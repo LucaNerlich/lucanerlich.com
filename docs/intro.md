@@ -61,6 +61,13 @@ Hope you find something that sparks your interest!
     - Displays aggregated podcasts release stats
     - **Technology:** Python 3, Next.JS, React, CSS
 
+* [lucanerlich.com](https://lucanerlich.com)
+    - *this page*
+    - [App Hosting via Coolify](https://coolify.io)
+    - [E-Mail via resend](https://resend.com)
+    - [Server via Hetzner Cloud](https://www.hetzner.com/de/cloud)
+    - [Frontend via Docusaurus](https://docusaurus.io)
+
 > I am self-hosting all my projects on a Hetzner VPS using [Coolify](https://coolify.io/) and Docker.
 > Some lightweight and gdpr friendly tracking has been added and self-hosted via [Umami](https://umami.is/).
 
