@@ -39,6 +39,10 @@ Hope you find something that sparks your interest!
 
 ### Hobby Projects
 
+* [LiftLog](https://liftlog.fitness)
+    - `WIP` Gym Tracking Tool + Social Network / Feed
+    - **Technology:** Spring Boot, Next.JS, React, Bootstrap CSS
+
 * [EZ-Budget](https://ez-budget.lucanerlich.com)
     - Monthly + Yearly budget tracking tool
     - **Technology:** Next.JS, React, Bootstrap CSS
