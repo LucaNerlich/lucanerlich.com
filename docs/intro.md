@@ -23,6 +23,43 @@ Want to dive straight into some of my favorite posts? Check out these highlights
 
 Hope you find something that sparks your interest!
 
+
+**Projects**
+-----------
+
+### Professional Projects
+
+* [First Class Performance](https://first-class-performance.com/)
+    - Design, Development, Linux Hosting, Maintenance
+    - **Technology:** Strapi CMS, Next.JS, React, SCSS, Material UI
+
+* [pnn-it.de](https://pnn-it.de/)
+    - Website of the GbR Business of a friend and myself.
+    - **Technology:** Next.JS, React, SCSS
+
+### Hobby Projects
+
+* [EZ-Budget](https://ez-budget.lucanerlich.com)
+    - Monthly + Yearly budget tracking tool
+    - **Technology:** Next.JS, React, Bootstrap CSS
+
+* [Mindestens 10 Zeichen](https://m10z.de)
+    - Community Led Gaming and Media Blog.
+    - **Technology:** Docusaurus 3
+
+* [Personal Media Blog](https://gaming.lucanerlich.com)
+    - Recycled posts from [m10z.de](https://m10z.de)
+    - #nobuild
+    - **Technology:** HTML, JavaScript, CSS
+
+* [RSS-Analyzer](https://rssanalyzer.lucanerlich.com)
+    - Audio-RSS Feed Parser
+    - Displays aggregated podcasts release stats
+    - **Technology:** Python 3, Next.JS, React, CSS
+
+> I am self-hosting all my projects on a Hetzner VPS using [Coolify](https://coolify.io/) and Docker.
+> Some lightweight and gdpr friendly tracking has been added and self-hosted via [Umami](https://umami.is/).
+
 **Dive In**
 ---------
 
