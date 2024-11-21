@@ -20,6 +20,8 @@ Want to dive straight into some of my favorite posts? Check out these highlights
   a development environment.
 * [Multi Tenancy ui.frontend](./aem/ui/multi-tenancy-support-ui-frontend.mdx): An exhaustive post that deep-dives into
   how the AEM `ui.frontend` module can be setup to support multi-tenant usecases.
+* [Spring Boot Google OAuth NextJS Example](https://github.com/LucaNerlich/spring-boot-google-oauth-nextjs-example): A
+  functional, production ready Spring Boot + Google OAuth + NextJS 15 App Router example
 
 Hope you find something that sparks your interest!
 
