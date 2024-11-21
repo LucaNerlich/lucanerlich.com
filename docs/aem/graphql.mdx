@@ -12,13 +12,19 @@
     ```
 2. Update Dispatcher ClientHeaders
  - `dispatcher/src/conf.dispatcher.d/clientheaders/clientheaders.any`
- ```
+```
+
  # Allow GraphQL GET, POST & preflight requests
- /0103 { /type "allow" /method '(GET|POST|OPTIONS)' /url "/content/_cq_graphql/*/endpoint.json" }
-    ```
+```
+/0103 {
+    /type "allow"
+    /method '(GET|POST|OPTIONS)'
+    /url "/content/_cq_graphql/*/endpoint.json"
+}
+```
 3. Add CORS Config
  - `ui.config/src/main/content/jcr_root/apps/cic/osgiconfig/config/com.adobe.granite.cors.impl.CORSPolicyImpl~cic-graphql.cfg.json`
- ```json
+```json
  {
      "supportscredentials": false,
      "supportedmethods": [
@@ -49,10 +55,12 @@
          "Authorization"
      ]
  }
-    ```
+```
+
 4. Add ReferrerFilter
  - `ui.config/src/main/content/jcr_root/apps/cic/osgiconfig/config/org.apache.sling.security.impl.ReferrerFilter~graphql.cfg.json`
- ```json
+
+```json
  {
      "allow.empty": false,
      "allow.hosts": [],
@@ -70,7 +78,7 @@
          ""
      ]
  }
-    ```
+```
 
 ## Documentation
 
