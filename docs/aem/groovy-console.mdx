@@ -11,7 +11,7 @@ In your 'Root' Pom add the following dependency:
 <dependency>
     <groupId>org.cid15.aem.groovy.console</groupId>
     <artifactId>aem-groovy-console-all</artifactId>
-    <version>17.0.0</version>
+    <version>18.0.2</version>
     <type>zip</type>
 </dependency>
 ```
@@ -25,7 +25,7 @@ In your 'All' Pom add the following dependency and plugin:
     <extensions>true</extensions>
     <configuration>
         <showImportPackageReport>false</showImportPackageReport>
-        <group>vwg.cms.c4c</group>
+        <group>some.group</group>
         <packageType>container</packageType>
         <!-- skip sub package validation for now as some vendor packages like CIF apps will not pass -->
         <skipSubPackageValidation>true</skipSubPackageValidation>
@@ -35,7 +35,7 @@ In your 'All' Pom add the following dependency and plugin:
                     <groupId>org.cid15.aem.groovy.console</groupId>
                     <artifactId>aem-groovy-console-all</artifactId>
                     <type>zip</type>
-                    <target>/apps/c4c-vendor-packages/container/install</target>
+                    <target>/apps/some-vendor-packages/container/install</target>
             </embedded>
         </embeddeds>
     </configuration>
