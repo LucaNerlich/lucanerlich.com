@@ -1,20 +1,19 @@
 # AEM Headless GraphQL
 
-## Setup
+## Update Dispatcher Filters
+- `dispatcher/src/conf.dispatcher.d/filters/filters.any`
 
-1. Update Dispatcher Filters
- - `dispatcher/src/conf.dispatcher.d/filters/filters.any`
- ```
+```
  $include "./default_clientheaders.any"
  "Origin"
  "Access-Control-Request-Method"
  "Access-Control-Request-Headers"
-    ```
-2. Update Dispatcher ClientHeaders
- - `dispatcher/src/conf.dispatcher.d/clientheaders/clientheaders.any`
 ```
+## Update Dispatcher ClientHeaders
+- `dispatcher/src/conf.dispatcher.d/clientheaders/clientheaders.any`
 
- # Allow GraphQL GET, POST & preflight requests
+## Allow GraphQL GET, POST & preflight requests
+
 ```
 /0103 {
     /type "allow"
@@ -22,8 +21,10 @@
     /url "/content/_cq_graphql/*/endpoint.json"
 }
 ```
-3. Add CORS Config
- - `ui.config/src/main/content/jcr_root/apps/cic/osgiconfig/config/com.adobe.granite.cors.impl.CORSPolicyImpl~cic-graphql.cfg.json`
+## Add CORS Config
+
+- `ui.config/src/main/content/jcr_root/apps/cic/osgiconfig/config/com.adobe.granite.cors.impl.CORSPolicyImpl~cic-graphql.cfg.json`
+
 ```json
  {
      "supportscredentials": false,
@@ -57,8 +58,9 @@
  }
 ```
 
-4. Add ReferrerFilter
- - `ui.config/src/main/content/jcr_root/apps/cic/osgiconfig/config/org.apache.sling.security.impl.ReferrerFilter~graphql.cfg.json`
+## Add ReferrerFilter
+
+- `ui.config/src/main/content/jcr_root/apps/cic/osgiconfig/config/org.apache.sling.security.impl.ReferrerFilter~graphql.cfg.json`
 
 ```json
  {
