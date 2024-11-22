@@ -7,7 +7,7 @@ RUN apk --no-cache add curl
 ARG PORT
 
 ENV PORT=$PORT
-ENV NODE_ENV=production
+
 
 # https://stackoverflow.com/a/65443098/4034811
 WORKDIR /app
@@ -19,6 +19,8 @@ RUN npm install
 
 # Build the Next.js application
 RUN npm run generate
+
+ENV NODE_ENV=production
 RUN npm run coolify-build
 
 # Expose port
