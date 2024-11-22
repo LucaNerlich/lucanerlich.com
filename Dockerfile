@@ -1,6 +1,9 @@
 # https://sreyaj.dev/deploy-nodejs-applications-on-a-vps-using-coolify-with-dockerfile
 FROM node:20-alpine
 
+# install curl for healthcheck
+RUN apk --no-cache add curl
+
 ARG PORT
 
 ENV PORT=$PORT
