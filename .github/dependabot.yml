@@ -14,6 +14,10 @@ updates:
             applies-to: version-updates
             patterns:
                 - "@docusaurus*"
+        react:
+            applies-to: version-updates
+            patterns:
+                - "react*"
         types:
             applies-to: version-updates
             patterns:
