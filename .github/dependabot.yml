@@ -9,3 +9,12 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    groups:
+        docusaurus:
+            applies-to: version-updates
+            patterns:
+                - "@docusaurus*"
+        types:
+            applies-to: version-updates
+            patterns:
+                - "@types*"
