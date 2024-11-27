@@ -35,7 +35,7 @@ Example ClientLibraryFolder `.content.xml`:
 Example js overwrite `searchRoot.js`:
 
 ```javascript
-js(function (window, document, ns) {
+(function (window, document, ns) {
     const customSearchRoot = "/content/dam/custom/path";
     ns.ui.assetFinder.registry.Images.searchRoot = customSearchRoot;
     console.debug("Overwrote Assets Siderail searchRoot to ", customSearchRoot);
