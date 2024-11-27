@@ -4,6 +4,8 @@ By default, the AEM Sites `Assets Siderail` (the left side option / drag & drop 
 assets below the fixed path `/content/dam`. This will lead to many cases of undesired images being displayed, e.g.
 thumbnails from projects etc.
 
+![img.png](attachments/img.png)
+
 For reference, the product code can be found here
 `/libs/cq/gui/components/authoring/editors/clientlibs/core/js/assetController/image/ImageAssetPanel.js`.
 
