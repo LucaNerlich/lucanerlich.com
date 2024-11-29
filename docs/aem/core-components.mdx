@@ -463,47 +463,48 @@ Implementing above Sling Model and the Component from Part enables us to create 
 extendedImage', which exportes all Core Components Image Component properties under the namespace 'image', as well as
 own additional properties.
 
-`/content/mysite/fr/en/home.model.json`
-```json
-
-extendedimage: {
-image: {
-id: "some-id",
-alt: "my alt text",
-title: "my caption",
-src: "/content/mysite/fr/en/home/_jcr_content/root/responsivegrid/extendedimage/image.img.jpeg/1617021471391/myCustomImage.jpeg",
-link: "/content/mysite/fr/en/discover.html",: type: "nt:unstructured",
-dataLayer: {
-some - id: {
-@type: "nt:unstructured",
-repo: modifyDate: "2021-03-29T12:37:51Z",
-dc: title: "my caption",
-xdm: linkURL: "/content/mysite/fr/en/discover.html",
-image: {
-repo: id: "3227649d-917f-461f-afc6-7d545d51cb33",
-repo: modifyDate: "2021-03-22T15:21:43Z",
-@type: "image/jpeg",
-repo: path: "/content/dam/mysite/discoverpage/myCustomImage.jpeg",
-xdm: tags: [],
-xdm: smartTags: {
-}
-}
-}
-}
-},
-ctaLinks: {
-"jcr: primaryType": "nt:unstructured",
-item0: {
-"jcr: primaryType": "nt:unstructured",
-path: "/content/mysite/fr/en/home",
-title: "CTA 1"
-},
-item1: {
-"jcr: primaryType": "nt:unstructured",
-path: "/content/mysite/fr/en/discover",
-title: "CTA 2"
-}
-},: type: "mysite/components/extendedimage"
+```json title="/content/mysite/fr/en/home.model.json"
+{
+    "extendedimage": {
+        "image": {
+            "id": "some-id",
+            "alt": "my alt text",
+            "title": "my caption",
+            "src": "/content/mysite/fr/en/home/_jcr_content/root/responsivegrid/extendedimage/image.img.jpeg/1617021471391/myCustomImage.jpeg",
+            "link": "/content/mysite/fr/en/discover.html",
+            "type": "nt:unstructured",
+            "dataLayer": {
+                "some-id": {
+                    "@type": "nt:unstructured",
+                    "repo:modifyDate": "2021-03-29T12:37:51Z",
+                    "dc:title": "my caption",
+                    "xdm:linkURL": "/content/mysite/fr/en/discover.html",
+                    "image": {
+                        "repo:id": "3227649d-917f-461f-afc6-7d545d51cb33",
+                        "repo:modifyDate": "2021-03-22T15:21:43Z",
+                        "@type": "image/jpeg",
+                        "repo:path": "/content/dam/mysite/discoverpage/myCustomImage.jpeg",
+                        "xdm:tags": [],
+                        "xdm:smartTags": {}
+                    }
+                }
+            }
+        },
+        "ctaLinks": {
+            "jcr:primaryType": "nt:unstructured",
+            "item0": {
+                "jcr:primaryType": "nt:unstructured",
+                "path": "/content/mysite/fr/en/home",
+                "title": "CTA 1"
+            },
+            "item1": {
+                "jcr:primaryType": "nt:unstructured",
+                "path": "/content/mysite/fr/en/discover",
+                "title": "CTA 2"
+            }
+        },
+        "type": "mysite/components/extendedimage"
+    }
 }
 ```
 
