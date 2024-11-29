@@ -3,12 +3,10 @@ FROM node:20-alpine
 
 # install curl for healthcheck
 RUN apk --no-cache add curl
-RUN apk --no-cache add git
 
 ARG PORT
 
 ENV PORT=$PORT
-
 
 # https://stackoverflow.com/a/65443098/4034811
 WORKDIR /app
