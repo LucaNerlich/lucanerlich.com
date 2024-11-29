@@ -3,6 +3,7 @@ FROM node:20-alpine
 
 # install curl for healthcheck
 RUN apk --no-cache add curl
+RUN apk --no-cache add git
 
 ARG PORT
 
