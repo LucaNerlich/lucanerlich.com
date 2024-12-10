@@ -68,19 +68,15 @@ const config = {
                 steps: 4, // the max number of images generated between min and max (inclusive)
                 disableInDev: false,
             },
-        ],
-        ["@docusaurus/plugin-client-redirects",
+        ], ['@docusaurus/plugin-client-redirects',
             {
-                // https://docusaurus.io/docs/api/plugins/@docusaurus/plugin-client-redirects#ex-config
-                createRedirects(existingPath) {
-                    if (existingPath.includes('/docs')) {
-                        // Redirect from /docs/team/X to /community/X and /docs/support/X to /community/X
-                        return [
-                            existingPath.replace('/docs', '/'),
-                        ];
-                    }
-                    return undefined; // Return a falsy value: no redirect created
-                },
+                redirects: [{
+                    from: '/docs/aem/component-dialogs/', to: '/aem/component-dialogs/',
+                }, {
+                    from: '/docs/aem/groovy-console/', to: '/aem/groovy-console/',
+                }, {
+                    from: '/docs/aem/extending-responsive-grid/', to: '/aem/extending-responsive-grid/',
+                },],
             },
         ],
         ['@docusaurus/plugin-pwa',
