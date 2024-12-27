@@ -181,6 +181,8 @@ alias dcb='docker-compose build'
 
 # Git
 alias gitfast='git pull && git add . && git commit -m "shortcut alias for minor changes" && git push'
+export gh='/Users/nerlich/tech/gh_2.64.0/bin'
+export PATH=$gh:$PATH
 
 # Maven
 alias mci='mvn clean install'
