@@ -1,5 +1,5 @@
 {
-    "label": "_archive",
+    "label": "Other",
     "className": "archive",
     "link": {
         "type": "generated-index"
