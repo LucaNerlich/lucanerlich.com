@@ -22,7 +22,7 @@ Example terminal tab in a folder with a node project
 
 ## .zshrc
 
-```shell
+```bash
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 

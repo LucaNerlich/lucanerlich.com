@@ -205,7 +205,7 @@ const config = {
             prism: {
                 // theme: lightCodeTheme,
                 // darkTheme: darkCodeTheme,
-                additionalLanguages: ['groovy', 'java', 'rust', 'python', 'bash', 'shell', 'xml'],
+                additionalLanguages: ['groovy', 'java', 'rust', 'python', 'bash', 'rust', 'yaml', 'csv'],
             },
         }),
 };
