@@ -58,10 +58,10 @@ Hope you find something that sparks your interest!
     - #nobuild
     - **Technology:** HTML, JavaScript, CSS
 
-* [RSS-Analyzer](https://rssanalyzer.lucanerlich.com)
+* [RSS-Analyzer](https://rssanalyzer.org)
     - Audio-RSS Feed Parser
     - Displays aggregated podcasts release stats
-    - **Technology:** Python 3, Next.JS, React, CSS
+  - **Technology:** Java, Next.JS, React, CSS
 
 * [lucanerlich.com](https://lucanerlich.com)
     - *this page*
