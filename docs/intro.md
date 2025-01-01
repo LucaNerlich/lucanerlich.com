@@ -22,6 +22,7 @@ Want to dive straight into some of my favorite posts? Check out these highlights
   how the AEM `ui.frontend` module can be setup to support multi-tenant usecases.
 * [Spring Boot Google OAuth NextJS Example](https://github.com/LucaNerlich/spring-boot-google-oauth-nextjs-example): A
   functional, production ready Spring Boot + Google OAuth + NextJS 15 App Router example
+* [🇩🇪Merkmale eines erfolgreichen Podcasts](https://m10z.de/merkmale-eines-erfolgreichen-podcasts)
 
 Hope you find something that sparks your interest!
 
