@@ -22,7 +22,8 @@ Example terminal tab in a folder with a node project
 
 ## Ghostty Config
 
-[Keybind Documentation](https://ghostty.org/docs/config/keybind)
+- [Keybind Documentation](https://ghostty.org/docs/config/keybind)
+- [MacOS Icon Config](https://ghostty.org/docs/config/reference#macos-icon)
 
 ```
 # Create window splits
@@ -42,6 +43,30 @@ keybind = alt+shift+d=goto_split:right
 # Other
 mouse-hide-while-typing = true
 keybind = cmd+w=close_surface
+
+# Create window splits
+keybind = alt+a=new_split:left
+keybind = alt+s=new_split:down
+keybind = alt+w=new_split:up
+keybind = alt+d=new_split:right
+keybind = alt+d=new_split:right
+keybind = alt+e=new_split:auto
+
+# Navigate window splits
+keybind = alt+shift+a=goto_split:left
+keybind = alt+shift+s=goto_split:bottom
+keybind = alt+shift+w=goto_split:top
+keybind = alt+shift+d=goto_split:right
+
+# Other
+mouse-hide-while-typing = true
+keybind = cmd+w=close_surface
+
+# Custom Icon Colors
+macos-icon = custom-style
+macos-icon-frame = plastic
+macos-icon-ghost-color = 1C2021
+macos-icon-screen-color = FA0C00
 ```
 
 ## .zshrc
