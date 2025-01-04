@@ -1,5 +1,8 @@
 luca:
-  name: Luca Nerlich
-  title: Technical Consultant
-  url: https://www.linkedin.com/in/lucanerlich/
-  image_url: https://share.lucanerlich.com/s/5pRbngBpYgb93wg/download/nerlich.png
+    name: Luca Nerlich
+    title: Technical Consultant
+    url: https://www.linkedin.com/in/lucanerlich/
+    image_url: https://share.lucanerlich.com/s/5pRbngBpYgb93wg/download/nerlich.png
+    socials:
+        github: https://github.com/LucaNerlich
+        linkedin: https://www.linkedin.com/in/lucanerlich
