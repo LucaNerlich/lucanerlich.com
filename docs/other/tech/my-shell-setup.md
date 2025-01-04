@@ -69,6 +69,8 @@ macos-icon-ghost-color = 1C2021
 macos-icon-screen-color = FA0C00
 ```
 
+![ghostty-icon.png](assets/ghostty-icon.png)
+
 ## .zshrc
 
 ```bash
