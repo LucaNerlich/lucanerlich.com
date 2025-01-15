@@ -14,4 +14,8 @@
       </aemServer>
     </servers>
   </component>
+  <component name="DiscordProjectSettings">
+    <option name="show" value="ASK" />
+    <option name="description" value="" />
+  </component>
 </project>
