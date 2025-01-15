@@ -1,4 +1,13 @@
-# Setup ollama and continue.dev for local, offline LLM use
+# Set up ollama and continue.dev for local, offline LLM use
+
+<!-- TOC -->
+
+* [Set up ollama and continue.dev for local, offline LLM use](#set-up-ollama-and-continuedev-for-local-offline-llm-use)
+    * [Model Setup](#model-setup)
+    * [Usage](#usage)
+    * [Suggested continue.dev config](#suggested-continuedev-config)
+
+<!-- TOC -->
 
 1. Install ollama
     - https://ollama.com/download
@@ -8,15 +17,16 @@
 
 ## Model Setup
 
-1. `ollama pull qwen2.5-coder`
+1. Update continue.dev `config.json` -> [see here](#suggested-continuedev-config)
+2. `ollama pull qwen2.5-coder`
     - Quick Tab Completion
     - https://ollama.com/library/qwen2.5-coder
-2. `ollama pull nomic-embed-text`
+3. `ollama pull nomic-embed-text`
     - Continue.dev Indexing and Codebase Search
-3. `ollama pull phi4`
+4. `ollama pull phi4`
     - General Purpose state-of-the-art open model
     - https://ollama.com/library/phi4
-4. `ollama serve`
+5. `ollama serve`
     - Run ollama api locally
     - https://ollama.com/library/nomic-embed-text
 
