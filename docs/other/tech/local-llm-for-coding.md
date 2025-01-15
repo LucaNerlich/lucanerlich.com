@@ -32,6 +32,9 @@ or via the chat-sidebar tab
 
 ## Suggested continue.dev config
 
+- Unix: `~/.continue/config.json`
+- Windows: `%USERPROFILE%\.continue\config.json`
+
 ```json title="~/.continue/config.json"
 {
     "models": [
