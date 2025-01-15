@@ -1,4 +1,6 @@
-# The Five Ideals
+# Key Principles for an Optimal Work Environment
+
+## The Five Ideals
 
 1. Locality and Simplicity
 2. Focus, Flow & Joy
@@ -10,8 +12,7 @@
 
 https://itrevolution.com/articles/five-ideals-of-devops/
 
-
-# The Four Types of Work
+## The Four Types of Work
 
 1. Business Projects
 2. Internal Projects
