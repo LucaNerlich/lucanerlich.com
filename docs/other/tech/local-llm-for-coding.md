@@ -1,13 +1,14 @@
 # Set up ollama and continue.dev for local, offline LLM use
 
 <!-- TOC -->
-
 * [Set up ollama and continue.dev for local, offline LLM use](#set-up-ollama-and-continuedev-for-local-offline-llm-use)
+    * [Ollama + Continue Dev](#ollama--continue-dev)
     * [Model Setup](#model-setup)
     * [Usage](#usage)
     * [Suggested continue.dev config](#suggested-continuedev-config)
-
 <!-- TOC -->
+
+## Ollama + Continue Dev
 
 1. Install ollama
     - https://ollama.com/download
