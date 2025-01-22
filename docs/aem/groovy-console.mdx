@@ -35,7 +35,7 @@ In your 'All' Pom add the following dependency and plugin:
                     <groupId>org.cid15.aem.groovy.console</groupId>
                     <artifactId>aem-groovy-console-all</artifactId>
                     <type>zip</type>
-                    <target>/apps/some-vendor-packages/container/install</target>
+                    <target>/apps/groovy-vendor-packages/container/install</target>
             </embedded>
         </embeddeds>
     </configuration>
@@ -48,6 +48,10 @@ In your 'All' Pom add the following dependency and plugin:
     <artifactId>aem-groovy-console-all</artifactId>
     <type>zip</type>
 </dependency>
+```
+Add the root path in all/src/main/content/META-INF/vault/filter.xml
+```
+<filter root="/apps/groovy-vendor-packages"/>
 ```
 
 Add the following osgi configuration file:
