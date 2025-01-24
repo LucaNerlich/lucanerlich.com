@@ -14,14 +14,17 @@
 2. `ollama pull qwen2.5-coder`
     - Quick Tab Completion
     - https://ollama.com/library/qwen2.5-coder
+   - [Open Source](https://github.com/QwenLM/Qwen2.5-Coder?tab=readme-ov-file#readme)
 3. `ollama pull nomic-embed-text`
     - Continue.dev Indexing and Codebase Search
 4. `ollama pull phi4`
     - General Purpose state-of-the-art open model
     - https://ollama.com/library/phi4
+   - [MIT License](https://ollama.com/library/phi4/blobs/fa8235e5b48f)
 5. `ollama serve`
     - Run ollama api locally
     - https://ollama.com/library/nomic-embed-text
+   - [Apache License](https://ollama.com/library/nomic-embed-text/blobs/c71d239df917)
 
 ## Usage
 
