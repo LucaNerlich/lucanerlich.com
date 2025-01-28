@@ -7,29 +7,40 @@
 2. Install the continue.dev Plugin for JetBrains or VSCode
     - https://plugins.jetbrains.com/plugin/22707-continue
     - https://marketplace.visualstudio.com/items?itemName=Continue.continue
+3. Optionally, use [OpenWebUI](https://docs.openwebui.com) via Docker as an Interface for Chatting
 
 ## Model Setup
 
-1. Update continue.dev `config.json` -> [see here](#suggested-continuedev-config)
-2. `ollama pull qwen2.5-coder`
-    - Quick Tab Completion
+1. Quick Tab Completion
+    ```bash
+    ollama pull qwen2.5-coder
+    ```
     - https://ollama.com/library/qwen2.5-coder
-   - [Open Source](https://github.com/QwenLM/Qwen2.5-Coder?tab=readme-ov-file#readme)
-3. `ollama pull nomic-embed-text`
-    - Continue.dev Indexing and Codebase Search
-4. `ollama pull phi4`
-    - General Purpose state-of-the-art open model
-    - https://ollama.com/library/phi4
+    - [Open Source](https://github.com/QwenLM/Qwen2.5-Coder?tab=readme-ov-file#readme)
+2. Indexing and Codebase Search
+    ```bash
+    ollama pull nomic-embed-text
+    ```
+3. General Purpose Reasoning Model
+    ```bash
+    ollama pull phi4
+    ```
+   - https://ollama.com/library/phi4
    - [MIT License](https://ollama.com/library/phi4/blobs/fa8235e5b48f)
    - Alternatively use *Deepseek R1*
      - https://ollama.com/library/deepseek-r1
      - [MIt License](https://ollama.com/library/deepseek-r1:32b/blobs/6e4c38e1172f)
      - Choose the largest b-Parameter Model that will fit into your VRAM
-       - `ollama pull ollama run deepseek-r1:32b`
-5. `ollama serve`
-    - Run ollama api locally
+     ```bash
+     ollama pull ollama run deepseek-r1:32b
+     ```
+4. Update continue.dev `config.json` -> [see here](#suggested-continuedev-config)
+5. Run ollama api locally
+    ```bash
+    ollama serve
+    ```
     - https://ollama.com/library/nomic-embed-text
-   - [Apache License](https://ollama.com/library/nomic-embed-text/blobs/c71d239df917)
+    - [Apache License](https://ollama.com/library/nomic-embed-text/blobs/c71d239df917)
 
 ## Usage
 
