@@ -1,4 +1,4 @@
-# Set up ollama and continue.dev for local, offline LLM use
+# How do setup a local & offline GitHub Copilot alternative
 
 ## Ollama + Continue Dev
 
