@@ -21,6 +21,10 @@
     - General Purpose state-of-the-art open model
     - https://ollama.com/library/phi4
    - [MIT License](https://ollama.com/library/phi4/blobs/fa8235e5b48f)
+   - Alternatively use *Deepseek R1*
+     - https://ollama.com/library/deepseek-r1
+     - Choose the largest b-Parameter Model that will fit into your VRAM
+       - `ollama pull ollama run deepseek-r1:32b`
 5. `ollama serve`
     - Run ollama api locally
     - https://ollama.com/library/nomic-embed-text
