@@ -23,6 +23,7 @@
    - [MIT License](https://ollama.com/library/phi4/blobs/fa8235e5b48f)
    - Alternatively use *Deepseek R1*
      - https://ollama.com/library/deepseek-r1
+     - [MIt License](https://ollama.com/library/deepseek-r1:32b/blobs/6e4c38e1172f)
      - Choose the largest b-Parameter Model that will fit into your VRAM
        - `ollama pull ollama run deepseek-r1:32b`
 5. `ollama serve`
