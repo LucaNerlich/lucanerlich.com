@@ -2,16 +2,19 @@
 
 ## Page Setup
 
-Development and Hosting is trivial. [Docusaurus](https://docusaurus.io/docs) comes with very sensible defaults and can be easily extended.
+Development and Hosting is trivial. [Docusaurus](https://docusaurus.io/docs) comes with very sensible defaults and can
+be easily extended.
 Regular React code and be combined with easy to write markdown.
 
-[Vercel](https://vercel.com) with its `hobby` plan supports Docusaurus v2 out of the box and for free. Just login, connect your repository and add a custom domain.
+[Vercel](https://vercel.com) with its `hobby` plan supports Docusaurus v2 out of the box and for free. Just login,
+connect your repository and add a custom domain.
 
 Done.
 
 ## Search
 
-Use the official Aligola / Docsearch integration. Alternatively use this plugin: https://github.com/lelouch77/docusaurus-lunr-search
+Use the official Aligola / Docsearch integration. Alternatively use this
+plugin: https://github.com/lelouch77/docusaurus-lunr-search
 
 ## Plugins
 
@@ -44,7 +47,8 @@ graph TD;
 
 [Infima Components](https://infima.dev/docs/components)
 
-Docusaurus comes with the Infima Styling Library by default. Therefore, we can just "copy paste" component examples into `.jsx` and `.mdx` pages.
+Docusaurus comes with the Infima Styling Library by default. Therefore, we can just "copy paste" component examples into
+`.jsx` and `.mdx` pages.
 
 Here is an example alert:
 
