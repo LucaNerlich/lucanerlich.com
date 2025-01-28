@@ -2,8 +2,32 @@
 
 - [GitHub Repo](https://github.com/CID15/aem-groovy-console)
 - [mvnrepository.com](https://mvnrepository.com/artifact/org.cid15.aem.groovy.console/aem-groovy-console-all/17.0.0)
+- [https://github.com/orbinson/aem-groovy-console](https://github.com/orbinson/aem-groovy-console)
 
 ## Install on AEM as a Cloud Service
+
+**2025 Update** - there is a more recent, updated version of the Groovy Console available for AEM as a Cloud Service -> https://github.com/orbinson/aem-groovy-console
+
+```xml title="/pom.xml"
+<dependency>
+  <groupId>be.orbinson.aem</groupId>
+  <artifactId>aem-groovy-console-all</artifactId>
+  <version>19.0.3</version>
+  <type>zip</type>
+</dependency>
+```
+
+```xml title="filevault-package-maven-plugin in the <embeddeds> section"
+<embedded>
+   <groupId>be.orbinson.aem</groupId>
+   <artifactId>aem-groovy-console-all</artifactId>
+   <target>/apps/vendor-packages/content/install</target>
+</embedded>
+```
+
+---
+
+The following steps are for the older, org.cid15, version of the Groovy Console:
 
 In your 'Root' Pom add the following dependency:
 
