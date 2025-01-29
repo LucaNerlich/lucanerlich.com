@@ -20,6 +20,14 @@ Example terminal tab in my home directory
 Example terminal tab in a folder with a node project
 ![shell-m10z.png](assets/shell-m10z.png)
 
+When using ssh to connect to remote servers,
+they might be missing the [shell info for Ghostty](https://ghostty.org/docs/help/terminfo#copy-ghostty's-terminfo-to-a-remote-machine).
+You can copy them with the following command
+
+```bash
+infocmp -x | ssh YOUR-SERVER -- tic -x -
+```
+
 ## Ghostty Config
 
 - [Keybind Documentation](https://ghostty.org/docs/config/keybind)
