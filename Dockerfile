@@ -10,17 +10,13 @@ ENV PORT=$PORT
 
 # https://stackoverflow.com/a/65443098/4034811
 WORKDIR /app
-# starts in repo root
-COPY . /app
 
-# Install dependencies
-RUN npm install
-
-# Build the Next.js application
-RUN npm run generate
+COPY package*.json /app
 
 ENV NODE_ENV=production
-RUN npm run coolify-build
+RUN npm install && npm run generate && npm run coolify-build && npm cache clean --force && rm -rf node_modules
+
+COPY . /app
 
 # Expose port
 EXPOSE $PORT
