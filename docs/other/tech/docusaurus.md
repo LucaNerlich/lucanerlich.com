@@ -16,33 +16,6 @@ Done.
 Use the official Aligola / Docsearch integration. Alternatively use this
 plugin: https://github.com/lelouch77/docusaurus-lunr-search
 
-## Plugins
-
-List here https://docusaurus.io/community/resources>.
-
-### Mermaid Diagrams
-
-- [Plugin](https://github.com/sjwall/mdx-mermaid)
-- [Documentation](https://mermaid-js.github.io/mermaid)
-
-````
-```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-```
-````
-
-```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-```
-
 ## Using Infima Styling
 
 [Infima Components](https://infima.dev/docs/components)

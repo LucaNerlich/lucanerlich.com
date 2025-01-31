@@ -11,12 +11,10 @@ ENV PORT=$PORT
 # https://stackoverflow.com/a/65443098/4034811
 WORKDIR /app
 
-COPY package*.json /app
+COPY . /app
 
 ENV NODE_ENV=production
 RUN npm install && npm run generate && npm run coolify-build && npm cache clean --force && rm -rf node_modules
-
-COPY . /app
 
 # Expose port
 EXPOSE $PORT

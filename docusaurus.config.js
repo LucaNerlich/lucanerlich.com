@@ -30,7 +30,7 @@ const config = {
                     editUrl: 'https://github.com/LucaNerlich/lucanerlich.com/tree/main',
                     showLastUpdateAuthor: false,
                     showLastUpdateTime: true,
-                    remarkPlugins: [require('mdx-mermaid')],
+                    remarkPlugins: [],
                     // https://stackoverflow.com/questions/61999271/how-to-set-docs-as-the-main-page
                     routeBasePath: '/',
                 },
@@ -59,7 +59,6 @@ const config = {
     ],
 
     plugins: [
-        'docusaurus-plugin-sass',
         ['@docusaurus/plugin-ideal-image',
             {
                 quality: 80,
