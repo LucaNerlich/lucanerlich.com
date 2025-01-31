@@ -51,6 +51,7 @@ keybind = alt+shift+d=goto_split:right
 # Other
 mouse-hide-while-typing = true
 keybind = cmd+w=close_surface
+keybind = performable:ctrl+c=copy_to_clipboard
 
 # Create window splits
 keybind = alt+a=new_split:left
