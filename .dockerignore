@@ -1,0 +1,26 @@
+# Ignore node_modules and other dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Ignore logs
+*.log
+logs
+
+# Ignore local environment files
+.env
+
+# Ignore version control folders
+.git
+
+# Ignore build output and coverage
+build
+dist
+coverage
+
+# OS-specific or IDE files
+.DS_Store
+.idea
+.vscode
+.vale-styles
+.vale.ini
