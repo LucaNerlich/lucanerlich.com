@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # build the Docusaurus site
-RUN run coolify-build
+RUN npm run coolify-build
 
 # -------------------------
 # 2) Production stage
