@@ -23,6 +23,8 @@ Want to dive straight into some of my favorite posts? Check out these highlights
 * [Spring Boot Google OAuth NextJS Example](https://github.com/LucaNerlich/spring-boot-google-oauth-nextjs-example): A
   functional, production ready Spring Boot + Google OAuth + NextJS 15 App Router example
 * [🇩🇪Merkmale eines erfolgreichen Podcasts](https://m10z.de/merkmale-eines-erfolgreichen-podcasts)
+* [🇩🇪Podcast Manager (Strapi CMS)](https://github.com/LucaNerlich/podcast-manager): A self-hosted Podcast Feed
+  Management System
 
 Hope you find something that sparks your interest!
 
