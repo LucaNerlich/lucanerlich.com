@@ -52,7 +52,7 @@ for further explanation.
 2. Add **only** the product `<PageMoveAction jcr:primaryType="cq:LiveSyncAction"/>`
 3. Add or set the rollout configurations on your live-copy page properties.
 
-```xml title="/apps/msm/sap/rolloutconfigs/pageMove"
+```xml title="/apps/msm/<your-project>/rolloutconfigs/pageMove"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
           cq:trigger="rollout"
@@ -60,7 +60,7 @@ for further explanation.
 The action copies rather than moves the (related) Live Copy page from the location before the move to the location after.
 The PageMoveAction does not change the Live Copy page at the location before the move. Therefore, for consecutive rollout configurations it has the status of a live relationship without a blueprint."
           jcr:primaryType="cq:RolloutConfig"
-          jcr:title="SAP PageMove Rollout Config">
+          jcr:title="PageMove Rollout Config">
     <PageMoveAction jcr:primaryType="cq:LiveSyncAction"/>
 </jcr:root>
 ```
