@@ -1,3 +1,7 @@
+---
+title: Multi-Site-Manager
+keywords: [ 'Multi-Site-Manager', 'MSM' ]
+---
 # Multi-Site-Manager | MSM
 
 > Rollout — The process Synchronizes from the source to the live copy, Can be triggered by an author (on a blueprint
