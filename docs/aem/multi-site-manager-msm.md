@@ -123,7 +123,7 @@ public class CustomActionFactory implements LiveActionFactory<LiveAction> {
             // implement your custom logic here
         }
         
-        // The following overlays are required due to implemented product interface
+        // The following overrides are required due to implemented product interface
         
         /************* Deprecated *************/
         @Deprecated
