@@ -71,6 +71,19 @@ Click on the documentation node and set the following property `sling:orderBefor
 
 [Source](https://medium.com/@surajkamdi/adding-documentation-for-aem-components-ab0bced28c26)
 
+## Best Practices
+
+1. If possible, extend an existing core component.
+2. Version your components /<component>/<version>/<component>.
+3. Structure your fields into tabs where it makes sense
+4. Do not overuse [multifields](#multifield)
+5. Use as few fields as possible, but as many as necessary
+6. Use Granite Alerts for important hints or notes
+7. Use granite wells where fields could be visually grouped.
+8. Add a component README.md file to help authors
+9. Add clientLib files directly into the component folder if necessary
+10. Don't overdo validation, handle missing fields gracefully in the model as well
+
 ## Empty Dialog / Starting Point
 
 This is an empty dialog structure and components can be placed in tabs (you can add `n` tabs.)
