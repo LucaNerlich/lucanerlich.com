@@ -283,3 +283,126 @@ export PATH="$PATH:/Users/nerlich/.cache/lm-studio/bin"
 # curl -sS https://starship.rs/install.sh | sh
 eval "$(starship init zsh)"
 ```
+
+## powershell .profile
+
+File Location: `C:\Users\lucan\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1`
+
+```powershell title="C:\Users\lucan\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
+# Linux-like aliases for PowerShell
+Set-Alias -Name ll -Value Get-ChildItem
+function ll { Get-ChildItem -Force @args | Format-Table -AutoSize }
+function ls { Get-ChildItem @args }
+function grep { Select-String @args }
+function pwd { (Get-Location).Path }
+function touch { New-Item -ItemType File @args }
+function cp { Copy-Item @args }
+function mv { Move-Item @args }
+function rm { Remove-Item @args }
+function cat { Get-Content @args }
+function clear { Clear-Host }
+function mkdir { New-Item -ItemType Directory @args }
+function man { Get-Help @args }
+function find { Get-ChildItem -Recurse -Filter @args }
+function diff { Compare-Object @args }
+function history { Get-History }
+
+Write-Host "Linux-like aliases loaded!" -ForegroundColor Green
+
+#region Environment path additions
+$env:PATH = "$env:ConEmuBaseDir\Scripts;$env:PATH"
+$env:PATH = "C:\Users\Luca\WPy64-3910\python-3.9.1.amd64;$env:PATH"
+#endregion
+
+#region Directory navigation aliases
+function cd2 { Set-Location -Path ..\.. }
+function cd3 { Set-Location -Path ..\..\.. }
+function cd4 { Set-Location -Path ..\..\..\.. }
+function f { Start-Process . }
+#endregion
+
+#region Project directory shortcuts
+function cdi { Set-Location -Path "E:\workspace\luca\" }
+function cds { Set-Location -Path "E:\workspace\luca\code\projects\strapi\cffc-v4\" }
+function cdc { Set-Location -Path "E:\workspace\luca\code\projects\cffc\" }
+function cdc4ca { Set-Location -Path "E:\workspace\adobe\VW\author-c4c\crx-quickstart\bin\" }
+function cdc4cp { Set-Location -Path "E:\workspace\adobe\VW\publish-c4c\crx-quickstart\bin\" }
+#endregion
+
+#region NPM aliases
+function npmil { npm install --legacy-peer-deps }
+function nrd { npm run dev }
+function nrb { npm run build }
+function nrs { npm run start }
+function nrbs { npm run build; npm run start }
+function npmu { npm update }
+function npmi { npm install }
+#endregion
+
+#region Maven aliases
+function mci { mvn clean install -T 1C }
+function mcip { mvn clean install -PautoInstallSinglePackage }
+function mcipst { mvn clean install -PautoInstallSinglePackage -DskipTests }
+function mcipp { mvn clean install -PautoInstallSinglePackagePublish }
+function mcib { mvn clean install -PautoInstallBundle }
+function msonar { mvn clean verify sonar:sonar -Dsonar.projectKey=R4C -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sqp_d1de0f4ad3b96a15cacf5c725d77fda62516e093 }
+#endregion
+
+#region Docker aliases
+function dcu { docker-compose pull; docker-compose up -d --remove-orphans }
+function dcul { docker-compose -f docker-compose-local.yml build; docker-compose -f docker-compose-local.yml up }
+function dcd { docker-compose down }
+#endregion
+
+#region Version check alias
+function ii { java -version; mvn -version }
+#endregion
+
+#region Dispatcher reload
+function dispatcherreload { 
+    if (Test-Path out) { Remove-Item -Recurse -Force out } 
+    bin\validator.exe full -d out src 
+    bin\docker_run.cmd out host.docker.internal:4503 8081 
+}
+#endregion
+
+#region Project navigation aliases - SAP
+function edge { Set-Location -Path "E:\workspace\adobe\SAP\builder-prospect-edge-worker\root\qa-headless-commerce" }
+function eds { Set-Location -Path "E:\workspace\adobe\SAP\builder-prospect-aem-dev" }
+function sapa { 
+    Set-Location -Path "E:\workspace\adobe\SAP\author\crx-quickstart\bin"
+    .\start.bat
+}
+function appb { Set-Location -Path "E:\workspace\adobe\SAP\builder-prospect-app-builder-pdp" }
+function sap { Set-Location -Path "E:\workspace\adobe\SAP\builder-prospect-aem-sapdx" }
+#endregion
+
+#region Adobe I/O aliases
+function aiodev { aio app dev }
+function aiodep { aio app deploy }
+function aiodpl { aio app deploy }
+function aiolog { aio app logs }
+function aiouse { aio app use }
+function aiort { aio rt }
+function aioact { aio rt activation }
+function aioinv { aio rt action invoke }
+function aiores { aio rt activation result }
+function aioll { aio rt activations list -l 60 }
+function aiols { aio rt activations list -l 10 }
+function aiolst { aio rt activations list -l 10 }
+function aiocm { aio cloudmanager }
+function aiorde { aio aem rde }
+function aiolgi { aio login --no-open }
+function aiolgo { aio logout --force }
+function aiocsl { aio console }
+function aioorg { aio console org select }
+function aioprj { aio console project select }
+function aiows { aio console ws select }
+function aiocfg { aio config }
+function aioplg { aio plugins }
+function aioinf { aio info }
+function aioo { aio where }
+#endregion
+
+Write-Host "Custom aliases loaded successfully!" -ForegroundColor Cyan
+```
