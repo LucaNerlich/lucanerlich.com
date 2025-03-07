@@ -13,7 +13,7 @@
 
 1. Quick Tab Completion
     ```bash
-    ollama pull qwen2.5-coder
+    ollama pull qwen2.5-coder:1.5b
     ```
     - https://ollama.com/library/qwen2.5-coder
     - [Open Source](https://github.com/QwenLM/Qwen2.5-Coder?tab=readme-ov-file#readme)
@@ -35,8 +35,14 @@
      ollama pull deepseek-r1:32b
      ollama run deepseek-r1:32b
      ```
-4. Update continue.dev `config.json` -> [see here](#suggested-continuedev-config)
-5. Run ollama api locally
+4. Reranking Model
+   ```bash
+   ollama pull linux6200/bge-reranker-v2-m3
+   ```
+   - https://docs.continue.dev/customize/model-roles/reranking
+   - https://ollama.com/linux6200/bge-reranker-v2-m3
+5. Update continue.dev `config.json` -> [see here](#suggested-continuedev-config)
+6. Run ollama api locally
     ```bash
     ollama serve
     ```
@@ -72,8 +78,25 @@ or via the chat-sidebar tab
             "provider": "ollama",
             "model": "deepseek-r1:32b",
             "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
+        },
+        {
+            "title": "Mistral Small 3",
+            "provider": "ollama",
+            "model": "mistral-small:24b",
+            "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
+        },
+        {
+            "title": "Reranker",
+            "provider": "ollama",
+            "model": "linux6200/bge-reranker-v2-m3"
         }
     ],
+    "reranker": {
+        "name": "llm",
+        "params": {
+            "modelTitle": "linux6200/bge-reranker-v2-m3"
+        }
+    },
     "tabAutocompleteModel": {
         "title": "Qwen2.5-Coder",
         "provider": "ollama",
@@ -148,7 +171,7 @@ or via the chat-sidebar tab
         },
         {
             "name": "commit",
-            "description": "Generate a git commit message"
+            "description": "Generate a git commit message for the current @Git Diff"
         }
     ]
 }
