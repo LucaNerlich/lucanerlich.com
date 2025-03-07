@@ -166,6 +166,21 @@ or via the chat-sidebar tab
             "name": "commit",
             "description": "Generate a git commit message"
         }
-    ]
+    ],
+    "docs": [
+        {
+            "startUrl": "https://www.aem.live/docs",
+            "title": "aem.live",
+            "faviconUrl": "https://www.aem.live/favicon.ico"
+        },
+        {
+            "startUrl": "https://experienceleague.adobe.com/de/docs/experience-manager-cloud-service",
+            "title": "AEMaaCS",
+            "faviconUrl": "https://experienceleague.adobe.com/favicon.ico"
+        }
+    ],
+    "experimental": {
+        "useChromiumForDocsCrawling": true
+    }
 }
 ```
