@@ -177,6 +177,26 @@ or via the chat-sidebar tab
             "startUrl": "https://experienceleague.adobe.com/de/docs/experience-manager-cloud-service",
             "title": "AEMaaCS",
             "faviconUrl": "https://experienceleague.adobe.com/favicon.ico"
+        },
+        {
+            "startUrl": "https://lucanerlich.com",
+            "title": "lucanerlich",
+            "faviconUrl": ""
+        },
+        {
+            "startUrl": "https://react.dev/",
+            "title": "react",
+            "faviconUrl": ""
+        },
+        {
+            "startUrl": "https://www.typescriptlang.org/",
+            "title": "typescript",
+            "faviconUrl": ""
+        },
+        {
+            "startUrl": "https://experience-aem.blogspot.com/2013/08/in-blog-experiencing-adobe-experience.html",
+            "title": "aem-blogspot",
+            "faviconUrl": ""
         }
     ],
     "experimental": {
