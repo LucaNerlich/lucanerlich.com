@@ -84,23 +84,12 @@ or via the chat-sidebar tab
             "provider": "ollama",
             "model": "mistral-small:24b",
             "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
-        },
-        {
-            "title": "Reranker",
-            "provider": "ollama",
-            "model": "linux6200/bge-reranker-v2-m3"
         }
     ],
-    "reranker": {
-        "name": "llm",
-        "params": {
-            "modelTitle": "linux6200/bge-reranker-v2-m3"
-        }
-    },
     "tabAutocompleteModel": {
         "title": "Qwen2.5-Coder",
         "provider": "ollama",
-        "model": "qwen2.5-coder"
+        "model": "qwen2.5-coder:1.5b"
     },
     "embeddingsProvider": {
         "title": "Nomic Embed Text",
@@ -162,6 +151,10 @@ or via the chat-sidebar tab
         {
             "name": "os",
             "params": {}
+        },
+        {
+            "name": "docs",
+            "params": {}
         }
     ],
     "slashCommands": [
@@ -171,7 +164,7 @@ or via the chat-sidebar tab
         },
         {
             "name": "commit",
-            "description": "Generate a git commit message for the current @Git Diff"
+            "description": "Generate a git commit message"
         }
     ]
 }
