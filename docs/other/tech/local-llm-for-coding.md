@@ -32,7 +32,8 @@
      - [MIt License](https://ollama.com/library/deepseek-r1:32b/blobs/6e4c38e1172f)
      - Choose the largest b-Parameter Model that will fit into your VRAM
      ```bash
-     ollama pull ollama run deepseek-r1:32b
+     ollama pull deepseek-r1:32b
+     ollama run deepseek-r1:32b
      ```
 4. Update continue.dev `config.json` -> [see here](#suggested-continuedev-config)
 5. Run ollama api locally
@@ -64,6 +65,12 @@ or via the chat-sidebar tab
             "title": "PHi-4",
             "provider": "ollama",
             "model": "phi4",
+            "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
+        },
+        {
+            "title": "Deepseek R1",
+            "provider": "ollama",
+            "model": "deepseek-r1:32b",
             "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
         }
     ],
