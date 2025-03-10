@@ -78,12 +78,6 @@ or via the chat-sidebar tab
             "provider": "ollama",
             "model": "deepseek-r1:32b",
             "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
-        },
-        {
-            "title": "Mistral Small 3",
-            "provider": "ollama",
-            "model": "mistral-small:24b",
-            "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
         }
     ],
     "tabAutocompleteModel": {
@@ -101,6 +95,29 @@ or via the chat-sidebar tab
             "name": "test",
             "prompt": "{{{ input }}}\n\nWrite a comprehensive set of unit tests for the selected code. It should setup, run tests that check for correctness including important edge cases, and teardown. Ensure that the tests are complete and sophisticated. Give the tests just as chat output, don't edit any file.",
             "description": "Write unit tests for highlighted code"
+        },
+        {
+            "name": "refactor",
+            "prompt": "{{{ input }}}\n\nRefactor the selected code to improve its structure and readability without changing its functionality. Provide a detailed explanation of your changes.",
+            "description": "Refactor code for better structure"
+        },
+        {
+            "name": "optimize",
+            "prompt": "{{{ input }}}\n\nOptimize the selected code for performance while maintaining its current behavior. Explain any trade-offs involved in your optimization process.",
+            "description": "Optimize code for performance"
+        },
+        {
+            "name": "explain",
+            "prompt": "{{{ input }}}\n\nOptimize the selected code for better performance. Look for inefficiencies or unnecessary computations that can be streamlined.",
+            "description": "Enhance performance of highlighted code"
+        },
+        {
+            "name": "translate",
+            "description": "Describe the functionality of highlighted code"
+        },
+        {
+            "prompt": "{{{ input }}}\n\nTranslate the highlighted code from its current programming language into Python, preserving functionality as closely as possible. Provide comments in your translated code for clarity.",
+            "description": "Translate code to Python"
         }
     ],
     "contextProviders": [
@@ -194,8 +211,8 @@ or via the chat-sidebar tab
             "faviconUrl": ""
         },
         {
-            "startUrl": "https://experience-aem.blogspot.com/2013/08/in-blog-experiencing-adobe-experience.html",
-            "title": "aem-blogspot",
+            "startUrl": "https://react-spectrum.adobe.com/index.html",
+            "title": "react spectrum",
             "faviconUrl": ""
         }
     ],
