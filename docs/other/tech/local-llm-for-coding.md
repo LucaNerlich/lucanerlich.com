@@ -93,28 +93,28 @@ or via the chat-sidebar tab
     "customCommands": [
         {
             "name": "test",
-            "prompt": "{{{ input }}}\n\nWrite a comprehensive set of unit tests for the selected code. It should setup, run tests that check for correctness including important edge cases, and teardown. Ensure that the tests are complete and sophisticated. Give the tests just as chat output, don't edit any file.",
-            "description": "Write unit tests for highlighted code"
+            "prompt": "{{{ input }}}\n\nWrite a comprehensive set of unit tests for the provided code. Ensure to include setup, execution of correctness checks with important edge cases, and teardown. Present the tests as plain text output.",
+            "description": "Generate unit tests for the highlighted code."
         },
         {
             "name": "refactor",
-            "prompt": "{{{ input }}}\n\nRefactor the selected code to improve its structure and readability without changing its functionality. Provide a detailed explanation of your changes.",
-            "description": "Refactor code for better structure"
+            "prompt": "{{{ input }}}\n\nRefactor the provided code to improve its structure and readability without altering its functionality. Include a detailed explanation of your changes and reasoning.",
+            "description": "Improve the code's structure for better readability."
         },
         {
             "name": "optimize",
-            "prompt": "{{{ input }}}\n\nOptimize the selected code for performance while maintaining its current behavior. Explain any trade-offs involved in your optimization process.",
-            "description": "Optimize code for performance"
+            "prompt": "{{{ input }}}\n\nOptimize the provided code for performance while maintaining its current behavior. Describe any trade-offs involved in your optimization process.",
+            "description": "Enhance code performance with a detailed explanation of changes and trade-offs."
         },
         {
             "name": "explain",
-            "prompt": "{{{ input }}}\n\nOptimize the selected code for better performance. Look for inefficiencies or unnecessary computations that can be streamlined.",
-            "description": "Enhance performance of highlighted code"
+            "prompt": "{{{ input }}}\n\nExplain the logic and functionality of the provided code. Discuss any potential inefficiencies or unnecessary computations that could be improved for better performance.",
+            "description": "Analyze and explain the code's functionality and potential improvements."
         },
         {
             "name": "document",
-            "prompt": "{{{ input }}}\n\nWrite language specific function documentation. Please return language correct documentation for the selected code. e.g javadoc or jsdoc, depending on the current programming language. Please keep the explanation clear and concise.",
-            "description": "Write language specific function docs. Please keep it clear and concise."
+            "prompt": "{{{ input }}}\n\nWrite language-specific documentation for the provided function. Use appropriate formats like Javadoc for Java or JSDoc for JavaScript. Ensure clarity and conciseness in your explanation.",
+            "description": "Create clear and concise function documentation using the correct language format."
         }
     ],
     "contextProviders": [
