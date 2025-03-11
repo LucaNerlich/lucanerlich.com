@@ -112,12 +112,9 @@ or via the chat-sidebar tab
             "description": "Enhance performance of highlighted code"
         },
         {
-            "name": "translate",
-            "description": "Describe the functionality of highlighted code"
-        },
-        {
-            "prompt": "{{{ input }}}\n\nTranslate the highlighted code from its current programming language into Python, preserving functionality as closely as possible. Provide comments in your translated code for clarity.",
-            "description": "Translate code to Python"
+            "name": "document",
+            "prompt": "{{{ input }}}\n\nWrite language specific function documentation. Please return language correct documentation for the selected code. e.g javadoc or jsdoc, depending on the current programming language. Please keep the explanation clear and concise.",
+            "description": "Write language specific function docs. Please keep it clear and concise."
         }
     ],
     "contextProviders": [
