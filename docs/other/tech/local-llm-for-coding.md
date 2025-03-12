@@ -90,6 +90,12 @@ or via the chat-sidebar tab
             "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
         },
         {
+            "title": "Llama 3.3",
+            "provider": "ollama",
+            "model": "llama3.3",
+            "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
+        },
+        {
             "title": "Deepseek R1",
             "provider": "ollama",
             "model": "deepseek-r1:32b",
