@@ -49,6 +49,22 @@
     - https://ollama.com/library/nomic-embed-text
     - [Apache License](https://ollama.com/library/nomic-embed-text/blobs/c71d239df917)
 
+## [Open Web UI](https://github.com/open-webui/open-webui)
+
+![openwebui.png](./assets/openwebui.png)
+
+Nvidia GPU
+
+```bash
+docker run -d -p 3000:8080 --gpus all --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+```
+
+Other
+
+```bash
+docker run -d -p 3456:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+```
+
 ## Usage
 
 Use directly in your editor
