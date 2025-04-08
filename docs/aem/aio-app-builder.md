@@ -360,10 +360,7 @@ async function streamAssetToAEM({sourceUrl, host, folderPath, fileName, auth, lo
         // The uploadURIs are in the first file object, not directly on the data object
         const fileInfo = data.files[0];
 
-        // 3. Start the download response
-        const downloadResponse = await fetch(sourceUrl);
-
-        // 4. Stream and upload binary to the blob store in parts
+        // 3. Stream and upload binary to the blob store in parts
         const uploadResult = await handleMultiPartUpload({
             sourceUrl,
             uploadURIs: fileInfo.uploadURIs,
@@ -373,7 +370,7 @@ async function streamAssetToAEM({sourceUrl, host, folderPath, fileName, auth, lo
             logger
         });
 
-        // 5. Complete the upload
+        // 4. Complete the upload
         const completeURL = createAbsoluteUrl(data.completeURI, host);
         const completeResult = await completeUpload({
             completeURI: completeURL,
