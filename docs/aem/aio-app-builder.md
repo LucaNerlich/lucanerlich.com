@@ -212,7 +212,8 @@ async function handleMultiPartUpload({
                                          fileSize,
                                          minPartSize,
                                          maxPartSize,
-                                         logger = console
+                                         logger = console,
+                                         maxConcurrent = 5
                                      }) {
     try {
         // Ensure we have at least one part
@@ -224,36 +225,82 @@ async function handleMultiPartUpload({
             minPartSize || Math.ceil(fileSize / numParts),
             Math.ceil(fileSize / numParts)
         );
-
         let bytesProcessed = 0;
 
-        // Process parts sequentially to avoid overwhelming memory
-        for (let i = 0; i < numParts; i++) {
+        // Create array of part descriptors
+        const parts = Array.from({length: numParts}, (_, i) => {
             const partStart = i * partSize;
             const partEnd = Math.min(partStart + partSize, fileSize) - 1;
-
-            // Ensure we use the correct upload URL (use the last one if we exceed available URLs)
-            const uploadURL = uploadURIs[Math.min(i, uploadURIs.length - 1)];
-
-            // Download and upload this part
-            const partResult = await downloadAndUploadPart({
-                sourceUrl,
-                uploadURL,
-                partIndex: i,
-                totalParts: numParts,
+            return {
+                index: i,
                 partStart,
                 partEnd,
-                fileSize,
-                logger
-            });
+                length: partEnd - partStart + 1,
+                uploadURL: uploadURIs[Math.min(i, uploadURIs.length - 1)]
+            };
+        });
 
-            if (!partResult.success) {
-                throw new Error(`Part upload failed: ${partResult.error}`);
-            }
+        // Filter out empty parts
+        const validParts = parts.filter(part => part.length > 0);
 
-            bytesProcessed += partResult.bytesProcessed;
+        // Split parts into batches of maxConcurrent
+        const batches = [];
+        for (let i = 0; i < validParts.length; i += maxConcurrent) {
+            batches.push(validParts.slice(i, i + maxConcurrent));
         }
 
+        // Process batches sequentially
+        for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+            const batch = batches[batchIndex];
+
+            // Process each batch concurrently
+            const batchResults = await Promise.allSettled(
+                batch.map(part =>
+                    downloadAndUploadPart({
+                        sourceUrl,
+                        uploadURL: part.uploadURL,
+                        partIndex: part.index,
+                        totalParts: numParts,
+                        partStart: part.partStart,
+                        partEnd: part.partEnd,
+                        fileSize,
+                        logger
+                    })
+                )
+            );
+
+            // Analyze the results - separate fulfilled from rejected promises
+            const fulfilledResults = batchResults
+                .filter(result => result.status === 'fulfilled')
+                .map(result => result.value);
+
+            const failedParts = batchResults
+                .filter(result => result.status === 'rejected' ||
+                    (result.status === 'fulfilled' && !result.value.success))
+                .map((result, index) => ({
+                    partIndex: batch[index].index,
+                    error: result.status === 'rejected'
+                        ? result.reason
+                        : result.value.error
+                }));
+
+            if (failedParts.length > 0) {
+                // Log information about failed parts but continue processing
+                const failedIndexes = failedParts.map(p => p.partIndex + 1).join(', ');
+
+                // Optional: decide whether to abort or continue based on failure percentage
+                const failureRate = failedParts.length / batch.length;
+                if (failureRate > 0.5) {  // If more than 50% of the batch failed
+                    throw new Error(`Too many parts failed (${failedParts.length}/${batch.length}) in batch ${batchIndex + 1} - aborting`);
+                }
+            }
+
+            // Update progress (count only successful uploads)
+            const batchBytes = fulfilledResults
+                .filter(result => result.success)
+                .reduce((sum, result) => sum + result.bytesProcessed, 0);
+            bytesProcessed += batchBytes;
+        }
         return {success: true};
     } catch (error) {
         return {success: false, error: error.message};
