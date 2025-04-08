@@ -42,9 +42,7 @@ async function initUpload({host, folderPath, fileName, fileSize, auth, logger = 
 
         const data = await response.json();
 
-        // Store the affinity cookie for future requests
         const cookies = response.headers.get('set-cookie');
-        // Use the full cookie string instead of just the first part
         const affinityCookie = cookies || null;
 
         return {
