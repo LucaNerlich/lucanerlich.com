@@ -285,14 +285,11 @@ async function handleMultiPartUpload({
                 }));
 
             if (failedParts.length > 0) {
-                // Log information about failed parts but continue processing
                 const failedIndexes = failedParts.map(p => p.partIndex + 1).join(', ');
+                logger.error(`Parts ${failedIndexes} failed to upload in batch ${batchIndex + 1}`);
+                logger.error(`First failure reason: ${failedParts[0].error}`);
 
-                // Optional: decide whether to abort or continue based on failure percentage
-                const failureRate = failedParts.length / batch.length;
-                if (failureRate > 0.5) {  // If more than 50% of the batch failed
-                    throw new Error(`Too many parts failed (${failedParts.length}/${batch.length}) in batch ${batchIndex + 1} - aborting`);
-                }
+                throw new Error(`Parts failed (${failedParts.length}/${batch.length}) in batch ${batchIndex + 1} - aborting`);
             }
 
             // Update progress (count only successful uploads)
