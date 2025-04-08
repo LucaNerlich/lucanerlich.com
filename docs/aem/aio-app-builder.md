@@ -367,12 +367,11 @@ This script can be called like this
 ```js
  // 30 mb large image test
 const imageUrl = 'https://sample-videos.com/img/Sample-jpg-image-30mb.jpg';
-const fileName = `${tourId}.jpg`;
+const fileName = `${fileName}.jpg`;
 
 // Use AEM technical Account or a _Local Developer Token_ via the Developer Console.
 const auth = `Bearer ${params.TOKEN}`;
 
-// Use our streamAssetToAEM utility function to handle the upload
 const uploadResult = await streamAssetToAEM({
     sourceUrl: imageUrl,
     host: aemHost,
