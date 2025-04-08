@@ -427,3 +427,39 @@ const uploadResult = await streamAssetToAEM({
 
 const targetUrl = `${aemHost}/content/dam/${uploadResult.data.assetPath}`;
 ```
+
+## Creating a Folder
+
+```js
+async function prepareFolder(params, logger) {
+    const fetch = require('node-fetch');
+
+    const formData = new URLSearchParams();
+    const folderName = params['uuid'];
+    formData.append('./jcr:content/jcr:title', folderName);
+    formData.append(':name', folderName);
+    formData.append('./jcr:primaryType', 'sling:OrderedFolder');
+    formData.append('./jcr:content/jcr:primaryType', 'nt:unstructured');
+    formData.append('./jcr:content/sourcing', 'false');
+    formData.append('_charset_', 'UTF-8');
+
+    const headers = {
+        'Authorization': `Bearer ${params['TOKEN']}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+    };
+
+    const url = `${params.AEM_HOST}${damRootPath}/${folderName}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to create folder: ${response.status}`);
+    }
+
+    logger.info(`Folder at ${url} created successfully`);
+    return `${damRootPath}/${folderName}`
+}
+```
