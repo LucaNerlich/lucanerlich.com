@@ -58,6 +58,17 @@ macos-icon = custom-style
 macos-icon-frame = plastic
 macos-icon-ghost-color = 1C2021
 macos-icon-screen-color = FA0C00
+
+# Cursor
+shell-integration-features = no-cursor
+cursor-style = block
+cursor-style-blink = false
+
+# Tab Style
+macos-titlebar-style = tabs
+macos-titlebar-proxy-icon = hidden
+split-divider-color = #222
+unfocused-split-opacity = 1
 ```
 
 ![ghostty-icon.png](assets/ghostty-icon.png)
