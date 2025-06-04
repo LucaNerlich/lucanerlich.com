@@ -65,6 +65,36 @@ Other
 docker run -d -p 3456:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
 ```
 
+### Docker Compose
+
+Below docker connects to ollama running natively on windows and not via docker.
+
+```yaml
+services:
+    open-webui:
+        image: ghcr.io/open-webui/open-webui:cuda
+        container_name: open-webui
+        volumes:
+            - ./data:/app/backend/data
+        ports:
+            - 3456:8080
+        environment:
+            - 'OLLAMA_BASE_URL=http://0.0.0.0:11434'
+        extra_hosts:
+            - host.docker.internal:host-gateway
+        restart: always
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        -   driver: nvidia
+                            count: all
+                            capabilities: [ gpu ]
+
+volumes:
+    open-webui: { }
+```
+
 ## Usage
 
 Use directly in your editor
