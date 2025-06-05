@@ -7,7 +7,7 @@
         "start": "docusaurus start",
         "dev": "docusaurus start",
         "build": "docusaurus build",
-        "coolify": "docusaurus serve --port 3002",
+        "coolify": "docusaurus serve --port 3000",
         "swizzle": "docusaurus swizzle",
         "deploy": "docusaurus deploy",
         "clear": "docusaurus clear",
