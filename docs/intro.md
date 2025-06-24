@@ -38,11 +38,9 @@ Hope you find something that sparks your interest!
 * [First Class Performance](https://first-class-performance.com/)
     - Design, Development, Linux Hosting, Maintenance
     - **Technology:** Strapi CMS, Next.JS, React, SCSS, Material UI
-
 * [Complete Motion CrossFit](https://complete-motion-crossfit.de/)
     - Design, Development, Linux Hosting, Maintenance
     - **Technology:** Next.JS, React, SCSS
-
 * [Nerlich / Puls GbR](https://pnn-it.de/)
     - Website of the GbR Business of a friend and myself.
     - **Technology:** Next.JS, React, SCSS
@@ -52,25 +50,20 @@ Hope you find something that sparks your interest!
 * [LiftLog](https://liftlog.fitness)
     - `WIP` Gym Tracking Tool + Social Network / Feed
     - **Technology:** Spring Boot, Next.JS, React, Bootstrap CSS
-
 * [EZ-Budget](https://ez-budget.lucanerlich.com)
     - Monthly + Yearly budget tracking tool
     - **Technology:** Next.JS, React, Bootstrap CSS
-
 * [Mindestens 10 Zeichen](https://m10z.de)
     - Community Led Gaming and Media Blog.
     - **Technology:** Docusaurus 3
-
 * [Personal Media Blog](https://gaming.lucanerlich.com)
     - Recycled posts from [m10z.de](https://m10z.de)
     - #nobuild
     - **Technology:** HTML, JavaScript, CSS
-
 * [RSS-Analyzer](https://rssanalyzer.org)
     - Audio-RSS Feed Parser
     - Displays aggregated podcasts release stats
   - **Technology:** Java, Next.JS, React, CSS
-
 * [lucanerlich.com](https://lucanerlich.com)
     - *this page*
     - [App Hosting via Coolify](https://coolify.io)
