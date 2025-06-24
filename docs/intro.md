@@ -39,6 +39,10 @@ Hope you find something that sparks your interest!
     - Design, Development, Linux Hosting, Maintenance
     - **Technology:** Strapi CMS, Next.JS, React, SCSS, Material UI
 
+* [Complete Motion CrossFit](https://complete-motion-crossfit.de/)
+    - Design, Development, Linux Hosting, Maintenance
+    - **Technology:** Next.JS, React, SCSS
+
 * [pnn-it.de](https://pnn-it.de/)
     - Website of the GbR Business of a friend and myself.
     - **Technology:** Next.JS, React, SCSS
