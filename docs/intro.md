@@ -43,7 +43,7 @@ Hope you find something that sparks your interest!
     - Design, Development, Linux Hosting, Maintenance
     - **Technology:** Next.JS, React, SCSS
 
-* [pnn-it.de](https://pnn-it.de/)
+* [Nerlich / Puls GbR](https://pnn-it.de/)
     - Website of the GbR Business of a friend and myself.
     - **Technology:** Next.JS, React, SCSS
 
