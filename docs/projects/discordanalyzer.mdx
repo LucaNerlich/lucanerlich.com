@@ -2,7 +2,7 @@ import Image from '@theme/IdealImage';
 
 # Discord Chat Analyzer
 
-[GitLab Repository](https://gitlab.com/lucanerlich/discordchatanalyzer)
+[GitHub Repository](https://github.com/LucaNerlich/Discord-Chat-Analyzer)
 
 The DCA operates on statically available chat log files, downloaded by the [DiscordChatExporter](https://github.com/Tyrrrz/DiscordChatExporter).
 
@@ -10,6 +10,9 @@ The DCA operates on statically available chat log files, downloaded by the [Disc
 
 After parsing all `.json` logs to Java Entities, separated into an array of `Channel` objects, each gets analyzed by the `Analyzer.java`.
 The analyzer reads each message and tracks a multitude of information for each specific author/chatter, automatically sorted by TreeMaps.
+
+Place the downloaded `.json` files in a directory `/logs/<somename>` in the root of your project.
+Update the log file dirname accordingly in the `readLogs` method.
 
 Based on the `rankingType`, the analyzer writes its data to separate files.
 
