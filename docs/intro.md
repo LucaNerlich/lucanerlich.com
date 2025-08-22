@@ -14,7 +14,7 @@ title: Luca Nerlich
 
 Want to dive straight into some of my favorite posts? Check out these highlights:
 
-* [Component Dialog Examples](./aem/component-dialogs.mdx): A one-stop-shop to copy and paste the most useful Granite
+* [⭐ Component Dialog Examples](./aem/component-dialogs.mdx): A one-stop-shop to copy and paste the most useful Granite
   Dialog xml widgets.
 * [Local Development Setup](./aem/aem-dev-setup.md): A short introduction on how to setup an AEM SDK locally, including
   a development environment.
@@ -23,7 +23,7 @@ Want to dive straight into some of my favorite posts? Check out these highlights
 * [Spring Boot Google OAuth NextJS Example](https://github.com/LucaNerlich/spring-boot-google-oauth-nextjs-example): A
   functional, production ready Spring Boot + Google OAuth + NextJS 15 App Router example
 * [🇩🇪 Merkmale eines erfolgreichen Podcasts](https://m10z.de/merkmale-eines-erfolgreichen-podcasts)
-* [Podcast Manager (Strapi CMS)](https://github.com/LucaNerlich/podcast-manager): A self-hosted Podcast Feed
+* [⭐ Podcast Manager (Strapi CMS)](https://github.com/LucaNerlich/podcast-manager): A self-hosted Podcast Feed
   Management System
   * [🇩🇪 Blog Post describing the Podcast Manager](https://m10z.de/podcast-manager-strapi-cms)
 
@@ -38,7 +38,7 @@ Hope you find something that sparks your interest!
 * [First Class Performance](https://first-class-performance.com/)
     - Design, Development, Linux Hosting, Maintenance
     - **Technology:** Strapi CMS, Next.JS, React, SCSS, Material UI
-* [Complete Motion CrossFit](https://complete-motion-crossfit.de/)
+* [⭐ Complete Motion CrossFit](https://complete-motion-crossfit.de/)
     - Design, Development, Linux Hosting, Maintenance
     - **Technology:** Next.JS, React, SCSS
 * [Nerlich / Puls GbR](https://pnn-it.de/)
@@ -47,9 +47,9 @@ Hope you find something that sparks your interest!
 
 ### Hobby Projects
 
-* [LiftLog](https://liftlog.fitness)
-    - `WIP` Gym Tracking Tool + Social Network / Feed
-    - **Technology:** Spring Boot, Next.JS, React, Bootstrap CSS
+* [⭐ Steam5](https://steam5.org)
+    - Steam Review Guessing Game
+    - **Technology:** Spring Boot, Next.JS, React, PostgreSQL
 * [EZ-Budget](https://ez-budget.lucanerlich.com)
     - Monthly + Yearly budget tracking tool
     - **Technology:** Next.JS, React, Bootstrap CSS
@@ -60,7 +60,7 @@ Hope you find something that sparks your interest!
     - Recycled posts from [m10z.de](https://m10z.de)
     - #nobuild
     - **Technology:** HTML, JavaScript, CSS
-* [RSS-Analyzer](https://rssanalyzer.org)
+* [⭐ RSS-Analyzer](https://rssanalyzer.org)
     - Audio-RSS Feed Parser
     - Displays aggregated podcasts release stats
   - **Technology:** Java, Next.JS, React, CSS
