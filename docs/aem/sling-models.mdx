@@ -1,5 +1,33 @@
 # Sling Models and Services
 
+## JavaScript Model - pass variable to model
+
+```text
+/some.html
+/helper.js
+```
+
+```javascript title='JavaScript Use Model'
+use(function () {
+  'use strict';
+
+  var someChangedValue = this.someVar;
+  // to what ever you want with `this.someVar` which is `someValue` passed in.
+  // ⚠️ this code will be executed server-side, console.log, window etc do not exist
+  // use ES5. ES6 will fail.
+
+  return {
+    someVar: someChangedValue
+  }
+});
+```
+
+```html
+<div data-sly-use.helper="${'helper.js' @ someVar=someValue}">
+${helper.someVar}
+</div>
+```
+
 ## Check for author / publish mode
 
 ```java
