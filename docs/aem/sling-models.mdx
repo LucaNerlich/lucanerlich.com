@@ -2,7 +2,7 @@
 
 ## JavaScript Model - pass variable to model
 
-```text
+```text title='file structure / aem component'
 /some.html
 /helper.js
 ```
@@ -22,7 +22,7 @@ use(function () {
 });
 ```
 
-```html
+```html title='HTL Template'
 <div data-sly-use.helper="${'helper.js' @ someVar=someValue}">
 ${helper.someVar}
 </div>
