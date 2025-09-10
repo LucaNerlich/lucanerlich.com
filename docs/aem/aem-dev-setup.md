@@ -88,20 +88,15 @@ Do be able to attach a java debugger locally, the startup scripts need to be ext
 
 In each (author, publish) start script, find the following line
 
-`if not defined CQ_JVM_OPTS set CQ_JVM_OPTS=-Xmx4024m -XX:MaxPermSize=256M` and add the following arguments
+`if not defined CQ_JVM_OPTS set CQ_JVM_OPTS=[...]` and add the following arguments
 
-`if not defined CQ_JVM_OPTS set CQ_JVM_OPTS=-Xmx4024m -XX:MaxPermSize=256M -Djava.awt.headless=true -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=30303,suspend=n`
+`CQ_JVM_OPTS='-server -Xmx8024m -Djava.awt.headless=true -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=30303,suspend=n'`
 .
 Note, that the `address=30303` needs to be different for author and publish.
 
 A debug run config in Intellij IDEA looks like this
 
 <Image img={require('/images/aem/idea-debug-config.png')}/>
-
-You can download example files here:
-
-- [Author Start.bat Windows](/assets/downloads/aem/author-start/start.bat)
-- [Publish Start.bat Windows](/assets/downloads/aem/publish-start/start.bat)
 
 ### Bootstrapping a development environment via Maven Archetype
 
