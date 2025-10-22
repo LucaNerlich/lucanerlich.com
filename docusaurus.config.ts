@@ -13,8 +13,16 @@ const config = {
     tagline: 'A Blog ~ ish',
     url: 'https://lucanerlich.com',
     baseUrl: '/',
-    onBrokenLinks: 'throw',
-    onBrokenMarkdownLinks: 'warn',
+    markdown: {
+        format: 'detect',
+        remarkRehypeOptions: {
+            footnoteLabel: 'Quellen / Fußnoten',
+        },
+        hooks:{
+            onBrokenMarkdownLinks: 'throw',
+            onBrokenMarkdownImages: 'throw'
+        }
+    },
     staticDirectories: ['static'],
     favicon: 'images/favicon.ico',
     organizationName: 'LucaNerlich',
