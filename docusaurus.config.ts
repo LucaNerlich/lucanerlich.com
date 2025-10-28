@@ -107,11 +107,6 @@ const config = {
                 pwaHead: [
                     {
                         tagName: 'link',
-                        rel: 'icon',
-                        href: '/img/M10Z_Orange.png',
-                    },
-                    {
-                        tagName: 'link',
                         rel: 'manifest',
                         href: '/manifest.json',
                     },
@@ -212,7 +207,7 @@ const config = {
             prism: {
                 // theme: lightCodeTheme,
                 // darkTheme: darkCodeTheme,
-                additionalLanguages: ['groovy', 'java', 'rust', 'python', 'bash', 'rust', 'yaml', 'csv'],
+                additionalLanguages: ['groovy', 'java', 'rust', 'python', 'bash', 'rust', 'yaml', 'csv', 'jsp'],
             },
         }),
 };
