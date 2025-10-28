@@ -39,6 +39,5 @@
     "engines": {
         "node": "^22",
         "npm": "^10"
-    },
-    "packageManager": "pnpm@10.15.1"
+    }
 }
