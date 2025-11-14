@@ -90,3 +90,130 @@ Add the following osgi configuration file:
 	]
 }
 ```
+
+
+## Use SQL2 Query and iterate batched over all content
+
+This is a dummy script which can be used as a baseline.
+It executes a SQL2 query and iterates over all content items, batched, to not overload the author environment..
+
+```groovy
+import javax.jcr.Node
+import javax.jcr.Session
+import javax.jcr.query.Query
+import javax.jcr.query.QueryManager
+import javax.jcr.query.QueryResult
+import javax.jcr.query.RowIterator
+
+// ---------------- Configuration ----------------
+final String BASE_PATH = '/content'       // Change to your subtree (e.g. '/content/my-site')
+final String NODE_TYPE = 'cq:Page'        // Any primary type, e.g., 'nt:unstructured', 'dam:Asset', etc.
+final int BATCH_SIZE = 500                // Tune to your environment
+final long THROTTLE_MILLIS = 0L           // e.g., 100–250ms if you want to be extra gentle
+final boolean DRY_RUN = true              // Flip to false to persist changes
+
+// ---------------- Helper (optional) ----------------
+static String safeTitle(Session s, String pagePath) {
+    try {
+        String contentPath = pagePath.endsWith('/') ? pagePath + 'jcr:content' : pagePath + '/jcr:content'
+        if (s.nodeExists(contentPath)) {
+            Node content = s.getNode(contentPath)
+            return content.hasProperty('jcr:title') ? content.getProperty('jcr:title').string : ''
+        }
+    } catch (Throwable ignored) {
+    }
+    return ''
+}
+
+// -------------------- Main --------------------
+Session s = session // provided by Groovy Console
+QueryManager qm = s.workspace.queryManager
+
+// IMPORTANT: JCR-SQL2 does NOT support inline LIMIT/OFFSET. Use setLimit/setOffset.
+String baseSql = """
+    SELECT p.[jcr:path]
+    FROM [${NODE_TYPE}] AS p
+    WHERE ISDESCENDANTNODE(p, '${BASE_PATH}')
+    ORDER BY p.[jcr:path]
+""".stripIndent().trim()
+
+int offset = 0
+int scanned = 0
+int mutated = 0
+
+while (true) {
+    Query q = qm.createQuery(baseSql, Query.JCR_SQL2)
+    q.setLimit(BATCH_SIZE)
+    q.setOffset(offset)
+    QueryResult result = q.execute()
+
+    RowIterator rows = result.rows
+    int returned = 0
+    while (rows.hasNext()) {
+        def row = rows.nextRow()
+        returned++
+        scanned++
+
+        String path = row.getPath('p') // selector alias 'p'
+        Node node = s.getNode(path)
+
+        // ---- Dummy operation (safe by default) ----
+        // Example: read a title from jcr:content for pages, or print the node name for generic types
+        String title = safeTitle(s, path)
+        out.println("Found: ${path}${title ? " | title='${title}'" : ''}")
+
+        // Example mutation guarded by DRY_RUN: set a marker property on the node itself
+        // Adapt the property name and value to your use case
+        if (!DRY_RUN) {
+            node.setProperty('demo:lastScanned', java.time.Instant.now().toString())
+            mutated++
+        }
+    }
+
+    out.println("Scanned so far: ${scanned} | Batch returned: ${returned} | Offset: ${offset}")
+
+    if (returned < BATCH_SIZE) {
+        break // last page
+    }
+    offset += returned
+    if (THROTTLE_MILLIS > 0) sleep THROTTLE_MILLIS
+}
+
+if (!DRY_RUN) {
+    s.save()
+}
+
+out.println('----------------------------------------')
+out.println("Base path: ${BASE_PATH}")
+out.println("Node type: ${NODE_TYPE}")
+out.println("Total scanned: ${scanned}")
+out.println("Total mutated: ${mutated}")
+return scanned
+```
+
+What this does
+- Queries nodes of type `NODE_TYPE` under `BASE_PATH`.
+- Uses `ORDER BY p.[jcr:path]` for stable paging and applies `setLimit/setOffset`.
+- Prints each path (and the `jcr:title` when applicable).
+- Shows how to add a safe, optional mutation guarded by `DRY_RUN`.
+
+---
+
+### Multi-selector example (child join)
+If you need to ensure a specific child exists (or has a property), switch to a join and qualify columns with the correct selector alias. For example, to find pages with a direct child named `rep:cugPolicy` that has `rep:principalNames` defined:
+
+```groovy
+String baseSql = """
+    SELECT p.[jcr:path]
+    FROM [cq:Page] AS p
+    INNER JOIN [nt:base] AS c ON ISCHILDNODE(c, p)
+    WHERE ISDESCENDANTNODE(p, '${BASE_PATH}')
+      AND NAME(c) = 'rep:cugPolicy'
+      AND c.[rep:principalNames] IS NOT NULL
+    ORDER BY p.[jcr:path]
+""".stripIndent().trim()
+```
+
+Notes
+- With more than one selector (`p`, `c`), reference columns with the selector alias (`p.[jcr:path]`).
+- You can combine this with in-code checks if certain repository configurations differ.
