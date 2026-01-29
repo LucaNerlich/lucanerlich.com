@@ -1,0 +1,63 @@
+---
+title: Iterator
+sidebar_position: 4
+tags: [design-patterns, behavioral]
+---
+
+# Iterator
+
+## Overview
+
+Provide a way to access elements of a collection sequentially without exposing its representation.
+
+## When to use
+
+- You want consistent traversal across different structures.
+- You need multiple traversal strategies.
+
+## Java example
+
+```java
+class Range implements Iterable<Integer> {
+    private final int start, end;
+    Range(int start, int end) { this.start = start; this.end = end; }
+
+    public Iterator<Integer> iterator() {
+        return new Iterator<>() {
+            private int current = start;
+            public boolean hasNext() { return current <= end; }
+            public Integer next() { return current++; }
+        };
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+class Range implements Iterable<number> {
+  constructor(private start: number, private end: number) {}
+  *[Symbol.iterator](): Iterator<number> {
+    for (let i = this.start; i <= this.end; i++) yield i;
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Hides internal structure.
+- Enables multiple traversal algorithms.
+
+Cons:
+- Extra objects for simple collections.
+
+## Common pitfalls
+
+- Exposing mutable internals through iterator.
+- Ignoring concurrent modification semantics.
+
+## Related patterns
+
+- [Composite](../structural/composite.mdx)
+- [Visitor](./visitor.mdx)

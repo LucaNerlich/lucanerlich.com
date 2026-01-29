@@ -1,0 +1,73 @@
+---
+title: Adapter
+sidebar_position: 1
+tags: [design-patterns, structural]
+---
+
+# Adapter
+
+## Overview
+
+Convert the interface of a class into another interface clients expect.
+
+## When to use
+
+- You need to integrate a legacy or third-party API.
+- You want to reuse existing classes without modifying them.
+
+## Java example
+
+```java
+class LegacyLogger {
+    void write(String msg) { /* ... */ }
+}
+
+interface Logger {
+    void log(String msg);
+}
+
+class LegacyLoggerAdapter implements Logger {
+    private final LegacyLogger legacy;
+    LegacyLoggerAdapter(LegacyLogger legacy) { this.legacy = legacy; }
+    public void log(String msg) { legacy.write(msg); }
+}
+```
+
+## TypeScript example
+
+```ts
+class LegacyLogger {
+  write(msg: string): void {}
+}
+
+interface Logger {
+  log(msg: string): void;
+}
+
+class LegacyLoggerAdapter implements Logger {
+  constructor(private legacy: LegacyLogger) {}
+  log(msg: string): void {
+    this.legacy.write(msg);
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Enables reuse without changing original code.
+- Keeps client code stable.
+
+Cons:
+- Adds an extra abstraction layer.
+- Too many adapters can complicate the codebase.
+
+## Common pitfalls
+
+- Over-adapting when a simpler wrapper works.
+- Hiding breaking behavior differences.
+
+## Related patterns
+
+- [Facade](./facade.mdx)
+- [Bridge](./bridge.mdx)

@@ -1,0 +1,89 @@
+---
+title: Singleton
+sidebar_position: 1
+tags: [design-patterns, creational]
+---
+
+# Singleton
+
+## Overview
+
+Ensure a class has a single instance and provide a global access point to it.
+
+## When to use
+
+- A single shared resource is required (for example, config, cache).
+- You need lazy initialization and controlled access.
+
+## Java example
+
+```java
+public final class ConfigRegistry {
+    private static volatile ConfigRegistry instance;
+    private final Properties props;
+
+    private ConfigRegistry(Properties props) {
+        this.props = props;
+    }
+
+    public static ConfigRegistry getInstance(Properties props) {
+        if (instance == null) {
+            synchronized (ConfigRegistry.class) {
+                if (instance == null) {
+                    instance = new ConfigRegistry(props);
+                }
+            }
+        }
+        return instance;
+    }
+
+    public String get(String key) {
+        return props.getProperty(key);
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+class ConfigRegistry {
+  private static instance: ConfigRegistry | null = null;
+  private readonly props: Record<string, string>;
+
+  private constructor(props: Record<string, string>) {
+    this.props = props;
+  }
+
+  static getInstance(props: Record<string, string>): ConfigRegistry {
+    if (!ConfigRegistry.instance) {
+      ConfigRegistry.instance = new ConfigRegistry(props);
+    }
+    return ConfigRegistry.instance;
+  }
+
+  get(key: string): string | undefined {
+    return this.props[key];
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Controlled access to a single instance.
+- Lazy initialization possible.
+
+Cons:
+- Global state makes tests harder.
+- Hidden dependencies can spread.
+
+## Common pitfalls
+
+- Using Singleton as a default for shared state.
+- Thread-safety issues in lazy initialization.
+- Hard-coded instance creation that blocks testing.
+
+## Related patterns
+
+- [Factory Method](./factory-method.mdx)
+- [Facade](../structural/facade.mdx)

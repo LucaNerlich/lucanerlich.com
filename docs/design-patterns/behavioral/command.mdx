@@ -1,0 +1,67 @@
+---
+title: Command
+sidebar_position: 2
+tags: [design-patterns, behavioral]
+---
+
+# Command
+
+## Overview
+
+Encapsulate a request as an object, allowing parameterization and queuing.
+
+## When to use
+
+- You need undo/redo.
+- You want to queue or log operations.
+
+## Java example
+
+```java
+interface Command { void execute(); }
+
+class SaveCommand implements Command {
+    private final Document doc;
+    SaveCommand(Document doc) { this.doc = doc; }
+    public void execute() { doc.save(); }
+}
+
+class Invoker {
+    void run(Command cmd) { cmd.execute(); }
+}
+```
+
+## TypeScript example
+
+```ts
+interface Command { execute(): void; }
+
+class SaveCommand implements Command {
+  constructor(private doc: Document) {}
+  execute(): void { this.doc.save(); }
+}
+
+class Invoker {
+  run(cmd: Command): void { cmd.execute(); }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Supports undo/redo and logging.
+- Decouples invoker from receiver.
+
+Cons:
+- Many small classes.
+- Indirection can be heavy for simple actions.
+
+## Common pitfalls
+
+- Not capturing all necessary state for undo.
+- Creating commands for trivial operations.
+
+## Related patterns
+
+- [Chain of Responsibility](./chain-of-responsibility.mdx)
+- [Memento](./memento.mdx)

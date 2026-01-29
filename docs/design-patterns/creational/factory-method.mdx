@@ -1,0 +1,96 @@
+---
+title: Factory Method
+sidebar_position: 2
+tags: [design-patterns, creational]
+---
+
+# Factory Method
+
+## Overview
+
+Define an interface for creating objects, but let subclasses decide which class to instantiate.
+
+## When to use
+
+- The exact concrete type is decided at runtime.
+- You want to decouple creation logic from usage.
+
+## Java example
+
+```java
+interface Exporter {
+    String export(String data);
+}
+
+class JsonExporter implements Exporter {
+    public String export(String data) {
+        return "{\"data\":\"" + data + "\"}";
+    }
+}
+
+class CsvExporter implements Exporter {
+    public String export(String data) {
+        return "data\n" + data + "\n";
+    }
+}
+
+abstract class ExporterFactory {
+    public abstract Exporter create();
+}
+
+class JsonExporterFactory extends ExporterFactory {
+    public Exporter create() {
+        return new JsonExporter();
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+interface Exporter {
+  export(data: string): string;
+}
+
+class JsonExporter implements Exporter {
+  export(data: string): string {
+    return JSON.stringify({ data });
+  }
+}
+
+class CsvExporter implements Exporter {
+  export(data: string): string {
+    return `data\n${data}\n`;
+  }
+}
+
+abstract class ExporterFactory {
+  abstract create(): Exporter;
+}
+
+class JsonExporterFactory extends ExporterFactory {
+  create(): Exporter {
+    return new JsonExporter();
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Centralizes creation logic.
+- Enables substitution of product types.
+
+Cons:
+- Adds extra classes.
+- Can be overkill for simple creation.
+
+## Common pitfalls
+
+- Returning different product types from the same factory.
+- Pushing too much logic into the factory.
+
+## Related patterns
+
+- [Abstract Factory](./abstract-factory.mdx)
+- [Builder](./builder.mdx)

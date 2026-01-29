@@ -1,0 +1,76 @@
+---
+title: Composite
+sidebar_position: 3
+tags: [design-patterns, structural]
+---
+
+# Composite
+
+## Overview
+
+Compose objects into tree structures and treat individual objects and composites uniformly.
+
+## When to use
+
+- You need to represent part-whole hierarchies.
+- Clients should handle single items and groups consistently.
+
+## Java example
+
+```java
+interface Node {
+    int size();
+}
+
+class FileNode implements Node {
+    private final int bytes;
+    FileNode(int bytes) { this.bytes = bytes; }
+    public int size() { return bytes; }
+}
+
+class Folder implements Node {
+    private final List<Node> children = new ArrayList<>();
+    public void add(Node node) { children.add(node); }
+    public int size() {
+        return children.stream().mapToInt(Node::size).sum();
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+interface Node {
+  size(): number;
+}
+
+class FileNode implements Node {
+  constructor(private bytes: number) {}
+  size(): number { return this.bytes; }
+}
+
+class Folder implements Node {
+  private children: Node[] = [];
+  add(node: Node): void { this.children.push(node); }
+  size(): number { return this.children.reduce((s, n) => s + n.size(), 0); }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Simplifies client logic for trees.
+- Easy to add new node types.
+
+Cons:
+- Can obscure differences between leaf and composite.
+
+## Common pitfalls
+
+- Exposing mutation when tree should be immutable.
+- Breaking invariants by mixing incompatible nodes.
+
+## Related patterns
+
+- [Decorator](./decorator.mdx)
+- [Iterator](../behavioral/iterator.mdx)

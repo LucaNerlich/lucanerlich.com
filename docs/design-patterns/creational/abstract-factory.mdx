@@ -1,0 +1,81 @@
+---
+title: Abstract Factory
+sidebar_position: 3
+tags: [design-patterns, creational]
+---
+
+# Abstract Factory
+
+## Overview
+
+Provide an interface for creating families of related objects without specifying their concrete classes.
+
+## When to use
+
+- You need consistent object families (for example, UI theme widgets).
+- You want to switch product families at runtime.
+
+## Java example
+
+```java
+interface Button { String render(); }
+interface Input { String render(); }
+
+class LightButton implements Button {
+    public String render() { return "light-button"; }
+}
+class DarkButton implements Button {
+    public String render() { return "dark-button"; }
+}
+
+interface UiFactory {
+    Button createButton();
+    Input createInput();
+}
+
+class LightUiFactory implements UiFactory {
+    public Button createButton() { return new LightButton(); }
+    public Input createInput() { return () -> "light-input"; }
+}
+```
+
+## TypeScript example
+
+```ts
+interface Button { render(): string; }
+interface Input { render(): string; }
+
+class LightButton implements Button {
+  render(): string { return "light-button"; }
+}
+
+interface UiFactory {
+  createButton(): Button;
+  createInput(): Input;
+}
+
+class DarkUiFactory implements UiFactory {
+  createButton(): Button { return { render: () => "dark-button" }; }
+  createInput(): Input { return { render: () => "dark-input" }; }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Ensures consistent product families.
+- Swappable factories improve flexibility.
+
+Cons:
+- More interfaces and classes.
+- Harder to add new product types.
+
+## Common pitfalls
+
+- Mixing products from different families.
+- Introducing too many factory layers.
+
+## Related patterns
+
+- [Factory Method](./factory-method.mdx)
+- [Builder](./builder.mdx)

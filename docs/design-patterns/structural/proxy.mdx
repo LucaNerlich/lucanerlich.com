@@ -1,0 +1,86 @@
+---
+title: Proxy
+sidebar_position: 7
+tags: [design-patterns, structural]
+---
+
+# Proxy
+
+## Overview
+
+Provide a placeholder or surrogate to control access to another object.
+
+## When to use
+
+- You want lazy loading or caching.
+- You need access control or logging.
+
+## Java example
+
+```java
+interface Image {
+    String render();
+}
+
+class RealImage implements Image {
+    private final String path;
+    RealImage(String path) { this.path = path; }
+    public String render() { return "render:" + path; }
+}
+
+class ImageProxy implements Image {
+    private final String path;
+    private RealImage real;
+    ImageProxy(String path) { this.path = path; }
+    public String render() {
+        if (real == null) {
+            real = new RealImage(path);
+        }
+        return real.render();
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+interface Image {
+  render(): string;
+}
+
+class RealImage implements Image {
+  constructor(private path: string) {}
+  render(): string { return `render:${this.path}`; }
+}
+
+class ImageProxy implements Image {
+  private real?: RealImage;
+  constructor(private path: string) {}
+  render(): string {
+    if (!this.real) {
+      this.real = new RealImage(this.path);
+    }
+    return this.real.render();
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Controls access and lifecycle.
+- Useful for lazy loading and caching.
+
+Cons:
+- Extra layer to maintain.
+- Can hide failures in real object creation.
+
+## Common pitfalls
+
+- Not handling failures or retries in the proxy.
+- Mixing proxy and real instance lifecycles.
+
+## Related patterns
+
+- [Decorator](./decorator.mdx)
+- [Facade](./facade.mdx)

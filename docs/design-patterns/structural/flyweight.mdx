@@ -1,0 +1,74 @@
+---
+title: Flyweight
+sidebar_position: 6
+tags: [design-patterns, structural]
+---
+
+# Flyweight
+
+## Overview
+
+Share common state between many objects to reduce memory usage.
+
+## When to use
+
+- You have many similar objects with small variations.
+- Memory usage is a concern.
+
+## Java example
+
+```java
+class Glyph {
+    private final String font;
+    Glyph(String font) { this.font = font; }
+    String render(String text) { return font + ":" + text; }
+}
+
+class GlyphFactory {
+    private final Map<String, Glyph> cache = new HashMap<>();
+    Glyph get(String font) {
+        return cache.computeIfAbsent(font, Glyph::new);
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+class Glyph {
+  constructor(private font: string) {}
+  render(text: string): string {
+    return `${this.font}:${text}`;
+  }
+}
+
+class GlyphFactory {
+  private cache = new Map<string, Glyph>();
+  get(font: string): Glyph {
+    if (!this.cache.has(font)) {
+      this.cache.set(font, new Glyph(font));
+    }
+    return this.cache.get(font)!;
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Reduces memory usage.
+- Improves performance for large sets.
+
+Cons:
+- Adds complexity and indirection.
+- Requires careful separation of shared vs unique state.
+
+## Common pitfalls
+
+- Sharing mutable state across instances.
+- Over-optimizing when object counts are small.
+
+## Related patterns
+
+- [Composite](./composite.mdx)
+- [Prototype](../creational/prototype.mdx)

@@ -15,6 +15,33 @@ This page collects practical Java guidelines for AEM projects. The goal is consi
 - Fail safely and log only what you need.
 - Avoid direct JCR APIs unless necessary.
 
+### Prefer Resource API over JCR when possible
+
+```java
+Resource resource = resolver.resolve("/content/my-site/en");
+if (ResourceUtil.isNonExistingResource(resource)) {
+    return;
+}
+ValueMap props = resource.getValueMap();
+String title = props.get("jcr:title", String.class);
+```
+
+### Prefer early returns
+
+Early returns make code easier to read and reduce deep nesting, especially around error handling.
+
+```java
+public String getTitle(ResourceResolver resolver, String path) {
+    Resource resource = resolver.resolve(path);
+    if (ResourceUtil.isNonExistingResource(resource)) {
+        return "";
+    }
+
+    String title = resource.getValueMap().get("jcr:title", String.class);
+    return StringUtils.defaultIfBlank(title, "Untitled");
+}
+```
+
 ## Sling Models
 
 - Use `DefaultInjectionStrategy.OPTIONAL` and handle missing values.
@@ -162,6 +189,20 @@ try {
 - Do not spawn your own threads without a clear reason.
 - Keep scheduled jobs idempotent.
 
+```java
+@Component(service = Runnable.class,
+    property = {
+        "scheduler.expression=0 0 * * * ?",
+        "scheduler.concurrent=false"
+    })
+public class HourlyJob implements Runnable {
+    @Override
+    public void run() {
+        // work must be idempotent
+    }
+}
+```
+
 ## Security basics
 
 ### Validate all user input before use
@@ -232,6 +273,15 @@ Handlebars.registerHelper('safeHref', (value) => {
 
 - Do not hardcode credentials.
 - Use allowlists for any external hostnames.
+
+```java
+private static final Set<String> ALLOWED_HOSTS =
+    Set.of("api.example.com", "services.example.com");
+
+public boolean isAllowedHost(URI uri) {
+    return ALLOWED_HOSTS.contains(uri.getHost());
+}
+```
 
 ## See also
 

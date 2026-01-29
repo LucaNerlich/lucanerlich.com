@@ -1,0 +1,75 @@
+---
+title: Mediator
+sidebar_position: 5
+tags: [design-patterns, behavioral]
+---
+
+# Mediator
+
+## Overview
+
+Define an object that centralizes communication between other objects.
+
+## When to use
+
+- Many objects communicate in complex ways.
+- You want to reduce direct dependencies between components.
+
+## Java example
+
+```java
+class ChatMediator {
+    private final List<User> users = new ArrayList<>();
+    void register(User user) { users.add(user); }
+    void broadcast(String msg, User from) {
+        for (User u : users) {
+            if (u != from) u.receive(msg);
+        }
+    }
+}
+
+class User {
+    private final ChatMediator mediator;
+    User(ChatMediator mediator) { this.mediator = mediator; }
+    void send(String msg) { mediator.broadcast(msg, this); }
+    void receive(String msg) { /* ... */ }
+}
+```
+
+## TypeScript example
+
+```ts
+class ChatMediator {
+  private users: User[] = [];
+  register(user: User): void { this.users.push(user); }
+  broadcast(msg: string, from: User): void {
+    this.users.filter(u => u !== from).forEach(u => u.receive(msg));
+  }
+}
+
+class User {
+  constructor(private mediator: ChatMediator) {}
+  send(msg: string): void { this.mediator.broadcast(msg, this); }
+  receive(msg: string): void {}
+}
+```
+
+## Pros and cons
+
+Pros:
+- Reduces coupling between components.
+- Centralizes complex interaction logic.
+
+Cons:
+- Mediator can become too large.
+- Single point of failure.
+
+## Common pitfalls
+
+- Packing domain logic into the mediator.
+- Using mediator for trivial interactions.
+
+## Related patterns
+
+- [Observer](./observer.mdx)
+- [Chain of Responsibility](./chain-of-responsibility.mdx)

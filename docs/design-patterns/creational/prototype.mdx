@@ -1,0 +1,66 @@
+---
+title: Prototype
+sidebar_position: 5
+tags: [design-patterns, creational]
+---
+
+# Prototype
+
+## Overview
+
+Create new objects by copying an existing instance (the prototype).
+
+## When to use
+
+- Object creation is expensive or complex.
+- You need many similar instances with small variations.
+
+## Java example
+
+```java
+class Report implements Cloneable {
+    private String title;
+    private List<String> sections;
+
+    Report(String title, List<String> sections) {
+        this.title = title;
+        this.sections = new ArrayList<>(sections);
+    }
+
+    public Report copy() {
+        return new Report(title, sections);
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+type Report = {
+  title: string;
+  sections: string[];
+};
+
+const prototype: Report = { title: "Monthly", sections: ["Summary", "KPIs"] };
+const copy: Report = { ...prototype, sections: [...prototype.sections] };
+```
+
+## Pros and cons
+
+Pros:
+- Fast creation via cloning.
+- Avoids complex constructor logic.
+
+Cons:
+- Deep copy can be tricky.
+- Clones may share mutable state if not careful.
+
+## Common pitfalls
+
+- Shallow copy of nested objects.
+- Mutating shared references after cloning.
+
+## Related patterns
+
+- [Builder](./builder.mdx)
+- [Factory Method](./factory-method.mdx)

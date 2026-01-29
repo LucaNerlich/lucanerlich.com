@@ -1,0 +1,91 @@
+---
+title: Bridge
+sidebar_position: 2
+tags: [design-patterns, structural]
+---
+
+# Bridge
+
+## Overview
+
+Decouple an abstraction from its implementation so both can vary independently.
+
+## When to use
+
+- You need to support multiple implementations across multiple abstractions.
+- You want to avoid a class explosion from combinations.
+
+## Java example
+
+```java
+interface Renderer {
+    String render(String title);
+}
+
+class HtmlRenderer implements Renderer {
+    public String render(String title) { return "<h1>" + title + "</h1>"; }
+}
+
+abstract class Page {
+    protected final Renderer renderer;
+    protected Page(Renderer renderer) { this.renderer = renderer; }
+    abstract String view();
+}
+
+class ArticlePage extends Page {
+    private final String title;
+    ArticlePage(Renderer renderer, String title) {
+        super(renderer);
+        this.title = title;
+    }
+    String view() { return renderer.render(title); }
+}
+```
+
+## TypeScript example
+
+```ts
+interface Renderer {
+  render(title: string): string;
+}
+
+class HtmlRenderer implements Renderer {
+  render(title: string): string {
+    return `<h1>${title}</h1>`;
+  }
+}
+
+abstract class Page {
+  constructor(protected renderer: Renderer) {}
+  abstract view(): string;
+}
+
+class ArticlePage extends Page {
+  constructor(renderer: Renderer, private title: string) {
+    super(renderer);
+  }
+  view(): string {
+    return this.renderer.render(this.title);
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Avoids combinatorial subclasses.
+- Implementations are swappable.
+
+Cons:
+- More indirection.
+- Harder to trace behavior.
+
+## Common pitfalls
+
+- Using Bridge when simple inheritance would do.
+- Creating too many tiny abstractions.
+
+## Related patterns
+
+- [Adapter](./adapter.mdx)
+- [Strategy](../behavioral/strategy.mdx)

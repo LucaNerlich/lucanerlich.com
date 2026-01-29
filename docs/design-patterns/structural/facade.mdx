@@ -1,0 +1,68 @@
+---
+title: Facade
+sidebar_position: 5
+tags: [design-patterns, structural]
+---
+
+# Facade
+
+## Overview
+
+Provide a simplified interface to a complex subsystem.
+
+## When to use
+
+- You want a clean API for a complex set of classes.
+- You want to decouple clients from subsystem details.
+
+## Java example
+
+```java
+class PaymentFacade {
+    private final FraudCheck fraud = new FraudCheck();
+    private final PaymentGateway gateway = new PaymentGateway();
+
+    public boolean pay(String userId, int amount) {
+        if (!fraud.isAllowed(userId, amount)) {
+            return false;
+        }
+        return gateway.charge(userId, amount);
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+class PaymentFacade {
+  private fraud = new FraudCheck();
+  private gateway = new PaymentGateway();
+
+  pay(userId: string, amount: number): boolean {
+    if (!this.fraud.isAllowed(userId, amount)) {
+      return false;
+    }
+    return this.gateway.charge(userId, amount);
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Simplifies client usage.
+- Reduces coupling.
+
+Cons:
+- Can become a god object.
+- May hide important capabilities.
+
+## Common pitfalls
+
+- Putting business logic into the facade.
+- Growing the facade instead of creating focused APIs.
+
+## Related patterns
+
+- [Adapter](./adapter.mdx)
+- [Singleton](../creational/singleton.mdx)

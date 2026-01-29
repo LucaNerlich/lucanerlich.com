@@ -1,0 +1,9 @@
+{
+  "label": "Behavioral",
+  "link": {
+    "type": "generated-index",
+    "description": "Patterns that focus on communication and responsibilities."
+  },
+  "position": 3,
+  "collapsed": true
+}

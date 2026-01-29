@@ -1,0 +1,128 @@
+---
+title: Observer
+sidebar_position: 7
+tags: [design-patterns, behavioral]
+---
+
+# Observer
+
+## Overview
+
+Define a one-to-many dependency so that when one object changes state, all dependents are notified.
+
+## When to use
+
+- You need event-driven updates.
+- Multiple components react to the same change.
+
+## Java example
+
+```java
+interface Observer {
+    void update(int value);
+}
+
+class Subject {
+    private final List<Observer> observers = new ArrayList<>();
+    void subscribe(Observer o) { observers.add(o); }
+    void setValue(int value) {
+        observers.forEach(o -> o.update(value));
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+type Observer = (value: number) => void;
+
+class Subject {
+  private observers: Observer[] = [];
+  subscribe(o: Observer): void { this.observers.push(o); }
+  setValue(value: number): void { this.observers.forEach(o => o(value)); }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Loose coupling between subject and observers.
+- Easy to add new listeners.
+
+Cons:
+- Hard to debug update order.
+- Potential memory leaks from subscriptions.
+
+## Common pitfalls
+
+- Forgetting to unsubscribe.
+- Triggering cascading updates unintentionally.
+
+## Related patterns
+
+- [Mediator](./mediator.mdx)
+- [Strategy](./strategy.mdx)
+---
+title: Observer
+sidebar_position: 7
+tags: [design-patterns, behavioral]
+---
+
+# Observer
+
+## Overview
+
+Define a one-to-many dependency so that when one object changes state, all dependents are notified.
+
+## When to use
+
+- You need event-driven updates.
+- Multiple components react to the same change.
+
+## Java example
+
+```java
+interface Observer {
+    void update(int value);
+}
+
+class Subject {
+    private final List<Observer> observers = new ArrayList<>();
+    void subscribe(Observer o) { observers.add(o); }
+    void setValue(int value) {
+        observers.forEach(o -> o.update(value));
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+type Observer = (value: number) => void;
+
+class Subject {
+  private observers: Observer[] = [];
+  subscribe(o: Observer): void { this.observers.push(o); }
+  setValue(value: number): void { this.observers.forEach(o => o(value)); }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Loose coupling between subject and observers.
+- Easy to add new listeners.
+
+Cons:
+- Hard to debug update order.
+- Potential memory leaks from subscriptions.
+
+## Common pitfalls
+
+- Forgetting to unsubscribe.
+- Triggering cascading updates unintentionally.
+
+## Related patterns
+
+- [Mediator](./mediator.mdx)
+- [Strategy](./strategy.mdx)

@@ -1,0 +1,67 @@
+---
+title: Interpreter
+sidebar_position: 3
+tags: [design-patterns, behavioral]
+---
+
+# Interpreter
+
+## Overview
+
+Define a grammar and an interpreter to evaluate expressions in that language.
+
+## When to use
+
+- You need a small, stable language for rules or filters.
+- Expressions are simple and frequent.
+
+## Java example
+
+```java
+interface Expression {
+    boolean interpret(String context);
+}
+
+class ContainsExpression implements Expression {
+    private final String token;
+    ContainsExpression(String token) { this.token = token; }
+    public boolean interpret(String context) {
+        return context.contains(token);
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+interface Expression {
+  interpret(context: string): boolean;
+}
+
+class ContainsExpression implements Expression {
+  constructor(private token: string) {}
+  interpret(context: string): boolean {
+    return context.includes(this.token);
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Easy to extend grammar with new expressions.
+- Clear representation of rules.
+
+Cons:
+- Can become complex for large grammars.
+- Performance can degrade with many nodes.
+
+## Common pitfalls
+
+- Using Interpreter for complex DSLs.
+- Skipping caching for repeated evaluations.
+
+## Related patterns
+
+- [Strategy](./strategy.mdx)
+- [Composite](../structural/composite.mdx)

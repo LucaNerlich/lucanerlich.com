@@ -1,0 +1,67 @@
+---
+title: Strategy
+sidebar_position: 9
+tags: [design-patterns, behavioral]
+---
+
+# Strategy
+
+## Overview
+
+Define a family of algorithms and make them interchangeable.
+
+## When to use
+
+- You need runtime selection of behavior.
+- You want to avoid large switch statements.
+
+## Java example
+
+```java
+interface PricingStrategy {
+    int price(int base);
+}
+
+class DiscountStrategy implements PricingStrategy {
+    public int price(int base) { return base - 10; }
+}
+
+class PricingService {
+    private PricingStrategy strategy;
+    PricingService(PricingStrategy strategy) { this.strategy = strategy; }
+    int compute(int base) { return strategy.price(base); }
+}
+```
+
+## TypeScript example
+
+```ts
+type PricingStrategy = (base: number) => number;
+
+const discount: PricingStrategy = (base) => base - 10;
+
+class PricingService {
+  constructor(private strategy: PricingStrategy) {}
+  compute(base: number): number { return this.strategy(base); }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Replaces complex conditional logic.
+- Easy to add new strategies.
+
+Cons:
+- More classes or functions to manage.
+- Clients must choose a strategy.
+
+## Common pitfalls
+
+- Strategies with overlapping responsibilities.
+- Hard-coded strategy selection in many places.
+
+## Related patterns
+
+- [State](./state.mdx)
+- [Decorator](../structural/decorator.mdx)

@@ -1,0 +1,72 @@
+---
+title: State
+sidebar_position: 8
+tags: [design-patterns, behavioral]
+---
+
+# State
+
+## Overview
+
+Allow an object to alter its behavior when its internal state changes.
+
+## When to use
+
+- Behavior varies based on state.
+- You want to avoid large conditionals.
+
+## Java example
+
+```java
+interface State {
+    String render();
+}
+
+class DraftState implements State {
+    public String render() { return "draft"; }
+}
+
+class Document {
+    private State state = new DraftState();
+    void setState(State state) { this.state = state; }
+    String render() { return state.render(); }
+}
+```
+
+## TypeScript example
+
+```ts
+interface State {
+  render(): string;
+}
+
+class DraftState implements State {
+  render(): string { return "draft"; }
+}
+
+class Document {
+  private state: State = new DraftState();
+  setState(state: State): void { this.state = state; }
+  render(): string { return this.state.render(); }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Removes complex conditional logic.
+- State transitions are explicit.
+
+Cons:
+- More classes for each state.
+- Can be overkill for simple cases.
+
+## Common pitfalls
+
+- States that leak knowledge of others.
+- Hidden transitions spread across code.
+
+## Related patterns
+
+- [Strategy](./strategy.mdx)
+- [Memento](./memento.mdx)

@@ -1,0 +1,68 @@
+---
+title: Memento
+sidebar_position: 6
+tags: [design-patterns, behavioral]
+---
+
+# Memento
+
+## Overview
+
+Capture and externalize an object's internal state so it can be restored later.
+
+## When to use
+
+- You need undo/redo.
+- You want to keep state history without exposing internals.
+
+## Java example
+
+```java
+class EditorMemento {
+    private final String content;
+    EditorMemento(String content) { this.content = content; }
+    String getContent() { return content; }
+}
+
+class Editor {
+    private String content = "";
+    void type(String text) { content += text; }
+    EditorMemento save() { return new EditorMemento(content); }
+    void restore(EditorMemento memento) { content = memento.getContent(); }
+}
+```
+
+## TypeScript example
+
+```ts
+class EditorMemento {
+  constructor(readonly content: string) {}
+}
+
+class Editor {
+  private content = "";
+  type(text: string): void { this.content += text; }
+  save(): EditorMemento { return new EditorMemento(this.content); }
+  restore(m: EditorMemento): void { this.content = m.content; }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Enables undo/redo without exposing internals.
+- Clear separation of state snapshots.
+
+Cons:
+- Memory usage can grow quickly.
+- Snapshot creation may be expensive.
+
+## Common pitfalls
+
+- Saving too frequently without limits.
+- Storing large, deep object graphs.
+
+## Related patterns
+
+- [Command](./command.mdx)
+- [State](./state.mdx)

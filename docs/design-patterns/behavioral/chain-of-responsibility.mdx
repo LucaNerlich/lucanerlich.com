@@ -1,0 +1,75 @@
+---
+title: Chain of Responsibility
+sidebar_position: 1
+tags: [design-patterns, behavioral]
+---
+
+# Chain of Responsibility
+
+## Overview
+
+Pass a request along a chain of handlers until one handles it.
+
+## When to use
+
+- Multiple handlers can process a request.
+- You want to decouple sender from receiver.
+
+## Java example
+
+```java
+abstract class Handler {
+    private Handler next;
+    Handler link(Handler next) { this.next = next; return next; }
+    void handle(String msg) {
+        if (next != null) next.handle(msg);
+    }
+}
+
+class ErrorHandler extends Handler {
+    void handle(String msg) {
+        if (msg.contains("ERROR")) {
+            // handle error
+            return;
+        }
+        super.handle(msg);
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+abstract class Handler {
+  private next?: Handler;
+  link(next: Handler): Handler { this.next = next; return next; }
+  handle(msg: string): void { this.next?.handle(msg); }
+}
+
+class ErrorHandler extends Handler {
+  handle(msg: string): void {
+    if (msg.includes("ERROR")) return;
+    super.handle(msg);
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Flexible handler composition.
+- Reduces coupling.
+
+Cons:
+- Can be hard to debug.
+- Requests may go unhandled.
+
+## Common pitfalls
+
+- Not defining a default handler.
+- Long chains with unclear responsibility.
+
+## Related patterns
+
+- [Command](./command.mdx)
+- [Mediator](./mediator.mdx)

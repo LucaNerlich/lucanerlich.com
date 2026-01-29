@@ -1,0 +1,70 @@
+---
+title: Visitor
+sidebar_position: 11
+tags: [design-patterns, behavioral]
+---
+
+# Visitor
+
+## Overview
+
+Add operations to object structures without changing their classes.
+
+## When to use
+
+- You need to run multiple operations on a stable object structure.
+- Adding new operations is more common than adding new node types.
+
+## Java example
+
+```java
+interface Visitor {
+    void visit(TextNode node);
+    void visit(ImageNode node);
+}
+
+interface Node {
+    void accept(Visitor v);
+}
+
+class TextNode implements Node {
+    public void accept(Visitor v) { v.visit(this); }
+}
+```
+
+## TypeScript example
+
+```ts
+interface Visitor {
+  visitText(node: TextNode): void;
+  visitImage(node: ImageNode): void;
+}
+
+interface Node {
+  accept(v: Visitor): void;
+}
+
+class TextNode implements Node {
+  accept(v: Visitor): void { v.visitText(this); }
+}
+```
+
+## Pros and cons
+
+Pros:
+- New operations can be added without modifying nodes.
+- Separates algorithms from object structure.
+
+Cons:
+- Adding new node types requires updating all visitors.
+- Can be verbose.
+
+## Common pitfalls
+
+- Using Visitor for small object graphs.
+- Forgetting to update all visitors after new nodes.
+
+## Related patterns
+
+- [Iterator](./iterator.mdx)
+- [Composite](../structural/composite.mdx)

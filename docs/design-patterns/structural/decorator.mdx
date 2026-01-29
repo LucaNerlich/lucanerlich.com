@@ -1,0 +1,76 @@
+---
+title: Decorator
+sidebar_position: 4
+tags: [design-patterns, structural]
+---
+
+# Decorator
+
+## Overview
+
+Attach additional responsibilities to an object dynamically by wrapping it.
+
+## When to use
+
+- You need flexible, runtime composition of behavior.
+- Inheritance would lead to too many subclasses.
+
+## Java example
+
+```java
+interface Notifier {
+    void send(String message);
+}
+
+class EmailNotifier implements Notifier {
+    public void send(String message) { /* email */ }
+}
+
+class SmsDecorator implements Notifier {
+    private final Notifier wrapped;
+    SmsDecorator(Notifier wrapped) { this.wrapped = wrapped; }
+    public void send(String message) {
+        wrapped.send(message);
+        /* sms */
+    }
+}
+```
+
+## TypeScript example
+
+```ts
+interface Notifier {
+  send(message: string): void;
+}
+
+class EmailNotifier implements Notifier {
+  send(message: string): void {}
+}
+
+class SmsDecorator implements Notifier {
+  constructor(private wrapped: Notifier) {}
+  send(message: string): void {
+    this.wrapped.send(message);
+  }
+}
+```
+
+## Pros and cons
+
+Pros:
+- Behavior can be added without subclassing.
+- Multiple decorators can be combined.
+
+Cons:
+- Many small objects can be hard to debug.
+- Order of decorators matters.
+
+## Common pitfalls
+
+- Hiding side effects in deep decorator stacks.
+- Mutating shared state across decorators.
+
+## Related patterns
+
+- [Composite](./composite.mdx)
+- [Strategy](../behavioral/strategy.mdx)

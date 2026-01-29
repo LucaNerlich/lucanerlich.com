@@ -1,0 +1,9 @@
+{
+  "label": "Structural",
+  "link": {
+    "type": "generated-index",
+    "description": "Patterns that compose objects into larger structures."
+  },
+  "position": 2,
+  "collapsed": true
+}

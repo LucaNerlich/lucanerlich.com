@@ -1,0 +1,78 @@
+---
+title: Template Method
+sidebar_position: 10
+tags: [design-patterns, behavioral]
+---
+
+# Template Method
+
+## Overview
+
+Define the skeleton of an algorithm and let subclasses override specific steps.
+
+## When to use
+
+- You want consistent flow with variable steps.
+- You need shared algorithm structure.
+
+## Java example
+
+```java
+abstract class DataPipeline {
+    final void run() {
+        read();
+        transform();
+        write();
+    }
+    abstract void read();
+    abstract void transform();
+    abstract void write();
+}
+
+class CsvPipeline extends DataPipeline {
+    void read() { /* csv */ }
+    void transform() { /* map */ }
+    void write() { /* store */ }
+}
+```
+
+## TypeScript example
+
+```ts
+abstract class DataPipeline {
+  run(): void {
+    this.read();
+    this.transform();
+    this.write();
+  }
+  protected abstract read(): void;
+  protected abstract transform(): void;
+  protected abstract write(): void;
+}
+
+class JsonPipeline extends DataPipeline {
+  protected read(): void {}
+  protected transform(): void {}
+  protected write(): void {}
+}
+```
+
+## Pros and cons
+
+Pros:
+- Enforces consistent algorithm structure.
+- Reduces duplicated code.
+
+Cons:
+- Inheritance can reduce flexibility.
+- Hard to change the base flow.
+
+## Common pitfalls
+
+- Overusing inheritance for small variations.
+- Adding too many hook methods.
+
+## Related patterns
+
+- [Strategy](./strategy.mdx)
+- [Factory Method](../creational/factory-method.mdx)
