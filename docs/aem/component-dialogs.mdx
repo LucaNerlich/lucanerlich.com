@@ -755,6 +755,61 @@ A `Well` groups items together visually, by adding a background color and a smal
 
 ![Well](/images/aem/dialogfields/well.png)
 
+## Persisted values and defaults
+
+- Use `./propertyName` to persist values on the component node.
+- When changing field names, add migration logic or fallback in your model.
+- Prefer handling defaults in Sling Models rather than relying solely on dialog defaults.
+
+```java
+@ValueMapValue
+private String variant;
+
+public String getVariant() {
+    return StringUtils.defaultIfBlank(variant, "simple");
+}
+```
+
+## Field naming conventions
+
+- Always include the `./` prefix to store values on the current component node.
+- Use consistent prefixes for related fields (for example, `ctaText`, `ctaLink`).
+- Avoid renaming existing fields unless you migrate content.
+
+## Rich Text Editor tips
+
+- Keep the toolbar minimal to reduce authoring noise.
+- Use the Styles plugin for semantic markup instead of inline formatting.
+
+```xml
+<text
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="cq/gui/components/authoring/dialog/richtext"
+    name="./text"
+    useFixedInlineToolbar="{Boolean}true">
+    <uiSettings jcr:primaryType="nt:unstructured">
+        <cui jcr:primaryType="nt:unstructured">
+            <inline
+                jcr:primaryType="nt:unstructured"
+                toolbar="[format#bold,format#italic,links#modifylink,links#unlink,#paraformat]"/>
+        </cui>
+    </uiSettings>
+</text>
+```
+
+## MSM / Live Copy considerations
+
+If a field should be lockable in MSM, add `cq-msm-lockable` to the field node.
+
+```xml
+<ctaText
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="CTA Text"
+    name="./ctaText"
+    cq-msm-lockable="ctaText"/>
+```
+
 <br/>
 <hr/>
 <small>
