@@ -1,0 +1,37 @@
+---
+title: Anti-Patterns and Misuse
+sidebar_position: 2
+tags: [design-patterns, anti-patterns]
+---
+
+# Anti-Patterns and Misuse
+
+Patterns are tools, not goals. These are common misuses that reduce clarity and maintainability.
+
+## Common anti-patterns
+
+### Overusing Singleton
+
+Singletons introduce global state and hidden dependencies. Prefer dependency injection or a scoped service.
+
+### Factory for everything
+
+Factories add indirection and boilerplate. Use them only when creation logic varies or needs isolation.
+
+### God Facade
+
+A facade that grows into a mega-service becomes a bottleneck and breaks modularity. Split by responsibility.
+
+### Inheritance for minor changes
+
+If you change only small behavior, prefer composition (Strategy/Decorator) over subclassing.
+
+### Using patterns without a problem
+
+If the code is simple, keep it simple. Patterns should solve real constraints.
+
+## Red flags
+
+- You can’t explain why a pattern is used.
+- The pattern adds more code than it saves.
+- Testing became harder after adding the pattern.

@@ -1,0 +1,55 @@
+---
+title: Overview
+sidebar_position: 1
+tags: [design-patterns]
+---
+
+# Design Patterns Overview
+
+This section collects GoF patterns with practical examples and guidance. Use it to pick a suitable pattern, not to force one.
+
+## Quick decision guide
+
+- **Object creation is complex** → look at **Creational** patterns.
+- **You need to compose behavior** → look at **Structural** patterns.
+- **You want flexible interactions** → look at **Behavioral** patterns.
+
+## Common comparisons (quick picks)
+
+- **Strategy vs State**: Strategy is chosen by the client; State changes from within the object.
+- **Adapter vs Facade**: Adapter changes an interface; Facade simplifies a subsystem.
+- **Decorator vs Proxy**: Decorator adds behavior; Proxy controls access.
+
+## Pattern map (by intent)
+
+| Intent | Patterns |
+| --- | --- |
+| Create one object | Singleton |
+| Create families | Abstract Factory |
+| Create step-by-step | Builder |
+| Reuse similar objects | Prototype |
+| Decouple creation | Factory Method |
+| Adapt interfaces | Adapter |
+| Simplify subsystems | Facade |
+| Compose trees | Composite |
+| Add behavior | Decorator |
+| Control access | Proxy |
+| Share state | Flyweight |
+| Vary implementation | Bridge |
+| Chain handlers | Chain of Responsibility |
+| Encapsulate actions | Command |
+| Define languages | Interpreter |
+| Traverse collections | Iterator |
+| Centralize communication | Mediator |
+| Snapshot state | Memento |
+| Notify observers | Observer |
+| Switch behavior by state | State |
+| Swap algorithms | Strategy |
+| Fixed algorithm steps | Template Method |
+| Add operations | Visitor |
+
+## Next steps
+
+- Start with the closest intent.
+- Check “Related patterns” for alternatives.
+- If two patterns fit, pick the simpler one.

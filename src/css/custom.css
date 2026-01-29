@@ -47,6 +47,16 @@ html[data-theme='dark'] .docusaurus-highlight-code-line {
     color: darkgoldenrod;
 }
 
+.hero-doc .menu__link {
+    font-weight: 600;
+    color: #ffb000;
+}
+
+.hero-doc .menu__link:hover {
+    color: #ffb000;
+    text-decoration: underline;
+}
+
 .archive > div > a {
     color: #666666;
     font-style: italic;

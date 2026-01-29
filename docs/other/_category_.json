@@ -3,5 +3,7 @@
     "className": "archive",
     "link": {
         "type": "generated-index"
-    }
+    },
+    "position": 4,
+    "collapsed": true
 }
