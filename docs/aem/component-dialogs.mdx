@@ -7,9 +7,26 @@ tags: [aem, dialogs, touch-ui]
 
 # Touch UI Component Dialog Examples
 
-The following chapters each present a coral xml snippet which can be copied into any `/components/mycomponent/_cq_dialog/.content.xml` file.
+The following chapters each present a Coral XML snippet which can be copied into any `/components/mycomponent/_cq_dialog/.content.xml` file.
 
 [Documentation Overview](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
+
+## TL;DR
+
+- Start from the empty dialog template and evolve it.
+- Use `fieldLabel` + `fieldDescription` consistently for author guidance.
+- Prefer `composite` multifields and `@ChildResource` when you need structured data.
+- Keep validation minimal and handle missing values in your Sling Model.
+
+## Quick navigation
+
+- [AEM Component Help Pages](#aem-component-help-pages)
+- [Best Practices](#best-practices)
+- [Empty Dialog / Starting Point](#empty-dialog--starting-point)
+- [Simple Data Fields](#simple-data-fields)
+- [Complex Data Fields](#complex-data-fields)
+- [Layout & Read Only](#layout--read-only)
+- [Full XML Example](#full-xml-example)
 
 ## AEM Component Help Pages
 
@@ -21,7 +38,7 @@ The following chapters each present a coral xml snippet which can be copied into
 6. Now copy the URL from the address bar. In my case the URL is `/mnt/overlay/wcm/core/content/sites/components/details.html/apps/<projectname>/components/some/text`.
 7. Go to the **component** within **CRXDE Lite** > **cq:dialog** and set the **helpPath** property to the value of the path copied above.
  - `helpPath="/mnt/overlay/wcm/core/content/sites/components/details.html/apps/<projectname>/components/some/text"`
-8. Now enable and add the component to the page, open the dialogue and click on the **Help (?)** icon.
+8. Now enable and add the component to the page, open the dialog and click on the **Help (?)** icon.
 
 ![Dialog help button](/images/aem/components/dialog-help-button.png)
 
@@ -93,6 +110,13 @@ Click on the documentation node and set the following property `sling:orderBefor
 9. Add clientLib files directly into the component folder if necessary
 10. Don't overdo validation, handle missing fields gracefully in the model as well
 
+## Common pitfalls
+
+- Missing `name` or missing `./` prefix, which leads to values not being persisted.
+- Forgetting `fieldLabel`, which makes dialogs harder to scan.
+- Overusing multifields instead of grouping into separate components.
+- Applying clientlibs globally instead of using dialog-specific categories.
+
 ## Empty Dialog / Starting Point
 
 This is an empty dialog structure and components can be placed in tabs (you can add `n` tabs.)
@@ -140,7 +164,7 @@ This is an empty dialog structure and components can be placed in tabs (you can 
                     </properties>
                     <layout
                             jcr:primaryType="nt:unstructured"
-                            jcr:title="Layout
+                            jcr:title="Layout"
                             sling:resourceType="granite/ui/components/coral/foundation/container"
                             margin="{Boolean}true">
                         <items jcr:primaryType="nt:unstructured">
@@ -249,7 +273,7 @@ You can define the min, max value and the increments, in which the input can be 
 
 ![Pathfield](/images/aem/dialogfields/pathfield.png)
 
-For an implementation of a dynamic rootPath, see [Dynamic Rootpath](https://lucanerlich.com/aem/ui/dynamic-pathbrowser-rootpath/).
+For an implementation of a dynamic rootPath, see [Dynamic Rootpath](./ui/dynamic-pathbrowser-rootpath.md).
 
 #### Pathbrowser
 
@@ -369,6 +393,90 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
 
 ## Complex Data Fields
 
+### Conditional fields (show/hide)
+
+Use a render condition when you need server-side control (for example, permissions or site-level logic).
+
+```xml
+<advancedSettings
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/container">
+    <granite:rendercondition
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="com.myproject/renderconditions/isAdmin"/>
+    <items jcr:primaryType="nt:unstructured">
+        <!-- advanced fields -->
+    </items>
+</advancedSettings>
+```
+
+For client-side toggles (show/hide based on a checkbox or select), prefer dialog JS in a small clientlib scoped to dialog usage.
+
+### Dynamic show/hide based on a selection
+
+When one widget controls the visibility of another, you can use dialog JS that reacts to the field value and toggles containers.
+
+**1) Add a controller field and a target container**
+
+```xml
+<variant
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/radiogroup"
+    fieldLabel="Variant"
+    name="./variant">
+    <items jcr:primaryType="nt:unstructured">
+        <simple jcr:primaryType="nt:unstructured" text="Simple" value="simple"/>
+        <advanced jcr:primaryType="nt:unstructured" text="Advanced" value="advanced"/>
+    </items>
+</variant>
+
+<advancedOptions
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/container"
+    granite:class="cmp-dialog-advanced"
+    margin="{Boolean}true">
+    <items jcr:primaryType="nt:unstructured">
+        <!-- fields shown only when variant=advanced -->
+    </items>
+</advancedOptions>
+```
+
+**2) Add a dialog-scoped clientlib**
+
+```xml title="ui.apps/.../clientlibs/clientlib-dialog/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:ClientLibraryFolder"
+          categories="[cq.authoring.dialog]"
+          allowProxy="{Boolean}true"/>
+```
+
+```text title="ui.apps/.../clientlibs/clientlib-dialog/js.txt"
+#base=js
+dialog-visibility.js
+```
+
+**3) Toggle visibility in JS**
+
+```js title="ui.apps/.../clientlibs/clientlib-dialog/js/dialog-visibility.js"
+(function ($document, Coral) {
+    const controllerSelector = 'coral-radio-group[name="./variant"]';
+    const targetSelector = '.cmp-dialog-advanced';
+
+    function toggle() {
+        const selected = document.querySelector(`${controllerSelector} coral-radio[checked]`);
+        const value = selected ? selected.value : 'simple';
+        document.querySelectorAll(targetSelector).forEach((el) => {
+            el.hidden = value !== 'advanced';
+        });
+    }
+
+    $document.on('dialog-ready', toggle);
+    $document.on('change', controllerSelector, toggle);
+})(jQuery(document), Coral);
+```
+
 ### Select Dropdown
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html)
@@ -400,7 +508,7 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
 </select>
 ```
 
-Opend
+Open
 ![Select open](/images/aem/dialogfields/selectopen.png)
 
 Closed
@@ -432,9 +540,30 @@ Closed
 
 ![Radio group](/images/aem/dialogfields/radio.png)
 
+### Datasource-backed fields
+
+For dynamic values, provide a datasource resource type. This works well for autocomplete and selects.
+
+```xml
+<customValue
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/autocomplete"
+    fieldLabel="Backend-driven values"
+    name="./customValue"
+    emptyText="Pick a value"
+    multiple="{Boolean}false">
+    <datasource
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="/apps/myproject/datasource/customstrings"/>
+    <options
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/form/autocomplete/list"/>
+</customValue>
+```
+
 ### Multifield
 
-A multifield wraps a predefined group of components and lets an author create `n` of these sets. The data will be saved to subnotes.
+A multifield wraps a predefined group of components and lets an author create `n` of these sets. The data will be saved to subnodes.
 Access that data via `@ChildResource` Annotation in your Sling Model, as described [here](../annotations/child-resource).
 
 Add `composite="{Boolean}true"` to save the entries as a child node which in return can easily be injected into a Sling Model via `@ChildResource`.
@@ -444,7 +573,7 @@ Otherwise all values entered will be stored on the node itself as Array Properti
 <myMultifield
     jcr:primaryType="nt:unstructured"
     sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
-composite="{Boolean}true"
+    composite="{Boolean}true"
     required="{Boolean}true">
     <field
         jcr:primaryType="nt:unstructured"
@@ -1125,3 +1254,11 @@ The following `.content.xml` file is a complete `cq:dialog` file for a component
     </content>
 </jcr:root>
 ```
+
+## Authoring UX tips
+
+- Keep required fields early in the first tab.
+- Use `fieldDescription` for guidance and examples.
+- Prefer smaller, focused tabs over a single long list.
+- Keep names stable; renaming properties impacts existing content.
+- Use `granite:class` sparingly to improve spacing or emphasis.
