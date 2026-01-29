@@ -1,3 +1,9 @@
+---
+title: Dialog Validation
+sidebar_position: 7
+tags: [aem, dialogs, validation]
+---
+
 # Dialog Validation
 
 This post will explain how one can add and implement custom AuthorUI/TouchUI Dialog Form Field validation.
@@ -15,6 +21,12 @@ This should be done it its own ClientLibrary, the following snippet shows the Cl
 		  categories="[cq.authoring.dialog]"
 		  dependencies="[cq.authoring.dialog.all,granite.jquery]"/>
 ```
+
+## See also
+
+- [Component dialogs](./component-dialogs.mdx)
+- [Coral UI](./ui/coral-ui.mdx)
+- [Client libraries](./client-libraries.mdx)
 
 The categories and dependencies are important. This will ensure, that your javascript code will only be loaded while editing AEM Dialogs.
 

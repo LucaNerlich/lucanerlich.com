@@ -1,5 +1,7 @@
 ---
 title: E-Mail Service in AEM
+sidebar_position: 25
+tags: [aem, email, operations]
 ---
 
 # Sending E-Mails in AEM
@@ -66,3 +68,8 @@ The E-Mail was successfully sent to our _proxy_ MailHog:
 
 - [Default Message Gateway](https://experienceleague.adobe.com/en/docs/experience-manager-learn/cloud-service/networking/examples/email-service)
 - [MailHog](https://github.com/mailhog/MailHog)
+
+## See also
+
+- [OSGi configuration](./osgi-configuration.mdx)
+- [Security basics](./security.mdx)

@@ -1,4 +1,9 @@
-import Image from '@theme/IdealImage';
+---
+title: Core Components
+sidebar_position: 5
+tags: [aem, core-components]
+---
+
 
 # Core Components
 
@@ -27,7 +32,7 @@ The latest Core Component Release can be downloaded from
 their [GitHub Release page](https://github.com/adobe/aem-core-wcm-components/releases).
 
 Each GitHub Release produces the following artefacts
-<Image img={require('/images/aem/core-components/github-release.jpg')}/>
+![Core Components release artifacts](/images/aem/core-components/github-release.jpg)
 
 In general, downloading the `core.wcm.components.all-<version>.zip` and installing it via
 the [JCR Package Manager](http://localhost:4502/crx/packmgr/index.jsp) is enough.
@@ -348,24 +353,24 @@ the latter is the important part. But more on this in Part 2.
 
 If added to a page and filled with data, the jcr node will be created like and look like this
 
-<Image img={require('/images/aem/core-components/extended-image-root.jpg')}/>
+![Extended image root node](/images/aem/core-components/extended-image-root.jpg)
 
 Due to the parameterized namespace include, all included/referenced image v2 dialog nodes will be included in
 the `namespace="image"`
 
-<Image img={require('/images/aem/core-components/extended-image-image.jpg')}/>
+![Extended image namespace](/images/aem/core-components/extended-image-image.jpg)
 
 All custom added properties, in our case the ctaLinks Multifield, will be in their defined jcr properties, as expected
 and usual for any AEM component
 
-<Image img={require('/images/aem/core-components/extended-image-ctalinks.jpg')}/>
+![Extended image CTA links](/images/aem/core-components/extended-image-ctalinks.jpg)
 
 By implementing above solution, the result will look like the following image. We are reusing the inherited asset and
 metadata tabs, as well as our custom added tab for cta links
 
-<Image img={require('/images/aem/core-components/extended-image-tab-original.jpg')}/>
+![Original image tab](/images/aem/core-components/extended-image-tab-original.jpg)
 
-<Image img={require('/images/aem/core-components/extended-image-tab-custom.jpg')}/>
+![Custom image tab](/images/aem/core-components/extended-image-tab-custom.jpg)
 
 
 ## 2. Extending the Java Backend
@@ -520,3 +525,9 @@ own additional properties.
 ### Credits
 
 Thanks to [Niek Raaijmakers](https://github.com/niekraaijmakers) for figuring some of this out :)
+
+## See also
+
+- [Components](./components.mdx)
+- [Component dialogs](./component-dialogs.mdx)
+- [Sling models](./sling-models.mdx)

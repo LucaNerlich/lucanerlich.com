@@ -1,3 +1,9 @@
+---
+title: Content Fragments
+sidebar_position: 17
+tags: [aem, content-fragments, headless]
+---
+
 # Content Fragments
 
 > Creating and Managing Content Fragments in AEM with Java
@@ -139,3 +145,10 @@ try (ResourceResolver resolver = getServiceResolver()) {
 - Use unique names for fragments
 - Validate input before creating fragments
 - Check for null references before setting them
+- Use a dedicated service user when mutating content
+
+## See also
+
+- [GraphQL](./graphql.mdx)
+- [Node operations](./node-operations.mdx)
+- [Replication and activation](./replication-activation.mdx)

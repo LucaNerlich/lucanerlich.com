@@ -1,52 +1,47 @@
 ---
-draft: true
+title: Adobe Helix (Franklin)
+sidebar_position: 29
+tags: [aem, helix, franklin, headless]
 ---
-# Helix
 
-<div class="alert alert--warning" role="alert">
-    Work in progress ⚠️
-</div>
+# Adobe Helix (Franklin)
 
-[Adobe Helix](https://www.hlx.live) is the **next generation** CMS. Its built **author first** and has no developer facing backend.
-Everything development wise happens client side. CSS and vanilla JS only, hosted on GitHub.
+Adobe Helix (also known as Franklin) is a document-driven CMS that focuses on fast authoring and performance. Content lives in SharePoint or Google Drive, and the website is generated from structured documents plus lightweight frontend code stored in GitHub.
 
-The main difference to other cms is, that **all** content is hosted exclusively on either SharePoint or GoogleDrive.
-Helix grabs that content, transforms it to markdown and HTML. These fragments are being made statically available via fastly CDN.
+## When to use Helix
 
-A client requests the html and executes the referenced scripts. These are a developers only possibility to alter the Websites appearance.
-Dom Manipulation, third party requests and CSS Styling transform the generated html into the desired visual outcome.
+- You want authoring directly in Word/Google Docs.
+- Your site can be modeled as documents plus modular blocks.
+- You want strong performance defaults with minimal backend work.
 
-Everybody can go through the [official tutorial](https://www.hlx.live/tutorial) and give helix a try. It's free! I highly recommend it - you need roughly 20 minutes.
+## How it works (high level)
 
-## Technical Setup
+1. Content is authored in SharePoint or Google Drive.
+2. Content is transformed into HTML/Markdown by Helix services.
+3. The site is rendered from GitHub-hosted frontend code and served via CDN.
 
-A Helix development domain is constructed from three parts: **Branch Name**, **Repository Name** and **Repository Owner username**.
+## Project URLs
 
-Example: https://branchname--reponame--githubusername.hlx3.page/site/path
+Preview URLs are constructed from the branch, repository name, and GitHub owner:
 
-<div class="alert alert--info" role="alert">
-    💡 As mentioned initially, a Helix Developer works "frontend only". The backend architecture has been summarized well
-    by the development team.
-</div>
+`https://{branch}--{repo}--{owner}.hlx.page/{path}`
 
-[hlx.live/docs/architecture](https://www.hlx.live/docs/architecture)
+Production URLs use the same pattern with `.hlx.live` or configured domains.
 
-## Best Practices
+## Best practices
 
-Merge only via GitHub PullRequest. Add a Helix url to the pull requests branch and utilize the Helix Bot Core Web Vital[^1] analysis for every commit.
-This ensures, that you never heavily change a pages' performance to the worse.
+- Keep blocks small and predictable; avoid heavy DOM rewrites.
+- Validate content structure early with strict block definitions.
+- Review performance on every PR; avoid regressions in Core Web Vitals.
+- Prefer progressive enhancement over large client-side bundles.
 
-<div class="alert alert--warning" role="alert">
-    ❗ This is especially important, since its fairly easy to mess with a pages' core web vitals via DOM manipulation.
-</div>
+## Learn more
 
-This pages has some great information on Helix Block design: [milo.adobe.com/blog/drafts/block-design](https://milo.adobe.com/blog/drafts/block-design).
+- [Helix architecture](https://www.hlx.live/docs/architecture)
+- [Getting started tutorial](https://www.hlx.live/tutorial)
+- [Block design guidance](https://milo.adobe.com/blog/drafts/block-design)
 
-## Official Adobe Helix Pages
+## See also
 
-- [business.adobe.com](https://business.adobe.com)
-- [blog.adobe.com](https://blog.adobe.com)
-
-## References
-
-[^1]   https://web.dev/vitals
+- [Performance](./performance.mdx)
+- [Security basics](./security.mdx)

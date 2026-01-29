@@ -1,4 +1,9 @@
-import Image from '@theme/IdealImage';
+---
+title: Servlets
+sidebar_position: 11
+tags: [aem, servlets, backend]
+---
+
 
 # Servlets
 
@@ -42,23 +47,29 @@ public class ContactFormServlet extends SlingAllMethodsServlet {
 }
 ```
 
+## See also
+
+- [Filters](./filter.mdx)
+- [Sling models](./sling-models.mdx)
+- [Security basics](./security.mdx)
+
 To test this via Postman, you will need to add AEMs Login Cookie. Open your Browsers Dev Tools and find the Cookies for your AEM Instance, most likely running at `localhost:4502`.
 
-<Image img={require('/images/aem/servlets/chrome.png')}/>
+![Browser cookie view](/images/aem/servlets/chrome.png)
 
 You now need to add this cookie "by hand" to your Postman configuration and remember to update its value, on instance restart / new login / value change.
 
-<Image img={require('/images/aem/servlets/postman-cookiesettings.png')}/>
+![Postman cookie settings](/images/aem/servlets/postman-cookiesettings.png)
 
 The added cookie with its Key Value Pair (`name=value`) looks like this:
 
-<Image img={require('/images/aem/servlets/postman-cookieadded.png')}/>
+![Postman cookie entry](/images/aem/servlets/postman-cookieadded.png)
 
 I'd suggest to increase / adapt the `Expires` Timestamp to at least a couple of hours in the future.
 
 When firing a POST Request to `http://localhost:4502/content/myproject/de/testpage/jcr:content/root/responsivegrid/contactform.action.json` your servlet will correctly handle that request and return a non 401 HTTP statuscode.
 
-<Image img={require('/images/aem/servlets/200.png')}/>
+![Postman 200 response](/images/aem/servlets/200.png)
 
 ## Returning a DataSource
 

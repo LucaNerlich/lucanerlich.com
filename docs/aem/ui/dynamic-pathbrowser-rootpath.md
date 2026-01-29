@@ -1,3 +1,9 @@
+---
+title: Dynamic PathBrowser RootPath
+sidebar_position: 5
+tags: [aem, ui, dialogs]
+---
+
 # Dynamic PathBrowser (PathField) RootPath
 
 The Granite [Pathfield](https://lucanerlich.com/aem/component-dialogs/#pathfield) has a property called `rootPath`.
@@ -17,6 +23,11 @@ We need to define a custom resource type and use it on our dialog.xml structure
     fieldLabel="Some Link"
     name="./someLink"/>
 ```
+
+## See also
+
+- [Component dialogs](../component-dialogs.mdx)
+- [Touch UI (Author UI)](./touch-ui.mdx)
 
 In your `ui.apps` add a new component:
 

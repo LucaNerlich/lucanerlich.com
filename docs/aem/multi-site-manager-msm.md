@@ -1,6 +1,8 @@
 ---
 title: Multi-Site-Manager
 keywords: [ 'Multi-Site-Manager', 'MSM' ]
+sidebar_position: 26
+tags: [aem, msm, sites]
 ---
 # Multi-Site-Manager | MSM
 
@@ -174,3 +176,8 @@ public class CustomActionFactory implements LiveActionFactory<LiveAction> {
 - [Creating a new Rollout Configuration](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/configuring-and-extending/msm#creating-a-new-rollout-configuration)
 - [Rollout cq:trigger Enum](https://developer.adobe.com/experience-manager/reference-materials/6-5/javadoc/com/day/cq/wcm/msm/api/RolloutManager.Trigger.html)
 - [Product Rollout Actions](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/reusing-content/msm/live-copy-sync-config#synchronization-actions)
+
+## See also
+
+- [Replication and activation](./replication-activation.mdx)
+- [Workflows](./workflows.mdx)

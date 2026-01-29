@@ -1,7 +1,13 @@
 ---
-draft: true
+title: Adobe I/O App Builder
+sidebar_position: 30
+tags: [aem, io, app-builder, assets]
 ---
-# Adobe IO - App Builder
+
+# Adobe I/O App Builder
+
+This guide shows how to build an App Builder action that streams a remote asset into AEM Assets using the direct binary upload flow.
+It focuses on a minimal, readable example and highlights the key steps in the API.
 
 ## Download and Upload to AEM Assets
 
@@ -406,6 +412,12 @@ module.exports = {
 }
 ```
 
+## Security notes
+
+- Validate `sourceUrl` against an allowlist to avoid SSRF.
+- Never log or hardcode credentials; use runtime secrets.
+- Validate `folderPath` and `fileName` before building URLs.
+
 This script can be called like this
 
 ```js
@@ -463,3 +475,8 @@ async function prepareFolder(params, logger) {
     return `${damRootPath}/${folderName}`
 }
 ```
+
+## See also
+
+- [Dispatcher configuration](./dispatcher-configuration.mdx)
+- [Security basics](./security.mdx)

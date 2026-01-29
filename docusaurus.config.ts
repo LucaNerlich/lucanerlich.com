@@ -67,15 +67,7 @@ const config = {
     ],
 
     plugins: [
-        ['@docusaurus/plugin-ideal-image',
-            {
-                quality: 80,
-                max: 1080, // max resized image's size.
-                min: 540, // min resized image's size. if original is lower, use that size.
-                steps: 4, // the max number of images generated between min and max (inclusive)
-                disableInDev: false,
-            },
-        ], ['@docusaurus/plugin-client-redirects',
+        ['@docusaurus/plugin-client-redirects',
             {
                 redirects: [
                     {
@@ -88,7 +80,7 @@ const config = {
                         from: '/docs/aem/extending-responsive-grid/', to: '/aem/extending-responsive-grid/',
                     },
                     {
-                        from: '/docs/category/aem/', to: '/category/aem/',
+                        from: '/docs/category/aem/', to: '/aem/',
                     },
                     {
                         from: '/docs/aem/ui/overlays/', to: '/aem/ui/overlays/',
@@ -151,7 +143,7 @@ const config = {
                 },
                 items: [
                     {
-                        to: '/category/aem',
+                        to: '/aem',
                         label: 'AEM',
                         className: "font-red",
                         position: 'left'

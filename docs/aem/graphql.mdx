@@ -1,3 +1,9 @@
+---
+title: Headless GraphQL
+sidebar_position: 18
+tags: [aem, graphql, headless]
+---
+
 # AEM Headless GraphQL
 
 ## Update Dispatcher Filters
@@ -55,8 +61,10 @@
          "Access-Control-Request-Headers",
          "Authorization"
      ]
- }
+}
 ```
+
+Prefer explicit allowlists for CORS and referrer filters to avoid widening access.
 
 ## Add ReferrerFilter
 
@@ -89,3 +97,9 @@
 - [Referrer Filter Config](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/headless/deployment/referrer-filter.html)
 - [Content Fragmets + GraphQL](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/headless/graphql-api/content-fragments.html)
 - [GraphiQL](https://experienceleague.adobe.com/docs/experience-manager-learn/getting-started-with-aem-headless/graphql/multi-step/explore-graphql-api.html)
+
+## See also
+
+- [Content fragments](./content-fragments.md)
+- [Dispatcher configuration](./dispatcher-configuration.mdx)
+- [Security basics](./security.mdx)

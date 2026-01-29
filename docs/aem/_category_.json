@@ -2,7 +2,10 @@
     "label": "AEM",
     "className": "font-red",
     "link": {
-        "type": "generated-index"
+        "type": "generated-index",
+        "slug": "/aem",
+        "description": "Notes and how-tos for Adobe Experience Manager development and operations."
     },
-    "collapsed": false
+    "collapsed": false,
+    "position": 2
 }

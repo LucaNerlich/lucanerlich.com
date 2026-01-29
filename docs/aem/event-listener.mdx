@@ -1,6 +1,14 @@
+---
+title: Event Listener
+sidebar_position: 13
+tags: [aem, events, backend]
+---
+
 # Event Listener
 
 With OCD (ObjectClassDefinition) Config
+
+If you invoke external endpoints from listeners, prefer an allowlist of trusted hostnames and timeouts to avoid unexpected outbound calls.
 
 ```java
 package com.iqospwa.core.listeners;
@@ -90,3 +98,9 @@ public class ReplicationEventJenkinsListener implements EventHandler {
     }
 }
 ```
+
+## See also
+
+- [Replication and activation](./replication-activation.mdx)
+- [OSGi configuration](./osgi-configuration.mdx)
+- [Security basics](./security.mdx)

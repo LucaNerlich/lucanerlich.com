@@ -1,4 +1,9 @@
-import Image from '@theme/IdealImage';
+---
+title: Components
+sidebar_position: 4
+tags: [aem, components, authoring]
+---
+
 
 # Components
 
@@ -14,7 +19,7 @@ ComponentStyleInfo componentStyleInfo = request.getResource().adaptTo(ComponentS
 
 `ComponentStyleInfo.class` holds the currently applied StyleSystem variation, as well as a reference to all applicable and available style variations.
 
-<Image img={require('/images/aem/components/componentStyleInfo.png')}/>
+![Component style info](/images/aem/components/componentStyleInfo.png)
 
 You could use this, to alter the markup, based on the selected style / css class.
 
@@ -54,7 +59,7 @@ You could use this, to alter the markup, based on the selected style / css class
 
 The above excerpt can be combined with a `well`, which results in the following output
 
-<Image img={require('/images/aem/components/radiogroup.png')}/>
+![Radio group](/images/aem/components/radiogroup.png)
 
 The full dialog tab in xml looks like this
 
@@ -95,11 +100,11 @@ It needs a version of the FileVault tool `vault-cli`.
 
 A valid configuration looks like this:
 
-<Image img={require('/images/aem/components/intellivaultconfig.png')}/>
+![IntelliVault config](/images/aem/components/intellivaultconfig.png)
 
 IntelliVault commands can be invoked, via right clicking any path below a `jcr_root` node.
 
-<Image img={require('/images/aem/components/intellivaultusage.png')}/>
+![IntelliVault usage](/images/aem/components/intellivaultusage.png)
 
 <div class="alert alert--warning" role="alert">
     Be careful, importing and exporting is destructive and will destroy / overwrite files.
@@ -118,3 +123,9 @@ The official repo tool is also a great way for content syncing, however, it can 
 - [GitHub Repository](https://github.com/Adobe-Marketing-Cloud/tools/tree/master/repo)
 
 I have not used it in a couple of years and would therefore ask you to have a look at the [read me](https://github.com/Adobe-Marketing-Cloud/tools/tree/master/repo#table-of-contents) for usage and installation guides.
+
+## See also
+
+- [Component dialogs](./component-dialogs.mdx)
+- [Core components](./core-components.mdx)
+- [Client libraries](./client-libraries.mdx)

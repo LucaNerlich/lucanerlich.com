@@ -1,0 +1,37 @@
+---
+title: HTL Templates
+sidebar_position: 8
+tags: [aem, htl, templates]
+---
+
+# HTL Templates
+
+HTL (Sightly) is AEM's template language. It keeps presentation logic in templates and business logic in Sling Models.
+
+## Basics
+
+```html
+<div data-sly-use.model="com.example.core.models.MyModel">
+  <h2>${model.title}</h2>
+  <p>${model.description}</p>
+</div>
+```
+
+## Escaping and context
+
+HTL escapes output by default. If you need a specific context (for example, URLs or HTML), use the correct context hint:
+
+```html
+<a href="${model.link @ context='uri'}">Read more</a>
+```
+
+## Best practices
+
+- Keep logic in Sling Models.
+- Avoid string concatenation in templates.
+- Use `data-sly-test` and `data-sly-list` for conditional rendering and loops.
+
+## See also
+
+- [Sling models](./sling-models.mdx)
+- [Components](./components.mdx)

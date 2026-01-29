@@ -1,6 +1,8 @@
 {
     "label": "UI",
     "link": {
-        "type": "generated-index"
-    }
+        "type": "generated-index",
+        "description": "Author UI, overlays, dialogs, and editor customizations."
+    },
+    "position": 9
 }

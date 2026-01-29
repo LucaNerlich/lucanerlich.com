@@ -1,4 +1,9 @@
-import Image from '@theme/IdealImage';
+---
+title: Touch UI Component Dialogs
+sidebar_position: 6
+tags: [aem, dialogs, touch-ui]
+---
+
 
 # Touch UI Component Dialog Examples
 
@@ -18,9 +23,9 @@ The following chapters each present a coral xml snippet which can be copied into
  - `helpPath="/mnt/overlay/wcm/core/content/sites/components/details.html/apps/<projectname>/components/some/text"`
 8. Now enable and add the component to the page, open the dialogue and click on the **Help (?)** icon.
 
-<Image img={require('/images/aem/components/dialog-help-button.png')}/>
+![Dialog help button](/images/aem/components/dialog-help-button.png)
 
-<Image img={require('/images/aem/components/dialog-readme.png')}/>
+![Dialog README view](/images/aem/components/dialog-readme.png)
 
 ### Set Documentation as Default Active Tab
 
@@ -92,7 +97,7 @@ Click on the documentation node and set the following property `sling:orderBefor
 
 This is an empty dialog structure and components can be placed in tabs (you can add `n` tabs.)
 
-<Image img={require('/images/aem/dialogfields/tabs.png')}/>
+![Dialog tabs](/images/aem/dialogfields/tabs.png)
 
 ```xml title="/components/mycomponent/_cq_dialog/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
@@ -162,7 +167,13 @@ This is an empty dialog structure and components can be placed in tabs (you can 
 </jcr:root>
 ```
 
-<Image img={require('/images/aem/dialogfields/empty.png')}/>
+## See also
+
+- [Dialog validation](./dialog-validation.mdx)
+- [Components](./components.mdx)
+- [Coral UI](./ui/coral-ui.mdx)
+
+![Empty dialog](/images/aem/dialogfields/empty.png)
 
 You can write a class or id to your dialog fragment by adding `granite:class="some-css-class"` or `granite:id="some-id"`. Add `
 required="{Boolean}true"` to any component field to mark it as required.
@@ -187,7 +198,7 @@ required="{Boolean}true"` to any component field to mark it as required.
    name="./label"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/textfield.png')}/>
+![Textfield](/images/aem/dialogfields/textfield.png)
 
 ### Textarea
 
@@ -202,7 +213,7 @@ required="{Boolean}true"` to any component field to mark it as required.
    name="./textareacontent"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/textarea.png')}/>
+![Textarea](/images/aem/dialogfields/textarea.png)
 
 ### Numberfield
 
@@ -221,7 +232,7 @@ You can define the min, max value and the increments, in which the input can be 
     step="{Double}1"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/numberfield.png')}/>
+![Numberfield](/images/aem/dialogfields/numberfield.png)
 
 ### Pathfield (Pathbrowser)
 
@@ -236,7 +247,7 @@ You can define the min, max value and the increments, in which the input can be 
    name="./path"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/pathfield.png')}/>
+![Pathfield](/images/aem/dialogfields/pathfield.png)
 
 For an implementation of a dynamic rootPath, see [Dynamic Rootpath](https://lucanerlich.com/aem/ui/dynamic-pathbrowser-rootpath/).
 
@@ -258,7 +269,7 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
    name="./assetpath"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/pathbrowser.png')}/>
+![Pathbrowser](/images/aem/dialogfields/pathbrowser.png)
 
 ### Asset Upload
 
@@ -273,7 +284,7 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
     name="./file"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/assetupload.png')}/>
+![Asset upload](/images/aem/dialogfields/assetupload.png)
 
 ### Checkbox
 
@@ -290,7 +301,7 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
     value="{Boolean}true"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/checkbox.png')}/>
+![Checkbox](/images/aem/dialogfields/checkbox.png)
 
 ### Switch
 
@@ -307,7 +318,7 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
    value="{Boolean}true"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/switch.png')}/>
+![Switch](/images/aem/dialogfields/switch.png)
 
 ### Datepicker
 
@@ -324,7 +335,7 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
    typeHint="Date"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/datepicker.png')}/>
+![Datepicker](/images/aem/dialogfields/datepicker.png)
 
 ### Userpicker
 
@@ -340,7 +351,7 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
     name="./user"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/userpicker.png')}/>
+![Userpicker](/images/aem/dialogfields/userpicker.png)
 
 #### Authorizable Autocomplete
 
@@ -354,7 +365,7 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
     name="./user"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/authautocomplete.png')}/>
+![Authorizable autocomplete](/images/aem/dialogfields/authautocomplete.png)
 
 ## Complex Data Fields
 
@@ -390,10 +401,10 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
 ```
 
 Opend
-<Image img={require('/images/aem/dialogfields/selectopen.png')}/>
+![Select open](/images/aem/dialogfields/selectopen.png)
 
 Closed
-<Image img={require('/images/aem/dialogfields/selectclosed.png')}/>
+![Select closed](/images/aem/dialogfields/selectclosed.png)
 
 ### Radio Select
 
@@ -419,7 +430,7 @@ Closed
 </radio>
 ```
 
-<Image img={require('/images/aem/dialogfields/radio.png')}/>
+![Radio group](/images/aem/dialogfields/radio.png)
 
 ### Multifield
 
@@ -455,7 +466,7 @@ composite="{Boolean}true"
 </myMultifield>
 ```
 
-<Image img={require('/images/aem/dialogfields/multifield.png')}/>
+![Multifield](/images/aem/dialogfields/multifield.png)
 
 ### Accordion
 
@@ -513,7 +524,7 @@ Any dialog field can be added to each accordion item `items` block.
 </accordion>
 ```
 
-<Image img={require('/images/aem/dialogfields/accordion.png')}/>
+![Accordion](/images/aem/dialogfields/accordion.png)
 
 ## Layout & Read Only
 
@@ -534,7 +545,7 @@ Any dialog field can be added to each accordion item `items` block.
 - Variant options are: `error`, `warning`, `success`, `help` and `info` with `info` being the default.
 - Size options are: `S` and `L` with `S` being the default.
 
-<Image img={require('/images/aem/dialogfields/alert.png')}/>
+![Alert](/images/aem/dialogfields/alert.png)
 
 You could now leverage the css class `cmp-editor-alert` to set the alert box div to e.g `width: 100%`.
 
@@ -553,7 +564,7 @@ You could now leverage the css class `cmp-editor-alert` to set the alert box div
    href="https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/hyperlink.png')}/>
+![Hyperlink](/images/aem/dialogfields/hyperlink.png)
 
 Check the [Coral UI Icon List](https://developer.adobe.com/experience-manager/reference-materials/6-5/coral-ui/coralui3/Coral.Icon.html#availableIcons) for available icons.
 
@@ -573,7 +584,7 @@ You can add simple, readonly text to the dialog. This lets you add "notes" or de
    text="Some help text :)"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/text.png')}/>
+![Text](/images/aem/dialogfields/text.png)
 
 ### Heading
 
@@ -587,7 +598,7 @@ You can add simple, readonly text to the dialog. This lets you add "notes" or de
     text="Some Heading"/>
 ```
 
-<Image img={require('/images/aem/dialogfields/heading.png')}/>
+![Heading](/images/aem/dialogfields/heading.png)
 
 ### Well
 
@@ -613,7 +624,7 @@ A `Well` groups items together visually, by adding a background color and a smal
 </wellGroup>
 ```
 
-<Image img={require('/images/aem/dialogfields/well.png')}/>
+![Well](/images/aem/dialogfields/well.png)
 
 <br/>
 <hr/>
@@ -625,7 +636,7 @@ A `Well` groups items together visually, by adding a background color and a smal
 
 The following `.content.xml` file is a complete `cq:dialog` file for a component dialog that displays all, commonly used, Granite ui fields.
 
-<Image img={require('/images/aem/dialogfields/demo-aem-component.png')}/>
+![Dialog demo](/images/aem/dialogfields/demo-aem-component.png)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

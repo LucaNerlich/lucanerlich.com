@@ -1,3 +1,9 @@
+---
+title: Modify and Query the JCR
+sidebar_position: 15
+tags: [aem, jcr, repository]
+---
+
 # Modify and Query the JCR
 
 ## JCR Queries
@@ -103,6 +109,8 @@ try {
 } catch (Exception e) {
   e.printStackTrace();
 }
+
+Avoid hardcoding credentials in production code; use service users and configuration instead.
 ```
 
 ## Groovy Console
@@ -176,3 +184,9 @@ Locally via CRX/DE and on deployed environments via "empty" Content-Package.
 ## References
 
 [^1]  https://experienceleague.adobe.com/docs/experience-manager-65/deploying/practices/best-practices-for-queries-and-indexing.html?lang=en#jcrquerycheatsheet>
+
+## See also
+
+- [Node operations](./node-operations.mdx)
+- [Groovy console](./groovy-console.mdx)
+- [Security basics](./security.mdx)

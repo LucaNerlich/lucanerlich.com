@@ -1,4 +1,9 @@
-import Image from '@theme/IdealImage';
+---
+title: Local Development Setup
+sidebar_position: 1
+tags: [aem, setup, local-development]
+---
+
 
 # Local Development Setup
 
@@ -96,7 +101,7 @@ Note, that the `address=30303` needs to be different for author and publish.
 
 A debug run config in Intellij IDEA looks like this
 
-<Image img={require('/images/aem/idea-debug-config.png')}/>
+![IntelliJ debug config](/images/aem/idea-debug-config.png)
 
 ### Bootstrapping a development environment via Maven Archetype
 
@@ -323,12 +328,18 @@ On Windows, the `docker_run.cmd` file will need to be slightly modified. Remove 
 - Line: 41 + 41
 - Line 179 - 181
 
-<Image img={require('/images/aem/dispatcher-windows1.png')}/>
-<Image img={require('/images/aem/dispatcher-windows2.png')}/>
+![Dispatcher Windows changes 1](/images/aem/dispatcher-windows1.png)
+![Dispatcher Windows changes 2](/images/aem/dispatcher-windows2.png)
 
 Thanks for reading!
 
 luca
+
+## See also
+
+- [Dispatcher configuration](./dispatcher-configuration.mdx)
+- [Deployment guide](./deployment.mdx)
+- [Testing strategies](./testing.mdx)
 
 ## Links & Downloads
 

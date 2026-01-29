@@ -1,0 +1,39 @@
+---
+title: Client Libraries
+sidebar_position: 9
+tags: [aem, clientlibs, frontend]
+---
+
+# Client Libraries
+
+Client libraries (clientlibs) manage CSS and JS in AEM. They are grouped by categories and loaded in components or templates.
+
+## Basic clientlib
+
+```xml title="ui.apps/.../clientlibs/clientlib-site/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:ClientLibraryFolder"
+          allowProxy="{Boolean}true"
+          categories="[myproject.site]"/>
+```
+
+## Load in HTL
+
+```html
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
+  <sly data-sly-call="${clientlib.all @ categories='myproject.site'}"></sly>
+</sly>
+```
+
+## Best practices
+
+- Keep categories small and purposeful.
+- Use `allowProxy` to serve from `/etc.clientlibs`.
+- Avoid overlays for clientlibs; extend via new categories instead.
+
+## See also
+
+- [HTL templates](./htl-templates.mdx)
+- [Touch UI (Author UI)](./ui/touch-ui.mdx)

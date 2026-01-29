@@ -1,3 +1,9 @@
+---
+title: Extending the Responsive Grid
+sidebar_position: 27
+tags: [aem, responsive-grid, components]
+---
+
 # Extending the Responsive Grid
 
 When implementing custom components during a project, one task that often pops up, is the need for implementing a
@@ -248,3 +254,8 @@ luca
 
 - [AEM Responsive Grid System](https://adobe-marketing-cloud.github.io/aem-responsivegrid/)
 - [Official Documentation - Responsive Layout](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/sites/authoring/features/responsive-layout.html#authoring)
+
+## See also
+
+- [Components](./components.mdx)
+- [Core components](./core-components.mdx)

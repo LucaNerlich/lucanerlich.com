@@ -1,4 +1,9 @@
-import Image from '@theme/IdealImage';
+---
+title: Overlays
+sidebar_position: 3
+tags: [aem, ui, overlays]
+---
+
 
 # Overlays
 
@@ -50,7 +55,7 @@ This adds a new 'HelpDesk' button to the main navigation.
 
 ```
 
-<Image img={require('/images/aem/ui/helpdesk.png')}/>
+![Helpdesk button](/images/aem/ui/helpdesk.png)
 
 Fiddle around with the 'order' value to place the new button at the desired location.
 You can find the other buttons here `/libs/cq/core/content/nav`.
@@ -300,7 +305,7 @@ component `[myapp]/core/components/[mycomponent]` will be populated with the dro
 
 You can console.log the available EditBar Actions, by looking at `author.EditorFrame.editableToolbar.config.actions.`.
 
-<Image img={require('/images/aem/ui/author.EditorFrame.editableToolbar.config.actions.png')}/>
+![Editable toolbar actions](/images/aem/ui/author.EditorFrame.editableToolbar.config.actions.png)
 
 ```javascript title="disableComponentEditing.js"
 (function ($document, author) {
@@ -351,3 +356,9 @@ This works very similar to the above example, we just need to overwrite the cond
     });
 })($(document), Granite.author);
 ```
+
+## See also
+
+- [Touch UI (Author UI)](./touch-ui.mdx)
+- [Render conditions](./render-conditions.mdx)
+- [Client libraries](../client-libraries.mdx)

@@ -1,3 +1,9 @@
+---
+title: Groovy Console
+sidebar_position: 28
+tags: [aem, groovy, tooling]
+---
+
 # Groovy Console
 
 - [GitHub Repo](https://github.com/CID15/aem-groovy-console)
@@ -90,6 +96,8 @@ Add the following osgi configuration file:
 	]
 }
 ```
+
+Keep Groovy Console access restricted to trusted admin groups only.
 
 
 ## Use SQL2 Query and iterate batched over all content
@@ -217,3 +225,9 @@ String baseSql = """
 Notes
 - With more than one selector (`p`, `c`), reference columns with the selector alias (`p.[jcr:path]`).
 - You can combine this with in-code checks if certain repository configurations differ.
+
+## See also
+
+- [Modify and query the JCR](./jcr.md)
+- [Node operations](./node-operations.mdx)
+- [Security basics](./security.mdx)

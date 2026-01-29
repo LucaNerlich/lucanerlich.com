@@ -1,3 +1,9 @@
+---
+title: Assets Siderail Search Root
+sidebar_position: 6
+tags: [aem, ui, assets]
+---
+
 # Assets Siderail - SearchRoot
 
 By default, the AEM Sites `Assets Siderail` (the left side option / drag & drop asset widget) search and displays alls
@@ -31,6 +37,11 @@ Example ClientLibraryFolder `.content.xml`:
           jsProcessor="[default:none,min:none;languageIn=ECMASCRIPT_2021;languageOut=ECMASCRIPT6]"
 />
 ```
+
+## See also
+
+- [Overlays](./overlays.mdx)
+- [Client libraries](../client-libraries.mdx)
 
 Example js overwrite `searchRoot.js`:
 

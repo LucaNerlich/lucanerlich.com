@@ -1,0 +1,26 @@
+---
+title: Security Basics
+sidebar_position: 24
+tags: [aem, security, best-practices]
+---
+
+# Security Basics
+
+These are general AEM security guidelines that apply across author, publish, and custom code.
+
+## Core principles
+
+- Least privilege for users and service accounts.
+- Validate input and avoid dynamic code execution.
+- Keep secrets out of the repository.
+
+## Common pitfalls to avoid
+
+- Exposing custom `/bin` endpoints without authentication or CSRF protection.
+- Overly broad dispatcher allowlists.
+- Granting `admin` permissions to service users.
+
+## See also
+
+- [OSGi configuration](./osgi-configuration.mdx)
+- [Dispatcher configuration](./dispatcher-configuration.mdx)
