@@ -240,6 +240,16 @@ required="{Boolean}true"` to any component field to mark it as required.
 
 ![Textarea](/images/aem/dialogfields/textarea.png)
 
+### Hidden
+
+```xml
+<hidden
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+    name="./source"
+    value="author-ui"/>
+```
+
 ### Numberfield
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html)
@@ -273,6 +283,19 @@ You can define the min, max value and the increments, in which the input can be 
 ```
 
 ![Pathfield](/images/aem/dialogfields/pathfield.png)
+
+#### Pathfield picker options
+
+```xml
+<pathfield
+   jcr:primaryType="nt:unstructured"
+   sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+   fieldLabel="Select asset"
+   forceSelection="{Boolean}true"
+   rootPath="/content/dam"
+   pickerSrc="/mnt/overlay/granite/ui/content/coral/foundation/form/pathfield/picker.html"
+   name="./assetPath"/>
+```
 
 For an implementation of a dynamic rootPath, see [Dynamic Rootpath](./ui/dynamic-pathbrowser-rootpath.md).
 
@@ -328,6 +351,21 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
 
 ![Checkbox](/images/aem/dialogfields/checkbox.png)
 
+### Checkbox group
+
+```xml
+<checkboxGroup
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/checkboxgroup"
+    fieldLabel="Options"
+    name="./options">
+    <items jcr:primaryType="nt:unstructured">
+        <optA text="Option A" value="a" jcr:primaryType="nt:unstructured"/>
+        <optB text="Option B" value="b" jcr:primaryType="nt:unstructured"/>
+    </items>
+</checkboxGroup>
+```
+
 ### Switch
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html)
@@ -345,6 +383,20 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
 
 ![Switch](/images/aem/dialogfields/switch.png)
 
+#### Switch with labels
+
+```xml
+<switch
+   jcr:primaryType="nt:unstructured"
+   sling:resourceType="granite/ui/components/coral/foundation/form/switch"
+   fieldLabel="Enable feature"
+   onText="On"
+   offText="Off"
+   name="./featureEnabled"
+   uncheckedValue="false"
+   value="{Boolean}true"/>
+```
+
 ### Datepicker
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/datepicker/index.html)
@@ -361,6 +413,19 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
 ```
 
 ![Datepicker](/images/aem/dialogfields/datepicker.png)
+
+#### Datepicker constraints
+
+```xml
+<datepicker
+   jcr:primaryType="nt:unstructured"
+   sling:resourceType="granite/ui/components/coral/foundation/form/datepicker"
+   fieldLabel="Publish date"
+   minDate="2024-01-01"
+   maxDate="2030-12-31"
+   displayedFormat="YYYY-MM-DD"
+   name="./publishDate"/>
+```
 
 ### Userpicker
 
@@ -515,6 +580,21 @@ Open
 Closed
 ![Select closed](/images/aem/dialogfields/selectclosed.png)
 
+### Select with datasource
+
+```xml
+<categorySelect
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/select"
+    fieldLabel="Category"
+    name="./category">
+    <datasource
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="/apps/myproject/datasource/categories"/>
+    <items jcr:primaryType="nt:unstructured"/>
+</categorySelect>
+```
+
 ### Radio Select
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/radiogroup/index.html)
@@ -540,6 +620,21 @@ Closed
 ```
 
 ![Radio group](/images/aem/dialogfields/radio.png)
+
+#### Coral 3 radio group (explicit)
+
+```xml
+<variant
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/radiogroup"
+    fieldLabel="Variant"
+    name="./variant">
+    <items jcr:primaryType="nt:unstructured">
+        <simple text="Simple" value="simple" jcr:primaryType="nt:unstructured"/>
+        <advanced text="Advanced" value="advanced" jcr:primaryType="nt:unstructured"/>
+    </items>
+</variant>
+```
 
 ### Datasource-backed fields
 
@@ -569,6 +664,32 @@ Access that data via `@ChildResource` Annotation in your Sling Model, as describ
 
 Add `composite="{Boolean}true"` to save the entries as a child node which in return can easily be injected into a Sling Model via `@ChildResource`.
 Otherwise all values entered will be stored on the node itself as Array Properties.
+
+#### Multifield validation (min/max)
+
+```xml
+<links
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+    composite="{Boolean}true">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        min-items="1"
+        max-items="5"/>
+    <field
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/container"
+        name="./links">
+        <items jcr:primaryType="nt:unstructured">
+            <textvalue
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                fieldLabel="Link Text"
+                name="./text"/>
+        </items>
+    </field>
+</links>
+```
 
 ```xml
 <myMultifield
@@ -655,6 +776,17 @@ Any dialog field can be added to each accordion item `items` block.
 ```
 
 ![Accordion](/images/aem/dialogfields/accordion.png)
+
+### Tags field
+
+```xml
+<tags
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="cq/gui/components/coral/common/form/tagfield"
+    fieldLabel="Tags"
+    name="./cq:tags"
+    multiple="{Boolean}true"/>
+```
 
 ## Layout & Read Only
 
@@ -756,6 +888,43 @@ A `Well` groups items together visually, by adding a background color and a smal
 
 ![Well](/images/aem/dialogfields/well.png)
 
+### Granite data attributes for JS hooks
+
+Use `granite:data` to expose custom attributes for dialog scripts.
+
+```xml
+<textvalue
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Label"
+    name="./label">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        role="dialog-toggle"
+        target=".cmp-dialog-advanced"/>
+</textvalue>
+```
+
+### Collapsible container
+
+```xml
+<section
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/accordion"
+    variant="default">
+    <items jcr:primaryType="nt:unstructured">
+        <group
+            jcr:primaryType="nt:unstructured"
+            jcr:title="Advanced"
+            sling:resourceType="granite/ui/components/coral/foundation/container"
+            maximized="{Boolean}false">
+            <items jcr:primaryType="nt:unstructured">
+                <!-- fields -->
+            </items>
+        </group>
+    </items>
+</section>
+```
 ## Persisted values and defaults
 
 - Use `./propertyName` to persist values on the component node.
