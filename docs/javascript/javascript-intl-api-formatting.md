@@ -1,5 +1,5 @@
 ---
-title: JavaScript Intl API: Currency, Date, and Number Formatting (TypeScript)
+title: "JavaScript Intl API: Currency, Date, and Number Formatting (TypeScript)"
 description: Learn currency formatting, date formatting, number formatting, list formatting, and more with the JavaScript Intl API. Practical TypeScript examples and best practices.
 slug: /javascript/intl-api-formatting
 tags: [javascript, typescript, intl, i18n, localization]
