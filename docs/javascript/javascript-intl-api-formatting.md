@@ -20,6 +20,8 @@ sidebar_position: 1
 
 The JavaScript Intl API is the built-in way to handle **currency formatting**, **date formatting**, **number formatting**, and a lot more. This guide walks through the most useful Intl features with expressive TypeScript examples you can drop into any app.
 
+Note: results below show typical output for `en-US` in modern browsers/Node. Minor punctuation or casing can vary by runtime and ICU data.
+
 ## Quick start: currency and date formatting
 
 ```ts
@@ -42,6 +44,12 @@ console.log(currency.format(amount));
 console.log(dateTime.format(createdAt));
 ```
 
+Result:
+```text
+USD 1,234.56
+Feb 2, 2026, 2:30 PM
+```
+
 ## Intl.NumberFormat: numbers, currency, units, percent
 
 ### Number formatting with locale and grouping
@@ -52,6 +60,7 @@ const number = 9876543.21;
 const compact = new Intl.NumberFormat("en-US", {
     notation: "compact",
     compactDisplay: "short",
+    maximumFractionDigits: 1,
 });
 
 const noGrouping = new Intl.NumberFormat("en-US", {
@@ -61,6 +70,12 @@ const noGrouping = new Intl.NumberFormat("en-US", {
 
 console.log(compact.format(number));
 console.log(noGrouping.format(number));
+```
+
+Result:
+```text
+9.9M
+9876543.21
 ```
 
 ### Currency formatting with precise rounding
@@ -85,6 +100,12 @@ console.log(usd.format(price));
 console.log(eurCode.format(price));
 ```
 
+Result:
+```text
+$20.00
+EUR 20.00
+```
+
 ### Unit and percent formatting
 
 ```ts
@@ -107,6 +128,12 @@ console.log(kmPerHour.format(speed));
 console.log(percent.format(ratio));
 ```
 
+Result:
+```text
+88.5 km/h
+23.7%
+```
+
 ### Format to parts for custom UI
 
 `formatToParts` is ideal if you need to style currency symbols or decimals separately.
@@ -119,10 +146,18 @@ const money = new Intl.NumberFormat("en-US", {
 
 const parts = money.formatToParts(1234.5);
 const currencySymbol = parts.find((p) => p.type === "currency")?.value ?? "";
-const integer = parts.find((p) => p.type === "integer")?.value ?? "";
+const integer = parts
+    .filter((p) => p.type === "integer" || p.type === "group")
+    .map((p) => p.value)
+    .join("");
 const fraction = parts.find((p) => p.type === "fraction")?.value ?? "";
 
 console.log({ currencySymbol, integer, fraction });
+```
+
+Result:
+```text
+{ currencySymbol: "$", integer: "1,234", fraction: "50" }
 ```
 
 ## Intl.DateTimeFormat: dates, times, time zones
@@ -148,6 +183,12 @@ console.log(longDate.format(now));
 console.log(shortDate.format(now));
 ```
 
+Result:
+```text
+Monday, February 2, 2026 at 2:30 PM
+2/2/26, 2:30 PM
+```
+
 ### Time zone aware formatting
 
 ```ts
@@ -169,6 +210,12 @@ console.log(nyc.format(meeting));
 console.log(berlin.format(meeting));
 ```
 
+Result:
+```text
+Feb 2, 2026, 11:00 AM
+Feb 2, 2026, 5:00 PM
+```
+
 ### Range formatting
 
 ```ts
@@ -182,6 +229,11 @@ const range = new Intl.DateTimeFormat("en-US", {
 });
 
 console.log(range.formatRange(start, end));
+```
+
+Result:
+```text
+Feb 2, 2026, 8:00 AM - 10:30 AM
 ```
 
 ### Format to parts for dates
@@ -199,6 +251,11 @@ const year = dateParts.find((p) => p.type === "year")?.value ?? "";
 console.log({ day, month, year });
 ```
 
+Result:
+```text
+{ day: "2", month: "February", year: "2026" }
+```
+
 ## Intl.ListFormat: list formatting
 
 ```ts
@@ -212,6 +269,11 @@ const list = new Intl.ListFormat("en-US", {
 console.log(list.format(tools));
 ```
 
+Result:
+```text
+TypeScript, Docusaurus, and Intl API
+```
+
 ## Intl.RelativeTimeFormat: relative time
 
 ```ts
@@ -222,6 +284,12 @@ const rtf = new Intl.RelativeTimeFormat("en-US", {
 
 console.log(rtf.format(-1, "day"));
 console.log(rtf.format(3, "week"));
+```
+
+Result:
+```text
+yesterday
+in 3 weeks
 ```
 
 ## Intl.PluralRules: pluralization
@@ -243,6 +311,12 @@ console.log(formatMessages(1));
 console.log(formatMessages(5));
 ```
 
+Result:
+```text
+You have 1 message
+You have 5 messages
+```
+
 ## Intl.Collator: locale-aware sorting
 
 ```ts
@@ -257,6 +331,11 @@ items.sort(collator.compare);
 console.log(items);
 ```
 
+Result:
+```text
+[ "file-1", "file-2", "file-10" ]
+```
+
 ## Intl.DisplayNames: user-friendly labels
 
 ```ts
@@ -264,6 +343,12 @@ const display = new Intl.DisplayNames("en-US", { type: "currency" });
 
 console.log(display.of("USD"));
 console.log(display.of("EUR"));
+```
+
+Result:
+```text
+US Dollar
+Euro
 ```
 
 ## Intl.Segmenter: split text by words or graphemes
@@ -279,6 +364,11 @@ const words = Array.from(wordSegmenter.segment(text))
 console.log(words);
 ```
 
+Result:
+```text
+[ "Intl", "API", "makes", "i18n", "easier" ]
+```
+
 ## Intl.Locale and supported values
 
 ```ts
@@ -291,6 +381,13 @@ if (typeof Intl.supportedValuesOf === "function") {
     const currencies = Intl.supportedValuesOf("currency").slice(0, 5);
     console.log(currencies);
 }
+```
+
+Result:
+```text
+en-US
+gregory
+[ "AED", "AFN", "ALL", "AMD", "ANG" ]
 ```
 
 ## Practical tips for production usage
@@ -311,6 +408,14 @@ function getNumberFormat(locale: string, options: Intl.NumberFormatOptions): Int
     numberFormatCache.set(key, formatter);
     return formatter;
 }
+
+const cachedUsd = getNumberFormat("en-US", { style: "currency", currency: "USD" });
+console.log(cachedUsd.format(1234.56));
+```
+
+Result:
+```text
+$1,234.56
 ```
 
 ## FAQ: Intl API for currency and date formatting
@@ -328,6 +433,11 @@ const usd = new Intl.NumberFormat("en-US", {
 console.log(usd.format(1234.56));
 ```
 
+Result:
+```text
+$1,234.56
+```
+
 ### How do I format dates with Intl in JavaScript?
 
 Use `Intl.DateTimeFormat` with `dateStyle`, `timeStyle`, and an optional `timeZone`.
@@ -339,9 +449,11 @@ const fmt = new Intl.DateTimeFormat("en-US", {
     timeZone: "UTC",
 });
 
-console.log(fmt.format(new Date()));
+const exampleDate = new Date("2026-02-02T14:30:00Z");
+console.log(fmt.format(exampleDate));
 ```
 
-### Is the Intl API supported in TypeScript?
-
-Yes. TypeScript ships type definitions for Intl, so you get full type safety and IntelliSense by default.
+Result:
+```text
+February 2, 2026 at 2:30 PM
+```
