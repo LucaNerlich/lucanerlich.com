@@ -7,38 +7,37 @@ tags: [aem, setup, local-development]
 
 # Local Development Setup
 
-This post describes the steps and software requirements one needs to follow, to create and set up a working, local AEM
-instance.
-Secondly, an example of using the "Maven Archetype" provides the necessary basics to bootstrap a new AEM
-project, according to the best practices.
+This post describes the steps and software requirements you need to create and set up a working local AEM instance.
+It also walks through bootstrapping a new project with the official Maven Archetype and shows common day-to-day
+commands you will likely run during development.
 
 ## TL:DR
 
-1. Install Java
-    1. [Download JDK](https://adoptopenjdk.net/)
-    2. Add to $PATH
-2. Login with Adobe Account & Download AEM
+1. Install Java (JDK)
+    1. [Download JDK](https://adoptopenjdk.net/) or use SDKMAN
+    2. Prefer JDK 21 for Cloud SDKs released since mid 2025
+    3. Add to `PATH` and verify with `java -version`
+2. Login with your Adobe account & download AEM
     1. [Adobe Software Distribution](https://experience.adobe.com/#/downloads/content/software-distribution/en/aemcloud.html)
-    2. e.g AEM SDK v2021.3.5087.20210322T071003Z-210325
-        1. Note, AEM Changed its Versioning for Cloud to `year + version + timestamp`.
-    3. extract archive
-    4. rename to `cq-author-p4502.jar`
-        1. If you want to start a local publisher, name it to `cq-publish-p4503`.
-        2. You can change the number to any valid port if you have something already running and blocking that specific
-           port.
-3. Start AEM Instance
-    1. `java -jar cq-author-p4502.jar`
-    2. wait 1-5 minutes (Newer Versions of AEM start a lot quicker, than e.g 6.3 or 6.4)
+    2. Example Cloud SDK version: `2021.3.5087.20210322T071003Z-210325`
+        1. Cloud SDK uses `year + version + timestamp` format
+    3. Extract the archive
+    4. Rename to `cq-author-p4502.jar`
+        1. For a local publish, name it `cq-publish-p4503.jar`
+        2. Adjust the port if you already have something running
+3. Start AEM instance
+    1. `java -jar cq-author-p4502.jar -gui`
+    2. Wait 1-5 minutes (newer versions start much faster)
 4. Install Maven
     1. [Download](https://maven.apache.org/download.cgi)
-    2. Add to $PATH
-5. Execute [Maven Archetype Command](#bootstrapping-a-development-environment-via-maven-archetype)
+    2. Add to `PATH` and verify with `mvn -v`
+5. Execute the [Maven Archetype Command](#bootstrapping-a-development-environment-via-maven-archetype)
     1. `cd ./mysite`
     2. `mvn clean install -PautoInstallPackage`
-6. Access [http://localhost:4502](http://localhost:4502) and login via admin:admin
+6. Access [http://localhost:4502](http://localhost:4502) and login with `admin:admin`
 
-Once you have shutdown (`ctrl+c`) your initial AEM Instance, you can / should start and shutdown AEM via the provided
-scripts in `crx-quickstart/bin`.
+Once you have shut down (`ctrl+c`) your initial AEM instance, you should start and stop AEM via the scripts in
+`crx-quickstart/bin` so that the JVM options and runmodes are applied consistently.
 
 ## Requirements
 
@@ -55,9 +54,10 @@ Managed Services offerings still bear the classic `major.minor.patch` level nota
 ### Tools
 
 - Java JDK
-    - JDK v11 ->  AEM Cloud SDK + AEM ≥6.5
-    - JDK v8 -> AEM ≤6.4
-- Maven ≥3.39
+    - JDK 21 -> AEM Cloud SDKs released since mid 2025
+    - JDK 11 -> AEM Cloud SDK + AEM 6.5 (older SDKs)
+    - JDK 8 -> AEM 6.4 and below
+- Maven >= 3.8
 - AEM-Repo Tool
     - Optional -> Conveniently push/pull content to the local JCR (AEMs Database)
 - NodeJS + NPM
@@ -69,37 +69,90 @@ A local development setup consists of two parts.
 One, the actual AEM instance (java process) running and,
 secondly, the repository containing all the projects custom code.
 
+### PATH setup (bash example)
+
+Make sure both Maven and your local AEM start scripts are available on your shell `PATH`.
+The example below assumes Maven is installed in `~/tools/apache-maven-3.9.9` and AEM is unpacked in `~/aem/author`.
+
+Add the following to `~/.bashrc`:
+
+```bash
+export MAVEN_HOME="$HOME/tools/apache-maven-3.9.9"
+export AEM_HOME="$HOME/aem/author"
+export PATH="$MAVEN_HOME/bin:$AEM_HOME/crx-quickstart/bin:$PATH"
+```
+
+Then reload:
+
+```bash
+source ~/.bashrc
+```
+
+Verify:
+
+```bash
+mvn -v
+start
+```
+
 ### Running AEM locally
 
-After downloading the desired AEM Version from
-the [Adobe Software Distribution](https://experience.adobe.com/#/downloads/content/software-distribution/en/aemcloud.html)
-extract the archive — if the cloud sdk has been downloaded.
-Otherwise, we can directly run the jar.
+After downloading the desired AEM version from
+the [Adobe Software Distribution](https://experience.adobe.com/#/downloads/content/software-distribution/en/aemcloud.html),
+extract the archive if you downloaded the Cloud SDK. For on-premise or managed services, you can run the jar directly.
 
 By renaming the jar according to the following schema, a couple of default settings can be
 set: `cq-(author|publish)-p(port)`.
-For example `cq-author-p4502`.
-When started, this will run the AEM instance as an
-author and expose it locally via port 4502.
+For example `cq-author-p4502.jar`.
+When started, this will run the AEM instance as an author and expose it locally via port 4502.
+The same pattern applies to publish with a default port of 4503.
 
-Running the jar is as easy as executing it like this: `java -jar my-downloaded-aem.jar -gui`.
+Running the jar is as easy as executing it like this:
+
+```bash
+java -jar cq-author-p4502.jar -gui
+```
+
+The first run will unpack the `crx-quickstart` directory next to the jar. This folder is the actual runtime and is
+where logs, bundles, and repository data are stored.
+
 The parameter `-gui` can be appended, to launch an additional small UI, which informs the user about the startup /
 installation progress.
 Additionally, `-gui` will automatically set the default admin users credentials to `admin:admin`.
 
+#### Start and stop scripts
+
+After the initial startup, use the scripts in `crx-quickstart/bin`:
+
+```bash
+./crx-quickstart/bin/start
+./crx-quickstart/bin/stop
+```
+
+On Windows, use `start.bat` and `stop.bat` instead.
+
+#### Adding runmodes
+
+You can add runmodes via the startup scripts, for example to differentiate author and publish or to enable
+environment-specific configuration:
+
+```bash
+./crx-quickstart/bin/start -r author,dev
+```
+
 ### Configuring Debug Ports for Local Development
 
-Do be able to attach a java debugger locally, the startup scripts need to be extended by a couple of arguments.
+To be able to attach a Java debugger locally, the startup scripts need to be extended by a couple of arguments.
 
 In each (author, publish) start script, find the following line
 
-`if not defined CQ_JVM_OPTS set CQ_JVM_OPTS=[...]` and add the following arguments
+`if not defined CQ_JVM_OPTS set CQ_JVM_OPTS=[...]` and add the following arguments:
 
 `CQ_JVM_OPTS='-server -Xmx8024m -Djava.awt.headless=true -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=30303,suspend=n'`
 .
 Note, that the `address=30303` needs to be different for author and publish.
 
-A debug run config in Intellij IDEA looks like this
+A debug run config in IntelliJ IDEA looks like this:
 
 ![IntelliJ debug config](/images/aem/idea-debug-config.png)
 
@@ -116,17 +169,15 @@ To summarize, by using an archetype, which itself has been created by the AEM De
 variables with which the archetype bootstraps itself and creates a customized set of files and directories — ready to
 use.
 
-The following example demonstrates a bash command using the v27 of the aem-project-archetype.
-By setting 'appTitle', '
-appId' and 'groupId' we tell the Archetype how it should name and structure our packages.
-'frontendModule' can be one of the following items['none', 'general', 'react', 'angular'].
-By specifying this parameter, we can opt in to use the (new) ui.frontend
-module, which itself can be preconfigured with either a "classic" html variant, or one of the modern Javascript SPA
-Frameworks - currently only React and Angular are supported.
+The following example demonstrates a bash command using v27 of the `aem-project-archetype`.
+By setting `appTitle`, `appId`, and `groupId` we tell the archetype how to name and structure the project.
+`frontendModule` can be one of `none`, `general`, `react`, or `angular`.
+By specifying this parameter, we can opt in to use the `ui.frontend` module, which can be preconfigured with either
+a classic HTML variant or a modern SPA framework (React or Angular).
 
-If we do not specify an 'aemVersion' the latest AEM Cloud Sdk will be used. A specific version can be set via passing
-the AEM version in its major.minor.patch level notation. For example 'aemVersion="6.4.8' would create the archetype
-based on AEM 6.4 with Patch Level 8 and add all necessary dependencies to the pom.xml.
+If we do not specify `aemVersion`, the latest AEM Cloud SDK is used. A specific version can be set via passing the AEM
+version in its `major.minor.patch` notation. For example `aemVersion="6.4.8"` creates a project based on AEM 6.4 with
+patch level 8 and adds all necessary dependencies to the `pom.xml`.
 
 ```bash
 mvn -B archetype:generate \
@@ -140,11 +191,20 @@ mvn -B archetype:generate \
  -D includeExamples=y
 ```
 
+#### Common archetype options (quick reference)
+
+- `appTitle`: Display name, e.g. "My Site"
+- `appId`: Project folder and package prefix, e.g. "mysite"
+- `groupId`: Maven group id, e.g. "com.mysite"
+- `frontendModule`: `none | general | react | angular`
+- `includeExamples`: `y` to include example components and content
+- `aemVersion`: `6.5.0` style version (for non-cloud)
+
 The Archetype provides a wide range of optional properties, with sensible defaults set for each. For a list of all
 available settings, please check
 the [official documentation](https://github.com/adobe/aem-project-archetype#available-properties) on GitHub.
 
-Executing the above command will create the following folder structure
+Executing the above command will create the following folder structure:
 
 ```bash
 Using AEM as a Cloud Service SDK version: 2021.3.5087.20210322T071003Z-210325
@@ -182,13 +242,60 @@ drwxr-xr-x  11 nerlich  staff  352B ui.tests/
 Building and deploying the complete development environment can be done via the following
 command `mvn clean install -PautoInstallSinglePackage` - executed in the root directory.
 
-`ui.apps`, `ui.config` and `ui.content` can be individually build with the profile `-PautoInstallPackage`. Deploying
-just the
-java module 'core' can be achieved with the profile `-PautoInstallBundle`.
+`ui.apps`, `ui.config`, and `ui.content` can be individually built with the profile `-PautoInstallPackage`. Deploying
+just the Java module `core` can be achieved with the profile `-PautoInstallBundle`.
 
-> I usually just run `mvn clean install -PautoInstallPackage` in my projects' root. The deployment is quick enough, and
-> I
-> can be sure that I did not forget anything.
+> I usually just run `mvn clean install -PautoInstallPackage` in my project's root. The deployment is quick enough and
+> I can be sure that I did not forget anything.
+
+#### Common Maven commands (copy/paste)
+
+```bash
+# Full build and deploy all packages
+mvn clean install -PautoInstallSinglePackage
+
+# Build and install only ui.apps/ui.config/ui.content packages
+mvn clean install -PautoInstallPackage
+
+# Deploy only the OSGi bundle
+mvn clean install -PautoInstallBundle
+
+# Run tests only
+mvn test
+```
+
+### AEM Repo Tool (content sync)
+
+The AEM Repo Tool (`repo`) is a fast way to push or pull content packages without a full Maven build.
+It is especially useful for front-end asset changes or small content updates.
+
+```bash
+# Install the repo tool (macOS via brew)
+brew install aem/repo/repo
+
+# Check that it is available
+repo --version
+```
+
+Example usage:
+
+```bash
+# Push a local content package (zip)
+repo put -u admin -p admin http://localhost:4502 crx-package.zip
+
+# Push a file or folder directly into JCR (useful for ui.apps changes)
+repo put -u admin -p admin http://localhost:4502 /path/to/ui.apps/src/main/content/jcr_root/apps/mysite
+
+# Pull from AEM into your local filesystem
+repo get -u admin -p admin http://localhost:4502 /content/mysite/en
+```
+
+### Troubleshooting quick hits
+
+- If AEM hangs on startup, check `crx-quickstart/logs/error.log`
+- If login fails, verify the jar was started with `-gui` at least once
+- If port 4502 is busy, rename the jar to another port, e.g. `cq-author-p5502.jar`
+- If bundles remain in "Installed" state, clear the OSGi cache by deleting `crx-quickstart/launchpad/felix` and restart
 
 ## SonarQube Setup - Automatic Rule Evaluation
 
