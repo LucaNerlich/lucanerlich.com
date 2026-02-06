@@ -1,16 +1,49 @@
 ---
 title: Client Libraries
 sidebar_position: 9
-tags: [aem, clientlibs, frontend]
+tags: [aem, clientlibs, frontend, css, javascript]
 ---
 
 # Client Libraries
 
-Client libraries (clientlibs) manage CSS and JS in AEM. They are grouped by categories and loaded in components or templates.
+Client libraries (clientlibs) are AEM's mechanism for managing CSS and JavaScript delivery. They provide
+dependency management, aggregation, minification, proxy serving, and cache busting -- all configured
+declaratively in the repository.
 
-## Basic clientlib
+Unlike raw static files, clientlibs give you:
 
-```xml title="ui.apps/.../clientlibs/clientlib-site/.content.xml"
+- **Categories** -- logical names that group CSS/JS files together
+- **Dependencies** -- declare load order between libraries
+- **Embedding** -- inline one library's content into another to reduce HTTP requests
+- **Proxy serving** -- serve files from `/etc.clientlibs/` instead of `/apps/` (which is blocked on publish)
+- **Minification** -- built-in CSS/JS minification and GZip compression
+- **Cache busting** -- content-hash URLs for long-term browser caching
+
+## Clientlib Folder Structure
+
+A clientlib is a JCR node of type `cq:ClientLibraryFolder`. On the filesystem (in `ui.apps`), it looks like this:
+
+```text title="Annotated clientlib structure"
+clientlib-site/
+  .content.xml          <-- Node definition: categories, dependencies, embed, allowProxy
+  js.txt                <-- Manifest: lists JS files to include (in order)
+  css.txt               <-- Manifest: lists CSS files to include (in order)
+  js/                   <-- JavaScript source files
+    main.js
+    utils.js
+  css/                  <-- CSS source files
+    styles.css
+    layout.css
+  resources/            <-- Static resources: fonts, images, SVGs
+    fonts/
+      myfont.woff2
+    icons/
+      logo.svg
+```
+
+### The .content.xml definition
+
+```xml title="clientlib-site/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
@@ -19,21 +52,602 @@ Client libraries (clientlibs) manage CSS and JS in AEM. They are grouped by cate
           categories="[myproject.site]"/>
 ```
 
-## Load in HTL
+| Property | Type | Description |
+|----------|------|-------------|
+| `jcr:primaryType` | String | Must be `cq:ClientLibraryFolder` |
+| `categories` | String[] | One or more category names this clientlib belongs to |
+| `allowProxy` | Boolean | Serve via `/etc.clientlibs/` proxy (always set to `true`) |
+| `dependencies` | String[] | Categories that must load **before** this one |
+| `embed` | String[] | Categories whose content is **inlined** into this one |
+| `channels` | String[] | Device channels: `[desktop]`, `[mobile]`, or both (rarely used) |
+| `cssProcessor` | String[] | CSS processing pipeline (e.g. `["default:none", "min:gcc"]`) |
+| `jsProcessor` | String[] | JS processing pipeline (e.g. `["min:gcc"]`) |
+
+### The manifest files (js.txt / css.txt)
+
+These plain-text files list which source files to include and in what order. Use `#base=` to set the
+base directory, so you don't repeat the path prefix:
+
+```text title="js.txt"
+#base=js
+main.js
+utils.js
+```
+
+```text title="css.txt"
+#base=css
+styles.css
+layout.css
+```
+
+Rules:
+- One filename per line
+- Lines starting with `#` are directives or comments
+- `#base=js` sets the base directory to `js/` -- all subsequent filenames are relative to it
+- Files are concatenated in the order listed
+- Missing files cause a build warning (but not a hard failure)
+
+:::warning
+If you omit `#base=`, AEM looks for files directly inside the clientlib folder root. This is a common
+source of "file not found" errors when your files are inside subdirectories.
+:::
+
+### The resources folder
+
+Files under `resources/` are served as-is (fonts, images, SVGs) and are accessible at:
+
+```text
+/etc.clientlibs/myproject/clientlibs/clientlib-site/resources/fonts/myfont.woff2
+```
+
+Reference them in CSS with relative paths:
+
+```css
+@font-face {
+    font-family: 'MyFont';
+    src: url('resources/fonts/myfont.woff2') format('woff2');
+}
+```
+
+## Categories
+
+Categories are the **identity** of a clientlib. They are logical names -- not file paths -- that you reference
+when loading CSS/JS in your templates.
+
+### Naming conventions
+
+Use a dot-separated namespace pattern to avoid collisions:
+
+```text
+myproject.site                     <-- Global site CSS/JS
+myproject.dependencies             <-- Third-party vendor libs
+myproject.components.hero          <-- Component-specific
+myproject.components.articlecard   <-- Component-specific
+cq.authoring.dialog                <-- AEM built-in: loaded in all Touch UI dialogs
+cq.authoring.editor.hook           <-- AEM built-in: loaded in page editor
+```
+
+### Multiple categories
+
+A single clientlib can belong to multiple categories:
+
+```xml
+categories="[myproject.site, myproject.base]"
+```
+
+Both `myproject.site` and `myproject.base` will resolve to this clientlib's files.
+
+### Category collisions
+
+If two clientlib folders declare the same category, **both are loaded** and their files are concatenated.
+This can cause unexpected duplicate CSS/JS or ordering issues. Always namespace with your project prefix
+and check for collisions with the [dump libs tool](#debugging-clientlibs).
+
+## Dependencies and Embedding
+
+### Dependencies
+
+The `dependencies` property declares that other categories must be loaded **before** this clientlib.
+Each dependency is loaded as a separate HTTP request.
+
+```xml
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:ClientLibraryFolder"
+          allowProxy="{Boolean}true"
+          categories="[myproject.site]"
+          dependencies="[myproject.dependencies, myproject.base]"/>
+```
+
+When `myproject.site` is loaded, AEM ensures `myproject.dependencies` and `myproject.base` are loaded first (as separate requests).
+
+### Embedding
+
+The `embed` property **inlines** another clientlib's CSS/JS content into this one. The embedded library's
+files become part of this library's output -- no extra HTTP request.
+
+```xml
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:ClientLibraryFolder"
+          allowProxy="{Boolean}true"
+          categories="[myproject.site]"
+          embed="[myproject.components.hero, myproject.components.articlecard, myproject.components.footer]"/>
+```
+
+Now a single request to `myproject.site` serves the combined output of all four libraries.
+
+### Dependencies vs embedding
+
+| | Dependencies | Embedding |
+|---|---|---|
+| **HTTP requests** | One per dependency (separate files) | All inlined into one file |
+| **Caching** | Each dependency cached independently | Single combined cache entry |
+| **Use when** | Shared vendor libraries (jQuery, etc.) that other clientlibs also depend on | Component-specific CSS/JS that should be bundled into the main site file |
+| **Risk** | More HTTP requests | Larger single file; embedded lib can't be cached separately |
+
+:::tip
+A common pattern: use `dependencies` for large shared vendor libraries (so they're cached once and reused),
+and `embed` for your own component clientlibs (so they're bundled into a single site-wide file).
+:::
+
+### Channels
+
+The `channels` property restricts a clientlib to specific device channels:
+
+```xml
+channels="[desktop]"
+```
+
+This is rarely used in modern AEM projects. Responsive design via CSS media queries is preferred.
+
+## The allowProxy Mechanism
+
+The `/apps/` path is blocked by Dispatcher on publish instances for security reasons. Without `allowProxy`,
+your clientlib CSS/JS would 404 on publish.
+
+Setting `allowProxy="{Boolean}true"` makes AEM serve the clientlib content from `/etc.clientlibs/` instead:
+
+```text
+Actual location:  /apps/myproject/clientlibs/clientlib-site/css/styles.css
+Proxy URL:        /etc.clientlibs/myproject/clientlibs/clientlib-site/css/styles.css
+```
+
+The proxy URL mirrors the path structure under `/apps/` but is served from the Dispatcher-friendly `/etc.clientlibs/` prefix.
+
+:::danger
+Always set `allowProxy="{Boolean}true"`. Without it:
+- On AEM as a Cloud Service: clientlibs **will not load** on publish
+- On AEM 6.5: clientlibs load on author but 404 on publish through Dispatcher
+- It is a hard requirement, not just a best practice
+:::
+
+## Loading Clientlibs in HTL
+
+AEM provides a built-in HTL template for loading clientlibs. First, import it:
 
 ```html
-<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
-  <sly data-sly-call="${clientlib.all @ categories='myproject.site'}"></sly>
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"/>
+```
+
+Then call one of three methods:
+
+### clientlib.all (CSS + JS together)
+
+Outputs both `<link>` and `<script>` tags:
+
+```html
+<sly data-sly-call="${clientlib.all @ categories='myproject.site'}"/>
+```
+
+### clientlib.css (CSS only)
+
+Outputs only `<link>` tags:
+
+```html
+<sly data-sly-call="${clientlib.css @ categories='myproject.site'}"/>
+```
+
+### clientlib.js (JS only)
+
+Outputs only `<script>` tags:
+
+```html
+<sly data-sly-call="${clientlib.js @ categories='myproject.site'}"/>
+```
+
+### Loading multiple categories
+
+Pass an array:
+
+```html
+<sly data-sly-call="${clientlib.all @ categories=['myproject.dependencies', 'myproject.site']}"/>
+```
+
+### Async and defer loading
+
+For non-blocking JS loading, use the `loading` attribute:
+
+```html
+<!-- Defer: execute after HTML parsing, maintain order -->
+<sly data-sly-call="${clientlib.js @ categories='myproject.site', loading='defer'}"/>
+
+<!-- Async: execute as soon as downloaded, no order guarantee -->
+<sly data-sly-call="${clientlib.js @ categories='myproject.analytics', loading='async'}"/>
+```
+
+### Optimal page template placement
+
+For best performance, split CSS and JS loading:
+
+```html title="page.html -- recommended placement"
+<!DOCTYPE html>
+<html>
+<head>
+    <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"/>
+
+    <!-- CSS in the head: renders immediately, avoids FOUC -->
+    <sly data-sly-call="${clientlib.css @ categories='myproject.site'}"/>
+</head>
+<body>
+
+    <!-- Page content -->
+    <div class="page">
+        <sly data-sly-resource="${'root' @ resourceType='wcm/foundation/components/responsivegrid'}"/>
+    </div>
+
+    <!-- JS at the end of body: doesn't block rendering -->
+    <sly data-sly-call="${clientlib.js @ categories='myproject.site', loading='defer'}"/>
+</body>
+</html>
+```
+
+### Conditional loading (author-only)
+
+Load clientlibs only in author mode (e.g. for editor customizations):
+
+```html
+<sly data-sly-test="${wcmmode.edit || wcmmode.preview}">
+    <sly data-sly-call="${clientlib.all @ categories='myproject.authoring'}"/>
 </sly>
 ```
 
-## Best practices
+## Minification and Aggregation
 
-- Keep categories small and purposeful.
-- Use `allowProxy` to serve from `/etc.clientlibs`.
-- Avoid overlays for clientlibs; extend via new categories instead.
+AEM's **HTML Library Manager** handles minification and aggregation at runtime.
+
+### OSGi configuration
+
+```json title="ui.config/.../config/com.adobe.granite.ui.clientlibs.impl.HtmlLibraryManagerImpl.cfg.json"
+{
+    "htmllibmanager.minify": true,
+    "htmllibmanager.debug": false,
+    "htmllibmanager.gzip": true,
+    "htmllibmanager.timing": false,
+    "htmllibmanager.maxDataUriSize": 0,
+    "htmllibmanager.maxage": 604800,
+    "htmllibmanager.enforceContentDispositionHeader": false
+}
+```
+
+| Property | Description | Default |
+|----------|-------------|---------|
+| `htmllibmanager.minify` | Enable CSS/JS minification | `true` on publish, `false` on author |
+| `htmllibmanager.debug` | Serve individual unminified files (like `?debugClientLibs=true` permanently) | `false` |
+| `htmllibmanager.gzip` | Enable GZip compression of clientlib output | `true` |
+| `htmllibmanager.timing` | Log timing information for clientlib processing | `false` |
+| `htmllibmanager.maxage` | Cache-Control max-age in seconds (604800 = 7 days) | `604800` |
+
+### Aggregation behaviour
+
+When minification is enabled, AEM concatenates all files in a category into a single output:
+
+```text
+Separate files (debug mode):
+  /etc.clientlibs/myproject/clientlibs/clientlib-site/js/main.js
+  /etc.clientlibs/myproject/clientlibs/clientlib-site/js/utils.js
+
+Aggregated (production):
+  /etc.clientlibs/myproject/clientlibs/clientlib-site.min.js
+```
+
+### Custom processors
+
+Override the default minifier per clientlib using `cssProcessor` and `jsProcessor`:
+
+```xml
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:ClientLibraryFolder"
+          allowProxy="{Boolean}true"
+          categories="[myproject.site]"
+          cssProcessor="[default:none, min:none]"
+          jsProcessor="[default:none, min:none]"/>
+```
+
+Setting processors to `none` disables AEM's minification for this clientlib -- useful when your
+`ui.frontend` build already produces minified output.
+
+## Versioning and Cache Busting
+
+AEM generates versioned URLs with a content hash so browsers can cache aggressively:
+
+```text
+/etc.clientlibs/myproject/clientlibs/clientlib-site.lc-abc123def456-lc.min.css
+                                                   ^^^^^^^^^^^^^^^^
+                                                   content hash
+```
+
+When the clientlib content changes, the hash changes, and browsers fetch the new version. Combined with
+a long `max-age` header, this gives you instant cache invalidation without stale content.
+
+On the Dispatcher side, ensure your cache rules allow `/etc.clientlibs/` paths and that flush agents
+invalidate clientlib URLs when code deployments occur.
+
+:::tip
+On AEM as a Cloud Service, clientlib versioning and Dispatcher invalidation are handled automatically
+by the CDN. On AEM 6.5 / AMS, configure your Dispatcher and CDN cache rules to respect the
+`lc-*-lc` hash pattern in the URL.
+:::
+
+## Debugging Clientlibs
+
+### Debug query parameter
+
+Append `?debugClientLibs=true` to any page URL to serve individual, unminified source files instead of the
+aggregated bundle. This makes it easy to identify which file contains a problem:
+
+```text
+http://localhost:4502/content/my-site/en/home.html?debugClientLibs=true
+```
+
+:::warning
+This parameter only works on **author** instances (or where the HTML Library Manager debug mode is not
+explicitly disabled). It does not work on publish through Dispatcher.
+:::
+
+### Dump libs tool
+
+Navigate to `/libs/granite/ui/content/dumplibs.html` to inspect all registered clientlibs:
+
+```text
+http://localhost:4502/libs/granite/ui/content/dumplibs.html
+```
+
+This tool shows:
+- All categories and their clientlib folders
+- Dependencies and embeds for each category
+- **Category collisions** (multiple folders declaring the same category)
+- **Broken dependencies** (references to categories that don't exist)
+
+### Rebuild clientlibs
+
+If clientlib changes are not reflected after modifying files on a running instance, force a rebuild:
+
+```text
+http://localhost:4502/libs/granite/ui/content/dumplibs.rebuild.html
+```
+
+Click **Invalidate Caches** and then **Rebuild Libraries**. This clears AEM's in-memory clientlib
+cache and recompiles all libraries.
+
+### Browser DevTools tips
+
+- **Network tab**: filter by `clientlib` or `etc.clientlibs` to see all loaded libraries
+- **Source maps**: AEM does not generate source maps by default. If you need them, use the `ui.frontend`
+  build pipeline (webpack/Vite) which produces source maps automatically
+- **Console errors**: missing clientlibs fail silently (no 404 for the HTML tag, just missing CSS/JS).
+  Check the `dumplibs` tool if styles or scripts are not loading
+
+## Preprocessors
+
+### Built-in LESS compiler
+
+AEM includes a LESS compiler that processes `.less` files at runtime. Configure it via the
+`cssProcessor` property:
+
+```xml title=".content.xml with LESS support"
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:ClientLibraryFolder"
+          allowProxy="{Boolean}true"
+          categories="[myproject.site]"
+          cssProcessor="[default:less, min:gcc;compilationLevel=simple]"/>
+```
+
+Then reference `.less` files in `css.txt`:
+
+```text title="css.txt"
+#base=css
+variables.less
+styles.less
+```
+
+### SCSS, TypeScript, and modern tooling
+
+AEM does **not** include built-in support for SCSS, TypeScript, or PostCSS. For these, use the
+`ui.frontend` module with a webpack or Vite build pipeline. The build output is plain CSS/JS that
+AEM serves as a regular clientlib.
+
+See the [Custom Component Guide -- Frontend via ui.frontend](./custom-component.mdx#frontend-via-uifrontend-module)
+and the [Multi-Tenancy UI Frontend Themes](./ui/multi-tenancy-support-ui-frontend.mdx) page for detailed setup.
+
+## Common Patterns
+
+### Site-wide clientlib
+
+Global CSS/JS loaded on every page via the page template. Contains base styles, typography, layout grid,
+and shared JavaScript utilities.
+
+```xml title="clientlibs/clientlib-site/.content.xml"
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:ClientLibraryFolder"
+          allowProxy="{Boolean}true"
+          categories="[myproject.site]"
+          embed="[myproject.components.header, myproject.components.footer, myproject.components.navigation]"/>
+```
+
+Loaded in the page template's `<head>` and `<body>` (see [optimal placement](#optimal-page-template-placement)).
+
+### Component-scoped clientlib
+
+CSS/JS placed inside a component folder, loaded only when that component is rendered.
+
+```text
+components/
+  articlecard/
+    clientlibs/
+      clientlib-site/
+        .content.xml     <-- categories="[myproject.components.articlecard]"
+        css.txt
+        css/articlecard.css
+```
+
+Loaded in the component's HTL:
+
+```html
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"/>
+<sly data-sly-call="${clientlib.css @ categories='myproject.components.articlecard'}"/>
+```
+
+Or **embedded** into the site-wide clientlib so all component styles are bundled into one request.
+
+### Dialog clientlib
+
+JavaScript that runs inside the Touch UI dialog (authoring only). Used for show/hide logic,
+custom validation, or dynamic field behaviour.
+
+```xml title="clientlib-editor/.content.xml"
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:ClientLibraryFolder"
+          allowProxy="{Boolean}true"
+          categories="[cq.authoring.dialog]"/>
+```
+
+The `cq.authoring.dialog` category is loaded automatically by AEM when any component dialog opens.
+Scope your JS to your component using specific CSS selectors.
+
+See [Component Dialogs -- Dialog Clientlib](./component-dialogs.mdx#dynamic-showhide-based-on-a-selection) and
+[Custom Component Guide -- Dialog Clientlib](./custom-component.mdx#step-7-the-dialog-clientlib) for full examples.
+
+### Editor clientlib
+
+JavaScript that hooks into the page editor (e.g. custom layer or toolbar behaviour):
+
+```xml
+categories="[cq.authoring.editor.hook]"
+```
+
+### Theme / brand clientlib
+
+Override base styles per site or brand. Used in multi-tenancy setups where multiple sites share
+components but differ in visual identity.
+
+```xml title="clientlib-theme-brand-a/.content.xml"
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:ClientLibraryFolder"
+          allowProxy="{Boolean}true"
+          categories="[myproject.theme.brand-a]"
+          dependencies="[myproject.site]"/>
+```
+
+Load the theme clientlib after the base site clientlib so its CSS overrides take effect. For a complete
+multi-tenancy setup, see [Multi-Tenancy UI Frontend Themes](./ui/multi-tenancy-support-ui-frontend.mdx).
+
+## Best Practices
+
+- **Always set `allowProxy="{Boolean}true"`** -- mandatory for AEMaaCS, required for publish on all environments.
+- **Namespace categories with your project prefix** -- `myproject.site`, not just `site`. Avoids collisions with other packages.
+- **Keep categories small and purposeful** -- one clientlib per concern (site base, each component, editor hooks). Combine them via `embed` in a parent clientlib.
+- **Use `embed` for production bundling** -- inline component clientlibs into the site clientlib to reduce HTTP requests.
+- **Use `dependencies` for shared vendor libraries** -- so they are cached once and reused across clientlibs.
+- **Split CSS and JS loading** -- CSS in the `<head>`, JS at the end of `<body>` with `defer`. Avoids render-blocking.
+- **Disable AEM minification when using `ui.frontend`** -- set `cssProcessor` and `jsProcessor` to `none` if webpack/Vite already minifies.
+- **Use the `ui.frontend` module for SCSS, TypeScript, or complex builds** -- AEM's built-in processing is limited to LESS and basic minification.
+- **Test with `?debugClientLibs=true`** during development to verify individual files load correctly.
+- **Check the dump libs tool** after deployments to detect category collisions or broken dependencies.
+- **Never put sensitive data in clientlibs** -- they are publicly accessible on publish. No API keys, tokens, or server-side logic.
+- **Use `resources/` for fonts and images** -- they are served through the proxy and benefit from cache headers.
+
+## Common Pitfalls
+
+### Missing #base= directive
+
+```text title="WRONG -- files won't be found"
+main.js
+utils.js
+```
+
+```text title="CORRECT"
+#base=js
+main.js
+utils.js
+```
+
+Without `#base=js`, AEM looks for `main.js` directly inside the clientlib folder root, not in the `js/` subdirectory.
+
+### Typo in category name
+
+Clientlib loading fails **silently**. If your CSS/JS is not appearing, double-check:
+1. The category name in `.content.xml` matches exactly what you reference in HTL
+2. There are no invisible characters or trailing spaces
+3. Use the [dump libs tool](#dump-libs-tool) to verify the category is registered
+
+### Circular dependencies
+
+If clientlib A depends on B and B depends on A, AEM enters an infinite loop. The page will hang or
+time out. Detect this with the dump libs tool, which reports circular dependency chains.
+
+### Forgetting allowProxy
+
+```text
+Author:  ✅ /apps/myproject/clientlibs/clientlib-site.css loads fine
+Publish: ❌ 404 -- /apps/ is blocked by Dispatcher
+```
+
+Always add `allowProxy="{Boolean}true"` and reference the proxy URL in Dispatcher configs.
+
+### Loading heavy JS in the head
+
+```html
+<!-- WRONG: blocks page rendering until all JS is downloaded and executed -->
+<head>
+    <sly data-sly-call="${clientlib.all @ categories='myproject.site'}"/>
+</head>
+```
+
+```html
+<!-- CORRECT: CSS in head, JS deferred at body end -->
+<head>
+    <sly data-sly-call="${clientlib.css @ categories='myproject.site'}"/>
+</head>
+<body>
+    <!-- page content -->
+    <sly data-sly-call="${clientlib.js @ categories='myproject.site', loading='defer'}"/>
+</body>
+```
+
+### Stale clientlibs on a running instance
+
+After modifying clientlib source files on a running instance (via CRXDE or package install), the
+in-memory cache may serve stale content. Use the [rebuild tool](#rebuild-clientlibs) to force
+recompilation, or restart the instance.
+
+### Embedded clientlib not updating
+
+When you embed category B into category A, changes to B's files require A to be rebuilt as well.
+AEM does not always detect transitive changes. Use the rebuild tool after modifying embedded libraries.
 
 ## See also
 
-- [HTL templates](./htl-templates.mdx)
-- [Touch UI (Author UI)](./ui/touch-ui.mdx)
+- [Custom Component Guide](./custom-component.mdx)
+- [HTL Templates](./htl-templates.mdx)
+- [Component Dialogs](./component-dialogs.mdx)
+- [Multi-Tenancy UI Frontend Themes](./ui/multi-tenancy-support-ui-frontend.mdx)
+- [Architecture](./architecture.mdx)
+- [Performance](./performance.mdx)
+- [Adobe: Using Client-Side Libraries](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/introduction/clientlibs)
+- [AEM as a Cloud Service: Client-Side Libraries](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/clientlibs)
