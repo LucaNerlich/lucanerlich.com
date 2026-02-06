@@ -1,6 +1,8 @@
 {
     "label": "Annotations",
     "link": {
+        "slug": "/aem/components/annotations",
+
         "type": "generated-index",
         "description": "Sling Model annotations and injection helpers."
     },

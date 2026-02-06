@@ -1,6 +1,7 @@
 {
     "label": "Backend",
     "link": {
+        "slug": "/aem/backend",
         "type": "generated-index",
         "description": "Sling Models, servlets, OSGi services, filters, and Java best practices."
     },

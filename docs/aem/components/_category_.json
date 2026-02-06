@@ -1,6 +1,8 @@
 {
     "label": "Components",
     "link": {
+        "slug": "/aem/components",
+
         "type": "generated-index",
         "description": "Component development, core components, dialog validation, and annotations."
     },
