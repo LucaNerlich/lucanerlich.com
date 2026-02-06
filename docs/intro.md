@@ -22,7 +22,7 @@ Want to dive straight into some of my favorite posts? Check out these highlights
   how the AEM `ui.frontend` module can be setup to support multi-tenant usecases.
 * [Spring Boot Google OAuth NextJS Example](https://github.com/LucaNerlich/spring-boot-google-oauth-nextjs-example): A
   functional, production ready Spring Boot + Google OAuth + NextJS 15 App Router example
-* [🇩🇪 Merkmale eines erfolgreichen Podcasts](https://m10z.de/artikel/merkmale-eines-erfolgreichen-podcasts
+* [🇩🇪 Merkmale eines erfolgreichen Podcasts](https://m10z.de/artikel/merkmale-eines-erfolgreichen-podcasts)
 * [⭐ Podcast Manager (Strapi CMS)](https://github.com/LucaNerlich/podcast-manager): A self-hosted Podcast Feed
   Management System
   * [🇩🇪 Blog Post describing the Podcast Manager](https://m10z.de/artikel/podcast-manager-strapi-cms)
