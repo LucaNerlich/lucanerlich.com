@@ -177,7 +177,17 @@ const config = {
                     {
                         to: '/aem',
                         label: 'AEM',
+                        position: 'left',
                         className: "font-red",
+                    },
+                    {
+                        to: '/javascript',
+                        label: 'JavaScript',
+                        position: 'left'
+                    },
+                    {
+                        to: '/design-patterns',
+                        label: 'Design Patterns',
                         position: 'left'
                     },
                     {
