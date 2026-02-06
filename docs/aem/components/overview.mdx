@@ -1,136 +1,179 @@
 ---
-title: Components
+title: Components Overview
 sidebar_position: 1
 tags: [aem, components, authoring]
 ---
 
+# Components Overview
 
-# Components
+An AEM component is a self-contained building block that authors drag onto a page, configure via a dialog,
+and that renders HTML through an HTL template backed by a Sling Model. Every component instance is stored
+as a JCR node under the page's `jcr:content` tree, and its `sling:resourceType` property tells Sling
+which rendering scripts to use.
+
+## Component Types
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| **Page component** | Defines the overall page structure (`<html>`, `<head>`, `<body>`) and loads global clientlibs. Usually has `sling:resourceSuperType` pointing to a Core Component page type | `myproject/components/page` |
+| **Content component** | A reusable block placed inside a layout container by authors. Contains its own dialog, model, and template | Text, Image, Teaser, Article Card |
+| **Container component** | Holds other components (a layout grid / parsys). Authors add child components into it | Responsive Grid, Container, Experience Fragment |
+| **Structural component** | Part of the template structure, locked by the template author (header, footer, navigation). Authors cannot remove them | Header, Footer, Navigation |
+
+## Component Anatomy
+
+Every component consists of up to five artifacts:
+
+```text
+myproject/components/articlecard/
+  .content.xml                    1. Component definition (resourceType, group, superType)
+  articlecard.html                2. HTL template (view)
+  _cq_dialog/.content.xml        3. Author dialog (per-instance fields)
+  _cq_design_dialog/.content.xml 4. Design dialog (template policy fields)
+  clientlibs/                     5. Clientlibs (CSS/JS for authoring and runtime)
+```
+
+The Sling Model (Java) lives in the `core/` module and is connected via `data-sly-use` in the HTL template.
+
+For a complete step-by-step walkthrough of building all five artifacts, see the
+[Custom Component Guide](../custom-component.mdx).
+
+## Component Lifecycle
+
+What happens when an author uses a component:
+
+```mermaid
+sequenceDiagram
+    participant Author
+    participant Editor as Page Editor
+    participant JCR as JCR Repository
+    participant Sling
+    participant HTL as HTL + Sling Model
+
+    Author->>Editor: Drags component onto page
+    Editor->>JCR: Creates node with sling:resourceType
+    Author->>Editor: Opens dialog, fills in fields
+    Editor->>JCR: Saves properties on the node
+    Note over Sling: Next page render
+    Sling->>JCR: Reads node, resolves resourceType
+    Sling->>HTL: Executes matching HTL template
+    HTL->>HTL: Adapts request to Sling Model
+    HTL-->>Author: Rendered HTML
+```
 
 ## Style System
 
-### Reading the Style Value in a Sling Model / Template
+The Style System allows template authors to define CSS class combinations that content authors can
+apply to components without developer involvement. This enables visual variations (e.g. "Hero - Dark",
+"Hero - Compact") from a single component.
 
-You can read your current sling models applied Style (System), if you adapt your Resource to the `ComponentStyleInfo.class`.
+### Configuring in template policies
+
+1. Open the **Template Editor** for your template
+2. Select a component and click the **policy icon**
+3. Under the **Styles** tab, add style groups and options:
+   - Group: "Layout" -- options: "Default", "Compact", "Wide"
+   - Group: "Theme" -- options: "Light", "Dark"
+4. Each option maps to one or more CSS classes (e.g. `cmp-hero--dark`)
+
+When an author selects a style, AEM adds the CSS classes to the component's wrapper element.
+
+### Reading style values in a Sling Model
+
+If you need to vary server-side logic based on the applied style (not just CSS), you can read the
+current style programmatically:
 
 ```java
-ComponentStyleInfo componentStyleInfo = request.getResource().adaptTo(ComponentStyleInfo.class);
+import com.day.cq.wcm.api.components.ComponentStyleInfo;
+
+// Adapt the component's resource to ComponentStyleInfo
+ComponentStyleInfo styleInfo = request.getResource().adaptTo(ComponentStyleInfo.class);
+
+if (styleInfo != null) {
+    // Get the applied CSS classes as a space-separated string
+    String appliedClasses = styleInfo.getAppliedCssClasses();
+
+    // Check for a specific variation
+    boolean isDark = appliedClasses != null && appliedClasses.contains("cmp-hero--dark");
+}
 ```
 
-`ComponentStyleInfo.class` holds the currently applied StyleSystem variation, as well as a reference to all applicable and available style variations.
+`ComponentStyleInfo` provides:
 
-![Component style info](/images/aem/components/componentStyleInfo.png)
+| Method | Returns |
+|--------|---------|
+| `getAppliedCssClasses()` | The CSS classes currently selected by the author (space-separated string) |
+| `getContentPolicy()` | The content policy associated with the component |
 
-You could use this, to alter the markup, based on the selected style / css class.
+### BEM naming convention
 
-## Dialogs
+Follow the [BEM](https://getbem.com/naming/) convention for component CSS classes. This aligns with
+how AEM Core Components name their classes:
 
-### Coral Radio Group + Well
+```text
+.cmp-hero                    Block
+.cmp-hero__image             Element
+.cmp-hero--dark              Modifier (applied via Style System)
+.cmp-hero__title--large      Element + Modifier
+```
+
+The `cmp-` prefix is the Core Components convention. Use your own project prefix if you prefer
+(e.g. `myp-hero`), but be consistent across all components.
+
+## Extending vs Building from Scratch
+
+| Approach | When to use | How |
+|----------|-------------|-----|
+| **Extend a Core Component** (recommended) | Your component is a variant of an existing Core Component (text, image, teaser, list, etc.) | Set `sling:resourceSuperType` to the Core Component. Override only the HTL template and/or Sling Model |
+| **Build from scratch** | No Core Component matches your needs | Create all artifacts yourself. See the [Custom Component Guide](../custom-component.mdx) |
+| **Proxy a Core Component** | You want to use a Core Component as-is but with your own `componentGroup` and resource type | Set `sling:resourceSuperType`, don't override any files |
+
+For extending and merging Core Component dialogs, see [Core Components](./core-components.mdx).
+
+## Component Groups and Allowed Components
+
+### Component groups
+
+The `componentGroup` property in `.content.xml` controls where the component appears in the editor's
+component browser:
 
 ```xml
-<items jcr:primaryType="nt:unstructured">
-    <radio-group-heading
-        jcr:primaryType="nt:unstructured"
-        sling:resourceType="granite/ui/components/coral/foundation/heading"
-        text="Radio Group Heading"
-        level="3"/>
-    <radio-group
-        jcr:primaryType="nt:unstructured"
-        sling:resourceType="granite/ui/components/coral/foundation/form/radiogroup"
-        deleteHint="{Boolean}false"
-        vertical="{Boolean}true"
-        name="./radioGroup">
-        <items
-            jcr:primaryType="nt:unstructured">
-            <radio-1
-                jcr:primaryType="nt:unstructured"
-                text="Descriptive Content 1"
-                value="somevalue"
-                checked="{Boolean}true"/>
-            <radio-2
-                jcr:primaryType="nt:unstructured"
-                text="Descriptive Content 2"
-                value="someOtherValue"
-                checked="{Boolean}false"/>
-        </items>
-    </radio-group>
-</items>
+componentGroup="My Project - Content"
 ```
 
-The above excerpt can be combined with a `well`, which results in the following output
+Common group naming patterns:
+- `My Project - Content` -- general content components
+- `My Project - Structure` -- structural components (header, footer)
+- `My Project - Commerce` -- commerce-specific components
+- `.hidden` -- hides the component from the browser (still usable via policies)
 
-![Radio group](/images/aem/components/radiogroup.png)
+### Allowed components via template policies
 
-The full dialog tab in xml looks like this
+In the **Template Editor**, click the policy icon on any container to configure which component groups
+(and individual components) are allowed in that container. This is stored under
+`/conf/myproject/settings/wcm/policies/`.
 
-```xml
-<properties jcr:primaryType="nt:unstructured"
-			jcr:title="Properties"
-			margin="{Boolean}true"
-			sling:resourceType="granite/ui/components/coral/foundation/container">
-    <items jcr:primaryType="nt:unstructured">
-    	<columns jcr:primaryType="nt:unstructured"
-    		    sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"
-    		    margin="{Boolean}true">
-    		<items jcr:primaryType="nt:unstructured">
-    			<column jcr:primaryType="nt:unstructured"
-    				    sling:resourceType="granite/ui/components/coral/foundation/container">
-    				<items jcr:primaryType="nt:unstructured">
-    					<assetPropertiesGroup jcr:primaryType="nt:unstructured"
-    										  sling:resourceType="granite/ui/components/coral/foundation/well">
-                            <!-- items block from above	-->
-    					</assetPropertiesGroup>
-    				</items>
-    			</column>
-    		</items>
-    	</columns>
-    </items>
-</properties>
-```
+## Quick Reference
 
-## JCR Repo Sync
-
-### IntelliVault
-
-For Jetbrains IDEs, the IntelliVault Plugin works well. It can export from the JCR to your local file system and import your local filesystem into the JCR.
-
-[IntelliVault Marketplace](https://plugins.jetbrains.com/plugin/7328-intellivault)
-
-It needs a version of the FileVault tool `vault-cli`.
-
-A valid configuration looks like this:
-
-![IntelliVault config](/images/aem/components/intellivaultconfig.png)
-
-IntelliVault commands can be invoked, via right clicking any path below a `jcr_root` node.
-
-![IntelliVault usage](/images/aem/components/intellivaultusage.png)
-
-<div class="alert alert--warning" role="alert">
-    Be careful, importing and exporting is destructive and will destroy / overwrite files.
-</div>
-
-1. Right Click `Pull from CRX` to copy and **overwrite** any content from the selected path from the JCR to your local filesystem.
-2. Right Click and `Push to CRX` top import and **overwrite** your local filesystem content to the selected path in your JCR.
-
-The IntelliVault plugin unfortunately does not get updated often and might not be available via the Jetbrains Plugin Marketplace, or not work altogether with your IDE Version.
-
-### AEM Repo Tool
-
-The official repo tool is also a great way for content syncing, however, it can be a bit tedious to set up and / or integrate into your workflow.
-
-- [Repo Tool Homepage](https://experienceleague.adobe.com/docs/experience-manager-65/developing/devtools/aem-repo-tool.html?lang=en)
-- [GitHub Repository](https://github.com/Adobe-Marketing-Cloud/tools/tree/master/repo)
-
-I have not used it in a couple of years and would therefore ask you to have a look at the [read me](https://github.com/Adobe-Marketing-Cloud/tools/tree/master/repo#table-of-contents) for usage and installation guides.
+| Topic | Page |
+|-------|------|
+| Dialog field types (textfield, select, multifield, etc.) | [Component Dialogs](../component-dialogs.mdx) |
+| Extending and merging Core Component dialogs | [Core Components](./core-components.mdx) |
+| Dialog validation (regex, custom validators) | [Dialog Validation](./dialog-validation.mdx) |
+| Building a component end-to-end | [Custom Component Guide](../custom-component.mdx) |
+| Sling Model annotations and patterns | [Sling Models](../backend/sling-models.mdx) |
+| HTL syntax and block elements | [HTL Templates](../htl-templates.mdx) |
+| CSS/JS management and loading | [Client Libraries](../client-libraries.mdx) |
+| Component architecture and request flow | [Architecture](../architecture.mdx) |
 
 ## See also
 
 - [Architecture](../architecture.mdx)
 - [Custom Component Guide](../custom-component.mdx)
-- [Component dialogs](../component-dialogs.mdx)
-- [Core components](./core-components.mdx)
-- [Dialog validation](./dialog-validation.mdx)
-- [Sling models](../backend/sling-models.mdx)
-- [HTL templates](../htl-templates.mdx)
-- [Client libraries](../client-libraries.mdx)
+- [Component Dialogs](../component-dialogs.mdx)
+- [Core Components](./core-components.mdx)
+- [Dialog Validation](./dialog-validation.mdx)
+- [Sling Models](../backend/sling-models.mdx)
+- [HTL Templates](../htl-templates.mdx)
+- [Client Libraries](../client-libraries.mdx)
+- [Multi-Tenancy UI Frontend Themes](../ui/multi-tenancy-support-ui-frontend.mdx)

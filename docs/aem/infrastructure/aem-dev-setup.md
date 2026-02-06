@@ -264,6 +264,29 @@ mvn clean install -PautoInstallBundle
 mvn test
 ```
 
+### IntelliVault (JetBrains content sync)
+
+For JetBrains IDEs (IntelliJ, WebStorm), the [IntelliVault](https://plugins.jetbrains.com/plugin/7328-intellivault)
+plugin provides two-way content sync between your local filesystem and the JCR. It requires
+a version of the FileVault tool `vault-cli` to be installed.
+
+![IntelliVault config](/images/aem/components/intellivaultconfig.png)
+
+IntelliVault commands are invoked by right-clicking any path below a `jcr_root` node:
+
+![IntelliVault usage](/images/aem/components/intellivaultusage.png)
+
+1. **Pull from CRX** -- copies content from the JCR to your local filesystem (**overwrites** local files)
+2. **Push to CRX** -- imports your local filesystem content into the JCR (**overwrites** JCR content)
+
+:::warning
+Both operations are destructive. Always commit or stash local changes before pulling, and verify your
+changes before pushing to a shared instance.
+:::
+
+The plugin is not always kept up to date and may not be available for the latest IDE versions. If it
+doesn't work with your IDE, use the AEM Repo Tool below or a full Maven build instead.
+
 ### AEM Repo Tool (content sync)
 
 The AEM Repo Tool (`repo`) is a fast way to push or pull content packages without a full Maven build.
