@@ -1,0 +1,896 @@
+---
+title: "Sling Model Annotations Reference"
+sidebar_position: 0
+tags: [aem, annotations, sling-models, reference]
+---
+
+# Sling Model Annotations Reference
+
+This page is a comprehensive reference for all commonly used Sling Model annotations. Each annotation is explained
+with its purpose, attributes, and practical examples. For deep dives on specific patterns, see the dedicated pages
+for [@ChildResource](./child-resource.mdx) and [@ExternalizedValueMapValue](./externalized-value-map-value.mdx).
+
+## Quick Reference
+
+| Annotation | Source Package | Purpose |
+|------------|---------------|---------|
+| [`@Model`](#model) | `o.a.s.models.annotations` | Declares a class as a Sling Model |
+| [`@ValueMapValue`](#valuemapvalue) | `o.a.s.models.annotations.injectorspecific` | Injects a JCR property from the resource's ValueMap |
+| [`@ChildResource`](#childresource) | `o.a.s.models.annotations.injectorspecific` | Injects child resources (nodes) as models or resources |
+| [`@Self`](#self) | `o.a.s.models.annotations.injectorspecific` | Injects the adaptable itself or delegates to another model |
+| [`@SlingObject`](#slingobject) | `o.a.s.models.annotations.injectorspecific` | Injects core Sling objects (Resource, Request, ResourceResolver) |
+| [`@OSGiService`](#osgiservice) | `o.a.s.models.annotations.injectorspecific` | Injects OSGi services |
+| [`@ScriptVariable`](#scriptvariable) | `o.a.s.models.annotations.injectorspecific` | Injects HTL scripting bindings (currentPage, etc.) |
+| [`@RequestAttribute`](#requestattribute) | `o.a.s.models.annotations.injectorspecific` | Reads request attributes (e.g. from `data-sly-use` parameters) |
+| [`@ResourcePath`](#resourcepath) | `o.a.s.models.annotations.injectorspecific` | Injects a Resource resolved by a JCR path |
+| [`@Inject`](#inject) | `javax.inject` | Generic injection (legacy -- prefer specific annotations) |
+| [`@Named`](#named) | `javax.inject` | Overrides the property name for `@Inject` |
+| [`@Source`](#source) | `o.a.s.models.annotations` | Selects a specific injector for `@Inject` |
+| [`@Via`](#via) | `o.a.s.models.annotations` | Changes the adaptable source for injection |
+| [`@Filter`](#filter) | `o.a.s.models.annotations` | Filters OSGi service references by LDAP expression |
+| [`@Default`](#default) | `o.a.s.models.annotations` | Provides fallback values when injection returns null |
+| [`@PostConstruct`](#postconstruct) | `javax.annotation` | Runs initialization logic after all fields are injected |
+| [`@Exporter`](#exporter) | `o.a.s.models.annotations` | Enables JSON/XML export of the model |
+
+:::tip
+The injector-specific annotations (like `@ValueMapValue`, `@OSGiService`, `@SlingObject`) are **always preferred**
+over the generic `@Inject`. They are self-documenting, type-safe, and avoid ambiguity about which injector is used.
+:::
+
+---
+
+## @Model
+
+Declares a Java class as a Sling Model. This is required on every Sling Model class.
+
+```java
+@Model(
+    adaptables = SlingHttpServletRequest.class,
+    adapters = {MyModel.class, ComponentExporter.class},
+    resourceType = "myproject/components/mycomponent",
+    defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)
+public class MyModel implements ComponentExporter { ... }
+```
+
+| Attribute | Type | Purpose |
+|-----------|------|---------|
+| `adaptables` | `Class<?>[]` | What the model can be adapted from (`SlingHttpServletRequest.class`, `Resource.class`, or both) |
+| `adapters` | `Class<?>[]` | What interfaces/classes the model can be adapted **to** (used for `adaptTo()` lookups) |
+| `resourceType` | `String` | Binds the model to a specific `sling:resourceType` (enables automatic resolution) |
+| `defaultInjectionStrategy` | `DefaultInjectionStrategy` | `OPTIONAL` or `REQUIRED` -- controls what happens when fields can't be injected |
+
+### `adaptables`: Request vs Resource
+
+The choice of adaptable affects which injectors work and what data is available:
+
+| Adaptable | Available injections | When to use |
+|-----------|---------------------|-------------|
+| `SlingHttpServletRequest.class` | Everything -- request, resource, session, WCM mode, script variables | **Default choice** for components rendered via HTL |
+| `Resource.class` | Resource properties, child resources, OSGi services | Utility models, child models for `@ChildResource`, unit tests |
+
+:::info
+If you use `Request` as the adaptable, you can still access the underlying resource via `@SlingObject`. If you use
+`Resource`, you **cannot** access request-scoped data (WCM mode, selectors, request attributes).
+:::
+
+### `defaultInjectionStrategy`
+
+```java
+// OPTIONAL: missing fields get null instead of failing the entire model
+@Model(adaptables = Resource.class,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class SafeModel {
+    @ValueMapValue
+    private String title; // null if property doesn't exist -- model still works
+}
+
+// REQUIRED (default): any missing field causes adaptTo() to return null
+@Model(adaptables = Resource.class)
+public class StrictModel {
+    @ValueMapValue
+    private String title; // if missing, adaptTo(StrictModel.class) returns null entirely
+}
+```
+
+:::tip
+Always set `defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL` and only mark specific fields as
+`REQUIRED` when truly necessary. This prevents the entire model from silently returning `null` when one
+optional field is missing.
+:::
+
+---
+
+## @ValueMapValue
+
+Injects a property from the resource's `ValueMap` (the JCR node properties). This is the most commonly used
+annotation in AEM Sling Models.
+
+```java
+@ValueMapValue
+private String title;
+
+@ValueMapValue
+private String[] tags;
+
+@ValueMapValue
+private boolean hideInNav;
+
+@ValueMapValue
+private Long maxItems;
+
+@ValueMapValue
+private Calendar publishDate;
+```
+
+| Attribute | Purpose |
+|-----------|---------|
+| `name` | Override the JCR property name (defaults to the Java field name) |
+| `injectionStrategy` | `OPTIONAL`, `REQUIRED`, or `DEFAULT` |
+| `via` | Change the resource to read from (e.g. `"resource"`) |
+
+### Property name mapping
+
+```java
+// Field name matches JCR property name
+@ValueMapValue
+private String jcr:title; // Won't compile -- invalid Java identifier!
+
+// Use 'name' to map to JCR properties with special characters
+@ValueMapValue(name = "jcr:title")
+private String pageTitle;
+
+// Or when the field name simply differs from the property name
+@ValueMapValue(name = "cq:lastModified")
+private Calendar lastModified;
+```
+
+### Type coercion
+
+Sling automatically coerces property values to the Java field type where possible:
+
+| JCR Type | Java Field Type | Notes |
+|----------|----------------|-------|
+| `String` | `String` | Direct |
+| `String[]` | `String[]`, `List<String>` | Multi-value properties |
+| `Long` | `Long`, `Integer`, `int`, `long` | Numeric coercion |
+| `Boolean` | `Boolean`, `boolean` | Direct |
+| `Date` | `Calendar`, `Date` | JCR dates are `Calendar` internally |
+| `Decimal` | `BigDecimal` | Direct |
+
+---
+
+## @ChildResource
+
+Injects child JCR nodes as Sling Models or Resources. Essential for composite multifield dialogs.
+
+```java
+// Inject all children of the "links" node as a list
+@ChildResource
+private List<LinkItem> links;
+
+// Named child node
+@ChildResource(name = "configuration")
+private AppConfig config;
+
+// As raw resources
+@ChildResource
+private List<Resource> items;
+```
+
+See the dedicated [@ChildResource deep dive](./child-resource.mdx) for complete documentation including
+dialog configuration, JCR structure, and patterns.
+
+---
+
+## @Self
+
+Injects the adaptable itself or delegates to another Sling Model adapted from the same adaptable. This is
+one of the most powerful -- and most misunderstood -- annotations.
+
+### Inject the adaptable directly
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class)
+public class MyModel {
+
+    // Injects the SlingHttpServletRequest itself
+    @Self
+    private SlingHttpServletRequest request;
+}
+```
+
+### Delegate to another Sling Model
+
+The more common use case: adapt the same request/resource to a different model within your model.
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class ProductPageModel {
+
+    // Adapts the same request to the HeroModel
+    @Self
+    private HeroModel hero;
+
+    // Adapts the same request to the BreadcrumbModel
+    @Self
+    private BreadcrumbModel breadcrumb;
+
+    public HeroModel getHero() { return hero; }
+    public BreadcrumbModel getBreadcrumb() { return breadcrumb; }
+}
+```
+
+This is useful for **composition** -- building a page-level model from multiple component models without
+duplicating logic.
+
+### `@Self` with `@Via`
+
+When the model adapts from a request but you need to delegate via the resource:
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class)
+public class WrapperModel {
+
+    // Adapts the underlying resource (not the request) to ChildModel
+    @Self @Via(type = ResourceSuperType.class)
+    private ChildModel delegateModel;
+}
+```
+
+| Attribute | Purpose |
+|-----------|---------|
+| `injectionStrategy` | `OPTIONAL`, `REQUIRED`, or `DEFAULT` |
+
+:::warning
+`@Self` delegation creates a new model instance via `adaptTo()`. If the target model's `adaptTo()` returns
+`null` (e.g. due to a missing required field), the `@Self` field will also be `null`. Always use
+`OPTIONAL` injection or null-check.
+:::
+
+---
+
+## @SlingObject
+
+Injects core Sling framework objects. What you can inject depends on the adaptable:
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class MyModel {
+
+    // The current resource (same as request.getResource())
+    @SlingObject
+    private Resource resource;
+
+    // The resource resolver
+    @SlingObject
+    private ResourceResolver resourceResolver;
+
+    // The request itself
+    @SlingObject
+    private SlingHttpServletRequest request;
+
+    // The response
+    @SlingObject
+    private SlingHttpServletResponse response;
+}
+```
+
+| Injectable | From Request | From Resource |
+|-----------|:---:|:---:|
+| `Resource` | Yes | Yes (the adaptable itself) |
+| `ResourceResolver` | Yes | Yes |
+| `SlingHttpServletRequest` | Yes | No |
+| `SlingHttpServletResponse` | Yes | No |
+
+:::tip
+Use `@SlingObject` for Sling framework objects. Don't use `@Inject` for these -- `@SlingObject` is explicit
+and avoids ambiguity.
+:::
+
+---
+
+## @OSGiService
+
+Injects an OSGi service registered in the Felix container. This is how your Sling Models access
+shared services, configurations, and APIs.
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class SearchModel {
+
+    @OSGiService
+    private QueryBuilder queryBuilder;
+
+    @OSGiService
+    private XSSAPI xssApi;
+
+    @OSGiService
+    private ModelFactory modelFactory;
+
+    @OSGiService
+    private Externalizer externalizer;
+}
+```
+
+### Filtering services
+
+When multiple implementations of the same interface exist, use the `filter` attribute with an LDAP expression:
+
+```java
+// Inject only the service where component.name matches
+@OSGiService(filter = "(component.name=com.myproject.impl.SpecialSearchService)")
+private SearchService searchService;
+
+// Filter by a custom service property
+@OSGiService(filter = "(service.type=premium)")
+private NotificationService notificationService;
+```
+
+| Attribute | Purpose |
+|-----------|---------|
+| `filter` | LDAP filter expression to select a specific service implementation |
+| `injectionStrategy` | `OPTIONAL`, `REQUIRED`, or `DEFAULT` |
+
+### Injecting multiple services
+
+```java
+// Inject all implementations as a list
+@OSGiService
+private List<EventHandler> eventHandlers;
+```
+
+---
+
+## @ScriptVariable
+
+Injects variables from the HTL scripting bindings. These are context objects that AEM/Sling makes available
+during page rendering.
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class NavigationModel {
+
+    @ScriptVariable
+    private Page currentPage;
+
+    @ScriptVariable
+    private Designer currentDesign;
+
+    @ScriptVariable
+    private Style currentStyle;
+
+    @ScriptVariable
+    private PageManager pageManager;
+
+    @ScriptVariable
+    private ComponentContext componentContext;
+
+    @ScriptVariable
+    private ValueMap properties;
+
+    public String getPageTitle() {
+        return currentPage.getTitle();
+    }
+
+    public int getDepth() {
+        return currentPage.getDepth();
+    }
+}
+```
+
+### Available script variables
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `currentPage` | `com.day.cq.wcm.api.Page` | The current page being rendered |
+| `resourcePage` | `com.day.cq.wcm.api.Page` | The page that contains the resource (may differ from `currentPage` for included components) |
+| `pageManager` | `com.day.cq.wcm.api.PageManager` | API for page CRUD operations |
+| `currentDesign` | `com.day.cq.wcm.api.designer.Design` | The current design |
+| `currentStyle` | `com.day.cq.wcm.api.designer.Style` | The current style (design cell) |
+| `componentContext` | `com.day.cq.wcm.api.components.ComponentContext` | Component rendering context |
+| `properties` | `org.apache.sling.api.resource.ValueMap` | Properties of the current resource |
+| `pageProperties` | `org.apache.sling.api.resource.ValueMap` | Properties of the current page's `jcr:content` node |
+| `component` | `com.day.cq.wcm.api.components.Component` | The current component definition |
+| `resource` | `org.apache.sling.api.resource.Resource` | The current resource |
+| `resolver` | `org.apache.sling.api.resource.ResourceResolver` | The resource resolver |
+
+:::warning
+`@ScriptVariable` only works when the model is adapted from `SlingHttpServletRequest`. It requires the
+HTL scripting context to be active, which means it won't work in unit tests without mocking the bindings.
+Consider using `@SlingObject` for `resource`/`resolver` and injecting `PageManager` via
+`resourceResolver.adaptTo(PageManager.class)` in a `@PostConstruct` if you need better testability.
+:::
+
+---
+
+## @RequestAttribute
+
+Reads attributes from the `SlingHttpServletRequest`. This is the standard way to pass parameters from HTL
+`data-sly-use` calls into your Sling Model.
+
+### Passing parameters from HTL
+
+```html title="HTL template"
+<sly data-sly-use.card="${'com.myproject.core.models.CardModel' @ title='Featured', maxItems=5}"/>
+<h2>${card.title}</h2>
+```
+
+```java title="CardModel.java"
+@Model(adaptables = SlingHttpServletRequest.class,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class CardModel {
+
+    // Reads the "title" request attribute set by data-sly-use
+    @RequestAttribute
+    private String title;
+
+    // Reads the "maxItems" request attribute
+    @RequestAttribute
+    private int maxItems;
+
+    public String getTitle() { return title; }
+    public int getMaxItems() { return maxItems > 0 ? maxItems : 10; }
+}
+```
+
+| Attribute | Purpose |
+|-----------|---------|
+| `name` | Override the attribute name (defaults to the Java field name) |
+| `injectionStrategy` | `OPTIONAL`, `REQUIRED`, or `DEFAULT` |
+
+### Passing request attributes programmatically
+
+Request attributes can also be set by servlets, filters, or other models:
+
+```java
+// In a filter or servlet
+request.setAttribute("analyticsId", "abc-123");
+
+// In a model
+@RequestAttribute(name = "analyticsId")
+private String trackingId;
+```
+
+:::info
+Request attributes set via `data-sly-use` are only available for that specific model invocation. They are
+**not** available to other models on the same page unless explicitly forwarded.
+:::
+
+---
+
+## @ResourcePath
+
+Injects a `Resource` by resolving a JCR path. The path can come from a JCR property or be hardcoded.
+
+```java
+// Resolve a path stored in a JCR property
+@ResourcePath(name = "targetPage")
+private Resource targetPageResource;
+
+// Hardcoded path
+@ResourcePath(path = "/content/dam/myproject/fallback-image")
+private Resource fallbackImage;
+
+// Inject multiple paths
+@ResourcePath(name = "relatedPages")
+private List<Resource> relatedPages;
+```
+
+| Attribute | Purpose |
+|-----------|---------|
+| `path` | Hardcoded JCR path to resolve |
+| `name` | JCR property name that contains the path (reads the value, then resolves it) |
+| `injectionStrategy` | `OPTIONAL`, `REQUIRED`, or `DEFAULT` |
+
+### Practical example
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class RelatedContentModel {
+
+    // Author picks a page path in the dialog (stored as "./targetPage" property)
+    @ResourcePath(name = "targetPage")
+    private Resource targetPageResource;
+
+    public String getTargetTitle() {
+        if (targetPageResource == null) return null;
+        Page page = targetPageResource.adaptTo(Page.class);
+        return page != null ? page.getTitle() : null;
+    }
+}
+```
+
+---
+
+## @Inject
+
+The **generic** injection annotation from `javax.inject`. Sling Models tries all registered injectors in
+priority order until one succeeds.
+
+```java
+@Inject
+private String title; // Could come from ValueMap, request attribute, or other injector
+```
+
+:::warning
+`@Inject` is **ambiguous** -- you can't tell which injector will handle it by reading the code. Always prefer
+the specific annotations (`@ValueMapValue`, `@OSGiService`, `@SlingObject`, etc.) instead. They are
+self-documenting and avoid unexpected injection sources.
+:::
+
+### When `@Inject` is still useful
+
+The main remaining use case is injecting **child resources** with the `@Source` annotation:
+
+```java
+@Inject @Source("child-resources")
+private List<Resource> items;
+```
+
+This is equivalent to `@ChildResource` but uses the generic mechanism.
+
+### Injector priority order
+
+When using `@Inject`, Sling tries injectors in this order:
+
+| Priority | Injector | What it provides |
+|----------|----------|------------------|
+| Highest | Script Bindings | HTL scripting variables |
+| High | ValueMap | JCR node properties |
+| Medium | Child Resources | Child nodes |
+| Medium | Request Attributes | Request attributes |
+| Low | OSGi Services | OSGi service references |
+| Lowest | Sling Object | Sling framework objects |
+
+---
+
+## @Named
+
+Overrides the property/parameter name for `@Inject`. Only works with `@Inject`, not with the
+injector-specific annotations (which have their own `name` attribute).
+
+```java
+// Without @Named -- field name "title" is used as the JCR property name
+@Inject
+private String title;
+
+// With @Named -- reads the "jcr:title" property instead
+@Inject @Named("jcr:title")
+private String pageTitle;
+```
+
+:::tip
+Since `@ValueMapValue` has a built-in `name` attribute, prefer `@ValueMapValue(name = "jcr:title")` over
+`@Inject @Named("jcr:title")`.
+:::
+
+---
+
+## @Source
+
+Selects a specific injector when using `@Inject`. This removes the ambiguity of which injector handles
+the injection.
+
+```java
+// Explicitly use the child-resources injector
+@Inject @Source("child-resources")
+private List<Resource> items;
+
+// Explicitly use the osgi-services injector
+@Inject @Source("osgi-services")
+private QueryBuilder queryBuilder;
+```
+
+| Source value | Injector |
+|-------------|----------|
+| `"script-bindings"` | Script variables (currentPage, etc.) |
+| `"valuemap"` | JCR properties |
+| `"child-resources"` | Child nodes |
+| `"request-attributes"` | Request attributes |
+| `"osgi-services"` | OSGi services |
+| `"sling-object"` | Sling framework objects |
+
+:::tip
+If you find yourself using `@Inject @Source(...)`, you should almost certainly switch to the equivalent
+injector-specific annotation instead. For example, `@Inject @Source("valuemap")` is just a verbose
+way of writing `@ValueMapValue`.
+:::
+
+---
+
+## @Via
+
+Changes **where** the injected value comes from. By default, injection reads from the adaptable (the request
+or resource). `@Via` redirects injection to a different source.
+
+### Common use: read from the resource when adapting from request
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class)
+public class MyModel {
+
+    // Without @Via: reads from the request's ValueMap (usually empty)
+    // With @Via: reads from the underlying resource's ValueMap
+    @Inject @Via("resource")
+    private String title;
+}
+```
+
+:::info
+This specific pattern is rarely needed because `@ValueMapValue` already reads from the resource's ValueMap
+automatically, even when the model adapts from a request. `@Via("resource")` is mainly useful with `@Inject`.
+:::
+
+### Via types for delegation
+
+```java
+// Delegate to the resource's child node
+@Self @Via(value = "jcr:content", type = ChildResource.class)
+private ContentModel contentModel;
+
+// Delegate to the resource super type
+@Self @Via(type = ResourceSuperType.class)
+private ParentModel parentModel;
+
+// Via a specific child path using BeanProperty
+@ValueMapValue @Via(value = "jcr:content", type = ChildResource.class)
+private String pageTitle;
+```
+
+| Via type | Purpose |
+|----------|---------|
+| `ChildResource.class` | Adapts from a child resource at the given path |
+| `ResourceSuperType.class` | Delegates to the resource super type's model |
+| `BeanProperty.class` | Reads from a bean property of the adaptable |
+| `ForcedResourceType.class` | Forces a different resource type for adaptation |
+
+---
+
+## @Filter
+
+Applies an LDAP filter when injecting OSGi services via `@Inject`. This is the `@Inject` equivalent of
+`@OSGiService(filter = ...)`.
+
+```java
+@Inject @Source("osgi-services")
+@Filter("(component.name=com.myproject.impl.PremiumSearch)")
+private SearchService searchService;
+```
+
+:::tip
+Prefer `@OSGiService(filter = "...")` which combines source selection and filtering in a single annotation.
+:::
+
+---
+
+## @Default
+
+Provides a fallback value when injection returns `null`. Works with `@Inject` and with the
+injector-specific annotations.
+
+```java
+@ValueMapValue
+@Default(values = "Untitled")
+private String title;
+
+@ValueMapValue
+@Default(intValues = 10)
+private int maxItems;
+
+@ValueMapValue
+@Default(booleanValues = false)
+private boolean hideInNav;
+
+@ValueMapValue
+@Default(longValues = 0L)
+private long sortOrder;
+```
+
+| Attribute | Java Type |
+|-----------|-----------|
+| `values` | `String[]` |
+| `intValues` | `int[]` |
+| `longValues` | `long[]` |
+| `doubleValues` | `double[]` |
+| `floatValues` | `float[]` |
+| `booleanValues` | `boolean[]` |
+| `shortValues` | `short[]` |
+
+:::tip
+For simple defaults, a null-check in your getter is often cleaner and more readable:
+
+```java
+@ValueMapValue
+private String title;
+
+public String getTitle() {
+    return StringUtils.defaultIfBlank(title, "Untitled");
+}
+```
+
+Use `@Default` when you want the default applied at injection time (before `@PostConstruct` runs).
+:::
+
+---
+
+## @PostConstruct
+
+A `javax.annotation` lifecycle annotation. The annotated method runs **after** all fields have been injected,
+giving you a place to perform computed initialization.
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class ArticleModel {
+
+    @ValueMapValue
+    private String title;
+
+    @ValueMapValue
+    private Calendar publishDate;
+
+    @OSGiService
+    private DateFormatterService dateFormatter;
+
+    private String formattedDate;
+    private String slug;
+
+    @PostConstruct
+    protected void init() {
+        // Compute derived values after injection
+        if (publishDate != null) {
+            formattedDate = dateFormatter.format(publishDate);
+        }
+        if (title != null) {
+            slug = title.toLowerCase().replaceAll("[^a-z0-9]+", "-");
+        }
+    }
+
+    public String getFormattedDate() { return formattedDate; }
+    public String getSlug() { return slug; }
+}
+```
+
+### Rules
+
+- The method must be `void`, take no arguments, and be `protected` (convention, not enforced)
+- Only **one** `@PostConstruct` method per class -- if the superclass has one, both run (super first)
+- If the method throws an exception, `adaptTo()` returns `null`
+- Keep it lightweight -- avoid expensive operations (see [Performance](../../infrastructure/performance.mdx))
+
+---
+
+## @Exporter
+
+Enables the Sling Model Exporter framework, which allows you to serialize the model as JSON (or other formats)
+via a `.model.json` URL.
+
+```java
+@Model(
+    adaptables = SlingHttpServletRequest.class,
+    adapters = {MyModel.class, ComponentExporter.class},
+    resourceType = "myproject/components/mycomponent"
+)
+@Exporter(name = "jackson", extensions = "json")
+public class MyModel implements ComponentExporter {
+
+    @ValueMapValue
+    private String title;
+
+    public String getTitle() { return title; }
+
+    @Override
+    public String getExportedType() {
+        return "myproject/components/mycomponent";
+    }
+}
+```
+
+| Attribute | Purpose |
+|-----------|---------|
+| `name` | Exporter name (`"jackson"` for JSON) |
+| `extensions` | URL extension that triggers the export (`"json"`) |
+| `selector` | URL selector (defaults to `"model"`) |
+
+Requesting `/content/my-site/en/home/jcr:content/mycomponent.model.json` returns:
+
+```json
+{
+    ":type": "myproject/components/mycomponent",
+    "title": "Hello World"
+}
+```
+
+:::info
+To participate in the JSON export, your model must implement `ComponentExporter` and be registered with
+the `adapters` attribute. This is required for AEM SPA Editor integration.
+:::
+
+---
+
+## Annotation Combinations Cheat Sheet
+
+Common annotation combinations you'll see in real AEM projects:
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class,
+       adapters = {MyComponent.class, ComponentExporter.class},
+       resourceType = MyComponent.RESOURCE_TYPE,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+@Exporter(name = "jackson", extensions = "json")
+public class MyComponent implements ComponentExporter {
+
+    static final String RESOURCE_TYPE = "myproject/components/mycomponent";
+
+    // --- JCR Properties ---
+    @ValueMapValue
+    private String title;
+
+    @ValueMapValue(name = "jcr:description")
+    private String description;
+
+    @ValueMapValue
+    @Default(values = "default")
+    private String variant;
+
+    // --- Child Resources (multifield) ---
+    @ChildResource
+    private List<LinkItem> links;
+
+    // --- Page Context ---
+    @ScriptVariable
+    private Page currentPage;
+
+    // --- Sling Objects ---
+    @SlingObject
+    private Resource resource;
+
+    @SlingObject
+    private ResourceResolver resourceResolver;
+
+    // --- OSGi Services ---
+    @OSGiService
+    private XSSAPI xssApi;
+
+    // --- Delegation ---
+    @Self
+    private SlingHttpServletRequest request;
+
+    // --- HTL Parameters ---
+    @RequestAttribute
+    private String cssClass;
+
+    // --- Computed fields ---
+    private String safeTitle;
+    private String pagePath;
+
+    @PostConstruct
+    protected void init() {
+        safeTitle = xssApi.encodeForHTML(title);
+        pagePath = currentPage != null ? currentPage.getPath() : "";
+    }
+
+    // Getters...
+
+    @Override
+    public String getExportedType() { return RESOURCE_TYPE; }
+}
+```
+
+## See also
+
+- [@ChildResource deep dive](./child-resource.mdx)
+- [@ExternalizedValueMapValue deep dive](./externalized-value-map-value.mdx)
+- [Sling Models and Services](../../backend/sling-models.mdx)
+- [Custom Component Guide](../../custom-component.mdx)
+- [Component Dialogs](../../component-dialogs.mdx)
+- [OSGi Configuration](../../backend/osgi-configuration.mdx)
+- [HTL Templates](../../htl-templates.mdx)
+- [Architecture](../../architecture.mdx)
+- [Apache Sling Models Documentation](https://sling.apache.org/documentation/bundles/models.html)
