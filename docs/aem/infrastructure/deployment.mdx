@@ -1,0 +1,28 @@
+---
+title: Deployment
+sidebar_position: 3
+tags: [aem, deployment, operations]
+---
+
+# Deployment
+
+For AEM as a Cloud Service, deployments are handled through Cloud Manager pipelines. For on-prem or managed services, deployments are usually package-based with additional operational checks.
+
+## Typical pipeline steps
+
+1. Build and unit test
+2. Package validation and static analysis
+3. Dispatcher validation (Cloud Service)
+4. Deploy to author and publish
+
+## Best practices
+
+- Keep packages small and focused.
+- Avoid content mutations in code deployments unless necessary.
+- Validate dispatcher rules before promotion.
+
+## See also
+
+- [Dispatcher configuration](./dispatcher-configuration.mdx)
+- [OSGi configuration](../backend/osgi-configuration.mdx)
+- [Testing](./testing.mdx)

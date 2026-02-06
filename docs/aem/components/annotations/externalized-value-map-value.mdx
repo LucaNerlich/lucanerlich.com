@@ -1,0 +1,150 @@
+---
+title: "@ExternalizedValueMapValue"
+sidebar_position: 2
+tags: [aem, annotations, sling-models]
+---
+
+# @ExternalizedValueMapValue
+
+Interface
+
+```java
+@Target({FIELD})
+@Retention(RUNTIME)
+@InjectAnnotation
+@Source(ExternalizedValueMapValue.ANNOTATION_NAME)
+public @interface ExternalizedValueMapValue {
+
+    String ANNOTATION_NAME = "externalized";
+
+    /**
+     * Represents the name
+     *
+     * @return
+     */
+    String name() default StringUtils.EMPTY;
+
+    @Deprecated
+    boolean optional() default false;
+
+    /**
+     * if set to REQUIRED injection is mandatory, if set to OPTIONAL injection is optional, in case of DEFAULT
+     * the standard annotations ({@link org.apache.sling.models.annotations.Optional}, {@link org.apache.sling.models.annotations.Required}) are used.
+     * If even those are not available the default injection strategy defined on the {@link org.apache.sling.models.annotations.Model} applies.
+     * Default value = DEFAULT.
+     */
+    InjectionStrategy injectionStrategy() default InjectionStrategy.DEFAULT;
+}
+```
+
+## See also
+
+- [Sling models](../../backend/sling-models.mdx)
+- [@ChildResource](./child-resource.mdx)
+
+Implementation
+
+```java
+package com.jti.cep.inject.impl;
+
+import com.jti.cep.externalizer.ExternalizerService;
+import com.jti.cep.inject.annotations.ExternalizedValueMapValue;
+import com.jti.cep.inject.util.InjectorUtil;
+import com.jti.cep.inject.util.ReflectionUtil;
+import org.apache.commons.lang.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.injectorspecific.InjectionStrategy;
+import org.apache.sling.models.spi.DisposalCallbackRegistry;
+import org.apache.sling.models.spi.Injector;
+import org.apache.sling.models.spi.injectorspecific.AbstractInjectAnnotationProcessor2;
+import org.apache.sling.models.spi.injectorspecific.InjectAnnotationProcessor2;
+import org.apache.sling.models.spi.injectorspecific.StaticInjectAnnotationProcessorFactory;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Type;
+import java.util.Optional;
+
+/**
+ * ExternalizedValueMapValueInjector
+ * <p>
+ * Externalizes properties in the sling model
+ * </p>
+ *
+ * @author raaijmak@adobe.com
+ * @since 2019-09-19
+ */
+@Component(immediate = true, service = {Injector.class, StaticInjectAnnotationProcessorFactory.class})
+public class ExternalizedValueMapValueInjector implements Injector, StaticInjectAnnotationProcessorFactory {
+
+    @Reference
+    private ExternalizerService externalizerService;
+
+    @Override
+    public String getName() {
+        return ExternalizedValueMapValue.ANNOTATION_NAME;
+    }
+
+    @Override
+    public Object getValue(Object adaptable, String name, Type type, AnnotatedElement annotatedElement, DisposalCallbackRegistry disposalCallbackRegistry) {
+
+        if (
+                ReflectionUtil.isAssignableFrom(type, String.class) &&
+                        annotatedElement.isAnnotationPresent(ExternalizedValueMapValue.class) &&
+                        adaptable instanceof SlingHttpServletRequest
+        ) {
+            SlingHttpServletRequest request = (SlingHttpServletRequest) adaptable;
+            ExternalizedValueMapValue annotation = annotatedElement.getAnnotation(ExternalizedValueMapValue.class);
+
+            String key = StringUtils.defaultIfBlank(annotation.name(), name);
+
+            Resource resource = InjectorUtil.getResourceFromAdaptable(adaptable);
+            String rawValue = resource.getValueMap().get(key, String.class);
+
+            if (StringUtils.isNotBlank(rawValue)) {
+                return externalizerService.externalizeForSPARouter(request, rawValue);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public InjectAnnotationProcessor2 createAnnotationProcessor(AnnotatedElement annotatedElement) {
+        return Optional.ofNullable(annotatedElement.getAnnotation(ExternalizedValueMapValue.class)).map(ExternalizedValueMapValueInjectorProcessor::new).orElse(null);
+    }
+
+    private static class ExternalizedValueMapValueInjectorProcessor extends AbstractInjectAnnotationProcessor2 {
+
+        private final ExternalizedValueMapValue annotation;
+
+        public ExternalizedValueMapValueInjectorProcessor(ExternalizedValueMapValue annotation) {
+            this.annotation = annotation;
+        }
+
+        @Override
+        public InjectionStrategy getInjectionStrategy() {
+            return annotation.injectionStrategy();
+        }
+
+        @Override
+        public Boolean isOptional() {
+            return annotation.optional();
+        }
+    }
+}
+```
+
+ExternalizerService.externalize
+
+```java
+@Override
+    public String externalize(SlingHttpServletRequest request, String path) {
+        if (StringUtils.isBlank(path)) {
+            return null;
+        }
+        return request.getResourceResolver().map(path);
+    }
+```

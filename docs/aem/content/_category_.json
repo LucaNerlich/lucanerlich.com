@@ -1,0 +1,8 @@
+{
+    "label": "Content & Data",
+    "link": {
+        "type": "generated-index",
+        "description": "JCR repository, content fragments, GraphQL, replication, and multi-site management."
+    },
+    "position": 9
+}

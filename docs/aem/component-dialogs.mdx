@@ -1,6 +1,6 @@
 ---
 title: Touch UI Component Dialogs
-sidebar_position: 6
+sidebar_position: 3
 tags: [aem, dialogs, touch-ui]
 sidebar_class_name: hero-doc
 ---
@@ -197,10 +197,10 @@ This is an empty dialog structure and components can be placed in tabs (you can 
 
 ## See also
 
-- [Dialog validation](./dialog-validation.mdx)
-- [Components](./components.mdx)
+- [Dialog validation](./components/dialog-validation.mdx)
+- [Components](./components/overview.mdx)
 - [Coral UI](./ui/coral-ui.mdx)
-- [Sling Models -- reading policy values](./sling-models.mdx#access-aem-template-policies)
+- [Sling Models -- reading policy values](./backend/sling-models.mdx#access-aem-template-policies)
 - [Dynamic rootpath for pathbrowser](./ui/dynamic-pathbrowser-rootpath.md)
 - [Granite UI Server-side API](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
 - [Coral UI Icon List](https://developer.adobe.com/experience-manager/reference-materials/6-5/coral-ui/coralui3/Coral.Icon.html#availableIcons)
@@ -741,7 +741,7 @@ For dynamic values, provide a datasource resource type. This works well for auto
 ### Multifield
 
 A multifield wraps a predefined group of components and lets an author create `n` of these sets. The data will be saved to subnodes.
-Access that data via `@ChildResource` Annotation in your Sling Model, as described [here](../annotations/child-resource).
+Access that data via `@ChildResource` Annotation in your Sling Model, as described [here](./components/annotations/child-resource.mdx).
 
 Add `composite="{Boolean}true"` to save the entries as a child node which in return can easily be injected into a Sling Model via `@ChildResource`.
 Otherwise all values entered will be stored on the node itself as Array Properties.
@@ -1140,7 +1140,7 @@ public class MyComponentModel {
 }
 ```
 
-For reusable helper methods to read policy values, see the [Sling Models page](./sling-models.mdx#access-aem-template-policies).
+For reusable helper methods to read policy values, see the [Sling Models page](./backend/sling-models.mdx#access-aem-template-policies).
 
 ## Layout & Read Only
 

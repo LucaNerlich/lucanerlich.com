@@ -1,0 +1,237 @@
+---
+title: Dialog Validation
+sidebar_position: 3
+tags: [aem, dialogs, validation]
+---
+
+# Dialog Validation
+
+This post will explain how one can add and implement custom AuthorUI/TouchUI Dialog Form Field validation.
+
+## Setup
+
+AEM Dialog Validation works by registering to `foundation.validation.validator` and implementing a set of fields.
+This should be done it its own ClientLibrary, the following snippet shows the ClientLibraryFolder `.content.xml` node.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+		  jcr:primaryType="cq:ClientLibraryFolder"
+		  allowProxy="{Boolean}true"
+		  categories="[cq.authoring.dialog]"
+		  dependencies="[cq.authoring.dialog.all,granite.jquery]"/>
+```
+
+## See also
+
+- [Component dialogs](../component-dialogs.mdx)
+- [Coral UI](../ui/coral-ui.mdx)
+- [Client libraries](../client-libraries.mdx)
+
+The categories and dependencies are important. This will ensure, that your javascript code will only be loaded while editing AEM Dialogs.
+
+My ClientLib directory looks like this:
+
+```text
+- /clientlib-dialogvalidation
+-- /js
+--- extensionSvgValidation.js
+--- multifieldValidation.js
+--- urlValidation.js
+-- .content.xml
+-- js.txt
+```
+
+Let's take a look at the basic validation fields which need to be implemented and registered.
+
+```javascript
+(function ($) {
+	"use strict";
+	$(window)
+		.adaptTo("foundation-registry")
+		.register(
+			"foundation.validation.validator", {
+				selector: "[data-foundation-validation=<your-custom-attribute>]",
+				validate: function (el) {
+					// validates the field. return false for invalid content
+				},
+				show: function (el, message) {
+					// triggers a notification popup when validation fails
+				}
+			});
+})(Granite.$);
+```
+
+An important part is the selector matching. This attributes 'maps' your validation logic to a data-attribute set to a dialog field.
+The latter can be done either via a `granite:data` node, or by adding `validation=<your-custom-attribute>` directly to any dialog field. Take a look at the following examples to see it in action.
+
+<div class="alert alert--warning" role="alert">
+    ⚠️ The css 'data-foundation-validation' selector class changed between 6.5 and AEMaaCS. AEMaaCS uses only the
+    'data-validation' attribute ⚠️
+</div>
+
+The following subchapter demonstrate some examples on how the above can be used in various validation scenarios.
+
+## Generic Regex Validation
+
+A common use case is the need to match an input field value against a given regex pattern. This examples matches the given pathfield value (should be a url) against a pattern that matches a valid external url.
+We set our validation attribute to `url`, which we then use in our validation selector `selector: "[data-foundation-validation=url]"`.
+
+```xml
+<endpointUrl
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldDescription="Please provide a valid URL"
+    fieldLabel="External Endpoint (URL)"
+    name="./endpointUrl"
+    validation="url"
+    required="{Boolean}true"/>
+```
+
+We define a pattern in our validation javascript code and use it to match against the given elements value. On error, a notification badge informs the author of the failed validation - including a custom error message.
+
+```javascript
+(function ($) {
+    "use strict";
+
+    //https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
+    const PATTERN_URL = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"
+
+    $(window)
+        .adaptTo("foundation-registry")
+        .register(
+            "foundation.validation.validator", {
+                selector: "[data-validation=url]",
+                validate: function (el) {
+                    var element = $(el);
+                    var value = element.val().toString();
+                    if (value.length > 0) {
+                        if (value.match(PATTERN_URL)) {
+                            // valid input
+                        } else {
+                            return "Please enter valid url.";
+                        }
+                    }
+
+                },
+                show: function (el, message) {
+                    var $el = $(el);
+
+                    var fieldAPI = $el.adaptTo("foundation-field");
+                    if (fieldAPI && fieldAPI.setInvalid) {
+                        fieldAPI.setInvalid(true);
+                    }
+
+                    var error = $el.data("foundation-validation.internal.error");
+
+                    if (error) {
+                        error.content.innerHTML = message;
+
+                        if (!error.parentNode) {
+                            $el.after(error);
+                            error.show();
+                        }
+                    } else {
+                        error = new Coral.Tooltip();
+                        error.variant = "error";
+                        error.interaction = "off";
+                        error.placement = "bottom";
+                        error.target = el;
+                        error.content.innerHTML = message;
+                        error.open = true;
+                        error.id = Coral.commons.getUID();
+
+                        $el.data("foundation-validation.internal.error", error);
+                        $el.after(error);
+                    }
+                }
+            });
+})(Granite.$);
+```
+
+### File Extension Validation
+
+A very similar approach can be used to check for a file validation. With this, it is possible to, for example, restrict an image upload field to a predefined set of file extensions.
+For readability’s sake, the snippet only includes the relevant parts - the overall structure does not change and can be copied from the [regex example](#generic-regex-validation).
+
+```xml
+<iconPath
+	jcr:primaryType="nt:unstructured"
+	sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+	fieldLabel="Icon Path"
+	emptyText="e.g. /content/dam/icons/home.svg"
+	filter="hierarchyNotFile"
+	name="./iconPath"
+	validation="extension-svg"
+	rootPath="/content/dam/icons"/>
+```
+
+```javascript
+const PATTERN_URL = "^.*\\.(svg)$"
+// [...]
+
+"[data-foundation-validation=extension-svg]",
+validate: function (el) {
+	var element = $(el);
+	var value = element.val().toString();
+	if (value.length > 0) {
+		if (value.match(PATTERN_URL)) {
+			// valid input
+		} else {
+			return "Only .svg files are allowed.";
+		}
+	}
+
+},
+// [...]
+```
+
+## Multifield Min / Max Item Amount
+
+We want to restrict an author to a specific amount of Multifield items that can be created. To achieve this, we need to write two attributes to the dom. We are doing this via a `granite:data` node:
+
+```xml
+<icons jcr:primaryType="nt:unstructured"
+	   sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+	   composite="{Boolean}true">
+	<granite:data
+		jcr:primaryType="nt:unstructured"
+		max-items="5"
+		min-items="1"/>
+	<field jcr:primaryType="nt:unstructured"
+		   sling:resourceType="granite/ui/components/coral/foundation/container"
+		   name="./icons">
+		<items jcr:primaryType="nt:unstructured">
+        </items>
+    </field>
+</icons>
+```
+
+Our selector will match all `coral-multifields`, however, our custom logic then only runs, if the specified attributes are present.
+
+```javascript
+// [...]
+"coral-multifield",
+validate: function (el) {
+	// coral-multifield -> MultifieldCollection -> getAll -> List of coral-multifield-items
+	var totalPanels = el.items.getAll().length;
+	var min = el.getAttribute("data-min-items");
+	var max = el.getAttribute("data-max-items");
+
+	if (min) {
+		min = parseInt(min);
+		if (min > 0 && totalPanels < min) {
+			return "Minimum amount of items required are: " + min;
+		}
+	}
+	if (max) {
+		max = parseInt(max);
+		if (max > 0 && totalPanels > max) {
+			return "Maximum amount of items allowed are: " + max;
+		}
+	}
+},
+// [...]
+```
+
+

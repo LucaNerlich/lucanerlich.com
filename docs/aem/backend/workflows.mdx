@@ -1,0 +1,114 @@
+---
+title: Workflows
+sidebar_position: 7
+tags: [aem, workflows, backend]
+---
+
+# Workflows
+
+[JavaDoc](https://helpx.adobe.com/experience-manager/6-3/sites/developing/using/reference-materials/javadoc/com/adobe/granite/workflow/WorkflowSession.html)
+
+```java
+WorkflowSession wf = resourceResolver.adaptTo(WorkflowSession.class);
+Workflow[] workflows = wf.getAllWorkflows();
+```
+
+Beispiel: Terminate all Workflows for current user / resourceResolvers Access Rights
+
+```java
+final WorkflowSession workflowSession = resourceResolver.adaptTo(WorkflowSession.class);
+final Workflow[] allWorkflows = workflowSession.getAllWorkflows();
+for (Workflow wf : allWorkflows) {
+ if (wf.getState().equals("RUNNING")) {
+  final String id = wf.getId();
+  LOG.info("Found running wf id: {}. Termination initiated.", id);
+  try {
+   workflowSession.terminateWorkflow(wf);
+  }
+  catch (WorkflowException we) {
+   LOG.error("Could not terminate Workflow with id: {}", id, we);
+  }
+ }
+}
+```
+
+Get All WorkflowLauncher and their Configs:
+
+```java
+ResourceResolver resourceResolver = getClientMergeReportingService().getResourceResolver();
+WorkflowLauncher wfl = resourceResolver.adaptTo(WorkflowLauncher.class);
+if (wfl != null) {
+ Iterator<ConfigEntry> configEntries = wfl.getConfigEntries();
+ List<ConfigEntry> wflConfigs = new ArrayList<>();
+ configEntries.forEachRemaining(wflConfigs::add);
+ for (ConfigEntry ce : wflConfigs) {
+  LOG.info("desc: " + ce.getId());
+  LOG.info("desc: " + ce.getDescription() + "\n");
+ }
+
+    // Disable all
+    for (ConfigEntry ce : list) {
+  ce.setEnabled(false);
+ }
+}
+```
+
+Disable / Enable All WorkflowLauncher
+
+```java
+try {
+ ResourceResolver resourceResolver = getClientMergeReportingService().getResourceResolver();
+ WorkflowLauncher workflowLauncher = resourceResolver.adaptTo(WorkflowLauncher.class);
+ if (workflowLauncher != null) {
+  Iterator<ConfigEntry> configEntries = workflowLauncher.getConfigEntries();
+  while (configEntries.hasNext()) {
+   final ConfigEntry configEntry = configEntries.next();
+   configEntries.next().setEnabled(false);
+   LOG.info("Disabled: " + configEntry.getId());
+   getClientMergeReportingService().details("Disabled WFL: " + configEntry.getId());
+  }
+ }
+}
+catch (LoginException le) {
+ LOG.error("Error during ResourceResolver login.", le);
+ return false;
+}
+catch (Exception e) {
+ LOG.error("Error during step execution.", e);
+ return false;
+}
+```
+
+## Deactivate the Newsletter Bounce Workflow Launcher
+
+Create a new 'overlay' file in `/conf/global/settings/workflow/launcher/config/newsletter_bounce_check/.content.xml` and set `enabled="{Boolean}false"`. Ensure, that this path is covered via your META-INF `filter.xml`.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
+    jcr:primaryType="cq:WorkflowLauncher"
+    comment="Deprecated - please use Adobe Campaign instead, as of AEM 6.1 (CQ-29408)"
+    condition=""
+    description=""
+    enabled="{Boolean}false"
+    eventType="{Long}1"
+    excludeList=""
+    glob="/var/mailimport"
+    nodetype="nt:unstructured"
+    runModes="author"
+    workflow="/var/workflow/models/newsletter_bounce_check"/>
+```
+
+### Links
+
+[Administering Workflows](https://docs.adobe.com/content/help/en/experience-manager-64/administering/operations/workflows.html)
+
+[Extending Workflows](https://docs.adobe.com/content/help/en/experience-manager-64/developing/extending-aem/extending-workflows/workflows.html)
+
+[Youtube Playlist / slightly outdated](https://www.youtube.com/playlist?list=PLAyP-K1LNAolxbfGAIFlBas9HW4EciArd)
+
+## See also
+
+- [Event listener](./event-listener.mdx)
+- [OSGi configuration](./osgi-configuration.mdx)
+- [Replication and activation](../content/replication-activation.mdx)

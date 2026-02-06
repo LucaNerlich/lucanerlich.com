@@ -1,0 +1,273 @@
+---
+title: Sling Models and Services
+sidebar_position: 1
+tags: [aem, sling-models, backend]
+---
+
+# Sling Models and Services
+
+## JavaScript Model - pass variable to model
+
+```text title='file structure / aem component'
+/some.html
+/helper.js
+```
+
+## See also
+
+- [Annotations](../components/annotations/child-resource.mdx)
+- [HTL templates](../htl-templates.mdx)
+- [Servlets](./servlets.mdx)
+
+```javascript title='JavaScript Use Model'
+use(function () {
+  'use strict';
+
+  var someChangedValue = this.someVar;
+  // to what ever you want with `this.someVar` which is `someValue` passed in.
+  // ⚠️ this code will be executed server-side, console.log, window etc do not exist
+  // use ES5. ES6 will fail.
+
+  return {
+    someVar: someChangedValue
+  }
+});
+```
+
+```html title='HTL Template'
+<div data-sly-use.helper="${'helper.js' @ someVar=someValue}">
+${helper.someVar}
+</div>
+```
+
+## Check for author / publish mode
+
+```java
+public static boolean isAuthorMode(SlingHttpServletRequest request) {
+    boolean result;
+    final WCMMode wcmMode = WCMMode.fromRequest(request);
+
+    switch (wcmMode) {
+        case EDIT:
+        case DESIGN:
+        case PREVIEW:
+            result = true;
+            break;
+        default:
+            result = false;
+    }
+
+    return result;
+}
+```
+
+Possible values are DISABLED, EDIT, PREVIEW, ANALYTICS,READ_ONLY and DESIGN.
+
+## Content as a Service - CaaS
+
+'Sling Module Exporter'
+
+It enables users to query pages with xx.model.json and retrieve a json document with the pages structure and content.
+
+`https://sling.apache.org/documentation/bundles/models.html#exporter-framework-since-130`
+
+`https://docs.adobe.com/content/help/en/experience-manager-64/developing/components/json-exporter-components.html`
+
+### Example
+
+Java Component
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class, adapters = {Title.class, ComponentExporter.class}, resourceType = Title.RESOURCE_TYPE,
+        defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+@Exporter(name = "jackson", extensions = "json")
+public class Title implements ComponentExporter {
+
+    static final String RESOURCE_TYPE = "wknd/components/title";
+
+    // optional, change exported key name
+    @JsonProperty("title")
+    @ValueMapValue
+    private String title;
+
+    public String getTitle(){
+        return title;
+    }
+
+    @Nonnull
+    @Override
+    public String getExportedType() {
+        return RESOURCE_TYPE;
+    }
+}
+
+```
+
+JCR Component
+Path: `jcr_root/apps/wknd/components/title`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    cq:icon="textLeft"
+    jcr:description="Displays a title."
+    jcr:primaryType="cq:Component"
+    jcr:title="Title"
+    componentGroup="Adobe"/>
+```
+
+## Access AEM Template Policies
+
+The following code examples demonstrate, how one can access editable template policies from a sling model.
+A template policy allows the author to configure settings at runtime via the AEM UI ("Edit template").
+These can be created as dialog nodes in a _cq_design_dialog file.
+
+An accessible policy property is the same as any other regular dialog property.
+
+```xml title="ui.apps/src/main/content/jcr_root/apps/xxx/yyy/_cq_design_dialog/.content.xml"
+<someSelectProperty
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/form/select"
+        fieldLabel="Some Value Dropdown"
+        required="{Boolean}true"
+        name="./someSelectProperty">
+    <items jcr:primaryType="nt:unstructured">
+        <small
+                jcr:primaryType="nt:unstructured"
+                text="Small"
+                selected="{Boolean}true"
+                value="{Long}1"/>
+        <medium
+                jcr:primaryType="nt:unstructured"
+                text="Medium"
+                value="{Long}2"/>
+        <large
+                jcr:primaryType="nt:unstructured"
+                text="Large"
+                value="{Long}3"/>
+    </items>
+</someSelectProperty>
+```
+
+We implement two helper methods which we use to easily access a given resources available template policy.
+
+```java title="core/src/main/java/xxx/yyy/utilities/Utils.java"
+/**
+ * Retrieves the {@link ContentPolicy} associated with the given {@link Resource}.
+ *
+ * @param resource the {@link Resource} from which the associated ContentPolicy is to be retrieved
+ * @return the associated ContentPolicy, or null if the ContentPolicyManager is not available or there is no associated ContentPolicy
+ */
+public static ContentPolicy getContentPolicy(Resource resource) {
+    ContentPolicy result = null;
+    final ContentPolicyManager contentPolicyManager = resource.getResourceResolver().adaptTo(ContentPolicyManager.class);
+    if (contentPolicyManager != null) {
+        result = contentPolicyManager.getPolicy(resource);
+    }
+    return result;
+}
+
+/**
+ * Fetches a specific policy property from the given {@link ContentPolicy} object and returns its value of the provided {@link Class} type.
+ * If the content policy is null or the property doesn't exist, returns null.
+ *
+ * @param contentPolicy the {@link ContentPolicy} from which to retrieve the property
+ * @param property      the property name to be fetched
+ * @param classType     the {@link Class} type of the property value
+ * @return the value of the property of the given {@link Class} type, or null if the content policy is null or the property doesn't exist
+ */
+public static <T> T getPolicyProperty(ContentPolicy contentPolicy, String property, Class<T> classType) {
+    T result = null;
+    if (contentPolicy != null) {
+        result = contentPolicy.getProperties().get(property, classType);
+    }
+    return result;
+}
+```
+
+We can then reuse these methods in our Sling Model
+
+```java title="core/src/main/java/xxx/yyy/models/impl/SomeSlingModel.java"
+final ContentPolicy contentPolicy = Utils.getContentPolicy(resource);
+// reusing the 'name' from our design_dialog property
+final String policySomeSelect = Utils.getPolicyProperty(contentPolicy, "someSelectProperty", String.class);
+```
+
+You can now access the currently selected policy value in your created variable.
+
+## UserManager
+
+## TagManager
+
+```java
+TagManager tagManager = request.getResourceResolver().adaptTo(TagManager.class);
+if (tagManager != null) {
+    Tag resolvedTag = tagManager.resolve(tag);
+    if (resolvedTag != null) {
+        tagName = resolvedTag.getTitle();
+        tagDescription = resolvedTag.getDescription();
+    }
+}
+```
+
+## ResourceResolver
+
+[Java Doc](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/javadoc/org/apache/sling/api/resource/ResourceResolver.html)
+
+[RR Factory](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/javadoc/org/apache/sling/api/resource/ResourceResolverFactory.html)
+
+### Lifecycle
+
+A Resource Resolver has a life cycle which begins with the creation of the Resource Resolver using any of the factory methods and ends with calling the close() method. It is very important to call the close() method once the resource resolver is not used any more to ensure any system resources are properly cleaned up. A Resource Resolver may also be closed implicitly if the ResourceResolverFactory which was used to create this resolver is no longer active.
+
+To check whether a Resource Resolver can still be used, the isLive() method can be called.
+
+A ResourceResolver is only valid for as long as the ResourceResolverFactory that created this instance exists. The same applies in general to all objects returned by this instance, especially for all resources. If the ResourceResolverFactory does not exist anymore, the resource resolver instances becomes invalid.
+
+[J. Hoh Blog](https://cqdump.wordpress.com/2013/07/23/cq-development-patterns-sling-resourceresolver-and-jcr-sessions/)
+
+```text
+Wenn ein ResourceResolver implizit verwendet wird, darf dieser nicht manuell per .close() geschlossen werden, da sonst 'zu viel' / die zugrundeliegende Session geschlossen wird. Die Verantwortung des RR Lifecycle liegt hier nicht beim Entwickler.
+Wenn ein ResourceResolver explizit per ResourceResolverFactory geoeffnet wird muss dieser auch manuell per .close() geschlossen werden. Zum Beispiel als autocloseable, wie bereits beschrieben.
+Bezueglich des angesprochenen API / Methodensignaturenproblems, ein ResourceResolver sollte  immer dort geschlossen werden, wo er auch geoeffnet wurde. Bedeuet, wenn ein ResourceResolver als Parameter in die Methode gereicht wird, darf diese den RR nicht schliessen. Der urspruengliche Aufrufer muss sich um diesen Sachverhalt kuemmern, bzw verantwortet den Lifecycle.
+```
+
+## Transport Handler
+
+```java
+package com.iqospwa.core.listeners;
+
+import com.day.cq.replication.AgentConfig;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.ReplicationResult;
+import com.day.cq.replication.ReplicationTransaction;
+import com.day.cq.replication.TransportContext;
+import com.day.cq.replication.TransportHandler;
+import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Component(service = TransportHandler.class,
+        name = "Jenkins Transport Handler",
+        immediate = true)
+public class JenkinsTransportHandler implements TransportHandler {
+
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
+
+    /**
+     * return true, if this handler should act on the job in this "queue".
+     */
+    @Override
+    public boolean canHandle(AgentConfig agentConfig) {
+        return false;
+    }
+
+    /**
+     * Basically works like the filter queue. It acts on the replication queue jobs.
+     */
+    @Override
+    public ReplicationResult deliver(TransportContext transportContext, ReplicationTransaction replicationTransaction) throws ReplicationException {
+        return null;
+    }
+}
+```

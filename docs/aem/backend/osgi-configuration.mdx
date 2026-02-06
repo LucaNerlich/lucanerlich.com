@@ -1,0 +1,40 @@
+---
+title: OSGi Configuration
+sidebar_position: 5
+tags: [aem, osgi, configuration]
+---
+
+# OSGi Configuration
+
+OSGi configuration is the primary way to control AEM services across environments. In AEM projects, configs are stored in the repository and deployed as part of the codebase.
+
+## Where configs live
+
+- `ui.config/src/main/content/jcr_root/apps/<app>/osgiconfig/`
+- Use runmode folders such as `config.author`, `config.publish`, and `config.dev` for environment-specific values.
+
+## File naming
+
+- Single config: `com.example.MyService.cfg.json`
+- Factory config: `com.example.MyService~my-name.cfg.json`
+
+## Example
+
+```json title="ui.config/.../config.author/com.example.MyService.cfg.json"
+{
+  "enabled": true,
+  "maxItems": 100,
+  "endpoint": "https://api.example.com"
+}
+```
+
+## Best practices
+
+- Keep secrets out of the repository; use secret stores or environment-specific injection.
+- Prefer small, focused configurations per service.
+- Use runmodes to keep author and publish behavior aligned with security requirements.
+
+## See also
+
+- [Deployment](../infrastructure/deployment.mdx)
+- [Security basics](../infrastructure/security.mdx)

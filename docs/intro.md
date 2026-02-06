@@ -16,7 +16,7 @@ Want to dive straight into some of my favorite posts? Check out these highlights
 
 * [⭐ Component Dialog Examples](./aem/component-dialogs.mdx): A one-stop-shop to copy and paste the most useful Granite
   Dialog xml widgets.
-* [Local Development Setup](./aem/aem-dev-setup.md): A short introduction on how to setup an AEM SDK locally, including
+* [Local Development Setup](./aem/infrastructure/aem-dev-setup.md): A short introduction on how to setup an AEM SDK locally, including
   a development environment.
 * [Multi Tenancy ui.frontend](./aem/ui/multi-tenancy-support-ui-frontend.mdx): An exhaustive post that deep-dives into
   how the AEM `ui.frontend` module can be setup to support multi-tenant usecases.

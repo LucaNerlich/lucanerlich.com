@@ -1,0 +1,38 @@
+---
+title: JCR Node Operations
+sidebar_position: 2
+tags: [aem, jcr, utilities]
+---
+
+# Various Operations on JCR Nodes
+
+## Loop over all Parents of given Child Node
+
+```java
+@Self
+private Resource currentResource;
+
+/**
+Loops over all parents to find 'customNode' e.g meta tags set via dialog multi
+*/
+private Resource getCustomNodeResource(Page page) {
+	String childPath = "/jcr:content/customNode";
+	Resource resource = null;
+	int currentPageDepth = page.getDepth();
+	for (int i=1; i < currentPageDepth; i++) {
+		resource = currentResource.getChild(page.getPath() + childPath);
+		if (resource != null) {
+			break;
+		} else {
+			page = page.getParent();
+		}
+	}
+	return resource;
+}
+```
+
+## See also
+
+- [Modify and query the JCR](./jcr.md)
+- [Content fragments](./content-fragments.md)
+- [Sling models](../backend/sling-models.mdx)

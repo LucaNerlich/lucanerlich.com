@@ -1,0 +1,54 @@
+---
+title: Adobe Edge Delivery Services
+sidebar_position: 9
+tags: [aem, edge-delivery, franklin, headless]
+slug: /aem/edge-delivery-services
+---
+
+# Adobe Edge Delivery Services
+
+Adobe Helix is now branded as **Adobe Edge Delivery Services (EDS)**. It is a modern content delivery framework that optimizes for speed, simplicity, and scale while staying tightly integrated with AEM as a Cloud Service. It enables fast authoring and delivery by pushing rendering and delivery closer to the edge and by using a frontend-first workflow. [Overview](https://experienceleague.adobe.com/de/docs/experience-manager-cloud-service/content/edge-delivery/overview)
+
+## What it is
+
+Edge Delivery Services is part of AEM and provides a composable, frontend-focused way to build and deliver sites. It replaces the traditional Publish/Dispatcher model with a multi-cloud SaaS delivery approach and integrates with your CDN or Adobe’s managed CDN. [Overview](https://experienceleague.adobe.com/de/docs/experience-manager-cloud-service/content/edge-delivery/overview)
+
+## Why use it
+
+- **Performance by default** with edge-optimized rendering.
+- **Faster development** with GitHub-driven workflows and lightweight frontend code.
+- **Flexible authoring** via AEM’s universal editor or document-based editing.
+
+## Authoring options
+
+1. **AEM Authoring + Universal Editor** for visual, in-context editing.
+2. **Document-based authoring** using SharePoint or Google Drive and publishing from familiar tools. [Overview](https://experienceleague.adobe.com/de/docs/experience-manager-cloud-service/content/edge-delivery/overview)
+
+## How it works (high level)
+
+1. Content is authored in AEM or document sources (SharePoint/Google Drive).
+2. Content is transformed and delivered via Edge Delivery Services.
+3. Frontend code is managed in GitHub and served globally at the edge. [Overview](https://experienceleague.adobe.com/de/docs/experience-manager-cloud-service/content/edge-delivery/overview)
+
+## Getting started
+
+If you want to start quickly, the official guidance points to using a preconfigured tutorial environment or setting up your own environment in less than 30 minutes. [Overview](https://experienceleague.adobe.com/de/docs/experience-manager-cloud-service/content/edge-delivery/overview)  
+For hands-on docs and tutorials, see [aem.live](https://aem.live).
+
+## Best practices
+
+- Keep blocks small and predictable; avoid heavy DOM rewrites.
+- Validate content structure early with strict block definitions.
+- Review performance on every PR; avoid regressions in Core Web Vitals.
+- Prefer progressive enhancement over large client-side bundles.
+
+## Learn more
+
+- [Edge Delivery Services overview](https://experienceleague.adobe.com/de/docs/experience-manager-cloud-service/content/edge-delivery/overview)
+- [aem.live documentation](https://aem.live)
+- [Block design guidance](https://milo.adobe.com/blog/drafts/block-design)
+
+## See also
+
+- [Performance](./performance.mdx)
+- [Security basics](./security.mdx)

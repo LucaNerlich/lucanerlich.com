@@ -1,0 +1,106 @@
+---
+title: Event Listener
+sidebar_position: 4
+tags: [aem, events, backend]
+---
+
+# Event Listener
+
+With OCD (ObjectClassDefinition) Config
+
+If you invoke external endpoints from listeners, prefer an allowlist of trusted hostnames and timeouts to avoid unexpected outbound calls.
+
+```java
+package com.iqospwa.core.listeners;
+
+import com.day.cq.replication.ReplicationAction;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.sling.event.jobs.NotificationConstants;
+import org.osgi.service.component.*;
+import org.osgi.service.component.propertytypes.ServiceDescription;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
+import org.osgi.service.metatype.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+
+/**
+ * Listens to Replication Action Events. If the configured paths match the event path,
+ * it will trigger the configured endpoint -> hit jenkins and trigger a new build for example
+ */
+@Component(service = EventHandler.class,
+        immediate = true,
+        property = {
+                EventConstants.EVENT_TOPIC + "=" + NotificationConstants.TOPIC_JOB_FINISHED
+        })
+@ServiceDescription("Event Listener which looks for Replication Events and triggers an external Endpoint")
+@Designate(ocd = ReplicationEventJenkinsListener.Config.class, factory = true)
+public class ReplicationEventJenkinsListener implements EventHandler {
+
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
+
+    private boolean enabled = false;
+    private String jenkinsUrl;
+    private String[] targetPaths;
+
+    private HttpClient httpClient;
+
+    @ObjectClassDefinition(name = "ReplicationEventJenkinsListener Config",
+            description = "Configure the ReplicationEventJenkinsListener")
+    public static @interface Config {
+
+        @AttributeDefinition(
+                name = "Enabled",
+                description = "Activation Event Listener is enabled",
+                type = AttributeType.BOOLEAN
+        )
+        boolean isEnabled() default false;
+
+        @AttributeDefinition(name = "External Jenkins Endpoint (url)",
+                description = "Jenkins Endpoint which should be triggered on AEM Replication Action")
+        String getJenkinsUrl() default "";
+
+        @AttributeDefinition(name = "Trigger on path", description = "Configure here all the paths on which the trigger should run")
+        String[] getTargetPaths();
+    }
+
+    /**
+     * Act only of finished replication jobs.
+     *
+     * @param event
+     */
+    public void handleEvent(final Event event) {
+        if (enabled && filterReplicationJobs(event)) {
+            final ReplicationAction action = ReplicationAction.fromEvent(event);
+            try {
+                if (httpClient != null) {
+                    final HttpResponse httpResponse = httpClient.execute(new HttpGet(jenkinsUrl));
+                }
+            } catch (IOException e) {}
+        }
+    }
+
+    @Activate
+    @Modified
+    protected void activate(Config config) {
+        enabled = config.isEnabled();
+        jenkinsUrl = config.getJenkinsUrl();
+        targetPaths = config.getTargetPaths();
+        httpClient = HttpClientBuilder.create().build();
+    }
+}
+```
+
+## See also
+
+- [Replication and activation](../content/replication-activation.mdx)
+- [OSGi configuration](./osgi-configuration.mdx)
+- [Security basics](../infrastructure/security.mdx)

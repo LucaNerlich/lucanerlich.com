@@ -1,0 +1,27 @@
+---
+title: AEM as a Cloud Service
+sidebar_position: 2
+tags: [aem, cloud-service, operations]
+---
+
+# AEM as a Cloud Service
+
+AEM as a Cloud Service provides managed infrastructure, continuous updates, and a strict separation between code and content changes.
+
+## What changes compared to on-prem
+
+- Deployments go through Cloud Manager pipelines.
+- Environments are immutable outside the pipeline.
+- Configuration is code-driven via OSGi configs and runmodes.
+
+## Practical tips
+
+- Use the Cloud SDK for local validation.
+- Keep dispatcher rules minimal and validate them in pipeline checks.
+- Treat author and publish as distinct targets with separate configs.
+
+## See also
+
+- [Local development setup](./aem-dev-setup.md)
+- [Deployment](./deployment.mdx)
+- [OSGi configuration](../backend/osgi-configuration.mdx)

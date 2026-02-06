@@ -70,21 +70,51 @@ const config = {
         ['@docusaurus/plugin-client-redirects',
             {
                 redirects: [
-                    {
-                        from: '/docs/aem/component-dialogs/', to: '/aem/component-dialogs/',
-                    },
-                    {
-                        from: '/docs/aem/groovy-console/', to: '/aem/groovy-console/',
-                    },
-                    {
-                        from: '/docs/aem/extending-responsive-grid/', to: '/aem/extending-responsive-grid/',
-                    },
-                    {
-                        from: '/docs/category/aem/', to: '/aem/',
-                    },
-                    {
-                        from: '/docs/aem/ui/overlays/', to: '/aem/ui/overlays/',
-                    },
+                    // Legacy /docs/ prefix redirects
+                    {from: '/docs/aem/component-dialogs/', to: '/aem/component-dialogs/'},
+                    {from: '/docs/aem/groovy-console/', to: '/aem/groovy-console/'},
+                    {from: '/docs/aem/extending-responsive-grid/', to: '/aem/ui/extending-responsive-grid/'},
+                    {from: '/docs/category/aem/', to: '/aem/'},
+                    {from: '/docs/aem/ui/overlays/', to: '/aem/ui/overlays/'},
+
+                    // Sidebar reorganization: components group
+                    {from: '/aem/components/', to: '/aem/components/overview/'},
+                    {from: '/aem/core-components/', to: '/aem/components/core-components/'},
+                    {from: '/aem/dialog-validation/', to: '/aem/components/dialog-validation/'},
+                    {from: '/aem/annotations/child-resource/', to: '/aem/components/annotations/child-resource/'},
+                    {from: '/aem/annotations/externalized-value-map-value/', to: '/aem/components/annotations/externalized-value-map-value/'},
+
+                    // Sidebar reorganization: backend group
+                    {from: '/aem/sling-models/', to: '/aem/backend/sling-models/'},
+                    {from: '/aem/servlets/', to: '/aem/backend/servlets/'},
+                    {from: '/aem/filter/', to: '/aem/backend/filter/'},
+                    {from: '/aem/event-listener/', to: '/aem/backend/event-listener/'},
+                    {from: '/aem/osgi-configuration/', to: '/aem/backend/osgi-configuration/'},
+                    {from: '/aem/java-best-practices/', to: '/aem/backend/java-best-practices/'},
+                    {from: '/aem/workflows/', to: '/aem/backend/workflows/'},
+
+                    // Sidebar reorganization: content group
+                    {from: '/aem/jcr/', to: '/aem/content/jcr/'},
+                    {from: '/aem/node-operations/', to: '/aem/content/node-operations/'},
+                    {from: '/aem/content-fragments/', to: '/aem/content/content-fragments/'},
+                    {from: '/aem/graphql/', to: '/aem/content/graphql/'},
+                    {from: '/aem/replication-activation/', to: '/aem/content/replication-activation/'},
+                    {from: '/aem/multi-site-manager-msm/', to: '/aem/content/multi-site-manager-msm/'},
+
+                    // Sidebar reorganization: infrastructure group
+                    {from: '/aem/aem-dev-setup/', to: '/aem/infrastructure/aem-dev-setup/'},
+                    {from: '/aem/cloud-service/', to: '/aem/infrastructure/cloud-service/'},
+                    {from: '/aem/deployment/', to: '/aem/infrastructure/deployment/'},
+                    {from: '/aem/dispatcher-configuration/', to: '/aem/infrastructure/dispatcher-configuration/'},
+                    {from: '/aem/performance/', to: '/aem/infrastructure/performance/'},
+                    {from: '/aem/security/', to: '/aem/infrastructure/security/'},
+                    {from: '/aem/testing/', to: '/aem/infrastructure/testing/'},
+                    {from: '/aem/email/', to: '/aem/infrastructure/email/'},
+                    {from: '/aem/helix/', to: '/aem/edge-delivery-services/'},
+                    {from: '/aem/aio-app-builder/', to: '/aem/infrastructure/aio-app-builder/'},
+
+                    // Sidebar reorganization: ui group
+                    {from: '/aem/extending-responsive-grid/', to: '/aem/ui/extending-responsive-grid/'},
                 ],
             },
         ],
