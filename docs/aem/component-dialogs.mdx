@@ -26,6 +26,9 @@ The following chapters each present a Coral XML snippet which can be copied into
 - [Empty Dialog / Starting Point](#empty-dialog--starting-point)
 - [Simple Data Fields](#simple-data-fields)
 - [Complex Data Fields](#complex-data-fields)
+- [Validation](#validation)
+- [Dialog Inheritance](#dialog-inheritance)
+- [Design Dialog (Template Policies)](#design-dialog-template-policies)
 - [Layout & Read Only](#layout--read-only)
 - [Full XML Example](#full-xml-example)
 
@@ -197,6 +200,10 @@ This is an empty dialog structure and components can be placed in tabs (you can 
 - [Dialog validation](./dialog-validation.mdx)
 - [Components](./components.mdx)
 - [Coral UI](./ui/coral-ui.mdx)
+- [Sling Models -- reading policy values](./sling-models.mdx#access-aem-template-policies)
+- [Dynamic rootpath for pathbrowser](./ui/dynamic-pathbrowser-rootpath.md)
+- [Granite UI Server-side API](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
+- [Coral UI Icon List](https://developer.adobe.com/experience-manager/reference-materials/6-5/coral-ui/coralui3/Coral.Icon.html#availableIcons)
 
 ![Empty dialog](/images/aem/dialogfields/empty.png)
 
@@ -425,6 +432,80 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
    maxDate="2030-12-31"
    displayedFormat="YYYY-MM-DD"
    name="./publishDate"/>
+```
+
+### Colorfield
+
+[Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/colorfield/index.html)
+
+```xml
+<colorpicker
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/colorfield"
+    fieldLabel="Brand Color"
+    name="./brandColor"
+    showDefaultColors="{Boolean}true"
+    showProperties="{Boolean}true"
+    showSwatches="{Boolean}true"/>
+```
+
+You can also restrict to a predefined palette by providing custom swatches:
+
+```xml
+<colorpicker
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/colorfield"
+    fieldLabel="Theme Color"
+    name="./themeColor"
+    showProperties="{Boolean}false"
+    showSwatches="{Boolean}true"
+    showDefaultColors="{Boolean}false">
+    <items jcr:primaryType="nt:unstructured">
+        <primary jcr:primaryType="nt:unstructured" value="#0055FF"/>
+        <secondary jcr:primaryType="nt:unstructured" value="#FF6600"/>
+        <dark jcr:primaryType="nt:unstructured" value="#333333"/>
+    </items>
+</colorpicker>
+```
+
+### Password
+
+[Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/password/index.html)
+
+```xml
+<password
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/password"
+    fieldLabel="API Key"
+    fieldDescription="Stored as plain text in the JCR -- consider using OSGi configs for secrets"
+    name="./apiKey"/>
+```
+
+:::warning
+Dialog passwords are stored as plain text in the JCR. For actual secrets, use
+[OSGi secret configurations](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/deploying/configuring-osgi#secret-configuration-values)
+or context-aware configurations instead.
+:::
+
+### Button Group
+
+[Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/buttongroup/index.html)
+
+A visual toggle group, useful for alignment or variant selection. Set `selectionMode` to `single`, `multiple`, or `none`.
+
+```xml
+<alignment
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/buttongroup"
+    fieldLabel="Text Alignment"
+    selectionMode="single"
+    name="./alignment">
+    <items jcr:primaryType="nt:unstructured">
+        <left  jcr:primaryType="nt:unstructured" text="Left"   value="left"   icon="textLeft"/>
+        <center jcr:primaryType="nt:unstructured" text="Center" value="center" icon="textCenter" checked="{Boolean}true"/>
+        <right jcr:primaryType="nt:unstructured" text="Right"  value="right"  icon="textRight"/>
+    </items>
+</alignment>
 ```
 
 ### Userpicker
@@ -787,6 +868,279 @@ Any dialog field can be added to each accordion item `items` block.
     name="./cq:tags"
     multiple="{Boolean}true"/>
 ```
+
+### Content Fragment picker
+
+Select a Content Fragment by path. Useful for headless or structured-content components.
+
+```xml
+<contentFragment
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+    fieldLabel="Content Fragment"
+    fieldDescription="Select a Content Fragment"
+    rootPath="/content/dam"
+    filter="hierarchyNotFile"
+    name="./fragmentPath"/>
+```
+
+For a picker that restricts to a specific CF model, use a datasource or render condition in your project.
+
+### Experience Fragment picker
+
+```xml
+<experienceFragment
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+    fieldLabel="Experience Fragment"
+    rootPath="/content/experience-fragments"
+    name="./experienceFragmentPath"/>
+```
+
+## Validation
+
+### Regex validation
+
+Add a `validation` node with a regex pattern to enforce input format:
+
+```xml
+<email
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Email Address"
+    name="./email"
+    required="{Boolean}true">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        foundation-validation=""/>
+    <validation
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/form/validation"
+        pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+        patternMessage="Please enter a valid email address"/>
+</email>
+```
+
+### Built-in validators
+
+Granite provides these validation types out of the box, set via the `validation` attribute on a field:
+
+| Validator | Description |
+|-----------|-------------|
+| (none) | No validation, only `required` is checked if set |
+| `foundation.jcr.name` | Valid JCR node name |
+| `foundation.url` | Valid URL format |
+| `foundation.email` | Valid email format |
+| `foundation.number` | Numeric value |
+
+```xml
+<linkUrl
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Link URL"
+    name="./linkUrl"
+    validation="foundation.url"/>
+```
+
+### Max length on textfield
+
+```xml
+<title
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Title"
+    name="./title"
+    maxlength="{Long}80"/>
+```
+
+## Dialog Inheritance
+
+### Extending a parent dialog with sling:resourceSuperType
+
+When your component extends another (e.g. a core component), its dialog can inherit from the parent.
+Fields, tabs, and structure are merged automatically.
+
+```xml title="components/mytext/_cq_dialog/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="nt:unstructured"
+          jcr:title="My Text"
+          sling:resourceType="cq/gui/components/authoring/dialog">
+    <content jcr:primaryType="nt:unstructured"
+             sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs jcr:primaryType="nt:unstructured"
+                  sling:resourceType="granite/ui/components/coral/foundation/tabs"
+                  maximized="{Boolean}true">
+                <items jcr:primaryType="nt:unstructured">
+                    <!-- New tab added to the inherited dialog -->
+                    <analytics
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Analytics"
+                        sling:resourceType="granite/ui/components/coral/foundation/container"
+                        margin="{Boolean}true">
+                        <items jcr:primaryType="nt:unstructured">
+                            <trackingId
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                fieldLabel="Tracking ID"
+                                name="./trackingId"/>
+                        </items>
+                    </analytics>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>
+```
+
+The component's `.content.xml` must reference the parent:
+
+```xml title="components/mytext/.content.xml"
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="cq:Component"
+          jcr:title="My Text"
+          sling:resourceSuperType="core/wcm/components/text/v2/text"
+          componentGroup="My Project"/>
+```
+
+### Hiding inherited tabs or fields with sling:hideChildren
+
+To remove specific tabs or fields inherited from a parent dialog, use `sling:hideChildren`:
+
+```xml
+<!-- Hide specific tabs by name -->
+<items jcr:primaryType="nt:unstructured"
+       sling:hideChildren="[layoutTab,stylesTab]">
+    <!-- your additional tabs here -->
+</items>
+```
+
+To hide all inherited children and start fresh:
+
+```xml
+<items jcr:primaryType="nt:unstructured"
+       sling:hideChildren="[*]">
+    <!-- only your own tabs will show -->
+</items>
+```
+
+You can also hide individual fields within a tab using the same mechanism deeper in the tree.
+
+### Hiding a single field with granite:hide
+
+```xml
+<unwantedField
+    jcr:primaryType="nt:unstructured"
+    granite:hide="{Boolean}true"/>
+```
+
+## Design Dialog (Template Policies)
+
+A `_cq_design_dialog` defines fields that appear in the **template editor** (Edit Template > Policy).
+Values are stored on the template policy, not on the component instance, and apply to all instances of the component
+using that template.
+
+```text title="Component structure"
+components/
+  mycomponent/
+    _cq_dialog/.content.xml          <-- instance dialog (per component)
+    _cq_design_dialog/.content.xml   <-- design dialog (per template policy)
+    mycomponent.html
+```
+
+```xml title="components/mycomponent/_cq_design_dialog/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="nt:unstructured"
+          jcr:title="My Component - Policy"
+          sling:resourceType="cq/gui/components/authoring/dialog">
+    <content jcr:primaryType="nt:unstructured"
+             sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs jcr:primaryType="nt:unstructured"
+                  sling:resourceType="granite/ui/components/coral/foundation/tabs"
+                  maximized="{Boolean}true">
+                <items jcr:primaryType="nt:unstructured">
+                    <properties
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Settings"
+                        sling:resourceType="granite/ui/components/coral/foundation/container"
+                        margin="{Boolean}true">
+                        <items jcr:primaryType="nt:unstructured">
+                            <columns jcr:primaryType="nt:unstructured"
+                                     sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"
+                                     margin="{Boolean}true">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <column jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <headingLevel
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                                fieldLabel="Default Heading Level"
+                                                name="./headingLevel">
+                                                <items jcr:primaryType="nt:unstructured">
+                                                    <h2 jcr:primaryType="nt:unstructured" text="H2" value="h2" selected="{Boolean}true"/>
+                                                    <h3 jcr:primaryType="nt:unstructured" text="H3" value="h3"/>
+                                                    <h4 jcr:primaryType="nt:unstructured" text="H4" value="h4"/>
+                                                </items>
+                                            </headingLevel>
+                                            <maxItems
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/numberfield"
+                                                fieldLabel="Max visible items"
+                                                fieldDescription="Limits the number of items an author can add"
+                                                name="./maxItems"
+                                                min="{Long}1"
+                                                max="{Long}20"
+                                                value="{Long}5"/>
+                                        </items>
+                                    </column>
+                                </items>
+                            </columns>
+                        </items>
+                    </properties>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>
+```
+
+Reading policy values in a Sling Model:
+
+```java
+import com.day.cq.wcm.api.policies.ContentPolicy;
+import com.day.cq.wcm.api.policies.ContentPolicyManager;
+
+@Model(adaptables = SlingHttpServletRequest.class)
+public class MyComponentModel {
+
+    @SlingObject
+    private Resource resource;
+
+    public String getDefaultHeadingLevel() {
+        ContentPolicyManager policyManager = resource.getResourceResolver()
+            .adaptTo(ContentPolicyManager.class);
+        if (policyManager != null) {
+            ContentPolicy policy = policyManager.getPolicy(resource);
+            if (policy != null) {
+                return policy.getProperties().get("headingLevel", "h2");
+            }
+        }
+        return "h2";
+    }
+}
+```
+
+For reusable helper methods to read policy values, see the [Sling Models page](./sling-models.mdx#access-aem-template-policies).
 
 ## Layout & Read Only
 
