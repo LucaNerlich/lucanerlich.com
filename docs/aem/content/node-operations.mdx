@@ -6,7 +6,268 @@ tags: [aem, jcr, utilities]
 
 # Various Operations on JCR Nodes
 
-## Loop over all Parents of given Child Node
+## Introduction
+
+AEM stores all content in the Java Content Repository (JCR). When working with JCR nodes programmatically, you have two main APIs at your disposal:
+
+- **Sling Resource API** (recommended) — higher-level abstraction that works with `Resource` objects and `ResourceResolver`. Portable, testable, and the idiomatic way to work in AEM.
+- **JCR Node API** — the lower-level `javax.jcr` API that operates directly on `Node`, `Session`, and `Property` objects. Use when the Sling API does not expose the feature you need (versioning, ordering, workspace operations).
+
+:::tip
+Prefer the Sling Resource API for everyday CRUD operations. Fall back to the JCR API only when you need capabilities like node ordering, versioning, or workspace-level copy.
+:::
+
+---
+
+## Create Nodes
+
+### Via Sling API
+
+```java
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.PersistenceException;
+import java.util.HashMap;
+import java.util.Map;
+
+public void createNodeViaSling(ResourceResolver resolver) throws PersistenceException {
+    Resource parentResource = resolver.getResource("/content/mysite/en");
+    if (parentResource != null) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("jcr:primaryType", "nt:unstructured");
+        properties.put("myProperty", "Hello World");
+        properties.put("myNumber", 42L);
+
+        Resource newResource = resolver.create(parentResource, "newChild", properties);
+        resolver.commit();
+    }
+}
+```
+
+### Via JCR API
+
+```java
+import javax.jcr.Node;
+import javax.jcr.Session;
+
+public void createNodeViaJcr(Session session) throws Exception {
+    Node parentNode = session.getNode("/content/mysite/en");
+    Node newNode = parentNode.addNode("newChild", "nt:unstructured");
+    newNode.setProperty("myProperty", "Hello World");
+    newNode.setProperty("myNumber", 42L);
+    session.save();
+}
+```
+
+:::warning
+Always call `resolver.commit()` or `session.save()` after making changes. Without it, your modifications exist only in the transient session and will be lost.
+:::
+
+---
+
+## Read Properties
+
+### Via Sling API
+
+```java
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
+
+public void readPropertiesViaSling(Resource resource) {
+    ValueMap properties = resource.getValueMap();
+    String title = properties.get("jcr:title", String.class);
+    Long count = properties.get("visitCount", 0L);
+    Boolean hidden = properties.get("hideInNav", false);
+    String[] tags = properties.get("cq:tags", String[].class);
+}
+```
+
+### Via JCR API
+
+```java
+import javax.jcr.Node;
+import javax.jcr.Property;
+
+public void readPropertiesViaJcr(Node node) throws Exception {
+    String title = node.getProperty("jcr:title").getString();
+    long count = node.getProperty("visitCount").getLong();
+    boolean hidden = node.getProperty("hideInNav").getBoolean();
+
+    // Multi-value property
+    Property tagsProp = node.getProperty("cq:tags");
+    javax.jcr.Value[] values = tagsProp.getValues();
+    for (javax.jcr.Value v : values) {
+        String tag = v.getString();
+    }
+}
+```
+
+### Type Casting Reference
+
+| JCR Type       | Sling ValueMap Class | JCR Getter             | Example Value                    |
+|----------------|----------------------|------------------------|----------------------------------|
+| `String`       | `String.class`       | `.getString()`         | `"Hello"`                        |
+| `Long`         | `Long.class`         | `.getLong()`           | `42L`                            |
+| `Boolean`      | `Boolean.class`      | `.getBoolean()`        | `true`                           |
+| `Calendar`     | `Calendar.class`     | `.getDate()`           | `2025-01-15T10:30:00.000+01:00` |
+| `Binary`       | `InputStream.class`  | `.getBinary()`         | binary stream                    |
+| `String[]`     | `String[].class`     | `.getValues()`         | `["tag:one", "tag:two"]`        |
+
+---
+
+## Update Properties
+
+### Via Sling API
+
+```java
+import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+
+public void updatePropertiesViaSling(Resource resource, ResourceResolver resolver)
+        throws Exception {
+    ModifiableValueMap mvp = resource.adaptTo(ModifiableValueMap.class);
+    if (mvp != null) {
+        mvp.put("jcr:title", "Updated Title");
+        mvp.put("visitCount", 100L);
+        mvp.remove("obsoleteProperty");
+        resolver.commit();
+    }
+}
+```
+
+### Via JCR API
+
+```java
+import javax.jcr.Node;
+import javax.jcr.Session;
+
+public void updatePropertiesViaJcr(Session session) throws Exception {
+    Node node = session.getNode("/content/mysite/en/jcr:content");
+    node.setProperty("jcr:title", "Updated Title");
+    node.setProperty("visitCount", 100L);
+    node.getProperty("obsoleteProperty").remove();
+    session.save();
+}
+```
+
+:::warning
+If `resource.adaptTo(ModifiableValueMap.class)` returns `null`, it typically means the service user lacks write permission to that path. Check your service user mappings.
+:::
+
+---
+
+## Delete Nodes
+
+### Via Sling API
+
+```java
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+
+public void deleteNodeViaSling(ResourceResolver resolver) throws Exception {
+    Resource target = resolver.getResource("/content/mysite/en/obsoletePage");
+    if (target != null) {
+        resolver.delete(target);
+        resolver.commit();
+    }
+}
+```
+
+### Via JCR API
+
+```java
+import javax.jcr.Node;
+import javax.jcr.Session;
+
+public void deleteNodeViaJcr(Session session) throws Exception {
+    Node node = session.getNode("/content/mysite/en/obsoletePage");
+    node.remove();
+    session.save();
+}
+```
+
+:::warning
+When deleting multiple child nodes in a loop, **collect paths first**, then delete in a separate pass. Deleting while iterating causes a `ConcurrentModificationException`.
+
+```java
+// Collect paths first
+List<String> pathsToDelete = new ArrayList<>();
+for (Resource child : parentResource.getChildren()) {
+    if (shouldDelete(child)) {
+        pathsToDelete.add(child.getPath());
+    }
+}
+
+// Then delete
+for (String path : pathsToDelete) {
+    Resource r = resolver.getResource(path);
+    if (r != null) {
+        resolver.delete(r);
+    }
+}
+resolver.commit();
+```
+:::
+
+---
+
+## Move and Copy
+
+### Move (atomic)
+
+```java
+import javax.jcr.Session;
+
+public void moveNode(Session session) throws Exception {
+    session.move("/content/mysite/en/old-page", "/content/mysite/en/new-page");
+    session.save();
+}
+```
+
+### Copy (duplicates the subtree)
+
+```java
+import javax.jcr.Session;
+import javax.jcr.Workspace;
+
+public void copyNode(Session session) throws Exception {
+    Workspace workspace = session.getWorkspace();
+    workspace.copy("/content/mysite/en/source-page", "/content/mysite/en/copy-of-source");
+}
+```
+
+:::tip
+`session.move()` is transient — it requires `session.save()` to persist. `workspace.copy()` is immediate and does not require a save. Move is atomic; copy duplicates the entire subtree including all child nodes and properties.
+:::
+
+---
+
+## Navigate the Tree
+
+### Common Sling Navigation Methods
+
+```java
+import org.apache.sling.api.resource.Resource;
+
+public void navigateTree(Resource resource) {
+    // Go up
+    Resource parent = resource.getParent();
+
+    // Go down to a specific child
+    Resource child = resource.getChild("jcr:content");
+
+    // Iterate over all children
+    for (Resource c : resource.getChildren()) {
+        String name = c.getName();
+        String path = c.getPath();
+    }
+}
+```
+
+### Loop over all Parents of given Child Node
+
+This is useful when you need to find an inherited configuration node (e.g. metadata set via a dialog) by walking up the page tree.
 
 ```java
 @Self
@@ -30,6 +291,138 @@ private Resource getCustomNodeResource(Page page) {
 	return resource;
 }
 ```
+
+### Recursive Traversal
+
+```java
+import org.apache.sling.api.resource.Resource;
+
+public void traverseRecursively(Resource resource, int depth) {
+    String indent = "  ".repeat(depth);
+    String type = resource.getValueMap().get("jcr:primaryType", "unknown");
+    log.info("{}{} [{}]", indent, resource.getName(), type);
+
+    for (Resource child : resource.getChildren()) {
+        traverseRecursively(child, depth + 1);
+    }
+}
+```
+
+---
+
+## Node Ordering
+
+By default, child nodes in `nt:unstructured` and `cq:Page` maintain insertion order. You can reorder them explicitly:
+
+```java
+import javax.jcr.Node;
+import javax.jcr.Session;
+
+public void reorderChildren(Session session) throws Exception {
+    Node parent = session.getNode("/content/mysite/en");
+    // Move "page-b" before "page-a" in the child list
+    parent.orderBefore("page-b", "page-a");
+    session.save();
+}
+```
+
+:::tip
+Node ordering matters for navigation menus, content lists, and anything that renders children in repository order. Pass `null` as the second argument to `orderBefore` to move a node to the end of the list.
+:::
+
+---
+
+## Versioning
+
+AEM uses JCR versioning to track content changes. The `VersionManager` lets you create and restore versions programmatically.
+
+```java
+import javax.jcr.Session;
+import javax.jcr.version.VersionManager;
+
+public void createAndRestoreVersion(Session session) throws Exception {
+    VersionManager vm = session.getWorkspace().getVersionManager();
+    String path = "/content/mysite/en/jcr:content";
+
+    // Create a new version (checkpoint = check-in + check-out)
+    vm.checkpoint(path);
+
+    // List versions
+    javax.jcr.version.VersionHistory history = vm.getVersionHistory(path);
+    javax.jcr.version.VersionIterator versions = history.getAllVersions();
+    while (versions.hasNext()) {
+        javax.jcr.version.Version v = versions.nextVersion();
+        log.info("Version: {} created at {}", v.getName(), v.getCreated().getTime());
+    }
+
+    // Restore a specific version
+    vm.restore(path, "1.0", true);
+}
+```
+
+:::warning
+Restoring a version replaces the current content of the node. The `removeExisting` parameter (third argument) controls whether conflicting nodes with the same UUID are removed. Set to `true` in most cases.
+:::
+
+---
+
+## Batch Operations
+
+When modifying a large number of nodes (hundreds or thousands), saving after every single change is inefficient. Instead, batch your saves.
+
+```java
+import org.apache.sling.api.resource.ResourceResolver;
+
+public void batchUpdate(ResourceResolver resolver, List<Resource> resources) throws Exception {
+    int batchSize = 1000;
+    int count = 0;
+
+    for (Resource resource : resources) {
+        ModifiableValueMap mvp = resource.adaptTo(ModifiableValueMap.class);
+        if (mvp != null) {
+            mvp.put("migrationFlag", true);
+            count++;
+
+            if (count % batchSize == 0) {
+                resolver.commit();
+                log.info("Committed batch at count {}", count);
+            }
+        }
+    }
+
+    // Commit remaining changes
+    if (count % batchSize != 0) {
+        resolver.commit();
+    }
+    log.info("Batch update complete. Total nodes updated: {}", count);
+}
+```
+
+:::tip
+A batch size of **1000** is a good starting point. For nodes with large binary properties, reduce the batch size to avoid excessive memory usage. For scripted bulk operations, consider using the [Groovy Console](../groovy-console.mdx) which provides built-in batching utilities.
+:::
+
+---
+
+## Sling API vs JCR API
+
+| Concern                  | Sling Resource API               | JCR Node API                     |
+|--------------------------|----------------------------------|----------------------------------|
+| **Abstraction level**    | High-level                       | Low-level                        |
+| **Primary object**       | `Resource`, `ValueMap`           | `Node`, `Property`, `Session`    |
+| **Create**               | `resolver.create()`              | `node.addNode()`                 |
+| **Read**                 | `resource.getValueMap()`         | `node.getProperty()`             |
+| **Update**               | `ModifiableValueMap.put()`       | `node.setProperty()`             |
+| **Delete**               | `resolver.delete()`              | `node.remove()`                  |
+| **Persist**              | `resolver.commit()`              | `session.save()`                 |
+| **Node ordering**        | Not supported                    | `node.orderBefore()`             |
+| **Versioning**           | Not supported                    | `VersionManager`                 |
+| **Move**                 | `resolver.move()`                | `session.move()`                 |
+| **Copy**                 | Not natively supported           | `workspace.copy()`               |
+| **Testability**          | Easy to mock                     | Harder to mock                   |
+| **Recommended**          | Yes — default choice             | When Sling API is insufficient   |
+
+---
 
 ## See also
 

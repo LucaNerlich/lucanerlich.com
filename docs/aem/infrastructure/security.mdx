@@ -6,19 +6,509 @@ tags: [aem, security, best-practices]
 
 # Security Basics
 
-These are general AEM security guidelines that apply across author, publish, and custom code.
+Security in AEM is a multi-layered concern that spans user management, access control, request filtering,
+XSS protection, and Dispatcher hardening. A single misconfiguration — an open servlet, a leaked service
+resolver, or a missing Dispatcher rule — can expose sensitive content or grant attackers administrative access.
 
-## Core principles
+This page covers the most critical security topics every AEM developer and architect should understand.
+The sections progress from repository-level controls (service users, ACLs, CUGs) through request-level
+defences (CSRF, referrer filter, XSS) to infrastructure-level hardening (Dispatcher, production-ready mode).
 
-- Least privilege for users and service accounts.
-- Validate input and avoid dynamic code execution.
-- Keep secrets out of the repository.
+:::tip Core principles
+- **Least privilege** for every user, service account, and Dispatcher rule.
+- **Validate all input** and never execute dynamic code.
+- **Defence in depth** — never rely on a single layer.
+- **Keep secrets out** of the repository, clientlibs, and version control.
+:::
 
-## Common pitfalls to avoid
+---
 
-- Exposing custom `/bin` endpoints without authentication or CSRF protection.
-- Overly broad dispatcher allowlists.
-- Granting `admin` permissions to service users.
+## Service Users
+
+AEM code that accesses the JCR must authenticate. In older versions, `loginAdministrative()` was commonly
+used to obtain a session with full admin rights. This is **deprecated and dangerous**.
+
+:::danger Never use `loginAdministrative()`
+`loginAdministrative()` grants unrestricted repository access to your code. If an attacker can trigger
+your servlet or workflow, they inherit those permissions. Always use a dedicated service user with
+minimal privileges instead.
+:::
+
+### Creating a service user mapping
+
+Service user mappings are defined as OSGi factory configurations for
+`org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended`.
+
+```json title="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-my-project.cfg.json"
+{
+    "user.mapping": [
+        "my-project.core:my-read-service=[my-project-read-service]",
+        "my-project.core:my-write-service=[my-project-write-service]"
+    ]
+}
+```
+
+The format is `<bundle-symbolic-name>:<sub-service-name>=<service-user-id>`. Always scope to a
+**sub-service name** so different parts of your code can use different privilege levels.
+
+### Obtaining a service ResourceResolver
+
+Use `ResourceResolverFactory.getServiceResourceResolver()` with **try-with-resources** to guarantee
+the resolver is closed, preventing session leaks.
+
+```java
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.LoginException;
+
+import java.util.Map;
+
+@Reference
+private ResourceResolverFactory resolverFactory;
+
+private static final Map<String, Object> AUTH_INFO = Map.of(
+    ResourceResolverFactory.SUBSERVICE, "my-read-service"
+);
+
+public String readTitle(String path) {
+    try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(AUTH_INFO)) {
+        Resource resource = resolver.getResource(path);
+        if (resource != null) {
+            ValueMap props = resource.getValueMap();
+            return props.get("jcr:title", String.class);
+        }
+    } catch (LoginException e) {
+        LOG.error("Failed to obtain service resolver for sub-service 'my-read-service'", e);
+    }
+    return null;
+}
+```
+
+:::warning Always close service resolvers
+A leaked `ResourceResolver` holds an open JCR session, consuming heap memory and repository
+connections. In high-traffic scenarios this leads to memory exhaustion and instance instability.
+Always use try-with-resources.
+:::
+
+### Minimal permission principle
+
+Grant only the permissions the service user actually needs:
+
+- **Read-only service**: `jcr:read` on the specific content subtree.
+- **Write service**: add `rep:write` only on the exact paths required.
+- **Never** grant `jcr:all` or place ACLs at the repository root (`/`).
+
+---
+
+## Access Control Lists (ACLs)
+
+AEM uses the Jackrabbit Oak access control model. ACLs are stored as `rep:policy` child nodes
+containing individual Access Control Entries (ACEs).
+
+### ACE node types
+
+| Node type | Purpose |
+|---|---|
+| `rep:GrantACE` | Grants a set of privileges to a principal |
+| `rep:DenyACE` | Denies a set of privileges to a principal |
+
+### `rep:glob` patterns
+
+The `rep:glob` restriction enables fine-grained path matching within an ACL:
+
+| Pattern | Matches |
+|---|---|
+| `""` (empty string) | Only the node itself, not children |
+| `*` | All direct children |
+| `*/jcr:content` | The `jcr:content` child of every direct child |
+| `/*` | The node and all descendants |
+
+```xml title="Example ACL granting read to a specific subtree"
+<rep:policy jcr:primaryType="rep:ACL">
+    <allow
+        jcr:primaryType="rep:GrantACE"
+        rep:principalName="my-project-read-service"
+        rep:privileges="{Name}jcr:read"
+        rep:glob="/*" />
+</rep:policy>
+```
+
+### Reading ACLs programmatically
+
+```java
+import org.apache.jackrabbit.api.security.JackrabbitAccessControlManager;
+import javax.jcr.Session;
+import javax.jcr.security.AccessControlPolicy;
+
+Session session = resolver.adaptTo(Session.class);
+JackrabbitAccessControlManager acm =
+    (JackrabbitAccessControlManager) session.getAccessControlManager();
+
+AccessControlPolicy[] policies = acm.getPolicies("/content/my-project");
+for (AccessControlPolicy policy : policies) {
+    // Inspect or modify entries
+}
+```
+
+### Setting ACLs via `repoinit` scripts (AEMaaCS)
+
+On AEM as a Cloud Service, `repoinit` scripts are the recommended way to provision service users
+and their ACLs declaratively. They run during deployment and are idempotent.
+
+```text title="org.apache.sling.jcr.repoinit.RepositoryInitializer-my-project.config"
+scripts=[
+    "create service user my-project-read-service with path system/my-project\n
+     create path /content/my-project(sling:Folder)\n
+     set ACL for my-project-read-service\n
+         allow jcr:read on /content/my-project\n
+     end\n
+
+     create service user my-project-write-service with path system/my-project\n
+     set ACL for my-project-write-service\n
+         allow jcr:read,rep:write on /content/my-project/dam/uploads\n
+     end"
+]
+```
+
+:::tip
+Use `repoinit` over manual ACL setup in CRX/DE. It ensures consistent permissions across
+environments, is version-controlled, and survives content package re-installations.
+:::
+
+---
+
+## Closed User Groups (CUGs)
+
+A Closed User Group restricts **read access** on a publish instance to a defined set of authenticated
+principals. Content outside the CUG boundary remains publicly readable; content inside requires login.
+
+### How it works
+
+A `rep:cugPolicy` node is placed on the root of the restricted subtree. It contains a
+`rep:principalNames` property listing the principals (users or groups) who are granted read access.
+
+```xml title="Example CUG policy node"
+<rep:cugPolicy
+    jcr:primaryType="rep:CugPolicy"
+    rep:principalNames="[members-group, premium-users]" />
+```
+
+### Configuration requirements
+
+1. Enable the CUG authorization module in AEM's security configuration.
+2. Define the CUG-supported paths (e.g., `/content/my-project/members`).
+3. Ensure a login page is configured so unauthenticated users are redirected.
+
+### Use case
+
+CUGs are ideal for **member-only content sections** such as gated documentation, premium articles,
+or partner portals where certain subtrees should only be visible after authentication.
+
+:::warning
+CUGs only control **read access**. They do not protect against write operations or API calls.
+Always combine CUGs with proper ACLs and Dispatcher rules.
+:::
+
+---
+
+## CSRF Protection
+
+AEM includes a built-in CSRF token filter that protects state-changing requests (POST, PUT, DELETE)
+against cross-site request forgery attacks.
+
+### How it works
+
+1. AEM generates a unique CSRF token per session.
+2. The token is embedded in forms and AJAX requests.
+3. The server validates the token on every mutating request — rejecting requests with missing or
+   invalid tokens.
+
+### Adding CSRF tokens to forms
+
+In HTL templates, use the `@csrf-token` expression:
+
+```html
+<form method="POST" action="/content/my-project/submit">
+    <input type="hidden" name=":cq_csrf_token" value="${@csrf-token}" />
+    <input type="text" name="message" />
+    <button type="submit">Send</button>
+</form>
+```
+
+For JavaScript-driven requests, fetch the token from the granite CSRF servlet:
+
+```javascript
+async function getCsrfToken() {
+    const response = await fetch('/libs/granite/csrf/token.json');
+    const data = await response.json();
+    return data.token;
+}
+
+async function submitData(payload) {
+    const token = await getCsrfToken();
+    await fetch('/content/my-project/submit', {
+        method: 'POST',
+        headers: {
+            'CSRF-Token': token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+}
+```
+
+### Configuring exempt paths
+
+Some headless API endpoints may need to be exempt from CSRF validation (e.g., when using
+token-based auth). Configure exemptions via the CSRF filter OSGi config:
+
+```json title="com.adobe.granite.csrf.impl.CSRFFilter.cfg.json"
+{
+    "filter.excluded.paths": [
+        "/api/v1/webhook",
+        "/api/v1/external-callback"
+    ]
+}
+```
+
+:::danger
+Only exempt paths that are protected by an alternative authentication mechanism (e.g., API keys,
+OAuth bearer tokens). Never exempt paths that accept session-cookie-authenticated requests.
+:::
+
+---
+
+## Sling Referrer Filter
+
+The Apache Sling Referrer Filter blocks POST requests that originate from untrusted domains,
+protecting against cross-site POST attacks where a malicious page submits a form to your AEM instance.
+
+### OSGi configuration
+
+```json title="org.apache.sling.security.impl.ReferrerFilter.cfg.json"
+{
+    "allow.empty": false,
+    "allow.hosts": [
+        "author.my-project.com",
+        "publish.my-project.com"
+    ],
+    "allow.hosts.regexp": [],
+    "filter.methods": [
+        "POST",
+        "PUT",
+        "DELETE"
+    ],
+    "exclude.agents.regexp": []
+}
+```
+
+:::warning
+Setting `allow.empty` to `true` allows requests with no `Referer` header. Some legitimate clients
+strip this header, but allowing empty referrers weakens the protection. Only enable this when
+absolutely necessary and compensate with other controls (CSRF tokens, authentication).
+:::
+
+---
+
+## XSS Protection
+
+Cross-site scripting (XSS) is one of the most common web vulnerabilities. AEM provides multiple
+layers of defence including HTL context-aware escaping, the AntiSamy framework, and the XSSAPI.
+
+For detailed XSS protection including AntiSamy configuration and XSSAPI usage, see
+[HTL Templates — XSS Protection](../htl-templates.mdx#xss-protection-configuration-antisamy).
+
+### Quick reminder: HTL context escaping
+
+HTL automatically applies context-appropriate escaping based on the output context:
+
+```html
+<!-- Escaped as HTML text (default) -->
+<p>${properties.description}</p>
+
+<!-- Escaped as URI -->
+<a href="${properties.link @ context='uri'}">Link</a>
+
+<!-- Escaped as HTML attribute -->
+<div data-config="${properties.config @ context='attribute'}"></div>
+
+<!-- DANGEROUS: disables escaping — only for trusted, already-safe markup -->
+<div>${properties.trustedHtml @ context='unsafe'}</div>
+```
+
+:::danger
+Never use `context='unsafe'` with user-supplied content. This completely disables escaping and
+opens the door to stored XSS attacks. If you need to render rich text, sanitise it server-side
+with XSSAPI first.
+:::
+
+---
+
+## Dispatcher Security
+
+The Dispatcher is your first line of defence on the publish tier. A properly configured Dispatcher
+prevents access to sensitive endpoints before requests ever reach AEM.
+
+### Paths to ALWAYS block on publish
+
+These paths must **never** be accessible on a public-facing publish instance:
+
+| Path pattern | Reason |
+|---|---|
+| `/crx/*` | CRX/DE and repository browser |
+| `/system/console/*` | Felix OSGi console |
+| `/apps/*` | Application code and component definitions |
+| `/libs/*` | AEM platform code |
+| `/bin/*` | Sling servlets (allow specific exceptions only) |
+| `/etc.clientlibs/*` | Allow this — proxied clientlibs are safe |
+| `/services/*` | Internal service endpoints |
+| `/content/dam/*.json` | Prevents JSON enumeration of DAM assets |
+
+### Deny-by-default filter pattern
+
+Always start with a deny-all rule and selectively allow only what is needed:
+
+```text title="/dispatcher/src/conf.dispatcher.d/filters/filters.any"
+/filters {
+    # Deny everything by default
+    /0001 { /type "deny" /url "*" }
+
+    # Allow public content
+    /0010 { /type "allow" /method "GET" /url "/content/my-project/*" }
+    /0011 { /type "allow" /method "GET" /url "/etc.clientlibs/*" }
+    /0012 { /type "allow" /method "GET" /url "/libs/granite/csrf/token.json" }
+
+    # Allow specific POST endpoints (with CSRF/auth protection)
+    /0020 { /type "allow" /method "POST" /url "/content/my-project/*/jcr:content.submit" }
+
+    # Explicit blocks (defence in depth)
+    /0099 { /type "deny" /url "/crx/*" }
+    /0100 { /type "deny" /url "/system/*" }
+    /0101 { /type "deny" /url "/apps/*" }
+    /0102 { /type "deny" /url "/bin/*" }
+    /0103 { /type "deny" /url "/services/*" }
+}
+```
+
+### Restricting HTTP methods
+
+On publish, most paths should only respond to `GET` and `HEAD`. Allowing `POST`, `PUT`, or
+`DELETE` on broad paths enables attackers to modify content via the Sling POST Servlet.
+
+```text
+# Only allow safe methods for general content
+/0010 { /type "allow" /method "(GET|HEAD)" /url "/content/*" }
+```
+
+:::tip
+Even if AEM requires authentication for write operations, the Dispatcher should still block
+unsafe methods as an additional layer. Defence in depth means not relying solely on AEM-level
+authentication.
+:::
+
+---
+
+## Production Ready Mode
+
+AEM's production-ready mode hardens the instance by disabling development features that pose
+security risks.
+
+### What it enables/disables
+
+| Feature | Development | Production Ready |
+|---|---|---|
+| CRX/DE access | Enabled | **Disabled** |
+| WebDAV access | Enabled | **Disabled** |
+| Debug servlets | Enabled | **Disabled** |
+| WCM debug filter | Enabled | **Disabled** |
+| Default password enforcement | Relaxed | **Enforced** |
+
+### Enabling production-ready mode
+
+On AEMaaCS, production-ready mode is always enabled on stage and production environments. For
+on-premise or AMS deployments, set the following run mode:
+
+```text
+-Dsling.run.modes=publish,prod,nosamplecontent
+```
+
+:::warning
+Never deploy an AEM publish instance to production without production-ready mode enabled.
+Leaving CRX/DE or debug servlets accessible on publish is one of the most common and critical
+misconfigurations.
+:::
+
+---
+
+## Content Disposition Filter
+
+The Content Disposition Filter prevents **content-type sniffing attacks** where browsers ignore the
+declared `Content-Type` and attempt to render uploaded files (e.g., SVGs containing JavaScript) as
+HTML.
+
+### How it works
+
+The filter adds a `Content-Disposition: attachment` header to responses for configured paths,
+forcing the browser to download rather than render the content inline.
+
+### OSGi configuration
+
+```json title="org.apache.sling.security.impl.ContentDispositionFilter.cfg.json"
+{
+    "sling.content.disposition.paths": [
+        "/content/dam/*:image/svg+xml",
+        "/content/dam/*:text/html",
+        "/content/dam/*:text/xml",
+        "/content/dam/*:application/xhtml+xml"
+    ],
+    "sling.content.disposition.all.paths": false
+}
+```
+
+This configuration forces downloads for SVG, HTML, and XML files served from the DAM — the most
+common vectors for stored XSS via file upload.
+
+:::tip
+On AEMaaCS, the Content Disposition Filter is pre-configured with sensible defaults. Verify
+the settings match your security requirements, especially if you allow user-uploaded SVG files.
+:::
+
+---
+
+## Common Vulnerabilities
+
+The following are frequently encountered security issues in AEM projects:
+
+1. **Open SlingPostServlet on publish** — The default Sling POST Servlet can create, modify, and
+   delete content. If not blocked on publish, attackers can modify the repository. Always deny
+   POST to general content paths at the Dispatcher level.
+
+2. **Unprotected custom servlets** — Servlets registered under `/bin/` or via resource types must
+   enforce authentication and authorisation. Never assume the Dispatcher will be the only control.
+
+3. **Leaked service resolvers** — Failing to close a `ResourceResolver` obtained via
+   `getServiceResourceResolver()` leaks JCR sessions. Under load, this exhausts the session pool
+   and crashes the instance.
+
+4. **Overly broad Dispatcher allow rules** — Rules like `/0010 { /type "allow" /url "*" }` negate
+   all subsequent deny rules if placed incorrectly. Always follow a deny-by-default pattern.
+
+5. **Secrets in clientlibs** — API keys, internal hostnames, or tokens embedded in JavaScript
+   clientlibs are visible to anyone inspecting the page source. Use server-side proxies or
+   environment-specific OSGi configs instead.
+
+6. **Missing CSRF tokens on forms** — Custom forms that skip CSRF token validation are vulnerable
+   to cross-site request forgery attacks.
+
+7. **Wildcard `allow.hosts` in referrer filter** — Using `*` or overly broad regex patterns
+   in the Sling Referrer Filter effectively disables the protection.
+
+:::danger
+Audit every custom servlet, workflow step, and scheduled job for proper authentication,
+authorisation, and resource resolver lifecycle management before going to production.
+:::
+
+---
 
 ## See also
 
@@ -30,3 +520,4 @@ These are general AEM security guidelines that apply across author, publish, and
 - [Dispatcher configuration](./dispatcher-configuration.mdx)
 - [Deployment](./deployment.mdx)
 - [Testing](./testing.mdx)
+- [HTL Templates](../htl-templates.mdx)

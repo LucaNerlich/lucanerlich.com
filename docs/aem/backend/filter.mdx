@@ -4,15 +4,230 @@ sidebar_position: 3
 tags: [aem, filters, backend]
 ---
 
-# Filter
+# Sling Servlet Filters
+
+## Introduction
+
+Sling servlet filters sit between the Sling engine and the servlet (or script) that ultimately handles a request. They
+intercept every request that matches their configuration and can inspect or modify the request and response **before**
+and **after** the servlet executes. This is the same `javax.servlet.Filter` contract you know from the Servlet
+specification, but registered through OSGi annotations instead of `web.xml`.
+
+Filters are ideal for **cross-cutting concerns** — logic that applies to many requests regardless of which servlet
+handles them. Typical examples include logging, security-header injection, authentication checks, and decoration-tag
+removal.
+
+:::tip
+Think of filters as middleware. They form a chain: each filter calls `chain.doFilter()` to pass control to the next
+filter (or to the servlet at the end of the chain). Skipping that call effectively blocks the request.
+:::
+
+## Filter Annotation
+
+Register a filter with the `@SlingServletFilter` annotation from `org.apache.sling.servlets.annotations`. Pair it with
+the OSGi `@Component` annotation so the SCR runtime picks it up.
+
+### Available Attributes
+
+| Attribute       | Type                         | Description                                                            |
+| --------------- | ---------------------------- | ---------------------------------------------------------------------- |
+| `scope`         | `SlingServletFilterScope[]`  | When the filter fires (see [Filter Scopes](#filter-scopes) below).     |
+| `pattern`       | `String`                     | Regex matched against the request path (e.g. `/content/mysite/.*`).    |
+| `resourceTypes` | `String[]`                   | Sling resource types the filter applies to.                            |
+| `extensions`    | `String[]`                   | Request extensions (e.g. `html`, `json`).                              |
+| `methods`       | `String[]`                   | HTTP methods (e.g. `GET`, `POST`).                                     |
+| `selectors`     | `String[]`                   | Sling selectors (e.g. `infinity`, `model`).                            |
+
+### Full Annotated Example
+
+```java title="AnnotatedFilterExample.java"
+import org.apache.sling.servlets.annotations.SlingServletFilter;
+import org.apache.sling.servlets.annotations.SlingServletFilterScope;
+import org.osgi.service.component.annotations.Component;
+
+import javax.servlet.*;
+import java.io.IOException;
+
+@Component
+@SlingServletFilter(
+        scope = {SlingServletFilterScope.REQUEST},
+        pattern = "/content/mysite/.*",
+        extensions = {"html", "json"},
+        methods = {"GET"},
+        selectors = {"model"}
+)
+public class AnnotatedFilterExample implements Filter {
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // Called once when the filter is activated
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        // Pre-processing — runs before the servlet
+        // ...
+
+        chain.doFilter(request, response);
+
+        // Post-processing — runs after the servlet
+        // ...
+    }
+
+    @Override
+    public void destroy() {
+        // Called once when the filter is deactivated
+    }
+}
+```
+
+## Filter Scopes
+
+The `scope` attribute controls **when** in the Sling request lifecycle the filter is invoked.
+
+| Scope       | Fires during                                       | Typical use case                                        |
+| ----------- | -------------------------------------------------- | ------------------------------------------------------- |
+| `REQUEST`   | The initial (main) HTTP request                    | Logging, auth checks, response headers                  |
+| `INCLUDE`   | `<sling:include>` / `data-sly-resource` calls      | Decoration-tag removal, component-level manipulation     |
+| `FORWARD`   | `<sling:forward>` calls                            | Redirect interception, request rewriting                 |
+| `ERROR`     | Error-handling dispatches (e.g. 404, 500 pages)    | Custom error-page logic, error logging                   |
+| `COMPONENT` | Component rendering (both include and forward)     | Component-level decoration, profiling                    |
+
+:::warning
+Choosing the wrong scope is a common source of bugs. A `REQUEST`-scoped filter will **never** fire for
+`data-sly-resource` includes — you need `INCLUDE` or `COMPONENT` for that.
+:::
+
+You can specify multiple scopes on a single filter:
+
+```java
+@SlingServletFilter(scope = {SlingServletFilterScope.REQUEST, SlingServletFilterScope.INCLUDE})
+```
+
+## Request Timing / Logging Filter
+
+A practical filter that measures and logs how long each request takes to process.
+
+```java title="RequestTimingFilter.java"
+import org.apache.sling.servlets.annotations.SlingServletFilter;
+import org.apache.sling.servlets.annotations.SlingServletFilterScope;
+import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
+@Component(property = "service.ranking:Integer=1000")
+@SlingServletFilter(
+        scope = {SlingServletFilterScope.REQUEST},
+        pattern = "/content/.*"
+)
+public class RequestTimingFilter implements Filter {
+
+    private static final Logger log = LoggerFactory.getLogger(RequestTimingFilter.class);
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // no-op
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
+        final long start = System.nanoTime();
+        final String uri = ((HttpServletRequest) request).getRequestURI();
+
+        try {
+            chain.doFilter(request, response);
+        } finally {
+            final long durationMs = (System.nanoTime() - start) / 1_000_000;
+            log.info("Request [{}] completed in {} ms", uri, durationMs);
+
+            if (durationMs > 3000) {
+                log.warn("Slow request detected: [{}] took {} ms", uri, durationMs);
+            }
+        }
+    }
+
+    @Override
+    public void destroy() {
+        // no-op
+    }
+}
+```
+
+:::tip
+Wrapping `chain.doFilter()` in a `try / finally` block guarantees that the timing is logged even when the downstream
+servlet throws an exception.
+:::
+
+## Response Header Filter (CORS / Security Headers)
+
+Add security-related HTTP headers to every response without touching individual servlets or scripts.
+
+```java title="SecurityHeaderFilter.java"
+import org.apache.sling.servlets.annotations.SlingServletFilter;
+import org.apache.sling.servlets.annotations.SlingServletFilterScope;
+import org.osgi.service.component.annotations.Component;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@Component(property = "service.ranking:Integer=900")
+@SlingServletFilter(
+        scope = {SlingServletFilterScope.REQUEST},
+        pattern = "/content/.*",
+        extensions = {"html"},
+        methods = {"GET"}
+)
+public class SecurityHeaderFilter implements Filter {
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // no-op
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
+        final HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        // Security headers
+        httpResponse.setHeader("X-Content-Type-Options", "nosniff");
+        httpResponse.setHeader("X-Frame-Options", "SAMEORIGIN");
+        httpResponse.setHeader("X-XSS-Protection", "1; mode=block");
+        httpResponse.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+        httpResponse.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+
+        chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
+        // no-op
+    }
+}
+```
+
+:::warning
+Security headers set in a Sling filter may be **overridden** by the Dispatcher or a CDN. Coordinate with your
+infrastructure team and verify the final headers with browser dev-tools or `curl -I`.
+:::
 
 ## Remove CQ Decoration Tags
 
-The following Sling filter removes all AEM added html component deocration tags
+AEM wraps every component include in a decoration `<div>` tag. This filter strips those tags on **publish** so
+experience-fragment markup stays clean.
 
 ```java title="CqDecorationFilter.java"
 /**
- * Remove aem component wrapper div on publish
+ * Remove AEM component wrapper div on publish.
  * https://github.com/Adobe-Consulting-Services/acs-aem-samples/blob/master/core/src/main/java/com/adobe/acs/samples/filters/impl/SampleSlingIncludeFilter.java
  */
 
@@ -31,8 +246,8 @@ public class CqDecorationFilter implements Filter {
     }
 
     @Override
-    public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-            ServletException {
+    public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
         final WCMMode mode = WCMMode.fromRequest(request);
         final IncludeOptions includeOptions = IncludeOptions.getOptions(request, true);
@@ -53,6 +268,150 @@ public class CqDecorationFilter implements Filter {
     }
 }
 ```
+
+:::tip
+This filter uses `SlingServletFilterScope.INCLUDE` because decoration tags are applied during component includes, not
+during the top-level request. A `REQUEST`-scoped filter would never see these includes.
+:::
+
+## Filter Ordering
+
+When multiple filters match the same request, OSGi uses the **`service.ranking`** property to determine execution
+order. **Higher ranking = executes first** (closer to the client).
+
+Set the ranking via the `@Component` annotation:
+
+```java
+@Component(property = "service.ranking:Integer=100")
+```
+
+### Example: Two Filters with Different Rankings
+
+```java title="HighPriorityFilter.java"
+@Component(property = "service.ranking:Integer=1000")
+@SlingServletFilter(scope = {SlingServletFilterScope.REQUEST}, pattern = "/content/.*")
+public class HighPriorityFilter implements Filter {
+    // Executes FIRST — good for authentication checks
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
+        // auth check here ...
+        chain.doFilter(req, res);
+    }
+    // init() and destroy() omitted for brevity
+}
+```
+
+```java title="LowPriorityFilter.java"
+@Component(property = "service.ranking:Integer=100")
+@SlingServletFilter(scope = {SlingServletFilterScope.REQUEST}, pattern = "/content/.*")
+public class LowPriorityFilter implements Filter {
+    // Executes SECOND — good for response decoration
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
+        chain.doFilter(req, res);
+        // modify response here ...
+    }
+    // init() and destroy() omitted for brevity
+}
+```
+
+The call order for a single request looks like:
+
+```
+Client → HighPriorityFilter (1000) → LowPriorityFilter (100) → Servlet → LowPriorityFilter → HighPriorityFilter → Client
+```
+
+## Filter vs Servlet
+
+Filters and servlets serve different purposes. Use this decision table to pick the right tool.
+
+| Concern                        | Filter | Servlet |
+| ------------------------------ | :----: | :-----: |
+| Logging / metrics              |   ✓    |         |
+| Security headers               |   ✓    |         |
+| Authentication / authorization |   ✓    |         |
+| Request/response transformation|   ✓    |         |
+| Dedicated REST endpoint        |        |    ✓    |
+| Specific resource type handler |        |    ✓    |
+| Custom JSON API                |        |    ✓    |
+| Data import / processing       |        |    ✓    |
+
+**Rule of thumb:** if the logic applies to *many* requests regardless of content, use a filter. If the logic handles a
+*specific* endpoint or resource type, use a servlet.
+
+## Common Pitfalls
+
+### 1. Forgetting `chain.doFilter()`
+
+If you forget to call `chain.doFilter(request, response)`, the request **hangs** — no servlet is ever invoked and the
+client receives no response (or a timeout).
+
+```java
+// BAD — request will never reach the servlet
+@Override
+public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+        throws IOException, ServletException {
+    log.info("Processing request");
+    // Missing: chain.doFilter(req, res);
+}
+```
+
+### 2. Overly Broad Pattern Matching
+
+A pattern like `"/.*"` matches **every** request in the entire JCR. This causes a measurable performance hit because the
+filter code runs on author UI requests, DAM asset requests, and health-check calls — not just page content.
+
+```java
+// BAD — matches everything
+@SlingServletFilter(scope = {SlingServletFilterScope.REQUEST}, pattern = "/.*")
+
+// GOOD — scoped to your site's content
+@SlingServletFilter(scope = {SlingServletFilterScope.REQUEST}, pattern = "/content/mysite/.*")
+```
+
+### 3. Scope Confusion
+
+- Use `REQUEST` for the incoming HTTP request.
+- Use `INCLUDE` when you need to intercept `data-sly-resource` or `<sling:include>` calls.
+- Use `COMPONENT` if you want to catch **both** includes and forwards during rendering.
+
+Mixing these up means your filter either never fires or fires far more often than expected.
+
+### 4. Not Checking WCM Mode
+
+Filters run on **both** author and publish unless you explicitly check. Accidentally stripping decoration tags on author
+breaks the editor UI.
+
+```java
+final WCMMode mode = WCMMode.fromRequest(request);
+if (WCMMode.DISABLED.equals(mode)) {
+    // publish-only logic
+}
+```
+
+### 5. Thread Safety
+
+Sling servlet filters are **singletons** — OSGi creates exactly one instance that handles all concurrent requests. Never
+store per-request state in instance fields.
+
+```java
+// BAD — shared mutable state
+private String currentUser;
+
+// GOOD — use local variables inside doFilter()
+@Override
+public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+        throws IOException, ServletException {
+    String currentUser = ((HttpServletRequest) req).getRemoteUser();
+    // ...
+}
+```
+
+:::warning
+Violating thread safety in a filter can cause **data leaks** between users — one user may see another user's data.
+:::
 
 ## See also
 

@@ -6,14 +6,560 @@ tags: [aem, performance, optimization]
 
 # Performance
 
-Performance in AEM is a combination of efficient components, stable content queries, and effective caching.
+Performance in AEM spans multiple layers: content queries against the Oak repository, server-side rendering through Sling Models and HTL, caching at the Dispatcher level, and frontend delivery to the browser. Optimising only one layer while ignoring the others will leave bottlenecks on the table. This page walks through each layer with concrete techniques, code examples, and the most common pitfalls.
 
-## Quick checklist
+:::tip Rule of thumb
+Measure first, optimise second. Use `request.log`, the query performance tool, and browser DevTools to find the real bottleneck before changing code.
+:::
 
-- Use Dispatcher caching and avoid unnecessary invalidations.
-- Keep Sling Model logic lightweight.
-- Use QueryBuilder and ensure indexes exist for heavy queries.
-- Minimize clientlib payloads and defer non-critical scripts.
+---
+
+## Query Performance
+
+The Oak repository sits on top of either a TarMK or MongoMK persistence layer. Without proper indexes, queries fall back to **repository traversal**, which reads nodes one by one and becomes catastrophically slow as the content tree grows.
+
+### Oak Index Types
+
+| Index type | Best for | Notes |
+|---|---|---|
+| **Property index** | Exact-match lookups on a single property (`jcr:primaryType`, custom flags) | Very fast, low storage cost |
+| **Lucene index** | Full-text search, multi-property queries, sorting, facets | More flexible but heavier to maintain |
+
+Create a **custom index** whenever you add a new query that filters on a property not covered by out-of-the-box indexes.
+
+```xml
+<!-- /oak:index/cq:myCustomIndex -->
+<jcr:root
+    jcr:primaryType="oak:QueryIndexDefinition"
+    type="lucene"
+    compatVersion="{Long}2"
+    async="async"
+    evaluatePathRestrictions="{Boolean}true">
+  <indexRules jcr:primaryType="nt:unstructured">
+    <nt:unstructured jcr:primaryType="nt:unstructured">
+      <properties jcr:primaryType="nt:unstructured">
+        <myProperty
+            jcr:primaryType="nt:unstructured"
+            name="myProperty"
+            propertyIndex="{Boolean}true"
+            ordered="{Boolean}true" />
+      </properties>
+    </nt:unstructured>
+  </indexRules>
+</jcr:root>
+```
+
+### Checking Index Usage with EXPLAIN
+
+Always verify that your query actually hits an index. Open the **Query Performance** tool at `/libs/granite/operations/content/diagnosistools/queryPerformance.html` or use `EXPLAIN` directly:
+
+```sql
+EXPLAIN SELECT * FROM [nt:unstructured] AS node
+WHERE ISDESCENDANTNODE(node, '/content/mysite')
+AND node.[sling:resourceType] = 'mysite/components/article'
+```
+
+If the plan says **traverse**, your query has no suitable index and must be fixed.
+
+:::warning Traversal queries
+A traversal warning in `error.log` — `*WARN* org.apache.jackrabbit.oak.plugins.index.Cursors$TraversingCursor Traversal query ... ; consider creating an index` — means Oak is walking the tree node by node. In production this can time out or bring the instance to its knees. **Never ignore traversal warnings.**
+:::
+
+### QueryBuilder Best Practices
+
+```java
+// Paginate results — never use p.limit=-1 in production
+Map<String, String> params = new HashMap<>();
+params.put("path", "/content/mysite");
+params.put("type", "cq:Page");
+params.put("property", "jcr:content/sling:resourceType");
+params.put("property.value", "mysite/components/article");
+params.put("p.limit", "20");
+params.put("p.offset", "0");
+// Use guessTotal to avoid expensive exact counts
+params.put("p.guessTotal", "true");
+
+Query query = queryBuilder.createQuery(PredicateGroup.create(params), session);
+SearchResult result = query.getResult();
+
+// result.getTotalMatches() returns an estimate when guessTotal is true
+long approxTotal = result.getTotalMatches();
+```
+
+:::warning Never use `p.limit=-1`
+Setting `p.limit=-1` fetches **every** matching node in a single call. On a large repository this can return hundreds of thousands of results, exhaust heap memory, and crash the instance. Always paginate.
+:::
+
+### JCR-SQL2 Index Hints
+
+If Oak chooses the wrong index, you can force one with the `OPTION(INDEX ...)` hint:
+
+```sql
+SELECT * FROM [nt:unstructured] AS node
+WHERE ISDESCENDANTNODE(node, '/content/mysite')
+AND node.[jcr:title] IS NOT NULL
+OPTION(INDEX TAG myCustomIndex)
+```
+
+The tag must match the `tags` property on the index definition.
+
+---
+
+## Sling Model Optimization
+
+Sling Models are the backbone of AEM component logic. Poorly written models are one of the most common causes of slow page rendering.
+
+### Keep `@PostConstruct` Lightweight
+
+The `@PostConstruct` method runs on **every** request that adapts the resource to the model. Expensive work here multiplies across every component instance on the page.
+
+```java
+@Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class ArticleModel {
+
+    @ValueMapValue
+    private String title;
+
+    @ValueMapValue
+    private String description;
+
+    // GOOD — @PostConstruct only sets simple derived state
+    @PostConstruct
+    protected void init() {
+        if (StringUtils.isBlank(title)) {
+            title = "Untitled";
+        }
+    }
+}
+```
+
+### Lazy Computation Pattern
+
+Compute expensive values only when the getter is actually called, and cache the result for subsequent calls within the same request.
+
+```java
+@Model(adaptables = Resource.class)
+public class NavigationModel {
+
+    @SlingObject
+    private ResourceResolver resolver;
+
+    private List<NavItem> items;
+
+    /**
+     * Computed lazily on first call, cached for the request.
+     */
+    public List<NavItem> getItems() {
+        if (items == null) {
+            items = buildNavTree(resolver);
+        }
+        return items;
+    }
+
+    private List<NavItem> buildNavTree(ResourceResolver resolver) {
+        // expensive tree walk
+        return List.of();
+    }
+}
+```
+
+### Avoid Injecting Heavy Services You Don't Always Use
+
+If a service is only needed in one code path, obtain it programmatically instead of injecting it at model construction time.
+
+```java
+// BAD — SearchService is injected (and potentially initialised) on every adaptation
+@OSGiService
+private SearchService searchService;
+
+// GOOD — obtain only when needed
+@SlingObject
+private ResourceResolver resolver;
+
+public List<Result> search(String term) {
+    SearchService svc = resolver.adaptTo(SearchService.class);
+    // or use the BundleContext / SlingScriptHelper
+    return svc.search(term);
+}
+```
+
+### Don't Do Queries in `@PostConstruct`
+
+Queries in `@PostConstruct` run on every request regardless of whether the result is consumed. Move them into lazy getters or dedicated methods.
+
+```java
+// BAD
+@PostConstruct
+protected void init() {
+    results = runExpensiveQuery(); // runs every time
+}
+
+// GOOD
+public List<Page> getResults() {
+    if (results == null) {
+        results = runExpensiveQuery(); // only when template calls ${model.results}
+    }
+    return results;
+}
+```
+
+---
+
+## HTL Rendering Performance
+
+HTL (Sightly) is compiled to Java servlets at runtime. While HTL itself is fast, certain patterns can cause unnecessary overhead.
+
+### Minimize `data-sly-resource` Nesting Depth
+
+Each `data-sly-resource` call triggers a full Sling resolution cycle (resource resolution, script selection, model adaptation). Deeply nested includes multiply this overhead.
+
+```html
+<!-- Prefer flat component structures over deep nesting -->
+<!-- BAD — 4 levels of includes -->
+<sly data-sly-resource="${'header' @ resourceType='mysite/components/header'}" />
+
+<!-- GOOD — render inline when possible, or keep nesting ≤ 2 levels -->
+<header class="site-header">
+    <sly data-sly-use.header="com.mysite.models.HeaderModel">
+        <nav>${header.navigationHtml @ context='unsafe'}</nav>
+    </sly>
+</header>
+```
+
+### Avoid Complex Expressions in Loops
+
+Move complex logic into the Sling Model rather than computing it in HTL loops.
+
+```html
+<!-- BAD — string manipulation repeated for every item -->
+<ul data-sly-list.item="${model.items}">
+    <li>${item.title @ context='html'} - ${item.date @ format='yyyy-MM-dd'}</li>
+</ul>
+
+<!-- GOOD — let the model pre-format the data -->
+<ul data-sly-list.item="${model.formattedItems}">
+    <li>${item.display @ context='html'}</li>
+</ul>
+```
+
+### Use `data-sly-test` to Skip Expensive Blocks Early
+
+Guard expensive blocks so they are only rendered when needed.
+
+```html
+<!-- Skip the entire related-articles block unless the author enabled it -->
+<sly data-sly-test="${model.showRelatedArticles}">
+    <section class="related-articles">
+        <sly data-sly-resource="${'related' @ resourceType='mysite/components/related-articles'}" />
+    </section>
+</sly>
+```
+
+---
+
+## Clientlib and Frontend Optimization
+
+Frontend assets are served through AEM's Client Library (clientlib) framework. Misconfigured clientlibs are a frequent cause of poor Lighthouse scores.
+
+### Minification and Aggregation
+
+Enable minification in the **HTML Library Manager** OSGi config:
+
+```json
+{
+    "com.adobe.granite.ui.clientlibs.impl.HtmlLibraryManagerImpl": {
+        "htmllibmanager.minify": true,
+        "htmllibmanager.gzip": true,
+        "htmllibmanager.timing": true,
+        "htmllibmanager.debug.init.js": false
+    }
+}
+```
+
+### Defer / Async JS Loading
+
+Load non-critical JavaScript asynchronously so it does not block the initial render.
+
+```html
+<!-- In your page component HTL -->
+<script src="/etc.clientlibs/mysite/clientlibs/analytics.js" async></script>
+<script src="/etc.clientlibs/mysite/clientlibs/interactions.js" defer></script>
+```
+
+:::tip Critical render path
+Only the CSS and JS required for above-the-fold content should be render-blocking. Everything else should be `defer` or `async`.
+:::
+
+### Critical CSS Inlining
+
+Inline the minimal CSS needed for the first paint directly in `<head>`:
+
+```html
+<style>
+    /* Critical CSS — extracted via tools like Critical or Penthouse */
+    .header { display: flex; height: 64px; }
+    .hero { min-height: 50vh; background: var(--bg-primary); }
+</style>
+<link rel="preload" href="/etc.clientlibs/mysite/clientlibs/site.css" as="style"
+      onload="this.onload=null;this.rel='stylesheet'">
+```
+
+### Image Lazy Loading
+
+Use native lazy loading for images below the fold:
+
+```html
+<img src="${model.imageSrc}" alt="${model.imageAlt}"
+     loading="lazy" decoding="async"
+     width="800" height="600" />
+```
+
+### WebP / AVIF via Dynamic Media or Adaptive Images
+
+Serve modern image formats using AEM Dynamic Media or the Core Components adaptive image servlet:
+
+```html
+<picture>
+    <source srcset="${model.imageSrc}.avif" type="image/avif" />
+    <source srcset="${model.imageSrc}.webp" type="image/webp" />
+    <img src="${model.imageSrc}.jpg" alt="${model.imageAlt}" loading="lazy" />
+</picture>
+```
+
+---
+
+## Dispatcher Caching
+
+The Dispatcher is the first line of defence against unnecessary load on AEM publish instances. A well-tuned Dispatcher serves the vast majority of requests from its cache without ever reaching AEM.
+
+### Cache Hit Ratio Target
+
+:::tip Aim for > 95 % cache hit ratio
+Monitor the Dispatcher `access.log` and `dispatcher.log`. If fewer than 95 % of requests are served from cache, investigate your invalidation rules and cache filter configuration.
+:::
+
+### TTL vs Invalidation-Based Caching
+
+| Strategy | Pros | Cons |
+|---|---|---|
+| **Invalidation-based** (stat file) | Content always fresh after activation | Complex invalidation chains can over-invalidate |
+| **TTL-based** (`/cache/enableTTL "1"`) | Simple, predictable | Content may be stale for the TTL duration |
+
+In practice, combine both: use invalidation for content pages and TTL for static assets.
+
+```apacheconf
+# dispatcher.any — enable TTL caching
+/cache {
+    /enableTTL "1"
+    /headers {
+        "Cache-Control"
+        "Expires"
+    }
+}
+```
+
+### Sling Dynamic Include (SDI) for Mixed Pages
+
+When a page is mostly static but contains one dynamic component (e.g., a user greeting), use SDI to cache the page shell and fetch the dynamic fragment via SSI/ESI at the Dispatcher level.
+
+```xml
+<!-- OSGi config: org.apache.sling.dynamicinclude.Configuration -->
+<jcr:root
+    jcr:primaryType="sling:OsgiConfig"
+    include-filter.config.enabled="{Boolean}true"
+    include-filter.config.resource-types="[mysite/components/user-greeting]"
+    include-filter.config.include-type="SSI" />
+```
+
+The Dispatcher then caches the page with an SSI directive and resolves the dynamic fragment on each request:
+
+```html
+<!--#include virtual="/content/mysite/en/jcr:content/user-greeting.html" -->
+```
+
+### Cache Headers Strategy
+
+Set appropriate `Cache-Control` headers on AEM publish to guide Dispatcher and CDN behaviour:
+
+```java
+@Component(service = Filter.class,
+    property = {
+        "sling.filter.scope=REQUEST",
+        "service.ranking:Integer=700"
+    })
+public class CacheHeaderFilter implements Filter {
+
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletResponse response = (HttpServletResponse) res;
+        // Static assets: cache for 1 year
+        if (req.getRequestURI().startsWith("/etc.clientlibs/")) {
+            response.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        }
+        chain.doFilter(req, res);
+    }
+
+    @Override public void init(FilterConfig cfg) {}
+    @Override public void destroy() {}
+}
+```
+
+---
+
+## JCR Session Management
+
+Resource resolvers and JCR sessions hold references to the underlying persistence layer. Leaked sessions accumulate memory and can eventually lock the repository.
+
+### Don't Hold Sessions Open Longer Than Needed
+
+Open a service resource resolver, do your work, and close it — all in the tightest scope possible.
+
+```java
+// GOOD — try-with-resources guarantees closure
+Map<String, Object> params = Map.of(
+    ResourceResolverFactory.SUBSERVICE, "my-service-user"
+);
+try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(params)) {
+    Resource resource = resolver.getResource("/content/mysite/data");
+    // process resource
+} catch (LoginException e) {
+    log.error("Cannot obtain service resolver", e);
+}
+```
+
+:::warning Resolver leaks
+A leaked `ResourceResolver` keeps an open JCR session, which holds repository state in memory. Over time this causes `OutOfMemoryError` and forces a restart. **Always** use try-with-resources.
+:::
+
+### Batch `session.save()` Calls
+
+Each `session.save()` triggers a commit to the persistence layer. Saving inside a loop is extremely slow.
+
+```java
+// BAD — save after every node
+for (Resource child : parentResource.getChildren()) {
+    ModifiableValueMap props = child.adaptTo(ModifiableValueMap.class);
+    props.put("processed", true);
+    resolver.commit(); // expensive per-node commit
+}
+
+// GOOD — batch all changes into one commit
+for (Resource child : parentResource.getChildren()) {
+    ModifiableValueMap props = child.adaptTo(ModifiableValueMap.class);
+    props.put("processed", true);
+}
+resolver.commit(); // single commit
+```
+
+### Session Leak Detection
+
+Enable the session leak logger to find code paths that forget to close resolvers:
+
+```
+org.apache.sling.resourceresolver.impl.CommonResourceResolverFactoryImpl
+  -> log level: DEBUG
+```
+
+In `error.log` you will see stack traces pointing to the exact line where the leaked resolver was opened.
+
+---
+
+## Monitoring and Profiling
+
+You cannot optimise what you do not measure. AEM provides several built-in tools for performance monitoring.
+
+### `request.log` and `access.log` Analysis
+
+AEM's `request.log` records every request with its processing time in milliseconds:
+
+```
+[2025-06-15 10:23:45] 200 GET /content/mysite/en.html 142ms
+```
+
+Sort by duration to find the slowest pages:
+
+```bash
+# Top 20 slowest requests
+sort -t' ' -k5 -rn request.log | head -20
+```
+
+### Slow Query Logging
+
+Enable the Oak query performance logger to capture queries exceeding a threshold:
+
+```
+org.apache.jackrabbit.oak.query
+  -> log level: DEBUG
+```
+
+Or set a threshold via OSGi:
+
+```json
+{
+    "org.apache.jackrabbit.oak.query.QueryEngineSettingsService": {
+        "queryLimitReads": 100000,
+        "queryFailTraversal": true,
+        "fastQuerySize": true
+    }
+}
+```
+
+:::tip `queryFailTraversal`
+Setting `queryFailTraversal=true` causes traversal queries to **fail immediately** rather than running slowly. This is highly recommended in production to prevent runaway queries.
+:::
+
+### JMX Beans for Repository Statistics
+
+Access Oak JMX beans via the **JMX Console** (`/system/console/jmx`) or programmatically:
+
+| MBean | What it tells you |
+|---|---|
+| `org.apache.jackrabbit.oak:QueryStat` | Slowest queries, popular queries, query count |
+| `org.apache.jackrabbit.oak:RepositoryStatistics` | Observation queue length, session count, commit rate |
+| `org.apache.jackrabbit.oak:IndexStats` | Index update lag, index size, async indexer state |
+
+### Thread Dumps for Deadlock Detection
+
+When an instance becomes unresponsive, capture a thread dump:
+
+```bash
+# Using jstack
+jstack -l <pid> > threaddump_$(date +%s).txt
+
+# Take 3 dumps 10 seconds apart to spot stuck threads
+for i in 1 2 3; do jstack -l <pid> > dump_${i}.txt; sleep 10; done
+```
+
+Look for threads in `BLOCKED` or `WAITING` state and check if any hold monitors that others are waiting for.
+
+### Query Debugger
+
+The built-in query debugger at:
+
+```
+/libs/granite/operations/content/diagnosistools/queryPerformance.html
+```
+
+lets you run `EXPLAIN` queries, see which index is selected, and view the query execution plan — all from a browser. Use this as your first stop when investigating slow queries.
+
+---
+
+## Common Pitfalls
+
+:::warning Avoid these frequent mistakes
+
+1. **Queries without indexes** — Every custom query must have a matching Oak index. Check with `EXPLAIN` before deploying.
+2. **ResourceResolver leaks** — Always close resolvers with try-with-resources. A single leaked resolver per request will eventually crash the instance.
+3. **Blocking JS in `<head>`** — Render-blocking scripts destroy Time to Interactive. Use `defer` or `async` for non-critical scripts.
+4. **Uncached Dispatcher paths** — If a URL pattern is not in the Dispatcher cache rules, every request hits publish. Audit `/cache/rules` regularly.
+5. **Over-invalidation** — A broad stat-file level or overly aggressive flush agents can nuke the entire cache on every activation. Use fine-grained invalidation rules.
+6. **`p.limit=-1` in QueryBuilder** — Fetches all results in one call. Always paginate.
+7. **Heavy `@PostConstruct` methods** — Run on every adaptation. Move expensive work into lazy getters.
+8. **Saving inside loops** — Each `resolver.commit()` / `session.save()` is a full repository commit. Batch writes.
+:::
+
+---
 
 ## See also
 
