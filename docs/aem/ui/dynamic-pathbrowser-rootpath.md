@@ -28,6 +28,10 @@ We need to define a custom resource type and use it on our dialog.xml structure
 
 - [Component dialogs](../component-dialogs.mdx)
 - [Touch UI (Author UI)](./touch-ui.mdx)
+- [Coral UI](./coral-ui.mdx)
+- [Overlays](./overlays.mdx)
+- [Render conditions](./render-conditions.mdx)
+- [Sling models](../backend/sling-models.mdx)
 
 In your `ui.apps` add a new component:
 

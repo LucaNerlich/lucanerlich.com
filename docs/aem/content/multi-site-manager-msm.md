@@ -179,5 +179,10 @@ public class CustomActionFactory implements LiveActionFactory<LiveAction> {
 
 ## See also
 
+- [Architecture](../architecture.mdx)
+- [Modify and query the JCR](./jcr.md)
+- [Node operations](./node-operations.mdx)
+- [Content fragments](./content-fragments.md)
 - [Replication and activation](./replication-activation.mdx)
 - [Workflows](../backend/workflows.mdx)
+- [Groovy Console](../groovy-console.mdx)

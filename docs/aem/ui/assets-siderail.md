@@ -41,6 +41,10 @@ Example ClientLibraryFolder `.content.xml`:
 ## See also
 
 - [Overlays](./overlays.mdx)
+- [Touch UI (Author UI)](./touch-ui.mdx)
+- [Coral UI](./coral-ui.mdx)
+- [Component dialogs](../component-dialogs.mdx)
+- [Custom Component Guide](../custom-component.mdx)
 - [Client libraries](../client-libraries.mdx)
 
 Example js overwrite `searchRoot.js`:

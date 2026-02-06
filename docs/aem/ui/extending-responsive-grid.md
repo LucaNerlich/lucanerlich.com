@@ -257,5 +257,10 @@ luca
 
 ## See also
 
+- [Architecture](../architecture.mdx)
+- [Custom Component Guide](../custom-component.mdx)
+- [Component dialogs](../component-dialogs.mdx)
 - [Components](../components/overview.mdx)
 - [Core components](../components/core-components.mdx)
+- [Client libraries](../client-libraries.mdx)
+- [Touch UI](./touch-ui.mdx)

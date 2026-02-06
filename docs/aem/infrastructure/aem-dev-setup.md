@@ -444,8 +444,13 @@ luca
 
 ## See also
 
+- [Architecture](../architecture.mdx)
 - [Dispatcher configuration](./dispatcher-configuration.mdx)
 - [Deployment guide](./deployment.mdx)
+- [AEM as a Cloud Service](./cloud-service.mdx)
+- [OSGi configuration](../backend/osgi-configuration.mdx)
+- [Performance](./performance.mdx)
+- [Groovy Console](../groovy-console.mdx)
 - [Testing strategies](./testing.mdx)
 
 ## Links & Downloads

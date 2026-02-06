@@ -149,6 +149,10 @@ try (ResourceResolver resolver = getServiceResolver()) {
 
 ## See also
 
+- [Architecture](../architecture.mdx)
+- [Modify and query the JCR](./jcr.md)
 - [GraphQL](./graphql.mdx)
 - [Node operations](./node-operations.mdx)
 - [Replication and activation](./replication-activation.mdx)
+- [Multi-Site Manager](./multi-site-manager-msm.md)
+- [Sling models](../backend/sling-models.mdx)
