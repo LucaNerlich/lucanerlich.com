@@ -1,37 +1,1211 @@
 ---
-title: HTL Templates
+title: HTL Templates (Sightly)
 sidebar_position: 8
-tags: [aem, htl, templates]
+tags: [aem, htl, templates, sightly]
 ---
 
 # HTL Templates
 
-HTL (Sightly) is AEM's template language. It keeps presentation logic in templates and business logic in Sling Models.
+HTL (HTML Template Language), formerly known as Sightly, is AEM's server-side template language. It is the
+[reference implementation](https://sling.apache.org/documentation/bundles/scripting/scripting-htl.html) of the
+HTML Template Language 1.4 specification. HTL enforces a clean separation of concerns: presentation logic stays in
+templates, while business logic belongs in [Sling Models](./sling-models.mdx) or Use-objects.
 
 ## Basics
 
+Load a Sling Model or Use-object with `data-sly-use`, then access its properties with the expression language `${}`.
+
 ```html
-<div data-sly-use.model="com.example.core.models.MyModel">
-  <h2>${model.title}</h2>
+<div data-sly-use.model="com.example.core.models.HeroComponent">
+  <h1>${model.title}</h1>
   <p>${model.description}</p>
+  <span>Published: ${model.publishDate}</span>
 </div>
 ```
 
-## Escaping and context
+## Block Elements
 
-HTL escapes output by default. If you need a specific context (for example, URLs or HTML), use the correct context hint:
+HTL provides several `data-sly-*` block elements that control rendering. They can be placed on any HTML element.
+
+### data-sly-use
+
+Initialises a Use-object (Sling Model, POJO, or JS file) and binds it to a variable.
 
 ```html
-<a href="${model.link @ context='uri'}">Read more</a>
+<!-- Fully qualified Java class -->
+<div data-sly-use.hero="com.example.core.models.HeroComponent">
+  ${hero.title}
+</div>
+
+<!-- Relative JavaScript Use-object -->
+<div data-sly-use.logic="logic.js">
+  ${logic.greeting}
+</div>
+
+<!-- Another HTL template file -->
+<div data-sly-use.tmpl="partials/card.html">
+  <!-- now tmpl holds the templates defined in card.html -->
+</div>
 ```
 
-## Best practices
+You can pass parameters to Use-objects:
 
-- Keep logic in Sling Models.
-- Avoid string concatenation in templates.
-- Use `data-sly-test` and `data-sly-list` for conditional rendering and loops.
+```html
+<div data-sly-use.product="${'com.example.core.models.ProductCard' @ sku='ABC-123', locale='en'}">
+  <h3>${product.name}</h3>
+  <span>${product.formattedPrice}</span>
+</div>
+```
+
+### data-sly-test
+
+Conditionally renders an element. The element and its content are removed if the expression evaluates to `false`.
+
+```html
+<!-- Simple boolean check -->
+<div data-sly-test="${model.showBanner}">
+  <p>This banner is visible!</p>
+</div>
+
+<!-- Store the test result in a variable for reuse -->
+<div data-sly-test.hasItems="${model.items.size > 0}">
+  <p>We have ${model.items.size} items.</p>
+</div>
+
+<!-- Reuse the test variable later (negation) -->
+<div data-sly-test="${!hasItems}">
+  <p>No items found.</p>
+</div>
+```
+
+### data-sly-list
+
+Iterates over a collection. Inside the loop, `item` refers to the current element and `itemList` provides loop metadata.
+
+```html
+<ul data-sly-list="${model.navigationItems}">
+  <li class="${itemList.first ? 'first' : ''}${itemList.last ? ' last' : ''}">
+    <a href="${item.url}">${item.title}</a>
+  </li>
+</ul>
+```
+
+You can rename the loop variable:
+
+```html
+<ul data-sly-list.page="${model.pages}">
+  <li>
+    ${pageList.index}: ${page.title} (count: ${pageList.count})
+  </li>
+</ul>
+```
+
+**Available `itemList` / `*List` properties:**
+
+| Property  | Description                              |
+|-----------|------------------------------------------|
+| `index`   | Zero-based index                         |
+| `count`   | One-based count (index + 1)              |
+| `first`   | `true` if the current item is the first  |
+| `middle`  | `true` if the item is neither first nor last |
+| `last`    | `true` if the current item is the last   |
+| `odd`     | `true` if `index` is odd                 |
+| `even`    | `true` if `index` is even                |
+
+### data-sly-repeat
+
+Similar to `data-sly-list`, but repeats the **host element** itself instead of its children.
+
+```html
+<!-- Repeats the <li> element for each tag -->
+<li data-sly-repeat="${model.tags}" class="tag">
+  ${item}
+</li>
+
+<!-- Output: -->
+<!-- <li class="tag">Java</li> -->
+<!-- <li class="tag">AEM</li> -->
+<!-- <li class="tag">HTL</li> -->
+```
+
+Comparison with `data-sly-list`:
+
+```html
+<!-- data-sly-list: the <ul> is rendered once, <li> is repeated inside it -->
+<ul data-sly-list="${model.colors}">
+  <li>${item}</li>
+</ul>
+
+<!-- data-sly-repeat: the <div> itself is repeated -->
+<div data-sly-repeat="${model.colors}" class="color-chip">
+  ${item}
+</div>
+```
+
+### data-sly-text
+
+Sets the text content of the host element, replacing any existing children. Output is HTML-escaped by default.
+
+```html
+<p data-sly-text="${model.summary}">This placeholder text is replaced at render time.</p>
+```
+
+### data-sly-attribute
+
+Adds or replaces attributes on the host element.
+
+```html
+<!-- Single attribute -->
+<a data-sly-attribute.href="${model.link}" data-sly-attribute.title="${model.linkTitle}">
+  Read more
+</a>
+
+<!-- Multiple attributes via a map (returned by your Sling Model as a Map<String, Object>) -->
+<div data-sly-attribute="${model.dataAttributes}">
+  Content
+</div>
+
+<!-- Conditional CSS class -->
+<div class="card" data-sly-attribute.class="${model.isActive ? 'card active' : 'card'}">
+  ${model.title}
+</div>
+```
+
+A `false` or empty value removes the attribute entirely:
+
+```html
+<!-- The 'disabled' attribute is only rendered when model.isDisabled is true -->
+<button data-sly-attribute.disabled="${model.isDisabled}">Submit</button>
+```
+
+### data-sly-element
+
+Replaces the tag name of the host element.
+
+```html
+<!-- Dynamically choose heading level -->
+<h1 data-sly-element="${model.headingLevel}">${model.title}</h1>
+
+<!-- If model.headingLevel is 'h3', this renders as: -->
+<!-- <h3>My Title</h3> -->
+```
+
+:::caution
+For security, `data-sly-element` only allows the following elements:
+`h1`-`h6`, `section`, `header`, `footer`, `nav`, `aside`, `article`, `main`,
+`div`, `span`, `p`, `ul`, `ol`, `li`, `small`, `pre`, `blockquote`.
+:::
+
+### data-sly-include
+
+Includes the output of another HTL file (or server-side script) into the current markup. The included file does **not** have access to the current HTL context.
+
+```html
+<!-- Include a header partial -->
+<header data-sly-include="partials/header.html"></header>
+
+<main>
+  <h1>${model.title}</h1>
+</main>
+
+<!-- Include a footer partial -->
+<footer data-sly-include="partials/footer.html"></footer>
+```
+
+You can pass request attributes:
+
+```html
+<div data-sly-include="${'partials/alert.html' @ requestAttributes=model.alertAttributes}"></div>
+```
+
+### data-sly-resource
+
+Includes a Sling resource (a child component or another resource path). This is how you embed AEM components within other components.
+
+```html
+<!-- Include a child resource using its relative path -->
+<div data-sly-resource="content/header"></div>
+
+<!-- Force a specific resource type -->
+<div data-sly-resource="${'content/header' @ resourceType='myproject/components/header'}"></div>
+
+<!-- Include with selectors -->
+<div data-sly-resource="${'content/teaser' @ selectors='mobile'}"></div>
+
+<!-- Add or replace selectors -->
+<div data-sly-resource="${'content/teaser' @ addSelectors='print', selectors='summary'}"></div>
+
+<!-- Remove specific selectors -->
+<div data-sly-resource="${'content/teaser' @ removeSelectors='edit'}"></div>
+
+<!-- Pass a Resource object directly (Sling extension) -->
+<div data-sly-resource="${model.featuredResource}"></div>
+
+<!-- Pass request attributes (Sling extension) -->
+<div data-sly-resource="${'content/panel' @ requestAttributes=model.panelAttributes}"></div>
+```
+
+### data-sly-template and data-sly-call
+
+Define reusable template blocks and call them with parameters. Templates are the HTL equivalent of "partials" or "macros".
+
+**Defining a template:**
+
+```html title="partials/card.html"
+<template data-sly-template.card="${@ title, description, imageUrl}">
+  <div class="card">
+    <img src="${imageUrl}" alt="${title}"/>
+    <h3>${title}</h3>
+    <p>${description}</p>
+  </div>
+</template>
+
+<template data-sly-template.badge="${@ label}">
+  <span class="badge">${label}</span>
+</template>
+```
+
+**Calling a template:**
+
+```html
+<sly data-sly-use.tmpl="partials/card.html"/>
+
+<!-- Call the card template -->
+<div data-sly-call="${tmpl.card @ title=model.title, description=model.summary, imageUrl=model.image}"></div>
+
+<!-- Call it in a loop -->
+<div data-sly-list="${model.articles}">
+  <sly data-sly-call="${tmpl.card @ title=item.title, description=item.excerpt, imageUrl=item.thumbnail}"/>
+</div>
+```
+
+### data-sly-unwrap
+
+Removes the host element from the output while keeping its children. Useful for wrapper elements that are only needed for applying block statements.
+
+```html
+<!-- The <sly> element never renders to output (it always unwraps) -->
+<sly data-sly-test="${model.showGreeting}">
+  <h2>Welcome!</h2>
+</sly>
+
+<!-- Conditionally unwrap a wrapper -->
+<div data-sly-unwrap="${!model.needsWrapper}">
+  <p>This content may or may not have a wrapping div.</p>
+</div>
+```
+
+### data-sly-set
+
+Defines a variable for later use. Available since HTL 1.4.
+
+```html
+<sly data-sly-set.fullName="${model.firstName} ${model.lastName}"/>
+<sly data-sly-set.isAdmin="${model.role == 'admin'}"/>
+
+<p>Hello, ${fullName}!</p>
+<div data-sly-test="${isAdmin}">
+  <a href="/admin">Admin Panel</a>
+</div>
+```
+
+## Expressions
+
+HTL expressions use the `${}` syntax. They support literals, variables, operators, and option modifiers.
+
+### Literals
+
+```html
+<p>${'Hello World'}</p>       <!-- String -->
+<p>${42}</p>                   <!-- Integer -->
+<p>${3.14}</p>                 <!-- Float -->
+<p>${true}</p>                 <!-- Boolean -->
+<p>${[1, 2, 3]}</p>           <!-- Array -->
+```
+
+### Operators
+
+```html
+<!-- Logical -->
+<p data-sly-test="${model.isActive && model.isVisible}">Active and visible</p>
+<p data-sly-test="${model.isAdmin || model.isModerator}">Has elevated role</p>
+<p data-sly-test="${!model.isHidden}">Not hidden</p>
+
+<!-- Comparison -->
+<p data-sly-test="${model.count > 0}">Has items</p>
+<p data-sly-test="${model.status == 'published'}">Published</p>
+
+<!-- Ternary -->
+<p>${model.isActive ? 'Active' : 'Inactive'}</p>
+
+<!-- Grouping -->
+<p data-sly-test="${(model.isAdmin || model.isModerator) && model.isActive}">
+  Active privileged user
+</p>
+```
+
+### Option Modifiers
+
+Options are appended with `@` and separated by commas.
+
+```html
+<!-- String join -->
+<p>${model.tags @ join=', '}</p>
+<!-- Output: "Java, AEM, HTL" -->
+
+<!-- URI manipulation -->
+<a href="${model.path @ extension='html'}">Link</a>
+<!-- Output: /content/my-page.html -->
+
+<a href="${model.path @ selectors='mobile', extension='html'}">Mobile</a>
+<!-- Output: /content/my-page.mobile.html -->
+
+<a href="${model.path @ prependPath='/content/site', extension='html'}">Prepend</a>
+
+<a href="${model.path @ appendPath='jcr:content', extension='json'}">JSON</a>
+
+<!-- Scheme and domain -->
+<a href="${model.path @ scheme='https'}">Secure Link</a>
+```
+
+## Display Context (Escaping)
+
+HTL escapes all output by default based on the context it detects. You can override the automatic context
+with `@ context='...'`. Always use the most restrictive context that works for your use case.
+
+```html
+<!-- Default: HTML text escaping -->
+<p>${model.title}</p>
+
+<!-- URI context for href/src attributes -->
+<a href="${model.link @ context='uri'}">Click here</a>
+<img src="${model.imageUrl @ context='uri'}"/>
+
+<!-- Render raw HTML (use with caution - XSS risk!) -->
+<div>${model.richText @ context='html'}</div>
+
+<!-- Attribute context -->
+<div title="${model.tooltip @ context='attribute'}">Hover me</div>
+
+<!-- Script context (for inline JS values) -->
+<script>var config = ${model.jsonConfig @ context='scriptString'};</script>
+
+<!-- Style context -->
+<div style="${model.inlineStyles @ context='styleString'}">Styled</div>
+
+<!-- Number context -->
+<span>${model.count @ context='number'}</span>
+
+<!-- Disable escaping entirely (dangerous - only for trusted content!) -->
+<div>${model.trustedMarkup @ context='unsafe'}</div>
+```
+
+**Available contexts:**
+
+| Context        | Description                                      |
+|----------------|--------------------------------------------------|
+| `text`         | Default for content inside elements (HTML-encoded) |
+| `html`         | Allows safe HTML (filters dangerous tags)         |
+| `attribute`    | For HTML attribute values                         |
+| `uri`          | For `href` and `src` attribute values             |
+| `scriptString` | Inside JavaScript strings                         |
+| `scriptComment`| Inside JavaScript comments                       |
+| `styleString`  | Inside CSS property values                        |
+| `styleComment` | Inside CSS comments                              |
+| `styleToken`   | For CSS identifiers                              |
+| `number`       | For numeric output                               |
+| `unsafe`       | Disables all escaping (use only for trusted data) |
+| `jsonString`   | Escapes text for JSON string grammar (Sling extension) |
+
+:::danger
+Never use `context='unsafe'` with user-provided content. This completely disables XSS protection. Use `context='html'` instead, which filters dangerous tags while allowing safe markup.
+:::
+
+### XSS Protection Configuration (AntiSamy)
+
+Under the hood, AEM's XSS filtering (especially for `context='html'`) is powered by the
+[OWASP AntiSamy library](https://owasp.org/www-project-antisamy/). AntiSamy applies a policy that defines
+which HTML tags, attributes, and CSS properties are allowed through the filter and which are stripped or sanitised.
+
+#### Configuration file locations
+
+AEM ships with **two** AntiSamy configuration files:
+
+| Path | Used by |
+|------|---------|
+| `/libs/cq/xssprotection/config.xml` | JSP-based components and the general CQ/Granite XSS API |
+| `/libs/sling/xss/config.xml` | HTL (Sightly) templates via the Sling XSS Protection API |
+
+Both files follow the same AntiSamy policy XML schema. In practice the two files are kept in sync by Adobe,
+but if you need to customise rules, you must identify which path is evaluated for your rendering technology.
+For most modern AEM projects using HTL, changes to `/libs/cq/xssprotection/config.xml` are picked up after a
+restart and apply across the board.
+
+#### Overlaying the configuration
+
+You should **never** modify files under `/libs` directly. Instead, create an
+[overlay](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/introduction/security)
+at the corresponding `/apps` path:
+
+```text title="Overlay path"
+/apps/cq/xssprotection/config.xml
+```
+
+:::warning
+You must overlay the **entire** `config.xml` file. Partial overlays (e.g. only the `<iframe>` section) are not
+supported by the AntiSamy loader -- the whole policy file is read as one unit.
+:::
+
+A typical reason to customise the policy is to allow specific tags or attributes that AntiSamy strips by default.
+For example, allowing `<iframe>` elements from trusted sources:
+
+```xml title="/apps/cq/xssprotection/config.xml (excerpt)"
+<!-- Allow iframe tags with restricted src attribute -->
+<tag name="iframe" action="validate">
+  <attribute name="src">
+    <regexp-list>
+      <!-- Only allow iframes from your own domain and YouTube -->
+      <regexp value="https://www\.example\.com/.*"/>
+      <regexp value="https://www\.youtube\.com/embed/.*"/>
+      <regexp value="https://player\.vimeo\.com/video/.*"/>
+    </regexp-list>
+  </attribute>
+  <attribute name="width">
+    <regexp-list>
+      <regexp value="[0-9]+(%)?"/>
+    </regexp-list>
+  </attribute>
+  <attribute name="height">
+    <regexp-list>
+      <regexp value="[0-9]+(%)?"/>
+    </regexp-list>
+  </attribute>
+  <attribute name="frameborder">
+    <regexp-list>
+      <regexp value="[0-9]+"/>
+    </regexp-list>
+  </attribute>
+  <attribute name="allowfullscreen">
+    <literal-list>
+      <literal value="allowfullscreen"/>
+      <literal value="true"/>
+    </literal-list>
+  </attribute>
+</tag>
+```
+
+Common AntiSamy **directives** you might adjust (at the top of the policy file):
+
+| Directive | Default | Description |
+|-----------|---------|-------------|
+| `useXHTML` | `true` | When `true`, output is XHTML-compliant (self-closing tags like `<div/>`). Set to `false` if empty `<div></div>` tags are being collapsed and breaking your layout |
+| `omitXMLDeclaration` | `true` | Omit the XML declaration from output |
+| `formatOutput` | `false` | Pretty-print the filtered HTML |
+| `maxInputSize` | `100000` | Maximum input string length in characters that AntiSamy will process |
+| `embedStyleSheets` | `false` | Whether to follow and inline external CSS `@import` rules |
+| `onUnknownTag` | `remove` | What to do with tags not listed in the policy: `remove`, `encode`, or `filter` (remove tag but keep content) |
+
+```xml title="Directive example"
+<directive name="useXHTML" value="false"/>
+<directive name="onUnknownTag" value="remove"/>
+<directive name="maxInputSize" value="200000"/>
+```
+
+#### Using XSSAPI in Java / Sling Models
+
+When you need XSS-safe output in Java code (Sling Models, Servlets, or WCMUse classes), use the
+[XSSAPI](https://developer.adobe.com/experience-manager/reference-materials/6-5/javadoc/com/adobe/granite/xss/XSSAPI.html)
+service rather than manually escaping strings. Adobe strongly recommends always going through XSSAPI
+for any value that will be rendered in HTML.
+
+```java title="core/src/main/java/com/example/core/models/SafeTextModel.java"
+import com.adobe.granite.xss.XSSAPI;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.OSGiService;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
+@Model(adaptables = SlingHttpServletRequest.class)
+public class SafeTextModel {
+
+    @OSGiService
+    private XSSAPI xssAPI;
+
+    @ValueMapValue(optional = true)
+    private String richText;
+
+    @ValueMapValue(optional = true)
+    private String linkUrl;
+
+    /**
+     * Returns HTML-filtered rich text, safe for rendering with context='html'.
+     * Applies the AntiSamy policy from config.xml.
+     */
+    public String getSafeRichText() {
+        return richText != null ? xssAPI.filterHTML(richText) : "";
+    }
+
+    /**
+     * Returns a validated and sanitised URL.
+     * Blocks javascript:, data:, and other dangerous schemes.
+     */
+    public String getSafeLink() {
+        return linkUrl != null ? xssAPI.getValidHref(linkUrl) : "#";
+    }
+}
+```
+
+**Key XSSAPI methods:**
+
+| Method | Purpose | Example |
+|--------|---------|---------|
+| `filterHTML(String)` | Sanitise HTML through AntiSamy policy | Rich text fields |
+| `encodeForHTML(String)` | HTML-entity encode (like `context='text'`) | Plain text in elements |
+| `encodeForHTMLAttr(String)` | Encode for HTML attribute values | Tooltip strings |
+| `encodeForJSString(String)` | Encode for JavaScript string literals | Inline `<script>` values |
+| `getValidHref(String)` | Validate and sanitise a URL | Link `href` values |
+| `getValidInteger(String, int)` | Parse and validate an integer with a default fallback | Numeric attributes |
+| `getValidDimension(String, String)` | Validate a CSS dimension value | Width/height values |
+
+```html title="HTL template using the model"
+<sly data-sly-use.model="com.example.core.models.SafeTextModel">
+  <!-- Already sanitised in Java -- safe to render as html -->
+  <div>${model.safeRichText @ context='html'}</div>
+  <a href="${model.safeLink @ context='uri'}">Read more</a>
+</sly>
+```
+
+:::tip
+**Double protection**: Even when your Sling Model sanitises values via XSSAPI, still apply the correct
+`@ context` in HTL. This gives you defense in depth -- if one layer fails or is bypassed, the other still protects
+against XSS.
+:::
+
+#### Avoiding context='unsafe' -- real-world patterns
+
+A common trap is reaching for `context='unsafe'` when AntiSamy strips something you need. For example,
+`tel:` links are blocked by the default URI context because `tel:` is not in the allowed scheme list.
+A naive (and dangerous) workaround looks like this:
+
+```html title="DON'T do this"
+<!-- AntiSamy strips tel: links, so a developer uses unsafe to 'fix' it -->
+<a href="${model.url @ context='unsafe'}">
+  ${model.urlText @ context='html'}
+</a>
+```
+
+This opens the door to XSS because **any** string -- including `javascript:alert(1)` -- will pass through
+unfiltered. Instead, use one of these safer approaches:
+
+**Approach 1 (recommended): Feature flags with hardcoded scheme in HTL**
+
+Move the `tel:` scheme out of the user-controlled value entirely. Let the Sling Model validate the phone
+number and expose a boolean flag:
+
+```java title="PhoneLinkModel.java"
+import java.util.regex.Pattern;
+
+@Model(adaptables = SlingHttpServletRequest.class)
+public class PhoneLinkModel {
+
+    private static final Pattern PHONE_PATTERN =
+        Pattern.compile("^\\+?[0-9\\s\\-().]+$");
+
+    @ValueMapValue(optional = true)
+    private String phoneNumber;
+
+    @ValueMapValue(optional = true)
+    private String phoneExtension;
+
+    @ValueMapValue(optional = true)
+    private String url;
+
+    public boolean isPhoneLink() {
+        return phoneNumber != null && !phoneNumber.isEmpty();
+    }
+
+    public boolean isValidPhone() {
+        return isPhoneLink() && PHONE_PATTERN.matcher(phoneNumber).matches();
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getPhoneExtension() {
+        return phoneExtension;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+}
+```
+
+```html title="link.html"
+<sly data-sly-use.model="com.example.core.models.PhoneLinkModel">
+
+  <!-- Regular link -->
+  <a data-sly-test="${!model.phoneLink}"
+     href="${model.url @ context='uri'}">
+    ${model.url @ context='text'}
+  </a>
+
+  <!-- Phone link: scheme is hardcoded, only the validated number is dynamic -->
+  <a data-sly-test="${model.phoneLink && model.validPhone}"
+     href="tel:${model.phoneNumber @ context='text'}${model.phoneExtension ? ',' : ''}${model.phoneExtension @ context='text'}"
+     x-cq-linkchecker="skip">
+    ${model.phoneNumber @ context='text'}
+    <span data-sly-test="${model.phoneExtension}"> ext. ${model.phoneExtension @ context='text'}</span>
+  </a>
+
+  <!-- Invalid phone: render as plain text, no link -->
+  <span data-sly-test="${model.phoneLink && !model.validPhone}">
+    ${model.phoneNumber @ context='text'}
+  </span>
+
+</sly>
+```
+
+The key insight: the `tel:` scheme is a **literal** in the template, not part of the user input. The dynamic
+portion (the phone number) is validated with a regex in Java and rendered with `context='text'`, so no
+exploit string can slip through.
+
+**Approach 2: Overlay the AntiSamy config to allow `tel:` in URIs**
+
+If many components need `tel:` links and the feature-flag approach feels too repetitive, you can add `tel` to
+the allowed protocols in your `/apps/cq/xssprotection/config.xml` overlay:
+
+```xml title="/apps/cq/xssprotection/config.xml (excerpt)"
+<allowed-protocols>
+  <protocol value="http"/>
+  <protocol value="https"/>
+  <protocol value="mailto"/>
+  <protocol value="tel"/>    <!-- added -->
+</allowed-protocols>
+```
+
+:::warning
+Only add schemes you genuinely need. Every additional allowed protocol widens the attack surface.
+Never add `javascript` or `data` to the allowed protocols.
+:::
+
+**Approach 3: Sanitise in the Sling Model and return a safe href**
+
+```java title="SafeLinkModel.java"
+public String getSafeHref() {
+    if (isPhoneLink() && isValidPhone()) {
+        // Build the tel: URI server-side after validation
+        String ext = phoneExtension != null ? "," + phoneExtension : "";
+        return "tel:" + phoneNumber.replaceAll("[^0-9+]", "") + ext;
+    }
+    // For regular URLs, use XSSAPI
+    return xssAPI.getValidHref(url);
+}
+```
+
+```html
+<a href="${model.safeHref @ context='uri'}">${model.linkText @ context='text'}</a>
+```
+
+**Audit your codebase**: search for `context='unsafe'` across all HTL files. Each occurrence is a potential
+XSS vulnerability that should be replaced with one of the patterns above.
+
+```bash
+# Find all unsafe context usages in your project
+grep -rn "context='unsafe'" --include="*.html" ui.apps/
+```
+
+#### Deploying to AEMaaCS
+
+For AEM as a Cloud Service, include your overlay at `/apps/cq/xssprotection/config.xml` in your
+`ui.apps` content package. The deployment pipeline will install it just like any other content overlay.
+There is no runtime JCR access to modify the config on the fly in cloud environments.
+
+```text title="ui.apps content package structure"
+ui.apps/
+  src/main/content/
+    jcr_root/
+      apps/
+        cq/
+          xssprotection/
+            config.xml          <-- your customised AntiSamy policy
+```
+
+## Internationalisation (i18n)
+
+HTL has built-in support for translating strings.
+
+```html
+<!-- Simple translation -->
+<p>${'Welcome to our site' @ i18n}</p>
+
+<!-- With a specific locale -->
+<p>${'Welcome to our site' @ i18n, locale='de'}</p>
+
+<!-- With a hint for translators -->
+<p>${'Save' @ i18n, hint='Button label for saving a form'}</p>
+
+<!-- With a custom resource bundle basename (Sling extension) -->
+<p>${'Hello' @ i18n, basename='com.example.i18n.messages'}</p>
+```
+
+## Format Options
+
+### Format Strings
+
+Use `@ format` for placeholder replacement in strings.
+
+```html
+<!-- Indexed placeholders -->
+<p>${'Hello {0}, you have {1} new messages.' @ format=[model.userName, model.messageCount]}</p>
+<!-- Output: "Hello Alice, you have 5 new messages." -->
+
+<!-- Single value shorthand -->
+<p>${'Welcome back, {0}!' @ format=model.userName}</p>
+<!-- Output: "Welcome back, Alice!" -->
+```
+
+When the ICU4J bundle is available, complex argument types like `plural` and `select` are supported (Sling extension):
+
+```html
+<!-- Plural support -->
+<p>${'{0, plural, one{# result} other{# results}}' @ format=model.resultCount}</p>
+<!-- Output for 1: "1 result" -->
+<!-- Output for 42: "42 results" -->
+
+<!-- Locale-aware plurals (e.g. Czech) -->
+<p>${'{0, plural, one{# výsledek} few{# výsledky} other{# výsledků}}' @ format=model.resultCount}</p>
+```
+
+### Format Dates
+
+```html
+<!-- Custom date pattern -->
+<p>${model.publishDate @ format='yyyy-MM-dd'}</p>
+<!-- Output: "2025-03-15" -->
+
+<p>${model.publishDate @ format='dd.MM.yyyy HH:mm'}</p>
+<!-- Output: "15.03.2025 14:30" -->
+
+<!-- Predefined patterns (Sling extension) -->
+<p>${model.publishDate @ format='short'}</p>
+<!-- Output (en_US): "3/15/25" -->
+
+<p>${model.publishDate @ format='medium'}</p>
+<!-- Output (en_US): "Mar 15, 2025" -->
+
+<p>${model.publishDate @ format='long'}</p>
+<!-- Output (en_US): "March 15, 2025" -->
+
+<p>${model.publishDate @ format='full'}</p>
+<!-- Output (en_US): "Saturday, March 15, 2025" -->
+
+<!-- With explicit locale -->
+<p>${model.publishDate @ format='long', locale='de'}</p>
+<!-- Output: "15. März 2025" -->
+```
+
+**Supported predefined date patterns:**
+
+| Pattern   | Description                          | Example (en_US)           |
+|-----------|--------------------------------------|---------------------------|
+| `short`   | Short numeric format                 | 3/15/25                   |
+| `medium`  | Medium detail (default)              | Mar 15, 2025              |
+| `long`    | Long descriptive format              | March 15, 2025            |
+| `full`    | Full format with day of week         | Saturday, March 15, 2025  |
+| `default` | Same as `medium`                     | Mar 15, 2025              |
+
+## The Use-API
+
+HTL supports multiple ways to provide business logic through Use-objects. The Sling implementation provides
+several Use Providers, each with a different priority (highest first):
+
+| Priority | Provider           | Purpose                                                   |
+|----------|--------------------|-----------------------------------------------------------|
+| 100      | RenderUnitProvider | Loading HTL templates via `data-sly-use`                  |
+| 90       | JavaUseProvider    | Sling Models, OSGi services, POJOs                        |
+| 80       | JsUseProvider      | JavaScript Use-objects (server-side Rhino)                |
+| 0        | ScriptUseProvider  | Objects returned by other script engines on the platform  |
+| -10      | ResourceUseProvider| Loading Resources by path                                 |
+
+### Java Use-API
+
+The most common and recommended approach. Sling Models are the standard way to provide component logic.
+
+```java title="core/src/main/java/com/example/core/models/ArticleModel.java"
+@Model(
+    adaptables = SlingHttpServletRequest.class,
+    adapters = ArticleModel.class,
+    resourceType = "myproject/components/article",
+    defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)
+public class ArticleModel {
+
+    @ValueMapValue
+    private String title;
+
+    @ValueMapValue
+    private String author;
+
+    @ValueMapValue
+    private Calendar publishDate;
+
+    @ValueMapValue
+    private String[] tags;
+
+    @Inject @Source("child-resources")
+    private List<Resource> relatedArticles;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author != null ? author : "Anonymous";
+    }
+
+    public Calendar getPublishDate() {
+        return publishDate;
+    }
+
+    public List<String> getTags() {
+        return tags != null ? Arrays.asList(tags) : Collections.emptyList();
+    }
+}
+```
+
+```html title="article.html"
+<article data-sly-use.article="com.example.core.models.ArticleModel">
+  <h1>${article.title}</h1>
+  <span class="author">By ${article.author}</span>
+  <time>${article.publishDate @ format='medium'}</time>
+
+  <ul data-sly-list="${article.tags}">
+    <li>${item}</li>
+  </ul>
+</article>
+```
+
+#### Passing parameters to Sling Models
+
+Parameters passed via HTL become request attributes that can be injected:
+
+```html
+<div data-sly-use.card="${'com.example.core.models.ProductCard' @ colour='red', year=2025}">
+  ${card.colour} - ${card.year}
+</div>
+```
+
+```java title="ProductCard.java"
+@Model(adaptables = SlingHttpServletRequest.class)
+public class ProductCard {
+
+    @Inject
+    private String colour;
+
+    @Inject
+    private Integer year;
+
+    // getters...
+}
+```
+
+#### POJO implementing Use interface
+
+For simple cases where you don't need the full Sling Model framework:
+
+```java title="SimpleHelper.java"
+package apps.myproject.components.helper;
+
+import javax.script.Bindings;
+import org.apache.sling.scripting.sightly.pojo.Use;
+
+public class SimpleHelper implements Use {
+
+    private String greeting;
+
+    @Override
+    public void init(Bindings bindings) {
+        String name = (String) bindings.getOrDefault("name", "World");
+        greeting = "Hello, " + name + "!";
+    }
+
+    public String getGreeting() {
+        return greeting;
+    }
+}
+```
+
+```html
+<sly data-sly-use.helper="${'SimpleHelper' @ name='Developer'}">
+  <p>${helper.greeting}</p>
+  <!-- Output: Hello, Developer! -->
+</sly>
+```
+
+#### Resource-backed Java classes
+
+Java classes can also live alongside HTL files in the repository (not in an OSGi bundle). The package name must
+match the resource path, with invalid Java characters replaced by underscores.
+
+```text title="Content structure"
+└── apps
+    └── myproject
+        └── components
+            └── greeting
+                ├── GreetingHelper.java
+                └── greeting.html
+```
+
+```html title="greeting.html"
+<!-- Short form (recommended for overlayability) -->
+<sly data-sly-use.helper="GreetingHelper">
+  <p>${helper.message}</p>
+</sly>
+
+<!-- Fully qualified (faster, but can't be overlaid by inheriting components) -->
+<sly data-sly-use.helper="apps.myproject.components.greeting.GreetingHelper">
+  <p>${helper.message}</p>
+</sly>
+```
+
+### JavaScript Use-API
+
+JavaScript Use-objects are evaluated server-side by the Rhino engine. Useful for quick prototyping or
+when Java infrastructure is not available. Use ES5 syntax only.
+
+```javascript title="logic.js"
+use(function () {
+  'use strict';
+
+  var currentDate = new java.util.Date();
+  var title = this.title || 'Default Title';
+
+  return {
+    title: title,
+    year: currentDate.getYear() + 1900,
+    isWeekend: function () {
+      var day = new java.util.Date().getDay();
+      return day == 0 || day == 6;
+    }
+  };
+});
+```
+
+```html
+<div data-sly-use.logic="${'logic.js' @ title='My Page'}">
+  <h1>${logic.title}</h1>
+  <p>Year: ${logic.year}</p>
+  <p data-sly-test="${logic.isWeekend}">Enjoy your weekend!</p>
+</div>
+```
+
+#### JavaScript Use-API with dependencies
+
+```javascript title="utils.js"
+use(function () {
+  'use strict';
+  return {
+    truncate: function (text, maxLength) {
+      if (text != null && text.length() > maxLength) {
+        return text.substring(0, maxLength) + '...';
+      }
+      return text;
+    }
+  };
+});
+```
+
+```javascript title="card.js"
+use(['utils.js'], function (Utils) {
+  'use strict';
+
+  var description = this.description || '';
+
+  return {
+    shortDescription: Utils.truncate(description, 100)
+  };
+});
+```
+
+```html
+<div data-sly-use.card="${'card.js' @ description=model.description}">
+  <p>${card.shortDescription}</p>
+</div>
+```
+
+:::warning
+JavaScript Use-objects are slower than Sling Models and harder to test. Prefer the Java Use-API (Sling Models)
+for production components. Also, use the loose equality operator (`==`) instead of strict equality (`===`) when
+comparing Java objects in Rhino, because `===` does not perform type coercion between Java and JavaScript types.
+:::
+
+#### JavaScript caveats with strict equality
+
+```javascript title="comparison.js"
+use(function () {
+  'use strict';
+  return {
+    // WRONG - returns false because Java String !== JS string
+    strictCompare: new java.lang.String('hello') === 'hello',
+    // CORRECT - returns true
+    looseCompare: new java.lang.String('hello') == 'hello'
+  };
+});
+```
+
+### Global Objects
+
+The following global objects are available to all Use-objects (Java and JavaScript):
+
+```text
+currentNode      // javax.jcr.Node
+currentSession   // javax.jcr.Session
+log              // org.slf4j.Logger
+out              // java.io.PrintWriter
+properties       // org.apache.sling.api.resource.ValueMap
+reader           // java.io.BufferedReader
+request          // org.apache.sling.api.SlingHttpServletRequest
+resolver         // org.apache.sling.api.resource.ResourceResolver
+resource         // org.apache.sling.api.resource.Resource
+response         // org.apache.sling.api.SlingHttpServletResponse
+sling            // org.apache.sling.api.scripting.SlingScriptHelper
+```
+
+The JavaScript Use Provider additionally exposes `console`, `use`, `exports`, and `module`.
+
+## Type Conversions
+
+When HTL evaluates expressions, Java objects are converted according to these rules:
+
+| HTL Type   | Conversion Rule                                                                                                |
+|------------|----------------------------------------------------------------------------------------------------------------|
+| Boolean    | `true` for non-null, non-zero, non-empty values. `false` for `null`, `0`, empty strings, and empty collections |
+| String     | Calls `toString()`. Collections are joined with `,`. Enums use `name()` (not `toString()`)                     |
+| Number     | `java.lang.Number` directly. Other types converted via String, then parsed                                     |
+| Date       | `java.util.Date`, `java.util.Calendar`, `java.time.Instant`                                                   |
+| Collection | Collections, Iterators, Iterables, Enumerations, arrays. Maps return their key set. Strings/Numbers become single-item lists |
+
+`java.util.Optional` values are automatically unwrapped before conversion.
+
+### Practical type conversion examples
+
+```html
+<!-- Boolean conversion: empty string is falsy -->
+<p data-sly-test="${model.subtitle}">Has subtitle</p>
+
+<!-- Boolean conversion: empty list is falsy -->
+<div data-sly-test="${model.items}">
+  <p>Items exist</p>
+</div>
+
+<!-- Number: used for arithmetic comparisons -->
+<p data-sly-test="${model.price > 0}">Price: ${model.price}</p>
+
+<!-- Collection: iterating over a Map gives you its keys -->
+<ul data-sly-list="${model.configMap}">
+  <li>${item}</li> <!-- outputs each key -->
+</ul>
+```
+
+## Common Patterns
+
+### Conditional CSS classes
+
+```html
+<div class="card${model.isFeatured ? ' card--featured' : ''}${model.isCompact ? ' card--compact' : ''}">
+  <h3>${model.title}</h3>
+</div>
+```
+
+### Empty / fallback content
+
+```html
+<h1>${model.title || 'Untitled'}</h1>
+
+<img src="${model.imageUrl || '/content/dam/fallback.jpg'}"
+     alt="${model.imageAlt || model.title}"/>
+```
+
+### Nested loops with templates
+
+```html title="partials/nav.html"
+<template data-sly-template.navItem="${@ item, level}">
+  <li class="nav-item nav-level-${level}">
+    <a href="${item.url}">${item.title}</a>
+    <ul data-sly-test="${item.children}" data-sly-list.child="${item.children}">
+      <sly data-sly-call="${navItem @ item=child, level=level + 1}"/>
+    </ul>
+  </li>
+</template>
+```
+
+```html
+<nav data-sly-use.nav="partials/nav.html">
+  <ul data-sly-list.root="${model.rootItems}">
+    <sly data-sly-call="${nav.navItem @ item=root, level=0}"/>
+  </ul>
+</nav>
+```
+
+### Component with edit placeholder (Author mode)
+
+```html
+<div data-sly-use.model="com.example.core.models.TextComponent"
+     data-sly-test.hasContent="${model.text}">
+  <div class="text-component">
+    ${model.text @ context='html'}
+  </div>
+</div>
+
+<!-- Placeholder for empty component in author mode -->
+<div data-sly-test="${!hasContent && wcmmode.edit}" class="cq-placeholder">
+  Click to configure text
+</div>
+```
+
+### WCM Mode checks
+
+```html
+<sly data-sly-test="${wcmmode.edit || wcmmode.preview}">
+  <div class="author-info">
+    <p>Component: ${resource.resourceType}</p>
+    <p>Path: ${resource.path}</p>
+  </div>
+</sly>
+```
+
+### Iteration with separator
+
+```html
+<p>
+  Tags:
+  <span data-sly-repeat="${model.tags}">
+    ${item}<span data-sly-test="${!itemList.last}">, </span>
+  </span>
+</p>
+<!-- Output: Tags: Java, AEM, HTL -->
+```
+
+## Best Practices
+
+- **Keep logic in Sling Models.** HTL should only handle presentation. Move any business logic, string manipulation, or data transformation into your Java models.
+- **Avoid string concatenation.** Use expression options (`@ format`, `@ join`) and URI manipulation options instead of building strings manually.
+- **Use `data-sly-test` wisely.** Store test results in variables when you need to reference them multiple times.
+- **Prefer `<sly>` for logic-only blocks.** The `<sly>` element never renders to output, making it ideal for control flow that shouldn't produce extra DOM elements.
+- **Use templates for reuse.** Extract repeated markup patterns into `data-sly-template` / `data-sly-call` pairs.
+- **Always use the right display context.** Never use `context='unsafe'`. Use `context='html'` for rich text, `context='uri'` for links.
+- **Prefer Sling Models over JavaScript Use-objects.** They're faster, easier to test, and integrate with the full AEM framework.
+- **Use `data-sly-resource` for component composition.** Include child components via their resource path rather than duplicating markup.
 
 ## See also
 
-- [Sling models](./sling-models.mdx)
+- [Sling Models](./sling-models.mdx)
 - [Components](./components.mdx)
+- [Official HTL Specification](https://github.com/adobe/htl-spec/blob/master/SPECIFICATION.md)
+- [Sling HTL Scripting Engine Documentation](https://sling.apache.org/documentation/bundles/scripting/scripting-htl.html)
+- [AEM Security -- XSS Protection](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/introduction/security)
+- [XSSAPI Javadoc](https://developer.adobe.com/experience-manager/reference-materials/6-5/javadoc/com/adobe/granite/xss/XSSAPI.html)
+- [OWASP AntiSamy Project](https://owasp.org/www-project-antisamy/)
+- [How good is your AEM security? -- XSS (Perficient)](https://blogs.perficient.com/2022/10/04/how-good-is-your-aem-security-xss/)

@@ -1,41 +1,59 @@
 ---
 title: Groovy Console
 sidebar_position: 28
-tags: [aem, groovy, tooling]
+tags: [aem, groovy, tooling, scripts]
 ---
 
 # Groovy Console
 
-- [GitHub Repo](https://github.com/CID15/aem-groovy-console)
-- [mvnrepository.com](https://mvnrepository.com/artifact/org.cid15.aem.groovy.console/aem-groovy-console-all/17.0.0)
-- [https://github.com/orbinson/aem-groovy-console](https://github.com/orbinson/aem-groovy-console)
+The [AEM Groovy Console](https://github.com/orbinson/aem-groovy-console) provides a web-based interface for running
+[Groovy](https://www.groovy-lang.org) scripts inside an AEM instance. Scripts can manipulate JCR content, call
+OSGi services, or execute arbitrary code using the AEM, Sling, and JCR APIs -- all without deploying a code package.
 
-## Install on AEM as a Cloud Service
+It is the go-to tool for one-off maintenance tasks, bulk content operations, data migrations, and quick debugging on
+author and publish instances.
 
-**2025 Update** - there is a more recent, updated version of the Groovy Console available for AEM as a Cloud Service -> https://github.com/orbinson/aem-groovy-console
+**Access the console** at [/groovyconsole](http://localhost:4502/groovyconsole) (or the legacy
+path `/apps/groovyconsole.html`).
 
-```xml title="/pom.xml"
+## Installation
+
+### Orbinson fork (recommended)
+
+The actively maintained fork by [Orbinson](https://github.com/orbinson/aem-groovy-console) supports
+AEM 6.5.10+, AEM as a Cloud Service (2022.11+), Sling 12+, and Java 8/11/17/21.
+
+Add the dependency to your root `pom.xml`:
+
+```xml title="pom.xml"
 <dependency>
   <groupId>be.orbinson.aem</groupId>
   <artifactId>aem-groovy-console-all</artifactId>
-  <version>19.0.3</version>
+  <version>19.0.8</version>
   <type>zip</type>
 </dependency>
 ```
 
-```xml title="filevault-package-maven-plugin in the <embeddeds> section"
+Embed it in your `all` package via the `filevault-package-maven-plugin`:
+
+```xml title="all/pom.xml -- embeddeds section"
 <embedded>
-   <groupId>be.orbinson.aem</groupId>
-   <artifactId>aem-groovy-console-all</artifactId>
-   <target>/apps/vendor-packages/content/install</target>
+  <groupId>be.orbinson.aem</groupId>
+  <artifactId>aem-groovy-console-all</artifactId>
+  <target>/apps/vendor-packages/content/install</target>
 </embedded>
 ```
 
----
+Alternatively, download the `.zip` package from the
+[GitHub releases page](https://github.com/orbinson/aem-groovy-console/releases) and install it manually via
+[Package Manager](http://localhost:4502/crx/packmgr).
 
-The following steps are for the older, org.cid15, version of the Groovy Console:
+### Legacy CID15 version
 
-In your 'Root' Pom add the following dependency:
+<details>
+<summary>Installation steps for the older org.cid15 version</summary>
+
+Add the dependency to your root `pom.xml`:
 
 ```xml title="pom.xml"
 <dependency>
@@ -46,7 +64,7 @@ In your 'Root' Pom add the following dependency:
 </dependency>
 ```
 
-In your 'All' Pom add the following dependency and plugin:
+In your `all` module, add the dependency and embed:
 
 ```xml title="all/pom.xml"
 <plugin>
@@ -57,53 +75,164 @@ In your 'All' Pom add the following dependency and plugin:
         <showImportPackageReport>false</showImportPackageReport>
         <group>some.group</group>
         <packageType>container</packageType>
-        <!-- skip sub package validation for now as some vendor packages like CIF apps will not pass -->
         <skipSubPackageValidation>true</skipSubPackageValidation>
         <embeddeds>
-            <!-- [...] -->
             <embedded>
-                    <groupId>org.cid15.aem.groovy.console</groupId>
-                    <artifactId>aem-groovy-console-all</artifactId>
-                    <type>zip</type>
-                    <target>/apps/groovy-vendor-packages/container/install</target>
+                <groupId>org.cid15.aem.groovy.console</groupId>
+                <artifactId>aem-groovy-console-all</artifactId>
+                <type>zip</type>
+                <target>/apps/groovy-vendor-packages/container/install</target>
             </embedded>
         </embeddeds>
     </configuration>
 </plugin>
 ```
 
-```xml title="all/pom.xml"
+```xml title="all/pom.xml -- dependency"
 <dependency>
     <groupId>org.cid15.aem.groovy.console</groupId>
     <artifactId>aem-groovy-console-all</artifactId>
     <type>zip</type>
 </dependency>
 ```
-Add the root path in all/src/main/content/META-INF/vault/filter.xml
-```
+
+Add the root path in `all/src/main/content/META-INF/vault/filter.xml`:
+
+```xml
 <filter root="/apps/groovy-vendor-packages"/>
 ```
 
-Add the following osgi configuration file:
+</details>
 
-```json title="ui.config/src/main/content/jcr_root/apps/<your-app>/osgiconfig/config.author.dev/org.cid15.aem.groovy.console.configuration.impl.DefaultConfigurationService.cfg.json"
+### OSGi configuration
+
+Restrict console access to trusted admin groups only:
+
+```json title="ui.config/src/main/content/jcr_root/apps/<your-app>/osgiconfig/config.author/be.orbinson.aem.groovy.console.configuration.impl.DefaultConfigurationService.cfg.json"
 {
-	"allowedGroups":[
-		"administrators"
-	],
-	"allowedScheduledJobsGroups":[
-		"administrators"
-	]
+  "allowedGroups": [
+    "administrators"
+  ],
+  "allowedScheduledJobsGroups": [
+    "administrators"
+  ],
+  "auditDisabled": false,
+  "emailEnabled": false,
+  "threadTimeout": 0
 }
 ```
 
-Keep Groovy Console access restricted to trusted admin groups only.
+| Property | Description | Default |
+|----------|-------------|---------|
+| `allowedGroups` | Groups authorized to execute scripts. Only `admin` user has access by default | `[]` |
+| `allowedScheduledJobsGroups` | Groups authorized to schedule jobs | `[]` |
+| `auditDisabled` | Disable auditing of script execution history | `false` |
+| `displayAllAuditRecords` | Show audit records from all users (not just current) | `false` |
+| `emailEnabled` | Send email notifications on script completion | `false` |
+| `emailRecipients` | Email addresses to notify | `[]` |
+| `threadTimeout` | Seconds before a script is interrupted (0 = no timeout) | `0` |
+| `distributedExecutionEnabled` | Replicate and execute script on all default replication agents | `false` |
 
+:::danger
+Never leave the Groovy Console accessible on publish instances in production. It provides full JCR access
+and can execute arbitrary code. Adobe Managed Services currently blocks Groovy Console installation on
+production publish environments for this reason.
+:::
 
-## Use SQL2 Query and iterate batched over all content
+## Available Bindings
 
-This is a dummy script which can be used as a baseline.
-It executes a SQL2 query and iterates over all content items, batched, to not overload the author environment..
+Every script automatically has access to these pre-bound variables -- no imports or setup required:
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `session` | `javax.jcr.Session` | The current JCR session |
+| `resourceResolver` | `ResourceResolver` | Sling resource resolver for the current user |
+| `pageManager` | `PageManager` | AEM page management API |
+| `queryBuilder` | `QueryBuilder` | AEM QueryBuilder API |
+| `bundleContext` | `BundleContext` | OSGi bundle context for accessing services |
+| `log` | `Logger` | SLF4J logger (output appears in `error.log`) |
+| `out` | `PrintWriter` | Writes output to the console result panel |
+| `sling` | `SlingScriptHelper` | Access to Sling services via `sling.getService(...)` |
+
+### Getting other services
+
+You can retrieve any OSGi service via the `bundleContext` or `sling` bindings:
+
+```groovy
+import com.day.cq.replication.Replicator
+
+// Option 1: via sling helper
+def replicator = sling.getService(Replicator)
+
+// Option 2: via bundleContext
+def ref = bundleContext.getServiceReference(Replicator.class.name)
+def replicator2 = bundleContext.getService(ref)
+```
+
+## Safety Best Practices
+
+Before running any script -- especially on shared or production environments -- follow these guidelines:
+
+### Always use DRY_RUN
+
+Guard all mutations behind a `DRY_RUN` flag. Run the script first with `DRY_RUN = true` to verify
+what **would** change, then flip to `false` to apply.
+
+```groovy
+final boolean DRY_RUN = true
+
+// ... find nodes ...
+
+if (!DRY_RUN) {
+    node.setProperty('myProp', 'newValue')
+    mutated++
+}
+
+// Save only when not dry-running
+if (!DRY_RUN) {
+    session.save()
+}
+```
+
+### Batch your saves
+
+Calling `session.save()` after every single node change is extremely slow and can cause
+`OutOfMemoryError` on large datasets. Save in batches:
+
+```groovy
+final int SAVE_THRESHOLD = 1000
+int changeCount = 0
+
+// inside your loop:
+if (!DRY_RUN) {
+    node.setProperty('updated', true)
+    changeCount++
+    if (changeCount % SAVE_THRESHOLD == 0) {
+        session.save()
+        out.println("Saved batch at ${changeCount} changes")
+    }
+}
+
+// final save for remaining changes
+if (!DRY_RUN && changeCount % SAVE_THRESHOLD != 0) {
+    session.save()
+}
+```
+
+### Additional tips
+
+- **Test on a local instance first.** Never run an untested script on a shared environment.
+- **Use `session.refresh(false)` to discard** pending changes if something goes wrong mid-execution.
+- **Add throttling** (`sleep(100)`) in tight loops to avoid overloading the repository on busy instances.
+- **Log progress** with `out.println()` so you can monitor long-running scripts in real time.
+- **Set a thread timeout** in the OSGi configuration to prevent runaway scripts from locking the instance.
+
+## Script Examples
+
+### Batched SQL2 query (baseline template)
+
+A reusable template that queries nodes with SQL2, iterates in batches, and supports optional mutations guarded by
+`DRY_RUN`. Use this as your starting point for almost any bulk operation.
 
 ```groovy
 import javax.jcr.Node
@@ -114,30 +243,28 @@ import javax.jcr.query.QueryResult
 import javax.jcr.query.RowIterator
 
 // ---------------- Configuration ----------------
-final String BASE_PATH = '/content'       // Change to your subtree (e.g. '/content/my-site')
-final String NODE_TYPE = 'cq:Page'        // Any primary type, e.g., 'nt:unstructured', 'dam:Asset', etc.
-final int BATCH_SIZE = 500                // Tune to your environment
-final long THROTTLE_MILLIS = 0L           // e.g., 100–250ms if you want to be extra gentle
-final boolean DRY_RUN = true              // Flip to false to persist changes
+final String BASE_PATH = '/content'       // Change to your subtree
+final String NODE_TYPE = 'cq:Page'        // e.g., 'nt:unstructured', 'dam:Asset'
+final int BATCH_SIZE = 500
+final long THROTTLE_MILLIS = 0L           // e.g., 100-250ms to be gentle
+final boolean DRY_RUN = true
 
-// ---------------- Helper (optional) ----------------
+// ---------------- Helper ----------------
 static String safeTitle(Session s, String pagePath) {
     try {
-        String contentPath = pagePath.endsWith('/') ? pagePath + 'jcr:content' : pagePath + '/jcr:content'
+        String contentPath = pagePath + '/jcr:content'
         if (s.nodeExists(contentPath)) {
             Node content = s.getNode(contentPath)
             return content.hasProperty('jcr:title') ? content.getProperty('jcr:title').string : ''
         }
-    } catch (Throwable ignored) {
-    }
+    } catch (Throwable ignored) {}
     return ''
 }
 
 // -------------------- Main --------------------
-Session s = session // provided by Groovy Console
+Session s = session
 QueryManager qm = s.workspace.queryManager
 
-// IMPORTANT: JCR-SQL2 does NOT support inline LIMIT/OFFSET. Use setLimit/setOffset.
 String baseSql = """
     SELECT p.[jcr:path]
     FROM [${NODE_TYPE}] AS p
@@ -154,42 +281,33 @@ while (true) {
     q.setLimit(BATCH_SIZE)
     q.setOffset(offset)
     QueryResult result = q.execute()
-
     RowIterator rows = result.rows
     int returned = 0
+
     while (rows.hasNext()) {
         def row = rows.nextRow()
         returned++
         scanned++
-
-        String path = row.getPath('p') // selector alias 'p'
+        String path = row.getPath('p')
         Node node = s.getNode(path)
 
-        // ---- Dummy operation (safe by default) ----
-        // Example: read a title from jcr:content for pages, or print the node name for generic types
         String title = safeTitle(s, path)
         out.println("Found: ${path}${title ? " | title='${title}'" : ''}")
 
-        // Example mutation guarded by DRY_RUN: set a marker property on the node itself
-        // Adapt the property name and value to your use case
         if (!DRY_RUN) {
             node.setProperty('demo:lastScanned', java.time.Instant.now().toString())
             mutated++
         }
     }
 
-    out.println("Scanned so far: ${scanned} | Batch returned: ${returned} | Offset: ${offset}")
+    out.println("Scanned: ${scanned} | Batch: ${returned} | Offset: ${offset}")
 
-    if (returned < BATCH_SIZE) {
-        break // last page
-    }
+    if (returned < BATCH_SIZE) break
     offset += returned
     if (THROTTLE_MILLIS > 0) sleep THROTTLE_MILLIS
 }
 
-if (!DRY_RUN) {
-    s.save()
-}
+if (!DRY_RUN) s.save()
 
 out.println('----------------------------------------')
 out.println("Base path: ${BASE_PATH}")
@@ -199,16 +317,10 @@ out.println("Total mutated: ${mutated}")
 return scanned
 ```
 
-What this does
-- Queries nodes of type `NODE_TYPE` under `BASE_PATH`.
-- Uses `ORDER BY p.[jcr:path]` for stable paging and applies `setLimit/setOffset`.
-- Prints each path (and the `jcr:title` when applicable).
-- Shows how to add a safe, optional mutation guarded by `DRY_RUN`.
+### Multi-selector SQL2 join
 
----
-
-### Multi-selector example (child join)
-If you need to ensure a specific child exists (or has a property), switch to a join and qualify columns with the correct selector alias. For example, to find pages with a direct child named `rep:cugPolicy` that has `rep:principalNames` defined:
+Find pages that have a specific child node (e.g. pages with a `rep:cugPolicy` child that has
+`rep:principalNames` defined):
 
 ```groovy
 String baseSql = """
@@ -222,12 +334,394 @@ String baseSql = """
 """.stripIndent().trim()
 ```
 
-Notes
-- With more than one selector (`p`, `c`), reference columns with the selector alias (`p.[jcr:path]`).
-- You can combine this with in-code checks if certain repository configurations differ.
+When using more than one selector (`p`, `c`), always qualify column names with the selector alias
+(e.g. `p.[jcr:path]`).
+
+### Bulk update a property on all pages
+
+Find all pages using a specific template and update a property on their `jcr:content` node:
+
+```groovy
+final String BASE_PATH = '/content/my-site'
+final String TEMPLATE = '/conf/my-site/settings/wcm/templates/article-page'
+final boolean DRY_RUN = true
+
+int count = 0
+
+getPage(BASE_PATH).recurse { page ->
+    if (page.properties['cq:template'] == TEMPLATE) {
+        def content = page.node // jcr:content node
+        out.println("${page.path} | current hideInNav = ${content.get('hideInNav')}")
+
+        if (!DRY_RUN) {
+            content.set('hideInNav', true)
+            count++
+        }
+    }
+}
+
+if (!DRY_RUN) session.save()
+out.println("Updated ${count} pages (DRY_RUN=${DRY_RUN})")
+```
+
+### Find and replace text in properties
+
+Search for a string across all `jcr:content` nodes and replace it:
+
+```groovy
+final String BASE_PATH = '/content/my-site'
+final String PROPERTY = 'jcr:title'
+final String SEARCH = 'Old Brand Name'
+final String REPLACE = 'New Brand Name'
+final boolean DRY_RUN = true
+
+int count = 0
+
+getPage(BASE_PATH).recurse { page ->
+    def content = page.node
+    if (content.get(PROPERTY)?.contains(SEARCH)) {
+        String oldValue = content.get(PROPERTY)
+        String newValue = oldValue.replace(SEARCH, REPLACE)
+        out.println("${page.path}: '${oldValue}' -> '${newValue}'")
+
+        if (!DRY_RUN) {
+            content.set(PROPERTY, newValue)
+            count++
+        }
+    }
+}
+
+if (!DRY_RUN) session.save()
+out.println("Replaced in ${count} pages (DRY_RUN=${DRY_RUN})")
+```
+
+### Find pages by template
+
+List all pages using a given template, grouped by path:
+
+```groovy
+final String BASE_PATH = '/content'
+final String TEMPLATE = '/conf/my-site/settings/wcm/templates/homepage'
+
+int count = 0
+
+getPage(BASE_PATH).recurse { page ->
+    if (page.properties['cq:template'] == TEMPLATE) {
+        out.println("${page.path} | title: ${page.properties['jcr:title'] ?: 'n/a'}")
+        count++
+    }
+}
+
+out.println("----------------------------------------")
+out.println("Found ${count} pages with template: ${TEMPLATE}")
+return count
+```
+
+### Find orphaned components
+
+Find component nodes whose `sling:resourceType` no longer exists in the repository (broken components):
+
+```groovy
+final String BASE_PATH = '/content/my-site'
+int orphanCount = 0
+
+getPage(BASE_PATH).recurse { page ->
+    page.node?.recurse { node ->
+        String resourceType = node.get('sling:resourceType')
+        if (resourceType && !resourceResolver.getResource('/apps/' + resourceType)
+                         && !resourceResolver.getResource('/libs/' + resourceType)) {
+            out.println("ORPHAN: ${node.path} | resourceType: ${resourceType}")
+            orphanCount++
+        }
+    }
+}
+
+out.println("----------------------------------------")
+out.println("Found ${orphanCount} orphaned components")
+return orphanCount
+```
+
+### Activate / deactivate pages
+
+Replicate pages programmatically:
+
+```groovy
+import com.day.cq.replication.ReplicationActionType
+import com.day.cq.replication.Replicator
+
+final String BASE_PATH = '/content/my-site/en/news'
+final boolean DRY_RUN = true
+
+def replicator = sling.getService(Replicator)
+int count = 0
+
+getPage(BASE_PATH).recurse { page ->
+    // Example: deactivate all pages that are hidden in nav
+    if (page.properties['hideInNav'] == 'true') {
+        out.println("Deactivating: ${page.path}")
+
+        if (!DRY_RUN) {
+            replicator.replicate(session, ReplicationActionType.DEACTIVATE, page.path)
+            count++
+        }
+    }
+}
+
+out.println("Deactivated ${count} pages (DRY_RUN=${DRY_RUN})")
+```
+
+### DAM: find assets by MIME type
+
+```groovy
+import javax.jcr.query.Query
+
+final String BASE_PATH = '/content/dam/my-site'
+final String MIME_TYPE = 'application/pdf'
+
+String sql = """
+    SELECT a.[jcr:path]
+    FROM [dam:Asset] AS a
+    INNER JOIN [nt:resource] AS r ON ISDESCENDANTNODE(r, a)
+    WHERE ISDESCENDANTNODE(a, '${BASE_PATH}')
+      AND r.[jcr:mimeType] = '${MIME_TYPE}'
+    ORDER BY a.[jcr:path]
+"""
+
+def qm = session.workspace.queryManager
+def result = qm.createQuery(sql, Query.JCR_SQL2).execute()
+int count = 0
+
+result.rows.each { row ->
+    out.println(row.getPath('a'))
+    count++
+}
+
+out.println("----------------------------------------")
+out.println("Found ${count} assets of type ${MIME_TYPE}")
+return count
+```
+
+### DAM: update asset metadata
+
+```groovy
+final String BASE_PATH = '/content/dam/my-site'
+final String PROPERTY = 'dc:rights'
+final String NEW_VALUE = '© 2025 My Company. All rights reserved.'
+final boolean DRY_RUN = true
+
+int count = 0
+
+def damRoot = resourceResolver.getResource(BASE_PATH)
+
+damRoot.listChildren().each { child ->
+    def metadataRes = child.getChild('jcr:content/metadata')
+    if (metadataRes != null) {
+        def metadata = metadataRes.adaptTo(javax.jcr.Node)
+        out.println("${child.path} | current ${PROPERTY}: ${metadata.hasProperty(PROPERTY) ? metadata.getProperty(PROPERTY).string : 'not set'}")
+
+        if (!DRY_RUN) {
+            metadata.setProperty(PROPERTY, NEW_VALUE)
+            count++
+        }
+    }
+}
+
+if (!DRY_RUN) session.save()
+out.println("Updated ${count} assets (DRY_RUN=${DRY_RUN})")
+```
+
+### Delete nodes matching a pattern
+
+Remove all nodes of a specific type or name under a given path:
+
+```groovy
+final String BASE_PATH = '/content/my-site'
+final String NODE_NAME_TO_DELETE = 'cq:LiveSyncConfig'
+final boolean DRY_RUN = true
+
+int count = 0
+def nodesToDelete = []
+
+// Collect first, then delete (avoid ConcurrentModificationException)
+session.getNode(BASE_PATH).recurse { node ->
+    if (node.name == NODE_NAME_TO_DELETE) {
+        nodesToDelete.add(node.path)
+    }
+}
+
+nodesToDelete.each { path ->
+    out.println("Deleting: ${path}")
+    if (!DRY_RUN) {
+        session.getNode(path).remove()
+        count++
+    }
+}
+
+if (!DRY_RUN) session.save()
+out.println("Deleted ${count} nodes (DRY_RUN=${DRY_RUN})")
+```
+
+### Create content pages programmatically
+
+```groovy
+import com.day.cq.wcm.api.Page
+
+final String PARENT_PATH = '/content/my-site/en'
+final String TEMPLATE = '/conf/my-site/settings/wcm/templates/content-page'
+final boolean DRY_RUN = true
+
+def pages = [
+    [name: 'about-us',    title: 'About Us'],
+    [name: 'contact',     title: 'Contact'],
+    [name: 'privacy',     title: 'Privacy Policy'],
+]
+
+int count = 0
+
+pages.each { p ->
+    String fullPath = "${PARENT_PATH}/${p.name}"
+    if (session.nodeExists(fullPath)) {
+        out.println("SKIP (exists): ${fullPath}")
+    } else {
+        out.println("CREATE: ${fullPath} | title: ${p.title}")
+        if (!DRY_RUN) {
+            pageManager.create(PARENT_PATH, p.name, TEMPLATE, p.title)
+            count++
+        }
+    }
+}
+
+if (!DRY_RUN) session.save()
+out.println("Created ${count} pages (DRY_RUN=${DRY_RUN})")
+```
+
+### Query with QueryBuilder
+
+Use the AEM QueryBuilder API instead of raw SQL2:
+
+```groovy
+import com.day.cq.search.PredicateGroup
+
+def params = [
+    'path'           : '/content/my-site',
+    'type'           : 'cq:Page',
+    'property'       : 'jcr:content/cq:template',
+    'property.value' : '/conf/my-site/settings/wcm/templates/article-page',
+    'orderby'        : 'path',
+    'p.limit'        : '-1'  // all results (use with caution)
+]
+
+def query = queryBuilder.createQuery(PredicateGroup.create(params), session)
+def result = query.result
+
+out.println("Found ${result.totalMatches} pages")
+
+result.hits.each { hit ->
+    out.println("${hit.path} | title: ${hit.properties['jcr:content/jcr:title'] ?: 'n/a'}")
+}
+
+return result.totalMatches
+```
+
+### List OSGi configurations
+
+```groovy
+import org.osgi.service.cm.ConfigurationAdmin
+
+def configAdmin = sling.getService(ConfigurationAdmin)
+def configs = configAdmin.listConfigurations(null)
+
+configs?.sort { it.pid }.each { config ->
+    out.println(config.pid)
+}
+
+out.println("----------------------------------------")
+out.println("Total configurations: ${configs?.size() ?: 0}")
+```
+
+## Scheduling Scripts
+
+The Groovy Console includes a built-in scheduler for running scripts on a cron schedule or asynchronously.
+Scripts run as [Sling Jobs](https://sling.apache.org/documentation/bundles/apache-sling-eventing-and-job-handling.html)
+and are audited in the same way as interactive executions.
+
+To schedule a script:
+
+1. Save your script in the console (it will be stored under `/conf/groovyconsole/scripts`)
+2. Open the **Scheduler** tab in the console UI
+3. Select the saved script and set either an immediate (async) execution or a Cron expression
+
+### Remote / batch execution via cURL
+
+Saved scripts can also be triggered via a POST request, which is useful for CI/CD pipelines or automated
+maintenance windows:
+
+```bash
+# Execute a single script
+curl -d "scriptPath=/conf/groovyconsole/scripts/samples/JcrSearch.groovy" \
+     -X POST -u admin:admin \
+     http://localhost:4502/bin/groovyconsole/post.json
+
+# Execute multiple scripts sequentially
+curl -d "scriptPaths=/conf/groovyconsole/scripts/cleanup.groovy&scriptPaths=/conf/groovyconsole/scripts/reindex.groovy" \
+     -X POST -u admin:admin \
+     http://localhost:4502/bin/groovyconsole/post.json
+```
+
+:::warning
+Protect the `/bin/groovyconsole/*` path with Dispatcher rules and authentication. Anyone who can reach this
+endpoint can execute arbitrary code on your AEM instance.
+:::
+
+## Extensions
+
+The Groovy Console can be extended with custom bindings, metaclasses, and compilation customizers via OSGi services:
+
+| Extension Interface | Purpose |
+|---------------------|---------|
+| `BindingExtensionProvider` | Add custom variables (e.g. project-specific helpers) to every script execution |
+| `CompilationCustomizerExtensionProvider` | Restrict or enhance language features, provide AST transformations |
+| `ScriptMetaClassExtensionProvider` | Add methods to the script class at runtime (e.g. `node.doSomething()`) |
+| `StarImportExtensionProvider` | Provide additional star imports for the compiler |
+| `NotificationService` | Custom notifications after script execution (e.g. Slack, Teams) |
+
+Example: adding a custom binding that provides a `projectHelper` object to all scripts:
+
+```java title="core/src/main/java/com/example/core/groovy/ProjectBindingProvider.java"
+import be.orbinson.aem.groovy.console.api.BindingExtensionProvider;
+import be.orbinson.aem.groovy.console.api.BindingVariable;
+import org.osgi.service.component.annotations.Component;
+
+@Component(service = BindingExtensionProvider.class, immediate = true)
+public class ProjectBindingProvider implements BindingExtensionProvider {
+
+    @Override
+    public Map<String, BindingVariable> getBindingVariables() {
+        Map<String, BindingVariable> variables = new LinkedHashMap<>();
+        variables.put("projectName", new BindingVariable("my-project", String.class));
+        return variables;
+    }
+}
+```
+
+## Dispatcher Configuration
+
+If you need the Groovy Console accessible through the Dispatcher (e.g. on a secured publish instance for debugging):
+
+```text title="dispatcher.any -- filter section"
+# Allow Groovy Console page
+/001 { /type "allow" /url "/groovyconsole" }
+/002 { /type "allow" /url "/apps/groovyconsole.html" }
+
+# Allow servlets
+/003 { /type "allow" /path "/bin/groovyconsole/*" }
+```
 
 ## See also
 
 - [Modify and query the JCR](./jcr.md)
 - [Node operations](./node-operations.mdx)
 - [Security basics](./security.mdx)
+- [Orbinson Groovy Console (GitHub)](https://github.com/orbinson/aem-groovy-console)
+- [CID15 Groovy Console (legacy)](https://github.com/CID15/aem-groovy-console)
+- [Sample scripts (GitHub)](https://github.com/orbinson/aem-groovy-console/tree/main/ui.content/src/main/content/jcr_root/conf/groovyconsole/scripts/samples)
