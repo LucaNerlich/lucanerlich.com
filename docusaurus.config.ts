@@ -15,6 +15,7 @@ const config = {
     baseUrl: '/',
     markdown: {
         format: 'detect',
+        mermaid: true,
         remarkRehypeOptions: {
             footnoteLabel: 'Quellen / Fußnoten',
         },
@@ -28,6 +29,7 @@ const config = {
     organizationName: 'LucaNerlich',
     projectName: 'blog-3.0',
     trailingSlash: true,
+    themes: ['@docusaurus/theme-mermaid'],
     presets: [
         [
             'classic',
@@ -230,6 +232,9 @@ const config = {
                 // theme: lightCodeTheme,
                 // darkTheme: darkCodeTheme,
                 additionalLanguages: ['groovy', 'java', 'rust', 'python', 'bash', 'rust', 'yaml', 'csv'],
+            },
+            mermaid: {
+                theme: { light: 'default', dark: 'dark' },
             },
         }),
 };

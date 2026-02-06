@@ -21,6 +21,7 @@
         "@docusaurus/plugin-client-redirects": "^3.9.2",
         "@docusaurus/plugin-pwa": "^3.9.2",
         "@docusaurus/preset-classic": "^3.9.2",
+        "@docusaurus/theme-mermaid": "^3.9.2",
         "@mdx-js/react": "^3.1.1",
         "clsx": "^2.1.1",
         "prism-react-renderer": "^2.4.1",
@@ -31,7 +32,7 @@
         "@docusaurus/module-type-aliases": "^3.9.2",
         "@docusaurus/tsconfig": "^3.9.2",
         "@docusaurus/types": "^3.9.2",
-        "@types/react": "^19.2.10",
+        "@types/react": "^19.2.13",
         "typescript": "~5.9.3"
     },
     "engines": {
