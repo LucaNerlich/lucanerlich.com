@@ -80,7 +80,7 @@ const config = {
                     {from: '/docs/aem/ui/overlays/', to: '/aem/ui/overlays/'},
 
                     // Sidebar reorganization: components group
-                    {from: '/aem/components/', to: '/aem/components/overview/'},
+                    // Note: /aem/components/ is handled by the category page itself
                     {from: '/aem/core-components/', to: '/aem/components/core-components/'},
                     {from: '/aem/dialog-validation/', to: '/aem/components/dialog-validation/'},
                     {from: '/aem/annotations/child-resource/', to: '/aem/components/annotations/child-resource/'},
