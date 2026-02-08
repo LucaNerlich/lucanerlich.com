@@ -6,82 +6,215 @@ tags: [aem, dialogs, validation]
 
 # Dialog Validation
 
-This post will explain how one can add and implement custom AuthorUI/TouchUI Dialog Form Field validation.
+AEM's Touch UI dialog framework includes a client-side validation system that lets you enforce business
+rules **before** an author saves a dialog. This prevents invalid data from reaching the JCR, reduces
+content errors, and improves the authoring experience by providing immediate, in-dialog feedback.
+
+This guide covers the built-in validation system, how to register custom validators, and a collection
+of ready-to-use validation examples.
+
+## How Validation Works
+
+```mermaid
+sequenceDiagram
+    participant Author
+    participant Dialog as Dialog UI
+    participant Registry as Foundation Registry
+    participant Validator as Custom Validator
+
+    Author->>Dialog: Fills in fields, clicks "Done"
+    Dialog->>Registry: Trigger validation for all fields
+    Registry->>Validator: Run validate() for matching selectors
+    alt Validation passes
+        Validator-->>Registry: undefined (no error)
+        Registry-->>Dialog: All valid
+        Dialog->>Dialog: Save to JCR
+        Dialog-->>Author: Dialog closes
+    else Validation fails
+        Validator-->>Registry: Error message string
+        Registry->>Validator: Run show() to display error
+        Validator-->>Dialog: Coral Tooltip with error
+        Dialog-->>Author: Error shown, save blocked
+    end
+```
+
+The validation framework is based on the **Foundation Validation API**:
+
+1. Validators are registered in the `foundation-registry` with a **CSS selector** that matches target fields
+2. When the author submits the dialog, AEM queries all registered validators
+3. Each validator's `validate()` function runs against matching fields
+4. If `validate()` returns a string (the error message), the save is blocked
+5. The `show()` function renders the error tooltip on the invalid field
+6. The `clear()` function removes the error when the field becomes valid
 
 ## Setup
 
-AEM Dialog Validation works by registering to `foundation.validation.validator` and implementing a set of fields.
-This should be done it its own ClientLibrary, the following snippet shows the ClientLibraryFolder `.content.xml` node.
+### Client Library
 
-```xml
+Dialog validation code must be loaded in the **authoring context only**. Create a dedicated Client Library:
+
+```xml title="ui.apps/.../clientlibs/clientlib-dialogvalidation/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
-		  jcr:primaryType="cq:ClientLibraryFolder"
-		  allowProxy="{Boolean}true"
-		  categories="[cq.authoring.dialog]"
-		  dependencies="[cq.authoring.dialog.all,granite.jquery]"/>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:ClientLibraryFolder"
+    allowProxy="{Boolean}true"
+    categories="[cq.authoring.dialog]"
+    dependencies="[cq.authoring.dialog.all,granite.jquery]"/>
 ```
 
-## See also
+| Property | Purpose |
+|----------|---------|
+| `categories="[cq.authoring.dialog]"` | Loads the JS only when a Touch UI dialog is open |
+| `dependencies="[cq.authoring.dialog.all,granite.jquery]"` | Ensures the Foundation API and jQuery are available |
+| `allowProxy="{Boolean}true"` | Serves the clientlib through the `/etc.clientlibs/` proxy |
 
-- [Custom Component Guide](../custom-component.mdx)
-- [Component dialogs](../component-dialogs.mdx)
-- [Components overview](./overview.mdx)
-- [Core components](./core-components.mdx)
-- [Touch UI](../ui/touch-ui.mdx)
-- [Coral UI](../ui/coral-ui.mdx)
-- [Client libraries](../client-libraries.mdx)
-
-The categories and dependencies are important. This will ensure, that your javascript code will only be loaded while editing AEM Dialogs.
-
-My ClientLib directory looks like this:
+### File structure
 
 ```text
-- /clientlib-dialogvalidation
--- /js
---- extensionSvgValidation.js
---- multifieldValidation.js
---- urlValidation.js
--- .content.xml
--- js.txt
+clientlib-dialogvalidation/
+├── .content.xml
+├── js.txt
+└── js/
+    ├── urlValidation.js
+    ├── extensionValidation.js
+    ├── multifieldValidation.js
+    ├── charCountValidation.js
+    └── conditionalRequiredValidation.js
 ```
 
-Let's take a look at the basic validation fields which need to be implemented and registered.
+```text title="js.txt"
+#base=js
+urlValidation.js
+extensionValidation.js
+multifieldValidation.js
+charCountValidation.js
+conditionalRequiredValidation.js
+```
 
-```javascript
+## Validator Registration Pattern
+
+Every custom validator follows the same structure:
+
+```javascript title="Template -- copy and adapt"
 (function ($) {
-	"use strict";
-	$(window)
-		.adaptTo("foundation-registry")
-		.register(
-			"foundation.validation.validator", {
-				selector: "[data-foundation-validation=<your-custom-attribute>]",
-				validate: function (el) {
-					// validates the field. return false for invalid content
-				},
-				show: function (el, message) {
-					// triggers a notification popup when validation fails
-				}
-			});
+    "use strict";
+
+    $(window)
+        .adaptTo("foundation-registry")
+        .register("foundation.validation.validator", {
+
+            // CSS selector that matches the dialog fields to validate
+            selector: "[data-validation=my-custom-rule]",
+
+            // Runs when the dialog is submitted.
+            // Return undefined/nothing for valid, or an error message string for invalid.
+            validate: function (el) {
+                var value = $(el).val();
+                if (value && !isValid(value)) {
+                    return "Your custom error message here.";
+                }
+                // Return nothing = valid
+            },
+
+            // Renders the error indicator on the field
+            show: function (el, message) {
+                var $el = $(el);
+                var fieldAPI = $el.adaptTo("foundation-field");
+                if (fieldAPI && fieldAPI.setInvalid) {
+                    fieldAPI.setInvalid(true);
+                }
+
+                var error = $el.data("foundation-validation.internal.error");
+                if (error) {
+                    error.content.innerHTML = message;
+                    if (!error.parentNode) {
+                        $el.after(error);
+                        error.show();
+                    }
+                } else {
+                    error = new Coral.Tooltip();
+                    error.variant = "error";
+                    error.interaction = "off";
+                    error.placement = "bottom";
+                    error.target = el;
+                    error.content.innerHTML = message;
+                    error.open = true;
+                    error.id = Coral.commons.getUID();
+                    $el.data("foundation-validation.internal.error", error);
+                    $el.after(error);
+                }
+            },
+
+            // Clears the error indicator when the field becomes valid
+            clear: function (el) {
+                var $el = $(el);
+                var fieldAPI = $el.adaptTo("foundation-field");
+                if (fieldAPI && fieldAPI.setInvalid) {
+                    fieldAPI.setInvalid(false);
+                }
+
+                var error = $el.data("foundation-validation.internal.error");
+                if (error) {
+                    error.hide();
+                    error.remove();
+                    $el.removeData("foundation-validation.internal.error");
+                }
+            }
+        });
 })(Granite.$);
 ```
 
-An important part is the selector matching. This attributes 'maps' your validation logic to a data-attribute set to a dialog field.
-The latter can be done either via a `granite:data` node, or by adding `validation=<your-custom-attribute>` directly to any dialog field. Take a look at the following examples to see it in action.
+### Connecting validators to dialog fields
 
-<div class="alert alert--warning" role="alert">
-    ⚠️ The css 'data-foundation-validation' selector class changed between 6.5 and AEMaaCS. AEMaaCS uses only the
-    'data-validation' attribute ⚠️
-</div>
+There are two ways to attach a validator to a dialog field:
 
-The following subchapter demonstrate some examples on how the above can be used in various validation scenarios.
-
-## Generic Regex Validation
-
-A common use case is the need to match an input field value against a given regex pattern. This examples matches the given pathfield value (should be a url) against a pattern that matches a valid external url.
-We set our validation attribute to `url`, which we then use in our validation selector `selector: "[data-foundation-validation=url]"`.
+**Option 1: `validation` attribute** (simple, single validator)
 
 ```xml
+<myField
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="URL"
+    name="./url"
+    validation="my-custom-rule"/>
+```
+
+**Option 2: `granite:data` node** (multiple validators, custom data attributes)
+
+```xml
+<myField
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="URL"
+    name="./url">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        validation="my-custom-rule"
+        max-length="100"/>
+</myField>
+```
+
+:::warning AEM 6.5 vs AEMaaCS selector difference
+The data attribute name changed between versions:
+- **AEM 6.5**: `data-foundation-validation`
+- **AEMaaCS**: `data-validation`
+
+For cross-compatibility, use both selectors:
+```javascript
+selector: "[data-validation=my-rule], [data-foundation-validation=my-rule]",
+```
+:::
+
+---
+
+## Validation Examples
+
+### URL Validation (Regex)
+
+Validates that a text field contains a properly formatted URL.
+
+```xml title="Dialog field"
 <endpointUrl
     jcr:primaryType="nt:unstructured"
     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -92,150 +225,720 @@ We set our validation attribute to `url`, which we then use in our validation se
     required="{Boolean}true"/>
 ```
 
-We define a pattern in our validation javascript code and use it to match against the given elements value. On error, a notification badge informs the author of the failed validation - including a custom error message.
-
-```javascript
+```javascript title="js/urlValidation.js"
 (function ($) {
     "use strict";
 
-    //https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-    const PATTERN_URL = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"
+    var PATTERN_URL = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
 
     $(window)
         .adaptTo("foundation-registry")
-        .register(
-            "foundation.validation.validator", {
-                selector: "[data-validation=url]",
-                validate: function (el) {
-                    var element = $(el);
-                    var value = element.val().toString();
-                    if (value.length > 0) {
-                        if (value.match(PATTERN_URL)) {
-                            // valid input
-                        } else {
-                            return "Please enter valid url.";
-                        }
-                    }
+        .register("foundation.validation.validator", {
+            selector: "[data-validation=url], [data-foundation-validation=url]",
 
-                },
-                show: function (el, message) {
-                    var $el = $(el);
-
-                    var fieldAPI = $el.adaptTo("foundation-field");
-                    if (fieldAPI && fieldAPI.setInvalid) {
-                        fieldAPI.setInvalid(true);
-                    }
-
-                    var error = $el.data("foundation-validation.internal.error");
-
-                    if (error) {
-                        error.content.innerHTML = message;
-
-                        if (!error.parentNode) {
-                            $el.after(error);
-                            error.show();
-                        }
-                    } else {
-                        error = new Coral.Tooltip();
-                        error.variant = "error";
-                        error.interaction = "off";
-                        error.placement = "bottom";
-                        error.target = el;
-                        error.content.innerHTML = message;
-                        error.open = true;
-                        error.id = Coral.commons.getUID();
-
-                        $el.data("foundation-validation.internal.error", error);
-                        $el.after(error);
-                    }
+            validate: function (el) {
+                var value = $(el).val().toString().trim();
+                if (value.length > 0 && !PATTERN_URL.test(value)) {
+                    return "Please enter a valid URL (e.g. https://www.example.com).";
                 }
-            });
+            },
+
+            show: function (el, message) {
+                showError($(el), el, message);
+            },
+
+            clear: function (el) {
+                clearError($(el));
+            }
+        });
+
+    // Reusable show/clear helpers (shared across validators)
+    function showError($el, el, message) {
+        var fieldAPI = $el.adaptTo("foundation-field");
+        if (fieldAPI && fieldAPI.setInvalid) {
+            fieldAPI.setInvalid(true);
+        }
+
+        var error = $el.data("foundation-validation.internal.error");
+        if (error) {
+            error.content.innerHTML = message;
+            if (!error.parentNode) {
+                $el.after(error);
+                error.show();
+            }
+        } else {
+            error = new Coral.Tooltip();
+            error.variant = "error";
+            error.interaction = "off";
+            error.placement = "bottom";
+            error.target = el;
+            error.content.innerHTML = message;
+            error.open = true;
+            error.id = Coral.commons.getUID();
+            $el.data("foundation-validation.internal.error", error);
+            $el.after(error);
+        }
+    }
+
+    function clearError($el) {
+        var fieldAPI = $el.adaptTo("foundation-field");
+        if (fieldAPI && fieldAPI.setInvalid) {
+            fieldAPI.setInvalid(false);
+        }
+
+        var error = $el.data("foundation-validation.internal.error");
+        if (error) {
+            error.hide();
+            error.remove();
+            $el.removeData("foundation-validation.internal.error");
+        }
+    }
 })(Granite.$);
 ```
 
 ### File Extension Validation
 
-A very similar approach can be used to check for a file validation. With this, it is possible to, for example, restrict an image upload field to a predefined set of file extensions.
-For readability’s sake, the snippet only includes the relevant parts - the overall structure does not change and can be copied from the [regex example](#generic-regex-validation).
+Restricts a path field to only accept files with specific extensions (e.g. SVG icons only).
+
+```xml title="Dialog field"
+<iconPath
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+    fieldLabel="Icon Path"
+    emptyText="e.g. /content/dam/icons/home.svg"
+    filter="hierarchyNotFile"
+    name="./iconPath"
+    validation="extension-svg"
+    rootPath="/content/dam/icons"/>
+```
+
+```javascript title="js/extensionValidation.js"
+(function ($) {
+    "use strict";
+
+    var PATTERN_SVG = /^.*\.(svg)$/i;
+
+    $(window)
+        .adaptTo("foundation-registry")
+        .register("foundation.validation.validator", {
+            selector: "[data-validation=extension-svg], [data-foundation-validation=extension-svg]",
+
+            validate: function (el) {
+                var value = $(el).val().toString().trim();
+                if (value.length > 0 && !PATTERN_SVG.test(value)) {
+                    return "Only .svg files are allowed.";
+                }
+            },
+
+            show: function (el, message) {
+                showError($(el), el, message);
+            },
+
+            clear: function (el) {
+                clearError($(el));
+            }
+        });
+
+    // ... showError / clearError helpers (same as above) ...
+})(Granite.$);
+```
+
+:::tip Generic extension validator
+For a reusable validator that works with any extension, use a `granite:data` attribute to pass the
+allowed extensions:
 
 ```xml
-<iconPath
-	jcr:primaryType="nt:unstructured"
-	sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
-	fieldLabel="Icon Path"
-	emptyText="e.g. /content/dam/icons/home.svg"
-	filter="hierarchyNotFile"
-	name="./iconPath"
-	validation="extension-svg"
-	rootPath="/content/dam/icons"/>
+<granite:data
+    jcr:primaryType="nt:unstructured"
+    validation="file-extension"
+    allowed-extensions="jpg,jpeg,png,webp"/>
 ```
 
 ```javascript
-const PATTERN_URL = "^.*\\.(svg)$"
-// [...]
-
-"[data-foundation-validation=extension-svg]",
 validate: function (el) {
-	var element = $(el);
-	var value = element.val().toString();
-	if (value.length > 0) {
-		if (value.match(PATTERN_URL)) {
-			// valid input
-		} else {
-			return "Only .svg files are allowed.";
-		}
-	}
-
-},
-// [...]
+    var value = $(el).val().toString().trim();
+    var allowed = el.getAttribute("data-allowed-extensions");
+    if (value.length > 0 && allowed) {
+        var pattern = new RegExp("^.*\\.(" + allowed.replace(/,/g, "|") + ")$", "i");
+        if (!pattern.test(value)) {
+            return "Allowed file types: " + allowed;
+        }
+    }
+}
 ```
+:::
 
-## Multifield Min / Max Item Amount
+### Multifield Min / Max Items
 
-We want to restrict an author to a specific amount of Multifield items that can be created. To achieve this, we need to write two attributes to the dom. We are doing this via a `granite:data` node:
+Restricts the number of items an author can add to a composite multifield.
 
-```xml
-<icons jcr:primaryType="nt:unstructured"
-	   sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
-	   composite="{Boolean}true">
-	<granite:data
-		jcr:primaryType="nt:unstructured"
-		max-items="5"
-		min-items="1"/>
-	<field jcr:primaryType="nt:unstructured"
-		   sling:resourceType="granite/ui/components/coral/foundation/container"
-		   name="./icons">
-		<items jcr:primaryType="nt:unstructured">
+```xml title="Dialog field"
+<icons
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+    composite="{Boolean}true">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        max-items="5"
+        min-items="1"/>
+    <field
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/container"
+        name="./icons">
+        <items jcr:primaryType="nt:unstructured">
+            <!-- ... fields ... -->
         </items>
     </field>
 </icons>
 ```
 
-Our selector will match all `coral-multifields`, however, our custom logic then only runs, if the specified attributes are present.
+```javascript title="js/multifieldValidation.js"
+(function ($) {
+    "use strict";
 
-```javascript
-// [...]
-"coral-multifield",
-validate: function (el) {
-	// coral-multifield -> MultifieldCollection -> getAll -> List of coral-multifield-items
-	var totalPanels = el.items.getAll().length;
-	var min = el.getAttribute("data-min-items");
-	var max = el.getAttribute("data-max-items");
+    $(window)
+        .adaptTo("foundation-registry")
+        .register("foundation.validation.validator", {
+            // Match all multifields -- the logic checks for data attributes
+            selector: "coral-multifield",
 
-	if (min) {
-		min = parseInt(min);
-		if (min > 0 && totalPanels < min) {
-			return "Minimum amount of items required are: " + min;
-		}
-	}
-	if (max) {
-		max = parseInt(max);
-		if (max > 0 && totalPanels > max) {
-			return "Maximum amount of items allowed are: " + max;
-		}
-	}
-},
-// [...]
+            validate: function (el) {
+                var totalItems = el.items.getAll().length;
+                var min = el.getAttribute("data-min-items");
+                var max = el.getAttribute("data-max-items");
+
+                if (min) {
+                    min = parseInt(min, 10);
+                    if (min > 0 && totalItems < min) {
+                        return "Minimum number of items required: " + min
+                            + " (currently " + totalItems + ").";
+                    }
+                }
+
+                if (max) {
+                    max = parseInt(max, 10);
+                    if (max > 0 && totalItems > max) {
+                        return "Maximum number of items allowed: " + max
+                            + " (currently " + totalItems + ").";
+                    }
+                }
+            },
+
+            show: function (el, message) {
+                // For multifields, attach the error to the multifield element itself
+                var $el = $(el);
+                var error = $el.data("foundation-validation.internal.error");
+
+                if (error) {
+                    error.content.innerHTML = message;
+                    if (!error.parentNode) {
+                        $el.after(error);
+                        error.show();
+                    }
+                } else {
+                    error = new Coral.Tooltip();
+                    error.variant = "error";
+                    error.interaction = "off";
+                    error.placement = "bottom";
+                    error.target = el;
+                    error.content.innerHTML = message;
+                    error.open = true;
+                    error.id = Coral.commons.getUID();
+                    $el.data("foundation-validation.internal.error", error);
+                    $el.after(error);
+                }
+            },
+
+            clear: function (el) {
+                var $el = $(el);
+                var error = $el.data("foundation-validation.internal.error");
+                if (error) {
+                    error.hide();
+                    error.remove();
+                    $el.removeData("foundation-validation.internal.error");
+                }
+            }
+        });
+})(Granite.$);
 ```
 
+### Character Count / Max Length
 
+Enforces a maximum character count on a text field or textarea, showing the current count.
+
+```xml title="Dialog field"
+<description
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+    fieldLabel="Description"
+    fieldDescription="Max 160 characters (SEO meta description)"
+    name="./description">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        validation="char-count"
+        max-chars="160"/>
+</description>
+```
+
+```javascript title="js/charCountValidation.js"
+(function ($) {
+    "use strict";
+
+    $(window)
+        .adaptTo("foundation-registry")
+        .register("foundation.validation.validator", {
+            selector: "[data-validation=char-count], [data-foundation-validation=char-count]",
+
+            validate: function (el) {
+                var value = $(el).val().toString();
+                var maxChars = parseInt(el.getAttribute("data-max-chars"), 10);
+
+                if (maxChars && value.length > maxChars) {
+                    return "Maximum " + maxChars + " characters allowed ("
+                        + value.length + " entered).";
+                }
+            },
+
+            show: function (el, message) {
+                showError($(el), el, message);
+            },
+
+            clear: function (el) {
+                clearError($(el));
+            }
+        });
+
+    // ... showError / clearError helpers ...
+})(Granite.$);
+```
+
+### Email Validation
+
+Validates that a text field contains a properly formatted email address.
+
+```xml title="Dialog field"
+<contactEmail
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Contact Email"
+    name="./contactEmail"
+    validation="email"/>
+```
+
+```javascript title="js/emailValidation.js"
+(function ($) {
+    "use strict";
+
+    // RFC 5322 simplified pattern
+    var PATTERN_EMAIL = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+    $(window)
+        .adaptTo("foundation-registry")
+        .register("foundation.validation.validator", {
+            selector: "[data-validation=email], [data-foundation-validation=email]",
+
+            validate: function (el) {
+                var value = $(el).val().toString().trim();
+                if (value.length > 0 && !PATTERN_EMAIL.test(value)) {
+                    return "Please enter a valid email address.";
+                }
+            },
+
+            show: function (el, message) {
+                showError($(el), el, message);
+            },
+
+            clear: function (el) {
+                clearError($(el));
+            }
+        });
+})(Granite.$);
+```
+
+### Phone Number Validation
+
+Validates international phone number formats.
+
+```xml title="Dialog field"
+<phone
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Phone Number"
+    fieldDescription="International format: +49 123 456 7890"
+    name="./phone"
+    validation="phone"/>
+```
+
+```javascript title="js/phoneValidation.js"
+(function ($) {
+    "use strict";
+
+    // Matches international phone formats: +1 234 567 8900, +49-123-456-7890, etc.
+    var PATTERN_PHONE = /^\+?[\d\s\-().]{7,20}$/;
+
+    $(window)
+        .adaptTo("foundation-registry")
+        .register("foundation.validation.validator", {
+            selector: "[data-validation=phone], [data-foundation-validation=phone]",
+
+            validate: function (el) {
+                var value = $(el).val().toString().trim();
+                if (value.length > 0 && !PATTERN_PHONE.test(value)) {
+                    return "Please enter a valid phone number (e.g. +49 123 456 7890).";
+                }
+            },
+
+            show: function (el, message) {
+                showError($(el), el, message);
+            },
+
+            clear: function (el) {
+                clearError($(el));
+            }
+        });
+})(Granite.$);
+```
+
+### Conditional Required Field
+
+Makes a field required only when another field has a specific value. For example, "Alt text" is
+required only when an image is selected.
+
+```xml title="Dialog fields"
+<image
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+    fieldLabel="Image"
+    name="./imagePath"
+    rootPath="/content/dam"/>
+
+<altText
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Alt Text"
+    fieldDescription="Required when an image is selected"
+    name="./altText">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        validation="conditional-required"
+        depends-on="./imagePath"/>
+</altText>
+```
+
+```javascript title="js/conditionalRequiredValidation.js"
+(function ($) {
+    "use strict";
+
+    $(window)
+        .adaptTo("foundation-registry")
+        .register("foundation.validation.validator", {
+            selector: "[data-validation=conditional-required]",
+
+            validate: function (el) {
+                var $el = $(el);
+                var dependsOnName = el.getAttribute("data-depends-on");
+                if (!dependsOnName) return;
+
+                // Find the field this depends on (by its name attribute)
+                var $dialog = $el.closest("coral-dialog");
+                var $dependsOn = $dialog.find("[name='" + dependsOnName + "']");
+
+                var dependsOnValue = $dependsOn.val();
+                var thisValue = $el.val();
+
+                // If the dependency field has a value but this field is empty
+                if (dependsOnValue && dependsOnValue.toString().trim().length > 0
+                    && (!thisValue || thisValue.toString().trim().length === 0)) {
+                    return "This field is required when '"
+                        + dependsOnName.replace("./", "") + "' is filled.";
+                }
+            },
+
+            show: function (el, message) {
+                showError($(el), el, message);
+            },
+
+            clear: function (el) {
+                clearError($(el));
+            }
+        });
+})(Granite.$);
+```
+
+### JSON Syntax Validation
+
+Validates that a textarea contains valid JSON (useful for configuration fields).
+
+```xml title="Dialog field"
+<jsonConfig
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+    fieldLabel="JSON Configuration"
+    fieldDescription="Must be valid JSON"
+    name="./jsonConfig"
+    validation="json"/>
+```
+
+```javascript title="js/jsonValidation.js"
+(function ($) {
+    "use strict";
+
+    $(window)
+        .adaptTo("foundation-registry")
+        .register("foundation.validation.validator", {
+            selector: "[data-validation=json], [data-foundation-validation=json]",
+
+            validate: function (el) {
+                var value = $(el).val().toString().trim();
+                if (value.length > 0) {
+                    try {
+                        JSON.parse(value);
+                    } catch (e) {
+                        return "Invalid JSON: " + e.message;
+                    }
+                }
+            },
+
+            show: function (el, message) {
+                showError($(el), el, message);
+            },
+
+            clear: function (el) {
+                clearError($(el));
+            }
+        });
+})(Granite.$);
+```
+
+---
+
+## Built-in Validation Attributes
+
+AEM provides several built-in validations that don't require custom JavaScript:
+
+| Attribute | Purpose | Example |
+|-----------|---------|---------|
+| `required="{Boolean}true"` | Field must not be empty | Any field |
+| `max="{Long}100"` | Maximum numeric value | Number field |
+| `min="{Long}0"` | Minimum numeric value | Number field |
+| `maxlength="{Long}255"` | Maximum string length | Text field |
+| `pattern="^[A-Za-z]+$"` | Regex pattern on the field itself | Text field |
+| `validation="foundation.jcr.name"` | Valid JCR node name | Text field |
+
+```xml title="Example: built-in validations combined"
+<price
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/numberfield"
+    fieldLabel="Price"
+    name="./price"
+    required="{Boolean}true"
+    min="{Double}0.01"
+    max="{Double}99999.99"
+    step="{Double}0.01"/>
+```
+
+---
+
+## Extracting Reusable Helpers
+
+When you have many validators, extract the `show()` and `clear()` logic into a shared utility to
+avoid code duplication across files:
+
+```javascript title="js/validationUtils.js"
+/**
+ * Shared validation error display utilities.
+ * Load this file BEFORE the individual validator files (list it first in js.txt).
+ */
+window.DialogValidation = (function () {
+    "use strict";
+
+    function showError($el, el, message) {
+        var fieldAPI = $el.adaptTo("foundation-field");
+        if (fieldAPI && fieldAPI.setInvalid) {
+            fieldAPI.setInvalid(true);
+        }
+
+        var error = $el.data("foundation-validation.internal.error");
+        if (error) {
+            error.content.innerHTML = message;
+            if (!error.parentNode) {
+                $el.after(error);
+                error.show();
+            }
+        } else {
+            error = new Coral.Tooltip();
+            error.variant = "error";
+            error.interaction = "off";
+            error.placement = "bottom";
+            error.target = el;
+            error.content.innerHTML = message;
+            error.open = true;
+            error.id = Coral.commons.getUID();
+            $el.data("foundation-validation.internal.error", error);
+            $el.after(error);
+        }
+    }
+
+    function clearError($el) {
+        var fieldAPI = $el.adaptTo("foundation-field");
+        if (fieldAPI && fieldAPI.setInvalid) {
+            fieldAPI.setInvalid(false);
+        }
+
+        var error = $el.data("foundation-validation.internal.error");
+        if (error) {
+            error.hide();
+            error.remove();
+            $el.removeData("foundation-validation.internal.error");
+        }
+    }
+
+    return {
+        showError: showError,
+        clearError: clearError
+    };
+})();
+```
+
+Then in each validator file:
+
+```javascript title="Simplified validator using shared helpers"
+(function ($) {
+    "use strict";
+
+    $(window)
+        .adaptTo("foundation-registry")
+        .register("foundation.validation.validator", {
+            selector: "[data-validation=email]",
+            validate: function (el) {
+                // ... validation logic ...
+            },
+            show: function (el, message) {
+                DialogValidation.showError($(el), el, message);
+            },
+            clear: function (el) {
+                DialogValidation.clearError($(el));
+            }
+        });
+})(Granite.$);
+```
+
+Updated `js.txt` to load the utility first:
+
+```text title="js.txt"
+#base=js
+validationUtils.js
+urlValidation.js
+extensionValidation.js
+emailValidation.js
+phoneValidation.js
+charCountValidation.js
+multifieldValidation.js
+conditionalRequiredValidation.js
+jsonValidation.js
+```
+
+---
+
+## Server-Side Validation
+
+Client-side validation improves the authoring experience, but should **never** be the only layer of
+defence. Authors can bypass client-side checks (e.g. by editing the JCR directly, using CRXDE, or
+importing content packages).
+
+For critical business rules, add server-side validation in your Sling Model:
+
+```java title="core/.../models/TeaserModel.java"
+@PostConstruct
+protected void init() {
+    if (StringUtils.isNotBlank(imagePath) && StringUtils.isBlank(altText)) {
+        LOG.warn("Teaser at {} has an image without alt text", resource.getPath());
+        // Optionally set a flag for the HTL template to show a warning in edit mode
+        hasValidationWarning = true;
+    }
+}
+```
+
+| Layer | Purpose | Enforcement |
+|-------|---------|------------|
+| **Client-side (dialog)** | Immediate feedback, guides authors | Soft -- can be bypassed |
+| **Server-side (Sling Model)** | Business rule enforcement | Hard -- always runs |
+| **Content policy** | Template-level constraints | Configurable by template authors |
+
+---
+
+## Best Practices and Common Pitfalls
+
+### Always implement `clear()`
+
+Without a `clear()` function, error tooltips remain visible even after the author corrects the field.
+This confuses authors and can block saving.
+
+### Use cross-compatible selectors
+
+To support both AEM 6.5 and AEMaaCS, always include both selector variants:
+
+```javascript
+selector: "[data-validation=my-rule], [data-foundation-validation=my-rule]",
+```
+
+### Don't block on empty optional fields
+
+If a field is not `required`, your validator should allow empty values. Only validate when the field
+actually has content:
+
+```javascript
+validate: function (el) {
+    var value = $(el).val().toString().trim();
+    // Only validate non-empty values -- empty is OK for optional fields
+    if (value.length > 0 && !isValid(value)) {
+        return "Error message";
+    }
+}
+```
+
+### Test with multifield items
+
+Validators on fields inside multifields run for every item. Make sure your validator logic handles
+the DOM structure correctly -- the `el` parameter is the specific field instance, not the multifield
+container.
+
+### Keep error messages helpful
+
+Bad: `"Invalid input"` --
+Good: `"Please enter a valid URL (e.g. https://www.example.com)"`
+
+Include the expected format, current value count, or a concrete example in the error message.
+
+### Avoid complex cross-field validation
+
+The Foundation Validation API is designed for single-field validation. For complex cross-field rules
+(e.g. "end date must be after start date"), use the `coral-dialog` submit event instead:
+
+```javascript
+$(document).on("click", ".cq-dialog-submit", function (e) {
+    var $dialog = $(this).closest("coral-dialog");
+    var startDate = $dialog.find("[name='./startDate']").val();
+    var endDate = $dialog.find("[name='./endDate']").val();
+
+    if (startDate && endDate && new Date(endDate) <= new Date(startDate)) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Show a Foundation UI notification
+        var ui = $(window).adaptTo("foundation-ui");
+        ui.alert("Validation Error", "End date must be after start date.", "error");
+    }
+});
+```
+
+## See also
+
+- [Custom Component Guide](../custom-component.mdx)
+- [Component Dialogs](../component-dialogs.mdx) -- full dialog field reference
+- [Components Overview](./overview.mdx)
+- [Core Components](./core-components.mdx)
+- [Touch UI](../ui/touch-ui.mdx)
+- [Coral UI](../ui/coral-ui.mdx)
+- [Client Libraries](../client-libraries.mdx)
+- [HTL Templates](../htl-templates.mdx)
+- [Security](../infrastructure/security.mdx) -- XSS prevention
