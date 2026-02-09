@@ -324,6 +324,6 @@ module.exports = ({ env }) => ({
 
 ## See also
 
-- [Plugin Development](./plugin-development.md) -- building full plugins with admin UI
-- [Configuration and Deployment](./configuration-and-deployment.md) -- admin server configuration
-- [Authentication and Permissions](./authentication-and-permissions.md) -- admin panel security
+- [Plugin Development](plugin-development.md) -- building full plugins with admin UI
+- [Configuration and Deployment](configuration-and-deployment.md) -- admin server configuration
+- [Authentication and Permissions](authentication-and-permissions.md) -- admin panel security

@@ -453,6 +453,6 @@ Strapi generates a `tsconfig.json`, but here's a recommended configuration:
 
 ## See also
 
-- [Custom Controllers and Services](./custom-controllers-services.md) -- JS examples to convert to TS
-- [Plugin Development](./plugin-development.md) -- TypeScript plugin structure
-- [Testing Strapi Applications](./testing-strapi-applications.md) -- typing test helpers
+- [Custom Controllers and Services](custom-controllers-services.md) -- JS examples to convert to TS
+- [Plugin Development](plugin-development.md) -- TypeScript plugin structure
+- [Testing Strapi Applications](testing-strapi-applications.md) -- typing test helpers

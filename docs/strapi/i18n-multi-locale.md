@@ -445,6 +445,6 @@ async function getAvailableLocales(documentId) {
 
 ## See also
 
-- [Relations and Population](./relations-and-population.md) -- general population patterns that apply to localized queries
-- [Custom Controllers and Services](./custom-controllers-services.md) -- implementing fallback services
-- [Content Modeling Patterns](./content-modeling-patterns.md) -- deciding which fields to localize
+- [Relations and Population](relations-and-population.md) -- general population patterns that apply to localized queries
+- [Custom Controllers and Services](custom-controllers-services.md) -- implementing fallback services
+- [Content Modeling Patterns](content-modeling-patterns.md) -- deciding which fields to localize

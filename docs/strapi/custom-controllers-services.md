@@ -127,7 +127,7 @@ module.exports = createCoreController('api::article.article', ({ strapi }) => ({
 }));
 ```
 
-You also need a custom route for each new action -- see the [Custom Routes](./custom-routes-and-endpoints.md) page.
+You also need a custom route for each new action -- see the [Custom Routes](custom-routes-and-endpoints.md) page.
 
 ---
 
@@ -262,7 +262,7 @@ async find(ctx) {
 
 ## See also
 
-- [Custom Routes and Endpoints](./custom-routes-and-endpoints.md) -- exposing custom actions via routes
-- [Middleware and Policies](./middleware-and-policies.md) -- request-level logic before controllers
-- [Lifecycle Hooks](./lifecycle-hooks.md) -- running logic before/after database operations
-- [Relations and Population](./relations-and-population.md) -- populating related data in services
+- [Custom Routes and Endpoints](custom-routes-and-endpoints.md) -- exposing custom actions via routes
+- [Middleware and Policies](middleware-and-policies.md) -- request-level logic before controllers
+- [Lifecycle Hooks](lifecycle-hooks.md) -- running logic before/after database operations
+- [Relations and Population](relations-and-population.md) -- populating related data in services

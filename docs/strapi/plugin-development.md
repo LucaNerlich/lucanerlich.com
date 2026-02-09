@@ -557,7 +557,7 @@ npm install strapi-plugin-bookmarks
 
 ## See also
 
-- [Custom Controllers and Services](./custom-controllers-services.md) -- the patterns plugins use internally
-- [Admin Panel Customization](./admin-panel-customization.md) -- extending the admin without a full plugin
-- [Middleware and Policies](./middleware-and-policies.md) -- adding middleware from plugins
-- [Lifecycle Hooks](./lifecycle-hooks.md) -- plugin lifecycle events
+- [Custom Controllers and Services](custom-controllers-services.md) -- the patterns plugins use internally
+- [Admin Panel Customization](admin-panel-customization.md) -- extending the admin without a full plugin
+- [Middleware and Policies](middleware-and-policies.md) -- adding middleware from plugins
+- [Lifecycle Hooks](lifecycle-hooks.md) -- plugin lifecycle events

@@ -380,6 +380,6 @@ const query = qs.stringify({
 
 ## See also
 
-- [Custom Controllers and Services](./custom-controllers-services.md) -- controllers that query relations
-- [Lifecycle Hooks](./lifecycle-hooks.md) -- hooks that auto-populate or validate relations
-- [Custom Routes and Endpoints](./custom-routes-and-endpoints.md) -- custom endpoints that return related data
+- [Custom Controllers and Services](custom-controllers-services.md) -- controllers that query relations
+- [Lifecycle Hooks](lifecycle-hooks.md) -- hooks that auto-populate or validate relations
+- [Custom Routes and Endpoints](custom-routes-and-endpoints.md) -- custom endpoints that return related data

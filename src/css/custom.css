@@ -31,6 +31,10 @@ html[data-theme='dark'] .docusaurus-highlight-code-line {
     margin-bottom: 1em;
 }
 
+.font-purple {
+    color: #4945ff;
+}
+
 .font-red {
     color: #ff0000;
 }

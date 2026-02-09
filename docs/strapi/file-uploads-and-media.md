@@ -387,6 +387,6 @@ formData.append('path', '/Blog Images');  # or folder ID
 
 ## See also
 
-- [Configuration and Deployment](./configuration-and-deployment.md) -- provider environment config
-- [Custom Controllers and Services](./custom-controllers-services.md) -- custom upload endpoints
-- [Lifecycle Hooks](./lifecycle-hooks.md) -- post-upload processing
+- [Configuration and Deployment](configuration-and-deployment.md) -- provider environment config
+- [Custom Controllers and Services](custom-controllers-services.md) -- custom upload endpoints
+- [Lifecycle Hooks](lifecycle-hooks.md) -- post-upload processing

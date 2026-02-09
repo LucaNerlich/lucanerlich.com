@@ -185,6 +185,12 @@ const config = {
                         className: "font-red",
                     },
                     {
+                        to: '/strapi',
+                        label: 'Strapi',
+                        position: 'left',
+                        className: "font-purple",
+                    },
+                    {
                         to: '/javascript',
                         label: 'JavaScript',
                         position: 'left'

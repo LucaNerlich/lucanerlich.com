@@ -766,7 +766,7 @@ query ArticleBySlug($slug: String!) {
 
 ## See also
 
-- [Custom Controllers and Services](./custom-controllers-services.md) -- REST counterpart of GraphQL resolvers
-- [Relations and Population](./relations-and-population.md) -- population patterns that apply to GraphQL too
-- [Authentication and Permissions](./authentication-and-permissions.md) -- auth context in resolvers
-- [Performance and Caching](./performance-and-caching.md) -- query optimization strategies
+- [Custom Controllers and Services](custom-controllers-services.md) -- REST counterpart of GraphQL resolvers
+- [Relations and Population](relations-and-population.md) -- population patterns that apply to GraphQL too
+- [Authentication and Permissions](authentication-and-permissions.md) -- auth context in resolvers
+- [Performance and Caching](performance-and-caching.md) -- query optimization strategies

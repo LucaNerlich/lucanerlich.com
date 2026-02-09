@@ -305,6 +305,6 @@ module.exports = {
 
 ## See also
 
-- [Custom Controllers and Services](./custom-controllers-services.md) -- where requests come from before hitting the DB
-- [Middleware and Policies](./middleware-and-policies.md) -- HTTP-level middleware (different from DB lifecycle)
-- [Relations and Population](./relations-and-population.md) -- populating related data in hooks
+- [Custom Controllers and Services](custom-controllers-services.md) -- where requests come from before hitting the DB
+- [Middleware and Policies](middleware-and-policies.md) -- HTTP-level middleware (different from DB lifecycle)
+- [Relations and Population](relations-and-population.md) -- populating related data in hooks

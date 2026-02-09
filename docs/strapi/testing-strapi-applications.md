@@ -579,7 +579,7 @@ tests/
 
 ## See also
 
-- [Custom Controllers and Services](./custom-controllers-services.md) -- what you're actually testing
-- [Middleware and Policies](./middleware-and-policies.md) -- testing policies and middleware
-- [TypeScript Integration](./typescript-integration.md) -- typing test helpers
-- [Configuration and Deployment](./configuration-and-deployment.md) -- CI/CD setup
+- [Custom Controllers and Services](custom-controllers-services.md) -- what you're actually testing
+- [Middleware and Policies](middleware-and-policies.md) -- testing policies and middleware
+- [TypeScript Integration](typescript-integration.md) -- typing test helpers
+- [Configuration and Deployment](configuration-and-deployment.md) -- CI/CD setup

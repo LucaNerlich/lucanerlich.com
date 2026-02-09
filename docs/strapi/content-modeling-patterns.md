@@ -385,6 +385,6 @@ NavigationItem (component: layout.nav-item)
 
 ## See also
 
-- [Relations and Population](./relations-and-population.md) -- querying and populating relations efficiently
-- [i18n and Multi-Locale Content](./i18n-multi-locale.md) -- localization affects modeling decisions
-- [Custom Controllers and Services](./custom-controllers-services.md) -- consuming your content model in code
+- [Relations and Population](relations-and-population.md) -- querying and populating relations efficiently
+- [i18n and Multi-Locale Content](i18n-multi-locale.md) -- localization affects modeling decisions
+- [Custom Controllers and Services](custom-controllers-services.md) -- consuming your content model in code

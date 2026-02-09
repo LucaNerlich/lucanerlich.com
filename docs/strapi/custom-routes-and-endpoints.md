@@ -350,6 +350,6 @@ export default {
 
 ## See also
 
-- [Custom Controllers and Services](./custom-controllers-services.md) -- implementing the handler actions
-- [Middleware and Policies](./middleware-and-policies.md) -- attaching access control to routes
-- [Authentication and Permissions](./authentication-and-permissions.md) -- auth configuration for routes
+- [Custom Controllers and Services](custom-controllers-services.md) -- implementing the handler actions
+- [Middleware and Policies](middleware-and-policies.md) -- attaching access control to routes
+- [Authentication and Permissions](authentication-and-permissions.md) -- auth configuration for routes
