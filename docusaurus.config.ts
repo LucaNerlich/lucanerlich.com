@@ -190,6 +190,11 @@ const config = {
                         position: 'left'
                     },
                     {
+                        to: '/java',
+                        label: 'Java',
+                        position: 'left'
+                    },
+                    {
                         to: '/design-patterns',
                         label: 'Design Patterns',
                         position: 'left'
