@@ -1,7 +1,7 @@
 ---
 title: "Deploying to a VPS with Nginx"
 sidebar_label: "Deploy: VPS + Nginx"
-description: Deploy your Java REST API to a VPS — installing the JDK, running as a systemd service, configuring nginx as a reverse proxy, and HTTPS with Let's Encrypt.
+description: Deploy your Java REST API to a VPS -- installing the JDK, running as a systemd service, configuring nginx as a reverse proxy, and HTTPS with Let's Encrypt.
 slug: /java/beginners-guide/deploy-vps-nginx
 tags: [java, beginners, deployment, nginx, vps]
 keywords:
@@ -25,7 +25,7 @@ Client (browser, curl, mobile app)
     │  HTTPS (port 443)
     ▼
 ┌──────────┐
-│  nginx   │  reverse proxy — handles HTTPS, serves static files
+│  nginx   │  reverse proxy -- handles HTTPS, serves static files
 └────┬─────┘
      │  HTTP (port 8080, localhost only)
      ▼
@@ -46,7 +46,7 @@ Before starting, you need:
 4. Your **task-api.jar** file from the previous chapter
 5. Optionally, a **domain name** pointed to your server's IP
 
-If you have not set up a VPS before, the initial server setup (creating a user, SSH keys, firewall) is covered in the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx). The steps are identical — follow that guide through Step 2, then return here.
+If you have not set up a VPS before, the initial server setup (creating a user, SSH keys, firewall) is covered in the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx). The steps are identical -- follow that guide through Step 2, then return here.
 
 ## Step 1: install Java on the server
 
@@ -63,7 +63,7 @@ sudo apt update
 sudo apt install openjdk-21-jre-headless -y
 ```
 
-We install `openjdk-21-jre-headless` (not the full JDK) — the server only needs to **run** Java, not compile it. This is a smaller installation.
+We install `openjdk-21-jre-headless` (not the full JDK) -- the server only needs to **run** Java, not compile it. This is a smaller installation.
 
 Verify:
 
@@ -131,7 +131,7 @@ Result:
 {"status":"ok"}
 ```
 
-Stop the server with `Ctrl+C`. It works — now let us run it properly as a service.
+Stop the server with `Ctrl+C`. It works -- now let us run it properly as a service.
 
 ## Step 3: create a systemd service
 
@@ -175,11 +175,11 @@ WantedBy=multi-user.target
 ```
 
 Key settings:
-- `User=deploy` — runs as the deploy user, not root
-- `Restart=on-failure` — automatically restarts on crashes
-- `WorkingDirectory` — sets the working directory so `tasks.dat` is stored in `/opt/task-api/`
-- `ReadWritePaths` — allows writing only to the app directory (systemd security)
-- `JAVA_OPTS` — JVM memory settings (64MB initial, 256MB max — more than enough for this app)
+- `User=deploy` -- runs as the deploy user, not root
+- `Restart=on-failure` -- automatically restarts on crashes
+- `WorkingDirectory` -- sets the working directory so `tasks.dat` is stored in `/opt/task-api/`
+- `ReadWritePaths` -- allows writing only to the app directory (systemd security)
+- `JAVA_OPTS` -- JVM memory settings (64MB initial, 256MB max -- more than enough for this app)
 
 ### Enable and start the service
 
@@ -359,7 +359,7 @@ Certbot sets up a systemd timer for automatic renewal every 90 days.
 Since nginx handles all public traffic, the Java server should only accept connections from `localhost`. Update `ApiServer.java`:
 
 ```java
-// Bind to localhost only — nginx will proxy public traffic
+// Bind to localhost only -- nginx will proxy public traffic
 HttpServer server = HttpServer.create(
     new InetSocketAddress("127.0.0.1", 8080), 0
 );
@@ -377,7 +377,7 @@ rsync -avz task-api.jar deploy@YOUR_SERVER_IP:/opt/task-api/
 sudo systemctl restart task-api
 ```
 
-Now port 8080 is not accessible from the outside — only nginx can reach it.
+Now port 8080 is not accessible from the outside -- only nginx can reach it.
 
 ## Deploying updates
 
@@ -418,7 +418,7 @@ ssh "$SERVER" "sudo systemctl restart task-api"
 
 echo "Checking health..."
 sleep 3
-curl -sf https://yoursite.com/api/health && echo " — OK" || echo " — FAILED"
+curl -sf https://yoursite.com/api/health && echo " -- OK" || echo " -- FAILED"
 
 echo "Deployment complete!"
 ```
@@ -465,7 +465,7 @@ The `/api/health` endpoint we built lets you verify the API is working. Monitori
 
 ## Security checklist
 
-Review the full server hardening steps from the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx) — the same steps apply here:
+Review the full server hardening steps from the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx) -- the same steps apply here:
 
 - [ ] Non-root user with sudo
 - [ ] SSH key authentication (password auth disabled)
@@ -497,22 +497,22 @@ Local machine                          VPS
 
 You now have a Java REST API running in production. From here, you could:
 
-- **Add a database** — SQLite for simple apps, PostgreSQL for production
-- **Use a framework** — Spring Boot, Quarkus, or Micronaut for more features
-- **Add authentication** — JWT tokens or session-based auth
-- **Containerize with Docker** — consistent deployments across environments
-- **Set up CI/CD** — automatic builds and deploys on git push
-- **Add logging** — structured logging with SLF4J and Logback
-- **Write tests** — JUnit for unit tests, integration tests for API endpoints
+- **Add a database** -- SQLite for simple apps, PostgreSQL for production
+- **Use a framework** -- Spring Boot, Quarkus, or Micronaut for more features
+- **Add authentication** -- JWT tokens or session-based auth
+- **Containerize with Docker** -- consistent deployments across environments
+- **Set up CI/CD** -- automatic builds and deploys on git push
+- **Add logging** -- structured logging with SLF4J and Logback
+- **Write tests** -- JUnit for unit tests, integration tests for API endpoints
 
 ## Summary
 
 - Install `openjdk-21-jre-headless` on the server (runtime only, no compiler needed).
-- **systemd** manages the Java process — start on boot, restart on crash, centralized logging.
-- **nginx** acts as a reverse proxy — handles HTTPS, forwards requests to `localhost:8080`.
+- **systemd** manages the Java process -- start on boot, restart on crash, centralized logging.
+- **nginx** acts as a reverse proxy -- handles HTTPS, forwards requests to `localhost:8080`.
 - **Let's Encrypt** provides free HTTPS certificates with automatic renewal.
 - Bind the Java server to `127.0.0.1` so it is only reachable through nginx.
 - Deploy with a simple `rsync` + `systemctl restart` workflow.
 - Monitor with `journalctl` and a `/api/health` endpoint.
 
-Congratulations — you have gone from writing `System.out.println("Hello, world!")` to deploying a live REST API. The fundamentals you have learned (types, OOP, collections, error handling, file I/O, HTTP) are the foundation for everything else in Java development. Keep building.
+Congratulations -- you have gone from writing `System.out.println("Hello, world!")` to deploying a live REST API. The fundamentals you have learned (types, OOP, collections, error handling, file I/O, HTTP) are the foundation for everything else in Java development. Keep building.

@@ -1,7 +1,7 @@
 ---
 title: "Deploying to a VPS with Nginx"
 sidebar_label: "Deploy: VPS + Nginx"
-description: Deploy your website to a Virtual Private Server — server setup, SSH, nginx configuration, HTTPS with Let's Encrypt, and basic security hardening.
+description: Deploy your website to a Virtual Private Server -- server setup, SSH, nginx configuration, HTTPS with Let's Encrypt, and basic security hardening.
 slug: /javascript/beginners-guide/deploy-vps-nginx
 tags: [javascript, beginners, deployment, nginx, vps]
 keywords:
@@ -19,7 +19,7 @@ You have a working website. Now let us put it on the internet. This chapter walk
 
 ## What is a VPS?
 
-A **Virtual Private Server** (VPS) is a virtual machine running in a data center. You get root access to a full Linux server that runs 24/7. Unlike shared hosting, you control everything — the operating system, the software, the firewall.
+A **Virtual Private Server** (VPS) is a virtual machine running in a data center. You get root access to a full Linux server that runs 24/7. Unlike shared hosting, you control everything -- the operating system, the software, the firewall.
 
 ### Choosing a provider
 
@@ -32,12 +32,12 @@ Popular VPS providers:
 | **Linode (Akamai)** | $5/month | Solid reliability, good support |
 | **Vultr** | $6/month | Many locations worldwide |
 
-For a simple static website, the cheapest plan from any provider is more than enough. This guide uses **Ubuntu 22.04 LTS** as the operating system — choose it when creating your server.
+For a simple static website, the cheapest plan from any provider is more than enough. This guide uses **Ubuntu 22.04 LTS** as the operating system -- choose it when creating your server.
 
 ### What you need before starting
 
 1. A VPS running **Ubuntu 22.04 LTS** (or newer)
-2. A **domain name** (optional but recommended — e.g., `yoursite.com`)
+2. A **domain name** (optional but recommended -- e.g., `yoursite.com`)
 3. The **website files** from the previous chapter
 4. A terminal on your local machine
 
@@ -51,7 +51,7 @@ When you create a VPS, the provider gives you the server's **IP address** and a 
 ssh root@YOUR_SERVER_IP
 ```
 
-Replace `YOUR_SERVER_IP` with the actual IP (e.g., `203.0.113.42`). On the first connection, you will be asked to confirm the server's fingerprint — type `yes`.
+Replace `YOUR_SERVER_IP` with the actual IP (e.g., `203.0.113.42`). On the first connection, you will be asked to confirm the server's fingerprint -- type `yes`.
 
 ### Update the system
 
@@ -61,7 +61,7 @@ apt update && apt upgrade -y
 
 ### Create a non-root user
 
-Running as root is dangerous — a mistake can destroy the entire system. Create a regular user:
+Running as root is dangerous -- a mistake can destroy the entire system. Create a regular user:
 
 ```bash
 adduser deploy
@@ -168,7 +168,7 @@ Open your browser and navigate to `http://YOUR_SERVER_IP`. You should see the de
 
 ### How nginx works
 
-Nginx is a **web server** — it listens for HTTP requests and serves files in response. For a static website, nginx simply serves your HTML, CSS, and JavaScript files directly to the browser.
+Nginx is a **web server** -- it listens for HTTP requests and serves files in response. For a static website, nginx simply serves your HTML, CSS, and JavaScript files directly to the browser.
 
 The configuration lives in `/etc/nginx/`. Key paths:
 
@@ -176,7 +176,7 @@ The configuration lives in `/etc/nginx/`. Key paths:
 |------|---------|
 | `/etc/nginx/nginx.conf` | Main configuration |
 | `/etc/nginx/sites-available/` | Site configurations (available) |
-| `/etc/nginx/sites-enabled/` | Site configurations (active — symlinks) |
+| `/etc/nginx/sites-enabled/` | Site configurations (active -- symlinks) |
 | `/var/www/` | Convention for website files |
 
 ## Step 4: upload your website files
@@ -195,10 +195,10 @@ rsync -avz --delete ./my-website/ deploy@YOUR_SERVER_IP:/var/www/mysite/
 ```
 
 Breakdown:
-- `-a` — archive mode (preserves permissions, timestamps)
-- `-v` — verbose output
-- `-z` — compress during transfer
-- `--delete` — remove files on the server that no longer exist locally
+- `-a` -- archive mode (preserves permissions, timestamps)
+- `-v` -- verbose output
+- `-z` -- compress during transfer
+- `--delete` -- remove files on the server that no longer exist locally
 
 Alternative using `scp`:
 
@@ -352,7 +352,7 @@ Certbot will:
 3. Automatically update your nginx config to use HTTPS
 4. Set up HTTP-to-HTTPS redirect
 
-Follow the prompts — enter your email and agree to the terms.
+Follow the prompts -- enter your email and agree to the terms.
 
 ### Verify HTTPS
 
@@ -386,7 +386,7 @@ sudo dpkg-reconfigure --priority=low unattended-upgrades
 
 Select "Yes" when asked to enable automatic updates.
 
-### Fail2Ban — block brute-force attacks
+### Fail2Ban -- block brute-force attacks
 
 ```bash
 sudo apt install fail2ban -y
@@ -454,7 +454,7 @@ Whenever you update your website locally, deploy the changes with a single comma
 rsync -avz --delete ./my-website/ deploy@YOUR_SERVER_IP:/var/www/mysite/
 ```
 
-No server restart needed — nginx serves files directly from disk.
+No server restart needed -- nginx serves files directly from disk.
 
 ### A simple deploy script
 
@@ -489,7 +489,7 @@ chmod +x deploy.sh
 
 After deploying, check these things:
 
-1. **Site loads:** Open your domain in a browser — all pages should work.
+1. **Site loads:** Open your domain in a browser -- all pages should work.
 2. **HTTPS works:** The lock icon should appear in the address bar.
 3. **No mixed content:** Open the browser console and check for warnings about HTTP resources on an HTTPS page.
 4. **Performance:** Open Chrome DevTools → Network tab, reload the page, and verify static assets have cache headers.
@@ -531,20 +531,20 @@ Here is everything we did, in order:
 
 You now have a website live on the internet, served by nginx over HTTPS. From here, you could:
 
-- **Add a CI/CD pipeline** — automatically deploy when you push to Git
-- **Add a backend** — use Node.js with Express behind nginx as a reverse proxy
-- **Add monitoring** — use tools like `htop`, `nginx` access logs, or services like UptimeRobot
-- **Add a database** — SQLite for small projects, PostgreSQL for larger ones
-- **Learn Docker** — containerize your application for easier deployment
-- **Explore frameworks** — React, Vue, Svelte, or Next.js for more complex applications
+- **Add a CI/CD pipeline** -- automatically deploy when you push to Git
+- **Add a backend** -- use Node.js with Express behind nginx as a reverse proxy
+- **Add monitoring** -- use tools like `htop`, `nginx` access logs, or services like UptimeRobot
+- **Add a database** -- SQLite for small projects, PostgreSQL for larger ones
+- **Learn Docker** -- containerize your application for easier deployment
+- **Explore frameworks** -- React, Vue, Svelte, or Next.js for more complex applications
 
 ## Summary
 
 - A **VPS** gives you a full Linux server in the cloud.
-- **SSH keys** are more secure than passwords — disable password authentication.
+- **SSH keys** are more secure than passwords -- disable password authentication.
 - **nginx** serves static files efficiently with caching and security headers.
 - **Let's Encrypt** provides free HTTPS certificates with automatic renewal.
 - **Fail2Ban** and **unattended-upgrades** protect against common threats.
 - Deploy updates with a single `rsync` command.
 
-Congratulations — you have gone from writing your first `console.log("Hello, world!")` to deploying a live website. The fundamentals you have learned (variables, functions, arrays, objects, DOM, events, fetch, deployment) are the foundation for everything else in web development. Keep building.
+Congratulations -- you have gone from writing your first `console.log("Hello, world!")` to deploying a live website. The fundamentals you have learned (variables, functions, arrays, objects, DOM, events, fetch, deployment) are the foundation for everything else in web development. Keep building.

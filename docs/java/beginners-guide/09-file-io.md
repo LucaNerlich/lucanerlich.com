@@ -1,7 +1,7 @@
 ---
 title: "File I/O"
 sidebar_label: "File I/O"
-description: Learn Java file I/O — Path, Files, reading and writing text files, directories, BufferedReader/Writer, and simple CSV parsing.
+description: Learn Java file I/O -- Path, Files, reading and writing text files, directories, BufferedReader/Writer, and simple CSV parsing.
 slug: /java/beginners-guide/file-io
 tags: [java, beginners, file-io, nio]
 keywords:
@@ -17,7 +17,7 @@ sidebar_position: 9
 
 Programs need to persist data beyond their runtime. The simplest way is to read and write files. Java's `java.nio.file` package (NIO.2) provides a clean, modern API for file operations.
 
-## `Path` — representing file locations
+## `Path` -- representing file locations
 
 A `Path` represents a file or directory location:
 
@@ -46,9 +46,9 @@ config.json
 data/users
 ```
 
-`Path` is just a representation — the file does not need to exist yet.
+`Path` is just a representation -- the file does not need to exist yet.
 
-## `Files` — the workhorse class
+## `Files` -- the workhorse class
 
 `java.nio.file.Files` provides static methods for all file operations. Most methods are one-liners.
 
@@ -388,7 +388,7 @@ Eve,32,Madrid
 
 ## Text-based data persistence
 
-A simple approach for small applications — store data as one record per line:
+A simple approach for small applications -- store data as one record per line:
 
 ```java
 import java.io.IOException;
@@ -467,16 +467,16 @@ Task[id=2, title=Build a project, done=false]
 Task[id=3, title=Deploy to VPS, done=false]
 ```
 
-This pattern — serialize to a simple text format, one record per line — is the foundation of the CLI project in the next chapter.
+This pattern -- serialize to a simple text format, one record per line -- is the foundation of the CLI project in the next chapter.
 
 ## Summary
 
 - **`Path`** represents file/directory locations; **`Files`** provides all operations.
 - `Files.readString` / `readAllLines` for small files; `newBufferedReader` / `lines()` for large files.
 - `Files.writeString` / `write` for writing; use `StandardOpenOption.APPEND` to append.
-- **Try-with-resources** for readers and writers — always.
+- **Try-with-resources** for readers and writers -- always.
 - `Files.exists`, `isRegularFile`, `isDirectory` for checking properties.
 - `Files.createDirectories` for creating paths; `Files.walk` for recursive traversal.
 - Simple CSV/text formats work well for small data persistence needs.
 
-Next up: [Project: CLI Task Manager](./10-project-cli-task-manager.md) — building a complete command-line application.
+Next up: [Project: CLI Task Manager](./10-project-cli-task-manager.md) -- building a complete command-line application.

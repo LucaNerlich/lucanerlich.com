@@ -2,6 +2,6 @@
     "label": "Beginners Guide",
     "link": {
         "type": "generated-index",
-        "description": "A comprehensive JavaScript beginners guide — from your first line of code to deploying a website on a VPS with nginx."
+        "description": "A comprehensive JavaScript beginners guide -- from your first line of code to deploying a website on a VPS with nginx."
     }
 }

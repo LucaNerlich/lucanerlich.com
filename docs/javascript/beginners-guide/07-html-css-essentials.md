@@ -1,7 +1,7 @@
 ---
 title: "HTML & CSS Essentials"
 sidebar_label: "HTML & CSS Essentials"
-description: Learn enough HTML and CSS to build web pages — document structure, semantic elements, forms, CSS selectors, the box model, flexbox, and responsive design.
+description: Learn enough HTML and CSS to build web pages -- document structure, semantic elements, forms, CSS selectors, the box model, flexbox, and responsive design.
 slug: /javascript/beginners-guide/html-css-essentials
 tags: [javascript, beginners, html, css]
 keywords:
@@ -15,7 +15,7 @@ sidebar_position: 7
 
 # HTML & CSS Essentials
 
-Before we can manipulate web pages with JavaScript, we need to understand how they are built. This chapter covers enough HTML and CSS to build real pages. It is not a comprehensive reference — it is the working knowledge you need for the rest of this guide.
+Before we can manipulate web pages with JavaScript, we need to understand how they are built. This chapter covers enough HTML and CSS to build real pages. It is not a comprehensive reference -- it is the working knowledge you need for the rest of this guide.
 
 ## HTML: the structure
 
@@ -42,7 +42,7 @@ Before we can manipulate web pages with JavaScript, we need to understand how th
 |------|---------|
 | `<!DOCTYPE html>` | Tells the browser this is an HTML5 document |
 | `<html lang="en">` | Root element; `lang` helps screen readers and search engines |
-| `<head>` | Metadata — not displayed on the page |
+| `<head>` | Metadata -- not displayed on the page |
 | `<meta charset="UTF-8">` | Character encoding (supports all languages) |
 | `<meta name="viewport" ...>` | Makes the page responsive on mobile devices |
 | `<title>` | Browser tab title |
@@ -56,10 +56,10 @@ An HTML element has an **opening tag**, optional **content**, and a **closing ta
 <p class="intro">This is a paragraph.</p>
 ```
 
-- `<p>` — opening tag
-- `class="intro"` — attribute (key-value pair on the tag)
-- `This is a paragraph.` — content
-- `</p>` — closing tag
+- `<p>` -- opening tag
+- `class="intro"` -- attribute (key-value pair on the tag)
+- `This is a paragraph.` -- content
+- `</p>` -- closing tag
 
 Some elements are **self-closing** (no content):
 
@@ -82,7 +82,7 @@ Six levels, `<h1>` (most important) through `<h6>` (least):
 <h3>Subsection</h3>
 ```
 
-Use headings in order — do not skip levels. A page should have exactly one `<h1>`.
+Use headings in order -- do not skip levels. A page should have exactly one `<h1>`.
 
 ### Paragraphs and text
 
@@ -104,7 +104,7 @@ Use headings in order — do not skip levels. A page should have exactly one `<h
 <a href="https://example.com" target="_blank" rel="noopener noreferrer">Opens in new tab</a>
 ```
 
-Always include `rel="noopener noreferrer"` when using `target="_blank"` — it prevents the linked page from accessing your page's `window.opener`.
+Always include `rel="noopener noreferrer"` when using `target="_blank"` -- it prevents the linked page from accessing your page's `window.opener`.
 
 ### Images
 
@@ -112,7 +112,7 @@ Always include `rel="noopener noreferrer"` when using `target="_blank"` — it p
 <img src="photo.jpg" alt="Description of the photo" width="400" height="300">
 ```
 
-The `alt` attribute is required for accessibility — it describes the image to screen readers and displays if the image fails to load.
+The `alt` attribute is required for accessibility -- it describes the image to screen readers and displays if the image fails to load.
 
 ### Lists
 
@@ -265,7 +265,7 @@ Forms collect user input. They are essential for interactive web pages:
 ```
 
 Key points:
-- `<label for="id">` links a label to an input — clicking the label focuses the input.
+- `<label for="id">` links a label to an input -- clicking the label focuses the input.
 - `required`, `minlength`, `type="email"` provide **built-in validation**.
 - `name` attributes identify form data when submitted.
 - We will handle form submission with JavaScript in the Events chapter.
@@ -323,28 +323,28 @@ Always use external stylesheets for real projects. They can be cached, shared ac
 Selectors target which elements to style:
 
 ```css
-/* Element selector — all <p> elements */
+/* Element selector -- all <p> elements */
 p {
     color: #333;
 }
 
-/* Class selector — elements with class="card" */
+/* Class selector -- elements with class="card" */
 .card {
     border: 1px solid #ddd;
     padding: 16px;
 }
 
-/* ID selector — the element with id="header" */
+/* ID selector -- the element with id="header" */
 #header {
     background: #f0f0f0;
 }
 
-/* Descendant — <a> inside <nav> */
+/* Descendant -- <a> inside <nav> */
 nav a {
     text-decoration: none;
 }
 
-/* Direct child — <li> that is a direct child of <ul> */
+/* Direct child -- <li> that is a direct child of <ul> */
 ul > li {
     list-style: disc;
 }
@@ -416,7 +416,7 @@ Every HTML element is a rectangular box with four layers:
 By default, `width` sets only the **content** width. With `border-box`, `width` includes padding and border:
 
 ```css
-/* Apply to everything — do this in every project */
+/* Apply to everything -- do this in every project */
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -429,40 +429,40 @@ With `border-box`: a `width: 200px` element with `padding: 20px` and `border: 2p
 ### Display values
 
 ```css
-/* Block — takes full width, stacks vertically */
+/* Block -- takes full width, stacks vertically */
 div { display: block; }
 
-/* Inline — flows with text, width/height ignored */
+/* Inline -- flows with text, width/height ignored */
 span { display: inline; }
 
-/* Inline-block — flows with text but respects width/height */
+/* Inline-block -- flows with text but respects width/height */
 .badge { display: inline-block; }
 
-/* None — removes from the page */
+/* None -- removes from the page */
 .hidden { display: none; }
 ```
 
 ### Position
 
 ```css
-/* Static — default, follows normal flow */
+/* Static -- default, follows normal flow */
 .static { position: static; }
 
-/* Relative — offset from its normal position */
+/* Relative -- offset from its normal position */
 .relative {
     position: relative;
     top: 10px;
     left: 20px;
 }
 
-/* Absolute — positioned relative to nearest positioned ancestor */
+/* Absolute -- positioned relative to nearest positioned ancestor */
 .absolute {
     position: absolute;
     top: 0;
     right: 0;
 }
 
-/* Fixed — positioned relative to the viewport (stays on scroll) */
+/* Fixed -- positioned relative to the viewport (stays on scroll) */
 .fixed-header {
     position: fixed;
     top: 0;
@@ -470,7 +470,7 @@ span { display: inline; }
     width: 100%;
 }
 
-/* Sticky — switches from relative to fixed at a threshold */
+/* Sticky -- switches from relative to fixed at a threshold */
 .sticky-nav {
     position: sticky;
     top: 0;
@@ -640,7 +640,7 @@ Apply CSS rules based on screen size:
 | `vw` / `vh` | Percentage of viewport width / height |
 | `fr` | Fraction of available space (CSS Grid) |
 
-Prefer `rem` for font sizes and spacing — it respects user zoom preferences.
+Prefer `rem` for font sizes and spacing -- it respects user zoom preferences.
 
 ### Responsive images
 
@@ -853,9 +853,9 @@ Save both files in the same folder, open `index.html` in a browser, and resize t
 - **HTML** defines page structure with semantic elements.
 - Use `<header>`, `<nav>`, `<main>`, `<article>`, `<footer>` instead of generic `<div>` elements.
 - **Forms** collect user input with built-in validation attributes.
-- **CSS** controls appearance — use external stylesheets.
+- **CSS** controls appearance -- use external stylesheets.
 - **Box model:** content + padding + border + margin. Always set `box-sizing: border-box`.
 - **Flexbox** handles layout: `display: flex`, `justify-content`, `align-items`, `gap`.
-- **Media queries** make pages responsive — design mobile-first, then add breakpoints.
+- **Media queries** make pages responsive -- design mobile-first, then add breakpoints.
 
-Next up: [The DOM](./08-the-dom.md) — using JavaScript to read and change the page.
+Next up: [The DOM](./08-the-dom.md) -- using JavaScript to read and change the page.

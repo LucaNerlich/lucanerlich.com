@@ -15,7 +15,7 @@ sidebar_position: 10
 
 # Working with Data
 
-Real web applications need data — from APIs, from the user, from the browser. This chapter covers fetching data from external sources, handling JSON, and storing data locally.
+Real web applications need data -- from APIs, from the user, from the browser. This chapter covers fetching data from external sources, handling JSON, and storing data locally.
 
 ## The Fetch API
 
@@ -33,9 +33,9 @@ Result:
 Leanne Graham
 ```
 
-This uses **promises** — `fetch` returns a promise that resolves to a `Response` object. `.json()` parses the response body as JSON (also returns a promise).
+This uses **promises** -- `fetch` returns a promise that resolves to a `Response` object. `.json()` parses the response body as JSON (also returns a promise).
 
-## Promises — a quick overview
+## Promises -- a quick overview
 
 A **promise** represents a value that will be available in the future. It has three states:
 
@@ -107,7 +107,7 @@ Sincere@april.biz
 
 ## Error handling with fetch
 
-`fetch` only rejects on **network errors** (no internet, DNS failure). HTTP errors like 404 or 500 are **not** rejections — you must check `response.ok`:
+`fetch` only rejects on **network errors** (no internet, DNS failure). HTTP errors like 404 or 500 are **not** rejections -- you must check `response.ok`:
 
 ```js
 async function getUser(id) {
@@ -228,21 +228,21 @@ Created post: { title: 'My Title', body: 'My post content', userId: 1, id: 101 }
 ### Other HTTP methods
 
 ```js
-// PUT — replace a resource
+// PUT -- replace a resource
 await fetch("https://api.example.com/users/1", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name: "Updated Name" }),
 });
 
-// PATCH — partially update a resource
+// PATCH -- partially update a resource
 await fetch("https://api.example.com/users/1", {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name: "Updated Name" }),
 });
 
-// DELETE — remove a resource
+// DELETE -- remove a resource
 await fetch("https://api.example.com/users/1", {
     method: "DELETE",
 });
@@ -286,11 +286,11 @@ When fetching independent data, run requests in parallel:
 
 ```js
 async function getDashboardData() {
-    // Sequential — slow (each waits for the previous)
+    // Sequential -- slow (each waits for the previous)
     // const users = await fetchJSON("/api/users");
     // const posts = await fetchJSON("/api/posts");
 
-    // Parallel — fast (both run at the same time)
+    // Parallel -- fast (both run at the same time)
     const [users, posts] = await Promise.all([
         fetchJSON("https://jsonplaceholder.typicode.com/users"),
         fetchJSON("https://jsonplaceholder.typicode.com/posts"),
@@ -348,7 +348,7 @@ async function loadUsers() {
             name.textContent = user.name;
 
             const email = document.createElement("span");
-            email.textContent = ` — ${user.email}`;
+            email.textContent = ` -- ${user.email}`;
 
             li.appendChild(name);
             li.appendChild(email);
@@ -364,7 +364,7 @@ async function loadUsers() {
 document.addEventListener("DOMContentLoaded", loadUsers);
 ```
 
-This pattern — loading indicator, fetch data, build DOM, handle errors — is the foundation of every data-driven web page.
+This pattern -- loading indicator, fetch data, build DOM, handle errors -- is the foundation of every data-driven web page.
 
 ## `localStorage` and `sessionStorage`
 
@@ -628,7 +628,7 @@ This example demonstrates:
 - Wrap `fetch` calls in `try`/`catch` for error handling.
 - Use `Promise.all` for parallel requests.
 - `localStorage` persists data across sessions; `sessionStorage` only until the tab closes.
-- Both storage APIs only store strings — use `JSON.stringify`/`JSON.parse` for objects.
+- Both storage APIs only store strings -- use `JSON.stringify`/`JSON.parse` for objects.
 - Combine fetch, DOM manipulation, and storage for data-driven pages.
 
-Next up: [Project: Build a Complete Website](./11-project-build-a-website.md) — putting everything together into a real, multi-page site.
+Next up: [Project: Build a Complete Website](./11-project-build-a-website.md) -- putting everything together into a real, multi-page site.

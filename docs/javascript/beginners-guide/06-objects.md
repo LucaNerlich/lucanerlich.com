@@ -1,7 +1,7 @@
 ---
 title: "Objects"
 sidebar_label: "Objects"
-description: Learn JavaScript objects — literals, properties, methods, this, destructuring, spread, Object methods, and JSON.
+description: Learn JavaScript objects -- literals, properties, methods, this, destructuring, spread, Object methods, and JSON.
 slug: /javascript/beginners-guide/objects
 tags: [javascript, beginners, objects, json]
 keywords:
@@ -36,7 +36,7 @@ Result:
 { name: 'Ada', age: 36, city: 'London' }
 ```
 
-Keys (also called **properties**) are strings. Values can be anything — strings, numbers, booleans, arrays, other objects, functions.
+Keys (also called **properties**) are strings. Values can be anything -- strings, numbers, booleans, arrays, other objects, functions.
 
 ## Accessing properties
 
@@ -100,7 +100,7 @@ Result:
 undefined
 ```
 
-No error — just `undefined`.
+No error -- just `undefined`.
 
 ### Optional chaining (`?.`)
 
@@ -229,16 +229,16 @@ Hello, I'm Ada
 
 ### `this` pitfall with arrow functions
 
-Arrow functions do **not** have their own `this` — they inherit it from the surrounding scope:
+Arrow functions do **not** have their own `this` -- they inherit it from the surrounding scope:
 
 ```js
 const person = {
     name: "Ada",
-    // Arrow function — 'this' is NOT the object
+    // Arrow function -- 'this' is NOT the object
     greetArrow: () => {
         return `Hello, I'm ${this.name}`;
     },
-    // Regular function — 'this' IS the object
+    // Regular function -- 'this' IS the object
     greetRegular() {
         return `Hello, I'm ${this.name}`;
     },
@@ -303,7 +303,7 @@ Result:
 
 ## Iterating over objects
 
-### `Object.keys()` — get all keys
+### `Object.keys()` -- get all keys
 
 ```js
 const user = { name: "Ada", age: 36, city: "London" };
@@ -315,7 +315,7 @@ Result:
 [ 'name', 'age', 'city' ]
 ```
 
-### `Object.values()` — get all values
+### `Object.values()` -- get all values
 
 ```js
 const user = { name: "Ada", age: 36, city: "London" };
@@ -327,7 +327,7 @@ Result:
 [ 'Ada', 36, 'London' ]
 ```
 
-### `Object.entries()` — get key-value pairs
+### `Object.entries()` -- get key-value pairs
 
 ```js
 const user = { name: "Ada", age: 36, city: "London" };
@@ -463,7 +463,7 @@ Very common pattern:
 
 ```js
 function createUser({ name, age, role = "user" }) {
-    return `${name} (${age}) — ${role}`;
+    return `${name} (${age}) -- ${role}`;
 }
 
 const result = createUser({ name: "Ada", age: 36, role: "admin" });
@@ -475,8 +475,8 @@ console.log(result2);
 
 Result:
 ```text
-Ada (36) — admin
-Bob (25) — user
+Ada (36) -- admin
+Bob (25) -- user
 ```
 
 ## Spread operator
@@ -487,7 +487,7 @@ Copy and merge objects:
 const defaults = { theme: "dark", language: "en", fontSize: 14 };
 const userPrefs = { theme: "light", fontSize: 16 };
 
-// Merge — later properties overwrite earlier ones
+// Merge -- later properties overwrite earlier ones
 const settings = { ...defaults, ...userPrefs };
 console.log(settings);
 
@@ -558,7 +558,7 @@ Result:
 true
 ```
 
-Note: `JSON.stringify` comparison is fragile — it depends on property order and does not handle all types. For robust deep comparison, use a library or write a recursive function.
+Note: `JSON.stringify` comparison is fragile -- it depends on property order and does not handle all types. For robust deep comparison, use a library or write a recursive function.
 
 ## JSON
 
@@ -567,7 +567,7 @@ Note: `JSON.stringify` comparison is fragile — it depends on property order an
 - No trailing commas
 - No functions, `undefined`, or `Symbol`
 
-### `JSON.stringify` — object to JSON string
+### `JSON.stringify` -- object to JSON string
 
 ```js
 const user = { name: "Ada", age: 36, active: true };
@@ -598,7 +598,7 @@ Result:
 }
 ```
 
-### `JSON.parse` — JSON string to object
+### `JSON.parse` -- JSON string to object
 
 ```js
 const json = '{"name":"Ada","age":36}';
@@ -614,7 +614,7 @@ Result:
 Ada
 ```
 
-**Always wrap `JSON.parse` in a try/catch** — invalid JSON throws an error:
+**Always wrap `JSON.parse` in a try/catch** -- invalid JSON throws an error:
 
 ```js
 try {
@@ -662,7 +662,7 @@ Ada
 
 ### Shallow vs deep copies
 
-The spread operator makes a **shallow** copy — nested objects are still shared:
+The spread operator makes a **shallow** copy -- nested objects are still shared:
 
 ```js
 const original = {
@@ -707,7 +707,7 @@ Result:
 
 ## `Object.freeze` and `Object.assign`
 
-### `Object.freeze` — prevent modifications
+### `Object.freeze` -- prevent modifications
 
 ```js
 const config = Object.freeze({
@@ -726,7 +726,7 @@ Result:
 
 Note: `freeze` is shallow. Nested objects can still be modified.
 
-### `Object.assign` — copy properties
+### `Object.assign` -- copy properties
 
 ```js
 const target = { a: 1 };
@@ -751,7 +751,7 @@ In modern code, the spread operator `{...target, ...source}` is preferred over `
 - Methods are functions on objects; use regular functions (not arrows) for methods that need `this`.
 - `Object.keys()`, `.values()`, `.entries()` iterate over objects.
 - Destructuring extracts properties; spread `...` copies and merges objects.
-- JSON is the standard text format for data exchange — use `JSON.stringify` and `JSON.parse`.
+- JSON is the standard text format for data exchange -- use `JSON.stringify` and `JSON.parse`.
 - Shallow copies share nested references; use `structuredClone` for deep copies.
 
-Next up: [HTML & CSS Essentials](./07-html-css-essentials.md) — the building blocks of web pages, just enough to start using JavaScript in the browser.
+Next up: [HTML & CSS Essentials](./07-html-css-essentials.md) -- the building blocks of web pages, just enough to start using JavaScript in the browser.

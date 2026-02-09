@@ -1,7 +1,7 @@
 ---
 title: "Events & Interactivity"
 sidebar_label: "Events"
-description: Learn how to handle user interactions in JavaScript — event listeners, the event object, bubbling, delegation, forms, and keyboard/mouse events.
+description: Learn how to handle user interactions in JavaScript -- event listeners, the event object, bubbling, delegation, forms, and keyboard/mouse events.
 slug: /javascript/beginners-guide/events
 tags: [javascript, beginners, events, dom]
 keywords:
@@ -15,7 +15,7 @@ sidebar_position: 9
 
 # Events & Interactivity
 
-Events are how JavaScript responds to user actions — clicks, key presses, form submissions, scrolling, and more. This chapter covers everything you need to make interactive web pages.
+Events are how JavaScript responds to user actions -- clicks, key presses, form submissions, scrolling, and more. This chapter covers everything you need to make interactive web pages.
 
 ## Adding event listeners
 
@@ -73,7 +73,7 @@ button.removeEventListener("click", handleClick);
 **Important:** you must pass the same function reference. Anonymous functions cannot be removed:
 
 ```js
-// This does NOT work — each arrow function is a different reference
+// This does NOT work -- each arrow function is a different reference
 button.addEventListener("click", () => console.log("A"));
 button.removeEventListener("click", () => console.log("A")); // does nothing
 ```
@@ -153,13 +153,13 @@ Common `event.key` values: `"Enter"`, `"Escape"`, `"ArrowUp"`, `"ArrowDown"`, `"
 ```js
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-        console.log("Escape pressed — close the modal");
+        console.log("Escape pressed -- close the modal");
     }
 
     // Check for modifier keys
     if (event.ctrlKey && event.key === "s") {
         event.preventDefault(); // prevent browser save dialog
-        console.log("Ctrl+S pressed — saving...");
+        console.log("Ctrl+S pressed -- saving...");
     }
 });
 ```
@@ -282,7 +282,7 @@ Prevent the event from reaching parent elements:
 ```js
 document.querySelector("#btn").addEventListener("click", (event) => {
     event.stopPropagation();
-    console.log("Button clicked — stopped bubbling");
+    console.log("Button clicked -- stopped bubbling");
 });
 
 // This will NOT fire when the button is clicked
@@ -293,17 +293,17 @@ document.querySelector("#outer").addEventListener("click", () => {
 
 Result (clicking the button):
 ```text
-Button clicked — stopped bubbling
+Button clicked -- stopped bubbling
 ```
 
-Use `stopPropagation` sparingly — it can break other listeners that rely on bubbling.
+Use `stopPropagation` sparingly -- it can break other listeners that rely on bubbling.
 
 ### Capture phase
 
 Events actually go through three phases:
-1. **Capture** — from `document` down to the target
-2. **Target** — the element that was clicked
-3. **Bubble** — back up from the target to `document`
+1. **Capture** -- from `document` down to the target
+2. **Target** -- the element that was clicked
+3. **Bubble** -- back up from the target to `document`
 
 To listen during the capture phase:
 
@@ -343,14 +343,14 @@ Instead of attaching listeners to every child element, attach one listener to a 
 ```
 
 ```js
-// Without delegation — one listener per item (bad for many items)
+// Without delegation -- one listener per item (bad for many items)
 document.querySelectorAll("#task-list li").forEach((li) => {
     li.addEventListener("click", () => {
         console.log(`Clicked: ${li.textContent}`);
     });
 });
 
-// With delegation — one listener on the parent (good!)
+// With delegation -- one listener on the parent (good!)
 document.querySelector("#task-list").addEventListener("click", (event) => {
     if (event.target.tagName === "LI") {
         console.log(`Clicked: ${event.target.textContent}`);
@@ -583,7 +583,7 @@ list.addEventListener("click", (event) => {
 
 ### Debounced search
 
-Prevent firing on every keystroke — wait until the user stops typing:
+Prevent firing on every keystroke -- wait until the user stops typing:
 
 ```js
 function debounce(fn, delay) {
@@ -633,7 +633,7 @@ Result:
 Ada logged in as admin
 ```
 
-Custom events are useful for decoupling components — one part of your code can emit events without knowing who is listening.
+Custom events are useful for decoupling components -- one part of your code can emit events without knowing who is listening.
 
 ## Summary
 
@@ -641,9 +641,9 @@ Custom events are useful for decoupling components — one part of your code can
 - The **event object** provides details: `type`, `target`, `key`, coordinates, etc.
 - `preventDefault()` stops default browser behavior (link navigation, form submission).
 - Events **bubble** from child to parent. Use `stopPropagation()` sparingly.
-- **Event delegation** attaches one listener to a parent — better performance, works for dynamic elements.
+- **Event delegation** attaches one listener to a parent -- better performance, works for dynamic elements.
 - `closest()` helps find the relevant element in delegated handlers.
 - Forms: use `FormData` or `form.elements` to access values, `event.preventDefault()` to handle submission in JavaScript.
 - **Debounce** expensive handlers like search to avoid firing on every keystroke.
 
-Next up: [Working with Data](./10-working-with-data.md) — fetching data from APIs and storing data in the browser.
+Next up: [Working with Data](./10-working-with-data.md) -- fetching data from APIs and storing data in the browser.

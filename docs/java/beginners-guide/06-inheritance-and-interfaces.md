@@ -15,7 +15,7 @@ sidebar_position: 6
 
 # Inheritance & Interfaces
 
-Inheritance lets you build new classes on top of existing ones. Interfaces define contracts that classes must fulfill. Together, they enable **polymorphism** — treating different types through a common interface.
+Inheritance lets you build new classes on top of existing ones. Interfaces define contracts that classes must fulfill. Together, they enable **polymorphism** -- treating different types through a common interface.
 
 ## Inheritance with `extends`
 
@@ -131,11 +131,11 @@ Whiskers says: Meow!
 Unknown makes a sound
 ```
 
-**Always use `@Override`** — the compiler will catch mistakes like misspelling the method name.
+**Always use `@Override`** -- the compiler will catch mistakes like misspelling the method name.
 
 ## Polymorphism
 
-The `dog` and `cat` variables above are declared as `Animal`, but they call their own overridden `speak()` methods. This is **polymorphism** — the same method call behaves differently depending on the actual object type.
+The `dog` and `cat` variables above are declared as `Animal`, but they call their own overridden `speak()` methods. This is **polymorphism** -- the same method call behaves differently depending on the actual object type.
 
 ```java
 Animal[] animals = {
@@ -172,10 +172,10 @@ abstract class Shape {
         this.color = color;
     }
 
-    // Abstract method — subclasses MUST implement this
+    // Abstract method -- subclasses MUST implement this
     abstract double area();
 
-    // Concrete method — subclasses inherit this
+    // Concrete method -- subclasses inherit this
     String describe() {
         return color + " shape with area " + String.format("%.2f", area());
     }
@@ -212,7 +212,7 @@ class Rectangle extends Shape {
 ```
 
 ```java
-// Shape s = new Shape("red"); // compile error — cannot instantiate abstract class
+// Shape s = new Shape("red"); // compile error -- cannot instantiate abstract class
 
 Circle circle = new Circle("red", 5);
 Rectangle rect = new Rectangle("blue", 4, 6);
@@ -231,7 +231,7 @@ Use abstract classes when you want to share code (fields, methods) between relat
 
 ## Interfaces
 
-An interface defines a **contract** — a set of methods that implementing classes must provide:
+An interface defines a **contract** -- a set of methods that implementing classes must provide:
 
 ```java
 interface Printable {
@@ -396,7 +396,7 @@ Integer: 42
 Double array of length 3
 ```
 
-No need for a separate cast — `s`, `i`, and `arr` are already the correct type.
+No need for a separate cast -- `s`, `i`, and `arr` are already the correct type.
 
 ## Sealed classes (Java 17+)
 
@@ -433,7 +433,7 @@ Rectangle: 24.00
 Triangle: 12.00
 ```
 
-The compiler knows all possible subtypes, so the switch is exhaustive — no `default` case needed. If you add a new shape, the compiler forces you to handle it everywhere.
+The compiler knows all possible subtypes, so the switch is exhaustive -- no `default` case needed. If you add a new shape, the compiler forces you to handle it everywhere.
 
 ## Abstract class vs interface
 
@@ -449,7 +449,7 @@ The compiler knows all possible subtypes, so the switch is exhaustive — no `de
 
 ## Composition over inheritance
 
-Inheritance creates tight coupling. Prefer **composition** — having an object contain another object — when possible:
+Inheritance creates tight coupling. Prefer **composition** -- having an object contain another object -- when possible:
 
 ```java
 // Instead of: class EmailNotifier extends Logger
@@ -498,17 +498,17 @@ class MyClass {
 ```
 
 Methods inherited from `Object`:
-- `toString()` — string representation
-- `equals(Object)` — content equality
-- `hashCode()` — hash code for collections
-- `getClass()` — runtime class information
-- `clone()` — shallow copy (avoid — use copy constructors instead)
+- `toString()` -- string representation
+- `equals(Object)` -- content equality
+- `hashCode()` -- hash code for collections
+- `getClass()` -- runtime class information
+- `clone()` -- shallow copy (avoid -- use copy constructors instead)
 
 ## Summary
 
 - **`extends`** creates a subclass that inherits fields and methods from a parent class.
 - **`super`** calls the parent constructor or methods.
-- **`@Override`** marks a method that replaces a parent method — the compiler verifies it.
+- **`@Override`** marks a method that replaces a parent method -- the compiler verifies it.
 - **Polymorphism**: a parent type variable can hold any subclass instance; method calls dispatch to the actual type.
 - **Abstract classes** cannot be instantiated and can force subclasses to implement methods.
 - **Interfaces** define contracts; a class can implement multiple interfaces.
@@ -517,4 +517,4 @@ Methods inherited from `Object`:
 - **Sealed classes** (Java 17+) restrict which classes can extend/implement them.
 - Prefer **composition** over inheritance when the relationship is "has-a" rather than "is-a".
 
-Next up: [Collections](./07-collections.md) — Java's powerful data structures for lists, maps, and sets.
+Next up: [Collections](./07-collections.md) -- Java's powerful data structures for lists, maps, and sets.

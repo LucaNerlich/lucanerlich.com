@@ -1,7 +1,7 @@
 ---
 title: "Project: Build a Complete Website"
 sidebar_label: "Project: Build a Website"
-description: Build a multi-page vanilla JavaScript website from scratch — navigation, theme toggle, form validation, dynamic content, and local storage.
+description: Build a multi-page vanilla JavaScript website from scratch -- navigation, theme toggle, form validation, dynamic content, and local storage.
 slug: /javascript/beginners-guide/project-build-a-website
 tags: [javascript, beginners, project, html, css]
 keywords:
@@ -21,9 +21,9 @@ Time to put everything together. In this chapter you will build a multi-page per
 
 A personal portfolio site with:
 
-- **Home page** — introduction and featured projects
-- **Projects page** — filterable project cards loaded from data
-- **Contact page** — form with client-side validation
+- **Home page** -- introduction and featured projects
+- **Projects page** -- filterable project cards loaded from data
+- **Contact page** -- form with client-side validation
 - **Shared navigation** with active page highlighting
 - **Dark/light theme toggle** with localStorage persistence
 - **Responsive design** that works on all screen sizes
@@ -423,7 +423,7 @@ img {
 Every page includes the same `<nav>` and `<footer>`. Here is the structure (you will repeat it in each HTML file):
 
 ```html
-<!-- Navigation — same on every page -->
+<!-- Navigation -- same on every page -->
 <nav class="site-nav">
     <div class="nav-inner">
         <a href="index.html" class="nav-logo">MyPortfolio</a>
@@ -438,7 +438,7 @@ Every page includes the same `<nav>` and `<footer>`. Here is the structure (you 
 
 <!-- Page content goes here -->
 
-<!-- Footer — same on every page -->
+<!-- Footer -- same on every page -->
 <footer class="site-footer">
     <p>&copy; 2025 MyPortfolio. Built with vanilla HTML, CSS, and JavaScript.</p>
 </footer>
@@ -503,7 +503,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPortfolio — Home</title>
+    <title>MyPortfolio -- Home</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -524,7 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <section class="hero">
         <h1>Hi, I'm a Web Developer</h1>
         <p>I build things for the web using HTML, CSS, and JavaScript.
-           Welcome to my portfolio — have a look around.</p>
+           Welcome to my portfolio -- have a look around.</p>
     </section>
 
     <section>
@@ -548,7 +548,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="card">
                 <h3>Portfolio Site</h3>
-                <p>This very website — a multi-page portfolio built entirely with vanilla technologies.</p>
+                <p>This very website -- a multi-page portfolio built entirely with vanilla technologies.</p>
                 <div class="tags">
                     <span class="tag">HTML</span>
                     <span class="tag">CSS</span>
@@ -629,7 +629,7 @@ Store project data as JSON so we can load and filter it dynamically:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPortfolio — Projects</title>
+    <title>MyPortfolio -- Projects</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -795,7 +795,7 @@ document.addEventListener("DOMContentLoaded", initProjects);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPortfolio — Contact</title>
+    <title>MyPortfolio -- Contact</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -1015,7 +1015,7 @@ Walk through this checklist:
 - [ ] Theme toggle switches between light and dark mode
 - [ ] Theme preference persists across page reloads
 - [ ] Projects page loads project data and displays cards
-- [ ] Filter buttons work — clicking a technology shows only matching projects
+- [ ] Filter buttons work -- clicking a technology shows only matching projects
 - [ ] Contact form validates on blur and on submit
 - [ ] Invalid fields show error messages and highlight red
 - [ ] Submitting a valid form shows the success message
@@ -1041,9 +1041,9 @@ This project uses everything from the previous chapters:
 ## Summary
 
 You now have a complete, working multi-page website built entirely with vanilla HTML, CSS, and JavaScript. The site is:
-- **Responsive** — works on phones, tablets, and desktops
-- **Accessible** — semantic HTML, proper labels, keyboard-navigable forms
-- **Interactive** — theme toggle, filterable projects, form validation
-- **Persistent** — theme preference saved in localStorage
+- **Responsive** -- works on phones, tablets, and desktops
+- **Accessible** -- semantic HTML, proper labels, keyboard-navigable forms
+- **Interactive** -- theme toggle, filterable projects, form validation
+- **Persistent** -- theme preference saved in localStorage
 
-Next up: [Deploying to a VPS with Nginx](./12-deploy-vps-nginx.md) — putting your site on the internet for the world to see.
+Next up: [Deploying to a VPS with Nginx](./12-deploy-vps-nginx.md) -- putting your site on the internet for the world to see.

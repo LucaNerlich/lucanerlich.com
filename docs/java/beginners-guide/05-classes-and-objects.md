@@ -1,7 +1,7 @@
 ---
 title: "Classes & Objects"
 sidebar_label: "Classes & Objects"
-description: Learn Java OOP basics — classes, objects, constructors, access modifiers, encapsulation, toString, equals/hashCode, static members, and records.
+description: Learn Java OOP basics -- classes, objects, constructors, access modifiers, encapsulation, toString, equals/hashCode, static members, and records.
 slug: /java/beginners-guide/classes-and-objects
 tags: [java, beginners, oop, classes]
 keywords:
@@ -116,7 +116,7 @@ public class Product {
     }
 }
 
-// Product p = new Product(); // compile error — no no-arg constructor
+// Product p = new Product(); // compile error -- no no-arg constructor
 Product p = new Product("Laptop", 999.99); // works
 ```
 
@@ -149,16 +149,16 @@ User u1 = new User("Ada", 36, "admin");
 User u2 = new User("Bob", 25);
 User u3 = new User("Charlie");
 
-System.out.println(u1.name + " — " + u1.role);
-System.out.println(u2.name + " — " + u2.role);
-System.out.println(u3.name + " — " + u3.age);
+System.out.println(u1.name + " -- " + u1.role);
+System.out.println(u2.name + " -- " + u2.role);
+System.out.println(u3.name + " -- " + u3.age);
 ```
 
 Result:
 ```text
-Ada — admin
-Bob — user
-Charlie — 0
+Ada -- admin
+Bob -- user
+Charlie -- 0
 ```
 
 `this(...)` calls another constructor in the same class. It must be the **first** statement.
@@ -171,7 +171,7 @@ Control who can see and use your fields, methods, and classes:
 |----------|-------|---------|----------|-------|
 | `public` | Yes | Yes | Yes | Yes |
 | `protected` | Yes | Yes | Yes | No |
-| (none — package-private) | Yes | Yes | No | No |
+| (none -- package-private) | Yes | Yes | No | No |
 | `private` | Yes | No | No | No |
 
 ```java
@@ -237,7 +237,7 @@ System.out.println(account.getBalance());
 account.withdraw(200);
 System.out.println(account.getBalance());
 
-// account.balance = 999999; // compile error — balance is private
+// account.balance = 999999; // compile error -- balance is private
 ```
 
 Result:
@@ -327,9 +327,9 @@ User a = new User("Ada", 36);
 User b = new User("Ada", 36);
 User c = new User("Bob", 25);
 
-System.out.println(a == b);       // false — different objects
-System.out.println(a.equals(b));  // true — same content
-System.out.println(a.equals(c));  // false — different content
+System.out.println(a == b);       // false -- different objects
+System.out.println(a.equals(b));  // true -- same content
+System.out.println(a.equals(c));  // false -- different content
 ```
 
 Result:
@@ -492,7 +492,7 @@ Area: 15.0
 Perimeter: 16.0
 ```
 
-**When to use records:** whenever you need a simple data carrier — DTOs, value objects, configuration, return multiple values from a method.
+**When to use records:** whenever you need a simple data carrier -- DTOs, value objects, configuration, return multiple values from a method.
 
 ## Builder pattern (brief introduction)
 
@@ -588,8 +588,8 @@ src/
 - **Access modifiers** control visibility: `private` → package-private → `protected` → `public`.
 - **Encapsulation**: private fields + public methods. Control access, enforce invariants.
 - Override **`toString`** for readable output, **`equals`/`hashCode`** for content comparison.
-- **`static`** members belong to the class, not instances — used for shared state and utility methods.
+- **`static`** members belong to the class, not instances -- used for shared state and utility methods.
 - **Records** (Java 16+) auto-generate constructors, accessors, `toString`, `equals`, `hashCode`.
 - The **builder pattern** handles objects with many optional parameters.
 
-Next up: [Inheritance & Interfaces](./06-inheritance-and-interfaces.md) — extending classes, implementing contracts, and polymorphism.
+Next up: [Inheritance & Interfaces](./06-inheritance-and-interfaces.md) -- extending classes, implementing contracts, and polymorphism.

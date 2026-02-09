@@ -15,11 +15,11 @@ sidebar_position: 1
 
 # Introduction & Environment Setup
 
-JavaScript is the programming language of the web. Every modern browser runs it, and with Node.js it runs on servers too. This guide takes you from zero to deploying a website on a VPS with nginx — no prior programming experience required.
+JavaScript is the programming language of the web. Every modern browser runs it, and with Node.js it runs on servers too. This guide takes you from zero to deploying a website on a VPS with nginx -- no prior programming experience required.
 
 ## What is JavaScript?
 
-JavaScript is a **high-level, interpreted programming language**. That means you write human-readable code and the computer executes it directly — no separate compilation step needed.
+JavaScript is a **high-level, interpreted programming language**. That means you write human-readable code and the computer executes it directly -- no separate compilation step needed.
 
 Three facts to remember:
 
@@ -63,9 +63,9 @@ Both. We start with Node.js for learning fundamentals (it is simpler to run a sc
 
 You need three things:
 
-1. **Node.js** — to run JavaScript in the terminal
-2. **A code editor** — to write your code
-3. **A web browser** — to test browser-based code
+1. **Node.js** -- to run JavaScript in the terminal
+2. **A code editor** -- to write your code
+3. **A web browser** -- to test browser-based code
 
 ### Installing Node.js
 
@@ -101,7 +101,7 @@ Result:
 v22.13.1
 ```
 
-The exact version number will differ — anything `v18` or higher is fine.
+The exact version number will differ -- anything `v18` or higher is fine.
 
 Also check that `npm` (Node Package Manager) is installed:
 
@@ -125,7 +125,7 @@ Use any editor you like. Popular choices:
 | **WebStorm** | Paid, powerful refactoring and debugging tools |
 | **Sublime Text** | Lightweight and fast |
 
-If you have no preference, start with [VS Code](https://code.visualstudio.com/) — it is free and has the best JavaScript tooling out of the box.
+If you have no preference, start with [VS Code](https://code.visualstudio.com/) -- it is free and has the best JavaScript tooling out of the box.
 
 ### Using the browser console
 
@@ -243,7 +243,7 @@ Comments do not affect execution
 
 ## Semicolons
 
-JavaScript has **automatic semicolon insertion** (ASI) — the engine adds semicolons for you in most cases. However, relying on ASI can cause subtle bugs. The convention in this guide is to **always use semicolons**:
+JavaScript has **automatic semicolon insertion** (ASI) -- the engine adds semicolons for you in most cases. However, relying on ASI can cause subtle bugs. The convention in this guide is to **always use semicolons**:
 
 ```js
 // Recommended
@@ -280,9 +280,9 @@ Always use strict mode. In modern JavaScript modules (which we will cover later)
 
 | Part | Chapters | What you will learn |
 |------|----------|-------------------|
-| **1 — Fundamentals** | 1–6 | Variables, types, control flow, functions, arrays, objects |
-| **2 — The Browser** | 7–10 | HTML/CSS basics, DOM manipulation, events, fetching data |
-| **3 — Build & Deploy** | 11–12 | Build a complete website, deploy it to a VPS with nginx |
+| **1 -- Fundamentals** | 1–6 | Variables, types, control flow, functions, arrays, objects |
+| **2 -- The Browser** | 7–10 | HTML/CSS basics, DOM manipulation, events, fetching data |
+| **3 -- Build & Deploy** | 11–12 | Build a complete website, deploy it to a VPS with nginx |
 
 Each chapter builds on the previous one. Code examples include expected output so you can verify your work. By chapter 12, you will have a website live on the internet.
 
@@ -290,8 +290,8 @@ Each chapter builds on the previous one. Code examples include expected output s
 
 - JavaScript runs in browsers (client-side) and in Node.js (server-side).
 - Install Node.js LTS to run JavaScript from the terminal.
-- Use any code editor — VS Code is a solid default.
+- Use any code editor -- VS Code is a solid default.
 - `console.log()` prints output to the terminal or browser console.
 - Use semicolons and strict mode for cleaner, safer code.
 
-Next up: [Variables, Types & Operators](./02-variables-and-types.md) — where you will learn how to store and work with data.
+Next up: [Variables, Types & Operators](./02-variables-and-types.md) -- where you will learn how to store and work with data.

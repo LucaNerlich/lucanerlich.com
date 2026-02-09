@@ -1,7 +1,7 @@
 ---
 title: "Building a REST API"
 sidebar_label: "REST API"
-description: Build a REST API with Java's built-in HttpServer — HTTP basics, request handling, JSON serialization, routing, and exposing the task manager over HTTP.
+description: Build a REST API with Java's built-in HttpServer -- HTTP basics, request handling, JSON serialization, routing, and exposing the task manager over HTTP.
 slug: /java/beginners-guide/rest-api
 tags: [java, beginners, rest, api, http]
 keywords:
@@ -15,7 +15,7 @@ sidebar_position: 11
 
 # Building a REST API
 
-In the previous chapter, the task manager ran from the command line. Now we will expose it over HTTP so any client — a browser, a mobile app, or `curl` — can interact with it. We will use Java's built-in `com.sun.net.httpserver.HttpServer`, requiring zero external dependencies.
+In the previous chapter, the task manager ran from the command line. Now we will expose it over HTTP so any client -- a browser, a mobile app, or `curl` -- can interact with it. We will use Java's built-in `com.sun.net.httpserver.HttpServer`, requiring zero external dependencies.
 
 ## HTTP and REST basics
 
@@ -169,7 +169,7 @@ public class JsonHelper {
 }
 ```
 
-This is intentionally minimal — it handles our specific data format. For production APIs, use a library like Jackson or Gson. See the [JSON Processing guide](../json-processing.md) for library-based approaches.
+This is intentionally minimal -- it handles our specific data format. For production APIs, use a library like Jackson or Gson. See the [JSON Processing guide](../json-processing.md) for library-based approaches.
 
 ## Step 2: the request handler
 
@@ -359,8 +359,8 @@ public class TaskHandler implements HttpHandler {
 ```
 
 Key points:
-- `HttpHandler` is the interface from `com.sun.net.httpserver` — implement `handle(HttpExchange)`
-- Routing is manual — check the path and method to determine the action
+- `HttpHandler` is the interface from `com.sun.net.httpserver` -- implement `handle(HttpExchange)`
+- Routing is manual -- check the path and method to determine the action
 - Responses are always JSON with the appropriate status code
 - Errors are caught and returned as JSON error responses
 
@@ -388,12 +388,12 @@ public class ApiServer {
         server.start();
         System.out.println("Task API running on http://localhost:" + PORT);
         System.out.println("Endpoints:");
-        System.out.println("  GET    /api/tasks       — list all tasks");
-        System.out.println("  GET    /api/tasks/{id}   — get a task");
-        System.out.println("  POST   /api/tasks       — create a task");
-        System.out.println("  PUT    /api/tasks/{id}   — complete a task");
-        System.out.println("  DELETE /api/tasks/{id}   — delete a task");
-        System.out.println("  GET    /api/health      — health check");
+        System.out.println("  GET    /api/tasks       -- list all tasks");
+        System.out.println("  GET    /api/tasks/{id}   -- get a task");
+        System.out.println("  POST   /api/tasks       -- create a task");
+        System.out.println("  PUT    /api/tasks/{id}   -- complete a task");
+        System.out.println("  DELETE /api/tasks/{id}   -- delete a task");
+        System.out.println("  GET    /api/health      -- health check");
         System.out.println();
         System.out.println("Press Ctrl+C to stop.");
     }
@@ -417,12 +417,12 @@ Result:
 ```text
 Task API running on http://localhost:8080
 Endpoints:
-  GET    /api/tasks       — list all tasks
-  GET    /api/tasks/{id}   — get a task
-  POST   /api/tasks       — create a task
-  PUT    /api/tasks/{id}   — complete a task
-  DELETE /api/tasks/{id}   — delete a task
-  GET    /api/health      — health check
+  GET    /api/tasks       -- list all tasks
+  GET    /api/tasks/{id}   -- get a task
+  POST   /api/tasks       -- create a task
+  PUT    /api/tasks/{id}   -- complete a task
+  DELETE /api/tasks/{id}   -- delete a task
+  GET    /api/health      -- health check
 
 Press Ctrl+C to stop.
 ```
@@ -553,7 +553,7 @@ Run:
 java -jar task-api.jar
 ```
 
-The JAR is self-contained — it uses only built-in Java libraries, so it runs anywhere Java is installed.
+The JAR is self-contained -- it uses only built-in Java libraries, so it runs anywhere Java is installed.
 
 ## What you have built
 
@@ -576,10 +576,10 @@ For building more complex APIs, you would typically use a framework. See the [HT
 ## Summary
 
 - Java's built-in `HttpServer` provides a zero-dependency HTTP server.
-- A `HttpHandler` processes each request — check the method and path to route.
+- A `HttpHandler` processes each request -- check the method and path to route.
 - Send JSON responses with `Content-Type: application/json` and appropriate status codes.
-- Manual JSON works for simple models — use Jackson or Gson for complex data.
+- Manual JSON works for simple models -- use Jackson or Gson for complex data.
 - The same `Task` and `TaskStore` classes from the CLI project power the API.
 - Package as a JAR for easy distribution.
 
-Next up: [Deploying to a VPS with Nginx](./12-deploy-vps-nginx.md) — putting your API on the internet.
+Next up: [Deploying to a VPS with Nginx](./12-deploy-vps-nginx.md) -- putting your API on the internet.

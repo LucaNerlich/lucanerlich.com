@@ -1,7 +1,7 @@
 ---
 title: "Error Handling"
 sidebar_label: "Error Handling"
-description: Learn Java error handling — try/catch/finally, checked vs unchecked exceptions, custom exceptions, try-with-resources, and best practices.
+description: Learn Java error handling -- try/catch/finally, checked vs unchecked exceptions, custom exceptions, try-with-resources, and best practices.
 slug: /java/beginners-guide/error-handling
 tags: [java, beginners, exceptions, error-handling]
 keywords:
@@ -72,7 +72,7 @@ The compiler forces you to handle checked exceptions. Unchecked exceptions indic
 
 ## `finally`
 
-The `finally` block always runs — whether an exception occurred or not:
+The `finally` block always runs -- whether an exception occurred or not:
 
 ```java
 try {
@@ -115,7 +115,7 @@ Result:
 Null pointer: Cannot invoke "String.length()" because "text" is null
 ```
 
-Order matters — catch the most specific exception first. `Exception` catches everything, so it must come last.
+Order matters -- catch the most specific exception first. `Exception` catches everything, so it must come last.
 
 ### Multi-catch (Java 7+)
 
@@ -194,7 +194,7 @@ Result (when file does not exist):
 File error: data.txt
 ```
 
-The `throws IOException` tells callers: "this method might throw an `IOException` — you must handle it."
+The `throws IOException` tells callers: "this method might throw an `IOException` -- you must handle it."
 
 ## Custom exceptions
 
@@ -259,8 +259,8 @@ Tried to withdraw: 80.0
 
 ### When to use checked vs unchecked
 
-- **Unchecked (`RuntimeException`):** programming errors, invalid arguments, illegal state — the caller cannot reasonably recover.
-- **Checked (`Exception`):** recoverable situations like file not found, network timeout — the caller should be forced to handle it.
+- **Unchecked (`RuntimeException`):** programming errors, invalid arguments, illegal state -- the caller cannot reasonably recover.
+- **Checked (`Exception`):** recoverable situations like file not found, network timeout -- the caller should be forced to handle it.
 
 In practice, most modern Java code favors unchecked exceptions.
 
@@ -325,14 +325,14 @@ try (
 ### 1. Catch specific exceptions
 
 ```java
-// Bad — catches everything, including bugs
+// Bad -- catches everything, including bugs
 try {
     riskyOperation();
 } catch (Exception e) {
     System.out.println("Something failed");
 }
 
-// Good — catches only what you expect
+// Good -- catches only what you expect
 try {
     riskyOperation();
 } catch (IOException e) {
@@ -343,14 +343,14 @@ try {
 ### 2. Do not swallow exceptions
 
 ```java
-// Bad — error disappears silently
+// Bad -- error disappears silently
 try {
     riskyOperation();
 } catch (IOException e) {
-    // empty catch block — the worst thing you can do
+    // empty catch block -- the worst thing you can do
 }
 
-// Good — at least log it
+// Good -- at least log it
 try {
     riskyOperation();
 } catch (IOException e) {
@@ -361,7 +361,7 @@ try {
 ### 3. Use exceptions for exceptional situations
 
 ```java
-// Bad — using exceptions for control flow
+// Bad -- using exceptions for control flow
 try {
     int value = Integer.parseInt(input);
     process(value);
@@ -369,7 +369,7 @@ try {
     useDefaultValue();
 }
 
-// Better — check first
+// Better -- check first
 if (input.matches("-?\\d+")) {
     int value = Integer.parseInt(input);
     process(value);
@@ -391,7 +391,7 @@ throw new IllegalArgumentException("Age must be positive, got: " + age);
 ### 5. Prefer unchecked exceptions for programming errors
 
 ```java
-// Good — caller made a mistake
+// Good -- caller made a mistake
 public void setAge(int age) {
     if (age < 0) {
         throw new IllegalArgumentException("Age cannot be negative: " + age);
@@ -437,7 +437,7 @@ For a comprehensive guide covering Result/Either patterns and advanced exception
 - **Checked exceptions** (`IOException`) must be caught or declared; **unchecked** (`RuntimeException`) do not.
 - **`throw`** signals an error; **`throws`** declares what a method might throw.
 - **Custom exceptions** add domain-specific context to errors.
-- **Try-with-resources** automatically closes files and connections — always use it.
+- **Try-with-resources** automatically closes files and connections -- always use it.
 - Catch specific exceptions, never swallow them, and include context in messages.
 
-Next up: [File I/O](./09-file-io.md) — reading and writing files.
+Next up: [File I/O](./09-file-io.md) -- reading and writing files.

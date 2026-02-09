@@ -1,7 +1,7 @@
 ---
 title: "The DOM"
 sidebar_label: "The DOM"
-description: Learn how JavaScript interacts with web pages through the DOM — selecting elements, modifying content, creating and removing elements, and traversing the tree.
+description: Learn how JavaScript interacts with web pages through the DOM -- selecting elements, modifying content, creating and removing elements, and traversing the tree.
 slug: /javascript/beginners-guide/the-dom
 tags: [javascript, beginners, dom]
 keywords:
@@ -15,7 +15,7 @@ sidebar_position: 8
 
 # The DOM
 
-The **Document Object Model** (DOM) is the browser's representation of an HTML page as a tree of objects. JavaScript uses the DOM to read and change anything on the page — text, styles, attributes, structure, everything.
+The **Document Object Model** (DOM) is the browser's representation of an HTML page as a tree of objects. JavaScript uses the DOM to read and change anything on the page -- text, styles, attributes, structure, everything.
 
 ## What is the DOM?
 
@@ -53,7 +53,7 @@ Every tag becomes a **node** (an object) in this tree. JavaScript can access and
 
 ## Selecting elements
 
-### `querySelector` — select one element
+### `querySelector` -- select one element
 
 Returns the **first** element that matches a CSS selector:
 
@@ -91,7 +91,7 @@ Result:
 Element not found
 ```
 
-### `querySelectorAll` — select multiple elements
+### `querySelectorAll` -- select multiple elements
 
 Returns a **NodeList** of all matching elements:
 
@@ -185,14 +185,14 @@ console.log(div.innerHTML);
 div.innerHTML = "<h2>New Title</h2><p>New paragraph</p>";
 ```
 
-**Security warning:** Never use `innerHTML` with user input — it creates a Cross-Site Scripting (XSS) vulnerability:
+**Security warning:** Never use `innerHTML` with user input -- it creates a Cross-Site Scripting (XSS) vulnerability:
 
 ```js
-// DANGEROUS — never do this
+// DANGEROUS -- never do this
 const userInput = '<img src=x onerror="alert(\'hacked\')">';
 div.innerHTML = userInput; // executes the attack
 
-// SAFE — use textContent for user input
+// SAFE -- use textContent for user input
 div.textContent = userInput; // displays as plain text
 ```
 
@@ -252,7 +252,7 @@ textInput.value = "New value";
 console.log(textInput.value);
 ```
 
-### `dataset` — custom data attributes
+### `dataset` -- custom data attributes
 
 HTML `data-*` attributes are accessible via `dataset`:
 
@@ -316,7 +316,7 @@ console.log(box.className); // "box highlighted"
 box.className = "new-class"; // replaces everything
 ```
 
-Prefer `classList` — it is safer because it does not overwrite existing classes.
+Prefer `classList` -- it is safer because it does not overwrite existing classes.
 
 ## Modifying inline styles
 
@@ -407,16 +407,16 @@ Insert HTML at specific positions:
 ```js
 const heading = document.querySelector("h1");
 
-// beforebegin — before the element
+// beforebegin -- before the element
 heading.insertAdjacentHTML("beforebegin", "<p>Before the heading</p>");
 
-// afterbegin — inside, at the start
+// afterbegin -- inside, at the start
 heading.insertAdjacentHTML("afterbegin", "<span>★ </span>");
 
-// beforeend — inside, at the end
+// beforeend -- inside, at the end
 heading.insertAdjacentHTML("beforeend", "<span> ★</span>");
 
-// afterend — after the element
+// afterend -- after the element
 heading.insertAdjacentHTML("afterend", "<p>After the heading</p>");
 ```
 
@@ -575,7 +575,7 @@ for (const user of users) {
     nameSpan.textContent = user.name;
 
     const roleSpan = document.createElement("span");
-    roleSpan.textContent = ` — ${user.role}`;
+    roleSpan.textContent = ` -- ${user.role}`;
 
     li.appendChild(nameSpan);
     li.appendChild(roleSpan);
@@ -585,10 +585,10 @@ for (const user of users) {
 
 This renders:
 ```text
-• Ada — Admin
-• Bob — User
-• Charlie — User
-• Diana — Moderator
+• Ada -- Admin
+• Bob -- User
+• Charlie -- User
+• Diana -- Moderator
 ```
 
 ## When to use which approach
@@ -613,4 +613,4 @@ This renders:
 - `parentElement`, `children`, `closest()` navigate the tree.
 - Use `DocumentFragment` for batch DOM updates.
 
-Next up: [Events & Interactivity](./09-events.md) — making your page respond to user actions.
+Next up: [Events & Interactivity](./09-events.md) -- making your page respond to user actions.
