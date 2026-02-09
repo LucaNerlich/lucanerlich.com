@@ -53,14 +53,14 @@ Practical JavaScript and TypeScript topics with code examples and browser compat
 
 GoF design patterns explained with Java and TypeScript examples: creational, structural, and behavioural patterns, plus a dedicated section on anti-patterns and common misuse.
 
-### [Other](./other/tech/mermaid-diagrams.mdx)
+### [Other](./other/mermaid-diagrams.mdx)
 
 Shell and terminal setup, Docusaurus tips, a comprehensive Mermaid diagram guide, useful link collections, and practical Strapi CMS guides.
 
 - [Strapi: Custom Controllers and Services](./strapi/custom-controllers-services.md) -- Extending core CRUD, custom actions, and service delegation
 - [Strapi: Relations and Population](./strapi/relations-and-population.md) -- Deep population, filtering, and performance optimization
 - [Strapi: Authentication and Permissions](./strapi/authentication-and-permissions.md) -- JWT flow, RBAC, API tokens, and OAuth providers
-- [Mermaid Diagram Guide](./other/tech/mermaid-diagrams.mdx) -- Flowcharts, sequence diagrams, class diagrams, and more
+- [Mermaid Diagram Guide](./other/mermaid-diagrams.mdx) -- Flowcharts, sequence diagrams, class diagrams, and more
 
 ---
 
@@ -74,7 +74,7 @@ A selection of the most useful pages across all categories:
 - [Concurrency and Virtual Threads](./java/concurrency.md) -- Modern Java concurrency with practical examples
 - [Sling Model Annotations](./aem/components/annotations/sling-model-annotations.mdx) -- `@Self`, `@Inject`, `@ChildResource`, and more
 - [AEM Workflows](./aem/backend/workflows.mdx) -- From business process mapping to custom workflow steps
-- [Mermaid Diagram Guide](./other/tech/mermaid-diagrams.mdx) -- Flowcharts, sequence diagrams, class diagrams, and more
+- [Mermaid Diagram Guide](./other/mermaid-diagrams.mdx) -- Flowcharts, sequence diagrams, class diagrams, and more
 - [Multi-Tenancy ui.frontend](./aem/ui/multi-tenancy-support-ui-frontend.mdx) -- Multi-tenant frontend architecture for AEM
 - [Templates and Policies](./aem/components/templates-policies.md) -- Editable templates, allowed components, Style System
 - [ACLs and Permissions](./aem/infrastructure/acl-permissions.md) -- Repoinit, Netcentric ACL Tool, service users
