@@ -280,9 +280,10 @@ Always use strict mode. In modern JavaScript modules (which we will cover later)
 
 | Part | Chapters | What you will learn |
 |------|----------|-------------------|
-| **1 -- Fundamentals** | 1–6 | Variables, types, control flow, functions, arrays, objects |
-| **2 -- The Browser** | 7–10 | HTML/CSS basics, DOM manipulation, events, fetching data |
-| **3 -- Build & Deploy** | 11–12 | Build a complete website, deploy it to a VPS with nginx |
+| **1 -- Fundamentals** | 1--6 | Variables, types, control flow, functions, arrays, objects |
+| **2 -- The Browser** | 7--10 | HTML/CSS basics, DOM manipulation, events, fetching data |
+| **3 -- Build & Deploy** | 11--12 | Build a complete website, deploy it to a VPS with nginx |
+| **4 -- TypeScript** | 13 | Static types, interfaces, generics, utility types, migration |
 
 Each chapter builds on the previous one. Code examples include expected output so you can verify your work. By chapter 12, you will have a website live on the internet.
 

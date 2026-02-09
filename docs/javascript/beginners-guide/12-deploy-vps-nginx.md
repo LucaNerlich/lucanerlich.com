@@ -529,7 +529,11 @@ Here is everything we did, in order:
 
 ## What comes next
 
-You now have a website live on the internet, served by nginx over HTTPS. From here, you could:
+You now have a website live on the internet, served by nginx over HTTPS. The next chapter introduces **TypeScript** -- static types for JavaScript that catch bugs before they reach production.
+
+Continue with: [TypeScript](./13-typescript.md)
+
+After that, you could:
 
 - **Add a CI/CD pipeline** -- automatically deploy when you push to Git
 - **Add a backend** -- use Node.js with Express behind nginx as a reverse proxy

@@ -71,6 +71,7 @@ export const sidebarOrder: Record<string, string[]> = {
         '10-working-with-data',
         '11-project-build-a-website',
         '12-deploy-vps-nginx',
+        '13-typescript',
     ],
 
     // ------------------------------------------------------------------
