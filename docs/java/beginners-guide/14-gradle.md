@@ -503,3 +503,5 @@ The choice rarely matters for the end result. Pick one, learn it well, and switc
 - **Neither tool is universally better** -- choose based on your team, project, and ecosystem.
 
 For advanced Maven topics (BOMs, multi-module projects, profiles), see the [Maven deep dive](../maven.md).
+
+Next up: [Streams & Lambdas](./15-streams-and-lambdas.md) -- functional programming in Java with the Stream API.

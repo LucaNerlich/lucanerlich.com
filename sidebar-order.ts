@@ -72,6 +72,8 @@ export const sidebarOrder: Record<string, string[]> = {
         '11-project-build-a-website',
         '12-deploy-vps-nginx',
         '13-typescript',
+        '14-error-handling',
+        '15-regular-expressions',
     ],
 
     // ------------------------------------------------------------------
@@ -96,6 +98,9 @@ export const sidebarOrder: Record<string, string[]> = {
         '12-deploy-vps-nginx',
         '13-maven',
         '14-gradle',
+        '15-streams-and-lambdas',
+        '16-optionals',
+        '17-testing',
     ],
 
     // ------------------------------------------------------------------

@@ -926,3 +926,5 @@ This gives you a TypeScript project with hot reloading, ready to develop in the 
 - Migrate gradually: add TypeScript to an existing project one file at a time.
 
 TypeScript is used by most modern JavaScript frameworks (Angular, Next.js, SvelteKit) and is the de facto standard for professional JavaScript development. The investment in learning it pays off immediately through fewer bugs and better tooling.
+
+Next up: [Error Handling](./14-error-handling.md) -- try/catch, custom errors, async error patterns, and best practices for failing gracefully.

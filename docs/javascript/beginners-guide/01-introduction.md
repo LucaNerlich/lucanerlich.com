@@ -284,6 +284,7 @@ Always use strict mode. In modern JavaScript modules (which we will cover later)
 | **2 -- The Browser** | 7--10 | HTML/CSS basics, DOM manipulation, events, fetching data |
 | **3 -- Build & Deploy** | 11--12 | Build a complete website, deploy it to a VPS with nginx |
 | **4 -- TypeScript** | 13 | Static types, interfaces, generics, utility types, migration |
+| **5 -- Going Deeper** | 14--15 | Error handling, regular expressions |
 
 Each chapter builds on the previous one. Code examples include expected output so you can verify your work. By chapter 12, you will have a website live on the internet.
 
