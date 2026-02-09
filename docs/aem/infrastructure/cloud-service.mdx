@@ -45,20 +45,19 @@ graph TD
 
 ## Key Differences from AEM 6.5 / On-Premise
 
-| Aspect | AEM 6.5 / On-Prem | AEMaaCS |
-|--------|-------------------|---------|
-| **Deployment** | Package Manager, WebDAV, manual install | Cloud Manager pipelines only |
-| **Infrastructure** | Self-managed servers | Fully managed, auto-scaled by Adobe |
-| **Updates** | Manual upgrades (months/years) | Continuous updates (monthly, automatic) |
-| **`/apps` and `/libs`** | Mutable at runtime | **Immutable** -- deployed via pipeline only |
-| **`/etc/designs`** | Design mode for component config | **Deprecated** -- use editable templates and policies |
-| **Custom run modes** | Any custom run mode name | Only `author`, `publish`, `preview` + `dev`, `stage`, `prod` |
-| **CRXDE Lite** | Available in all environments | Available on dev/RDE only, **not in stage/prod** |
-| **Package Manager** | Full access in all environments | Dev only; not available in stage/prod |
-| **Repository access** | Direct JCR access, WebDAV | Developer Console for logs; no direct JCR in prod |
-| **Content replication** | Replication agents (manual config) | **Content Distribution** (Sling, automatic) |
-| **Pricing model** | Perpetual license | Subscription (per program) |
-| **Scaling** | Manual (add servers) | Automatic (horizontal auto-scaling) |
+| Aspect                  | AEM 6.5 / On-Prem                       | AEMaaCS                                                      |
+|-------------------------|-----------------------------------------|--------------------------------------------------------------|
+| **Deployment**          | Package Manager, WebDAV, manual install | Cloud Manager pipelines only                                 |
+| **Infrastructure**      | Self-managed servers                    | Fully managed, auto-scaled by Adobe                          |
+| **Updates**             | Manual upgrades (months/years)          | Continuous updates (monthly, automatic)                      |
+| **`/apps` and `/libs`** | Mutable at runtime                      | **Immutable** -- deployed via pipeline only                  |
+| **`/etc/designs`**      | Design mode for component config        | **Deprecated** -- use editable templates and policies        |
+| **Custom run modes**    | Any custom run mode name                | Only `author`, `publish`, `preview` + `dev`, `stage`, `prod` |
+| **CRXDE Lite**          | Available in all environments           | Available on dev/RDE only, **not in stage/prod**             |
+| **Repository access**   | Direct JCR access, WebDAV               | Developer Console for logs; no direct JCR in prod            |
+| **Content replication** | Replication agents (manual config)      | **Content Distribution** (Sling, automatic)                  |
+| **Pricing model**       | Perpetual license                       | Subscription (per program)                                   |
+| **Scaling**             | Manual (add servers)                    | Automatic (horizontal auto-scaling)                          |
 
 ---
 
@@ -69,10 +68,10 @@ graph TD
 A **program** is the top-level organisational unit in Cloud Manager. Each program contains
 a set of environments, pipelines, and configuration.
 
-| Program type | Purpose |
-|-------------|---------|
-| **Production** | Full set of environments (dev, stage, prod) for a live site |
-| **Sandbox** | Trial and experimentation; auto-hibernates after inactivity; limited features |
+| Program type   | Purpose                                                                       |
+|----------------|-------------------------------------------------------------------------------|
+| **Production** | Full set of environments (dev, stage, prod) for a live site                   |
+| **Sandbox**    | Trial and experimentation; auto-hibernates after inactivity; limited features |
 
 ### Environment types
 
@@ -88,13 +87,13 @@ graph LR
     RDE -.->|"rapid iteration"| Dev
 ```
 
-| Environment | Purpose | Key characteristics |
-|-------------|---------|-------------------|
-| **Development** | Day-to-day development and testing | Mutable; CRXDE available; can install packages manually |
+| Environment         | Purpose                              | Key characteristics                                        |
+|---------------------|--------------------------------------|------------------------------------------------------------|
+| **Development**     | Day-to-day development and testing   | Mutable; CRXDE available; can install packages manually    |
 | **Rapid Dev (RDE)** | Fast iteration without full pipeline | Deploy in seconds via CLI; no build step; limited lifespan |
-| **Stage** | Pre-production validation | Mirrors prod topology; immutable; pipeline-only deployment |
-| **Production** | Live site | Immutable; auto-scaled; no CRXDE; no Package Manager |
-| **Preview** | Content preview before publish | Optional; separate tier for preview workflows |
+| **Stage**           | Pre-production validation            | Mirrors prod topology; immutable; pipeline-only deployment |
+| **Production**      | Live site                            | Immutable; auto-scaled; no CRXDE; no Package Manager       |
+| **Preview**         | Content preview before publish       | Optional; separate tier for preview workflows              |
 
 ---
 
@@ -108,27 +107,27 @@ repository.
 
 These paths are overwritten on every deployment and cannot be changed at runtime:
 
-| Path | Contains |
-|------|----------|
-| `/apps/` | Component definitions, Sling Models, services, HTL scripts |
-| `/libs/` | AEM product code (never modify) |
-| `/oak:index/` | Custom Oak index definitions |
-| `/apps/*/config/` | OSGi configurations |
-| `/apps/*/i18n/` | i18n dictionaries |
+| Path              | Contains                                                   |
+|-------------------|------------------------------------------------------------|
+| `/apps/`          | Component definitions, Sling Models, services, HTL scripts |
+| `/libs/`          | AEM product code (never modify)                            |
+| `/oak:index/`     | Custom Oak index definitions                               |
+| `/apps/*/config/` | OSGi configurations                                        |
+| `/apps/*/i18n/`   | i18n dictionaries                                          |
 
 ### Mutable (content, managed at runtime)
 
 These paths persist across deployments and are managed by authors or at runtime:
 
-| Path | Contains |
-|------|----------|
-| `/content/` | Pages, experience fragments |
-| `/content/dam/` | Digital assets |
-| `/content/cq:tags/` | Tags and taxonomies |
-| `/conf/` | Editable templates, policies, cloud service configs, CA Config |
-| `/var/` | Workflows, audit logs, eventing |
-| `/home/` | Users and groups |
-| `/tmp/` | Temporary data |
+| Path                | Contains                                                       |
+|---------------------|----------------------------------------------------------------|
+| `/content/`         | Pages, experience fragments                                    |
+| `/content/dam/`     | Digital assets                                                 |
+| `/content/cq:tags/` | Tags and taxonomies                                            |
+| `/conf/`            | Editable templates, policies, cloud service configs, CA Config |
+| `/var/`             | Workflows, audit logs, eventing                                |
+| `/home/`            | Users and groups                                               |
+| `/tmp/`             | Temporary data                                                 |
 
 ### Repoinit for bootstrap content
 
@@ -235,14 +234,14 @@ aio aem:rde:reset
 
 ### When to use RDEs vs dev environments
 
-| Scenario | RDE | Dev environment |
-|----------|-----|-----------------|
-| Quick feature iteration | Best | Slow (pipeline) |
-| Testing OSGi config changes | Best | OK |
-| Full integration testing | No | Yes |
-| Load testing | No | Yes |
-| Dispatcher testing | Partial | Full |
-| Collaboration (shared state) | Limited | Yes |
+| Scenario                     | RDE     | Dev environment |
+|------------------------------|---------|-----------------|
+| Quick feature iteration      | Best    | Slow (pipeline) |
+| Testing OSGi config changes  | Best    | OK              |
+| Full integration testing     | No      | Yes             |
+| Load testing                 | No      | Yes             |
+| Dispatcher testing           | Partial | Full            |
+| Collaboration (shared state) | Limited | Yes             |
 
 ---
 
@@ -256,17 +255,17 @@ Access it at: `https://dev-console-<env-id>.adobeaemcloud.com/`
 
 ### Available features
 
-| Feature | Description |
-|---------|-------------|
-| **Status** | Environment health, instance status, version info |
-| **Bundles** | List OSGi bundles, check state (Active, Resolved, Installed) |
-| **Components** | List OSGi (Declarative Services) components and their state |
-| **Configurations** | View OSGi configurations (read-only) |
-| **Sling Models** | List registered Sling Models and their adapters |
-| **Oak Indexes** | View index definitions and reindexing status |
-| **Repository browser** | Browse the JCR tree (read-only) |
-| **Logs** | Download or tail log files (error.log, request.log, etc.) |
-| **Query performance** | View slow queries and index usage |
+| Feature                | Description                                                  |
+|------------------------|--------------------------------------------------------------|
+| **Status**             | Environment health, instance status, version info            |
+| **Bundles**            | List OSGi bundles, check state (Active, Resolved, Installed) |
+| **Components**         | List OSGi (Declarative Services) components and their state  |
+| **Configurations**     | View OSGi configurations (read-only)                         |
+| **Sling Models**       | List registered Sling Models and their adapters              |
+| **Oak Indexes**        | View index definitions and reindexing status                 |
+| **Repository browser** | Browse the JCR tree (read-only)                              |
+| **Logs**               | Download or tail log files (error.log, request.log, etc.)    |
+| **Query performance**  | View slow queries and index usage                            |
 
 :::tip
 For production debugging, the Developer Console log viewer is your primary tool. You
@@ -303,14 +302,14 @@ cd dispatcher-tools
 
 ### SDK vs production differences
 
-| Aspect | SDK | AEMaaCS production |
-|--------|-----|-------------------|
-| **Scaling** | Single instance | Auto-scaled cluster |
-| **CDN** | None (localhost) | Fastly CDN |
+| Aspect                   | SDK               | AEMaaCS production         |
+|--------------------------|-------------------|----------------------------|
+| **Scaling**              | Single instance   | Auto-scaled cluster        |
+| **CDN**                  | None (localhost)  | Fastly CDN                 |
 | **Content Distribution** | Local replication | Sling Content Distribution |
-| **Startup time** | 2-5 minutes | Managed by Adobe |
-| **Updates** | Manual download | Automatic |
-| **Oak persistence** | Segment tar | Composite node store |
+| **Startup time**         | 2-5 minutes       | Managed by Adobe           |
+| **Updates**              | Manual download   | Automatic                  |
+| **Oak persistence**      | Segment tar       | Composite node store       |
 
 ---
 
@@ -353,15 +352,15 @@ followed by smaller top-ups closer to go-live.
 
 ### Common migration challenges
 
-| Challenge | Solution |
-|-----------|----------|
-| Custom run modes | Map to standard run modes (`dev`, `stage`, `prod`) |
-| `/etc/designs` | Migrate to editable templates and policies |
-| Custom login modules | Use AEM IMS (Adobe Identity Management) |
-| Workflow launchers with `/libs` paths | Update to `/content` or `/var` paths |
-| Large binary assets | Use CTT with streaming; plan for transfer time |
-| Custom Oak indexes | Convert with Index Converter; deploy via `/oak:index/` in code |
-| Custom replication agents | Replace with Content Distribution (automatic) |
+| Challenge                             | Solution                                                       |
+|---------------------------------------|----------------------------------------------------------------|
+| Custom run modes                      | Map to standard run modes (`dev`, `stage`, `prod`)             |
+| `/etc/designs`                        | Migrate to editable templates and policies                     |
+| Custom login modules                  | Use AEM IMS (Adobe Identity Management)                        |
+| Workflow launchers with `/libs` paths | Update to `/content` or `/var` paths                           |
+| Large binary assets                   | Use CTT with streaming; plan for transfer time                 |
+| Custom Oak indexes                    | Convert with Index Converter; deploy via `/oak:index/` in code |
+| Custom replication agents             | Replace with Content Distribution (automatic)                  |
 
 ---
 
@@ -369,20 +368,20 @@ followed by smaller top-ups closer to go-live.
 
 These features available on AEM 6.5 are **not available** or **deprecated** on AEMaaCS:
 
-| Feature | Status | Replacement |
-|---------|--------|-------------|
-| **CRXDE Lite** (prod) | Removed | Developer Console (read-only) |
-| **Package Manager** (prod) | Removed | Cloud Manager pipelines |
-| **Classic UI** | Deprecated | Touch UI |
-| **Design mode / `/etc/designs`** | Deprecated | Editable templates and policies |
-| **Static templates** | Deprecated | Editable templates |
-| **Custom run modes** | Removed | `dev`, `stage`, `prod` only |
-| **JSP scripting** | Deprecated | HTL (Sightly) |
-| **Replication agents** | Replaced | Sling Content Distribution |
-| **Workflow purge schedulers** | Changed | Adobe-managed maintenance windows |
-| **`loginAdministrative()`** | Removed | Service users with `getServiceResourceResolver()` |
-| **WebDAV access** | Removed | Assets HTTP API, AEM Desktop App |
-| **VLT (FileVault)** | Limited | AEM Repo Tool, RDE CLI |
+| Feature                          | Status     | Replacement                                       |
+|----------------------------------|------------|---------------------------------------------------|
+| **CRXDE Lite** (prod)            | Removed    | Developer Console (read-only)                     |
+| **Package Manager** (prod)       | Removed    | Cloud Manager pipelines                           |
+| **Classic UI**                   | Deprecated | Touch UI                                          |
+| **Design mode / `/etc/designs`** | Deprecated | Editable templates and policies                   |
+| **Static templates**             | Deprecated | Editable templates                                |
+| **Custom run modes**             | Removed    | `dev`, `stage`, `prod` only                       |
+| **JSP scripting**                | Deprecated | HTL (Sightly)                                     |
+| **Replication agents**           | Replaced   | Sling Content Distribution                        |
+| **Workflow purge schedulers**    | Changed    | Adobe-managed maintenance windows                 |
+| **`loginAdministrative()`**      | Removed    | Service users with `getServiceResourceResolver()` |
+| **WebDAV access**                | Removed    | Assets HTTP API, AEM Desktop App                  |
+| **VLT (FileVault)**              | Limited    | AEM Repo Tool, RDE CLI                            |
 
 ---
 
@@ -441,24 +440,24 @@ AEMaaCS automatically scales both the author and publish tiers based on load:
 
 ### What you control
 
-| Aspect | Your responsibility |
-|--------|-------------------|
-| **Cache-Control headers** | Set appropriate TTLs for static and dynamic content |
-| **CDN configuration** | `cdn.yaml` for redirects, transformations, origin selectors |
-| **Dispatcher rules** | Cache rules, filters, rewrite rules |
-| **Oak indexes** | Define custom indexes for query performance |
-| **Asset processing** | Configure processing profiles for image renditions |
+| Aspect                    | Your responsibility                                         |
+|---------------------------|-------------------------------------------------------------|
+| **Cache-Control headers** | Set appropriate TTLs for static and dynamic content         |
+| **CDN configuration**     | `cdn.yaml` for redirects, transformations, origin selectors |
+| **Dispatcher rules**      | Cache rules, filters, rewrite rules                         |
+| **Oak indexes**           | Define custom indexes for query performance                 |
+| **Asset processing**      | Configure processing profiles for image renditions          |
 
 ### What Adobe manages
 
-| Aspect | Adobe's responsibility |
-|--------|----------------------|
-| **Infrastructure** | Servers, networking, storage, scaling |
-| **Updates** | Monthly AEM updates, security patches |
-| **Monitoring** | Uptime monitoring, alerting |
-| **Backups** | Automated backups, point-in-time recovery |
-| **SSL/TLS** | Certificate management for `*.adobeaemcloud.com` |
-| **Maintenance** | Compaction, garbage collection, index optimization |
+| Aspect             | Adobe's responsibility                             |
+|--------------------|----------------------------------------------------|
+| **Infrastructure** | Servers, networking, storage, scaling              |
+| **Updates**        | Monthly AEM updates, security patches              |
+| **Monitoring**     | Uptime monitoring, alerting                        |
+| **Backups**        | Automated backups, point-in-time recovery          |
+| **SSL/TLS**        | Certificate management for `*.adobeaemcloud.com`   |
+| **Maintenance**    | Compaction, garbage collection, index optimization |
 
 ---
 
@@ -468,11 +467,11 @@ AEMaaCS environments run in isolated VPCs. By default, they can only make outbou
 requests to public internet endpoints. For connecting to private services, Adobe offers
 **Advanced Networking**:
 
-| Networking type | Use case |
-|----------------|----------|
+| Networking type          | Use case                                                               |
+|--------------------------|------------------------------------------------------------------------|
 | **Flexible port egress** | Connect to external services on non-standard ports (e.g., SMTP on 587) |
-| **Dedicated egress IP** | Whitelist a fixed IP for outbound connections to firewalled services |
-| **VPN** | Site-to-site VPN for connecting to private corporate networks |
+| **Dedicated egress IP**  | Whitelist a fixed IP for outbound connections to firewalled services   |
+| **VPN**                  | Site-to-site VPN for connecting to private corporate networks          |
 
 Configure via Cloud Manager API or CLI:
 
@@ -531,18 +530,18 @@ that take time.
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Code changes not reflected after deploy | Check that the pipeline completed; verify the bundle is active in Developer Console |
-| `LoginException` for service users | Ensure repoinit scripts run before service user mappings; check ACLs |
-| Content missing after deployment | Content packages must go into `ui.content`, not `ui.apps`; mutable content is not overwritten |
-| Custom run mode configs ignored | AEMaaCS only supports standard run modes (`dev`, `stage`, `prod`, `author`, `publish`) |
-| Slow queries in production | Define custom Oak indexes in `/oak:index/`; use the Developer Console query performance tool |
-| SMTP not working | Configure Advanced Networking (flexible port egress) for port 587; see [E-Mail Service](./email.md) |
-| Assets not rendering | Check asset processing profiles; verify Dynamic Media configuration |
-| Dispatcher cache not invalidating | Cache invalidation is automatic on AEMaaCS; check CDN cache if stale content persists |
-| `ClassNotFoundException` after update | Adobe's monthly updates may remove deprecated APIs; check release notes and fix code |
-| CRXDE not available | Expected in stage/prod; use Developer Console repository browser (read-only) |
+| Pitfall                                 | Solution                                                                                            |
+|-----------------------------------------|-----------------------------------------------------------------------------------------------------|
+| Code changes not reflected after deploy | Check that the pipeline completed; verify the bundle is active in Developer Console                 |
+| `LoginException` for service users      | Ensure repoinit scripts run before service user mappings; check ACLs                                |
+| Content missing after deployment        | Content packages must go into `ui.content`, not `ui.apps`; mutable content is not overwritten       |
+| Custom run mode configs ignored         | AEMaaCS only supports standard run modes (`dev`, `stage`, `prod`, `author`, `publish`)              |
+| Slow queries in production              | Define custom Oak indexes in `/oak:index/`; use the Developer Console query performance tool        |
+| SMTP not working                        | Configure Advanced Networking (flexible port egress) for port 587; see [E-Mail Service](./email.md) |
+| Assets not rendering                    | Check asset processing profiles; verify Dynamic Media configuration                                 |
+| Dispatcher cache not invalidating       | Cache invalidation is automatic on AEMaaCS; check CDN cache if stale content persists               |
+| `ClassNotFoundException` after update   | Adobe's monthly updates may remove deprecated APIs; check release notes and fix code                |
+| CRXDE not available                     | Expected in stage/prod; use Developer Console repository browser (read-only)                        |
 
 ---
 
