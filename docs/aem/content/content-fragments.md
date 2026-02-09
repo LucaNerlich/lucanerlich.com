@@ -838,4 +838,5 @@ curl -u admin:admin \
 - [Component Dialogs](../component-dialogs.mdx) -- Content Fragment picker field
 - [Experience Fragments](./experience-fragments.md) -- XF vs CF comparison
 - [Tags and Taxonomies](./tags-taxonomies.md) -- tagging fragments
+- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) -- Content Distribution and migration
 - [Groovy Console](../groovy-console.mdx) -- bulk fragment operations

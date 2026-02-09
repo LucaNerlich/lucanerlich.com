@@ -466,4 +466,5 @@ Create a new variation or version before making breaking changes.
 - [i18n and Translation](./i18n-translation.md) -- translating XFs
 - [Headless GraphQL](./graphql.mdx) -- headless content delivery
 - [Templates and Policies](../components/templates-policies.md) -- XF templates
+- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) -- Content Distribution replaces replication
 - [Replication and Activation](./replication-activation.mdx) -- publishing XFs

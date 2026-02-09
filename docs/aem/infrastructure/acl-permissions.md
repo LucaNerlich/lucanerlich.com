@@ -657,6 +657,7 @@ users only need to edit existing content, not create or delete nodes.
 - [Security Basics](./security.mdx) -- CSRF, XSS, referrer filter, and more
 - [Sling Models and Services](../backend/sling-models.mdx) -- service user usage
 - [Servlets](../backend/servlets.mdx) -- servlet security and ACL bypasses
+- [AEM as a Cloud Service](./cloud-service.mdx) -- repoinit, immutable paths, Developer Console
 - [Deployment](./deployment.mdx) -- deploying repoinit and ACL Tool configs
 - [Groovy Console](../groovy-console.mdx) -- testing permissions interactively
 - [Workflows](../backend/workflows.mdx) -- workflow service users

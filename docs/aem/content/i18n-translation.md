@@ -608,4 +608,5 @@ content, not just placeholder text.
 - [Content Fragments](./content-fragments.md) -- translating Content Fragments
 - [Experience Fragments](./experience-fragments.md) -- translating Experience Fragments
 - [Tags and Taxonomies](./tags-taxonomies.md) -- localising tag titles
+- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) -- translation cloud configs on AEMaaCS
 - [Architecture](../architecture.mdx) -- multi-language site architecture

@@ -617,4 +617,5 @@ handles locale resolution automatically.
 - [Custom Dialog Widgets](../ui/custom-dialog-widgets.md) -- dynamic tag DataSources
 - [Groovy Console](../groovy-console.mdx) -- scripted tag management
 - [i18n and Translation](./i18n-translation.md) -- localising tag titles
+- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) -- tag replication via Content Distribution
 - [Multi-Site Manager](./multi-site-manager-msm.md) -- multi-site tag governance

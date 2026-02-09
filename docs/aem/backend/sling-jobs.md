@@ -660,4 +660,5 @@ with a dedicated service user.
 - [OSGi Configuration](./osgi-configuration.mdx) -- configuring schedulers per run mode
 - [Sling Models and Services](./sling-models.mdx) -- OSGi service patterns
 - [Java Best Practices](./java-best-practices.mdx) -- threading and concurrency
+- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) -- AEMaaCS constraints and RDEs
 - [Adobe I/O App Builder](../infrastructure/aio-app-builder.md) -- serverless alternative for heavy processing
