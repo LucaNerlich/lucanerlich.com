@@ -3,33 +3,42 @@
 # -------------------------
 FROM node:22-alpine AS builder
 
+# Use pnpm (matches packageManager in package.json)
+RUN corepack enable && corepack prepare pnpm@10.16.1 --activate
+
 WORKDIR /app
 
-COPY package*.json ./
+# Copy dependency files first -- this layer is cached until these files change
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-RUN npm install
+# Install all dependencies (dev + prod, needed for the build)
+RUN pnpm install --frozen-lockfile
 
+# Copy source files (separate layer: source changes don't re-install deps)
 COPY . .
 
-# build the Docusaurus site
-RUN npm run build
+# Build the Docusaurus site
+RUN pnpm build
 
 # -------------------------
 # 2) Production stage
 # -------------------------
 FROM node:22-alpine
 
+RUN corepack enable && corepack prepare pnpm@10.16.1 --activate
+
 WORKDIR /app
 
-# copy only necessary artifacts from build stage
-COPY --from=builder /app /app
+# Copy only what docusaurus serve needs -- not the entire build stage
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/pnpm-lock.yaml ./
+COPY --from=builder /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/docusaurus.config.ts ./
+COPY --from=builder /app/node_modules ./node_modules
 
-RUN npm ci --production && npm cache clean --force
-
-ARG PORT
-ENV PORT=$PORT
 ENV NODE_ENV=production
 
-EXPOSE $PORT
+EXPOSE 3000
 
-CMD ["npm", "run", "coolify"]
+CMD ["pnpm", "run", "coolify"]
