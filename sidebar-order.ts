@@ -93,6 +93,8 @@ export const sidebarOrder: Record<string, string[]> = {
         '10-project-cli-task-manager',
         '11-rest-api',
         '12-deploy-vps-nginx',
+        '13-maven',
+        '14-gradle',
     ],
 
     // ------------------------------------------------------------------
@@ -111,7 +113,6 @@ export const sidebarOrder: Record<string, string[]> = {
     // Other
     // ------------------------------------------------------------------
     'other': [
-        'tech',
         'link-collections',
     ],
 };

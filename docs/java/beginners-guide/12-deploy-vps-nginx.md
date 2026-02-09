@@ -495,7 +495,12 @@ Local machine                          VPS
 
 ## What comes next
 
-You now have a Java REST API running in production. From here, you could:
+You now have a Java REST API running in production. The next two chapters cover **build tools** that make managing dependencies, compiling, and packaging much easier:
+
+- [Maven](./13-maven.md) -- the most widely used Java build tool, with Gson for JSON
+- [Gradle](./14-gradle.md) -- the modern alternative, with Jackson for JSON
+
+Beyond that, you could:
 
 - **Add a database** -- SQLite for simple apps, PostgreSQL for production
 - **Use a framework** -- Spring Boot, Quarkus, or Micronaut for more features
@@ -515,4 +520,4 @@ You now have a Java REST API running in production. From here, you could:
 - Deploy with a simple `rsync` + `systemctl restart` workflow.
 - Monitor with `journalctl` and a `/api/health` endpoint.
 
-Congratulations -- you have gone from writing `System.out.println("Hello, world!")` to deploying a live REST API. The fundamentals you have learned (types, OOP, collections, error handling, file I/O, HTTP) are the foundation for everything else in Java development. Keep building.
+Your REST API is live. Continue to [Maven](./13-maven.md) and [Gradle](./14-gradle.md) to learn how build tools manage dependencies, simplify packaging, and improve the API project with proper JSON libraries.

@@ -223,6 +223,15 @@ const config: Config = {
                     // Merged pages: dynamic-pathbrowser + assets-siderail -> custom-dialog-widgets
                     {from: '/aem/ui/dynamic-pathbrowser-rootpath/', to: '/aem/ui/custom-dialog-widgets/'},
                     {from: '/aem/ui/assets-siderail/', to: '/aem/ui/custom-dialog-widgets/'},
+
+                    // Flattened other/tech/ into other/
+                    {from: '/other/tech/', to: '/other/'},
+                    {from: '/other/tech/commands/', to: '/other/commands/'},
+                    {from: '/other/tech/docusaurus/', to: '/other/docusaurus/'},
+                    {from: '/other/tech/local-llm-for-coding/', to: '/other/local-llm-for-coding/'},
+                    {from: '/other/tech/mermaid-diagrams/', to: '/other/mermaid-diagrams/'},
+                    {from: '/other/tech/my-shell-setup/', to: '/other/my-shell-setup/'},
+                    {from: '/other/tech/sql-guide/', to: '/other/sql-guide/'},
                 ],
             },
         ],

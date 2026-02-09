@@ -354,6 +354,7 @@ jshell> /exit
 | **1 -- Fundamentals** | 1–6 | Variables, types, control flow, methods, OOP (classes, inheritance, interfaces) |
 | **2 -- Working with Data** | 7–9 | Collections, error handling, file I/O |
 | **3 -- Build & Deploy** | 10–12 | CLI task manager, REST API, deploy to a VPS with nginx |
+| **4 -- Build Tools** | 13–14 | Maven and Gradle -- dependency management, fat JARs, JSON libraries |
 
 Each chapter builds on the previous one. Code examples include expected output so you can verify your work. By chapter 12, you will have a running REST API on the internet.
 
