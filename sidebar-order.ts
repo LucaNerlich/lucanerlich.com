@@ -74,6 +74,28 @@ export const sidebarOrder: Record<string, string[]> = {
     ],
 
     // ------------------------------------------------------------------
+    // Java – beginners guide first, then individual topics
+    // ------------------------------------------------------------------
+    'java': [
+        'beginners-guide',
+    ],
+
+    'java/beginners-guide': [
+        '01-introduction',
+        '02-variables-and-types',
+        '03-control-flow',
+        '04-methods',
+        '05-classes-and-objects',
+        '06-inheritance-and-interfaces',
+        '07-collections',
+        '08-error-handling',
+        '09-file-io',
+        '10-project-cli-task-manager',
+        '11-rest-api',
+        '12-deploy-vps-nginx',
+    ],
+
+    // ------------------------------------------------------------------
     // Design Patterns – overview and reference first, then pattern groups
     // ------------------------------------------------------------------
     'design-patterns': [

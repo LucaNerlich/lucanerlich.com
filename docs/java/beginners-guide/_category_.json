@@ -1,0 +1,7 @@
+{
+    "label": "Beginners Guide",
+    "link": {
+        "type": "generated-index",
+        "description": "A comprehensive Java beginners guide — from your first class to deploying a REST API on a VPS with nginx."
+    }
+}
