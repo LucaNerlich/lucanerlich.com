@@ -117,6 +117,10 @@ const config = {
 
                     // Sidebar reorganization: ui group
                     {from: '/aem/extending-responsive-grid/', to: '/aem/ui/extending-responsive-grid/'},
+
+                    // Merged pages: dynamic-pathbrowser + assets-siderail → custom-dialog-widgets
+                    {from: '/aem/ui/dynamic-pathbrowser-rootpath/', to: '/aem/ui/custom-dialog-widgets/'},
+                    {from: '/aem/ui/assets-siderail/', to: '/aem/ui/custom-dialog-widgets/'},
                 ],
             },
         ],

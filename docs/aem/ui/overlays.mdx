@@ -4,22 +4,103 @@ sidebar_position: 3
 tags: [aem, ui, overlays]
 ---
 
-
 # Overlays
 
-To, for example, change the main authorui navigation, in crx/de right click and 'overlay node': /libs/cq/core/content/nav.
+Overlays (powered by the **Sling Resource Merger**) are AEM's mechanism for customising or extending
+the product UI **without modifying** the original files under `/libs`. By recreating a file with the
+same path under `/apps`, Sling merges your version with the original, letting you add, modify, hide,
+or replace individual nodes and properties.
 
-[Documentation](https://docs.adobe.com/content/help/en/experience-manager-64/developing/platform/overlays.html)
+This is how you customise the AEM Touch UI -- navigation items, console columns, dialog fields,
+toolbar actions, and more.
 
-## Hide Main Navigation Items
+```mermaid
+graph LR
+    Request["Request for /libs/cq/core/content/nav"]
+    Merger["Sling Resource Merger"]
+    Libs["/libs/cq/core/content/nav (product)"]
+    Apps["/apps/cq/core/content/nav (your overlay)"]
+    Result["Merged Result"]
 
-Add the following Overlay, to hide e.g "Personalization" from the Main AEM Homepage http://localhost:4502/aem/start.html.
+    Request --> Merger
+    Libs --> Merger
+    Apps --> Merger
+    Merger --> Result
+```
 
-Place the overlay here: `ui.apps/src/main/content/jcr_root/apps/cq/core/content/nav/.content.xml`.
+## How the Sling Resource Merger Works
 
-```xml
+The Sling Resource Merger is active by default in AEM. When a resource is requested, Sling checks
+both `/apps` and `/libs` (in that order) and **merges** them:
+
+| Scenario | Behaviour |
+|----------|----------|
+| Node exists only in `/libs` | Used as-is (product default) |
+| Node exists only in `/apps` | Added to the merged result |
+| Node exists in both `/libs` and `/apps` | `/apps` version wins (properties merged, `/apps` takes precedence) |
+| Node in `/apps` has `sling:hideResource=true` | Node is hidden from the merged result |
+| Node in `/apps` has `sling:hideChildren` | Specified child nodes are hidden |
+| Node in `/apps` has `sling:orderBefore` | Controls the order of the node relative to siblings |
+
+### Merger properties reference
+
+| Property | Type | Purpose |
+|----------|------|---------|
+| `sling:hideResource` | `Boolean` | Hides this node entirely from the merged result |
+| `sling:hideChildren` | `String[]` | Hides specific child nodes by name (e.g., `[child1, child2]`) |
+| `sling:hideProperties` | `String[]` | Hides specific properties from the merged result |
+| `sling:orderBefore` | `String` | Places this node before the named sibling in the merge order |
+
+---
+
+## Creating an Overlay
+
+### Via CRXDE Lite
+
+1. Navigate to the node you want to overlay in CRXDE Lite (e.g., `/libs/cq/core/content/nav`)
+2. Right-click the node and select **Overlay Node**
+3. Confirm the target path (`/apps/cq/core/content/nav`)
+4. CRXDE creates the matching structure under `/apps`
+5. Modify the overlay as needed
+
+### Via your project code
+
+For deployment via your Maven project, recreate the same directory structure under `ui.apps`:
+
+```text
+ui.apps/src/main/content/jcr_root/
+└── apps/
+    └── cq/
+        └── core/
+            └── content/
+                └── nav/
+                    └── .content.xml    ← Your overlay
+```
+
+Add the path to your `filter.xml`:
+
+```xml title="ui.apps/src/main/content/META-INF/vault/filter.xml"
+<filter root="/apps/cq/core/content/nav" mode="merge"/>
+```
+
+:::warning
+Always use `mode="merge"` in your filter for overlays. Using the default `mode="replace"` would
+delete all product nodes not present in your overlay, potentially breaking the UI.
+:::
+
+---
+
+## Practical Examples
+
+### Hide main navigation items
+
+Hide unwanted items from the AEM homepage (`http://localhost:4502/aem/start.html`):
+
+```xml title="ui.apps/.../apps/cq/core/content/nav/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
     jcr:primaryType="nt:unstructured"
     id="root">
     <projects jcr:primaryType="nt:unstructured"
@@ -35,234 +116,278 @@ Place the overlay here: `ui.apps/src/main/content/jcr_root/apps/cq/core/content/
 </jcr:root>
 ```
 
-## Add a button to the main navigation / Dashboard
+To find the node names of navigation items, inspect `/libs/cq/core/content/nav` in CRXDE.
 
-Create a new node / overlay here `ui.apps/src/main/content/jcr_root/apps/cq/core/content/nav/.content.xml`.
-This adds a new 'HelpDesk' button to the main navigation.
+### Add a custom navigation button
 
-```xml
+Add a "HelpDesk" link to the AEM homepage navigation:
+
+```xml title="ui.apps/.../apps/cq/core/content/nav/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
     jcr:primaryType="nt:unstructured">
     <helpdesk
         jcr:primaryType="nt:unstructured"
         jcr:title="HelpDesk"
-        href="https://adobe.com"
+        href="https://support.mycompany.com"
         icon="callCenter"
         order="{Long}1600"
         target="_blank"/>
 </jcr:root>
-
 ```
 
 ![Helpdesk button](/images/aem/ui/helpdesk.png)
 
-Fiddle around with the 'order' value to place the new button at the desired location.
-You can find the other buttons here `/libs/cq/core/content/nav`.
+Adjust the `order` value to position the button (lower numbers appear first). Inspect
+`/libs/cq/core/content/nav` to see the order values of existing items.
 
+### Customise Sites console columns
 
-## Select Audiofiles in the Assets Sidepanel
+Add or remove columns in the Sites console list view:
 
-This post explains, how you can add a simple overlay to allow authors to filter and select audio files in the assets
-sidepanel.
-
-### TL:DR
-
-1. Create audioController.js based on videoController.js
-2. Create ClientLibrary
-3. Deploy
-
-### Issue
-
-By default, the AEM Assets Sidepanel does not allow to filter by audio files and therefore an author cannot drag and
-drop these onto pages and components. This is a great addition, if you want to build components which let the user list
-and download to audio files, such as podcasts, songs or shows.
-
-The out of the box asset dropdown filters do not include a mime type for audio files. Therefore we need to add our own.
-
-![assetsidepanel](/images/aem/audiocontroller/assetsidepanel.png)
-
-### Solution
-
-Fortunately, the solution is quite simple. Adobe provides a bunch of xyzController.js files which control the current
-behaviour and are responsible for the asset sidepanel dropdown filter. We can reuse one of them, adapt to our needs,
-sideload it enjoy the possibility to filter by audio (or any other mimetypes).
-
-The controller provided by AEM can be found in this
-path `/libs/cq/gui/components/authoring/editors/clientlibs/core/js/assetController`. Almost all controller are very
-similar, their only real difference is the name, dropdown title/value and filtered mimetypes. Due to this, we can easily
-copy the `/libs/cq/gui/components/authoring/editors/clientlibs/core/js/assetController/video/videoController.js` for
-example and recreate it as an assetController.js.
-
-There are now two ways to go about this, creating an overlay or adding it to a new ClientLibrary. The latter is a much
-cleaner solution, but I will quickly explain the overlay variant as well.
-
-The mentioned audioController.js can be found added at the end of this
-post: [audioController.js example](#audiocontrollerjs-example).
-
-#### Overlay
-
-AEM allows to quickly "edit" / overwrite files, using the Sling Resource Merger mechanism -> or "creating an overlay".
-This works via recreating a file with the same name under the exact same directory strucutre, just in `/apps/` and not
-in `/libs/`.
-
-Therefore on could
-create `/apps/cq/gui/components/authoring/editors/clientlibs/core/js/assetController/audio/audioController.js` and add
-that file to an overlay of its ClientLibraries `/libs/cq/gui/components/authoring/editors/clientlibs/core/js.txt`
-aggregation file, which would also need an overlay at `/apps/cq/gui/components/authoring/editors/clientlibs/core/js.txt`
-
-```text
-[...]
-# asset controllers
-# Manuscripts are deprecated in AEM 6.2.  Use content fragments instead of manuscripts.
-assetController/video/videoController.js
-assetController/document/documentController.js
-# our new audioController
-assetController/audio/audioController.js
-[...]
-```
-
-However, this solution is not encouraged. Overlays should be used sparesly and especially not for altering
-ClientLibraries. This can lead to major issues and unwanted sideeffects when upgrading AEM, since Adobe can not take
-your added overlay into account when updating "their own / `libs`" files.
-
-#### Custom ClientLibrary
-
-A better and cleaner solution is to add the audioController.js to a new ClientLibrary `clientlib-sidepanel` and load it
-when necessary. The category we need in this case is `cq.authoring.dialog.all`. By loading our ClientLibrary for pages
-specifying this category, we make sure, that our added audioController gets loaded whenever we need it -> an author
-edits pages.
-
-The following files need to be created:
-
-- ui.apps/src/main/content/jcr_root/apps/[myapp]/clientlibs/clientlib-sidepanel/.content.xml
-
-```xml
+```xml title="ui.apps/.../apps/cq/core/content/sites/jcr:content/views/list/columns/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          jcr:primaryType="cq:ClientLibraryFolder"
-          categories="[cq.authoring.dialog.all]"
-          embed="[]"
-          allowProxy="{Boolean}true"/>
-```
-
-- ui.apps/src/main/content/jcr_root/apps/[myapp]/clientlibs/clientlib-sidepanel/js.txt
-
-```text
-#base=js
-
-audioController.js
-```
-
-- ui.apps/src/main/content/jcr_root/apps/[myapp]/clientlibs/clientlib-sidepanel/js/audioController.js
-
-After deployment, the assets sidepanel has a new `audio` filter dropdown entry and lists only files with audio
-mimetypes. Authors can now search and filter for songs etc.
-
-![assetsidepanel](/images/aem/audiocontroller/audiodropdown.png)
-
-##### Enable drag and drop
-
-Assets from the sidepanel can also be drag and dropped, if your component as a configured cq:editConfig node. This is a
-quick example for `ui.apps/src/main/content/jcr_root/apps/[myapp]/core/components/[mycomponent]/_cq_editConfig.xml`
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-          jcr:primaryType="cq:EditConfig">
-    <cq:dropTargets jcr:primaryType="nt:unstructured">
-        <file
-            jcr:primaryType="cq:DropTargetConfig"
-            accept="[application/pdf,audio/.*,video/.*,application/zip]"
-            groups="[media]"
-            propertyName="./link">
-            <parameters
-                jcr:primaryType="nt:unstructured"
-                sling:resourceType="[myapp]/core/components/[mycomponent]"/>
-        </file>
-    </cq:dropTargets>
-    <cq:listeners
-        jcr:primaryType="cq:EditListenersConfig"
-        afteredit="REFRESH_PAGE"/>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    jcr:primaryType="nt:unstructured">
+    <!-- Hide the "Published" column -->
+    <published jcr:primaryType="nt:unstructured"
+               sling:hideResource="{Boolean}true"/>
+    <!-- Add a custom column -->
+    <template jcr:primaryType="nt:unstructured"
+              jcr:title="Template"
+              sortable="{Boolean}true"
+              sling:orderBefore="published"/>
 </jcr:root>
 ```
 
-This config defines the accepted mimetypes for drag and dropped assets and clarifies the property and resourceType of
-the targeted jcr node / property. In this case, the property `./link` of the
-component `[myapp]/core/components/[mycomponent]` will be populated with the dropped files path.
+### Overlay a dialog field
 
-#### audioController.js example
+Change the default value or behaviour of a product dialog field. For example, modify the Core
+Component Image dialog to change a field label:
+
+```xml title="ui.apps/.../apps/core/wcm/components/image/v3/image/_cq_dialog/.content.xml (partial)"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured">
+    <content jcr:primaryType="nt:unstructured">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs jcr:primaryType="nt:unstructured">
+                <items jcr:primaryType="nt:unstructured">
+                    <properties jcr:primaryType="nt:unstructured">
+                        <items jcr:primaryType="nt:unstructured">
+                            <!-- Only override the specific field you need to change -->
+                            <alt jcr:primaryType="nt:unstructured"
+                                 fieldLabel="Accessibility Text (required)"
+                                 required="{Boolean}true"/>
+                        </items>
+                    </properties>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>
+```
+
+:::tip
+When overlaying dialogs, you only need to include the nodes on the **path** to the field you want
+to change. The Sling Resource Merger merges your changes with the original dialog. You do not need
+to copy the entire dialog XML.
+:::
+
+### Hide dialog fields with `sling:hideChildren`
+
+Remove specific fields from an inherited or overlaid dialog without replacing the entire node:
+
+```xml
+<items jcr:primaryType="nt:unstructured"
+       sling:hideChildren="[decorative,linkURL]">
+    <!-- The "decorative" and "linkURL" fields from /libs will be hidden -->
+</items>
+```
+
+### Override page properties tabs
+
+Add a custom tab to the page properties dialog:
+
+```xml title="ui.apps/.../apps/myproject/components/page/tabs/socialmedia/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Social Media"
+    sling:resourceType="granite/ui/components/coral/foundation/container"
+    sling:orderBefore="cloudservices">
+    <items jcr:primaryType="nt:unstructured">
+        <ogTitle jcr:primaryType="nt:unstructured"
+                 sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                 fieldLabel="OG Title"
+                 name="./ogTitle"/>
+        <ogDescription jcr:primaryType="nt:unstructured"
+                       sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+                       fieldLabel="OG Description"
+                       name="./ogDescription"/>
+        <ogImage jcr:primaryType="nt:unstructured"
+                 sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                 fieldLabel="OG Image"
+                 rootPath="/content/dam"
+                 name="./ogImage"/>
+    </items>
+</jcr:root>
+```
+
+---
+
+## Toolbar Action Customisation
+
+The AEM page editor toolbar provides actions for each editable component (Edit, Configure, Copy,
+Delete, etc.). You can customise these actions via client-side JavaScript.
+
+Available actions can be inspected in the browser console:
 
 ```javascript
-/*
- * ADOBE CONFIDENTIAL
- *
- * Copyright 2013 Adobe Systems Incorporated
- * All Rights Reserved.
- *
- * NOTICE:  All information contained herein is, and remains
- * the property of Adobe Systems Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Adobe Systems Incorporated and its
- * suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Adobe Systems Incorporated.
- */
-;
-(function ($, ns, channel, window, undefined) {
+// List all available toolbar actions
+Object.keys(Granite.author.EditorFrame.editableToolbar.config.actions);
+```
 
-    /**
-     * Asset Controller for the video type
-     *
-     * @memberOf Granite.author.ui.assetFinder
-     * @inner
-     * @alias audioAssetController
-     * @ignore
-     * @type {Granite.author.ui.assetFinder~AssetController}
-     */
+![Editable toolbar actions](/images/aem/ui/author.EditorFrame.editableToolbar.config.actions.png)
+
+### Disable the Edit Dialog button for a specific component
+
+Hide the "Configure" (wrench) button for a specific component type:
+
+```javascript title="ui.apps/.../clientlibs/clientlib-authoring/js/disableComponentEditing.js"
+(function($document, author) {
+    'use strict';
+
+    $document.on('cq-layer-activated', function(ev) {
+        if (ev.layer === 'Edit') {
+            var originalCondition = author.EditorFrame.editableToolbar.config.actions.CONFIGURE.condition;
+
+            author.EditorFrame.editableToolbar.config.actions.CONFIGURE.condition = function(editable) {
+                // Hide the configure button for this specific component
+                if (editable &&
+                    editable.config &&
+                    editable.config.dialog &&
+                    editable.config.dialog === '/apps/myproject/components/abstractcomponent/cq:dialog') {
+                    return false;
+                }
+                // Fall back to the original condition for all other components
+                return originalCondition.call(this, editable);
+            };
+        }
+    });
+
+})($(document), Granite.author);
+```
+
+### Disable the "Convert to Building Block" button
+
+```javascript title="ui.apps/.../clientlibs/clientlib-authoring/js/hideBuildingBlocks.js"
+(function($document, author) {
+    'use strict';
+
+    $document.on('cq-layer-activated', function(ev) {
+        if (ev.layer === 'Edit') {
+            author.EditorFrame.editableToolbar.config.actions.BBCONVERT.condition = function() {
+                return false;
+            };
+        }
+    });
+
+})($(document), Granite.author);
+```
+
+### Add a custom toolbar action
+
+```javascript title="ui.apps/.../clientlibs/clientlib-authoring/js/customToolbarAction.js"
+(function($document, author) {
+    'use strict';
+
+    $document.on('cq-layer-activated', function(ev) {
+        if (ev.layer === 'Edit') {
+            // Add a custom "Analytics" action to the toolbar
+            author.EditorFrame.editableToolbar.config.actions.ANALYTICS = {
+                icon: 'graphBarVertical',
+                text: 'View Analytics',
+                handler: function(editable) {
+                    var path = editable.path;
+                    window.open('/mnt/overlay/dam/gui/content/assets/analysisreport.html?path=' + path, '_blank');
+                },
+                condition: function(editable) {
+                    // Only show for page components
+                    return editable.type === 'wcm/foundation/components/responsivegrid';
+                }
+            };
+        }
+    });
+
+})($(document), Granite.author);
+```
+
+### Clientlib for toolbar customisations
+
+All toolbar JavaScript should be loaded via a clientlib with category `cq.authoring.dialog.all` or
+`cq.authoring.editor`:
+
+```xml title="ui.apps/.../clientlibs/clientlib-authoring/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:ClientLibraryFolder"
+    categories="[cq.authoring.dialog.all]"
+    allowProxy="{Boolean}true"/>
+```
+
+```text title="js.txt"
+#base=js
+disableComponentEditing.js
+hideBuildingBlocks.js
+customToolbarAction.js
+```
+
+---
+
+## Audio Asset Finder Controller
+
+By default, the AEM Assets side panel doesn't include an audio file filter. You can add one by
+registering a custom asset controller via a clientlib (preferred) rather than overlaying the product
+JS files.
+
+![assetsidepanel](/images/aem/audiocontroller/assetsidepanel.png)
+
+### Creating the audio controller
+
+The product controllers live at `/libs/cq/gui/components/authoring/editors/clientlibs/core/js/assetController`.
+Copy the pattern from `videoController.js` and change the `name` and `mimeType`:
+
+```javascript title="ui.apps/.../clientlibs/clientlib-sidepanel/js/audioController.js"
+;(function($, ns, channel, window, undefined) {
+    'use strict';
+
     var self = {},
         name = 'Audio';
 
-    // make the loadAssets function more flexible
     self.searchRoot = '/content/dam';
-    // open assets in the admin view (to edit properties)
     self.viewInAdminRoot = '/assetdetails.html{+item}';
 
     var searchPath = self.searchRoot,
         imageServlet = '/bin/wcm/contentfinder/asset/view.html',
         itemResourceType = 'cq/gui/components/authoring/assetfinder/asset';
 
-    /**
-     Pre asset type switch hook
-     */
-    self.setUp = function () {
-    };
+    self.setUp = function() {};
+    self.tearDown = function() {};
 
-    /**
-     Post asset type switch hook
-     */
-    self.tearDown = function () {
-    };
-
-    /**
-     *
-     * @param query {String} search query
-     * @param lowerLimit {Number} lower bound for paging
-     * @param upperLimit {Number} upper bound for paging
-     * @returns {jQuery.Promise}
-     */
-    self.loadAssets = function (query, lowerLimit, upperLimit) {
+    self.loadAssets = function(query, lowerLimit, upperLimit) {
         var param = {
-            '_dc': new Date().getTime(),  // cache killer
-            'query': query.concat("order:\"-jcr:content/jcr:lastModified\" "), // sort by jcr:content/jcr:lastModified property
-            // we specify audio files only:
+            '_dc': new Date().getTime(),
+            'query': query.concat('order:"-jcr:content/jcr:lastModified" '),
             'mimeType': 'audio',
-            'itemResourceType': itemResourceType, // single item rendering (cards)
-            'limit': lowerLimit + ".." + upperLimit,
+            'itemResourceType': itemResourceType,
+            'limit': lowerLimit + '..' + upperLimit,
             '_charset_': 'utf-8'
         };
 
@@ -274,95 +399,194 @@ component `[myapp]/core/components/[mycomponent]` will be populated with the dro
         });
     };
 
-    /**
-     * Set URL to image servlet
-     * @param {String} imgServlet - URL to image servlet
-     */
-    self.setServlet = function (imgServlet) {
-        imageServlet = imgServlet;
-    };
+    self.setServlet = function(servlet) { imageServlet = servlet; };
+    self.setSearchPath = function(path) { searchPath = path; };
+    self.setItemResourceType = function(rt) { itemResourceType = rt; };
+    self.resetSearchPath = function() { searchPath = self.searchRoot; };
 
-    self.setSearchPath = function (spath) {
-        searchPath = spath;
-    };
-
-    self.setItemResourceType = function (rt) {
-        itemResourceType = rt;
-    };
-
-    self.resetSearchPath = function () {
-        searchPath = self.searchRoot;
-    };
-
-    // register as a asset tab
+    // Register as an asset finder tab
     ns.ui.assetFinder.register(name, self);
 
 }(jQuery, Granite.author, jQuery(document), this));
-
 ```
 
-## Disabling the Edit Dialog Button
+### Clientlib setup
 
-You can console.log the available EditBar Actions, by looking at `author.EditorFrame.editableToolbar.config.actions.`.
-
-![Editable toolbar actions](/images/aem/ui/author.EditorFrame.editableToolbar.config.actions.png)
-
-```javascript title="disableComponentEditing.js"
-(function ($document, author) {
- $document.on('cq-layer-activated', function (ev) {
-  if (ev.layer === 'Edit') {
-   author.EditorFrame.editableToolbar.config.actions.CONFIGURE.condition = function (editable) {
-    if (editable &&
-     editable.config &&
-     editable.config.dialog &&
-     editable.config.dialog === '/apps/kaufland/core/components/content/abstractcomponent/cq:dialog') {
-     return false;
-    }
-    return author.pageInfoHelper.canModify() && editable.hasAction("CONFIGURE") && !!editable.config.dialog
-   }
-  }
- });
-})($(document), Granite.author);
-```
-
-```xml
-<!-- clientlib .content.xml -->
+```xml title="ui.apps/.../clientlibs/clientlib-sidepanel/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
- xmlns:jcr="http://www.jcp.org/jcr/1.0"
- jcr:primaryType="cq:ClientLibraryFolder"
- categories="[cq.authoring.dialog.all]"
- embed="[]"
- allowProxy="{Boolean}true"/>
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:ClientLibraryFolder"
+    categories="[cq.authoring.dialog.all]"
+    allowProxy="{Boolean}true"/>
 ```
 
-```text
+```text title="js.txt"
 #base=js
-disableComponentEditing.js
+audioController.js
 ```
 
-## Disabling the "Convert to Building Block" Button
+After deployment, a new "Audio" option appears in the asset finder dropdown.
 
-This works very similar to the above example, we just need to overwrite the condition for the button.
+### Enabling drag and drop for audio assets
 
-```javascript title="hideBuildingBlocksButton.js"
-(function ($document, author) {
-    $document.on('cq-layer-activated', function (ev) {
-        if (ev.layer === 'Edit') {
-            author.EditorFrame.editableToolbar.config.actions.BBCONVERT.condition = function (editable) {
-                return false;
-            }
-        }
-    });
-})($(document), Granite.author);
+Configure `_cq_editConfig.xml` to accept audio MIME types on your component:
+
+```xml title="ui.apps/.../components/mycomponent/_cq_editConfig.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:EditConfig">
+    <cq:dropTargets jcr:primaryType="nt:unstructured">
+        <file
+            jcr:primaryType="cq:DropTargetConfig"
+            accept="[application/pdf,audio/.*,video/.*,application/zip]"
+            groups="[media]"
+            propertyName="./fileReference">
+            <parameters
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="myproject/components/mycomponent"/>
+        </file>
+    </cq:dropTargets>
+    <cq:listeners
+        jcr:primaryType="cq:EditListenersConfig"
+        afteredit="REFRESH_PAGE"/>
+</jcr:root>
 ```
+
+The `accept` property uses regex patterns for MIME types. `audio/.*` matches all audio formats
+(MP3, WAV, OGG, etc.).
+
+---
+
+## Overlay vs `sling:resourceSuperType`
+
+There are two ways to customise AEM UI elements. Understanding the difference is important:
+
+| Approach | Mechanism | Use when |
+|----------|-----------|---------|
+| **Overlay** (`/apps` mirrors `/libs`) | Sling Resource Merger | Modifying product UI elements (navigation, consoles, product dialogs) |
+| **`sling:resourceSuperType`** | Component inheritance | Creating custom components that extend existing ones |
+
+```mermaid
+graph TD
+    subgraph Overlay
+        Libs1["/libs/cq/core/content/nav"]
+        Apps1["/apps/cq/core/content/nav"]
+        Merged1["Merged result"]
+
+        Libs1 --> Merged1
+        Apps1 --> Merged1
+    end
+
+    subgraph Inheritance
+        Parent["wcm/foundation/components/responsivegrid"]
+        Child["myproject/components/section-container"]
+
+        Parent -->|"sling:resourceSuperType"| Child
+    end
+```
+
+### When to overlay
+
+- Hiding navigation items, console columns, or toolbar buttons
+- Changing labels, default values, or field properties in product dialogs
+- Adding custom tabs to page properties
+- Modifying admin console behaviour
+
+### When to use inheritance
+
+- Creating custom components that extend Core Components or Foundation Components
+- Building container components that extend the responsive grid
+- Adding fields to a component dialog while keeping the parent dialog intact
+
+---
+
+## Best Practices
+
+### Keep overlays minimal
+
+Only overlay the **specific nodes and properties** you need to change. The Sling Resource Merger
+handles the rest. The less you overlay, the fewer conflicts you'll have on AEM upgrades.
+
+```xml
+<!-- ✅ Good: only change one property -->
+<alt jcr:primaryType="nt:unstructured"
+     fieldLabel="Accessibility Text (required)"
+     required="{Boolean}true"/>
+
+<!-- ❌ Bad: copy the entire dialog and change one field -->
+<!-- (Don't do this -- it breaks on AEM upgrades) -->
+```
+
+### Never overlay clientlibs
+
+Overlaying `/libs` clientlibs (`js.txt`, `css.txt`, or JS/CSS files) is fragile and breaks on AEM
+upgrades. Instead, create your own clientlib with the appropriate category and add your custom
+code there.
+
+### Use `mode="merge"` in filter.xml
+
+Always use merge mode for overlay paths:
+
+```xml
+<filter root="/apps/cq/core/content/nav" mode="merge"/>
+```
+
+Using the default `replace` mode would delete product nodes not in your overlay.
+
+### Document your overlays
+
+Overlays are "invisible" -- they only take effect at runtime. Document what each overlay does and
+why, so future developers know what was customised.
+
+### Test after AEM upgrades
+
+Adobe regularly updates `/libs` content. After every AEM upgrade or service pack, verify that your
+overlays still produce the expected result. Overlays that conflict with new product nodes can cause
+subtle UI bugs.
+
+### Use `sling:orderBefore` for positioning
+
+When adding new items (navigation buttons, dialog tabs), use `sling:orderBefore` to control
+placement rather than relying on JCR node ordering:
+
+```xml
+<myCustomTab jcr:primaryType="nt:unstructured"
+             jcr:title="My Tab"
+             sling:orderBefore="cloudservices"/>
+```
+
+---
+
+## Common Pitfalls
+
+| Pitfall | Solution |
+|---------|----------|
+| Overlay has no effect | Verify the path matches `/libs` exactly (case-sensitive); check `filter.xml` includes the overlay path |
+| Navigation item still visible after hiding | Clear browser cache and the AEM clientlib cache (`/libs/granite/ui/content/dumplibs.rebuild.html`) |
+| Overlay breaks after AEM upgrade | Minimise overlays; only overlay what you need; test after every upgrade |
+| `filter.xml` with `mode="replace"` deletes product content | Always use `mode="merge"` for overlay paths |
+| Dialog overlay doesn't merge correctly | Ensure you replicate the full **node path** from root to the target field (every parent node must exist) |
+| Custom navigation button doesn't appear | Check the `order` value; set it between existing items' order values |
+| Toolbar action JS doesn't load | Verify clientlib category is `cq.authoring.dialog.all` or `cq.authoring.editor` |
+| Overlay only works in CRXDE, not after deploy | Add the overlay path to `filter.xml` and ensure it's included in the content package |
+
+## External Resources
+
+- [Overlays Documentation](https://experienceleague.adobe.com/docs/experience-manager-65/content/implementing/developing/platform/overlays.html)
+- [Sling Resource Merger](https://sling.apache.org/documentation/bundles/resource-merger.html)
+- [Customising the AEM Sites Console](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/implementing/developing/customizing-consoles.html)
 
 ## See also
 
-- [Touch UI (Author UI)](./touch-ui.mdx)
-- [Coral UI](./coral-ui.mdx)
-- [Render conditions](./render-conditions.mdx)
-- [Assets Siderail](./assets-siderail.md)
-- [Component dialogs](../component-dialogs.mdx)
-- [Custom Component Guide](../custom-component.mdx)
-- [Client libraries](../client-libraries.mdx)
+- [Touch UI (Author UI)](./touch-ui.mdx) -- Touch UI architecture
+- [Coral UI](./coral-ui.mdx) -- client-side component library
+- [Render Conditions](./render-conditions.mdx) -- conditionally show/hide UI elements
+- [Custom Dialog Widgets](./custom-dialog-widgets.md) -- dynamic pathfields, asset finder roots, datasources
+- [Component Dialogs](../component-dialogs.mdx) -- dialog field types
+- [Custom Component Guide](../custom-component.mdx) -- component inheritance
+- [Client Libraries](../client-libraries.mdx) -- loading custom JS/CSS
+- [Extending the Responsive Grid](./extending-responsive-grid.md) -- container components via inheritance
