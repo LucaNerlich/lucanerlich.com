@@ -51,14 +51,14 @@ graph LR
 
 ## When to Use App Builder
 
-| Use case | Why App Builder? |
-|----------|-----------------|
-| **React to AEM events** (page publish, asset upload, CF changes) | I/O Events + Runtime Actions = event-driven, no AEM code needed |
-| **Third-party integrations** (PIM sync, CRM enrichment, translation APIs) | Serverless actions run outside AEM; no OSGi bundle deployment |
-| **Custom asset processing** (watermarking, metadata enrichment, format conversion) | Asset Compute workers extend the DAM processing pipeline |
-| **Backend-for-frontend** (custom APIs for SPAs or mobile apps) | Lightweight HTTP endpoints with built-in auth |
-| **Custom AEM UIs** (admin panels, dashboards, content tools) | SPA hosted on Adobe CDN, integrated into AEM Shell |
-| **Bulk operations** (migration scripts, batch metadata updates) | Long-running orchestration without tying up AEM threads |
+| Use case                                                                           | Why App Builder?                                                |
+|------------------------------------------------------------------------------------|-----------------------------------------------------------------|
+| **React to AEM events** (page publish, asset upload, CF changes)                   | I/O Events + Runtime Actions = event-driven, no AEM code needed |
+| **Third-party integrations** (PIM sync, CRM enrichment, translation APIs)          | Serverless actions run outside AEM; no OSGi bundle deployment   |
+| **Custom asset processing** (watermarking, metadata enrichment, format conversion) | Asset Compute workers extend the DAM processing pipeline        |
+| **Backend-for-frontend** (custom APIs for SPAs or mobile apps)                     | Lightweight HTTP endpoints with built-in auth                   |
+| **Custom AEM UIs** (admin panels, dashboards, content tools)                       | SPA hosted on Adobe CDN, integrated into AEM Shell              |
+| **Bulk operations** (migration scripts, batch metadata updates)                    | Long-running orchestration without tying up AEM threads         |
 
 ### When NOT to use App Builder
 
@@ -106,14 +106,14 @@ graph TD
     Web -->|invokes| API
 ```
 
-| Component | Description |
-|-----------|-------------|
-| **Runtime Actions** | Serverless Node.js functions (max 60s default, 10 min with async) |
-| **Web Assets** | Optional React SPA served from Adobe's CDN, embedded in AEM Shell |
-| **Files SDK** | Cloud file storage (Azure Blob under the hood) for temporary/persistent files |
-| **State SDK** | Key-value store (Azure Cosmos DB) for caching, state, and configuration |
-| **I/O Events** | Pub/sub event system -- AEM publishes events, actions consume them |
-| **Adobe IMS** | OAuth 2.0 authentication and service-to-service tokens |
+| Component           | Description                                                                   |
+|---------------------|-------------------------------------------------------------------------------|
+| **Runtime Actions** | Serverless Node.js functions (max 60s default, 60 min with async)             |
+| **Web Assets**      | Optional React SPA served from Adobe's CDN, embedded in AEM Shell             |
+| **Files SDK**       | Cloud file storage (Azure Blob under the hood) for temporary/persistent files |
+| **State SDK**       | Key-value store (Azure Cosmos DB) for caching, state, and configuration       |
+| **I/O Events**      | Pub/sub event system -- AEM publishes events, actions consume them            |
+| **Adobe IMS**       | OAuth 2.0 authentication and service-to-service tokens                        |
 
 ### Execution Model
 
