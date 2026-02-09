@@ -52,6 +52,28 @@ export const sidebarOrder: Record<string, string[]> = {
     ],
 
     // ------------------------------------------------------------------
+    // JavaScript – beginners guide first, then individual topics
+    // ------------------------------------------------------------------
+    'javascript': [
+        'beginners-guide',
+    ],
+
+    'javascript/beginners-guide': [
+        '01-introduction',
+        '02-variables-and-types',
+        '03-control-flow',
+        '04-functions',
+        '05-arrays',
+        '06-objects',
+        '07-html-css-essentials',
+        '08-the-dom',
+        '09-events',
+        '10-working-with-data',
+        '11-project-build-a-website',
+        '12-deploy-vps-nginx',
+    ],
+
+    // ------------------------------------------------------------------
     // Design Patterns – overview and reference first, then pattern groups
     // ------------------------------------------------------------------
     'design-patterns': [
