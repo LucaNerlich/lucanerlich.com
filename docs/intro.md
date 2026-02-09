@@ -17,26 +17,37 @@ Practical guides and reference documentation for <strong>Adobe Experience Manage
 
 ## Documentation
 
-### [AEM -- 40+ pages](./aem/architecture.mdx)
+### [AEM](./aem/architecture.mdx)
 
-Comprehensive Adobe Experience Manager documentation covering the full stack: architecture, components, HTL templates, Sling Models, OSGi services, Client Libraries, Content Fragments, Dispatcher, security, and AEM as a Cloud Service.
+Comprehensive Adobe Experience Manager documentation covering the full stack -- from architecture and components to Dispatcher, security, and AEM as a Cloud Service.
 
-**Popular pages:**
-[Component Dialogs](./aem/component-dialogs.mdx) | [Architecture](./aem/architecture.mdx) | [HTL Templates](./aem/htl-templates.mdx) | [Custom Component Guide](./aem/custom-component.mdx) | [Sling Models](./aem/backend/sling-models.mdx) | [Groovy Console](./aem/groovy-console.mdx) | [Client Libraries](./aem/client-libraries.mdx) | [Workflows](./aem/backend/workflows.mdx)
+- [Architecture](./aem/architecture.mdx) -- How Sling, JCR, and OSGi fit together in the AEM request processing pipeline
+- [Component Dialogs](./aem/component-dialogs.mdx) -- Copy-paste reference for the most useful Granite UI dialog widgets
+- [Custom Component Guide](./aem/custom-component.mdx) -- Step-by-step walkthrough: Sling Model, dialog, HTL template, and clientlib
+- [HTL Templates](./aem/htl-templates.mdx) -- Sightly syntax, block elements, expression language, and XSS protection
+- [Sling Models](./aem/backend/sling-models.mdx) -- Annotations, injectors, exporters, testing, and best practices
+- [Client Libraries](./aem/client-libraries.mdx) -- Clientlib categories, dependencies, embedding, and the HTML Library Manager
+- [Groovy Console](./aem/groovy-console.mdx) -- Interactive scripting for content operations, migrations, and debugging
+- [Workflows](./aem/backend/workflows.mdx) -- Business process mapping, custom process steps, and launchers
 
-### [Java -- 14 pages](./java/java-streams.md)
+### [Java](./java/java-streams.md)
 
-Core Java language guides independent of any framework: Streams, Generics, Optionals, Concurrency (including Virtual Threads), Collections, JSON processing with Jackson, HTTP clients, testing with JUnit 5 and Mockito, Maven, and logging.
+Core Java language guides independent of any framework -- practical examples, pitfall tables, and patterns you can apply immediately.
 
-**Popular pages:**
-[Streams and Collectors](./java/java-streams.md) | [Modern Java Features](./java/modern-java-features.md) | [Concurrency](./java/concurrency.md) | [Testing](./java/testing.md) | [Generics](./java/generics.md) | [Error Handling](./java/error-handling.md)
+- [Streams and Collectors](./java/java-streams.md) -- Stream pipelines, groupingBy, partitioningBy, and parallel streams
+- [Modern Java Features](./java/modern-java-features.md) -- Records, sealed classes, pattern matching, and a Java 11-to-21 feature table
+- [Concurrency](./java/concurrency.md) -- Threads, ExecutorService, CompletableFuture, and Virtual Threads
+- [Generics](./java/generics.md) -- Bounded types, wildcards, the PECS principle, and type erasure
+- [Testing](./java/testing.md) -- JUnit 5, Mockito mocking, AssertJ assertions, and parameterised tests
+- [Error Handling](./java/error-handling.md) -- Checked vs unchecked exceptions, try-with-resources, and the Result pattern
 
-### [JavaScript -- 7 pages](./javascript/javascript-intl-api-formatting.md)
+### [JavaScript](./javascript/javascript-intl-api-formatting.md)
 
-Practical JavaScript and TypeScript topics: the Intl API for formatting, async/await patterns, error handling, performance optimisation, JSON parsing, input sanitisation, and browser storage.
+Practical JavaScript and TypeScript topics with code examples and browser compatibility notes.
 
-**Popular pages:**
-[Intl API Formatting](./javascript/javascript-intl-api-formatting.md) | [Async/Await Patterns](./javascript/async-await-guide.md) | [Error Handling](./javascript/javascript-error-handling.md)
+- [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) -- Locale-aware number, date, currency, and relative time formatting
+- [Async/Await Patterns](./javascript/async-await-guide.md) -- Promises, error handling, concurrency control, and common pitfalls
+- [Error Handling](./javascript/javascript-error-handling.md) -- Custom error classes, global handlers, and structured error reporting
 
 ### [Design Patterns](./design-patterns/overview.mdx)
 
