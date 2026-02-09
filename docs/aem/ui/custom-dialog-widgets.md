@@ -617,4 +617,5 @@ return rootPath;
 - [Coral UI](./coral-ui.mdx) -- client-side dialog scripting
 - [Touch UI](./touch-ui.mdx)
 - [Client Libraries](../client-libraries.mdx) -- loading authoring clientlibs
+- [Tags and Taxonomies](../content/tags-taxonomies.md) -- tag-based DataSources
 - [Multi-Tenancy UI Frontend](./multi-tenancy-support-ui-frontend.mdx) -- multi-tenant frontend patterns

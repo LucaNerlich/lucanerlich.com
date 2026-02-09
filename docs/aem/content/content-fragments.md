@@ -836,4 +836,6 @@ curl -u admin:admin \
 - [HTL Templates](../htl-templates.mdx) -- rendering fragment data
 - [Architecture](../architecture.mdx) -- content model and resource resolution
 - [Component Dialogs](../component-dialogs.mdx) -- Content Fragment picker field
+- [Experience Fragments](./experience-fragments.md) -- XF vs CF comparison
+- [Tags and Taxonomies](./tags-taxonomies.md) -- tagging fragments
 - [Groovy Console](../groovy-console.mdx) -- bulk fragment operations

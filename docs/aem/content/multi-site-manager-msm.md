@@ -736,5 +736,7 @@ Tools > Operations > Web Console > Day CQ WCM Rollout Conflict Handler
 - [Replication and Activation](./replication-activation.mdx) -- publishing Live Copies
 - [Workflows](../backend/workflows.mdx) -- translation and approval workflows
 - [Groovy Console](../groovy-console.mdx) -- bulk MSM operations
+- [i18n and Translation](./i18n-translation.md) -- language copies, translation framework
+- [Experience Fragments](./experience-fragments.md) -- multi-site XFs
 - [Dispatcher Configuration](../infrastructure/dispatcher-configuration.mdx)
 - [Deployment](../infrastructure/deployment.mdx)

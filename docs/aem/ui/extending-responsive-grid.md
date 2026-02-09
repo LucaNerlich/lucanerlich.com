@@ -710,5 +710,6 @@ Nested responsive grids (a container inside a container inside a container) work
 - [Client Libraries](../client-libraries.mdx) -- including grid CSS
 - [Sling Models](../backend/sling-models.mdx) -- `@Self`, `@Via`, `@Delegate`
 - [HTL Templates](../htl-templates.mdx) -- `data-sly-resource` and `resourceSuperType`
+- [SPA Editor](./spa-editor.md) -- SPA Editor SDK and component mapping
 - [Touch UI](./touch-ui.mdx) -- page editor and authoring experience
 - [Multi-Tenancy UI Frontend](./multi-tenancy-support-ui-frontend.mdx)

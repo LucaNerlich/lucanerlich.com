@@ -482,6 +482,527 @@ Run the validator as a Git pre-commit hook so that broken configurations never r
 
 ---
 
+## CDN Configuration (`cdn.yaml`)
+
+In AEMaaCS, an **Adobe-managed CDN** (Fastly) sits in front of the Dispatcher. You can
+configure its behaviour declaratively using a `cdn.yaml` file deployed via the
+**Cloud Manager config pipeline**. This gives you control over request/response
+transformations, server-side redirects, origin selection, and traffic filter rules --
+all at the CDN edge, before traffic even reaches the Dispatcher.
+
+```mermaid
+graph LR
+    Client["Client (Browser)"]
+    CDN["CDN (Fastly)"]
+    Dispatcher["Dispatcher (Apache)"]
+    Publish["AEM Publish"]
+
+    Client --> CDN
+    CDN -->|"cdn.yaml rules applied here"| Dispatcher
+    Dispatcher --> Publish
+```
+
+### Setup
+
+1. Create a file named `cdn.yaml` under a top-level `config/` folder in your Git repository
+2. All rules share a common envelope:
+
+```yaml
+kind: "CDN"
+version: "1"
+data:
+  # rule sections go here
+  requestTransformations: ...
+  responseTransformations: ...
+  redirects: ...
+  originSelectors: ...
+```
+
+3. Deploy via a **Config Pipeline** in Cloud Manager
+4. The cumulative file size (including traffic filter rules) must not exceed **100 KB**
+
+### Evaluation Order
+
+When a request arrives at the CDN, rules are evaluated in this order:
+
+```mermaid
+graph TD
+    A["1. Traffic Filter Rules (WAF)"] --> B["2. Request Transformations"]
+    B --> C["3. Origin Selectors"]
+    C --> D["4. Response Transformations"]
+    D --> E["5. Server-side Redirects"]
+```
+
+---
+
+### Request Transformations
+
+Request transformations modify **incoming requests** before they reach the Dispatcher.
+You can set, unset, or transform headers, paths, query parameters, and cookies.
+
+```yaml
+data:
+  requestTransformations:
+    removeMarketingParams: true
+    rules:
+      - name: set-custom-header
+        when:
+          reqProperty: path
+          like: /api/*
+        actions:
+          - type: set
+            reqHeader: x-api-version
+            value: "2"
+
+      - name: strip-html-extension
+        when:
+          reqProperty: path
+          like: "*.html"
+        actions:
+          - type: transform
+            reqProperty: path
+            op: replace
+            match: '\.html$'
+            replacement: ""
+
+      - name: lowercase-path
+        when:
+          reqProperty: path
+          matches: ".*[A-Z].*"
+        actions:
+          - type: transform
+            reqProperty: path
+            op: tolower
+
+      - name: unset-debug-params
+        when:
+          reqProperty: path
+          like: "*"
+        actions:
+          - type: unset
+            queryParamMatch: "^(debug|wcmmode|_=).*$"
+```
+
+**`removeMarketingParams: true`** automatically strips common tracking parameters
+(`utm_*`, `fbclid`, `gclid`, etc.) from the query string, improving cache hit ratios.
+
+#### Available actions
+
+| Action | Properties | Description |
+|--------|-----------|-------------|
+| **set** | `reqHeader` / `reqProperty` / `queryParam` / `reqCookie` / `var`, `value` | Set a header, path, query param, cookie, or variable |
+| **unset** | `reqHeader` / `queryParam` / `reqCookie` / `queryParamMatch` | Remove a header, param, or cookie. `queryParamMatch` accepts a regex |
+| **transform** | `op: replace`, `match`, `replacement` | Regex replace on a property |
+| **transform** | `op: tolower` | Lowercase a property value |
+
+#### Variables
+
+You can set variables during request transformations and reference them later in
+response transformations or redirects:
+
+```yaml
+data:
+  requestTransformations:
+    rules:
+      - name: extract-country
+        when:
+          reqProperty: path
+          matches: "^/([a-zA-Z]{2})(/.*|$)"
+        actions:
+          - type: set
+            var: country-code
+            value:
+              reqProperty: path
+          - type: transform
+            var: country-code
+            op: replace
+            match: "^/([a-zA-Z]{2})(/.*|$)"
+            replacement: '\1'
+
+  responseTransformations:
+    rules:
+      - name: set-country-header
+        when:
+          var: country-code
+          equals: de
+        actions:
+          - type: set
+            respHeader: x-country
+            value: germany
+```
+
+---
+
+### Response Transformations
+
+Response transformations modify **outgoing responses** before they reach the client.
+Set or remove headers, cookies, and even override the HTTP status code.
+
+```yaml
+data:
+  responseTransformations:
+    rules:
+      - name: security-headers
+        when: "*"
+        actions:
+          - type: set
+            respHeader: X-Content-Type-Options
+            value: nosniff
+          - type: set
+            respHeader: X-Frame-Options
+            value: SAMEORIGIN
+          - type: set
+            respHeader: Referrer-Policy
+            value: strict-origin-when-cross-origin
+
+      - name: remove-server-header
+        when: "*"
+        actions:
+          - type: unset
+            respHeader: Server
+
+      - name: set-cache-for-static
+        when:
+          reqProperty: path
+          like: "/etc.clientlibs/*"
+        actions:
+          - type: set
+            respHeader: Cache-Control
+            value: "public, max-age=31536000, immutable"
+
+      - name: set-cookie-with-attributes
+        when:
+          reqProperty: path
+          like: /login
+        actions:
+          - type: set
+            respCookie: session-hint
+            value: active
+            attributes:
+              path: /
+              secure: true
+              httpOnly: true
+```
+
+#### Available actions
+
+| Action | Properties | Description |
+|--------|-----------|-------------|
+| **set** | `respHeader` / `respCookie` / `respProperty`, `value` | Set a response header, cookie, or property (`status`) |
+| **unset** | `respHeader` / `respCookie` | Remove a response header or cookie |
+
+---
+
+### Server-Side Redirects
+
+Declare 301/302 redirects that are handled entirely at the CDN edge -- no request
+reaches the Dispatcher or AEM:
+
+```yaml
+data:
+  redirects:
+    rules:
+      - name: old-site-redirect
+        when:
+          reqProperty: path
+          equals: "/old-page.html"
+        action:
+          type: redirect
+          status: 301
+          location: https://www.example.com/new-page
+
+      - name: trailing-slash-redirect
+        when:
+          reqProperty: path
+          matches: "^(.+)/$"
+        action:
+          type: redirect
+          status: 301
+          location:
+            reqProperty: path
+            transform:
+              - op: replace
+                match: "^(.+)/$"
+                replacement: '\1'
+
+      - name: www-redirect
+        when:
+          reqProperty: domain
+          equals: "example.com"
+        action:
+          type: redirect
+          status: 301
+          location:
+            reqProperty: url
+            transform:
+              - op: replace
+                match: "^/(.*)$"
+                replacement: 'https://www.example.com/\1'
+
+      - name: country-redirect
+        when:
+          reqProperty: path
+          equals: "/"
+        action:
+          type: redirect
+          status: 302
+          location:
+            reqProperty: clientCountry
+            transform:
+              - op: replace
+                match: "^(.*)$"
+                replacement: 'https://www.example.com/\1/home'
+              - op: tolower
+```
+
+The `location` can be a **static string** or a **dynamic value** derived from request
+properties with optional transforms (regex replace, tolower).
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `status` | `301` | HTTP status code. Allowed: 301, 302, 303, 307, 308 |
+| `location` | (required) | Absolute or relative redirect target |
+
+---
+
+### Origin Selectors
+
+Origin selectors let you **proxy traffic to different backends** based on request
+properties. This is how you route paths to non-AEM services (external APIs, Edge
+Delivery Services, etc.) through the same CDN domain.
+
+```yaml
+data:
+  originSelectors:
+    rules:
+      - name: api-backend
+        when:
+          reqProperty: path
+          like: /api/v2/*
+        action:
+          type: selectOrigin
+          originName: api-server
+          # skipCache: true
+
+      - name: edge-delivery-content
+        when:
+          allOf:
+            - reqProperty: tier
+              equals: publish
+            - reqProperty: path
+              matches: "^(/scripts/.*|/styles/.*|/fonts/.*|/blocks/.*|/icons/.*|.*/media_.*)"
+        action:
+          type: selectOrigin
+          originName: eds-origin
+
+    origins:
+      - name: api-server
+        domain: api.example.com
+        forwardHost: true
+        timeout: 30
+
+      - name: eds-origin
+        domain: main--repo--owner.aem.live
+        forwardHost: true
+        forwardCookie: true
+```
+
+#### Proxying to Edge Delivery Services
+
+A common pattern is serving some paths from traditional AEM Publish and others from
+Edge Delivery Services (EDS), all under the same domain:
+
+```yaml
+origins:
+  - name: aem-live
+    domain: main--mysite--myorg.aem.live
+
+rules:
+  - name: eds-static-assets
+    when:
+      allOf:
+        - reqProperty: tier
+          equals: publish
+        - reqProperty: domain
+          equals: www.example.com
+        - reqProperty: path
+          matches: "^(/scripts/.*|/styles/.*|/fonts/.*|/blocks/.*|/icons/.*)"
+    action:
+      type: selectOrigin
+      originName: aem-live
+```
+
+#### Proxying to AEM static tier
+
+For static resources deployed via the front-end pipeline, use `selectAemOrigin`:
+
+```yaml
+rules:
+  - name: static-assets
+    when:
+      reqProperty: domain
+      equals: static.example.com
+    action:
+      type: selectAemOrigin
+      originName: static
+```
+
+#### Origin properties
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `domain` | (required) | Backend hostname (also used for SSL SNI) |
+| `ip` | (auto) | Override DNS resolution with a fixed IP |
+| `forwardHost` | `false` | Pass the original `Host` header to the backend |
+| `forwardCookie` | `false` | Pass cookies to the backend |
+| `forwardAuthorization` | `false` | Pass the `Authorization` header to the backend |
+| `timeout` | `60` | Seconds to wait for the first response byte |
+
+---
+
+### Custom Log Properties
+
+Add custom fields to your CDN logs for observability:
+
+```yaml
+data:
+  requestTransformations:
+    rules:
+      - name: log-forwarded-host
+        when: "*"
+        actions:
+          - type: set
+            logProperty: forwarded_host
+            value:
+              reqHeader: x-forwarded-host
+
+  responseTransformations:
+    rules:
+      - name: log-cache-status
+        when: "*"
+        actions:
+          - type: set
+            logProperty: cache_control
+            value:
+              respHeader: cache-control
+```
+
+The custom fields appear in your CDN log entries alongside the standard fields
+(`timestamp`, `url`, `status`, `cache`, `pop`, etc.).
+
+---
+
+### Complete Example
+
+Here is a production-ready `cdn.yaml` that combines several patterns:
+
+```yaml
+kind: "CDN"
+version: "1"
+data:
+  requestTransformations:
+    removeMarketingParams: true
+    rules:
+      - name: strip-html-extension
+        when:
+          reqProperty: path
+          matches: "^/content/.*\\.html$"
+        actions:
+          - type: transform
+            reqProperty: path
+            op: replace
+            match: '\.html$'
+            replacement: ""
+
+      - name: log-real-ip
+        when: "*"
+        actions:
+          - type: set
+            logProperty: real_ip
+            value:
+              reqHeader: x-forwarded-for
+
+  responseTransformations:
+    rules:
+      - name: security-headers
+        when: "*"
+        actions:
+          - type: set
+            respHeader: X-Content-Type-Options
+            value: nosniff
+          - type: set
+            respHeader: X-Frame-Options
+            value: SAMEORIGIN
+          - type: set
+            respHeader: Strict-Transport-Security
+            value: "max-age=63072000; includeSubDomains; preload"
+
+      - name: long-cache-clientlibs
+        when:
+          reqProperty: path
+          like: "/etc.clientlibs/*"
+        actions:
+          - type: set
+            respHeader: Cache-Control
+            value: "public, max-age=31536000, immutable"
+
+  redirects:
+    rules:
+      - name: enforce-www
+        when:
+          reqProperty: domain
+          equals: example.com
+        action:
+          type: redirect
+          status: 301
+          location:
+            reqProperty: url
+            transform:
+              - op: replace
+                match: "^/(.*)$"
+                replacement: 'https://www.example.com/\1'
+
+      - name: legacy-pages
+        when:
+          reqProperty: path
+          equals: "/old-about.html"
+        action:
+          type: redirect
+          status: 301
+          location: /about
+```
+
+---
+
+### CDN Configuration Best Practices
+
+**Keep the file under 100 KB.** The CDN config file has a hard size limit. For large
+redirect lists, consider moving them into a Sling redirect map or the Dispatcher rewrite
+rules instead.
+
+**Use `removeMarketingParams: true`.** This single setting strips `utm_*`, `fbclid`,
+`gclid`, and similar tracking parameters, significantly improving CDN cache hit ratios.
+
+**Add security headers at the CDN.** Headers like `Strict-Transport-Security`,
+`X-Content-Type-Options`, and `X-Frame-Options` are best set at the edge so they apply
+to all responses, including error pages and redirects.
+
+**Test with the config pipeline.** Deploy CDN config changes through a dedicated config
+pipeline in Cloud Manager. Changes take effect within minutes.
+
+**Use variables for complex logic.** Extract values in request transformations and
+reference them in response transformations to avoid duplicating match logic.
+
+**Don't duplicate Dispatcher rules.** If a redirect or rewrite can be handled at the CDN
+edge, do it there. Reserve Dispatcher rewrite rules for backend-specific transformations
+that need access to the AEM response.
+
+:::tip
+For the full specification, see the [Adobe documentation on CDN traffic configuration](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/cdn-configuring-traffic).
+:::
+
+---
+
 ## Common Pitfalls
 
 ### 1. Overly Broad Allow Rules
@@ -540,4 +1061,6 @@ Always run `./bin/validator full` before committing. Cloud Manager will reject d
 - [Local development setup](./aem-dev-setup.md)
 - [Performance](./performance.mdx)
 - [Security basics](./security.mdx)
+- [Edge Delivery Services](./helix.mdx) -- CDN origin selectors for EDS integration
 - [Testing](./testing.mdx)
+- [Adobe CDN Traffic Configuration docs](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/cdn-configuring-traffic)
