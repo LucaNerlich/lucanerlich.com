@@ -35,6 +35,7 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-lock.yaml ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
 COPY --from=builder /app/docusaurus.config.ts ./
+COPY --from=builder /app/sidebar-order.ts ./
 COPY --from=builder /app/sidebars.js ./
 COPY --from=builder /app/umami.js ./
 COPY --from=builder /app/src/css/custom.css ./src/css/custom.css

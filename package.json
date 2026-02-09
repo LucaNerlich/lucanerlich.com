@@ -1,7 +1,7 @@
 {
     "name": "lucanerlich.com",
     "version": "1.0.0",
-    "private": false,
+    "private": true,
     "scripts": {
         "docusaurus": "docusaurus",
         "start": "docusaurus start",

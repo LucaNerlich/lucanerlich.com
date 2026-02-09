@@ -4,6 +4,5 @@
         "slug": "/strapi",
         "type": "generated-index",
         "description": "Practical guides for common Strapi CMS challenges: custom controllers, middleware, lifecycle hooks, authentication, relations, admin customization, and deployment."
-    },
-    "position": 1
+    }
 }

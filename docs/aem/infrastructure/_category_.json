@@ -5,6 +5,5 @@
 
         "type": "generated-index",
         "description": "Development setup, deployment, Dispatcher, cloud service, performance, security, and testing."
-    },
-    "position": 11
+    }
 }

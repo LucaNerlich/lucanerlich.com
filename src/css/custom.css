@@ -1,10 +1,11 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Global styles – Infima CSS framework overrides.
+ * Uses CSS custom properties so colours adapt between light and dark mode.
  */
 
-/* You can override the default Infima variables here. */
+/* ------------------------------------------------------------------ */
+/* Infima palette                                                     */
+/* ------------------------------------------------------------------ */
 :root {
     --ifm-color-primary: #25c2a0;
     --ifm-color-primary-dark: rgb(33, 175, 144);
@@ -14,8 +15,28 @@
     --ifm-color-primary-lighter: rgb(102, 212, 189);
     --ifm-color-primary-lightest: rgb(146, 224, 208);
     --ifm-code-font-size: 95%;
+
+    /* Custom theme tokens – light mode defaults */
+    --custom-accent-red: #d40000;
+    --custom-accent-green: #148a3c;
+    --custom-accent-purple: #3b38cc;
+    --custom-accent-gold: #a67c00;
+    --custom-accent-amber: #c08800;
+    --custom-muted: #606060;
 }
 
+html[data-theme='dark'] {
+    --custom-accent-red: #ff4040;
+    --custom-accent-green: #2dd460;
+    --custom-accent-purple: #6c68ff;
+    --custom-accent-gold: #daa520;
+    --custom-accent-amber: #ffb000;
+    --custom-muted: #999999;
+}
+
+/* ------------------------------------------------------------------ */
+/* Code highlighting                                                  */
+/* ------------------------------------------------------------------ */
 .docusaurus-highlight-code-line {
     background-color: rgba(0, 0, 0, 0.1);
     display: block;
@@ -24,64 +45,69 @@
 }
 
 html[data-theme='dark'] .docusaurus-highlight-code-line {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* ------------------------------------------------------------------ */
+/* Admonitions / alerts                                               */
+/* ------------------------------------------------------------------ */
 .alert {
     margin-bottom: 1em;
 }
 
+/* ------------------------------------------------------------------ */
+/* Navbar colour accents                                              */
+/* ------------------------------------------------------------------ */
 .font-purple {
-    color: #4945ff;
+    color: var(--custom-accent-purple);
 }
 
 .font-red {
-    color: #ff0000;
+    color: var(--custom-accent-red);
 }
 
 .font-green {
-    color: #19c256;
+    color: var(--custom-accent-green);
 }
 
 .font-red > div > a {
-    color: #ff0000;
+    color: var(--custom-accent-red);
 }
 
+/* ------------------------------------------------------------------ */
+/* Sidebar category & hero-doc colours                                */
+/* ------------------------------------------------------------------ */
 .theme-doc-sidebar-item-category-level-2 > div > a {
-    color: darkgoldenrod;
+    color: var(--custom-accent-gold);
 }
 
 .hero-doc .menu__link {
     font-weight: 600;
-    color: #ffb000;
+    color: var(--custom-accent-amber);
 }
 
 .hero-doc .menu__link:hover {
-    color: #ffb000;
+    color: var(--custom-accent-amber);
     text-decoration: underline;
 }
 
 .archive > div > a {
-    color: #666666;
+    color: var(--custom-muted);
     font-style: italic;
 }
 
-/* SEARCH */
+/* ------------------------------------------------------------------ */
+/* Algolia DocSearch overrides                                        */
+/* ------------------------------------------------------------------ */
 html[data-theme='light'] .DocSearch {
-    /* --docsearch-primary-color: var(--ifm-color-primary); */
-    /* --docsearch-text-color: var(--ifm-font-color-base); */
     --docsearch-muted-color: var(--ifm-color-secondary-darkest);
     --docsearch-container-background: rgba(94, 100, 112, 0.7);
-    /* Modal */
     --docsearch-modal-background: var(--ifm-color-secondary-lighter);
-    /* Search box */
     --docsearch-searchbox-background: var(--ifm-color-secondary);
     --docsearch-searchbox-focus-background: var(--ifm-color-white);
-    /* Hit */
     --docsearch-hit-color: var(--ifm-font-color-base);
     --docsearch-hit-active-color: var(--ifm-color-white);
     --docsearch-hit-background: var(--ifm-color-white);
-    /* Footer */
     --docsearch-footer-background: var(--ifm-color-white);
 }
 
@@ -89,16 +115,12 @@ html[data-theme='dark'] .DocSearch {
     --docsearch-text-color: var(--ifm-font-color-base);
     --docsearch-muted-color: var(--ifm-color-secondary-darkest);
     --docsearch-container-background: rgba(47, 55, 69, 0.7);
-    /* Modal */
     --docsearch-modal-background: var(--ifm-background-color);
-    /* Search box */
     --docsearch-searchbox-background: var(--ifm-background-color);
     --docsearch-searchbox-focus-background: var(--ifm-color-black);
-    /* Hit */
     --docsearch-hit-color: var(--ifm-font-color-base);
     --docsearch-hit-active-color: var(--ifm-color-white);
     --docsearch-hit-background: var(--ifm-color-emphasis-100);
-    /* Footer */
     --docsearch-footer-background: var(--ifm-background-surface-color);
     --docsearch-key-gradient: linear-gradient(
         -26.5deg,
@@ -107,26 +129,19 @@ html[data-theme='dark'] .DocSearch {
     );
 }
 
-.docusaurus-highlight-code-line {
-    background-color: rgb(72, 77, 91);
-    display: block;
-    margin: 0 calc(-1 * var(--ifm-pre-padding));
-    padding: 0 var(--ifm-pre-padding);
-}
-
-/* If you have a different syntax highlighting theme for dark mode. */
-html[data-theme='dark'] .docusaurus-highlight-code-line {
-    /* Color which works with dark mode syntax highlighting theme */
-    background-color: rgb(100, 100, 100);
-}
-
+/* ------------------------------------------------------------------ */
+/* Images                                                             */
+/* ------------------------------------------------------------------ */
 img {
     margin-bottom: 1em;
     box-shadow: 0 15px 12px -8px rgb(0 0 0 / 20%);
     border-radius: 6px;
 }
 
-/*https://css-tricks.com/snippets/css/system-font-stack/*/
+/* ------------------------------------------------------------------ */
+/* Typography                                                         */
+/* ------------------------------------------------------------------ */
+/* https://css-tricks.com/snippets/css/system-font-stack/ */
 body {
     --ifm-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }

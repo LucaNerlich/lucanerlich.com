@@ -57,9 +57,9 @@ GoF design patterns explained with Java and TypeScript examples: creational, str
 
 Shell and terminal setup, Docusaurus tips, a comprehensive Mermaid diagram guide, useful link collections, and practical Strapi CMS guides.
 
-- [Strapi: Custom Controllers and Services](./other/strapi/custom-controllers-services.md) -- Extending core CRUD, custom actions, and service delegation
-- [Strapi: Relations and Population](./other/strapi/relations-and-population.md) -- Deep population, filtering, and performance optimization
-- [Strapi: Authentication and Permissions](./other/strapi/authentication-and-permissions.md) -- JWT flow, RBAC, API tokens, and OAuth providers
+- [Strapi: Custom Controllers and Services](./strapi/custom-controllers-services.md) -- Extending core CRUD, custom actions, and service delegation
+- [Strapi: Relations and Population](./strapi/relations-and-population.md) -- Deep population, filtering, and performance optimization
+- [Strapi: Authentication and Permissions](./strapi/authentication-and-permissions.md) -- JWT flow, RBAC, API tokens, and OAuth providers
 - [Mermaid Diagram Guide](./other/tech/mermaid-diagrams.mdx) -- Flowcharts, sequence diagrams, class diagrams, and more
 
 ---
