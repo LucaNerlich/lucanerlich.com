@@ -4,6 +4,5 @@
         "slug": "/javascript",
         "type": "generated-index",
         "description": "JavaScript and TypeScript notes with practical examples and formatting guides (Intl API, date formatting, currency formatting, and more)."
-    },
-    "collapsed": true
+    }
 }

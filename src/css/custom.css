@@ -7,15 +7,6 @@
 /* Infima palette                                                     */
 /* ------------------------------------------------------------------ */
 :root {
-    --ifm-color-primary: #25c2a0;
-    --ifm-color-primary-dark: rgb(33, 175, 144);
-    --ifm-color-primary-darker: rgb(31, 165, 136);
-    --ifm-color-primary-darkest: rgb(26, 136, 112);
-    --ifm-color-primary-light: rgb(70, 203, 174);
-    --ifm-color-primary-lighter: rgb(102, 212, 189);
-    --ifm-color-primary-lightest: rgb(146, 224, 208);
-    --ifm-code-font-size: 95%;
-
     /* Custom theme tokens – light mode defaults */
     --custom-accent-red: #d40000;
     --custom-accent-green: #148a3c;
@@ -35,35 +26,14 @@ html[data-theme='dark'] {
 }
 
 /* ------------------------------------------------------------------ */
-/* Code highlighting                                                  */
-/* ------------------------------------------------------------------ */
-.docusaurus-highlight-code-line {
-    background-color: rgba(0, 0, 0, 0.1);
-    display: block;
-    margin: 0 calc(-1 * var(--ifm-pre-padding));
-    padding: 0 var(--ifm-pre-padding);
-}
-
-html[data-theme='dark'] .docusaurus-highlight-code-line {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* ------------------------------------------------------------------ */
-/* Admonitions / alerts                                               */
-/* ------------------------------------------------------------------ */
-.alert {
-    margin-bottom: 1em;
-}
-
-/* ------------------------------------------------------------------ */
 /* Navbar colour accents                                              */
 /* ------------------------------------------------------------------ */
 .font-purple {
-    color: var(--custom-accent-purple);
+    color: var(--custom-accent-purple) !important;
 }
 
 .font-red {
-    color: var(--custom-accent-red);
+    color: var(--custom-accent-red) !important;
 }
 
 .font-green {
@@ -72,80 +42,4 @@ html[data-theme='dark'] .docusaurus-highlight-code-line {
 
 .font-red > div > a {
     color: var(--custom-accent-red);
-}
-
-/* ------------------------------------------------------------------ */
-/* Sidebar category & hero-doc colours                                */
-/* ------------------------------------------------------------------ */
-.theme-doc-sidebar-item-category-level-2 > div > a {
-    color: var(--custom-accent-gold);
-}
-
-.hero-doc .menu__link {
-    font-weight: 600;
-    color: var(--custom-accent-amber);
-}
-
-.hero-doc .menu__link:hover {
-    color: var(--custom-accent-amber);
-    text-decoration: underline;
-}
-
-.archive > div > a {
-    color: var(--custom-muted);
-    font-style: italic;
-}
-
-/* ------------------------------------------------------------------ */
-/* Algolia DocSearch overrides                                        */
-/* ------------------------------------------------------------------ */
-html[data-theme='light'] .DocSearch {
-    --docsearch-muted-color: var(--ifm-color-secondary-darkest);
-    --docsearch-container-background: rgba(94, 100, 112, 0.7);
-    --docsearch-modal-background: var(--ifm-color-secondary-lighter);
-    --docsearch-searchbox-background: var(--ifm-color-secondary);
-    --docsearch-searchbox-focus-background: var(--ifm-color-white);
-    --docsearch-hit-color: var(--ifm-font-color-base);
-    --docsearch-hit-active-color: var(--ifm-color-white);
-    --docsearch-hit-background: var(--ifm-color-white);
-    --docsearch-footer-background: var(--ifm-color-white);
-}
-
-html[data-theme='dark'] .DocSearch {
-    --docsearch-text-color: var(--ifm-font-color-base);
-    --docsearch-muted-color: var(--ifm-color-secondary-darkest);
-    --docsearch-container-background: rgba(47, 55, 69, 0.7);
-    --docsearch-modal-background: var(--ifm-background-color);
-    --docsearch-searchbox-background: var(--ifm-background-color);
-    --docsearch-searchbox-focus-background: var(--ifm-color-black);
-    --docsearch-hit-color: var(--ifm-font-color-base);
-    --docsearch-hit-active-color: var(--ifm-color-white);
-    --docsearch-hit-background: var(--ifm-color-emphasis-100);
-    --docsearch-footer-background: var(--ifm-background-surface-color);
-    --docsearch-key-gradient: linear-gradient(
-        -26.5deg,
-        var(--ifm-color-emphasis-200) 0%,
-        var(--ifm-color-emphasis-100) 100%
-    );
-}
-
-/* ------------------------------------------------------------------ */
-/* Images                                                             */
-/* ------------------------------------------------------------------ */
-img {
-    margin-bottom: 1em;
-    box-shadow: 0 15px 12px -8px rgb(0 0 0 / 20%);
-    border-radius: 6px;
-}
-
-/* ------------------------------------------------------------------ */
-/* Typography                                                         */
-/* ------------------------------------------------------------------ */
-/* https://css-tricks.com/snippets/css/system-font-stack/ */
-body {
-    --ifm-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-}
-
-code {
-    --ifm-font-family-monospace: "Courier New", sans-serif;
 }

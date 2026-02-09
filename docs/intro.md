@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 slug: /
-title: Luca Nerlich
+title: Home
 description: "Technical documentation and guides for AEM, Java, JavaScript, and software design patterns."
 ---
 

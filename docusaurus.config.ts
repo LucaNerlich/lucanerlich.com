@@ -152,7 +152,7 @@ const config: Config = {
                 },
                 blog: false,
                 theme: {
-                    customCss: './src/css/custom.css',
+                    customCss: ['./src/css/custom.css'],
                 },
                 sitemap: {
                     lastmod: 'date',
@@ -285,7 +285,7 @@ const config: Config = {
                     to: '/strapi',
                     label: 'Strapi',
                     position: 'left',
-                    className: 'font-strapi',
+                    className: 'font-purple',
                 },
                 {
                     to: '/javascript',
