@@ -58,6 +58,11 @@ Practical JavaScript and TypeScript topics with code examples and browser compat
 - [Error Handling](./javascript/javascript-error-handling.md) -- Custom error classes, global handlers, and structured
   error reporting
 
+### [Content Modeling](./content-modeling.md)
+
+CMS-agnostic guide to architecting content models -- content types, field selection, relations, performance pitfalls,
+complexity traps, and a practical blog example. Applies to AEM, Strapi, and any headless CMS.
+
 ### [Design Patterns](./design-patterns/overview.mdx)
 
 GoF design patterns explained with Java and TypeScript examples: creational, structural, and behavioural patterns, plus
