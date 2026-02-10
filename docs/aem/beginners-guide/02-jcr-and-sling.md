@@ -186,8 +186,8 @@ Sling breaks down URLs into parts:
 
 ```
 /content/mysite/en/about.article.html/suffix?key=value
-|___________________________|_____|____|______|________|
-         Resource path       Selectors Ext  Suffix  Query
+|______________________|_____|____|______|___________|
+         Resource path  Selectors Ext  Suffix  Query
 ```
 
 | Part              | Example                    | Purpose                                          |
@@ -233,6 +233,8 @@ The `sling:resourceType` on the node points to a component definition. Sling loo
 2. `/libs/<resourceType>/<scriptName>.html` -- AEM's default
 
 This is the **overlay mechanism** -- you can override any AEM component by placing your version in `/apps`.
+
+- [Sling Resource Merger](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/sling-resource-merger)
 
 ### Script selection rules
 

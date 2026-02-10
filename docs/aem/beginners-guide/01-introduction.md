@@ -92,8 +92,8 @@ Many concepts transfer to AEM 6.5, but deployment and some APIs differ.
 
 Before we start:
 
-- **Java 11** (the JDK, not just the JRE) -- check with `java -version`
-- **Maven 3.8+** -- check with `mvn -version`
+- **Java 21** (the JDK, not just the JRE) -- check with `java -version`
+- **Maven 3.9+** -- check with `mvn -version`
 - **An AEMaaCS SDK** -- download from
   the [Software Distribution portal](https://experience.adobe.com/#/downloads/content/software-distribution/en/aemcloud.html) (
   requires an Adobe ID)
@@ -210,6 +210,11 @@ mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.2.1:generate \
 | `aemVersion` | cloud      | Target AEMaaCS                            |
 
 This generates a `mysite/` directory with the full project structure.
+
+Official documentation:
+
+- https://experienceleague.adobe.com/en/docs/experience-manager-core-components/using/developing/archetype/overview
+- https://github.com/adobe/aem-project-archetype
 
 ## Project structure walkthrough
 
@@ -335,13 +340,12 @@ Once logged in at `http://localhost:4502`, explore:
 debugging.
 
 > **Note:** CRXDE Lite is available on local SDK instances and AEMaaCS development environments, but **not in production
-**. Never use it for production changes.
+**. The apps directory (and others) is read-only in production.
 
 ### OSGi Web Console
 
 `http://localhost:4502/system/console` -- manage OSGi bundles, services, configurations. We will explore this in chapter
 
-3.
 
 ### Package Manager
 

@@ -134,7 +134,7 @@ The `@Component` annotation tells OSGi:
 
 ### Consuming services
 
-Other components reference services using `@Reference`:
+Other services reference services using `@Reference`:
 
 ```java
 import com.mysite.core.services.GreetingService;
@@ -150,6 +150,28 @@ public class SomeOtherServiceImpl implements SomeOtherService {
     public void doSomething() {
         String message = greetingService.greet("AEM");
         // "Hello, AEM!"
+    }
+}
+```
+
+Other components reference services using `@OSGiService`:
+
+```java
+@Model(
+    adaptables = {SlingHttpServletRequest.class, Resource.class},
+    adapters = {GreetingModel.class, ComponentExporter.class},
+    resourceType = GreetingModel.RESOURCE_TYPE,
+    defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class GreetingModel {
+
+    @OSGiService
+    private GreetingService greetingService;
+    
+    // [...]
+
+    @PostConstruct
+    public void init() {
+        final String message = greetingService.greet("AEM");
     }
 }
 ```
