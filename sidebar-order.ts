@@ -52,6 +52,28 @@ export const sidebarOrder: Record<string, string[]> = {
     ],
 
     // ------------------------------------------------------------------
+    // Strapi – beginners guide first, then individual topics
+    // ------------------------------------------------------------------
+    'strapi': [
+        'beginners-guide',
+    ],
+
+    'strapi/beginners-guide': [
+        '01-introduction',
+        '02-content-modeling',
+        '03-relations',
+        '04-managing-content',
+        '05-rest-api',
+        '06-authentication-and-permissions',
+        '07-custom-controllers-and-services',
+        '08-routes-policies-middleware',
+        '09-lifecycle-hooks-and-webhooks',
+        '10-media-and-file-uploads',
+        '11-typescript-integration',
+        '12-configuration-and-deployment',
+    ],
+
+    // ------------------------------------------------------------------
     // JavaScript – beginners guide first, then individual topics
     // ------------------------------------------------------------------
     'javascript': [
