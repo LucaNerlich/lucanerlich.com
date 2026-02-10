@@ -212,6 +212,9 @@ The Style System lets you define CSS classes that authors can apply to component
 Each option maps to a CSS class (e.g., `cmp-hero--large`, `cmp-hero--dark`). Authors select styles in the component
 toolbar without touching code.
 
+> Remember, any changes you make via the browser UI will need to be exported and persisted in the git repository.
+> Otherwise, they will be lost on redeploy.
+
 ## Responsive grid (layout container)
 
 The responsive grid is the main layout mechanism. It provides:

@@ -317,6 +317,8 @@ public class MyModel {
 
 > **Best practice:** Use `DefaultInjectionStrategy.OPTIONAL` at the model level and provide `@Default` values for fields
 > that need them. This prevents exceptions when authors have not filled in all fields.
+> Well, _theoretically_, `DefaultInjectionStrategy.REQUIRED` would be ideal, however, in daily development, this most
+> often leads to quite a bit of pain.
 
 ## Interface-based models with adapters
 
@@ -373,6 +375,9 @@ public class HeroImpl implements Hero {
     public String getCtaLink() { return ctaLink; }
 }
 ```
+
+I always try to first write down the interface before the implementation. This forces me to think about the public API
+and what parts of a possible implementation make sense to expose.
 
 In HTL, reference the interface:
 
