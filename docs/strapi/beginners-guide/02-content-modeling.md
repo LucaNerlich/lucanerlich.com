@@ -22,10 +22,10 @@ Content modeling is the most important decision you make in a CMS project. A goo
 
 Strapi has two kinds of content types:
 
-| Type | Description | Examples |
-|------|-------------|----------|
-| **Collection type** | Many entries of the same shape | Posts, Authors, Categories |
-| **Single type** | Exactly one entry | Homepage, Site Settings, About Page |
+| Type                | Description                    | Examples                            |
+|---------------------|--------------------------------|-------------------------------------|
+| **Collection type** | Many entries of the same shape | Posts, Authors, Categories          |
+| **Single type**     | Exactly one entry              | Homepage, Site Settings, About Page |
 
 Think of a collection type as a database table with many rows. A single type is a table with exactly one row.
 

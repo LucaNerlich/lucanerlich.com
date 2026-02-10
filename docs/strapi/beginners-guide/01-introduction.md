@@ -21,13 +21,13 @@ We assume you already know JavaScript and Node.js basics. If not, work through t
 
 ## How this guide is structured
 
-| Part | Chapters | What you will learn |
-|------|----------|---------------------|
-| **1 -- Getting Started** | 1--3 | Install Strapi, model content types, define relations |
-| **2 -- Working with Data** | 4--6 | Admin panel, REST API, authentication & permissions |
-| **3 -- Customizing the Backend** | 7--9 | Controllers, services, routes, policies, middleware, lifecycle hooks, webhooks |
-| **4 -- Production Features** | 10--11 | File uploads, media providers, TypeScript integration |
-| **5 -- Deploy** | 12 | Environment config, PostgreSQL, nginx, HTTPS, security hardening |
+| Part                             | Chapters | What you will learn                                                            |
+|----------------------------------|----------|--------------------------------------------------------------------------------|
+| **1 -- Getting Started**         | 1--3     | Install Strapi, model content types, define relations                          |
+| **2 -- Working with Data**       | 4--6     | Admin panel, REST API, authentication & permissions                            |
+| **3 -- Customizing the Backend** | 7--9     | Controllers, services, routes, policies, middleware, lifecycle hooks, webhooks |
+| **4 -- Production Features**     | 10--11   | File uploads, media providers, TypeScript integration                          |
+| **5 -- Deploy**                  | 12       | Environment config, PostgreSQL, nginx, HTTPS, security hardening               |
 
 By the end you will have a blog CMS with authors, posts, categories, and tags -- fully customized and running in production.
 
@@ -59,16 +59,16 @@ Benefits of going headless:
 
 Strapi is one of the most popular headless CMS options. Here is why:
 
-| Feature | Details |
-|---------|---------|
-| **Open source** | MIT-licensed, self-hosted, no vendor lock-in |
-| **Node.js** | Built on Koa -- if you know JavaScript, you can customize everything |
-| **Admin panel** | Beautiful, auto-generated UI for content editors |
-| **REST & GraphQL** | Both APIs generated automatically from your content types |
-| **Plugin system** | Extend functionality with community or custom plugins |
-| **TypeScript** | First-class TypeScript support in Strapi 5 |
-| **Database agnostic** | SQLite (dev), PostgreSQL, MySQL, MariaDB (production) |
-| **Self-hosted** | Full control over your data and infrastructure |
+| Feature               | Details                                                              |
+|-----------------------|----------------------------------------------------------------------|
+| **Open source**       | MIT-licensed, self-hosted, no vendor lock-in                         |
+| **Node.js**           | Built on Koa -- if you know JavaScript, you can customize everything |
+| **Admin panel**       | Beautiful, auto-generated UI for content editors                     |
+| **REST & GraphQL**    | Both APIs generated automatically from your content types            |
+| **Plugin system**     | Extend functionality with community or custom plugins                |
+| **TypeScript**        | First-class TypeScript support in Strapi 5                           |
+| **Database agnostic** | SQLite (dev), PostgreSQL, MySQL, MariaDB (production)                |
+| **Self-hosted**       | Full control over your data and infrastructure                       |
 
 ## Prerequisites
 
@@ -76,8 +76,8 @@ Before we start, make sure you have:
 
 - **Node.js 18 or later** -- check with `node --version`
 - **npm, yarn, or pnpm** -- any package manager works
-- **A code editor** -- VS Code recommended
-- **A terminal** -- you will live here
+- **A code editor**
+- **A terminal**
 
 If you need to install Node.js, see the [JavaScript guide's setup chapter](/javascript/beginners-guide/introduction).
 
@@ -91,13 +91,13 @@ npx create-strapi@latest my-blog
 
 The CLI will ask you a few questions:
 
-| Question | Recommended answer |
-|----------|-------------------|
-| Use TypeScript? | **No** (we will add it in chapter 11) |
-| Install dependencies? | **Yes** |
-| Initialize git? | **Yes** |
-| Use example template? | **No** (we will build from scratch) |
-| Database | **SQLite** (perfect for development) |
+| Question              | Recommended answer                    |
+|-----------------------|---------------------------------------|
+| Use TypeScript?       | **No** (we will add it in chapter 11) |
+| Install dependencies? | **Yes**                               |
+| Initialize git?       | **Yes**                               |
+| Use example template? | **No** (we will build from scratch)   |
+| Database              | **SQLite** (perfect for development)  |
 
 Once the installation finishes, start the development server:
 
@@ -152,12 +152,12 @@ my-blog/
 
 The directories you will work with most:
 
-| Directory | Purpose |
-|-----------|---------|
-| `src/api/` | Content type schemas, controllers, services, routes |
-| `src/components/` | Reusable component schemas |
-| `config/` | Application configuration |
-| `public/uploads/` | Uploaded files (local provider) |
+| Directory         | Purpose                                             |
+|-------------------|-----------------------------------------------------|
+| `src/api/`        | Content type schemas, controllers, services, routes |
+| `src/components/` | Reusable component schemas                          |
+| `config/`         | Application configuration                           |
+| `public/uploads/` | Uploaded files (local provider)                     |
 
 ## The admin panel
 
@@ -260,14 +260,14 @@ Here is the typical workflow when developing with Strapi:
 
 ## Useful CLI commands
 
-| Command | What it does |
-|---------|-------------|
-| `npm run develop` | Start the dev server (with auto-reload) |
-| `npm run start` | Start in production mode (no auto-reload) |
-| `npm run build` | Build the admin panel for production |
-| `npm run strapi generate` | Scaffold content types, controllers, services, etc. |
-| `npm run strapi routes:list` | Show all registered routes |
-| `npm run strapi admin:reset-user-password` | Reset an admin user's password |
+| Command                                    | What it does                                        |
+|--------------------------------------------|-----------------------------------------------------|
+| `npm run develop`                          | Start the dev server (with auto-reload)             |
+| `npm run start`                            | Start in production mode (no auto-reload)           |
+| `npm run build`                            | Build the admin panel for production                |
+| `npm run strapi generate`                  | Scaffold content types, controllers, services, etc. |
+| `npm run strapi routes:list`               | Show all registered routes                          |
+| `npm run strapi admin:reset-user-password` | Reset an admin user's password                      |
 
 ## Summary
 

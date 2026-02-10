@@ -606,6 +606,21 @@ When one widget controls the visibility of another, you can use dialog JS that r
           allowProxy="{Boolean}true"/>
 ```
 
+Alternatively, load the clientlib specifically only in the components dialog, by adding changing the categories propety to a custom name `categories="[cq.authoring.mycomponent]"` and
+the `extraClientlibs="[cq.authoring.mycomponent]"` property to its `/cq:dialog/.content.xml` file.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          jcr:title="My Component"
+          extraClientlibs="[cq.authoring.mycomponent]"
+          sling:resourceType="cq/gui/components/authoring/dialog">
+<!-- [...] -->
+```
+
 ```text title="ui.apps/.../clientlibs/clientlib-dialog/js.txt"
 #base=js
 dialog-visibility.js
