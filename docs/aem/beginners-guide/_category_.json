@@ -1,0 +1,7 @@
+{
+    "label": "Beginners Guide",
+    "link": {
+        "type": "generated-index",
+        "description": "A comprehensive AEM as a Cloud Service beginners guide -- from your first project to deploying a site with custom components, templates, and headless content."
+    }
+}

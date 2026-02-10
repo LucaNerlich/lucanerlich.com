@@ -30,6 +30,7 @@ export const sidebarOrder: Record<string, string[]> = {
     // AEM – hero docs pinned at top, then subcategories
     // ------------------------------------------------------------------
     'aem': [
+        'beginners-guide',
         'architecture',
         'custom-component',
         'component-dialogs',
@@ -41,6 +42,23 @@ export const sidebarOrder: Record<string, string[]> = {
         'content',
         'ui',
         'infrastructure',
+    ],
+
+    'aem/beginners-guide': [
+        '01-introduction',
+        '02-jcr-and-sling',
+        '03-osgi-fundamentals',
+        '04-your-first-component',
+        '05-htl-templates',
+        '06-component-dialogs',
+        '07-sling-models',
+        '08-templates-and-policies',
+        '09-client-libraries',
+        '10-building-pages',
+        '11-content-fragments-and-graphql',
+        '12-multi-site-manager-and-i18n',
+        '13-dispatcher-and-caching',
+        '14-deployment-and-cloud-manager',
     ],
 
     'aem/components': [
