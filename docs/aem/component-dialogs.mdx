@@ -609,7 +609,7 @@ When one widget controls the visibility of another, you can use dialog JS that r
 Alternatively, load the clientlib specifically only in the components dialog, by adding changing the categories propety to a custom name `categories="[cq.authoring.mycomponent]"` and
 the `extraClientlibs="[cq.authoring.mycomponent]"` property to its `/cq:dialog/.content.xml` file.
 
-```xml
+```xml title="/apps/myproject/components/mycomponent/cq:dialog/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
