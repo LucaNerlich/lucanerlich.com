@@ -274,7 +274,7 @@ mvn clean install -PautoInstallSinglePackage
 6. Drag the Hello component onto the page
 7. Double-click it (or click the wrench icon) to open the dialog
 8. Enter a greeting and message
-9. Click the checkmark to save
+9. Save the dialog prompt
 
 You should see your component rendered on the page with the values you entered.
 
@@ -345,6 +345,11 @@ The `sling:resourceSuperType` property creates an inheritance chain -- your prox
 Component. You can then override specific files (HTL, dialog, model) in your proxy to customize behavior.
 
 The Maven archetype generates proxy components for common Core Components automatically.
+
+Official documentation:
+
+- https://www.aemcomponents.dev
+- https://experienceleague.adobe.com/en/docs/experience-manager-core-components/using/introduction
 
 > For more on custom components and Core Components, see
 > the [Custom Component Guide](/aem/custom-component), [Components Overview](/aem/components/overview),

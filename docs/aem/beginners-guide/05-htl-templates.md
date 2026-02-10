@@ -54,7 +54,7 @@ Options modify how values are rendered:
 
 ### Display contexts
 
-HTL automatically picks an escaping context, but you can override it:
+HTL automatically picks an escaping context, but you can override it - here are some of the often used context options:
 
 | Context          | Use for         | Example                                                      |
 |------------------|-----------------|--------------------------------------------------------------|
