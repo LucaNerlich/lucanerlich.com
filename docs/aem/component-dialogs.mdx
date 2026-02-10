@@ -629,28 +629,99 @@ dialog-visibility.js
 
 **3) Toggle visibility in JS**
 
-Following JQuery Example is for a multifield
+Following JQuery Example is for a multifield which has a select dropdown "linkType"
 
 ```js title="ui.apps/.../clientlibs/clientlib-dialog/js/dialog-visibility.js"
 (function (window, document, Granite, $) {
     "use strict"
 
-    $(document).on('dialog-ready', (event) => {
-        const component = $(event.target);
-
-        // Its plural, since a multifield can contain multiple item containers
-        const sources = $('coral-select.some-source');
-        if (!sources) {
+    /**
+     * Initializes the link type source dropdown elements by attaching event handlers for visibility toggling
+     * and ensuring a proper initial state for target elements based on dropdown values.
+     *
+     * This method performs the following actions:
+     * - Selects all elements matching the selector `.coral-select.linkType-showhide-source`.
+     * - Skips initialization for elements already marked as initialized.
+     * - Toggles the visibility of `.linkType-showhide-target` elements based on the selected dropdown value.
+     * - Handles dynamic multifield scenarios by adjusting the visibility of DOM elements through CSS.
+     *
+     * @return {void} This method does not return a value.
+     */
+    const initializeLinkTypeSources = function () {
+        // Find all .class marked input fields
+        const linkTypeSources = $('coral-select.linkType-showhide-source');
+        if (!linkTypeSources.length) {
             return;
         }
 
-        sources.each((index, select) => {
-            select.addEventListener('change', function (event) {
-                let value = select.value;
-                // do whatever you want with the selected value
-            })
-        })
+        linkTypeSources.each((index, select) => {
+            const $select = $(select);
 
+            // Skip if already initialized
+            if ($select.data('linktype-initialized')) {
+                return;
+            }
+            $select.data('linktype-initialized', true);
+
+            /**
+             * Controls the visibility of a target element in the DOM based on the selected value
+             * in a dropdown menu. Specifically, this function:
+             * - Finds the closest `.coral-Well` container relative to the selected dropdown.
+             * - Locates the `.linkType-showhide-target` element within the well to determine
+             *   the corresponding target element.
+             * - Toggles the target element's visibility based on the value of the dropdown menu.
+             *
+             * @function toggleTarget
+             * @description Dynamically toggles the visibility of an element, typically used
+             *              in cases such as multifield item handling or conditional UI display.
+             */
+            const toggleTarget = function () {
+                const value = select.value;
+                const well = $select.closest('div.coral-Well');
+                const target = well.find('.linkType-showhide-target')?.closest('div.coral-Form-fieldwrapper');
+                console.log("target", target);
+                if (!target.length) {
+                    return;
+                }
+
+                // We have to show/hide via css, since newly added multifield items would otherwise always show the query textarea
+                if (value === 'mail') {
+                    target.css('display', 'block');
+                } else {
+                    target.css('display', 'none');
+                }
+            };
+
+            // Show/Hide on Dialog-Ready
+            toggleTarget();
+
+            // Show/Hide on Select Change Events
+            $select.on('change', function (event) {
+                toggleTarget();
+            });
+        });
+    };
+
+    $(document).on('dialog-ready', (event) => {
+        initializeLinkTypeSources();
+
+        // Watch for multifield item changes (add/remove coral-multifield-item)
+        const multifields = document.querySelectorAll('coral-multifield');
+        multifields.forEach((multifield) => {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList') {
+                        // Re-initialize when coral-multifield-item is added or removed
+                        initializeLinkTypeSources();
+                    }
+                });
+            });
+
+            observer.observe(multifield, {
+                childList: true,
+                subtree: false
+            });
+        });
     });
 })(window, document, Granite, $);
 ```
