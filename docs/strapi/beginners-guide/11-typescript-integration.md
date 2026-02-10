@@ -15,9 +15,12 @@ sidebar_position: 11
 
 # TypeScript Integration
 
-Strapi 5 supports TypeScript natively. Adding types to your project gives you autocompletion, compile-time error checking, and better documentation. In this chapter we will convert our JavaScript project to TypeScript and type everything we have built so far.
+Strapi 5 supports TypeScript natively. Adding types to your project gives you autocompletion, compile-time error
+checking, and better documentation. In this chapter we will convert our JavaScript project to TypeScript and type
+everything we have built so far.
 
-If you are not familiar with TypeScript basics, check out the [TypeScript chapter](/javascript/beginners-guide/typescript) in the JavaScript guide first.
+If you are not familiar with TypeScript basics, check out
+the [TypeScript chapter](/javascript/beginners-guide/typescript) in the JavaScript guide first.
 
 ## Starting a new project with TypeScript
 
@@ -90,7 +93,8 @@ Strapi compiles TypeScript automatically on startup. If there are type errors, t
 
 ## Generating types from content schemas
 
-Strapi can auto-generate TypeScript types from your content type schemas. This is the most powerful TypeScript feature -- your types stay in sync with your data model.
+Strapi can auto-generate TypeScript types from your content type schemas. This is the most powerful TypeScript
+feature -- your types stay in sync with your data model.
 
 ### Generate types
 
@@ -151,7 +155,8 @@ export interface ApiPostPost {
 }
 ```
 
-> **Tip:** Re-run `npm run strapi ts:generate-types` whenever you change a content type schema. Some teams add this to a pre-build script.
+> **Tip:** Re-run `npm run strapi ts:generate-types` whenever you change a content type schema. Some teams add this to a
+> pre-build script.
 
 ### Auto-generate on restart
 
@@ -605,6 +610,8 @@ You learned:
 - Creating **custom type utilities** for common data shapes
 - TypeScript **tips** -- separate type checking, regenerating types, strict mode
 
-Your Strapi project now has full TypeScript support. The type system catches errors at compile time and provides excellent editor autocompletion. In the final chapter we will deploy everything to production.
+Your Strapi project now has full TypeScript support. The type system catches errors at compile time and provides
+excellent editor autocompletion. In the final chapter we will deploy everything to production.
 
-Next up: [Configuration & Deployment](./12-configuration-and-deployment.md) -- environment config, PostgreSQL, PM2 or systemd, nginx reverse proxy, HTTPS, and security hardening.
+Next up: [Configuration & Deployment](./12-configuration-and-deployment.md) -- environment config, PostgreSQL, PM2 or
+systemd, nginx reverse proxy, HTTPS, and security hardening.

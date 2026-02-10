@@ -15,7 +15,9 @@ sidebar_position: 7
 
 # Sling Models
 
-Sling Models are the bridge between the JCR and your Java code. They let you annotate a POJO (Plain Old Java Object) so that Sling automatically injects content properties, child resources, and OSGi services. Every non-trivial component should have a Sling Model.
+Sling Models are the bridge between the JCR and your Java code. They let you annotate a POJO (Plain Old Java Object) so
+that Sling automatically injects content properties, child resources, and OSGi services. Every non-trivial component
+should have a Sling Model.
 
 ## Basic Sling Model
 
@@ -60,9 +62,9 @@ Used in HTL:
 
 The `adaptables` parameter defines what the model can be adapted from:
 
-| Adaptable | Use when | Available injectors |
-|-----------|----------|---------------------|
-| `Resource.class` | You only need resource properties and children | `@ValueMapValue`, `@ChildResource`, `@ResourcePath` |
+| Adaptable                       | Use when                                                        | Available injectors                                                   |
+|---------------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------|
+| `Resource.class`                | You only need resource properties and children                  | `@ValueMapValue`, `@ChildResource`, `@ResourcePath`                   |
 | `SlingHttpServletRequest.class` | You need the request, session, selectors, or request attributes | All of the above plus `@RequestAttribute`, `@ScriptVariable`, `@Self` |
 
 ```java
@@ -75,7 +77,8 @@ public class SimpleModel { ... }
 public class RequestAwareModel { ... }
 ```
 
-> **Best practice:** Use `Resource.class` when possible. It is simpler, more testable, and works in non-request contexts (e.g., background jobs).
+> **Best practice:** Use `Resource.class` when possible. It is simpler, more testable, and works in non-request
+> contexts (e.g., background jobs).
 
 ## Injection annotations
 
@@ -97,7 +100,8 @@ private Calendar publishDate; // reads ./publishDate
 private String pageTitle;    // reads ./jcr:title (specify name when it differs)
 ```
 
-Supported types: `String`, `Boolean`/`boolean`, `Integer`/`int`, `Long`/`long`, `Double`/`double`, `Calendar`, `String[]`, and more.
+Supported types: `String`, `Boolean`/`boolean`, `Integer`/`int`, `Long`/`long`, `Double`/`double`, `Calendar`,
+`String[]`, and more.
 
 ### @ChildResource -- read child nodes
 
@@ -289,7 +293,8 @@ public class ArticleModel {
 
 ## Optional injection
 
-By default, `@ValueMapValue` injection is **optional** -- if the property does not exist, the field is `null`. To make injection required:
+By default, `@ValueMapValue` injection is **optional** -- if the property does not exist, the field is `null`. To make
+injection required:
 
 ```java
 @ValueMapValue(injectionStrategy = InjectionStrategy.REQUIRED)
@@ -310,7 +315,8 @@ public class MyModel {
 }
 ```
 
-> **Best practice:** Use `DefaultInjectionStrategy.OPTIONAL` at the model level and provide `@Default` values for fields that need them. This prevents exceptions when authors have not filled in all fields.
+> **Best practice:** Use `DefaultInjectionStrategy.OPTIONAL` at the model level and provide `@Default` values for fields
+> that need them. This prevents exceptions when authors have not filled in all fields.
 
 ## Interface-based models with adapters
 
@@ -436,7 +442,9 @@ class HeroImplTest {
 }
 ```
 
-> For the full annotation reference, see the [Sling Models and Services](/aem/backend/sling-models), [Sling Model Annotations](/aem/components/annotations/sling-model-annotations), and [@ChildResource](/aem/components/annotations/child-resource) references.
+> For the full annotation reference, see
+> the [Sling Models and Services](/aem/backend/sling-models), [Sling Model Annotations](/aem/components/annotations/sling-model-annotations),
+> and [@ChildResource](/aem/components/annotations/child-resource) references.
 
 ## Summary
 
@@ -444,13 +452,16 @@ You learned:
 
 - **Sling Model basics** -- `@Model`, `@ValueMapValue`, `@Default`
 - **Adaptables** -- `Resource.class` vs `SlingHttpServletRequest.class`
-- **Injection annotations**: `@ValueMapValue`, `@ChildResource`, `@Self`, `@OSGiService`, `@ScriptVariable`, `@RequestAttribute`, `@ResourcePath`
+- **Injection annotations**: `@ValueMapValue`, `@ChildResource`, `@Self`, `@OSGiService`, `@ScriptVariable`,
+  `@RequestAttribute`, `@ResourcePath`
 - **`@PostConstruct`** for initialization logic
 - **Optional vs required** injection strategies
 - **Interface-based models** with `adapters` for clean APIs
 - **Model Exporters** for JSON output
 - **Testing** with AemContext
 
-With components (HTL + dialogs + Sling Models) covered, we are ready to build a complete site. The next chapter covers templates and policies -- how pages are structured and which components are allowed.
+With components (HTL + dialogs + Sling Models) covered, we are ready to build a complete site. The next chapter covers
+templates and policies -- how pages are structured and which components are allowed.
 
-Next up: [Templates & Policies](./08-templates-and-policies.md) -- editable templates, template types, structure vs initial content, component policies, and page structure.
+Next up: [Templates & Policies](./08-templates-and-policies.md) -- editable templates, template types, structure vs
+initial content, component policies, and page structure.

@@ -15,11 +15,14 @@ sidebar_position: 9
 
 # Lifecycle Hooks & Webhooks
 
-Sometimes you need to react to content changes: validate data before saving, send a notification when a post is published, or sync content with an external service. Strapi provides two mechanisms for this: **Document Service middleware** (lifecycle hooks) and **webhooks**.
+Sometimes you need to react to content changes: validate data before saving, send a notification when a post is
+published, or sync content with an external service. Strapi provides two mechanisms for this: **Document Service
+middleware** (lifecycle hooks) and **webhooks**.
 
 ## Document Service middleware
 
-In Strapi 5, lifecycle hooks are implemented as **Document Service middleware**. They intercept calls on the Document Service -- the layer that handles all content operations.
+In Strapi 5, lifecycle hooks are implemented as **Document Service middleware**. They intercept calls on the Document
+Service -- the layer that handles all content operations.
 
 ```mermaid
 sequenceDiagram
@@ -41,24 +44,24 @@ sequenceDiagram
 
 ### Available events
 
-| Event | When it runs |
-|-------|-------------|
-| `beforeCreate` | Before a new document is created |
-| `afterCreate` | After a new document is created |
-| `beforeUpdate` | Before a document is updated |
-| `afterUpdate` | After a document is updated |
-| `beforeDelete` | Before a document is deleted |
-| `afterDelete` | After a document is deleted |
-| `beforeFindOne` | Before a single document is fetched |
-| `afterFindOne` | After a single document is fetched |
-| `beforeFindMany` | Before multiple documents are fetched |
-| `afterFindMany` | After multiple documents are fetched |
-| `beforeCount` | Before a count query |
-| `afterCount` | After a count query |
-| `beforePublish` | Before a document is published |
-| `afterPublish` | After a document is published |
-| `beforeUnpublish` | Before a document is unpublished |
-| `afterUnpublish` | After a document is unpublished |
+| Event             | When it runs                          |
+|-------------------|---------------------------------------|
+| `beforeCreate`    | Before a new document is created      |
+| `afterCreate`     | After a new document is created       |
+| `beforeUpdate`    | Before a document is updated          |
+| `afterUpdate`     | After a document is updated           |
+| `beforeDelete`    | Before a document is deleted          |
+| `afterDelete`     | After a document is deleted           |
+| `beforeFindOne`   | Before a single document is fetched   |
+| `afterFindOne`    | After a single document is fetched    |
+| `beforeFindMany`  | Before multiple documents are fetched |
+| `afterFindMany`   | After multiple documents are fetched  |
+| `beforeCount`     | Before a count query                  |
+| `afterCount`      | After a count query                   |
+| `beforePublish`   | Before a document is published        |
+| `afterPublish`    | After a document is published         |
+| `beforeUnpublish` | Before a document is unpublished      |
+| `afterUnpublish`  | After a document is unpublished       |
 
 ### Registering middleware
 
@@ -84,13 +87,13 @@ module.exports = {
 
 The `context` object contains:
 
-| Property | Description |
-|----------|-------------|
-| `context.uid` | Content type UID (e.g., `"api::post.post"`) |
-| `context.action` | The action being performed (e.g., `"create"`, `"update"`) |
-| `context.params` | The parameters passed to the Document Service method |
-| `context.params.data` | The data being written (for create/update) |
-| `context.params.documentId` | The document ID (for findOne/update/delete) |
+| Property                    | Description                                               |
+|-----------------------------|-----------------------------------------------------------|
+| `context.uid`               | Content type UID (e.g., `"api::post.post"`)               |
+| `context.action`            | The action being performed (e.g., `"create"`, `"update"`) |
+| `context.params`            | The parameters passed to the Document Service method      |
+| `context.params.data`       | The data being written (for create/update)                |
+| `context.params.documentId` | The document ID (for findOne/update/delete)               |
 
 ### Example -- validate post titles
 
@@ -280,7 +283,8 @@ module.exports = async (context, next) => {
 
 ## Webhooks
 
-Webhooks are HTTP callbacks that notify external services when content changes. Unlike lifecycle hooks (which run custom code inside Strapi), webhooks send an HTTP request to a URL you specify.
+Webhooks are HTTP callbacks that notify external services when content changes. Unlike lifecycle hooks (which run custom
+code inside Strapi), webhooks send an HTTP request to a URL you specify.
 
 ### Configuring webhooks in the admin panel
 
@@ -288,19 +292,19 @@ Webhooks are HTTP callbacks that notify external services when content changes. 
 2. Click **Create new webhook**
 3. Configure:
 
-| Field | Description |
-|-------|-------------|
-| **Name** | Descriptive name (e.g., "Rebuild frontend") |
-| **URL** | The endpoint to call (e.g., `https://api.vercel.com/v1/integrations/deploy/...`) |
-| **Headers** | Custom headers (e.g., authorization tokens) |
-| **Events** | Which events trigger the webhook |
+| Field       | Description                                                                      |
+|-------------|----------------------------------------------------------------------------------|
+| **Name**    | Descriptive name (e.g., "Rebuild frontend")                                      |
+| **URL**     | The endpoint to call (e.g., `https://api.vercel.com/v1/integrations/deploy/...`) |
+| **Headers** | Custom headers (e.g., authorization tokens)                                      |
+| **Events**  | Which events trigger the webhook                                                 |
 
 4. Select events:
 
-| Event category | Events |
-|---------------|--------|
-| **Entry** | `entry.create`, `entry.update`, `entry.delete`, `entry.publish`, `entry.unpublish` |
-| **Media** | `media.create`, `media.update`, `media.delete` |
+| Event category | Events                                                                             |
+|----------------|------------------------------------------------------------------------------------|
+| **Entry**      | `entry.create`, `entry.update`, `entry.delete`, `entry.publish`, `entry.unpublish` |
+| **Media**      | `media.create`, `media.update`, `media.delete`                                     |
 
 5. Click **Save**
 
@@ -327,21 +331,21 @@ When an event triggers, Strapi sends a POST request with this payload:
 
 ### Common webhook use cases
 
-| Use case | Webhook target |
-|----------|---------------|
-| **Rebuild static site** | Vercel, Netlify deploy hooks |
-| **Invalidate CDN cache** | Cloudflare, Fastly purge API |
-| **Sync search index** | Algolia, Meilisearch indexing API |
-| **Send notifications** | Slack, Discord, email service |
-| **Sync to external DB** | Your own API endpoint |
+| Use case                 | Webhook target                    |
+|--------------------------|-----------------------------------|
+| **Rebuild static site**  | Vercel, Netlify deploy hooks      |
+| **Invalidate CDN cache** | Cloudflare, Fastly purge API      |
+| **Sync search index**    | Algolia, Meilisearch indexing API |
+| **Send notifications**   | Slack, Discord, email service     |
+| **Sync to external DB**  | Your own API endpoint             |
 
 ### Example -- trigger a Vercel rebuild
 
 1. In Vercel, create a Deploy Hook (Project Settings > Git > Deploy Hooks)
 2. Copy the hook URL
 3. In Strapi, create a webhook with:
-   - **URL:** `https://api.vercel.com/v1/integrations/deploy/prj_xxx/yyy`
-   - **Events:** `entry.publish`, `entry.unpublish`, `entry.delete`
+    - **URL:** `https://api.vercel.com/v1/integrations/deploy/prj_xxx/yyy`
+    - **Events:** `entry.publish`, `entry.unpublish`, `entry.delete`
 
 Now every time you publish, unpublish, or delete a post, Vercel rebuilds your frontend.
 
@@ -355,7 +359,8 @@ Headers:
   Content-Type: application/json
 ```
 
-To format the Slack message, you would need a middleware service (like a serverless function) between Strapi and Slack that transforms the webhook payload into Slack's message format.
+To format the Slack message, you would need a middleware service (like a serverless function) between Strapi and Slack
+that transforms the webhook payload into Slack's message format.
 
 ## Programmatic webhooks
 
@@ -409,17 +414,18 @@ module.exports = async (context, next) => {
 };
 ```
 
-> **Tip:** For production, use a proper HTTP client (like `node-fetch` or `axios`) instead of the built-in `https` module.
+> **Tip:** For production, use a proper HTTP client (like `node-fetch` or `axios`) instead of the built-in `https`
+> module.
 
 ## Lifecycle hooks vs webhooks
 
-| Feature | Lifecycle hooks | Webhooks |
-|---------|----------------|----------|
-| **Runs** | Inside Strapi (synchronous) | External HTTP call (asynchronous) |
-| **Configuration** | Code in `src/index.js` | Admin panel or `config/` |
-| **Use for** | Validation, transformation, internal side effects | External service notification |
-| **Can block** | Yes (throw error to prevent action) | No (fire and forget) |
-| **Access to** | Full Strapi API, context, data | Webhook payload only |
+| Feature           | Lifecycle hooks                                   | Webhooks                          |
+|-------------------|---------------------------------------------------|-----------------------------------|
+| **Runs**          | Inside Strapi (synchronous)                       | External HTTP call (asynchronous) |
+| **Configuration** | Code in `src/index.js`                            | Admin panel or `config/`          |
+| **Use for**       | Validation, transformation, internal side effects | External service notification     |
+| **Can block**     | Yes (throw error to prevent action)               | No (fire and forget)              |
+| **Access to**     | Full Strapi API, context, data                    | Webhook payload only              |
 
 Use lifecycle hooks when you need to:
 
@@ -435,7 +441,8 @@ Use webhooks when you need to:
 - **Sync data** with external systems
 - **Decouple** Strapi from external services
 
-> For advanced lifecycle and webhook patterns, see the [Lifecycle Hooks](/strapi/lifecycle-hooks) and [Webhooks and Integrations](/strapi/webhooks-and-integrations) references.
+> For advanced lifecycle and webhook patterns, see the [Lifecycle Hooks](/strapi/lifecycle-hooks)
+> and [Webhooks and Integrations](/strapi/webhooks-and-integrations) references.
 
 ## Summary
 
@@ -449,6 +456,8 @@ You learned:
 - Common webhook use cases (rebuild, CDN purge, Slack, search sync)
 - When to use **lifecycle hooks vs webhooks**
 
-Your blog now reacts to content changes: validating titles, auto-generating slugs, and optionally notifying external services. The next chapter covers file uploads and media management.
+Your blog now reacts to content changes: validating titles, auto-generating slugs, and optionally notifying external
+services. The next chapter covers file uploads and media management.
 
-Next up: [Media & File Uploads](./10-media-and-file-uploads.md) -- upload providers, S3 and Cloudinary integration, image optimization, responsive formats, and upload validation.
+Next up: [Media & File Uploads](./10-media-and-file-uploads.md) -- upload providers, S3 and Cloudinary integration,
+image optimization, responsive formats, and upload validation.

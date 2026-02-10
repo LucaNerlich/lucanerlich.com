@@ -312,25 +312,25 @@ The table below lists frequently configured services and their PIDs.
 ## Common Pitfalls
 
 1. **Wrong run mode folder** — placing a publish config in `config.author/` means it is never active on
-   publish instances. Double-check the folder name.
+publish instances. Double-check the folder name.
 
 2. **Missing tilde in factory configs** — without the `~identifier` suffix, AEM treats the file as a
-   singleton and only one instance will ever be created.
+singleton and only one instance will ever be created.
 
 3. **PID typo** — the filename PID must exactly match the fully qualified class name annotated with
-   `@Component`. A silent mismatch means the config is never applied.
+`@Component`. A silent mismatch means the config is never applied.
 
 4. **Editing configs via Felix Console in production** — changes are overwritten on the next deployment
-   and create configuration drift. Always deploy configs through the repository.
+and create configuration drift. Always deploy configs through the repository.
 
 5. **Config not picked up after deployment** — verify the content package filter in
-   `ui.config/src/main/content/META-INF/vault/filter.xml` includes the `osgiconfig` path.
+`ui.config/src/main/content/META-INF/vault/filter.xml` includes the `osgiconfig` path.
 
 6. **Forgetting the `.cfg.json` extension** — files without the correct extension are ignored by the
-   OSGi installer.
+OSGi installer.
 
 7. **Using legacy formats in new projects** — `.config` and `.cfg` files still work but lack JSON
-   tooling support and are harder to read. Prefer `.cfg.json` for all new configs.
+tooling support and are harder to read. Prefer `.cfg.json` for all new configs.
 
 :::tip Validate configs in CI
 Add a build step that checks OSGi config filenames against the codebase's Java PIDs. A simple script

@@ -3,23 +3,26 @@ title: "The JCR & Sling"
 sidebar_label: "JCR & Sling"
 description: The Java Content Repository, node types and properties, resource resolution, CRXDE Lite, and how Apache Sling maps URLs to content.
 slug: /aem/beginners-guide/jcr-and-sling
-tags: [aem, beginners]
+tags: [ aem, beginners ]
 keywords:
-  - aem jcr
-  - aem sling
-  - aem resource resolution
-  - aem crxde lite
-  - aem content repository
+    - aem jcr
+    - aem sling
+    - aem resource resolution
+    - aem crxde lite
+    - aem content repository
 sidebar_position: 2
 ---
 
 # The JCR & Sling
 
-Everything in AEM is stored in the **JCR** (Java Content Repository) -- pages, components, templates, images, configurations, even your code definitions. Understanding the JCR and how **Sling** resolves URLs to content is essential for working with AEM.
+Everything in AEM is stored in the **JCR** (Java Content Repository) -- pages, components, templates, images,
+configurations, even your code definitions. Understanding the JCR and how **Sling** resolves URLs to content is
+essential for working with AEM.
 
 ## What is the JCR?
 
-The JCR is a hierarchical, tree-structured content repository. Think of it as a cross between a file system and a database:
+The JCR is a hierarchical, tree-structured content repository. Think of it as a cross between a file system and a
+database:
 
 ```mermaid
 flowchart TD
@@ -42,22 +45,23 @@ flowchart TD
     MySiteApps --> Templates["/apps/mysite/templates"]
 ```
 
-| Path | Contents |
-|------|----------|
-| `/apps` | Your project's code -- components, templates, clientlibs, configs |
-| `/libs` | AEM's built-in code -- Core Components, platform features |
-| `/content` | Authored content -- pages, assets |
-| `/conf` | Configuration -- editable templates, Cloud Configurations |
-| `/var` | Runtime data -- workflow instances, audit logs |
-| `/etc` | Legacy config area (some items still here) |
-| `/home` | Users and groups |
+| Path       | Contents                                                          |
+|------------|-------------------------------------------------------------------|
+| `/apps`    | Your project's code -- components, templates, clientlibs, configs |
+| `/libs`    | AEM's built-in code -- Core Components, platform features         |
+| `/content` | Authored content -- pages, assets                                 |
+| `/conf`    | Configuration -- editable templates, Cloud Configurations         |
+| `/var`     | Runtime data -- workflow instances, audit logs                    |
+| `/etc`     | Legacy config area (some items still here)                        |
+| `/home`    | Users and groups                                                  |
 
 ### Nodes and properties
 
 The JCR is made of **nodes** and **properties**:
 
 - A **node** is like a folder. It has a name, a type, and can contain child nodes and properties.
-- A **property** is a key-value pair attached to a node. Values can be strings, numbers, dates, booleans, or binary data.
+- A **property** is a key-value pair attached to a node. Values can be strings, numbers, dates, booleans, or binary
+  data.
 
 Example -- a page node:
 
@@ -89,26 +93,26 @@ Key observations:
 
 Every node has a **primary type** that defines its structure:
 
-| Node type | Use |
-|-----------|-----|
-| `cq:Page` | A page in the Sites console |
-| `cq:PageContent` | The content node of a page (`jcr:content`) |
-| `nt:unstructured` | Generic node -- no schema constraints. Most component data nodes |
-| `nt:folder` | A basic folder |
-| `sling:Folder` | A Sling-aware folder |
-| `sling:OrderedFolder` | Folder with ordered children |
-| `cq:Component` | A component definition node |
-| `cq:Template` | A template definition node |
-| `dam:Asset` | A digital asset (image, document) |
+| Node type             | Use                                                              |
+|-----------------------|------------------------------------------------------------------|
+| `cq:Page`             | A page in the Sites console                                      |
+| `cq:PageContent`      | The content node of a page (`jcr:content`)                       |
+| `nt:unstructured`     | Generic node -- no schema constraints. Most component data nodes |
+| `nt:folder`           | A basic folder                                                   |
+| `sling:Folder`        | A Sling-aware folder                                             |
+| `sling:OrderedFolder` | Folder with ordered children                                     |
+| `cq:Component`        | A component definition node                                      |
+| `cq:Template`         | A template definition node                                       |
+| `dam:Asset`           | A digital asset (image, document)                                |
 
 Nodes can also have **mixin types** that add additional capabilities:
 
-| Mixin | Adds |
-|-------|------|
-| `mix:versionable` | Version history |
-| `mix:lockable` | Locking support |
-| `cq:LiveRelationship` | Live Copy support (MSM) |
-| `rep:AccessControllable` | ACL support |
+| Mixin                    | Adds                    |
+|--------------------------|-------------------------|
+| `mix:versionable`        | Version history         |
+| `mix:lockable`           | Locking support         |
+| `cq:LiveRelationship`    | Live Copy support (MSM) |
+| `rep:AccessControllable` | ACL support             |
 
 ## Exploring the JCR with CRXDE Lite
 
@@ -120,10 +124,10 @@ http://localhost:4502/crx/de
 
 ### The CRXDE Lite interface
 
-| Area | What it shows |
-|------|--------------|
-| **Left panel** | Node tree browser -- navigate the hierarchy |
-| **Center panel** | Node properties (key-value pairs) |
+| Area             | What it shows                                  |
+|------------------|------------------------------------------------|
+| **Left panel**   | Node tree browser -- navigate the hierarchy    |
+| **Center panel** | Node properties (key-value pairs)              |
 | **Bottom panel** | Query tool, access control, replication status |
 
 ### Browsing content
@@ -144,11 +148,13 @@ You can modify properties directly in CRXDE Lite:
 3. Change its value
 4. Click **Save All** at the top
 
-> **Warning:** Direct JCR edits in CRXDE Lite are for **debugging and exploration only**. In AEMaaCS, production content is managed through the authoring UI and code through Git + Cloud Manager.
+> **Warning:** Direct JCR edits in CRXDE Lite are for **debugging and exploration only**. In AEMaaCS, production content
+> is managed through the authoring UI and code through Git + Cloud Manager.
 
 ## Apache Sling -- the web framework
 
-Sling is the web framework that sits between HTTP and the JCR. Its core job: **resolve a URL to a JCR resource, then render it**.
+Sling is the web framework that sits between HTTP and the JCR. Its core job: **resolve a URL to a JCR resource, then
+render it**.
 
 ### The Sling request processing pipeline
 
@@ -169,7 +175,8 @@ flowchart LR
 When a request like `GET /content/mysite/en/about.html` arrives:
 
 1. **Resource resolution** -- Sling decomposes the URL and finds the JCR node at `/content/mysite/en/about`
-2. **Script selection** -- Sling reads the `sling:resourceType` property (e.g., `mysite/components/page`) and finds the corresponding rendering script
+2. **Script selection** -- Sling reads the `sling:resourceType` property (e.g., `mysite/components/page`) and finds the
+   corresponding rendering script
 3. **Rendering** -- the HTL template (or servlet) renders the content
 4. **Response** -- the rendered HTML is returned
 
@@ -183,13 +190,13 @@ Sling breaks down URLs into parts:
          Resource path       Selectors Ext  Suffix  Query
 ```
 
-| Part | Example | Purpose |
-|------|---------|---------|
-| **Resource path** | `/content/mysite/en/about` | Maps to a JCR node |
-| **Selectors** | `article` | Alternate rendering (e.g., `about.article.html`) |
-| **Extension** | `html` | Output format |
-| **Suffix** | `/suffix` | Additional path info |
-| **Query string** | `key=value` | Parameters |
+| Part              | Example                    | Purpose                                          |
+|-------------------|----------------------------|--------------------------------------------------|
+| **Resource path** | `/content/mysite/en/about` | Maps to a JCR node                               |
+| **Selectors**     | `article`                  | Alternate rendering (e.g., `about.article.html`) |
+| **Extension**     | `html`                     | Output format                                    |
+| **Suffix**        | `/suffix`                  | Additional path info                             |
+| **Query string**  | `key=value`                | Parameters                                       |
 
 Selectors are powerful -- they let you render the same content in different ways without creating new endpoints:
 
@@ -229,14 +236,15 @@ This is the **overlay mechanism** -- you can override any AEM component by placi
 
 ### Script selection rules
 
-For a resource with `sling:resourceType = "mysite/components/text"`, Sling looks for scripts in `/apps/mysite/components/text/`:
+For a resource with `sling:resourceType = "mysite/components/text"`, Sling looks for scripts in
+`/apps/mysite/components/text/`:
 
-| Request | Script looked up |
-|---------|-----------------|
-| `GET .html` | `text.html` or `html.html` |
-| `GET .json` | `text.json` or `json.html` |
+| Request             | Script looked up                     |
+|---------------------|--------------------------------------|
+| `GET .html`         | `text.html` or `html.html`           |
+| `GET .json`         | `text.json` or `json.html`           |
 | `GET .article.html` | `text.article.html` then `text.html` |
-| `POST .html` | `text.POST.html` |
+| `POST .html`        | `text.POST.html`                     |
 
 Script naming conventions: `<component>.<selector>.<extension>.html` or the shorthand `<extension>.html`.
 
@@ -264,12 +272,12 @@ for (Resource child : page.getChildren()) {
 
 Key interfaces:
 
-| Interface | Purpose |
-|-----------|---------|
-| `Resource` | Represents a JCR node (or virtual resource) |
-| `ResourceResolver` | Resolves paths to resources, creates/modifies resources |
-| `ValueMap` | Read properties from a resource (like a type-safe Map) |
-| `ModifiableValueMap` | Write properties to a resource |
+| Interface            | Purpose                                                 |
+|----------------------|---------------------------------------------------------|
+| `Resource`           | Represents a JCR node (or virtual resource)             |
+| `ResourceResolver`   | Resolves paths to resources, creates/modifies resources |
+| `ValueMap`           | Read properties from a resource (like a type-safe Map)  |
+| `ModifiableValueMap` | Write properties to a resource                          |
 
 ### Adaptable pattern
 
@@ -289,7 +297,8 @@ ValueMap props = resource.adaptTo(ValueMap.class);
 Node node = resource.adaptTo(Node.class);
 ```
 
-This pattern is central to AEM development. Sling Models (chapter 7) are the primary way you adapt resources to custom Java objects.
+This pattern is central to AEM development. Sling Models (chapter 7) are the primary way you adapt resources to custom
+Java objects.
 
 ## Content paths and conventions
 
@@ -297,29 +306,29 @@ AEM has strong conventions for where content lives:
 
 ### Code paths (immutable in AEMaaCS)
 
-| Path | Contents |
-|------|----------|
-| `/apps/mysite/components/` | Your component definitions |
+| Path                       | Contents                     |
+|----------------------------|------------------------------|
+| `/apps/mysite/components/` | Your component definitions   |
 | `/apps/mysite/clientlibs/` | Your CSS/JS client libraries |
-| `/apps/mysite/i18n/` | Your i18n dictionaries |
+| `/apps/mysite/i18n/`       | Your i18n dictionaries       |
 
 ### Content paths (mutable)
 
-| Path | Contents |
-|------|----------|
-| `/content/mysite/` | Your site's pages |
-| `/content/dam/mysite/` | Your digital assets (images, PDFs) |
-| `/content/experience-fragments/mysite/` | Experience Fragments |
-| `/conf/mysite/` | Your site's configuration (templates, Cloud Configs) |
+| Path                                    | Contents                                             |
+|-----------------------------------------|------------------------------------------------------|
+| `/content/mysite/`                      | Your site's pages                                    |
+| `/content/dam/mysite/`                  | Your digital assets (images, PDFs)                   |
+| `/content/experience-fragments/mysite/` | Experience Fragments                                 |
+| `/conf/mysite/`                         | Your site's configuration (templates, Cloud Configs) |
 
 ### System paths
 
-| Path | Contents |
-|------|----------|
-| `/libs/` | AEM's built-in code -- **never modify** |
-| `/var/` | Runtime data (workflow, audit) |
-| `/home/users/` | User accounts |
-| `/home/groups/` | Groups |
+| Path            | Contents                                |
+|-----------------|-----------------------------------------|
+| `/libs/`        | AEM's built-in code -- **never modify** |
+| `/var/`         | Runtime data (workflow, audit)          |
+| `/home/users/`  | User accounts                           |
+| `/home/groups/` | Groups                                  |
 
 > **Rule:** Never modify `/libs`. Always overlay or extend in `/apps`. In AEMaaCS, `/libs` is read-only.
 
@@ -346,16 +355,21 @@ http://localhost:4502/bin/querybuilder.json?
 SQL-like syntax for JCR queries:
 
 ```sql
-SELECT * FROM [cq:Page] AS page
-WHERE ISDESCENDANTNODE(page, '/content/mysite')
-  AND page.[jcr:content/jcr:title] LIKE '%about%'
+SELECT *
+FROM [cq:Page] AS page
+WHERE ISDESCENDANTNODE(page
+    , '/content/mysite')
+  AND page.[jcr: content /jcr:title] LIKE '%about%'
 ```
 
-You can run queries in CRXDE Lite's query tool (bottom panel) or the QueryBuilder Debugger at `http://localhost:4502/libs/cq/search/content/querydebug.html`.
+You can run queries in CRXDE Lite's query tool (bottom panel) or the QueryBuilder Debugger at
+`http://localhost:4502/libs/cq/search/content/querydebug.html`.
 
-> **Performance warning:** Queries without proper indexes are slow and can block the repository. Always test query performance and create Oak indexes for production queries. See the [JCR reference](/aem/content/jcr) for details.
+> **Performance warning:** Queries without proper indexes are slow and can block the repository. Always test query
+> performance and create Oak indexes for production queries. See the [JCR reference](/aem/content/jcr) for details.
 
-> For deeper JCR topics, see the [Modify and Query the JCR](/aem/content/jcr) and [JCR Node Operations](/aem/content/node-operations) references.
+> For deeper JCR topics, see the [Modify and Query the JCR](/aem/content/jcr)
+> and [JCR Node Operations](/aem/content/node-operations) references.
 
 ## Summary
 
@@ -371,6 +385,8 @@ You learned:
 - **Content path conventions** -- `/apps` for code, `/content` for content, `/libs` is read-only
 - **Querying** with QueryBuilder and JCR-SQL2
 
-The JCR stores everything, and Sling connects it to the web. The third foundational layer is OSGi -- the module system that manages your Java code.
+The JCR stores everything, and Sling connects it to the web. The third foundational layer is OSGi -- the module system
+that manages your Java code.
 
-Next up: [OSGi Fundamentals](./03-osgi-fundamentals.md) -- bundles, services, the OSGi container, the Web Console, and configuration management.
+Next up: [OSGi Fundamentals](./03-osgi-fundamentals.md) -- bundles, services, the OSGi container, the Web Console, and
+configuration management.

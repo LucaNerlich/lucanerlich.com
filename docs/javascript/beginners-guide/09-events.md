@@ -15,7 +15,8 @@ sidebar_position: 9
 
 # Events & Interactivity
 
-Events are how JavaScript responds to user actions -- clicks, key presses, form submissions, scrolling, and more. This chapter covers everything you need to make interactive web pages.
+Events are how JavaScript responds to user actions -- clicks, key presses, form submissions, scrolling, and more. This
+chapter covers everything you need to make interactive web pages.
 
 ## Adding event listeners
 
@@ -102,6 +103,7 @@ button.addEventListener("click", (event) => {
 ```
 
 Result (when clicking):
+
 ```text
 Type: click
 Target: BUTTON
@@ -111,14 +113,14 @@ Timestamp: 12345.67
 
 Common properties:
 
-| Property | Description |
-|----------|-------------|
-| `event.type` | Event name (`"click"`, `"keydown"`, etc.) |
-| `event.target` | The element that triggered the event |
-| `event.currentTarget` | The element the listener is attached to |
-| `event.clientX` / `clientY` | Mouse position relative to viewport |
-| `event.key` | Key pressed (for keyboard events) |
-| `event.timeStamp` | When the event occurred |
+| Property                    | Description                               |
+|-----------------------------|-------------------------------------------|
+| `event.type`                | Event name (`"click"`, `"keydown"`, etc.) |
+| `event.target`              | The element that triggered the event      |
+| `event.currentTarget`       | The element the listener is attached to   |
+| `event.clientX` / `clientY` | Mouse position relative to viewport       |
+| `event.key`                 | Key pressed (for keyboard events)         |
+| `event.timeStamp`           | When the event occurred                   |
 
 ## Common event types
 
@@ -218,7 +220,8 @@ window.addEventListener("load", () => {
 });
 ```
 
-**Best practice:** place your `<script>` tag at the end of `<body>`, or use `DOMContentLoaded` to ensure the DOM is available before your code runs.
+**Best practice:** place your `<script>` tag at the end of `<body>`, or use `DOMContentLoaded` to ensure the DOM is
+available before your code runs.
 
 ## Preventing default behavior
 
@@ -242,7 +245,8 @@ form.addEventListener("submit", (event) => {
 
 ## Event bubbling and capturing
 
-When you click a button inside a `<div>`, the event fires on the button **and** on every ancestor up to `document`. This is called **bubbling**.
+When you click a button inside a `<div>`, the event fires on the button **and** on every ancestor up to `document`. This
+is called **bubbling**.
 
 ```html
 <div id="outer">
@@ -267,6 +271,7 @@ document.querySelector("#btn").addEventListener("click", () => {
 ```
 
 Result (clicking the button):
+
 ```text
 Button clicked
 Inner div clicked
@@ -292,6 +297,7 @@ document.querySelector("#outer").addEventListener("click", () => {
 ```
 
 Result (clicking the button):
+
 ```text
 Button clicked -- stopped bubbling
 ```
@@ -301,6 +307,7 @@ Use `stopPropagation` sparingly -- it can break other listeners that rely on bub
 ### Capture phase
 
 Events actually go through three phases:
+
 1. **Capture** -- from `document` down to the target
 2. **Target** -- the element that was clicked
 3. **Bubble** -- back up from the target to `document`
@@ -322,6 +329,7 @@ document.querySelector("#outer").addEventListener("click", () => {
 ```
 
 Result (clicking the button):
+
 ```text
 Outer (capture phase)
 Button (target)
@@ -332,7 +340,8 @@ You will rarely need capture phase listeners, but understanding the flow helps w
 
 ## Event delegation
 
-Instead of attaching listeners to every child element, attach one listener to a parent and use `event.target` to determine which child was clicked:
+Instead of attaching listeners to every child element, attach one listener to a parent and use `event.target` to
+determine which child was clicked:
 
 ```html
 <ul id="task-list">
@@ -359,6 +368,7 @@ document.querySelector("#task-list").addEventListener("click", (event) => {
 ```
 
 Benefits of delegation:
+
 - **Performance:** one listener instead of many
 - **Dynamic elements:** works for elements added later (they bubble to the parent)
 - **Less memory:** fewer event listener objects
@@ -383,7 +393,8 @@ document.querySelector("#user-list").addEventListener("click", (event) => {
 });
 ```
 
-`closest` walks up the tree from `event.target` to find the nearest matching ancestor. It handles clicks on `<strong>` or `<span>` inside the `<li>`.
+`closest` walks up the tree from `event.target` to find the nearest matching ancestor. It handles clicks on `<strong>`
+or `<span>` inside the `<li>`.
 
 ## Form handling
 
@@ -629,11 +640,13 @@ document.dispatchEvent(userLoggedIn);
 ```
 
 Result:
+
 ```text
 Ada logged in as admin
 ```
 
-Custom events are useful for decoupling components -- one part of your code can emit events without knowing who is listening.
+Custom events are useful for decoupling components -- one part of your code can emit events without knowing who is
+listening.
 
 ## Summary
 
@@ -643,7 +656,8 @@ Custom events are useful for decoupling components -- one part of your code can 
 - Events **bubble** from child to parent. Use `stopPropagation()` sparingly.
 - **Event delegation** attaches one listener to a parent -- better performance, works for dynamic elements.
 - `closest()` helps find the relevant element in delegated handlers.
-- Forms: use `FormData` or `form.elements` to access values, `event.preventDefault()` to handle submission in JavaScript.
+- Forms: use `FormData` or `form.elements` to access values, `event.preventDefault()` to handle submission in
+  JavaScript.
 - **Debounce** expensive handlers like search to avoid firing on every keystroke.
 
 Next up: [Working with Data](./10-working-with-data.md) -- fetching data from APIs and storing data in the browser.

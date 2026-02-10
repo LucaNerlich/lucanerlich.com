@@ -15,11 +15,13 @@ sidebar_position: 8
 
 # Templates & Policies
 
-Templates define the structure and behavior of pages. Policies control which components authors can use and how they behave. Together, they create a governed authoring experience -- authors have freedom within boundaries.
+Templates define the structure and behavior of pages. Policies control which components authors can use and how they
+behave. Together, they create a governed authoring experience -- authors have freedom within boundaries.
 
 ## Editable templates
 
-AEM uses **editable templates** -- templates that can be created and configured in the authoring UI (not just in code). They live in `/conf/mysite/settings/wcm/templates/`.
+AEM uses **editable templates** -- templates that can be created and configured in the authoring UI (not just in code).
+They live in `/conf/mysite/settings/wcm/templates/`.
 
 ```mermaid
 flowchart TD
@@ -31,11 +33,11 @@ flowchart TD
     ET -->|"creates"| Page
 ```
 
-| Concept | Stored in | Managed by |
-|---------|-----------|------------|
-| **Template Type** | `/apps/mysite/templates/` | Developers (code) |
+| Concept               | Stored in                              | Managed by            |
+|-----------------------|----------------------------------------|-----------------------|
+| **Template Type**     | `/apps/mysite/templates/`              | Developers (code)     |
 | **Editable Template** | `/conf/mysite/settings/wcm/templates/` | Template authors (UI) |
-| **Page** | `/content/mysite/` | Content authors (UI) |
+| **Page**              | `/content/mysite/`                     | Content authors (UI)  |
 
 ### Template Types
 
@@ -72,11 +74,11 @@ apps/mysite/templates/
 
 The template editor has three modes:
 
-| Mode | Purpose |
-|------|---------|
-| **Structure** | Define locked layout containers and components. Authors cannot change these |
-| **Initial Content** | Set default content for new pages. Authors can modify this |
-| **Policies** | Configure component policies -- allowed components, styles, behavior |
+| Mode                | Purpose                                                                     |
+|---------------------|-----------------------------------------------------------------------------|
+| **Structure**       | Define locked layout containers and components. Authors cannot change these |
+| **Initial Content** | Set default content for new pages. Authors can modify this                  |
+| **Policies**        | Configure component policies -- allowed components, styles, behavior        |
 
 ### Structure mode
 
@@ -150,7 +152,8 @@ Your project's page component typically extends the Core Components page:
           sling:resourceSuperType="core/wcm/components/page/v3/page"/>
 ```
 
-Then you customize by overriding specific HTL files (like `customheaderlibs.html` and `customfooterlibs.html`) rather than rewriting the entire page.
+Then you customize by overriding specific HTL files (like `customheaderlibs.html` and `customfooterlibs.html`) rather
+than rewriting the entire page.
 
 ## Component policies
 
@@ -165,11 +168,13 @@ The most common policy setting -- which components can authors add to a containe
 3. Click the **policy icon** (wrench)
 4. Under **Allowed Components**, select which component groups and individual components are permitted
 
-This prevents authors from placing inappropriate components -- for example, blocking the Hero component from appearing inside a sidebar container.
+This prevents authors from placing inappropriate components -- for example, blocking the Hero component from appearing
+inside a sidebar container.
 
 ### Design dialog policies
 
-Some components have a **design dialog** (also called a policy dialog) that configures component-level defaults for a specific template context:
+Some components have a **design dialog** (also called a policy dialog) that configures component-level defaults for a
+specific template context:
 
 - **Text component** -- default rich text formatting options
 - **Image component** -- allowed image widths, lazy loading default
@@ -198,13 +203,14 @@ The Style System lets you define CSS classes that authors can apply to component
 2. Open its policy
 3. Under **Styles**, add style groups:
 
-| Style group | Options |
-|-------------|---------|
-| **Size** | Small, Medium, Large |
-| **Theme** | Light, Dark |
+| Style group | Options              |
+|-------------|----------------------|
+| **Size**    | Small, Medium, Large |
+| **Theme**   | Light, Dark          |
 | **Spacing** | Compact, Comfortable |
 
-Each option maps to a CSS class (e.g., `cmp-hero--large`, `cmp-hero--dark`). Authors select styles in the component toolbar without touching code.
+Each option maps to a CSS class (e.g., `cmp-hero--large`, `cmp-hero--dark`). Authors select styles in the component
+toolbar without touching code.
 
 ## Responsive grid (layout container)
 
@@ -217,11 +223,11 @@ The responsive grid is the main layout mechanism. It provides:
 
 Authors use the layout mode (ruler icon) to resize component columns per breakpoint:
 
-| Breakpoint | Default width |
-|-----------|---------------|
-| Phone | < 768px |
-| Tablet | 768px -- 1024px |
-| Desktop | > 1024px |
+| Breakpoint | Default width   |
+|------------|-----------------|
+| Phone      | < 768px         |
+| Tablet     | 768px -- 1024px |
+| Desktop    | > 1024px        |
 
 Breakpoints are configured in the responsive grid's policy.
 
@@ -282,7 +288,8 @@ sequenceDiagram
     Page-->>Author: Page created, open in editor
 ```
 
-> For advanced template patterns, see the [Templates and Policies](/aem/components/templates-policies) reference. For customizing the responsive grid layout, see [Extending the Responsive Grid](/aem/ui/extending-responsive-grid).
+> For advanced template patterns, see the [Templates and Policies](/aem/components/templates-policies) reference. For
+> customizing the responsive grid layout, see [Extending the Responsive Grid](/aem/ui/extending-responsive-grid).
 
 ## Summary
 
@@ -297,4 +304,5 @@ You learned:
 - **Proxy components** inherit from Core Components for easy customization
 - Templates are linked to sites via the `cq:conf` property
 
-Next up: [Client Libraries](./09-client-libraries.md) -- CSS and JS management, clientlib categories, dependencies, embedding, proxy serving, and integration with the page component.
+Next up: [Client Libraries](./09-client-libraries.md) -- CSS and JS management, clientlib categories, dependencies,
+embedding, proxy serving, and integration with the page component.

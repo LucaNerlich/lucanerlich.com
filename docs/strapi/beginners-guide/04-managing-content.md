@@ -15,7 +15,8 @@ sidebar_position: 4
 
 # Managing Content
 
-The admin panel is where content editors spend their time. In this chapter we will create some actual content for our blog, learn the draft/publish workflow, and explore the media library.
+The admin panel is where content editors spend their time. In this chapter we will create some actual content for our
+blog, learn the draft/publish workflow, and explore the media library.
 
 ## Creating entries
 
@@ -25,10 +26,10 @@ The admin panel is where content editors spend their time. In this chapter we wi
 2. Click **Author** in the collection types list
 3. Click **Create new entry**
 4. Fill in the fields:
-   - **name:** Ada Lovelace
-   - **bio:** Pioneer of computing, wrote the first algorithm.
-   - **email:** ada@example.com
-   - **avatar:** Upload an image (or skip for now)
+    - **name:** Ada Lovelace
+    - **bio:** Pioneer of computing, wrote the first algorithm.
+    - **email:** ada@example.com
+    - **avatar:** Upload an image (or skip for now)
 5. Click **Save** (this creates a draft)
 6. Click **Publish** to make it available via the API
 
@@ -42,22 +43,22 @@ Create a second author:
 
 Create a few categories:
 
-| name | slug | description |
-|------|------|-------------|
+| name       | slug       | description                                 |
+|------------|------------|---------------------------------------------|
 | JavaScript | javascript | Posts about JavaScript and the web platform |
-| Strapi | strapi | Posts about Strapi CMS |
-| General | general | Everything else |
+| Strapi     | strapi     | Posts about Strapi CMS                      |
+| General    | general    | Everything else                             |
 
 ### Create Tags
 
 Create some tags:
 
-| name | slug |
-|------|------|
+| name     | slug     |
+|----------|----------|
 | tutorial | tutorial |
 | beginner | beginner |
-| api | api |
-| cms | cms |
+| api      | api      |
+| cms      | cms      |
 
 ### Create a Post
 
@@ -66,19 +67,19 @@ Now create your first blog post:
 1. Go to **Post** in the Content Manager
 2. Click **Create new entry**
 3. Fill in:
-   - **title:** Getting Started with Strapi
-   - **slug:** auto-generated from title (`getting-started-with-strapi`)
-   - **content:** Write some content using the rich text editor
-   - **excerpt:** A quick introduction to building APIs with Strapi.
-   - **publishedDate:** today's date
-   - **featured:** true
+    - **title:** Getting Started with Strapi
+    - **slug:** auto-generated from title (`getting-started-with-strapi`)
+    - **content:** Write some content using the rich text editor
+    - **excerpt:** A quick introduction to building APIs with Strapi.
+    - **publishedDate:** today's date
+    - **featured:** true
 4. In the **Relations** section on the right:
-   - **author:** Select "Ada Lovelace"
-   - **category:** Select "Strapi"
-   - **tags:** Select "tutorial", "beginner", "cms"
+    - **author:** Select "Ada Lovelace"
+    - **category:** Select "Strapi"
+    - **tags:** Select "tutorial", "beginner", "cms"
 5. Expand the **SEO** component:
-   - **metaTitle:** Getting Started with Strapi
-   - **metaDescription:** Learn how to set up and configure Strapi 5 for your blog.
+    - **metaTitle:** Getting Started with Strapi
+    - **metaDescription:** Learn how to set up and configure Strapi 5 for your blog.
 6. Click **Save**, then **Publish**
 
 Create a few more posts to have data to work with in later chapters.
@@ -100,17 +101,18 @@ stateDiagram-v2
 
 ### How it works
 
-| State | API visibility | Admin visibility |
-|-------|---------------|-----------------|
-| **Draft** | Not returned by default | Shown with "Draft" badge |
-| **Published** | Returned in API responses | Shown with "Published" badge |
-| **Modified** | Published version served; draft has unsaved changes | Shown with "Modified" badge |
+| State         | API visibility                                      | Admin visibility             |
+|---------------|-----------------------------------------------------|------------------------------|
+| **Draft**     | Not returned by default                             | Shown with "Draft" badge     |
+| **Published** | Returned in API responses                           | Shown with "Published" badge |
+| **Modified**  | Published version served; draft has unsaved changes | Shown with "Modified" badge  |
 
 Key points:
 
 - **Creating** an entry starts it as a draft
 - **Publishing** makes the current version available via the API
-- **Editing** a published entry creates a new draft version -- the published version remains live until you publish again
+- **Editing** a published entry creates a new draft version -- the published version remains live until you publish
+  again
 - **Unpublishing** removes the entry from the API but keeps it in the database as a draft
 - **Deleting** removes both draft and published versions permanently
 
@@ -166,12 +168,12 @@ Click any file to see its details:
 
 By default, Strapi creates multiple sizes for uploaded images:
 
-| Format | Max width |
-|--------|-----------|
-| `thumbnail` | 156px |
-| `small` | 500px |
-| `medium` | 750px |
-| `large` | 1000px |
+| Format      | Max width |
+|-------------|-----------|
+| `thumbnail` | 156px     |
+| `small`     | 500px     |
+| `medium`    | 750px     |
+| `large`     | 1000px    |
 
 The original file is always preserved. You can configure these sizes in `config/plugins.ts`:
 
@@ -220,7 +222,8 @@ The **Blocks** editor (Strapi 5's default rich text field) supports:
 - Images (inline from the media library)
 - Links
 
-The editor stores content as a structured JSON format, not HTML. This makes it frontend-agnostic -- you render the blocks however you want on the client.
+The editor stores content as a structured JSON format, not HTML. This makes it frontend-agnostic -- you render the
+blocks however you want on the client.
 
 ## Bulk operations
 
@@ -228,11 +231,12 @@ The Content Manager supports bulk operations on collection types:
 
 1. In the list view, check the boxes next to entries
 2. A toolbar appears at the top with actions:
-   - **Publish** -- publish all selected drafts
-   - **Unpublish** -- unpublish all selected entries
-   - **Delete** -- delete all selected entries
+    - **Publish** -- publish all selected drafts
+    - **Unpublish** -- unpublish all selected entries
+    - **Delete** -- delete all selected entries
 
-This is useful when you need to manage many entries at once -- for example, publishing a batch of posts or cleaning up test data.
+This is useful when you need to manage many entries at once -- for example, publishing a batch of posts or cleaning up
+test data.
 
 ## Filtering and sorting in the admin panel
 
@@ -320,4 +324,5 @@ You learned:
 
 Your blog now has real content. In the next chapter we will learn how to access it programmatically via the REST API.
 
-Next up: [REST API](./05-rest-api.md) -- understanding Strapi's auto-generated REST endpoints, filtering, sorting, pagination, population, and testing with curl.
+Next up: [REST API](./05-rest-api.md) -- understanding Strapi's auto-generated REST endpoints, filtering, sorting,
+pagination, population, and testing with curl.

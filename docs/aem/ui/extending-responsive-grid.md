@@ -33,14 +33,15 @@ graph TD
 
 ## When to Use a Custom Container
 
-| Scenario | Approach |
-|----------|---------|
-| Simple component, no children | Standard component with dialog |
-| Container with no extra properties | Use the built-in Layout Container (`wcm/foundation/components/responsivegrid`) |
-| Container with custom properties + children | **Extend the responsive grid** (this guide) |
-| Container with fixed child slots (no drag & drop) | Use `@ChildResource` + `data-sly-resource` in HTL |
+| Scenario                                          | Approach                                                                       |
+|---------------------------------------------------|--------------------------------------------------------------------------------|
+| Simple component, no children                     | Standard component with dialog                                                 |
+| Container with no extra properties                | Use the built-in Layout Container (`wcm/foundation/components/responsivegrid`) |
+| Container with custom properties + children       | **Extend the responsive grid** (this guide)                                    |
+| Container with fixed child slots (no drag & drop) | Use `@ChildResource` + `data-sly-resource` in HTL                              |
 
 Common real-world examples:
+
 - **Footer quicklinks container** -- title + logo + *n* link column children
 - **Accordion / Tab container** -- variant selector + *n* panel children
 - **Section container** -- background image, colour theme, anchor ID + *n* content children
@@ -181,6 +182,7 @@ The HTL template renders your custom properties and delegates child rendering to
 ```
 
 The critical line is:
+
 ```html
 <sly data-sly-resource="${resource @ resourceSuperType='wcm/foundation/components/responsivegrid'}"/>
 ```
@@ -355,12 +357,12 @@ public class SectionContainerExporter implements ComponentExporter, ContainerExp
 
 ### How `@Delegate` works here
 
-| Annotation | Purpose |
-|-----------|---------|
-| `@Self` | Injects from the current adaptable (the request) |
-| `@Via(type = ResourceSuperType.class)` | Adapts via the resource super type (`wcm/foundation/components/responsivegrid`) |
-| `@Delegate(types = ResponsiveGridExporter.class, excludes = ExcludedMethods.class)` | Lombok generates forwarding methods for all `ResponsiveGridExporter` methods except `getExportedType()` |
-| `@JsonIgnore` | Prevents Jackson from serialising the `responsiveGrid` field directly (the delegated methods handle serialisation) |
+| Annotation                                                                          | Purpose                                                                                                            |
+|-------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| `@Self`                                                                             | Injects from the current adaptable (the request)                                                                   |
+| `@Via(type = ResourceSuperType.class)`                                              | Adapts via the resource super type (`wcm/foundation/components/responsivegrid`)                                    |
+| `@Delegate(types = ResponsiveGridExporter.class, excludes = ExcludedMethods.class)` | Lombok generates forwarding methods for all `ResponsiveGridExporter` methods except `getExportedType()`            |
+| `@JsonIgnore`                                                                       | Prevents Jackson from serialising the `responsiveGrid` field directly (the delegated methods handle serialisation) |
 
 The `ExcludedMethods` interface is critical -- without it, `getExportedType()` would return
 `wcm/foundation/components/responsivegrid` instead of your custom resource type, breaking
@@ -482,14 +484,14 @@ export default MapTo('myproject/components/section-container')(
 
 ### Key React patterns
 
-| Pattern | Purpose |
-|---------|---------|
-| `extends ResponsiveGrid` | Inherits all grid rendering logic (child placement, edit mode placeholders) |
-| `this.childComponents` | Renders all child components placed by the author |
-| `this.placeholderComponent` | Renders the drag-and-drop placeholder in edit mode |
-| `this.containerProps` | Props for the grid container div (CSS classes, data attributes) |
-| `MapTo('resource/type')` | Maps the React component to the AEM resource type for SPA Editor |
-| `withComponentMappingContext` | Enables child component resolution in nested containers |
+| Pattern                       | Purpose                                                                     |
+|-------------------------------|-----------------------------------------------------------------------------|
+| `extends ResponsiveGrid`      | Inherits all grid rendering logic (child placement, edit mode placeholders) |
+| `this.childComponents`        | Renders all child components placed by the author                           |
+| `this.placeholderComponent`   | Renders the drag-and-drop placeholder in edit mode                          |
+| `this.containerProps`         | Props for the grid container div (CSS classes, data attributes)             |
+| `MapTo('resource/type')`      | Maps the React component to the AEM resource type for SPA Editor            |
+| `withComponentMappingContext` | Enables child component resolution in nested containers                     |
 
 ---
 
@@ -570,12 +572,12 @@ component code. This is an authoring/template concern:
 4. Open the **Policy** dialog
 5. Configure:
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| **Column count** | 12 | Number of grid columns |
-| **Phone breakpoint** | 768px | Below this width, use phone layout |
-| **Tablet breakpoint** | 1200px | Below this width, use tablet layout |
-| **Allowed components** | (all) | Component groups/names allowed as children |
+| Setting                | Default | Description                                |
+|------------------------|---------|--------------------------------------------|
+| **Column count**       | 12      | Number of grid columns                     |
+| **Phone breakpoint**   | 768px   | Below this width, use phone layout         |
+| **Tablet breakpoint**  | 1200px  | Below this width, use tablet layout        |
+| **Allowed components** | (all)   | Component groups/names allowed as children |
 
 The CSS classes generated by the grid follow the pattern:
 
@@ -682,16 +684,16 @@ Nested responsive grids (a container inside a container inside a container) work
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Children don't appear in edit mode | Ensure `data-sly-resource` delegates to `resourceSuperType='wcm/foundation/components/responsivegrid'` |
-| Grid CSS classes missing | Include the `wcm.foundation.components.responsivegrid` clientlib on the page |
-| JSON export missing `:items` and `:itemsOrder` | Implement `ContainerExporter`; ensure `@Delegate` or manual delegation includes `getExportedItems()` and `getExportedItemsOrder()` |
-| `:type` in JSON shows `responsivegrid` instead of custom type | Exclude `getExportedType()` from the `@Delegate` and return your own `RESOURCE_TYPE` |
-| Layout mode not available | Container must extend `responsivegrid`; check that the template policy enables layout mode |
-| Authors can drop any component | Configure allowed components in the template policy |
-| Container renders child markup twice | Don't manually iterate children AND delegate to the grid; use one approach |
-| Responsive layout data lost on rollout (MSM) | `cq:responsive` nodes are handled by the standard rollout config; verify the rollout configuration includes `contentUpdate` |
+| Pitfall                                                       | Solution                                                                                                                           |
+|---------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| Children don't appear in edit mode                            | Ensure `data-sly-resource` delegates to `resourceSuperType='wcm/foundation/components/responsivegrid'`                             |
+| Grid CSS classes missing                                      | Include the `wcm.foundation.components.responsivegrid` clientlib on the page                                                       |
+| JSON export missing `:items` and `:itemsOrder`                | Implement `ContainerExporter`; ensure `@Delegate` or manual delegation includes `getExportedItems()` and `getExportedItemsOrder()` |
+| `:type` in JSON shows `responsivegrid` instead of custom type | Exclude `getExportedType()` from the `@Delegate` and return your own `RESOURCE_TYPE`                                               |
+| Layout mode not available                                     | Container must extend `responsivegrid`; check that the template policy enables layout mode                                         |
+| Authors can drop any component                                | Configure allowed components in the template policy                                                                                |
+| Container renders child markup twice                          | Don't manually iterate children AND delegate to the grid; use one approach                                                         |
+| Responsive layout data lost on rollout (MSM)                  | `cq:responsive` nodes are handled by the standard rollout config; verify the rollout configuration includes `contentUpdate`        |
 
 ## External Resources
 

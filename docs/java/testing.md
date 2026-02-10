@@ -477,14 +477,14 @@ User user = TestUsers.aUser().name("Custom").build();
 
 ## What to mock vs what not to mock
 
-| Mock | Don't mock |
-|------|-----------|
-| External services (HTTP, email, payment) | Value objects and DTOs |
-| Database repositories | Pure functions (no side effects) |
-| Third-party APIs | Simple data structures |
-| Time/clock (`Clock`) | The class under test itself |
-| File system operations | Static utility methods (test indirectly) |
-| Message queues | Immutable objects (records) |
+| Mock                                     | Don't mock                               |
+|------------------------------------------|------------------------------------------|
+| External services (HTTP, email, payment) | Value objects and DTOs                   |
+| Database repositories                    | Pure functions (no side effects)         |
+| Third-party APIs                         | Simple data structures                   |
+| Time/clock (`Clock`)                     | The class under test itself              |
+| File system operations                   | Static utility methods (test indirectly) |
+| Message queues                           | Immutable objects (records)              |
 
 > If you find yourself mocking everything, your design might have too many
 > dependencies. Consider simplifying or restructuring.
@@ -535,15 +535,15 @@ void shouldWriteToFile(@TempDir Path tempDir) throws IOException {
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Testing implementation, not behaviour | Tests break on every refactor | Test public API outcomes, not internal method calls |
-| Too many mocks | Tests are fragile and hard to read | Favour integration tests for complex flows; mock only external boundaries |
-| Not verifying interactions | Mock is set up but never checked | Use `verify()` to confirm expected calls |
-| Shared mutable state between tests | Tests pass individually, fail together | Use `@BeforeEach` for fresh state per test |
-| Ignoring test names | Hard to understand failures | Use `@DisplayName` and descriptive method names |
-| Mocking final classes/methods | Mockito throws errors | Add `mockito-inline` or use interfaces |
-| `@Mock` without `@ExtendWith(MockitoExtension.class)` | Mocks are null | Always add the extension |
+| Pitfall                                               | Problem                                | Fix                                                                       |
+|-------------------------------------------------------|----------------------------------------|---------------------------------------------------------------------------|
+| Testing implementation, not behaviour                 | Tests break on every refactor          | Test public API outcomes, not internal method calls                       |
+| Too many mocks                                        | Tests are fragile and hard to read     | Favour integration tests for complex flows; mock only external boundaries |
+| Not verifying interactions                            | Mock is set up but never checked       | Use `verify()` to confirm expected calls                                  |
+| Shared mutable state between tests                    | Tests pass individually, fail together | Use `@BeforeEach` for fresh state per test                                |
+| Ignoring test names                                   | Hard to understand failures            | Use `@DisplayName` and descriptive method names                           |
+| Mocking final classes/methods                         | Mockito throws errors                  | Add `mockito-inline` or use interfaces                                    |
+| `@Mock` without `@ExtendWith(MockitoExtension.class)` | Mocks are null                         | Always add the extension                                                  |
 
 ---
 

@@ -15,7 +15,8 @@ sidebar_position: 6
 
 # Objects
 
-An object is a collection of **key-value pairs**. Objects are the primary way to group related data and behavior in JavaScript.
+An object is a collection of **key-value pairs**. Objects are the primary way to group related data and behavior in
+JavaScript.
 
 ## Object literals
 
@@ -32,11 +33,13 @@ console.log(person);
 ```
 
 Result:
+
 ```text
 { name: 'Ada', age: 36, city: 'London' }
 ```
 
-Keys (also called **properties**) are strings. Values can be anything -- strings, numbers, booleans, arrays, other objects, functions.
+Keys (also called **properties**) are strings. Values can be anything -- strings, numbers, booleans, arrays, other
+objects, functions.
 
 ## Accessing properties
 
@@ -50,6 +53,7 @@ console.log(user.age);
 ```
 
 Result:
+
 ```text
 Ada
 36
@@ -65,12 +69,14 @@ console.log(user["age"]);
 ```
 
 Result:
+
 ```text
 Ada
 36
 ```
 
 Bracket notation is required when:
+
 - The key is stored in a variable
 - The key contains spaces or special characters
 
@@ -83,6 +89,7 @@ console.log(user["full name"]);
 ```
 
 Result:
+
 ```text
 Ada
 Ada Lovelace
@@ -96,6 +103,7 @@ console.log(user.email);
 ```
 
 Result:
+
 ```text
 undefined
 ```
@@ -121,6 +129,7 @@ console.log(user.company?.name);
 ```
 
 Result:
+
 ```text
 London
 undefined
@@ -149,6 +158,7 @@ console.log(car);
 ```
 
 Result:
+
 ```text
 { brand: 'Toyota', year: 2024 }
 { brand: 'Toyota', year: 2024, color: 'blue' }
@@ -174,6 +184,7 @@ console.log(user.name !== undefined);
 ```
 
 Result:
+
 ```text
 true
 false
@@ -200,6 +211,7 @@ console.log(calculator.subtract(10, 4));
 ```
 
 Result:
+
 ```text
 8
 6
@@ -223,6 +235,7 @@ console.log(person.greet());
 ```
 
 Result:
+
 ```text
 Hello, I'm Ada
 ```
@@ -249,12 +262,14 @@ console.log(person.greetArrow());
 ```
 
 Result:
+
 ```text
 Hello, I'm Ada
 Hello, I'm undefined
 ```
 
-**Rule:** Use regular functions (shorthand syntax) for object methods. Use arrow functions for callbacks and standalone functions.
+**Rule:** Use regular functions (shorthand syntax) for object methods. Use arrow functions for callbacks and standalone
+functions.
 
 ## Computed property names
 
@@ -273,6 +288,7 @@ console.log(user);
 ```
 
 Result:
+
 ```text
 { name: 'Ada', email: 'ada@example.com', emailVerified: true }
 ```
@@ -296,6 +312,7 @@ console.log(user2);
 ```
 
 Result:
+
 ```text
 { name: 'Ada', age: 36 }
 { name: 'Ada', age: 36 }
@@ -311,6 +328,7 @@ console.log(Object.keys(user));
 ```
 
 Result:
+
 ```text
 [ 'name', 'age', 'city' ]
 ```
@@ -323,6 +341,7 @@ console.log(Object.values(user));
 ```
 
 Result:
+
 ```text
 [ 'Ada', 36, 'London' ]
 ```
@@ -335,6 +354,7 @@ console.log(Object.entries(user));
 ```
 
 Result:
+
 ```text
 [ [ 'name', 'Ada' ], [ 'age', 36 ], [ 'city', 'London' ] ]
 ```
@@ -350,6 +370,7 @@ for (const subject in scores) {
 ```
 
 Result:
+
 ```text
 math: 95
 english: 87
@@ -367,6 +388,7 @@ for (const [subject, score] of Object.entries(scores)) {
 ```
 
 Result:
+
 ```text
 math: 95
 english: 87
@@ -389,6 +411,7 @@ console.log(city);
 ```
 
 Result:
+
 ```text
 Ada
 36
@@ -406,6 +429,7 @@ console.log(userAge);
 ```
 
 Result:
+
 ```text
 Ada
 36
@@ -423,6 +447,7 @@ console.log(role);
 ```
 
 Result:
+
 ```text
 Ada
 0
@@ -451,6 +476,7 @@ console.log(country);
 ```
 
 Result:
+
 ```text
 TechCorp
 London
@@ -474,6 +500,7 @@ console.log(result2);
 ```
 
 Result:
+
 ```text
 Ada (36) -- admin
 Bob (25) -- user
@@ -499,6 +526,7 @@ console.log(copy.theme);
 ```
 
 Result:
+
 ```text
 { theme: 'light', language: 'en', fontSize: 16 }
 dark
@@ -518,6 +546,7 @@ console.log(rest);
 ```
 
 Result:
+
 ```text
 Ada
 { age: 36, city: 'London', role: 'admin' }
@@ -539,6 +568,7 @@ console.log(a === c); // same reference
 ```
 
 Result:
+
 ```text
 false
 true
@@ -554,15 +584,19 @@ console.log(JSON.stringify(a) === JSON.stringify(b));
 ```
 
 Result:
+
 ```text
 true
 ```
 
-Note: `JSON.stringify` comparison is fragile -- it depends on property order and does not handle all types. For robust deep comparison, use a library or write a recursive function.
+Note: `JSON.stringify` comparison is fragile -- it depends on property order and does not handle all types. For robust
+deep comparison, use a library or write a recursive function.
 
 ## JSON
 
-**JSON** (JavaScript Object Notation) is a text format for data exchange. It looks like JavaScript objects but with stricter rules:
+**JSON** (JavaScript Object Notation) is a text format for data exchange. It looks like JavaScript objects but with
+stricter rules:
+
 - Keys must be double-quoted strings
 - No trailing commas
 - No functions, `undefined`, or `Symbol`
@@ -578,6 +612,7 @@ console.log(typeof json);
 ```
 
 Result:
+
 ```text
 {"name":"Ada","age":36,"active":true}
 string
@@ -591,6 +626,7 @@ console.log(JSON.stringify(user, null, 2));
 ```
 
 Result:
+
 ```text
 {
   "name": "Ada",
@@ -609,6 +645,7 @@ console.log(user.name);
 ```
 
 Result:
+
 ```text
 { name: 'Ada', age: 36 }
 Ada
@@ -625,6 +662,7 @@ try {
 ```
 
 Result:
+
 ```text
 Parse error: Unexpected token 'o', "not valid json" is not valid JSON
 ```
@@ -654,6 +692,7 @@ console.log(school.students.length);
 ```
 
 Result:
+
 ```text
 London
 Ada
@@ -679,6 +718,7 @@ console.log(original.scores);  // changed!
 ```
 
 Result:
+
 ```text
 Ada
 [ 90, 85, 92, 100 ]
@@ -700,6 +740,7 @@ console.log(deep.scores);
 ```
 
 Result:
+
 ```text
 [ 90, 85, 92 ]
 [ 90, 85, 92, 100 ]
@@ -720,6 +761,7 @@ console.log(config.timeout);
 ```
 
 Result:
+
 ```text
 5000
 ```
@@ -737,6 +779,7 @@ console.log(target);
 ```
 
 Result:
+
 ```text
 { a: 1, b: 2, c: 3 }
 ```
@@ -754,4 +797,5 @@ In modern code, the spread operator `{...target, ...source}` is preferred over `
 - JSON is the standard text format for data exchange -- use `JSON.stringify` and `JSON.parse`.
 - Shallow copies share nested references; use `structuredClone` for deep copies.
 
-Next up: [HTML & CSS Essentials](./07-html-css-essentials.md) -- the building blocks of web pages, just enough to start using JavaScript in the browser.
+Next up: [HTML & CSS Essentials](./07-html-css-essentials.md) -- the building blocks of web pages, just enough to start
+using JavaScript in the browser.

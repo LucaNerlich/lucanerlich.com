@@ -14,11 +14,14 @@ keywords:
 
 # SQL: A Complete Guide
 
-SQL (Structured Query Language) is the standard language for working with relational databases. Whether you use PostgreSQL, MySQL, SQLite, MariaDB, or SQL Server -- the core SQL syntax is the same. This guide covers everything from basic queries to database design.
+SQL (Structured Query Language) is the standard language for working with relational databases. Whether you use
+PostgreSQL, MySQL, SQLite, MariaDB, or SQL Server -- the core SQL syntax is the same. This guide covers everything from
+basic queries to database design.
 
 ## What is a relational database?
 
-A relational database stores data in **tables** (also called relations). Each table has **columns** (attributes) and **rows** (records). Tables are related to each other through **keys**.
+A relational database stores data in **tables** (also called relations). Each table has **columns** (attributes) and *
+*rows** (records). Tables are related to each other through **keys**.
 
 ```mermaid
 erDiagram
@@ -49,14 +52,14 @@ erDiagram
 
 Key concepts:
 
-| Term | Meaning |
-|------|---------|
-| **Table** | A collection of related data organized in rows and columns |
-| **Row** (record) | One entry in a table |
-| **Column** (field) | One attribute of a record |
-| **Primary key (PK)** | A column (or set of columns) that uniquely identifies each row |
-| **Foreign key (FK)** | A column that references a primary key in another table |
-| **Schema** | The structure of the database -- all tables, columns, types, and relationships |
+| Term                 | Meaning                                                                        |
+|----------------------|--------------------------------------------------------------------------------|
+| **Table**            | A collection of related data organized in rows and columns                     |
+| **Row** (record)     | One entry in a table                                                           |
+| **Column** (field)   | One attribute of a record                                                      |
+| **Primary key (PK)** | A column (or set of columns) that uniquely identifies each row                 |
+| **Foreign key (FK)** | A column that references a primary key in another table                        |
+| **Schema**           | The structure of the database -- all tables, columns, types, and relationships |
 
 ## Setting up a practice database
 
@@ -86,29 +89,29 @@ CREATE TABLE users (
 
 ### Common data types
 
-| Type | Description | Example |
-|------|-------------|---------|
-| `INTEGER` / `INT` | Whole numbers | `42` |
-| `BIGINT` | Large integers | `9000000000` |
-| `REAL` / `FLOAT` | Floating-point | `3.14` |
-| `NUMERIC(p,s)` / `DECIMAL` | Fixed-precision | `99.99` |
-| `TEXT` / `VARCHAR(n)` | Variable-length string | `'hello'` |
-| `CHAR(n)` | Fixed-length string | `'US'` |
-| `BOOLEAN` | True/false | `TRUE` |
-| `DATE` | Date only | `'2025-01-15'` |
-| `TIMESTAMP` | Date and time | `'2025-01-15 10:30:00'` |
-| `BLOB` | Binary data | Images, files |
+| Type                       | Description            | Example                 |
+|----------------------------|------------------------|-------------------------|
+| `INTEGER` / `INT`          | Whole numbers          | `42`                    |
+| `BIGINT`                   | Large integers         | `9000000000`            |
+| `REAL` / `FLOAT`           | Floating-point         | `3.14`                  |
+| `NUMERIC(p,s)` / `DECIMAL` | Fixed-precision        | `99.99`                 |
+| `TEXT` / `VARCHAR(n)`      | Variable-length string | `'hello'`               |
+| `CHAR(n)`                  | Fixed-length string    | `'US'`                  |
+| `BOOLEAN`                  | True/false             | `TRUE`                  |
+| `DATE`                     | Date only              | `'2025-01-15'`          |
+| `TIMESTAMP`                | Date and time          | `'2025-01-15 10:30:00'` |
+| `BLOB`                     | Binary data            | Images, files           |
 
 ### Column constraints
 
-| Constraint | Meaning |
-|-----------|---------|
-| `PRIMARY KEY` | Unique identifier for each row |
-| `NOT NULL` | Column cannot be empty |
-| `UNIQUE` | No duplicate values |
-| `DEFAULT value` | Value used when none is provided |
-| `CHECK (condition)` | Value must satisfy a condition |
-| `REFERENCES table(col)` | Foreign key to another table |
+| Constraint              | Meaning                          |
+|-------------------------|----------------------------------|
+| `PRIMARY KEY`           | Unique identifier for each row   |
+| `NOT NULL`              | Column cannot be empty           |
+| `UNIQUE`                | No duplicate values              |
+| `DEFAULT value`         | Value used when none is provided |
+| `CHECK (condition)`     | Value must satisfy a condition   |
+| `REFERENCES table(col)` | Foreign key to another table     |
 
 ### Creating related tables
 
@@ -179,6 +182,7 @@ SELECT name AS user_name, email AS contact FROM users;
 ```
 
 Result:
+
 ```text
 user_name          | contact
 -------------------+------------------------
@@ -305,6 +309,7 @@ SELECT MAX(age) AS oldest FROM users;
 ```
 
 Result:
+
 ```text
 total_users: 5
 active_users: 4
@@ -324,6 +329,7 @@ GROUP BY active;
 ```
 
 Result:
+
 ```text
 active | count
 -------+------
@@ -409,6 +415,7 @@ INNER JOIN posts ON users.id = posts.user_id;
 ```
 
 Result:
+
 ```text
 name           | title
 ---------------+-------------------------
@@ -432,6 +439,7 @@ LEFT JOIN posts ON users.id = posts.user_id;
 ```
 
 Result:
+
 ```text
 name              | title
 ------------------+-------------------------
@@ -455,7 +463,8 @@ FROM users
 RIGHT JOIN posts ON users.id = posts.user_id;
 ```
 
-Not all databases support `RIGHT JOIN` (e.g., SQLite does not). You can always rewrite it as a `LEFT JOIN` by swapping the table order.
+Not all databases support `RIGHT JOIN` (e.g., SQLite does not). You can always rewrite it as a `LEFT JOIN` by swapping
+the table order.
 
 ### `FULL OUTER JOIN` -- all rows from both tables
 
@@ -523,6 +532,7 @@ LEFT JOIN employees m ON e.manager_id = m.id;
 ```
 
 Result:
+
 ```text
 employee | manager
 ---------+--------
@@ -596,6 +606,7 @@ FROM users u;
 ```
 
 Result:
+
 ```text
 name              | post_count
 ------------------+-----------
@@ -654,6 +665,7 @@ SELECT * FROM active_authors ORDER BY published_posts DESC;
 ```
 
 Result:
+
 ```text
 name           | published_posts
 ---------------+----------------
@@ -679,6 +691,7 @@ FROM users;
 ```
 
 Result:
+
 ```text
 name              | age | rank
 ------------------+-----+-----
@@ -765,7 +778,8 @@ DROP TABLE IF EXISTS post_tags;
 
 ## Indexes
 
-Indexes make queries faster by creating a data structure (usually a B-tree) that lets the database find rows without scanning the entire table.
+Indexes make queries faster by creating a data structure (usually a B-tree) that lets the database find rows without
+scanning the entire table.
 
 ```mermaid
 flowchart LR
@@ -794,13 +808,13 @@ CREATE UNIQUE INDEX idx_users_email_unique ON users(email);
 
 ### When to create indexes
 
-| Index on | When |
-|----------|------|
-| Primary keys | Automatic -- every PK is indexed |
-| Foreign keys | Always -- speeds up joins |
-| Columns in `WHERE` | If queried frequently |
-| Columns in `ORDER BY` | If sorted frequently |
-| Columns in `JOIN ON` | If joined frequently |
+| Index on              | When                             |
+|-----------------------|----------------------------------|
+| Primary keys          | Automatic -- every PK is indexed |
+| Foreign keys          | Always -- speeds up joins        |
+| Columns in `WHERE`    | If queried frequently            |
+| Columns in `ORDER BY` | If sorted frequently             |
+| Columns in `JOIN ON`  | If joined frequently             |
 
 ### When NOT to index
 
@@ -815,7 +829,8 @@ CREATE UNIQUE INDEX idx_users_email_unique ON users(email);
 EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'ada@example.com';
 ```
 
-This shows how the database executes the query -- whether it uses an index, a full table scan, and how long each step takes. Use it to diagnose slow queries.
+This shows how the database executes the query -- whether it uses an index, a full table scan, and how long each step
+takes. Use it to diagnose slow queries.
 
 ## Transactions
 
@@ -830,12 +845,12 @@ flowchart LR
     I --> D["Durability: Committed data survives crashes"]
 ```
 
-| Property | Meaning |
-|----------|---------|
-| **Atomicity** | All statements in the transaction succeed, or all are rolled back |
-| **Consistency** | The database moves from one valid state to another |
-| **Isolation** | Concurrent transactions do not see each other's uncommitted changes |
-| **Durability** | Once committed, data is permanent even after a crash |
+| Property        | Meaning                                                             |
+|-----------------|---------------------------------------------------------------------|
+| **Atomicity**   | All statements in the transaction succeed, or all are rolled back   |
+| **Consistency** | The database moves from one valid state to another                  |
+| **Isolation**   | Concurrent transactions do not see each other's uncommitted changes |
+| **Durability**  | Once committed, data is permanent even after a crash                |
 
 ### Using transactions
 
@@ -852,7 +867,8 @@ COMMIT;
 -- ROLLBACK;
 ```
 
-Without a transaction, if the first `UPDATE` succeeds but the second fails, money disappears. With a transaction, both updates are rolled back on failure.
+Without a transaction, if the first `UPDATE` succeeds but the second fails, money disappears. With a transaction, both
+updates are rolled back on failure.
 
 ### Transaction example -- transferring money
 
@@ -895,6 +911,7 @@ SELECT * FROM published_posts ORDER BY created_at DESC;
 ```
 
 Views:
+
 - Simplify complex queries by giving them a name
 - Provide a layer of abstraction over the underlying tables
 - Do not store data themselves (they execute the query each time)
@@ -966,21 +983,22 @@ Now Ada's email is stored once. Orders reference customers and products by ID.
 
 ### Relationship types
 
-| Type | Example | Implementation |
-|------|---------|---------------|
-| **One-to-many** | One user has many posts | FK on the "many" side (`posts.user_id`) |
-| **Many-to-many** | Posts have many tags, tags have many posts | Junction table (`post_tags`) |
-| **One-to-one** | One user has one profile | FK with UNIQUE constraint, or same PK |
+| Type             | Example                                    | Implementation                          |
+|------------------|--------------------------------------------|-----------------------------------------|
+| **One-to-many**  | One user has many posts                    | FK on the "many" side (`posts.user_id`) |
+| **Many-to-many** | Posts have many tags, tags have many posts | Junction table (`post_tags`)            |
+| **One-to-one**   | One user has one profile                   | FK with UNIQUE constraint, or same PK   |
 
 ### Primary key strategies
 
-| Strategy | Example | Pros | Cons |
-|----------|---------|------|------|
-| Auto-increment `INTEGER` | `1, 2, 3, ...` | Simple, small, fast | Predictable, gaps on delete |
-| UUID | `a1b2c3d4-...` | Globally unique, no collisions | Larger, slower index |
-| ULID | `01ARZ3...` | Sortable, unique | Less common |
+| Strategy                 | Example        | Pros                           | Cons                        |
+|--------------------------|----------------|--------------------------------|-----------------------------|
+| Auto-increment `INTEGER` | `1, 2, 3, ...` | Simple, small, fast            | Predictable, gaps on delete |
+| UUID                     | `a1b2c3d4-...` | Globally unique, no collisions | Larger, slower index        |
+| ULID                     | `01ARZ3...`    | Sortable, unique               | Less common                 |
 
-For most applications, auto-increment integers are fine. Use UUIDs when you need globally unique IDs (distributed systems, public-facing IDs).
+For most applications, auto-increment integers are fine. Use UUIDs when you need globally unique IDs (distributed
+systems, public-facing IDs).
 
 ## Practical patterns
 
@@ -1104,6 +1122,7 @@ FROM users;
 ```
 
 Result:
+
 ```text
 name              | age | category
 ------------------+-----+------------
@@ -1168,22 +1187,22 @@ LIMIT count OFFSET skip;
 
 ### CRUD operations
 
-| Operation | SQL |
-|-----------|-----|
-| **C**reate | `INSERT INTO table (cols) VALUES (vals)` |
-| **R**ead | `SELECT cols FROM table WHERE condition` |
+| Operation  | SQL                                          |
+|------------|----------------------------------------------|
+| **C**reate | `INSERT INTO table (cols) VALUES (vals)`     |
+| **R**ead   | `SELECT cols FROM table WHERE condition`     |
 | **U**pdate | `UPDATE table SET col = val WHERE condition` |
-| **D**elete | `DELETE FROM table WHERE condition` |
+| **D**elete | `DELETE FROM table WHERE condition`          |
 
 ### Join cheat sheet
 
-| Join | Returns |
-|------|---------|
-| `INNER JOIN` | Only matching rows from both tables |
-| `LEFT JOIN` | All left rows + matching right rows (NULL if no match) |
-| `RIGHT JOIN` | All right rows + matching left rows (NULL if no match) |
-| `FULL OUTER JOIN` | All rows from both tables (NULL where no match) |
-| `CROSS JOIN` | Every combination of rows |
+| Join              | Returns                                                |
+|-------------------|--------------------------------------------------------|
+| `INNER JOIN`      | Only matching rows from both tables                    |
+| `LEFT JOIN`       | All left rows + matching right rows (NULL if no match) |
+| `RIGHT JOIN`      | All right rows + matching left rows (NULL if no match) |
+| `FULL OUTER JOIN` | All rows from both tables (NULL where no match)        |
+| `CROSS JOIN`      | Every combination of rows                              |
 
 ## Summary
 

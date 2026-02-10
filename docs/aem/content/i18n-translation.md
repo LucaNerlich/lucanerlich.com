@@ -263,6 +263,7 @@ graph TD
 ```
 
 Language copies can be:
+
 - **Created manually** and translated by human editors
 - **Created via translation projects** using the Translation Integration Framework
 
@@ -290,18 +291,18 @@ sequenceDiagram
 
 1. Install the translation connector bundle (e.g., SDL, Lionbridge)
 2. Configure the **Translation Integration** cloud service:
-   - **Tools > Cloud Services > Translation Cloud Services**
-   - Add a configuration with your provider credentials
+    - **Tools > Cloud Services > Translation Cloud Services**
+    - Add a configuration with your provider credentials
 3. Link the cloud configuration to your site:
-   - On the language root (e.g., `/content/mysite/en`), set the cloud config reference
+    - On the language root (e.g., `/content/mysite/en`), set the cloud config reference
 
 #### Creating a translation project
 
 1. Navigate to **Projects > Translation Projects**
 2. Create a new project:
-   - Select the source language root
-   - Select the target languages
-   - Choose scope (full site or selected pages)
+    - Select the source language root
+    - Select the target languages
+    - Choose scope (full site or selected pages)
 3. AEM creates a project with translation jobs
 4. Submit jobs to the provider
 5. Review returned translations
@@ -591,15 +592,15 @@ content, not just placeholder text.
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Translations not showing | Check that `jcr:language` is set on the language root; verify the dictionary is deployed |
-| Wrong language displayed | Ensure the `jcr:language` property matches the expected locale (e.g., `de` not `de_DE`) |
-| Dictionary key returned instead of translation | The key doesn't exist in the dictionary for the current locale; check spelling and basename |
-| Translation project returns empty | Verify `translation_rules.xml` includes the properties you want translated |
-| i18n works on author but not publish | Ensure the dictionary under `/apps/` is included in the `ui.apps` package |
-| Format options not interpolated | Use `format=[param1, param2]` in HTL; the dictionary value must contain `{0}`, `{1}` placeholders |
-| Language switcher links to 404 | Check that the equivalent page exists in the target language before linking |
+| Pitfall                                        | Solution                                                                                          |
+|------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Translations not showing                       | Check that `jcr:language` is set on the language root; verify the dictionary is deployed          |
+| Wrong language displayed                       | Ensure the `jcr:language` property matches the expected locale (e.g., `de` not `de_DE`)           |
+| Dictionary key returned instead of translation | The key doesn't exist in the dictionary for the current locale; check spelling and basename       |
+| Translation project returns empty              | Verify `translation_rules.xml` includes the properties you want translated                        |
+| i18n works on author but not publish           | Ensure the dictionary under `/apps/` is included in the `ui.apps` package                         |
+| Format options not interpolated                | Use `format=[param1, param2]` in HTL; the dictionary value must contain `{0}`, `{1}` placeholders |
+| Language switcher links to 404                 | Check that the equivalent page exists in the target language before linking                       |
 
 ## See also
 

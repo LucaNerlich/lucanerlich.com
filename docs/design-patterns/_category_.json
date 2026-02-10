@@ -1,8 +1,8 @@
 {
-  "label": "Design Patterns",
-  "link": {
-    "type": "generated-index",
-    "slug": "/design-patterns",
-    "description": "GoF design patterns with Java and TypeScript examples, pros/cons, and practical guidance."
-  }
+    "label": "Design Patterns",
+    "link": {
+        "type": "generated-index",
+        "slug": "/design-patterns",
+        "description": "GoF design patterns with Java and TypeScript examples, pros/cons, and practical guidance."
+    }
 }

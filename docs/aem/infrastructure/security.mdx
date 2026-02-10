@@ -221,7 +221,7 @@ against cross-site request forgery attacks.
 1. AEM generates a unique CSRF token per session.
 2. The token is embedded in forms and AJAX requests.
 3. The server validates the token on every mutating request — rejecting requests with missing or
-   invalid tokens.
+invalid tokens.
 
 ### Adding CSRF tokens to forms
 
@@ -480,28 +480,28 @@ the settings match your security requirements, especially if you allow user-uplo
 The following are frequently encountered security issues in AEM projects:
 
 1. **Open SlingPostServlet on publish** — The default Sling POST Servlet can create, modify, and
-   delete content. If not blocked on publish, attackers can modify the repository. Always deny
-   POST to general content paths at the Dispatcher level.
+delete content. If not blocked on publish, attackers can modify the repository. Always deny
+POST to general content paths at the Dispatcher level.
 
 2. **Unprotected custom servlets** — Servlets registered under `/bin/` or via resource types must
-   enforce authentication and authorisation. Never assume the Dispatcher will be the only control.
+enforce authentication and authorisation. Never assume the Dispatcher will be the only control.
 
 3. **Leaked service resolvers** — Failing to close a `ResourceResolver` obtained via
-   `getServiceResourceResolver()` leaks JCR sessions. Under load, this exhausts the session pool
-   and crashes the instance.
+`getServiceResourceResolver()` leaks JCR sessions. Under load, this exhausts the session pool
+and crashes the instance.
 
 4. **Overly broad Dispatcher allow rules** — Rules like `/0010 { /type "allow" /url "*" }` negate
-   all subsequent deny rules if placed incorrectly. Always follow a deny-by-default pattern.
+all subsequent deny rules if placed incorrectly. Always follow a deny-by-default pattern.
 
 5. **Secrets in clientlibs** — API keys, internal hostnames, or tokens embedded in JavaScript
-   clientlibs are visible to anyone inspecting the page source. Use server-side proxies or
-   environment-specific OSGi configs instead.
+clientlibs are visible to anyone inspecting the page source. Use server-side proxies or
+environment-specific OSGi configs instead.
 
 6. **Missing CSRF tokens on forms** — Custom forms that skip CSRF token validation are vulnerable
-   to cross-site request forgery attacks.
+to cross-site request forgery attacks.
 
 7. **Wildcard `allow.hosts` in referrer filter** — Using `*` or overly broad regex patterns
-   in the Sling Referrer Filter effectively disables the protection.
+in the Sling Referrer Filter effectively disables the protection.
 
 :::danger
 Audit every custom servlet, workflow step, and scheduled job for proper authentication,

@@ -36,11 +36,13 @@ if (temperature > 30) {
 ```
 
 Result:
+
 ```text
 It's warm
 ```
 
 Rules:
+
 - The condition inside `()` is converted to a boolean.
 - Only the **first** matching branch runs.
 - `else if` and `else` are optional.
@@ -67,6 +69,7 @@ if (isWeekend || isHoliday) {
 ```
 
 Result:
+
 ```text
 You can drive
 Day off!
@@ -83,6 +86,7 @@ if (!isLoggedIn) {
 ```
 
 Result:
+
 ```text
 Please log in
 ```
@@ -98,11 +102,13 @@ console.log(status);
 ```
 
 Result:
+
 ```text
 adult
 ```
 
-The syntax is `condition ? valueIfTrue : valueIfFalse`. Use it for simple assignments. Do not nest ternaries -- they become unreadable:
+The syntax is `condition ? valueIfTrue : valueIfFalse`. Use it for simple assignments. Do not nest ternaries -- they
+become unreadable:
 
 ```js
 // Don't do this
@@ -144,6 +150,7 @@ switch (day) {
 ```
 
 Result:
+
 ```text
 Weekday
 ```
@@ -167,12 +174,14 @@ switch (fruit) {
 ```
 
 Result:
+
 ```text
 Found apple
 Found banana
 ```
 
-The fall-through is intentional in the Monday–Friday example above (grouping cases), but it is a common bug when forgotten.
+The fall-through is intentional in the Monday–Friday example above (grouping cases), but it is a common bug when
+forgotten.
 
 ## `for` loop
 
@@ -185,6 +194,7 @@ for (let i = 0; i < 5; i++) {
 ```
 
 Result:
+
 ```text
 Iteration 0
 Iteration 1
@@ -194,6 +204,7 @@ Iteration 4
 ```
 
 The three parts:
+
 1. **Initialization:** `let i = 0` -- runs once before the loop starts
 2. **Condition:** `i < 5` -- checked before each iteration; loop stops when `false`
 3. **Update:** `i++` -- runs after each iteration
@@ -207,6 +218,7 @@ for (let i = 5; i > 0; i--) {
 ```
 
 Result:
+
 ```text
 5
 4
@@ -224,6 +236,7 @@ for (let i = 0; i <= 10; i += 2) {
 ```
 
 Result:
+
 ```text
 0
 2
@@ -247,6 +260,7 @@ while (count < 3) {
 ```
 
 Result:
+
 ```text
 Count is 0
 Count is 1
@@ -266,6 +280,7 @@ console.log(number);
 ```
 
 Result:
+
 ```text
 128
 ```
@@ -289,6 +304,7 @@ while (true) {
 ```
 
 Result:
+
 ```text
 Attempt 1
 Attempt 2
@@ -314,6 +330,7 @@ do {
 ```
 
 Result:
+
 ```text
 Attempt 1: got "valid"
 ```
@@ -333,6 +350,7 @@ for (const fruit of fruits) {
 ```
 
 Result:
+
 ```text
 apple
 banana
@@ -348,6 +366,7 @@ for (const char of "hello") {
 ```
 
 Result:
+
 ```text
 h
 e
@@ -373,13 +392,15 @@ for (const key in person) {
 ```
 
 Result:
+
 ```text
 name: Ada
 age: 36
 city: London
 ```
 
-**Do not use `for...in` on arrays.** It iterates over indices as strings and includes inherited properties. Use `for...of` for arrays.
+**Do not use `for...in` on arrays.** It iterates over indices as strings and includes inherited properties. Use
+`for...of` for arrays.
 
 ## `break` and `continue`
 
@@ -395,6 +416,7 @@ for (let i = 0; i < 10; i++) {
 ```
 
 Result:
+
 ```text
 0
 1
@@ -415,6 +437,7 @@ for (let i = 0; i < 6; i++) {
 ```
 
 Result:
+
 ```text
 1
 3
@@ -436,6 +459,7 @@ for (let row = 1; row <= 3; row++) {
 ```
 
 Result:
+
 ```text
 (1,1) (1,2) (1,3)
 (2,1) (2,2) (2,3)
@@ -459,6 +483,7 @@ for (let i = 0; i < 3; i++) {
 ```
 
 Result:
+
 ```text
 i=0, j=0
 i=0, j=1
@@ -484,6 +509,7 @@ console.log(sum);
 ```
 
 Result:
+
 ```text
 150
 ```
@@ -505,6 +531,7 @@ console.log(found);
 ```
 
 Result:
+
 ```text
 Charlie
 ```
@@ -523,6 +550,7 @@ console.log(sentence.trim());
 ```
 
 Result:
+
 ```text
 JavaScript is fun
 ```
@@ -546,6 +574,7 @@ for (let i = 1; i <= 20; i++) {
 ```
 
 Result:
+
 ```text
 1
 2

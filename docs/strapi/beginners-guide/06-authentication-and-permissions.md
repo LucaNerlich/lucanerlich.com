@@ -15,7 +15,8 @@ sidebar_position: 6
 
 # Authentication & Permissions
 
-A public-read API is fine for a blog, but most applications need to control who can create, update, and delete content. Strapi ships with the **Users & Permissions** plugin -- a complete auth system built in.
+A public-read API is fine for a blog, but most applications need to control who can create, update, and delete content.
+Strapi ships with the **Users & Permissions** plugin -- a complete auth system built in.
 
 ## How authentication works in Strapi
 
@@ -48,12 +49,13 @@ The flow:
 
 Strapi has two completely separate user systems:
 
-| Type | Purpose | Table | Auth |
-|------|---------|-------|------|
-| **Admin users** | Access the admin panel | `admin_users` | Admin JWT |
-| **API users** | Access the REST/GraphQL API | `up_users` | Users & Permissions JWT |
+| Type            | Purpose                     | Table         | Auth                    |
+|-----------------|-----------------------------|---------------|-------------------------|
+| **Admin users** | Access the admin panel      | `admin_users` | Admin JWT               |
+| **API users**   | Access the REST/GraphQL API | `up_users`    | Users & Permissions JWT |
 
-Admin users are managed in Settings > Administration. API users are managed via the Users & Permissions plugin. They do not share accounts, tokens, or permissions.
+Admin users are managed in Settings > Administration. API users are managed via the Users & Permissions plugin. They do
+not share accounts, tokens, or permissions.
 
 This chapter focuses on **API users**.
 
@@ -61,7 +63,8 @@ This chapter focuses on **API users**.
 
 ### Enable registration
 
-By default, user registration is enabled. You can configure it in **Settings** > **Users & Permissions** > **Advanced settings**:
+By default, user registration is enabled. You can configure it in **Settings** > **Users & Permissions** > **Advanced
+settings**:
 
 - **Enable sign-ups** -- toggle registration on/off
 - **Default role for new users** -- which role new users get (default: `Authenticated`)
@@ -133,7 +136,8 @@ curl -X POST http://localhost:1337/api/posts \
   }'
 ```
 
-If the token is missing or invalid, Strapi returns a `401 Unauthorized` error. If the user's role lacks the required permission, it returns `403 Forbidden`.
+If the token is missing or invalid, Strapi returns a `401 Unauthorized` error. If the user's role lacks the required
+permission, it returns `403 Forbidden`.
 
 ## JWT configuration
 
@@ -159,16 +163,17 @@ module.exports = ({ env }) => ({
 });
 ```
 
-> **Security note:** Use a strong, random JWT secret in production. Never commit it to version control -- use environment variables.
+> **Security note:** Use a strong, random JWT secret in production. Never commit it to version control -- use
+> environment variables.
 
 ## Roles and permissions
 
 Strapi ships with two default roles:
 
-| Role | Description |
-|------|-------------|
-| **Public** | Unauthenticated requests (no JWT) |
-| **Authenticated** | Logged-in users (valid JWT) |
+| Role              | Description                       |
+|-------------------|-----------------------------------|
+| **Public**        | Unauthenticated requests (no JWT) |
+| **Authenticated** | Logged-in users (valid JWT)       |
 
 ### Configuring permissions
 
@@ -176,26 +181,26 @@ Strapi ships with two default roles:
 2. Click a role (e.g., **Authenticated**)
 3. For each content type, toggle the allowed actions:
 
-| Action | HTTP method | Description |
-|--------|-------------|-------------|
-| **find** | `GET /api/posts` | List entries |
-| **findOne** | `GET /api/posts/:id` | Get single entry |
-| **create** | `POST /api/posts` | Create entry |
-| **update** | `PUT /api/posts/:id` | Update entry |
-| **delete** | `DELETE /api/posts/:id` | Delete entry |
+| Action      | HTTP method             | Description      |
+|-------------|-------------------------|------------------|
+| **find**    | `GET /api/posts`        | List entries     |
+| **findOne** | `GET /api/posts/:id`    | Get single entry |
+| **create**  | `POST /api/posts`       | Create entry     |
+| **update**  | `PUT /api/posts/:id`    | Update entry     |
+| **delete**  | `DELETE /api/posts/:id` | Delete entry     |
 
 4. Click **Save**
 
 ### Example permission setup for a blog
 
-| Content type | Public | Authenticated |
-|-------------|--------|---------------|
-| **Post** | find, findOne | find, findOne, create |
-| **Author** | find, findOne | find, findOne |
-| **Category** | find, findOne | find, findOne |
-| **Tag** | find, findOne | find, findOne |
-| **Site Settings** | find | find |
-| **User** | -- | find (me) |
+| Content type      | Public        | Authenticated         |
+|-------------------|---------------|-----------------------|
+| **Post**          | find, findOne | find, findOne, create |
+| **Author**        | find, findOne | find, findOne         |
+| **Category**      | find, findOne | find, findOne         |
+| **Tag**           | find, findOne | find, findOne         |
+| **Site Settings** | find          | find                  |
+| **User**          | --            | find (me)             |
 
 This setup allows:
 
@@ -215,11 +220,11 @@ You can create additional roles for finer-grained access:
 
 Example custom roles:
 
-| Role | Permissions |
-|------|-------------|
-| **Editor** | CRUD on posts, read on everything else |
-| **Moderator** | Update and delete on posts, read on everything |
-| **Premium User** | Read on premium content (custom content type) |
+| Role             | Permissions                                    |
+|------------------|------------------------------------------------|
+| **Editor**       | CRUD on posts, read on everything else         |
+| **Moderator**    | Update and delete on posts, read on everything |
+| **Premium User** | Read on premium content (custom content type)  |
 
 ### Assigning roles to users
 
@@ -232,7 +237,8 @@ In the admin panel:
 
 ## API tokens
 
-API tokens are an alternative to JWT for server-to-server communication. They are created in the admin panel and do not require user authentication.
+API tokens are an alternative to JWT for server-to-server communication. They are created in the admin panel and do not
+require user authentication.
 
 ### Creating an API token
 
@@ -240,12 +246,12 @@ API tokens are an alternative to JWT for server-to-server communication. They ar
 2. Click **Create new API Token**
 3. Configure:
 
-| Field | Description |
-|-------|-------------|
-| **Name** | A descriptive name (e.g., "Frontend build", "CI/CD") |
-| **Description** | What the token is used for |
-| **Token duration** | Unlimited, 7 days, 30 days, 90 days |
-| **Token type** | Read-only, Full access, or Custom |
+| Field              | Description                                          |
+|--------------------|------------------------------------------------------|
+| **Name**           | A descriptive name (e.g., "Frontend build", "CI/CD") |
+| **Description**    | What the token is used for                           |
+| **Token duration** | Unlimited, 7 days, 30 days, 90 days                  |
+| **Token type**     | Read-only, Full access, or Custom                    |
 
 4. For **Custom** type, configure permissions per content type (like roles)
 5. Click **Save** -- the token is displayed **once**. Copy it immediately.
@@ -261,13 +267,14 @@ API tokens use the same `Authorization: Bearer` header as JWTs. Strapi distingui
 
 ### Token types
 
-| Type | Use case |
-|------|----------|
-| **Read-only** | Static site builds, public frontends |
+| Type            | Use case                                       |
+|-----------------|------------------------------------------------|
+| **Read-only**   | Static site builds, public frontends           |
 | **Full access** | CI/CD pipelines, admin scripts (use carefully) |
-| **Custom** | Fine-grained control per content type |
+| **Custom**      | Fine-grained control per content type          |
 
-> **Security best practice:** Prefer custom tokens with the minimum necessary permissions. Full-access tokens are powerful and should be limited to trusted server environments.
+> **Security best practice:** Prefer custom tokens with the minimum necessary permissions. Full-access tokens are
+> powerful and should be limited to trusted server environments.
 
 ## Getting the current user
 
@@ -348,7 +355,8 @@ curl -X POST http://localhost:1337/api/auth/reset-password \
   }'
 ```
 
-> **Note:** Email sending must be configured for forgot password to work. By default, Strapi uses `sendmail`. For production, configure an email provider (e.g., SendGrid, Mailgun) in `config/plugins.ts`.
+> **Note:** Email sending must be configured for forgot password to work. By default, Strapi uses `sendmail`. For
+> production, configure an email provider (e.g., SendGrid, Mailgun) in `config/plugins.ts`.
 
 ## Blocking users
 
@@ -405,7 +413,8 @@ flowchart TD
 7. **Rotate API tokens** -- set expiration dates and rotate regularly
 8. **Do not store JWTs in localStorage** -- if building a frontend, prefer HTTP-only cookies or in-memory storage
 
-> For advanced authentication patterns (SSO, social providers, custom providers), see the [Authentication and Permissions](/strapi/authentication-and-permissions) reference.
+> For advanced authentication patterns (SSO, social providers, custom providers), see
+> the [Authentication and Permissions](/strapi/authentication-and-permissions) reference.
 
 ## Summary
 
@@ -419,6 +428,8 @@ You learned:
 - **Password management** (change password, forgot password)
 - Security **best practices** for production
 
-Your API is now secured. Public users can read content, authenticated users can create posts, and admins manage everything. In the next chapter we will go deeper -- customizing Strapi's built-in controllers and services.
+Your API is now secured. Public users can read content, authenticated users can create posts, and admins manage
+everything. In the next chapter we will go deeper -- customizing Strapi's built-in controllers and services.
 
-Next up: [Custom Controllers & Services](./07-custom-controllers-and-services.md) -- extending Strapi's default CRUD, adding business logic in services, and building custom actions.
+Next up: [Custom Controllers & Services](./07-custom-controllers-and-services.md) -- extending Strapi's default CRUD,
+adding business logic in services, and building custom actions.

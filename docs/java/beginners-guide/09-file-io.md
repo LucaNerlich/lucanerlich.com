@@ -15,7 +15,8 @@ sidebar_position: 9
 
 # File I/O
 
-Programs need to persist data beyond their runtime. The simplest way is to read and write files. Java's `java.nio.file` package (NIO.2) provides a clean, modern API for file operations.
+Programs need to persist data beyond their runtime. The simplest way is to read and write files. Java's `java.nio.file`
+package (NIO.2) provides a clean, modern API for file operations.
 
 ## `Path` -- representing file locations
 
@@ -37,6 +38,7 @@ System.out.println(nested.getParent());
 ```
 
 Result:
+
 ```text
 data.txt
 /home/user/documents/report.txt
@@ -102,7 +104,8 @@ try (var reader = Files.newBufferedReader(Path.of("large-file.txt"))) {
 }
 ```
 
-`Files.readString` and `readAllLines` load the entire file into memory. For files larger than a few hundred MB, use `newBufferedReader` or `lines()`:
+`Files.readString` and `readAllLines` load the entire file into memory. For files larger than a few hundred MB, use
+`newBufferedReader` or `lines()`:
 
 ```java
 try (var stream = Files.lines(Path.of("large-file.txt"))) {
@@ -132,11 +135,13 @@ try {
 ```
 
 Result:
+
 ```text
 File written
 ```
 
 The file `output.txt` now contains:
+
 ```text
 Hello, file!
 Second line.
@@ -194,6 +199,7 @@ try (var writer = Files.newBufferedWriter(Path.of("output.txt"))) {
 ```
 
 Result:
+
 ```text
 Written with BufferedWriter
 ```
@@ -284,6 +290,7 @@ CSV (Comma-Separated Values) is a common plain-text data format. For simple case
 ### Reading CSV
 
 Given a file `users.csv`:
+
 ```text
 name,age,city
 Ada,36,London
@@ -337,6 +344,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 User[name=Ada, age=36, city=London]
 User[name=Bob, age=25, city=Berlin]
@@ -377,6 +385,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 CSV written
 name,age,city
@@ -384,7 +393,8 @@ Diana,28,Paris
 Eve,32,Madrid
 ```
 
-**Note:** this simple approach does not handle commas or quotes inside values. For production CSV handling, use a library like OpenCSV or Apache Commons CSV.
+**Note:** this simple approach does not handle commas or quotes inside values. For production CSV handling, use a
+library like OpenCSV or Apache Commons CSV.
 
 ## Text-based data persistence
 
@@ -460,6 +470,7 @@ for (Task task : loaded) {
 ```
 
 Result:
+
 ```text
 Saved 3 tasks
 Task[id=1, title=Learn Java, done=false]
@@ -467,7 +478,8 @@ Task[id=2, title=Build a project, done=false]
 Task[id=3, title=Deploy to VPS, done=false]
 ```
 
-This pattern -- serialize to a simple text format, one record per line -- is the foundation of the CLI project in the next chapter.
+This pattern -- serialize to a simple text format, one record per line -- is the foundation of the CLI project in the
+next chapter.
 
 ## Summary
 

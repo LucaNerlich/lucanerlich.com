@@ -15,7 +15,9 @@ sidebar_position: 13
 
 # TypeScript
 
-TypeScript is JavaScript with **static types**. It catches bugs at compile time instead of at runtime, provides better editor autocompletion, and makes large codebases easier to maintain. Every valid JavaScript file is also valid TypeScript -- you can adopt it gradually.
+TypeScript is JavaScript with **static types**. It catches bugs at compile time instead of at runtime, provides better
+editor autocompletion, and makes large codebases easier to maintain. Every valid JavaScript file is also valid
+TypeScript -- you can adopt it gradually.
 
 ## Why TypeScript?
 
@@ -41,17 +43,18 @@ add(2, 3);       // 5
 add("2", 3);     // Error: Argument of type 'string' is not assignable to parameter of type 'number'
 ```
 
-The `: number` annotations tell TypeScript what types are expected. The error appears **in your editor** before you even run the code.
+The `: number` annotations tell TypeScript what types are expected. The error appears **in your editor** before you even
+run the code.
 
 ### What TypeScript gives you
 
-| Benefit | Explanation |
-|---------|-------------|
-| **Catch bugs early** | Type errors are caught at compile time, not at runtime |
-| **Better autocomplete** | Your editor knows the shape of every object |
-| **Self-documenting code** | Types explain what a function expects and returns |
-| **Safer refactoring** | Rename a property and see every place that breaks |
-| **Gradual adoption** | Add types to one file at a time -- no big rewrite needed |
+| Benefit                   | Explanation                                              |
+|---------------------------|----------------------------------------------------------|
+| **Catch bugs early**      | Type errors are caught at compile time, not at runtime   |
+| **Better autocomplete**   | Your editor knows the shape of every object              |
+| **Self-documenting code** | Types explain what a function expects and returns        |
+| **Safer refactoring**     | Rename a property and see every place that breaks        |
+| **Gradual adoption**      | Add types to one file at a time -- no big rewrite needed |
 
 ## Setting up TypeScript
 
@@ -88,13 +91,13 @@ This creates a `tsconfig.json` with sensible defaults. Here is a minimal configu
 }
 ```
 
-| Option | What it does |
-|--------|-------------|
-| `target` | Which JavaScript version to compile to |
-| `module` | Module system for the output |
-| `strict` | Enable all strict type checks (always use this) |
-| `outDir` | Where compiled `.js` files go |
-| `rootDir` | Where your `.ts` source files live |
+| Option    | What it does                                    |
+|-----------|-------------------------------------------------|
+| `target`  | Which JavaScript version to compile to          |
+| `module`  | Module system for the output                    |
+| `strict`  | Enable all strict type checks (always use this) |
+| `outDir`  | Where compiled `.js` files go                   |
+| `rootDir` | Where your `.ts` source files live              |
 
 ### Your first TypeScript file
 
@@ -113,6 +116,7 @@ node dist/hello.js
 ```
 
 Result:
+
 ```text
 Hello, TypeScript!
 ```
@@ -129,13 +133,15 @@ npx ts-node src/hello.ts
 ```
 
 Result:
+
 ```text
 Hello, TypeScript!
 ```
 
 ## Type annotations
 
-Type annotations tell TypeScript what type a value should be. The syntax is `: Type` after the variable name, parameter, or return value.
+Type annotations tell TypeScript what type a value should be. The syntax is `: Type` after the variable name, parameter,
+or return value.
 
 ### Primitive types
 
@@ -157,7 +163,8 @@ const age = 36;           // TypeScript infers: number
 const active = true;      // TypeScript infers: boolean
 ```
 
-You do not need to annotate everything. TypeScript is smart enough to infer types from assigned values. Add explicit annotations when:
+You do not need to annotate everything. TypeScript is smart enough to infer types from assigned values. Add explicit
+annotations when:
 
 - The type is not obvious from the value
 - You want to document the intent
@@ -297,6 +304,7 @@ printUser(ada);
 ```
 
 Result:
+
 ```text
 Ada Lovelace (ada@example.com), age 36
 ```
@@ -365,15 +373,16 @@ type User = {
 
 ### `type` vs `interface`
 
-| Feature | `interface` | `type` |
-|---------|------------|--------|
-| Object shapes | Yes | Yes |
-| Extending | `extends` keyword | Intersection (`&`) |
-| Union types | No | Yes |
-| Primitives, tuples | No | Yes |
-| Declaration merging | Yes | No |
+| Feature             | `interface`       | `type`             |
+|---------------------|-------------------|--------------------|
+| Object shapes       | Yes               | Yes                |
+| Extending           | `extends` keyword | Intersection (`&`) |
+| Union types         | No                | Yes                |
+| Primitives, tuples  | No                | Yes                |
+| Declaration merging | Yes               | No                 |
 
-**Rule of thumb:** Use `interface` for object shapes. Use `type` for everything else (unions, tuples, primitives, complex composed types).
+**Rule of thumb:** Use `interface` for object shapes. Use `type` for everything else (unions, tuples, primitives,
+complex composed types).
 
 ## Union types
 
@@ -453,7 +462,8 @@ console.log(area({ kind: "circle", radius: 5 }));           // 78.539...
 console.log(area({ kind: "rectangle", width: 4, height: 6 })); // 24
 ```
 
-The `kind` property (called a **discriminant**) lets TypeScript know which variant you are working with inside each branch.
+The `kind` property (called a **discriminant**) lets TypeScript know which variant you are working with inside each
+branch.
 
 ## Generics
 
@@ -596,15 +606,15 @@ const permissions: Record<Role, string[]> = {
 
 ### Summary of utility types
 
-| Utility | What it does |
-|---------|-------------|
-| `Partial<T>` | Makes all properties optional |
-| `Required<T>` | Makes all properties required |
-| `Readonly<T>` | Makes all properties readonly |
-| `Pick<T, K>` | Keeps only the specified properties |
-| `Omit<T, K>` | Removes the specified properties |
-| `Record<K, V>` | Creates a type with keys K and values V |
-| `ReturnType<F>` | Extracts the return type of a function |
+| Utility         | What it does                               |
+|-----------------|--------------------------------------------|
+| `Partial<T>`    | Makes all properties optional              |
+| `Required<T>`   | Makes all properties required              |
+| `Readonly<T>`   | Makes all properties readonly              |
+| `Pick<T, K>`    | Keeps only the specified properties        |
+| `Omit<T, K>`    | Removes the specified properties           |
+| `Record<K, V>`  | Creates a type with keys K and values V    |
+| `ReturnType<F>` | Extracts the return type of a function     |
 | `Parameters<F>` | Extracts the parameter types of a function |
 
 ## Enums
@@ -655,7 +665,8 @@ const enum Color {
 const c = Color.Red; // compiled to: const c = "RED"
 ```
 
-**Tip:** Many TypeScript developers prefer union types (`type Direction = "up" | "down" | "left" | "right"`) over enums. They are simpler, produce no runtime code, and work better with type narrowing.
+**Tip:** Many TypeScript developers prefer union types (`type Direction = "up" | "down" | "left" | "right"`) over enums.
+They are simpler, produce no runtime code, and work better with type narrowing.
 
 ## Type assertions
 
@@ -666,7 +677,8 @@ const input = document.getElementById("username") as HTMLInputElement;
 input.value = "Ada";
 ```
 
-Without the assertion, TypeScript only knows `getElementById` returns `HTMLElement | null`. With `as HTMLInputElement`, you tell TypeScript it is specifically an input element.
+Without the assertion, TypeScript only knows `getElementById` returns `HTMLElement | null`. With `as HTMLInputElement`,
+you tell TypeScript it is specifically an input element.
 
 **Use assertions sparingly.** They override the type checker -- if you are wrong, you will get runtime errors.
 
@@ -703,7 +715,8 @@ console.log(add(2, 3));       // 5
 console.log(multiply(4, 5));   // 20
 ```
 
-**Note:** Use `.js` extensions in import paths even when importing `.ts` files. TypeScript resolves these to the compiled `.js` output.
+**Note:** Use `.js` extensions in import paths even when importing `.ts` files. TypeScript resolves these to the
+compiled `.js` output.
 
 ### Exporting types
 
@@ -755,13 +768,13 @@ Or visit [https://www.typescriptlang.org/dt/search](https://www.typescriptlang.o
 
 The `"strict": true` flag in `tsconfig.json` enables several checks at once:
 
-| Flag | What it catches |
-|------|----------------|
-| `strictNullChecks` | `null` and `undefined` are not assignable to other types |
-| `noImplicitAny` | Variables and parameters must have explicit types (no implicit `any`) |
-| `strictFunctionTypes` | Stricter checks on function parameter types |
-| `strictPropertyInitialization` | Class properties must be initialized in the constructor |
-| `noImplicitThis` | `this` must have an explicit type in functions |
+| Flag                           | What it catches                                                       |
+|--------------------------------|-----------------------------------------------------------------------|
+| `strictNullChecks`             | `null` and `undefined` are not assignable to other types              |
+| `noImplicitAny`                | Variables and parameters must have explicit types (no implicit `any`) |
+| `strictFunctionTypes`          | Stricter checks on function parameter types                           |
+| `strictPropertyInitialization` | Class properties must be initialized in the constructor               |
+| `noImplicitThis`               | `this` must have an explicit type in functions                        |
 
 **Always use `strict: true`.** It catches the most bugs and is the recommended setting for all TypeScript projects.
 
@@ -847,7 +860,8 @@ console.log(user.name);       // Ada
 // console.log(user.age);     // Error: Property 'age' is private
 ```
 
-TypeScript's `public`, `private`, `protected`, and `readonly` modifiers in the constructor automatically create and assign class properties -- no separate field declarations needed.
+TypeScript's `public`, `private`, `protected`, and `readonly` modifiers in the constructor automatically create and
+assign class properties -- no separate field declarations needed.
 
 ## Migrating JavaScript to TypeScript
 
@@ -881,11 +895,13 @@ In `tsconfig.json`:
 
 ### Step 3: Rename files one at a time
 
-Rename `.js` files to `.ts` and fix any type errors that appear. Start with the simplest files (utility functions, constants) and work toward the more complex ones.
+Rename `.js` files to `.ts` and fix any type errors that appear. Start with the simplest files (utility functions,
+constants) and work toward the more complex ones.
 
 ### Step 4: Enable `checkJs` (optional)
 
-Setting `checkJs: true` makes TypeScript check your `.js` files too -- it will infer types and report errors even in plain JavaScript.
+Setting `checkJs: true` makes TypeScript check your `.js` files too -- it will infer types and report errors even in
+plain JavaScript.
 
 ### Step 5: Turn on strict mode
 
@@ -895,12 +911,12 @@ Once all files are `.ts`, enable `"strict": true` for maximum type safety.
 
 TypeScript must be compiled to JavaScript before the browser can run it. Common approaches:
 
-| Tool | How it works |
-|------|-------------|
-| `tsc` | TypeScript compiler -- compiles `.ts` to `.js` |
-| **Vite** | Dev server and bundler with built-in TypeScript support |
-| **esbuild** | Extremely fast bundler that strips types |
-| **webpack + ts-loader** | Traditional bundler with TypeScript loader |
+| Tool                    | How it works                                            |
+|-------------------------|---------------------------------------------------------|
+| `tsc`                   | TypeScript compiler -- compiles `.ts` to `.js`          |
+| **Vite**                | Dev server and bundler with built-in TypeScript support |
+| **esbuild**             | Extremely fast bundler that strips types                |
+| **webpack + ts-loader** | Traditional bundler with TypeScript loader              |
 
 For new projects, **Vite** is the simplest choice:
 
@@ -925,6 +941,9 @@ This gives you a TypeScript project with hot reloading, ready to develop in the 
 - **`strict: true`** in `tsconfig.json` catches the most bugs -- always use it.
 - Migrate gradually: add TypeScript to an existing project one file at a time.
 
-TypeScript is used by most modern JavaScript frameworks (Angular, Next.js, SvelteKit) and is the de facto standard for professional JavaScript development. The investment in learning it pays off immediately through fewer bugs and better tooling.
+TypeScript is used by most modern JavaScript frameworks (Angular, Next.js, SvelteKit) and is the de facto standard for
+professional JavaScript development. The investment in learning it pays off immediately through fewer bugs and better
+tooling.
 
-Next up: [Error Handling](./14-error-handling.md) -- try/catch, custom errors, async error patterns, and best practices for failing gracefully.
+Next up: [Error Handling](./14-error-handling.md) -- try/catch, custom errors, async error patterns, and best practices
+for failing gracefully.

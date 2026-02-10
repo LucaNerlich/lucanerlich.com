@@ -7,7 +7,9 @@ tags: [strapi, webhooks, integrations, algolia, search, notifications]
 
 # Webhooks and External Integrations
 
-Almost every Strapi project needs to talk to external systems -- search indexes, notification services, payment gateways, or static site rebuilds. This page covers Strapi's built-in webhook system, custom event-driven integrations, and patterns for common third-party services.
+Almost every Strapi project needs to talk to external systems -- search indexes, notification services, payment
+gateways, or static site rebuilds. This page covers Strapi's built-in webhook system, custom event-driven integrations,
+and patterns for common third-party services.
 
 ## Built-in webhooks
 
@@ -15,16 +17,16 @@ Strapi has a webhook system configurable from the admin panel (**Settings > Webh
 
 ### Available events
 
-| Event | Fires when |
-|-------|-----------|
-| `entry.create` | A content entry is created |
-| `entry.update` | A content entry is updated |
-| `entry.delete` | A content entry is deleted |
-| `entry.publish` | A content entry is published |
+| Event             | Fires when                     |
+|-------------------|--------------------------------|
+| `entry.create`    | A content entry is created     |
+| `entry.update`    | A content entry is updated     |
+| `entry.delete`    | A content entry is deleted     |
+| `entry.publish`   | A content entry is published   |
 | `entry.unpublish` | A content entry is unpublished |
-| `media.create` | A media file is uploaded |
-| `media.update` | A media file is updated |
-| `media.delete` | A media file is deleted |
+| `media.create`    | A media file is uploaded       |
+| `media.update`    | A media file is updated        |
+| `media.delete`    | A media file is deleted        |
 
 ### Webhook payload
 
@@ -438,14 +440,14 @@ module.exports = ({ strapi }) => ({
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Blocking side effects in middleware | Slow API responses | Use `setImmediate()` for external calls |
-| No webhook signature verification | Anyone can fake webhook calls | Verify signatures (Stripe, GitHub, etc.) |
-| Algolia admin key in frontend | Key leaks, index gets corrupted | Use the search-only key in the frontend |
-| No error handling on external calls | One failed webhook blocks the chain | Wrap in try/catch, use a queue with retries |
-| Webhook endpoint missing `auth: false` | External services get 403 | Set `auth: false` on inbound webhook routes |
-| Syncing on every update | Too many API calls to search/notifications | Debounce or only sync on `publish` |
+| Pitfall                                | Problem                                    | Fix                                         |
+|----------------------------------------|--------------------------------------------|---------------------------------------------|
+| Blocking side effects in middleware    | Slow API responses                         | Use `setImmediate()` for external calls     |
+| No webhook signature verification      | Anyone can fake webhook calls              | Verify signatures (Stripe, GitHub, etc.)    |
+| Algolia admin key in frontend          | Key leaks, index gets corrupted            | Use the search-only key in the frontend     |
+| No error handling on external calls    | One failed webhook blocks the chain        | Wrap in try/catch, use a queue with retries |
+| Webhook endpoint missing `auth: false` | External services get 403                  | Set `auth: false` on inbound webhook routes |
+| Syncing on every update                | Too many API calls to search/notifications | Debounce or only sync on `publish`          |
 
 ---
 

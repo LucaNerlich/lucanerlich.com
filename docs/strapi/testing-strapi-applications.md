@@ -7,7 +7,8 @@ tags: [strapi, testing, jest, unit-tests, integration-tests]
 
 # Testing Strapi Applications
 
-Testing Strapi applications is essential but under-documented. This page covers setting up a test Strapi instance, unit testing services, integration testing API endpoints, mocking strategies, and CI/CD integration.
+Testing Strapi applications is essential but under-documented. This page covers setting up a test Strapi instance, unit
+testing services, integration testing API endpoints, mocking strategies, and CI/CD integration.
 
 ## Test environment setup
 
@@ -566,13 +567,13 @@ tests/
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Tests share state | One test's data leaks into another | Clean database between tests |
-| Strapi instance not destroyed | Port still in use, next run fails | Always call `teardownStrapi()` in `afterAll` |
-| Testing against production DB | Accidentally deletes real data | Use `NODE_ENV=test` with a separate database |
-| Slow test suite | Strapi boots for every test file | Use `globalSetup` to boot once |
-| Missing env vars in CI | Strapi fails to start | Set all required env vars in CI config |
+| Pitfall                               | Problem                              | Fix                                           |
+|---------------------------------------|--------------------------------------|-----------------------------------------------|
+| Tests share state                     | One test's data leaks into another   | Clean database between tests                  |
+| Strapi instance not destroyed         | Port still in use, next run fails    | Always call `teardownStrapi()` in `afterAll`  |
+| Testing against production DB         | Accidentally deletes real data       | Use `NODE_ENV=test` with a separate database  |
+| Slow test suite                       | Strapi boots for every test file     | Use `globalSetup` to boot once                |
+| Missing env vars in CI                | Strapi fails to start                | Set all required env vars in CI config        |
 | Testing implementation, not behaviour | Brittle tests that break on refactor | Test API responses, not internal method calls |
 
 ---

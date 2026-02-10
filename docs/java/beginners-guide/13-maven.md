@@ -15,9 +15,12 @@ sidebar_position: 13
 
 # Maven
 
-So far we have compiled and packaged everything by hand with `javac` and `jar`. That works for small projects, but it quickly becomes painful when you need external libraries, multiple source directories, or automated testing. **Build tools** solve this.
+So far we have compiled and packaged everything by hand with `javac` and `jar`. That works for small projects, but it
+quickly becomes painful when you need external libraries, multiple source directories, or automated testing. **Build
+tools** solve this.
 
-Apache Maven is the most widely used build tool in the Java ecosystem. It handles compilation, dependency management, testing, and packaging with a single `pom.xml` configuration file.
+Apache Maven is the most widely used build tool in the Java ecosystem. It handles compilation, dependency management,
+testing, and packaging with a single `pom.xml` configuration file.
 
 ## Installing Maven
 
@@ -29,7 +32,8 @@ brew install maven
 
 ### Windows
 
-Download from [maven.apache.org](https://maven.apache.org/download.cgi), extract, and add the `bin/` directory to your `PATH`.
+Download from [maven.apache.org](https://maven.apache.org/download.cgi), extract, and add the `bin/` directory to your
+`PATH`.
 
 ### Linux (Ubuntu/Debian)
 
@@ -44,6 +48,7 @@ mvn --version
 ```
 
 Result:
+
 ```text
 Apache Maven 3.9.6
 Maven home: /opt/homebrew/Cellar/maven/3.9.6/libexec
@@ -140,18 +145,19 @@ The POM (Project Object Model) is the heart of a Maven project. Create `pom.xml`
 
 Key elements:
 
-| Element | Purpose |
-|---------|---------|
-| `groupId` | Your organization (like a Java package prefix) |
-| `artifactId` | The project name |
-| `version` | The project version |
-| `properties` | Java version, encoding, and other settings |
-| `dependencies` | External libraries Maven downloads for you |
-| `build/plugins` | Plugins that customize the build process |
+| Element         | Purpose                                        |
+|-----------------|------------------------------------------------|
+| `groupId`       | Your organization (like a Java package prefix) |
+| `artifactId`    | The project name                               |
+| `version`       | The project version                            |
+| `properties`    | Java version, encoding, and other settings     |
+| `dependencies`  | External libraries Maven downloads for you     |
+| `build/plugins` | Plugins that customize the build process       |
 
 ### Project coordinates
 
-The combination of `groupId`, `artifactId`, and `version` uniquely identifies your project (and any dependency). This is called **GAV coordinates**:
+The combination of `groupId`, `artifactId`, and `version` uniquely identifies your project (and any dependency). This is
+called **GAV coordinates**:
 
 ```text
 com.google.code.gson:gson:2.11.0
@@ -192,7 +198,8 @@ When you run `mvn package`, Maven automatically runs `validate`, `compile`, and 
 
 ## Improving the REST API with Gson
 
-In chapter 11, we built JSON helpers by hand. With Maven, we can add **Gson** (Google's JSON library) as a dependency and replace all that manual work.
+In chapter 11, we built JSON helpers by hand. With Maven, we can add **Gson** (Google's JSON library) as a dependency
+and replace all that manual work.
 
 ### Updated `Task.java`
 
@@ -454,6 +461,7 @@ public class TaskHandler implements HttpHandler {
 ```
 
 Look at what changed:
+
 - **No more `JsonHelper`** -- `gson.toJson(object)` serializes any object to JSON automatically
 - **`gson.fromJson(body, Class)`** parses JSON into a typed object -- no manual string parsing
 - **Request/response records** give structure to the API contract
@@ -494,6 +502,7 @@ mvn clean package
 ```
 
 Result:
+
 ```text
 [INFO] --- maven-shade-plugin:3.6.0:shade (default) @ task-api ---
 [INFO] Including com.google.code.gson:gson:jar:2.11.0 in the shaded jar.
@@ -507,6 +516,7 @@ java -jar target/task-api-1.0.0.jar
 ```
 
 Result:
+
 ```text
 Task API running on http://localhost:8080
 Press Ctrl+C to stop.
@@ -526,7 +536,8 @@ You never download JAR files manually. Maven handles everything.
 
 ### Finding dependencies
 
-Search [search.maven.org](https://search.maven.org/) or [mvnrepository.com](https://mvnrepository.com/) for libraries. Copy the `<dependency>` XML snippet into your `pom.xml`.
+Search [search.maven.org](https://search.maven.org/) or [mvnrepository.com](https://mvnrepository.com/) for libraries.
+Copy the `<dependency>` XML snippet into your `pom.xml`.
 
 ### Dependency scope
 
@@ -546,12 +557,12 @@ Search [search.maven.org](https://search.maven.org/) or [mvnrepository.com](http
 </dependency>
 ```
 
-| Scope | Available during | Included in JAR |
-|-------|-----------------|-----------------|
-| `compile` (default) | Compile + test + runtime | Yes |
-| `test` | Test only | No |
-| `provided` | Compile + test | No (server provides it) |
-| `runtime` | Test + runtime | Yes |
+| Scope               | Available during         | Included in JAR         |
+|---------------------|--------------------------|-------------------------|
+| `compile` (default) | Compile + test + runtime | Yes                     |
+| `test`              | Test only                | No                      |
+| `provided`          | Compile + test           | No (server provides it) |
+| `runtime`           | Test + runtime           | Yes                     |
 
 ## Maven wrapper
 

@@ -15,7 +15,8 @@ sidebar_position: 11
 
 # Project: Build a Complete Website
 
-Time to put everything together. In this chapter you will build a multi-page personal website using only HTML, CSS, and vanilla JavaScript. This is the site we will deploy to a VPS in the next chapter.
+Time to put everything together. In this chapter you will build a multi-page personal website using only HTML, CSS, and
+vanilla JavaScript. This is the site we will deploy to a VPS in the next chapter.
 
 ## What we are building
 
@@ -49,7 +50,8 @@ Create this folder structure before starting. All paths below are relative to th
 
 ## Step 1: shared styles
 
-Create `css/styles.css` with the full stylesheet. This covers the layout, components, and responsive behavior for all pages:
+Create `css/styles.css` with the full stylesheet. This covers the layout, components, and responsive behavior for all
+pages:
 
 ```css
 /* css/styles.css */
@@ -979,7 +981,8 @@ document.addEventListener("DOMContentLoaded", initContactForm);
 
 ### Option 1: VS Code Live Server
 
-If you use VS Code, install the **Live Server** extension. Right-click `index.html` and select "Open with Live Server". It starts a local server with auto-reload.
+If you use VS Code, install the **Live Server** extension. Right-click `index.html` and select "Open with Live Server".
+It starts a local server with auto-reload.
 
 ### Option 2: Node.js `http-server`
 
@@ -1025,22 +1028,24 @@ Walk through this checklist:
 
 This project uses everything from the previous chapters:
 
-| Concept | Where it is used |
-|---------|-----------------|
-| Variables & types | Data storage, form values, boolean flags |
-| Control flow | Validation logic, filter conditions |
-| Functions | `initTheme`, `initProjects`, `validateField`, `renderProjects` |
-| Arrays | Project list, filtering with `.filter()`, iterating with `for...of` |
-| Objects | Project data, form data with `Object.fromEntries` |
-| HTML & CSS | Page structure, flexbox layout, CSS custom properties |
-| DOM manipulation | `createElement`, `querySelector`, `classList`, `textContent` |
-| Events | Click handlers, form submit, input/blur for validation, delegation |
-| Fetch API | Loading `projects.json` |
-| localStorage | Theme persistence |
+| Concept           | Where it is used                                                    |
+|-------------------|---------------------------------------------------------------------|
+| Variables & types | Data storage, form values, boolean flags                            |
+| Control flow      | Validation logic, filter conditions                                 |
+| Functions         | `initTheme`, `initProjects`, `validateField`, `renderProjects`      |
+| Arrays            | Project list, filtering with `.filter()`, iterating with `for...of` |
+| Objects           | Project data, form data with `Object.fromEntries`                   |
+| HTML & CSS        | Page structure, flexbox layout, CSS custom properties               |
+| DOM manipulation  | `createElement`, `querySelector`, `classList`, `textContent`        |
+| Events            | Click handlers, form submit, input/blur for validation, delegation  |
+| Fetch API         | Loading `projects.json`                                             |
+| localStorage      | Theme persistence                                                   |
 
 ## Multi-page site architecture
 
-Our portfolio has three pages that share navigation, a footer, styles, and a theme toggle. This works, but as a site grows, the duplicated HTML becomes a maintenance burden. This section covers how to link between pages properly, how to structure a larger site, and how to eliminate repetition.
+Our portfolio has three pages that share navigation, a footer, styles, and a theme toggle. This works, but as a site
+grows, the duplicated HTML becomes a maintenance burden. This section covers how to link between pages properly, how to
+structure a larger site, and how to eliminate repetition.
 
 ### Linking between pages
 
@@ -1059,15 +1064,16 @@ Use **relative paths** when linking between pages on the same site:
 <a href="post-2.html">Next Post</a>
 ```
 
-| Path | Meaning |
-|------|---------|
-| `projects.html` | File in the same folder |
-| `blog/post-1.html` | File in a subfolder |
-| `../index.html` | File one folder up |
-| `../../about.html` | File two folders up |
-| `/index.html` | Absolute from the site root |
+| Path               | Meaning                     |
+|--------------------|-----------------------------|
+| `projects.html`    | File in the same folder     |
+| `blog/post-1.html` | File in a subfolder         |
+| `../index.html`    | File one folder up          |
+| `../../about.html` | File two folders up         |
+| `/index.html`      | Absolute from the site root |
 
-**Relative paths** are preferred because they work regardless of where the site is hosted (a subfolder, a different domain, or locally). **Absolute paths** (starting with `/`) work too but break if the site is not at the domain root.
+**Relative paths** are preferred because they work regardless of where the site is hosted (a subfolder, a different
+domain, or locally). **Absolute paths** (starting with `/`) work too but break if the site is not at the domain root.
 
 #### Anchor links (same-page navigation)
 
@@ -1106,7 +1112,8 @@ For consistent navigation across pages, always use the same HTML structure:
 </nav>
 ```
 
-The `initActiveNav()` function in `main.js` automatically highlights the current page. This pattern works for any number of pages -- just add more `<li>` entries.
+The `initActiveNav()` function in `main.js` automatically highlights the current page. This pattern works for any number
+of pages -- just add more `<li>` entries.
 
 #### External links
 
@@ -1116,7 +1123,8 @@ Always use the full URL and open in a new tab:
 <a href="https://github.com/username" target="_blank" rel="noopener noreferrer">GitHub</a>
 ```
 
-`rel="noopener noreferrer"` is a security best practice -- it prevents the linked page from accessing your `window.opener` object.
+`rel="noopener noreferrer"` is a security best practice -- it prevents the linked page from accessing your
+`window.opener` object.
 
 ### Structuring a larger site
 
@@ -1198,11 +1206,13 @@ Split styles across files and load them in order:
 </head>
 ```
 
-`base.css` defines variables and resets, `layout.css` uses them for page structure, and `components.css` styles individual elements. This order matters -- later files can override earlier ones.
+`base.css` defines variables and resets, `layout.css` uses them for page structure, and `components.css` styles
+individual elements. This order matters -- later files can override earlier ones.
 
 ### Reusing code across pages
 
-The biggest pain point of vanilla multi-page sites is duplicated HTML. Every page repeats the same `<nav>`, `<footer>`, and `<head>` content. Here are several strategies to reduce that repetition.
+The biggest pain point of vanilla multi-page sites is duplicated HTML. Every page repeats the same `<nav>`, `<footer>`,
+and `<head>` content. Here are several strategies to reduce that repetition.
 
 #### Strategy 1: JavaScript-injected components
 
@@ -1289,7 +1299,8 @@ Now each page just has placeholder elements:
 
 **Pros:** Single source of truth for nav and footer. Change once, every page updates.
 
-**Cons:** Requires a web server (will not work by opening `file://` directly). A brief flash may occur before components load.
+**Cons:** Requires a web server (will not work by opening `file://` directly). A brief flash may occur before components
+load.
 
 #### Strategy 2: reusable CSS utility classes
 
@@ -1364,7 +1375,8 @@ We already use CSS custom properties for the theme. Take this further to create 
 }
 ```
 
-Every component uses these variables instead of hardcoded values. When you want to adjust spacing or sizing across the entire site, change one variable.
+Every component uses these variables instead of hardcoded values. When you want to adjust spacing or sizing across the
+entire site, change one variable.
 
 #### Strategy 4: shared JavaScript modules
 
@@ -1468,35 +1480,42 @@ Now one `project.html` template serves every project. Link to individual project
 <a href="project.html?id=2">Task Manager</a>
 ```
 
-This avoids creating dozens of nearly identical HTML files. The same pattern works for blog posts, team members, product pages -- any content that shares a structure.
+This avoids creating dozens of nearly identical HTML files. The same pattern works for blog posts, team members, product
+pages -- any content that shares a structure.
 
 ### When to reach for a framework
 
-These strategies work well for small to medium sites (up to ~20-30 pages). Beyond that, you start fighting the limitations of vanilla HTML:
+These strategies work well for small to medium sites (up to ~20-30 pages). Beyond that, you start fighting the
+limitations of vanilla HTML:
 
-| Problem | Framework solution |
-|---------|-------------------|
-| Duplicated HTML across pages | Component-based architecture (React, Vue, Svelte) |
-| No templating language | JSX, Vue templates, Svelte markup |
-| Manual routing | Client-side router or file-based routing (Next.js, Astro) |
-| No build step for optimization | Bundlers (Vite, webpack) with minification, tree-shaking |
-| Managing state across pages | Global state management (Redux, Zustand, Pinia) |
+| Problem                        | Framework solution                                        |
+|--------------------------------|-----------------------------------------------------------|
+| Duplicated HTML across pages   | Component-based architecture (React, Vue, Svelte)         |
+| No templating language         | JSX, Vue templates, Svelte markup                         |
+| Manual routing                 | Client-side router or file-based routing (Next.js, Astro) |
+| No build step for optimization | Bundlers (Vite, webpack) with minification, tree-shaking  |
+| Managing state across pages    | Global state management (Redux, Zustand, Pinia)           |
 
-If you find yourself spending more time managing repetition than building features, it is time to consider a framework. But understanding vanilla HTML/CSS/JS first makes learning any framework much easier -- you know what the framework is abstracting away.
+If you find yourself spending more time managing repetition than building features, it is time to consider a framework.
+But understanding vanilla HTML/CSS/JS first makes learning any framework much easier -- you know what the framework is
+abstracting away.
 
-Before jumping to a framework though, there is a built-in browser feature that solves the component problem without any library: **Web Components**.
+Before jumping to a framework though, there is a built-in browser feature that solves the component problem without any
+library: **Web Components**.
 
 ### Web Components
 
-Web Components are a set of browser-native APIs that let you create **custom, reusable HTML elements** with their own encapsulated markup, styles, and behavior. No framework, no build step, no npm install -- they work in every modern browser.
+Web Components are a set of browser-native APIs that let you create **custom, reusable HTML elements** with their own
+encapsulated markup, styles, and behavior. No framework, no build step, no npm install -- they work in every modern
+browser.
 
 #### The three core APIs
 
-| API | What it does |
-|-----|-------------|
+| API                 | What it does                                        |
+|---------------------|-----------------------------------------------------|
 | **Custom Elements** | Define new HTML tags (`<my-nav>`, `<project-card>`) |
-| **Shadow DOM** | Encapsulate styles so they do not leak in or out |
-| **HTML Templates** | Define reusable markup fragments with `<template>` |
+| **Shadow DOM**      | Encapsulate styles so they do not leak in or out    |
+| **HTML Templates**  | Define reusable markup fragments with `<template>`  |
 
 #### Your first custom element
 
@@ -1555,7 +1574,8 @@ Now every page just uses the custom tag:
 </html>
 ```
 
-Change the nav once in `site-nav.js` and every page updates. No `fetch()`, no server required, no flash of unstyled content.
+Change the nav once in `site-nav.js` and every page updates. No `fetch()`, no server required, no flash of unstyled
+content.
 
 **How it works:**
 
@@ -1565,7 +1585,8 @@ Change the nav once in `site-nav.js` and every page updates. No `fetch()`, no se
 
 #### Adding the Shadow DOM for style encapsulation
 
-Without the Shadow DOM, a component's styles can conflict with the rest of the page. The Shadow DOM creates an isolated scope:
+Without the Shadow DOM, a component's styles can conflict with the rest of the page. The Shadow DOM creates an isolated
+scope:
 
 ```js
 // js/components/alert-banner.js
@@ -1617,7 +1638,8 @@ Use it anywhere:
 <alert-banner type="info">New features are available.</alert-banner>
 ```
 
-The `.banner` styles inside the Shadow DOM will **never** conflict with `.banner` classes elsewhere on the page. This is true encapsulation -- no CSS naming conventions or BEM needed.
+The `.banner` styles inside the Shadow DOM will **never** conflict with `.banner` classes elsewhere on the page. This is
+true encapsulation -- no CSS naming conventions or BEM needed.
 
 #### Using attributes and properties
 
@@ -1736,7 +1758,8 @@ document.querySelector("user-badge").setAttribute("role", "viewer");
 
 #### Using `<template>` and `<slot>`
 
-The `<template>` element defines markup that is not rendered until cloned. Combine it with `<slot>` to let the consumer pass content into the component:
+The `<template>` element defines markup that is not rendered until cloned. Combine it with `<slot>` to let the consumer
+pass content into the component:
 
 ```html
 <!-- Define the template (once, anywhere in the page) -->
@@ -1782,17 +1805,18 @@ Use it with slotted content:
 </fancy-card>
 ```
 
-Slots let consumers inject their own content while the component controls the layout and styling. This is the same concept as "children" or "slots" in React, Vue, and Svelte.
+Slots let consumers inject their own content while the component controls the layout and styling. This is the same
+concept as "children" or "slots" in React, Vue, and Svelte.
 
 #### Lifecycle methods summary
 
-| Method | When it runs |
-|--------|-------------|
-| `constructor()` | Element is created (use for Shadow DOM setup) |
-| `connectedCallback()` | Element is added to the page |
-| `disconnectedCallback()` | Element is removed from the page |
-| `attributeChangedCallback(name, oldVal, newVal)` | An observed attribute changes |
-| `adoptedCallback()` | Element is moved to a new document (rare) |
+| Method                                           | When it runs                                  |
+|--------------------------------------------------|-----------------------------------------------|
+| `constructor()`                                  | Element is created (use for Shadow DOM setup) |
+| `connectedCallback()`                            | Element is added to the page                  |
+| `disconnectedCallback()`                         | Element is removed from the page              |
+| `attributeChangedCallback(name, oldVal, newVal)` | An observed attribute changes                 |
+| `adoptedCallback()`                              | Element is moved to a new document (rare)     |
 
 #### Organizing components in a project
 
@@ -1822,22 +1846,26 @@ import "./components/project-card.js";
 
 #### When to use Web Components vs a framework
 
-| Use Web Components when... | Use a framework when... |
-|---------------------------|------------------------|
-| You want zero dependencies | You need complex state management |
-| You are building a small/medium site | You are building a large single-page app |
-| You want components that work with any framework | You need server-side rendering |
+| Use Web Components when...                                  | Use a framework when...                          |
+|-------------------------------------------------------------|--------------------------------------------------|
+| You want zero dependencies                                  | You need complex state management                |
+| You are building a small/medium site                        | You are building a large single-page app         |
+| You want components that work with any framework            | You need server-side rendering                   |
 | You are building a shared design system / component library | You need a rich ecosystem of plugins and tooling |
-| You want maximum browser compatibility | You want a large community and hiring pool |
+| You want maximum browser compatibility                      | You want a large community and hiring pool       |
 
-Web Components and frameworks are not mutually exclusive. Many teams build Web Components for their shared design system and use them inside React, Vue, or Angular apps. The browser-native approach means the components work everywhere without framework lock-in.
+Web Components and frameworks are not mutually exclusive. Many teams build Web Components for their shared design system
+and use them inside React, Vue, or Angular apps. The browser-native approach means the components work everywhere
+without framework lock-in.
 
 ## Summary
 
 You now have a complete, working multi-page website built entirely with vanilla HTML, CSS, and JavaScript. The site is:
+
 - **Responsive** -- works on phones, tablets, and desktops
 - **Accessible** -- semantic HTML, proper labels, keyboard-navigable forms
 - **Interactive** -- theme toggle, filterable projects, form validation
 - **Persistent** -- theme preference saved in localStorage
 
-Next up: [Deploying to a VPS with Nginx](./12-deploy-vps-nginx.md) -- putting your site on the internet for the world to see.
+Next up: [Deploying to a VPS with Nginx](./12-deploy-vps-nginx.md) -- putting your site on the internet for the world to
+see.

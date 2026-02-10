@@ -25,22 +25,22 @@
     ```bash
     ollama pull phi4
     ```
-   - https://ollama.com/library/phi4
-   - [MIT License](https://ollama.com/library/phi4/blobs/fa8235e5b48f)
-   - Alternatively use *Deepseek R1*
-     - https://ollama.com/library/deepseek-r1
-     - [MIt License](https://ollama.com/library/deepseek-r1:32b/blobs/6e4c38e1172f)
-     - Choose the largest b-Parameter Model that will fit into your VRAM
-     ```bash
-     ollama pull deepseek-r1:32b
-     ollama run deepseek-r1:32b
-     ```
+    - https://ollama.com/library/phi4
+    - [MIT License](https://ollama.com/library/phi4/blobs/fa8235e5b48f)
+    - Alternatively use *Deepseek R1*
+        - https://ollama.com/library/deepseek-r1
+        - [MIt License](https://ollama.com/library/deepseek-r1:32b/blobs/6e4c38e1172f)
+        - Choose the largest b-Parameter Model that will fit into your VRAM
+      ```bash
+      ollama pull deepseek-r1:32b
+      ollama run deepseek-r1:32b
+      ```
 4. Reranking Model
    ```bash
    ollama pull linux6200/bge-reranker-v2-m3
    ```
-   - https://docs.continue.dev/customize/model-roles/reranking
-   - https://ollama.com/linux6200/bge-reranker-v2-m3
+    - https://docs.continue.dev/customize/model-roles/reranking
+    - https://ollama.com/linux6200/bge-reranker-v2-m3
 5. Update continue.dev `config.json` -> [see here](#suggested-continuedev-config)
 6. Run ollama api locally
     ```bash

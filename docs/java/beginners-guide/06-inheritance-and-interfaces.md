@@ -15,7 +15,8 @@ sidebar_position: 6
 
 # Inheritance & Interfaces
 
-Inheritance lets you build new classes on top of existing ones. Interfaces define contracts that classes must fulfill. Together, they enable **polymorphism** -- treating different types through a common interface.
+Inheritance lets you build new classes on top of existing ones. Interfaces define contracts that classes must fulfill.
+Together, they enable **polymorphism** -- treating different types through a common interface.
 
 ## Inheritance with `extends`
 
@@ -61,6 +62,7 @@ System.out.println(cat.speak());
 ```
 
 Result:
+
 ```text
 Rex makes a sound
 Rex
@@ -71,6 +73,7 @@ Whiskers makes a sound
 ### `super`
 
 `super` refers to the parent class:
+
 - `super(...)` calls the parent constructor (must be the first statement in the child constructor)
 - `super.method()` calls the parent's version of an overridden method
 
@@ -125,6 +128,7 @@ System.out.println(animal.speak());
 ```
 
 Result:
+
 ```text
 Rex says: Woof!
 Whiskers says: Meow!
@@ -135,7 +139,8 @@ Unknown makes a sound
 
 ## Polymorphism
 
-The `dog` and `cat` variables above are declared as `Animal`, but they call their own overridden `speak()` methods. This is **polymorphism** -- the same method call behaves differently depending on the actual object type.
+The `dog` and `cat` variables above are declared as `Animal`, but they call their own overridden `speak()` methods. This
+is **polymorphism** -- the same method call behaves differently depending on the actual object type.
 
 ```java
 Animal[] animals = {
@@ -151,6 +156,7 @@ for (Animal animal : animals) {
 ```
 
 Result:
+
 ```text
 Rex says: Woof!
 Whiskers says: Meow!
@@ -158,7 +164,8 @@ Bella says: Woof!
 Luna says: Meow!
 ```
 
-The loop does not know or care whether each element is a `Dog` or `Cat`. It just calls `speak()`, and the right version runs. This is the core power of OOP.
+The loop does not know or care whether each element is a `Dog` or `Cat`. It just calls `speak()`, and the right version
+runs. This is the core power of OOP.
 
 ## Abstract classes
 
@@ -222,12 +229,14 @@ System.out.println(rect.describe());
 ```
 
 Result:
+
 ```text
 red shape with area 78.54
 blue shape with area 24.00
 ```
 
-Use abstract classes when you want to share code (fields, methods) between related classes while forcing subclasses to implement specific behavior.
+Use abstract classes when you want to share code (fields, methods) between related classes while forcing subclasses to
+implement specific behavior.
 
 ## Interfaces
 
@@ -270,6 +279,7 @@ System.out.println("Export size: " + report.export().length + " bytes");
 ```
 
 Result:
+
 ```text
 === Q1 Sales ===
 Revenue: $1.2M
@@ -277,6 +287,7 @@ Export size: 30 bytes
 ```
 
 Key differences from abstract classes:
+
 - A class can implement **multiple** interfaces but extend only **one** class
 - Interfaces cannot have instance fields (only `static final` constants)
 - All methods are `public` by default
@@ -313,6 +324,7 @@ logger.error("Connection failed");
 ```
 
 Result:
+
 ```text
 [INFO] Server started
 [ERROR] Connection failed
@@ -343,6 +355,7 @@ System.out.println(v.isValid("abc"));
 ```
 
 Result:
+
 ```text
 false
 true
@@ -361,6 +374,7 @@ if (animal instanceof Dog) {
 ```
 
 Result:
+
 ```text
 It's a dog!
 ```
@@ -390,6 +404,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 String of length 5
 Integer: 42
@@ -427,25 +442,28 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 Circle: 78.54
 Rectangle: 24.00
 Triangle: 12.00
 ```
 
-The compiler knows all possible subtypes, so the switch is exhaustive -- no `default` case needed. If you add a new shape, the compiler forces you to handle it everywhere.
+The compiler knows all possible subtypes, so the switch is exhaustive -- no `default` case needed. If you add a new
+shape, the compiler forces you to handle it everywhere.
 
 ## Abstract class vs interface
 
-| Feature | Abstract class | Interface |
-|---------|---------------|-----------|
-| Inheritance | Single (`extends`) | Multiple (`implements`) |
-| Fields | Yes (instance + static) | Only `static final` |
-| Constructors | Yes | No |
-| Default methods | Yes (regular methods) | Yes (`default` keyword) |
-| Use when | Classes share code and state | Classes share a contract |
+| Feature         | Abstract class               | Interface                |
+|-----------------|------------------------------|--------------------------|
+| Inheritance     | Single (`extends`)           | Multiple (`implements`)  |
+| Fields          | Yes (instance + static)      | Only `static final`      |
+| Constructors    | Yes                          | No                       |
+| Default methods | Yes (regular methods)        | Yes (`default` keyword)  |
+| Use when        | Classes share code and state | Classes share a contract |
 
-**Rule of thumb:** use interfaces for defining capabilities ("what can it do?"), use abstract classes for sharing implementation between related classes ("what is it?").
+**Rule of thumb:** use interfaces for defining capabilities ("what can it do?"), use abstract classes for sharing
+implementation between related classes ("what is it?").
 
 ## Composition over inheritance
 
@@ -476,11 +494,13 @@ notifier.notify("ada@example.com", "Welcome!");
 ```
 
 Result:
+
 ```text
 [INFO] Email sent to ada@example.com
 ```
 
 Benefits:
+
 - `EmailNotifier` is not tied to a specific `Logger` implementation
 - You can swap loggers at runtime
 - No fragile base class problem
@@ -489,7 +509,8 @@ Benefits:
 
 ## The `Object` class
 
-Every class in Java implicitly extends `Object`. That is where `toString()`, `equals()`, `hashCode()`, and other methods come from:
+Every class in Java implicitly extends `Object`. That is where `toString()`, `equals()`, `hashCode()`, and other methods
+come from:
 
 ```java
 class MyClass {
@@ -498,6 +519,7 @@ class MyClass {
 ```
 
 Methods inherited from `Object`:
+
 - `toString()` -- string representation
 - `equals(Object)` -- content equality
 - `hashCode()` -- hash code for collections

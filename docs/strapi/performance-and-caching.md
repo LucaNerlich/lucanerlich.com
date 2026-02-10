@@ -7,7 +7,8 @@ tags: [strapi, performance, caching, redis, optimization]
 
 # Performance and Caching
 
-Strapi is fast out of the box for small datasets. At scale -- thousands of entries, deep relations, high traffic -- you need explicit caching, query optimization, and infrastructure tuning.
+Strapi is fast out of the box for small datasets. At scale -- thousands of entries, deep relations, high traffic -- you
+need explicit caching, query optimization, and infrastructure tuning.
 
 ## Performance bottleneck overview
 
@@ -436,29 +437,29 @@ Enable temporarily with `DATABASE_DEBUG=true` to find slow queries.
 
 ## Performance checklist
 
-| Action | Impact | Effort |
-|--------|--------|--------|
-| Add `fields` to every query | High -- reduces payload 50-80% | Low |
-| Add database indexes on filtered columns | High -- 10x faster lookups | Low |
-| Implement response caching (Redis) | Very high -- eliminates DB hits | Medium |
-| Set `Cache-Control` headers | High -- enables CDN caching | Low |
-| Paginate all list endpoints | High -- prevents memory spikes | Low |
-| Limit population depth | Medium -- fewer joins | Low |
-| Use connection pooling | Medium -- prevents connection exhaustion | Low |
-| Profile slow requests | Varies -- identifies the real bottleneck | Medium |
+| Action                                   | Impact                                   | Effort |
+|------------------------------------------|------------------------------------------|--------|
+| Add `fields` to every query              | High -- reduces payload 50-80%           | Low    |
+| Add database indexes on filtered columns | High -- 10x faster lookups               | Low    |
+| Implement response caching (Redis)       | Very high -- eliminates DB hits          | Medium |
+| Set `Cache-Control` headers              | High -- enables CDN caching              | Low    |
+| Paginate all list endpoints              | High -- prevents memory spikes           | Low    |
+| Limit population depth                   | Medium -- fewer joins                    | Low    |
+| Use connection pooling                   | Medium -- prevents connection exhaustion | Low    |
+| Profile slow requests                    | Varies -- identifies the real bottleneck | Medium |
 
 ---
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| `populate=*` in production | Fetches entire relational graph | Explicitly list fields and relations |
-| No cache invalidation | Stale data served forever | Invalidate on write operations |
-| Cache key ignores auth | User A sees user B's data | Include auth state in cache key |
-| SQLite in production | Locks under concurrent writes | Use PostgreSQL or MySQL |
-| No database indexes | Full table scans on every query | Add indexes on slug, publishedAt, foreign keys |
-| Logging every query in production | I/O overhead from debug logging | Only enable `debug` temporarily |
+| Pitfall                           | Problem                         | Fix                                            |
+|-----------------------------------|---------------------------------|------------------------------------------------|
+| `populate=*` in production        | Fetches entire relational graph | Explicitly list fields and relations           |
+| No cache invalidation             | Stale data served forever       | Invalidate on write operations                 |
+| Cache key ignores auth            | User A sees user B's data       | Include auth state in cache key                |
+| SQLite in production              | Locks under concurrent writes   | Use PostgreSQL or MySQL                        |
+| No database indexes               | Full table scans on every query | Add indexes on slug, publishedAt, foreign keys |
+| Logging every query in production | I/O overhead from debug logging | Only enable `debug` temporarily                |
 
 ---
 

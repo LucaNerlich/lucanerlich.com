@@ -7,7 +7,8 @@ tags: [strapi, configuration, deployment, docker, production]
 
 # Configuration and Deployment
 
-Strapi's configuration system is environment-aware and file-based. Getting it right is the difference between a smooth deployment and hours of debugging.
+Strapi's configuration system is environment-aware and file-based. Getting it right is the difference between a smooth
+deployment and hours of debugging.
 
 ## Project structure (config files)
 
@@ -323,19 +324,19 @@ pm2 startup
 
 ## Production hardening checklist
 
-| Action | Why |
-|--------|-----|
-| Set strong, unique `APP_KEYS` | Used for session encryption and cookie signing |
-| Use separate `ADMIN_JWT_SECRET` and `JWT_SECRET` | Admin and API auth should have different secrets |
-| Enable HTTPS (reverse proxy) | Never serve Strapi directly over HTTP in production |
-| Set `PUBLIC_URL` | Required for correct absolute URLs in emails and media |
-| Use PostgreSQL or MySQL | SQLite is not suitable for production |
-| Configure upload provider | Use S3/Cloudinary instead of local filesystem for scalability |
-| Set `NODE_ENV=production` | Disables dev features, enables optimisations |
-| Enable rate limiting | Protects admin login and API endpoints |
-| Disable GraphQL Playground | Leaks schema information in production |
-| Run behind a reverse proxy | Nginx, Caddy, or Traefik for TLS termination and caching |
-| Set up backups | Automate database + uploads backups |
+| Action                                           | Why                                                           |
+|--------------------------------------------------|---------------------------------------------------------------|
+| Set strong, unique `APP_KEYS`                    | Used for session encryption and cookie signing                |
+| Use separate `ADMIN_JWT_SECRET` and `JWT_SECRET` | Admin and API auth should have different secrets              |
+| Enable HTTPS (reverse proxy)                     | Never serve Strapi directly over HTTP in production           |
+| Set `PUBLIC_URL`                                 | Required for correct absolute URLs in emails and media        |
+| Use PostgreSQL or MySQL                          | SQLite is not suitable for production                         |
+| Configure upload provider                        | Use S3/Cloudinary instead of local filesystem for scalability |
+| Set `NODE_ENV=production`                        | Disables dev features, enables optimisations                  |
+| Enable rate limiting                             | Protects admin login and API endpoints                        |
+| Disable GraphQL Playground                       | Leaks schema information in production                        |
+| Run behind a reverse proxy                       | Nginx, Caddy, or Traefik for TLS termination and caching      |
+| Set up backups                                   | Automate database + uploads backups                           |
 
 ---
 
@@ -377,14 +378,14 @@ module.exports = ({ env }) => ({
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Missing `APP_KEYS` in production | Strapi won't start | Generate 4 random strings |
-| SQLite in production | Data corruption under concurrent load | Switch to PostgreSQL |
-| No `PUBLIC_URL` | Media URLs point to `localhost` | Set the public-facing URL |
-| Committing `.env` to git | Secrets exposed | Add `.env` to `.gitignore` |
-| Running as root | Security risk | Use a non-root user in Docker/VPS |
-| No health check endpoint | Uptime monitoring is blind | Strapi provides `GET /_health` |
+| Pitfall                          | Problem                               | Fix                               |
+|----------------------------------|---------------------------------------|-----------------------------------|
+| Missing `APP_KEYS` in production | Strapi won't start                    | Generate 4 random strings         |
+| SQLite in production             | Data corruption under concurrent load | Switch to PostgreSQL              |
+| No `PUBLIC_URL`                  | Media URLs point to `localhost`       | Set the public-facing URL         |
+| Committing `.env` to git         | Secrets exposed                       | Add `.env` to `.gitignore`        |
+| Running as root                  | Security risk                         | Use a non-root user in Docker/VPS |
+| No health check endpoint         | Uptime monitoring is blind            | Strapi provides `GET /_health`    |
 
 ---
 

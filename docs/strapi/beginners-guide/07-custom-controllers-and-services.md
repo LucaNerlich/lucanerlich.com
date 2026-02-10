@@ -15,7 +15,8 @@ sidebar_position: 7
 
 # Custom Controllers & Services
 
-Strapi's auto-generated CRUD is great for basic operations, but real applications need custom logic. In this chapter we will extend the default controllers, create custom actions, and organize business logic into services.
+Strapi's auto-generated CRUD is great for basic operations, but real applications need custom logic. In this chapter we
+will extend the default controllers, create custom actions, and organize business logic into services.
 
 ## Architecture overview
 
@@ -27,14 +28,15 @@ flowchart LR
     DocService --> DB["Database"]
 ```
 
-| Layer | Responsibility |
-|-------|---------------|
-| **Route** | Maps URLs to controller actions |
-| **Controller** | Handles HTTP request/response |
-| **Service** | Contains business logic |
+| Layer                | Responsibility                             |
+|----------------------|--------------------------------------------|
+| **Route**            | Maps URLs to controller actions            |
+| **Controller**       | Handles HTTP request/response              |
+| **Service**          | Contains business logic                    |
 | **Document Service** | Low-level data access (provided by Strapi) |
 
-The rule: **controllers should be thin, services should be fat**. Controllers parse input and format output. Services contain the actual logic.
+The rule: **controllers should be thin, services should be fat**. Controllers parse input and format output. Services
+contain the actual logic.
 
 ## Default controllers
 
@@ -47,7 +49,8 @@ const { createCoreController } = require("@strapi/strapi").factories;
 module.exports = createCoreController("api::post.post");
 ```
 
-This one line gives you all five CRUD actions: `find`, `findOne`, `create`, `update`, `delete`. The `createCoreController` factory creates them automatically.
+This one line gives you all five CRUD actions: `find`, `findOne`, `create`, `update`, `delete`. The
+`createCoreController` factory creates them automatically.
 
 ## Extending a core controller
 
@@ -283,7 +286,8 @@ module.exports = createCoreController("api::post.post", ({ strapi }) => ({
 
 ## The Document Service
 
-The Document Service is Strapi 5's primary data access API. Use it in services (and sometimes controllers) to interact with your content:
+The Document Service is Strapi 5's primary data access API. Use it in services (and sometimes controllers) to interact
+with your content:
 
 ### Core methods
 
@@ -347,18 +351,20 @@ const count = await docs.count({
 
 ### Document Service vs core service
 
-| Feature | Document Service | Core Service |
-|---------|-----------------|--------------|
-| **Access** | `strapi.documents("api::post.post")` | `strapi.service("api::post.post")` |
-| **Purpose** | Raw data access | Business logic + data access |
-| **Sanitization** | No (raw data) | Yes (respects permissions) |
-| **Use from** | Services | Controllers |
+| Feature          | Document Service                     | Core Service                       |
+|------------------|--------------------------------------|------------------------------------|
+| **Access**       | `strapi.documents("api::post.post")` | `strapi.service("api::post.post")` |
+| **Purpose**      | Raw data access                      | Business logic + data access       |
+| **Sanitization** | No (raw data)                        | Yes (respects permissions)         |
+| **Use from**     | Services                             | Controllers                        |
 
-Use the **core service** when you need sanitized, permission-aware responses. Use the **Document Service** when you need raw data access in your custom service logic.
+Use the **core service** when you need sanitized, permission-aware responses. Use the **Document Service** when you need
+raw data access in your custom service logic.
 
 ## Output sanitization
 
-When returning data from custom controllers, you should sanitize the output to respect field-level privacy settings and relation permissions:
+When returning data from custom controllers, you should sanitize the output to respect field-level privacy settings and
+relation permissions:
 
 ```javascript
 module.exports = createCoreController("api::post.post", ({ strapi }) => ({
@@ -467,7 +473,8 @@ module.exports = createCoreController("api::post.post", ({ strapi }) => ({
 }));
 ```
 
-> For more advanced controller and service patterns, see the [Custom Controllers and Services](/strapi/custom-controllers-services) reference.
+> For more advanced controller and service patterns, see
+> the [Custom Controllers and Services](/strapi/custom-controllers-services) reference.
 
 ## Summary
 
@@ -481,6 +488,8 @@ You learned:
 - **Output sanitization** to respect privacy and permissions
 - The principle of **thin controllers, fat services**
 
-The custom actions we created (featured posts, find by slug, related posts) are not accessible yet -- they need routes. That is what the next chapter covers.
+The custom actions we created (featured posts, find by slug, related posts) are not accessible yet -- they need routes.
+That is what the next chapter covers.
 
-Next up: [Routes, Policies & Middleware](./08-routes-policies-middleware.md) -- mapping custom URLs to controller actions, access control policies, and request/response middleware.
+Next up: [Routes, Policies & Middleware](./08-routes-policies-middleware.md) -- mapping custom URLs to controller
+actions, access control policies, and request/response middleware.

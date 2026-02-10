@@ -15,7 +15,8 @@ sidebar_position: 2
 
 # Variables, Types & Operators
 
-Java is a **statically typed** language -- every variable has a declared type, and the compiler enforces it. This chapter covers all the primitive types, strings, type casting, and operators.
+Java is a **statically typed** language -- every variable has a declared type, and the compiler enforces it. This
+chapter covers all the primitive types, strings, type casting, and operators.
 
 ## Declaring variables
 
@@ -32,6 +33,7 @@ System.out.println(isActive);
 ```
 
 Result:
+
 ```text
 25
 Ada
@@ -59,6 +61,7 @@ System.out.println(MAX_RETRIES);
 ```
 
 Result:
+
 ```text
 3
 ```
@@ -79,6 +82,7 @@ System.out.println(((Object) count).getClass().getSimpleName());
 ```
 
 Result:
+
 ```text
 String
 Integer
@@ -97,16 +101,16 @@ Use `var` when the type is obvious from the right side. Prefer explicit types wh
 
 Java has **eight** primitive types. They store values directly (not as objects):
 
-| Type | Size | Range | Default | Example |
-|------|------|-------|---------|---------|
-| `byte` | 8 bits | -128 to 127 | 0 | `byte b = 100;` |
-| `short` | 16 bits | -32,768 to 32,767 | 0 | `short s = 30000;` |
-| `int` | 32 bits | ~-2.1 billion to ~2.1 billion | 0 | `int i = 42;` |
-| `long` | 64 bits | ~-9.2 quintillion to ~9.2 quintillion | 0L | `long l = 123456789L;` |
-| `float` | 32 bits | ~7 decimal digits | 0.0f | `float f = 3.14f;` |
-| `double` | 64 bits | ~15 decimal digits | 0.0 | `double d = 3.14;` |
-| `boolean` | 1 bit* | `true` or `false` | false | `boolean b = true;` |
-| `char` | 16 bits | Unicode character | '\u0000' | `char c = 'A';` |
+| Type      | Size    | Range                                 | Default  | Example                |
+|-----------|---------|---------------------------------------|----------|------------------------|
+| `byte`    | 8 bits  | -128 to 127                           | 0        | `byte b = 100;`        |
+| `short`   | 16 bits | -32,768 to 32,767                     | 0        | `short s = 30000;`     |
+| `int`     | 32 bits | ~-2.1 billion to ~2.1 billion         | 0        | `int i = 42;`          |
+| `long`    | 64 bits | ~-9.2 quintillion to ~9.2 quintillion | 0L       | `long l = 123456789L;` |
+| `float`   | 32 bits | ~7 decimal digits                     | 0.0f     | `float f = 3.14f;`     |
+| `double`  | 64 bits | ~15 decimal digits                    | 0.0      | `double d = 3.14;`     |
+| `boolean` | 1 bit*  | `true` or `false`                     | false    | `boolean b = true;`    |
+| `char`    | 16 bits | Unicode character                     | '\u0000' | `char c = 'A';`        |
 
 *boolean actual size depends on the JVM implementation.
 
@@ -121,12 +125,14 @@ System.out.println(worldPopulation);
 ```
 
 Result:
+
 ```text
 8000000
 8000000000
 ```
 
-Without the `L` suffix, the compiler treats a number literal as `int`. If the value exceeds `int` range, you get a compile error.
+Without the `L` suffix, the compiler treats a number literal as `int`. If the value exceeds `int` range, you get a
+compile error.
 
 ### `double` and `float`
 
@@ -140,6 +146,7 @@ System.out.println(0.1 + 0.2); // same floating-point quirk as any language
 ```
 
 Result:
+
 ```text
 3.141592653589793
 3.14
@@ -159,12 +166,14 @@ System.out.println(isColdOutside);
 ```
 
 Result:
+
 ```text
 true
 false
 ```
 
-Unlike JavaScript, Java does **not** coerce other types to booleans. `if (1)` is a compile error -- only `boolean` expressions are allowed in conditions.
+Unlike JavaScript, Java does **not** coerce other types to booleans. `if (1)` is a compile error -- only `boolean`
+expressions are allowed in conditions.
 
 ### `char`
 
@@ -182,6 +191,7 @@ System.out.println((int) letter); // numeric value
 ```
 
 Result:
+
 ```text
 A
 7
@@ -200,6 +210,7 @@ System.out.println(greeting.length());
 ```
 
 Result:
+
 ```text
 Hello, world!
 13
@@ -218,6 +229,7 @@ System.out.println(upper);
 ```
 
 Result:
+
 ```text
 hello
 HELLO
@@ -244,6 +256,7 @@ System.out.println(s.isBlank());            // false (Java 11+)
 ```
 
 Result:
+
 ```text
 13
 H
@@ -273,13 +286,15 @@ System.out.println(a.equals(c));  // true (same content)
 ```
 
 Result:
+
 ```text
 true
 false
 true
 ```
 
-**Always use `.equals()` to compare strings.** The `==` operator compares object references, not content. It sometimes works due to string interning, but it is unreliable.
+**Always use `.equals()` to compare strings.** The `==` operator compares object references, not content. It sometimes
+works due to string interning, but it is unreliable.
 
 ### String concatenation
 
@@ -300,6 +315,7 @@ System.out.printf("Price: $%.2f%n", 9.99);
 ```
 
 Result:
+
 ```text
 Hello, World!
 Ada is 36 years old
@@ -323,6 +339,7 @@ System.out.println(json);
 ```
 
 Result:
+
 ```text
 {
     "name": "Ada",
@@ -348,6 +365,7 @@ System.out.println(doubleValue);
 ```
 
 Result:
+
 ```text
 42
 42.0
@@ -371,6 +389,7 @@ System.out.println(small);
 ```
 
 Result:
+
 ```text
 3
 -126
@@ -391,6 +410,7 @@ System.out.println(big);
 ```
 
 Result:
+
 ```text
 42
 3.14
@@ -408,6 +428,7 @@ try {
 ```
 
 Result:
+
 ```text
 Cannot parse: For input string: "abc"
 ```
@@ -425,6 +446,7 @@ System.out.println(s3);
 ```
 
 Result:
+
 ```text
 42
 42
@@ -435,16 +457,16 @@ Result:
 
 Each primitive has a corresponding **wrapper class** that turns it into an object:
 
-| Primitive | Wrapper |
-|-----------|---------|
-| `int` | `Integer` |
-| `long` | `Long` |
-| `double` | `Double` |
-| `float` | `Float` |
-| `boolean` | `Boolean` |
-| `char` | `Character` |
-| `byte` | `Byte` |
-| `short` | `Short` |
+| Primitive | Wrapper     |
+|-----------|-------------|
+| `int`     | `Integer`   |
+| `long`    | `Long`      |
+| `double`  | `Double`    |
+| `float`   | `Float`     |
+| `boolean` | `Boolean`   |
+| `char`    | `Character` |
+| `byte`    | `Byte`      |
+| `short`   | `Short`     |
 
 Java **autoboxes** -- it automatically converts between primitives and wrappers:
 
@@ -457,6 +479,7 @@ System.out.println(unboxed);
 ```
 
 Result:
+
 ```text
 42
 42
@@ -476,6 +499,7 @@ System.out.println(10.0 / 3); // 3.3333... -- double division
 ```
 
 Result:
+
 ```text
 13
 7
@@ -485,7 +509,8 @@ Result:
 3.3333333333333335
 ```
 
-**Integer division truncates.** `10 / 3` is `3`, not `3.33`. If you want decimal division, at least one operand must be a `double` or `float`.
+**Integer division truncates.** `10 / 3` is `3`, not `3.33`. If you want decimal division, at least one operand must be
+a `double` or `float`.
 
 ### Increment and decrement
 
@@ -507,6 +532,7 @@ System.out.println(++b); // increments first, then prints 6
 ```
 
 Result:
+
 ```text
 6
 5
@@ -527,6 +553,7 @@ x %= 4;  System.out.println(x); // 2
 ```
 
 Result:
+
 ```text
 15
 12
@@ -549,6 +576,7 @@ System.out.println(5 != 3);  // true
 ```
 
 Result:
+
 ```text
 true
 false
@@ -558,7 +586,8 @@ true
 true
 ```
 
-**For primitives**, `==` compares values and works correctly. **For objects** (including `String`), use `.equals()` to compare content.
+**For primitives**, `==` compares values and works correctly. **For objects** (including `String`), use `.equals()` to
+compare content.
 
 ## Logical operators
 
@@ -572,6 +601,7 @@ System.out.println(!false);        // true
 ```
 
 Result:
+
 ```text
 true
 false
@@ -600,6 +630,7 @@ if (name != null && name.length() > 0) {
 ```
 
 Result:
+
 ```text
 No name provided
 ```
@@ -621,6 +652,7 @@ System.out.println(Math.random());       // random double between 0.0 and 1.0
 ```
 
 Result:
+
 ```text
 42
 20
@@ -645,17 +677,17 @@ System.out.println("Dice: " + dice);
 
 From highest to lowest (simplified):
 
-| Priority | Operators |
-|----------|-----------|
-| 1 | `()` (parentheses) |
-| 2 | `++` `--` `!` (unary) |
-| 3 | `*` `/` `%` |
-| 4 | `+` `-` |
-| 5 | `<` `<=` `>` `>=` |
-| 6 | `==` `!=` |
-| 7 | `&&` |
-| 8 | `\|\|` |
-| 9 | `=` `+=` `-=` etc. |
+| Priority | Operators             |
+|----------|-----------------------|
+| 1        | `()` (parentheses)    |
+| 2        | `++` `--` `!` (unary) |
+| 3        | `*` `/` `%`           |
+| 4        | `+` `-`               |
+| 5        | `<` `<=` `>` `>=`     |
+| 6        | `==` `!=`             |
+| 7        | `&&`                  |
+| 8        | `\|\|`                |
+| 9        | `=` `+=` `-=` etc.    |
 
 When in doubt, use parentheses to make your intent explicit:
 

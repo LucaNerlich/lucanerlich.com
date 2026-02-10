@@ -7,7 +7,8 @@ tags: [strapi, typescript, types, development]
 
 # TypeScript Integration
 
-Strapi 5 supports TypeScript natively. However, the type story is still evolving -- auto-generated types from content schemas, typing custom controllers and services, and getting full IntelliSense requires some setup.
+Strapi 5 supports TypeScript natively. However, the type story is still evolving -- auto-generated types from content
+schemas, typing custom controllers and services, and getting full IntelliSense requires some setup.
 
 ## Starting a TypeScript project
 
@@ -440,14 +441,14 @@ Strapi generates a `tsconfig.json`, but here's a recommended configuration:
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Missing `ts:generate-types` | No autocomplete for content attributes | Run it after schema changes |
-| `any` types everywhere | Defeats the purpose of TypeScript | Define interfaces for your content types |
-| JSON schemas not in `include` | `resolveJsonModule` doesn't find schemas | Add `"src/**/*.json"` to `include` |
-| `ctx` typed as `any` | No type safety in controllers | Strapi's Koa context types are limited; add assertions |
-| Forgetting `as const` on route methods | `method` inferred as `string` instead of `'GET'` | Use `'GET' as const` |
-| Types diverge from schema | Runtime errors despite TypeScript compiling | Regenerate types after every schema change |
+| Pitfall                                | Problem                                          | Fix                                                    |
+|----------------------------------------|--------------------------------------------------|--------------------------------------------------------|
+| Missing `ts:generate-types`            | No autocomplete for content attributes           | Run it after schema changes                            |
+| `any` types everywhere                 | Defeats the purpose of TypeScript                | Define interfaces for your content types               |
+| JSON schemas not in `include`          | `resolveJsonModule` doesn't find schemas         | Add `"src/**/*.json"` to `include`                     |
+| `ctx` typed as `any`                   | No type safety in controllers                    | Strapi's Koa context types are limited; add assertions |
+| Forgetting `as const` on route methods | `method` inferred as `string` instead of `'GET'` | Use `'GET' as const`                                   |
+| Types diverge from schema              | Runtime errors despite TypeScript compiling      | Regenerate types after every schema change             |
 
 ---
 

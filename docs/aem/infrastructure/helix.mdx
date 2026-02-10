@@ -505,11 +505,11 @@ graph TD
 ```
 
 1. **LCP (Largest Contentful Paint)** -- critical CSS is inlined, hero images use
-   `fetchpriority="high"` and `loading="eager"`
+`fetchpriority="high"` and `loading="eager"`
 2. **Eager blocks** -- blocks visible in the first viewport are loaded immediately
 3. **Lazy blocks** -- below-the-fold blocks are loaded via `IntersectionObserver`
 4. **Delayed scripts** -- analytics, chat widgets, and other non-essential scripts
-   load only after user interaction (click, scroll, keydown) or after 3 seconds
+load only after user interaction (click, scroll, keydown) or after 3 seconds
 
 ### What EDS does automatically
 

@@ -7,16 +7,17 @@ tags: [strapi, routes, endpoints, api]
 
 # Custom Routes and Endpoints
 
-Strapi auto-generates REST routes for every content type (`find`, `findOne`, `create`, `update`, `delete`). Custom routes let you add new endpoints, change URL patterns, or restrict access to existing ones.
+Strapi auto-generates REST routes for every content type (`find`, `findOne`, `create`, `update`, `delete`). Custom
+routes let you add new endpoints, change URL patterns, or restrict access to existing ones.
 
 ## Core router vs custom router
 
-| Concept | Core Router | Custom Router |
-|---------|-------------|---------------|
-| **Created by** | `createCoreRouter()` factory | Manual route definition |
-| **Actions** | Maps to default controller CRUD | Maps to any controller action |
-| **File** | `src/api/[name]/routes/[name].js` | `src/api/[name]/routes/01-custom.js` |
-| **Override config** | Use `config` object to attach middleware/policies | Use per-route `config` object |
+| Concept             | Core Router                                       | Custom Router                        |
+|---------------------|---------------------------------------------------|--------------------------------------|
+| **Created by**      | `createCoreRouter()` factory                      | Manual route definition              |
+| **Actions**         | Maps to default controller CRUD                   | Maps to any controller action        |
+| **File**            | `src/api/[name]/routes/[name].js`                 | `src/api/[name]/routes/01-custom.js` |
+| **Override config** | Use `config` object to attach middleware/policies | Use per-route `config` object        |
 
 ---
 
@@ -99,7 +100,8 @@ module.exports = {
 };
 ```
 
-> Route files load in **alphabetical order**. Prefix custom routes with `01-` so they load before the core router and avoid being shadowed by wildcard patterns.
+> Route files load in **alphabetical order**. Prefix custom routes with `01-` so they load before the core router and
+> avoid being shadowed by wildcard patterns.
 
 ### URL parameters
 
@@ -338,13 +340,13 @@ export default {
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Custom route shadowed by core router | Core wildcard `:id` matches your custom path | Prefix custom route file with `01-` |
-| `handler` string typo | Route returns 404 | Use the full `api::name.controller.action` format |
-| Public route but no role permission | 403 Forbidden despite `auth: false` | Enable the route in Public role settings |
-| Duplicate method+path | Only the first route wins | Ensure unique method+path combinations |
-| Missing controller action | 500 error on request | Create the corresponding controller method |
+| Pitfall                              | Problem                                      | Fix                                               |
+|--------------------------------------|----------------------------------------------|---------------------------------------------------|
+| Custom route shadowed by core router | Core wildcard `:id` matches your custom path | Prefix custom route file with `01-`               |
+| `handler` string typo                | Route returns 404                            | Use the full `api::name.controller.action` format |
+| Public route but no role permission  | 403 Forbidden despite `auth: false`          | Enable the route in Public role settings          |
+| Duplicate method+path                | Only the first route wins                    | Ensure unique method+path combinations            |
+| Missing controller action            | 500 error on request                         | Create the corresponding controller method        |
 
 ---
 

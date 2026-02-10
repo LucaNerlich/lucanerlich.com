@@ -15,17 +15,21 @@ sidebar_position: 1
 
 # Introduction & Environment Setup
 
-Java is one of the most widely used programming languages in the world. It powers Android apps, enterprise backends, cloud services, and everything in between. This guide takes you from zero to deploying a REST API on a VPS -- no prior Java experience required.
+Java is one of the most widely used programming languages in the world. It powers Android apps, enterprise backends,
+cloud services, and everything in between. This guide takes you from zero to deploying a REST API on a VPS -- no prior
+Java experience required.
 
 ## What is Java?
 
 Java is a **statically typed, compiled, object-oriented** programming language. That means:
 
-1. **Statically typed** -- you declare the type of every variable. The compiler catches type errors before the program runs.
+1. **Statically typed** -- you declare the type of every variable. The compiler catches type errors before the program
+   runs.
 2. **Compiled** -- you turn source code (`.java` files) into bytecode (`.class` files) before running it.
 3. **Object-oriented** -- code is organized into classes and objects (covered in chapter 5).
 
-Java was created in 1995 by James Gosling at Sun Microsystems. Its design philosophy is **"write once, run anywhere"** -- compiled Java code runs on any platform that has a Java Virtual Machine.
+Java was created in 1995 by James Gosling at Sun Microsystems. Its design philosophy is **"write once, run anywhere"
+** -- compiled Java code runs on any platform that has a Java Virtual Machine.
 
 ## JDK, JRE, JVM -- what is what?
 
@@ -53,11 +57,11 @@ These three terms come up constantly. Here is what they mean:
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-| Component | What it is | Who needs it |
-|-----------|-----------|--------------|
-| **JVM** | The virtual machine that executes Java bytecode | Everyone running Java |
-| **JRE** | JVM + standard libraries | Users running Java programs |
-| **JDK** | JRE + development tools (`javac`, `jar`, etc.) | Developers writing Java |
+| Component | What it is                                      | Who needs it                |
+|-----------|-------------------------------------------------|-----------------------------|
+| **JVM**   | The virtual machine that executes Java bytecode | Everyone running Java       |
+| **JRE**   | JVM + standard libraries                        | Users running Java programs |
+| **JDK**   | JRE + development tools (`javac`, `jar`, etc.)  | Developers writing Java     |
 
 You need the **JDK** -- it includes everything.
 
@@ -74,7 +78,8 @@ Hello.java  →  javac  →  Hello.class  →  java  →  Output
 2. `javac` (the Java compiler) compiles it into **bytecode** -- a `.class` file.
 3. `java` (the JVM launcher) runs the bytecode.
 
-The bytecode is platform-independent. The same `.class` file runs on Windows, macOS, and Linux -- as long as a JVM is installed.
+The bytecode is platform-independent. The same `.class` file runs on Windows, macOS, and Linux -- as long as a JVM is
+installed.
 
 ## Installing the JDK
 
@@ -94,7 +99,8 @@ sudo ln -sfn $(brew --prefix)/opt/openjdk@21/libexec/openjdk.jdk /Library/Java/J
 
 ### Windows
 
-Download the installer from [Adoptium](https://adoptium.net/) (Eclipse Temurin) and run it. Make sure to check "Add to PATH" during installation.
+Download the installer from [Adoptium](https://adoptium.net/) (Eclipse Temurin) and run it. Make sure to check "Add to
+PATH" during installation.
 
 ### Linux (Ubuntu/Debian)
 
@@ -112,6 +118,7 @@ java --version
 ```
 
 Result:
+
 ```text
 openjdk 21.0.2 2024-01-16
 OpenJDK Runtime Environment (build 21.0.2+13)
@@ -127,6 +134,7 @@ javac --version
 ```
 
 Result:
+
 ```text
 javac 21.0.2
 ```
@@ -135,14 +143,15 @@ javac 21.0.2
 
 Java is verbose enough that a good IDE makes a big difference. Popular choices:
 
-| IDE | Notes |
-|-----|-------|
+| IDE                         | Notes                                                    |
+|-----------------------------|----------------------------------------------------------|
 | **IntelliJ IDEA Community** | Free, best Java IDE, excellent refactoring and debugging |
-| **IntelliJ IDEA Ultimate** | Paid, adds web/enterprise features |
-| **VS Code** | Free, lightweight, needs the Java extension pack |
-| **Eclipse** | Free, traditional, large plugin ecosystem |
+| **IntelliJ IDEA Ultimate**  | Paid, adds web/enterprise features                       |
+| **VS Code**                 | Free, lightweight, needs the Java extension pack         |
+| **Eclipse**                 | Free, traditional, large plugin ecosystem                |
 
-If you have no preference, start with [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download/) -- it is free and has the best Java tooling.
+If you have no preference, start with [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download/) -- it
+is free and has the best Java tooling.
 
 For this guide, all examples are compiled and run from the terminal so you can use any editor.
 
@@ -171,6 +180,7 @@ java Hello
 ```
 
 Result:
+
 ```text
 Hello, world!
 ```
@@ -187,14 +197,16 @@ public class Hello {                    // 1. Class declaration
 }
 ```
 
-1. **`public class Hello`** -- every Java file contains a class. The class name must match the filename (`Hello.java` → `class Hello`). `public` means other classes can access it.
+1. **`public class Hello`** -- every Java file contains a class. The class name must match the filename (`Hello.java` →
+   `class Hello`). `public` means other classes can access it.
 
-2. **`public static void main(String[] args)`** -- the entry point. The JVM looks for this exact signature when you run the program.
-   - `public` -- accessible from outside the class
-   - `static` -- belongs to the class itself, not to an instance (more on this in chapter 5)
-   - `void` -- returns nothing
-   - `main` -- the method name the JVM looks for
-   - `String[] args` -- command-line arguments as an array of strings
+2. **`public static void main(String[] args)`** -- the entry point. The JVM looks for this exact signature when you run
+   the program.
+    - `public` -- accessible from outside the class
+    - `static` -- belongs to the class itself, not to an instance (more on this in chapter 5)
+    - `void` -- returns nothing
+    - `main` -- the method name the JVM looks for
+    - `String[] args` -- command-line arguments as an array of strings
 
 3. **`System.out.println("Hello, world!")`** -- prints text to the terminal followed by a newline.
 
@@ -213,6 +225,7 @@ public class PrintDemo {
 ```
 
 Result:
+
 ```text
 Line 1
 Line 2
@@ -221,7 +234,8 @@ No newline here
 
 ## One file, one public class
 
-Java enforces a strict rule: **each `.java` file can contain at most one `public` class**, and the filename must match that class name.
+Java enforces a strict rule: **each `.java` file can contain at most one `public` class**, and the filename must match
+that class name.
 
 ```java
 // File: Calculator.java -- the filename MUST be Calculator.java
@@ -268,11 +282,13 @@ java com.example.app.Main
 ```
 
 Result:
+
 ```text
 Hello from a package!
 ```
 
-For the early chapters of this guide, we will skip packages to keep things simple. We introduce them properly in the project chapters.
+For the early chapters of this guide, we will skip packages to keep things simple. We introduce them properly in the
+project chapters.
 
 ## Comments
 
@@ -301,10 +317,12 @@ Use comments to explain **why**, not **what**. The code should be clear enough t
 ## Semicolons, braces, and whitespace
 
 Java requires:
+
 - A **semicolon** `;` at the end of every statement
 - **Curly braces** `{}` to define blocks (class bodies, method bodies, loops, etc.)
 
-Whitespace (spaces, tabs, newlines) is ignored by the compiler, but consistent indentation is essential for readability. The Java convention is **4 spaces per indent level** (not tabs).
+Whitespace (spaces, tabs, newlines) is ignored by the compiler, but consistent indentation is essential for readability.
+The Java convention is **4 spaces per indent level** (not tabs).
 
 ```java
 // Good -- readable
@@ -349,15 +367,16 @@ jshell> /exit
 
 ## How this guide is structured
 
-| Part | Chapters | What you will learn |
-|------|----------|-------------------|
-| **1 -- Fundamentals** | 1–6 | Variables, types, control flow, methods, OOP (classes, inheritance, interfaces) |
-| **2 -- Working with Data** | 7–9 | Collections, error handling, file I/O |
-| **3 -- Build & Deploy** | 10–12 | CLI task manager, REST API, deploy to a VPS with nginx |
-| **4 -- Build Tools** | 13--14 | Maven and Gradle -- dependency management, fat JARs, JSON libraries |
-| **5 -- Going Deeper** | 15--17 | Streams & lambdas, Optionals, testing with JUnit 5 |
+| Part                       | Chapters | What you will learn                                                             |
+|----------------------------|----------|---------------------------------------------------------------------------------|
+| **1 -- Fundamentals**      | 1–6      | Variables, types, control flow, methods, OOP (classes, inheritance, interfaces) |
+| **2 -- Working with Data** | 7–9      | Collections, error handling, file I/O                                           |
+| **3 -- Build & Deploy**    | 10–12    | CLI task manager, REST API, deploy to a VPS with nginx                          |
+| **4 -- Build Tools**       | 13--14   | Maven and Gradle -- dependency management, fat JARs, JSON libraries             |
+| **5 -- Going Deeper**      | 15--17   | Streams & lambdas, Optionals, testing with JUnit 5                              |
 
-Each chapter builds on the previous one. Code examples include expected output so you can verify your work. By chapter 12, you will have a running REST API on the internet.
+Each chapter builds on the previous one. Code examples include expected output so you can verify your work. By chapter
+12, you will have a running REST API on the internet.
 
 ## Summary
 

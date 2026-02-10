@@ -58,13 +58,13 @@ executor.awaitTermination(10, TimeUnit.SECONDS);
 
 ### Thread pool types
 
-| Factory method | Behaviour | Use case |
-|---------------|-----------|----------|
-| `newFixedThreadPool(n)` | Fixed number of threads | CPU-bound work (n = number of cores) |
-| `newCachedThreadPool()` | Creates threads as needed, reuses idle threads | Short-lived, bursty I/O tasks |
-| `newSingleThreadExecutor()` | Single thread, tasks queued | Sequential background processing |
-| `newScheduledThreadPool(n)` | Scheduled/periodic execution | Timed tasks, polling |
-| `newVirtualThreadPerTaskExecutor()` | One virtual thread per task (Java 21+) | High-concurrency I/O |
+| Factory method                      | Behaviour                                      | Use case                             |
+|-------------------------------------|------------------------------------------------|--------------------------------------|
+| `newFixedThreadPool(n)`             | Fixed number of threads                        | CPU-bound work (n = number of cores) |
+| `newCachedThreadPool()`             | Creates threads as needed, reuses idle threads | Short-lived, bursty I/O tasks        |
+| `newSingleThreadExecutor()`         | Single thread, tasks queued                    | Sequential background processing     |
+| `newScheduledThreadPool(n)`         | Scheduled/periodic execution                   | Timed tasks, polling                 |
+| `newVirtualThreadPerTaskExecutor()` | One virtual thread per task (Java 21+)         | High-concurrency I/O                 |
 
 ---
 
@@ -170,15 +170,15 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 
 ### Virtual vs platform threads
 
-| Aspect | Platform threads | Virtual threads |
-|--------|-----------------|-----------------|
-| **Managed by** | OS kernel | JVM |
-| **Memory per thread** | ~1 MB stack | ~few KB |
-| **Max count** | Thousands | Millions |
-| **Best for** | CPU-bound work | I/O-bound work (HTTP, DB, file) |
-| **Blocking cost** | Expensive (blocks OS thread) | Cheap (JVM parks the virtual thread) |
-| **Thread pool needed** | Yes | No (one per task is fine) |
-| **Synchronized blocks** | Fine | Can "pin" carrier thread (use `ReentrantLock` instead) |
+| Aspect                  | Platform threads             | Virtual threads                                        |
+|-------------------------|------------------------------|--------------------------------------------------------|
+| **Managed by**          | OS kernel                    | JVM                                                    |
+| **Memory per thread**   | ~1 MB stack                  | ~few KB                                                |
+| **Max count**           | Thousands                    | Millions                                               |
+| **Best for**            | CPU-bound work               | I/O-bound work (HTTP, DB, file)                        |
+| **Blocking cost**       | Expensive (blocks OS thread) | Cheap (JVM parks the virtual thread)                   |
+| **Thread pool needed**  | Yes                          | No (one per task is fine)                              |
+| **Synchronized blocks** | Fine                         | Can "pin" carrier thread (use `ReentrantLock` instead) |
 
 ### When to use virtual threads
 
@@ -321,16 +321,16 @@ List<UrlResult> fetchAll(List<String> urls) {
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Shared mutable state | Race conditions, data corruption | Use immutable objects, AtomicXxx, or synchronisation |
-| `thread.run()` instead of `start()` | Runs on the calling thread, not a new thread | Always call `start()` |
-| Not shutting down ExecutorService | Thread pool keeps the JVM alive | Call `shutdown()` in a finally block or use try-with-resources (Java 21+) |
-| Catching `InterruptedException` and ignoring it | Breaks interrupt-based cancellation | Re-interrupt: `Thread.currentThread().interrupt()` |
-| Deadlock | Two threads each waiting for the other's lock | Lock ordering, timeout-based locking, or lock-free designs |
-| `synchronized` with virtual threads | Pins the carrier thread during blocking I/O | Use `ReentrantLock` instead |
-| Thread pool sized to available processors for I/O work | Threads block on I/O, pool is underutilised | Use virtual threads or a larger cached pool for I/O |
-| `Future.get()` without timeout | Blocks forever if the task never completes | Always use `get(timeout, unit)` |
+| Pitfall                                                | Problem                                       | Fix                                                                       |
+|--------------------------------------------------------|-----------------------------------------------|---------------------------------------------------------------------------|
+| Shared mutable state                                   | Race conditions, data corruption              | Use immutable objects, AtomicXxx, or synchronisation                      |
+| `thread.run()` instead of `start()`                    | Runs on the calling thread, not a new thread  | Always call `start()`                                                     |
+| Not shutting down ExecutorService                      | Thread pool keeps the JVM alive               | Call `shutdown()` in a finally block or use try-with-resources (Java 21+) |
+| Catching `InterruptedException` and ignoring it        | Breaks interrupt-based cancellation           | Re-interrupt: `Thread.currentThread().interrupt()`                        |
+| Deadlock                                               | Two threads each waiting for the other's lock | Lock ordering, timeout-based locking, or lock-free designs                |
+| `synchronized` with virtual threads                    | Pins the carrier thread during blocking I/O   | Use `ReentrantLock` instead                                               |
+| Thread pool sized to available processors for I/O work | Threads block on I/O, pool is underutilised   | Use virtual threads or a larger cached pool for I/O                       |
+| `Future.get()` without timeout                         | Blocks forever if the task never completes    | Always use `get(timeout, unit)`                                           |
 
 ---
 

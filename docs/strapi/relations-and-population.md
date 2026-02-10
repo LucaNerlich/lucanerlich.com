@@ -7,17 +7,18 @@ tags: [strapi, relations, population, database, queries]
 
 # Relations and Population
 
-Relations are one of the most powerful -- and most confusing -- aspects of Strapi. Understanding how to define, query, and populate them efficiently is essential for any non-trivial project.
+Relations are one of the most powerful -- and most confusing -- aspects of Strapi. Understanding how to define, query,
+and populate them efficiently is essential for any non-trivial project.
 
 ## Relation types
 
-| Type | Example | Database |
-|------|---------|----------|
-| **One-to-One** | User has one Profile | FK on either table |
-| **One-to-Many** | Author has many Articles | FK on the "many" side |
-| **Many-to-Many** | Articles have many Tags (and vice versa) | Join table |
-| **Many-Way** | Article references many related Articles (one-directional) | Join table |
-| **Polymorphic** | Comment belongs to Article or Page | Type + ID columns |
+| Type             | Example                                                    | Database              |
+|------------------|------------------------------------------------------------|-----------------------|
+| **One-to-One**   | User has one Profile                                       | FK on either table    |
+| **One-to-Many**  | Author has many Articles                                   | FK on the "many" side |
+| **Many-to-Many** | Articles have many Tags (and vice versa)                   | Join table            |
+| **Many-Way**     | Article references many related Articles (one-directional) | Join table            |
+| **Polymorphic**  | Comment belongs to Article or Page                         | Type + ID columns     |
 
 Relations are configured in the Content-Type Builder or directly in the schema JSON:
 
@@ -368,13 +369,13 @@ const query = qs.stringify({
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| `populate=*` in production | Fetches everything, huge payloads, slow | Explicitly list needed relations and fields |
-| Missing `fields` on populate | Returns all attributes of the related entity | Use `fields: ['name']` to restrict |
-| Circular population | Author populates articles which populate author... | Set explicit `maxDepth` or break the chain with `fields` |
-| Forgetting dynamic zone `on` syntax | Returns empty array for dynamic zones | Use the `on` key with component UIDs |
-| Filtering on unpopulated relation | Filter silently fails or returns wrong results | Ensure the relation exists in the query context |
+| Pitfall                             | Problem                                            | Fix                                                      |
+|-------------------------------------|----------------------------------------------------|----------------------------------------------------------|
+| `populate=*` in production          | Fetches everything, huge payloads, slow            | Explicitly list needed relations and fields              |
+| Missing `fields` on populate        | Returns all attributes of the related entity       | Use `fields: ['name']` to restrict                       |
+| Circular population                 | Author populates articles which populate author... | Set explicit `maxDepth` or break the chain with `fields` |
+| Forgetting dynamic zone `on` syntax | Returns empty array for dynamic zones              | Use the `on` key with component UIDs                     |
+| Filtering on unpopulated relation   | Filter silently fails or returns wrong results     | Ensure the relation exists in the query context          |
 
 ---
 

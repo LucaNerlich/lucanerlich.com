@@ -48,20 +48,20 @@ Every JCR node can have a `rep:policy` child node containing **Access Control En
 
 ### Privilege reference
 
-| Privilege | Covers |
-|-----------|--------|
-| `jcr:read` | Read nodes and properties |
-| `rep:write` | Create, modify, and delete nodes/properties |
-| `jcr:addChildNodes` | Create child nodes |
-| `jcr:removeChildNodes` | Delete child nodes |
-| `jcr:removeNode` | Delete the node itself |
-| `jcr:modifyProperties` | Modify properties |
-| `crx:replicate` | Activate / publish content |
-| `jcr:readAccessControl` | Read ACL policies |
-| `jcr:modifyAccessControl` | Modify ACL policies |
-| `jcr:lockManagement` | Lock / unlock nodes |
-| `jcr:versionManagement` | Create and restore versions |
-| `jcr:all` | All privileges (superuser) |
+| Privilege                 | Covers                                      |
+|---------------------------|---------------------------------------------|
+| `jcr:read`                | Read nodes and properties                   |
+| `rep:write`               | Create, modify, and delete nodes/properties |
+| `jcr:addChildNodes`       | Create child nodes                          |
+| `jcr:removeChildNodes`    | Delete child nodes                          |
+| `jcr:removeNode`          | Delete the node itself                      |
+| `jcr:modifyProperties`    | Modify properties                           |
+| `crx:replicate`           | Activate / publish content                  |
+| `jcr:readAccessControl`   | Read ACL policies                           |
+| `jcr:modifyAccessControl` | Modify ACL policies                         |
+| `jcr:lockManagement`      | Lock / unlock nodes                         |
+| `jcr:versionManagement`   | Create and restore versions                 |
+| `jcr:all`                 | All privileges (superuser)                  |
 
 ### Evaluation order
 
@@ -89,13 +89,13 @@ is powerful for fine-grained control without creating ACEs on every node:
 
 ### Common glob patterns
 
-| Pattern | Matches |
-|---------|---------|
-| `""` (empty) | Only the node itself |
-| `*` | Direct children only |
-| `*/jcr:content` | `jcr:content` of direct children |
-| `*/jcr:content*` | `jcr:content` and everything below it, for direct children |
-| `/*/jcr:content/*` | Properties/children under `jcr:content` at depth 2 |
+| Pattern            | Matches                                                    |
+|--------------------|------------------------------------------------------------|
+| `""` (empty)       | Only the node itself                                       |
+| `*`                | Direct children only                                       |
+| `*/jcr:content`    | `jcr:content` of direct children                           |
+| `*/jcr:content*`   | `jcr:content` and everything below it, for direct children |
+| `/*/jcr:content/*` | Properties/children under `jcr:content` at depth 2         |
 
 ### Example: Read-only access to page properties
 
@@ -144,16 +144,16 @@ manage users, groups, service users, and ACLs declaratively:
 
 ### Repoinit syntax reference
 
-| Statement | Example |
-|-----------|---------|
-| Create service user | `create service user my-user with path system/myproject` |
-| Create group | `create group my-group with path /home/groups/myproject` |
-| Add to group | `add content-authors to group myproject-super-authors` |
-| Set ACL | `set ACL for principal-name` ... `end` |
-| Allow | `allow jcr:read on /content/mysite` |
-| Deny | `deny rep:write on /content/mysite` |
-| Glob restriction | `allow jcr:read on /content restriction(rep:glob,*/jcr:content*)` |
-| Create path | `create path /content/mysite(sling:OrderedFolder)` |
+| Statement           | Example                                                           |
+|---------------------|-------------------------------------------------------------------|
+| Create service user | `create service user my-user with path system/myproject`          |
+| Create group        | `create group my-group with path /home/groups/myproject`          |
+| Add to group        | `add content-authors to group myproject-super-authors`            |
+| Set ACL             | `set ACL for principal-name` ... `end`                            |
+| Allow               | `allow jcr:read on /content/mysite`                               |
+| Deny                | `deny rep:write on /content/mysite`                               |
+| Glob restriction    | `allow jcr:read on /content restriction(rep:glob,*/jcr:content*)` |
+| Create path         | `create path /content/mysite(sling:OrderedFolder)`                |
 
 ---
 
@@ -165,17 +165,17 @@ de facto standard for managing AEM permissions in enterprise projects. It provid
 
 ### Why use it?
 
-| Feature | Repoinit | Netcentric ACL Tool |
-|---------|---------|-------------------|
-| **Format** | Custom DSL in JSON | YAML |
-| **Readability** | Moderate | Excellent |
-| **Group management** | Basic | Full (hierarchy, membership, profiles) |
-| **ACL management** | Full | Full (with glob, restrictions, CUGs) |
-| **Idempotent** | Yes | Yes |
-| **Dump existing** | No | Yes (`acl-dump`) |
-| **Validation** | Runtime only | Pre-deploy validation |
-| **AEMaaCS** | Native | Supported (via content package) |
-| **AEM 6.5** | Requires config | Fully supported |
+| Feature              | Repoinit           | Netcentric ACL Tool                    |
+|----------------------|--------------------|----------------------------------------|
+| **Format**           | Custom DSL in JSON | YAML                                   |
+| **Readability**      | Moderate           | Excellent                              |
+| **Group management** | Basic              | Full (hierarchy, membership, profiles) |
+| **ACL management**   | Full               | Full (with glob, restrictions, CUGs)   |
+| **Idempotent**       | Yes                | Yes                                    |
+| **Dump existing**    | No                 | Yes (`acl-dump`)                       |
+| **Validation**       | Runtime only       | Pre-deploy validation                  |
+| **AEMaaCS**          | Native             | Supported (via content package)        |
+| **AEM 6.5**          | Requires config    | Fully supported                        |
 
 ### Installation
 
@@ -442,15 +442,15 @@ graph TD
 
 ### Recommended group structure
 
-| Group | Purpose | Key permissions |
-|-------|---------|----------------|
-| `content-authors` | Author and publish content pages | read, write, replicate on `/content/mysite` |
-| `dam-contributors` | Upload and manage assets | read, write on `/content/dam/mysite` |
-| `dam-publishers` | Publish assets | read, replicate on `/content/dam/mysite` |
-| `tag-administrators` | Manage the tag taxonomy | read, write on `/content/cq:tags/mysite` |
-| `template-authors` | Create and manage editable templates | read, write on `/conf/mysite/settings/wcm/templates` |
-| `site-admins` | Full access to a specific site | all on `/content/mysite`, `/content/dam/mysite` |
-| `workflow-users` | Start and participate in workflows | read on `/var/workflow/models` |
+| Group                | Purpose                              | Key permissions                                      |
+|----------------------|--------------------------------------|------------------------------------------------------|
+| `content-authors`    | Author and publish content pages     | read, write, replicate on `/content/mysite`          |
+| `dam-contributors`   | Upload and manage assets             | read, write on `/content/dam/mysite`                 |
+| `dam-publishers`     | Publish assets                       | read, replicate on `/content/dam/mysite`             |
+| `tag-administrators` | Manage the tag taxonomy              | read, write on `/content/cq:tags/mysite`             |
+| `template-authors`   | Create and manage editable templates | read, write on `/conf/mysite/settings/wcm/templates` |
+| `site-admins`        | Full access to a specific site       | all on `/content/mysite`, `/content/dam/mysite`      |
+| `workflow-users`     | Start and participate in workflows   | read on `/var/workflow/models`                       |
 
 ---
 
@@ -641,16 +641,16 @@ users only need to edit existing content, not create or delete nodes.
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Users can't see pages after deployment | Check that the group has `jcr:read` on `/content` and all ancestor nodes |
-| ACL Tool runs but permissions don't apply | Verify the YAML is syntactically correct; check the ACL Tool log in Felix console |
-| Service user gets `LoginException` | Check the service user mapping and ensure the user exists (repoinit must run first) |
-| Deny ACE has no effect | Deny is evaluated in order; ensure it comes after (or at the same level as) the allow ACE |
-| CUG blocks all anonymous access | CUGs deny `jcr:read` to everyone not in the principal list; verify the group membership |
-| `rep:glob` matches too broadly | Test glob patterns carefully; empty string `""` matches only the node itself |
-| Permissions work on author but not publish | Ensure ACLs are also set for publish-side groups; check if CUGs are enabled on publish |
-| Repoinit script fails silently | Check the error.log for repoinit execution errors after deployment |
+| Pitfall                                    | Solution                                                                                  |
+|--------------------------------------------|-------------------------------------------------------------------------------------------|
+| Users can't see pages after deployment     | Check that the group has `jcr:read` on `/content` and all ancestor nodes                  |
+| ACL Tool runs but permissions don't apply  | Verify the YAML is syntactically correct; check the ACL Tool log in Felix console         |
+| Service user gets `LoginException`         | Check the service user mapping and ensure the user exists (repoinit must run first)       |
+| Deny ACE has no effect                     | Deny is evaluated in order; ensure it comes after (or at the same level as) the allow ACE |
+| CUG blocks all anonymous access            | CUGs deny `jcr:read` to everyone not in the principal list; verify the group membership   |
+| `rep:glob` matches too broadly             | Test glob patterns carefully; empty string `""` matches only the node itself              |
+| Permissions work on author but not publish | Ensure ACLs are also set for publish-side groups; check if CUGs are enabled on publish    |
+| Repoinit script fails silently             | Check the error.log for repoinit execution errors after deployment                        |
 
 ## See also
 

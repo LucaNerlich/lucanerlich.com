@@ -7,7 +7,9 @@ tags: [strapi, import, export, migration, data, backup]
 
 # Data Import, Export, and Migration
 
-Moving data between Strapi environments -- dev to staging, staging to production, exporting for backups -- is a recurring need. This page covers Strapi's built-in tools, custom import/export scripts, database migrations, and content seeding.
+Moving data between Strapi environments -- dev to staging, staging to production, exporting for backups -- is a
+recurring need. This page covers Strapi's built-in tools, custom import/export scripts, database migrations, and content
+seeding.
 
 ## Strapi transfer (built-in)
 
@@ -51,11 +53,11 @@ npx strapi transfer --to https://staging.example.com/admin \
   --exclude files   # Don't transfer media files
 ```
 
-| Flag | Values | Description |
-|------|--------|-------------|
-| `--only` | `content`, `files`, `config` | Transfer only specified data types |
-| `--exclude` | `content`, `files`, `config` | Exclude specified data types |
-| `--force` | - | Skip confirmation prompts |
+| Flag        | Values                       | Description                        |
+|-------------|------------------------------|------------------------------------|
+| `--only`    | `content`, `files`, `config` | Transfer only specified data types |
+| `--exclude` | `content`, `files`, `config` | Exclude specified data types       |
+| `--force`   | -                            | Skip confirmation prompts          |
 
 ---
 
@@ -502,14 +504,14 @@ find "$BACKUP_DIR" -type f -mtime +7 -delete
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Transfer without matching schemas | Data import fails or corrupts | Deploy schema changes first, then transfer content |
-| No `down()` in migration | Cannot roll back | Always write a `down()` function |
-| Seeding in production | Overwrites real data | Guard with `if (count === 0)` or env check |
-| CSV encoding issues | Special characters corrupt on import | Use UTF-8 BOM or specify encoding explicitly |
-| Importing relations by ID | IDs differ between environments | Import by slug or unique field, then resolve relations |
-| No backup before import | Data loss if import goes wrong | Always backup before destructive operations |
+| Pitfall                           | Problem                              | Fix                                                    |
+|-----------------------------------|--------------------------------------|--------------------------------------------------------|
+| Transfer without matching schemas | Data import fails or corrupts        | Deploy schema changes first, then transfer content     |
+| No `down()` in migration          | Cannot roll back                     | Always write a `down()` function                       |
+| Seeding in production             | Overwrites real data                 | Guard with `if (count === 0)` or env check             |
+| CSV encoding issues               | Special characters corrupt on import | Use UTF-8 BOM or specify encoding explicitly           |
+| Importing relations by ID         | IDs differ between environments      | Import by slug or unique field, then resolve relations |
+| No backup before import           | Data loss if import goes wrong       | Always backup before destructive operations            |
 
 ---
 

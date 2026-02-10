@@ -15,32 +15,36 @@ sidebar_position: 11
 
 # Building a REST API
 
-In the previous chapter, the task manager ran from the command line. Now we will expose it over HTTP so any client -- a browser, a mobile app, or `curl` -- can interact with it. We will use Java's built-in `com.sun.net.httpserver.HttpServer`, requiring zero external dependencies.
+In the previous chapter, the task manager ran from the command line. Now we will expose it over HTTP so any client -- a
+browser, a mobile app, or `curl` -- can interact with it. We will use Java's built-in
+`com.sun.net.httpserver.HttpServer`, requiring zero external dependencies.
 
 ## HTTP and REST basics
 
 **HTTP** is the protocol the web runs on. A client sends a **request**, the server sends a **response**.
 
 A request has:
+
 - **Method:** `GET`, `POST`, `PUT`, `DELETE`
 - **Path:** `/api/tasks`, `/api/tasks/1`
 - **Headers:** metadata (content type, auth tokens)
 - **Body:** data (for `POST`/`PUT`)
 
 A response has:
+
 - **Status code:** `200 OK`, `201 Created`, `404 Not Found`, `400 Bad Request`
 - **Headers:** metadata (content type, cache control)
 - **Body:** the data (usually JSON)
 
 **REST** (Representational State Transfer) is a convention for designing APIs around resources:
 
-| Action | Method | Path | Description |
-|--------|--------|------|-------------|
-| List all tasks | `GET` | `/api/tasks` | Returns all tasks |
-| Get one task | `GET` | `/api/tasks/{id}` | Returns a specific task |
-| Create a task | `POST` | `/api/tasks` | Creates and returns a new task |
-| Update a task | `PUT` | `/api/tasks/{id}` | Updates and returns the task |
-| Delete a task | `DELETE` | `/api/tasks/{id}` | Deletes the task |
+| Action         | Method   | Path              | Description                    |
+|----------------|----------|-------------------|--------------------------------|
+| List all tasks | `GET`    | `/api/tasks`      | Returns all tasks              |
+| Get one task   | `GET`    | `/api/tasks/{id}` | Returns a specific task        |
+| Create a task  | `POST`   | `/api/tasks`      | Creates and returns a new task |
+| Update a task  | `PUT`    | `/api/tasks/{id}` | Updates and returns the task   |
+| Delete a task  | `DELETE` | `/api/tasks/{id}` | Deletes the task               |
 
 ## Project structure
 
@@ -59,7 +63,8 @@ Copy `Task.java` and `TaskStore.java` from the previous chapter. We will add thr
 
 ## Step 1: JSON helpers
 
-Since we are not using any libraries, we need simple helper methods to convert tasks to/from JSON. For our small data model, manual JSON is straightforward:
+Since we are not using any libraries, we need simple helper methods to convert tasks to/from JSON. For our small data
+model, manual JSON is straightforward:
 
 ```java
 // JsonHelper.java
@@ -169,7 +174,8 @@ public class JsonHelper {
 }
 ```
 
-This is intentionally minimal -- it handles our specific data format. For production APIs, use a library like Jackson or Gson. See the [JSON Processing guide](../json-processing.md) for library-based approaches.
+This is intentionally minimal -- it handles our specific data format. For production APIs, use a library like Jackson or
+Gson. See the [JSON Processing guide](../json-processing.md) for library-based approaches.
 
 ## Step 2: the request handler
 
@@ -359,6 +365,7 @@ public class TaskHandler implements HttpHandler {
 ```
 
 Key points:
+
 - `HttpHandler` is the interface from `com.sun.net.httpserver` -- implement `handle(HttpExchange)`
 - Routing is manual -- check the path and method to determine the action
 - Responses are always JSON with the appropriate status code
@@ -401,6 +408,7 @@ public class ApiServer {
 ```
 
 The server:
+
 - Listens on port 8080
 - Routes all `/api/*` requests to `TaskHandler`
 - Prints the available endpoints on startup
@@ -414,6 +422,7 @@ java ApiServer
 ```
 
 Result:
+
 ```text
 Task API running on http://localhost:8080
 Endpoints:
@@ -438,6 +447,7 @@ curl http://localhost:8080/api/health
 ```
 
 Result:
+
 ```json
 {"status":"ok"}
 ```
@@ -451,6 +461,7 @@ curl -X POST http://localhost:8080/api/tasks \
 ```
 
 Result:
+
 ```json
 {"id":1,"description":"Buy groceries","done":false}
 ```
@@ -462,6 +473,7 @@ curl -X POST http://localhost:8080/api/tasks \
 ```
 
 Result:
+
 ```json
 {"id":2,"description":"Learn Java REST APIs","done":false}
 ```
@@ -473,6 +485,7 @@ curl http://localhost:8080/api/tasks
 ```
 
 Result:
+
 ```json
 [{"id":1,"description":"Buy groceries","done":false},{"id":2,"description":"Learn Java REST APIs","done":false}]
 ```
@@ -484,6 +497,7 @@ curl http://localhost:8080/api/tasks/1
 ```
 
 Result:
+
 ```json
 {"id":1,"description":"Buy groceries","done":false}
 ```
@@ -495,6 +509,7 @@ curl -X PUT http://localhost:8080/api/tasks/1
 ```
 
 Result:
+
 ```json
 {"id":1,"description":"Buy groceries","done":true}
 ```
@@ -506,6 +521,7 @@ curl -X DELETE http://localhost:8080/api/tasks/2
 ```
 
 Result:
+
 ```json
 {"error":"Deleted task 2"}
 ```
@@ -517,6 +533,7 @@ curl http://localhost:8080/api/tasks/999
 ```
 
 Result:
+
 ```json
 {"error":"Task not found: 999"}
 ```
@@ -528,6 +545,7 @@ curl -X POST http://localhost:8080/api/tasks \
 ```
 
 Result:
+
 ```json
 {"error":"Missing 'description' field"}
 ```
@@ -557,21 +575,23 @@ The JAR is self-contained -- it uses only built-in Java libraries, so it runs an
 
 ## What you have built
 
-| Component | Purpose |
-|-----------|---------|
-| `Task.java` | Data model (reused from CLI project) |
-| `TaskStore.java` | File persistence (reused from CLI project) |
-| `JsonHelper.java` | Manual JSON serialization/parsing |
-| `TaskHandler.java` | HTTP routing and request handling |
-| `ApiServer.java` | Server configuration and startup |
+| Component          | Purpose                                    |
+|--------------------|--------------------------------------------|
+| `Task.java`        | Data model (reused from CLI project)       |
+| `TaskStore.java`   | File persistence (reused from CLI project) |
+| `JsonHelper.java`  | Manual JSON serialization/parsing          |
+| `TaskHandler.java` | HTTP routing and request handling          |
+| `ApiServer.java`   | Server configuration and startup           |
 
 The API follows REST conventions with proper:
+
 - HTTP methods (`GET`, `POST`, `PUT`, `DELETE`)
 - Status codes (`200`, `201`, `400`, `404`, `405`, `500`)
 - JSON content type headers
 - Error responses in a consistent format
 
-For building more complex APIs, you would typically use a framework. See the [HTTP Clients guide](../http-clients.md) for how to consume HTTP APIs from Java.
+For building more complex APIs, you would typically use a framework. See the [HTTP Clients guide](../http-clients.md)
+for how to consume HTTP APIs from Java.
 
 ## Summary
 

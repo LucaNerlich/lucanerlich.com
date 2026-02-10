@@ -73,13 +73,13 @@ Namespaces are the direct children of `/content/cq:tags/`:
 
 Tags use the `cq:Tag` node type with these key properties:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `jcr:title` | String | Display title (localisable) |
-| `jcr:description` | String | Description |
+| Property             | Type   | Description                 |
+|----------------------|--------|-----------------------------|
+| `jcr:title`          | String | Display title (localisable) |
+| `jcr:description`    | String | Description                 |
 | `sling:resourceType` | String | `cq/tagging/components/tag` |
-| `jcr:title.de` | String | German title (i18n) |
-| `jcr:title.fr` | String | French title (i18n) |
+| `jcr:title.de`       | String | German title (i18n)         |
+| `jcr:title.fr`       | String | French title (i18n)         |
 
 ### Tag ID format
 
@@ -189,18 +189,18 @@ while (resources.hasNext()) {
 
 ### TagManager API reference
 
-| Method | Description |
-|--------|-------------|
-| `resolve(tagId)` | Resolve a tag by its ID |
-| `createTag(tagId, title, desc, autoSave)` | Create a new tag |
-| `getTags(resource)` | Get all tags on a resource |
-| `setTags(resource, tags, autoSave)` | Set tags on a resource |
-| `find(rootPath, tagIds...)` | Find resources with specific tags |
-| `findByTitle(title)` | Find tags by title |
-| `deleteTag(tag, autoSave)` | Delete a tag |
-| `moveTag(tag, newPath)` | Move/rename a tag |
-| `mergeTag(sourceTag, targetTag)` | Merge two tags |
-| `canCreateTag(tagId)` | Check if the current user can create a tag |
+| Method                                    | Description                                |
+|-------------------------------------------|--------------------------------------------|
+| `resolve(tagId)`                          | Resolve a tag by its ID                    |
+| `createTag(tagId, title, desc, autoSave)` | Create a new tag                           |
+| `getTags(resource)`                       | Get all tags on a resource                 |
+| `setTags(resource, tags, autoSave)`       | Set tags on a resource                     |
+| `find(rootPath, tagIds...)`               | Find resources with specific tags          |
+| `findByTitle(title)`                      | Find tags by title                         |
+| `deleteTag(tag, autoSave)`                | Delete a tag                               |
+| `moveTag(tag, newPath)`                   | Move/rename a tag                          |
+| `mergeTag(sourceTag, targetTag)`          | Merge two tags                             |
+| `canCreateTag(tagId)`                     | Check if the current user can create a tag |
 
 ---
 
@@ -450,20 +450,20 @@ AND content.[cq:tags] = 'marketing:campaigns/2025'
 
 ### Flat vs hierarchical
 
-| Pattern | Example | Best for |
-|---------|---------|----------|
-| **Flat** | `regions:emea`, `regions:americas` | Simple classification, no parent-child relationships |
+| Pattern          | Example                              | Best for                                               |
+|------------------|--------------------------------------|--------------------------------------------------------|
+| **Flat**         | `regions:emea`, `regions:americas`   | Simple classification, no parent-child relationships   |
 | **Hierarchical** | `regions:emea/uk`, `regions:emea/de` | Faceted navigation, tag inheritance, drill-down search |
 
 ### Multi-site tag governance
 
 In multi-site projects, decide where tags live:
 
-| Strategy | Tags location | Use case |
-|----------|--------------|----------|
-| **Global shared** | `/content/cq:tags/global/` | All sites share the same taxonomy |
-| **Per-site namespace** | `/content/cq:tags/brand-a/`, `/content/cq:tags/brand-b/` | Each site has its own tags |
-| **Hybrid** | `/content/cq:tags/shared/` + `/content/cq:tags/brand-a/` | Shared base + site-specific extensions |
+| Strategy               | Tags location                                            | Use case                               |
+|------------------------|----------------------------------------------------------|----------------------------------------|
+| **Global shared**      | `/content/cq:tags/global/`                               | All sites share the same taxonomy      |
+| **Per-site namespace** | `/content/cq:tags/brand-a/`, `/content/cq:tags/brand-b/` | Each site has its own tags             |
+| **Hybrid**             | `/content/cq:tags/shared/` + `/content/cq:tags/brand-a/` | Shared base + site-specific extensions |
 
 ### Closed tag namespaces
 
@@ -490,6 +490,7 @@ Tag titles can be translated for multi-language sites by adding locale-specific
 ```
 
 The `tag.getLocalizedTitle(locale)` method resolves titles with a fallback chain:
+
 1. Exact locale match (`de_DE`)
 2. Language match (`de`)
 3. Default title (no locale suffix)
@@ -598,15 +599,15 @@ handles locale resolution automatically.
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Tags not showing on publish | Tags must be activated/replicated; check the replication status in the Tagging Console |
-| `TagManager` returns null | The `ResourceResolver` does not have the `com.day.cq.tagging` bundle resolved; check OSGi console |
-| Tag picker shows all tags | Set `rootPath` on the tag field to restrict to a specific namespace |
-| Duplicate tags across namespaces | Establish clear namespace ownership; use a shared namespace for cross-cutting concerns |
+| Pitfall                          | Solution                                                                                                |
+|----------------------------------|---------------------------------------------------------------------------------------------------------|
+| Tags not showing on publish      | Tags must be activated/replicated; check the replication status in the Tagging Console                  |
+| `TagManager` returns null        | The `ResourceResolver` does not have the `com.day.cq.tagging` bundle resolved; check OSGi console       |
+| Tag picker shows all tags        | Set `rootPath` on the tag field to restrict to a specific namespace                                     |
+| Duplicate tags across namespaces | Establish clear namespace ownership; use a shared namespace for cross-cutting concerns                  |
 | Performance with large tag trees | Use `tagid` QueryBuilder predicate instead of property-based queries; consider Oak indexes on `cq:tags` |
-| Tags lost during content copy | Include `/content/cq:tags/` in your content package filter when migrating content |
-| Authors creating ad-hoc tags | Close the namespace and restrict tag creation to administrators |
+| Tags lost during content copy    | Include `/content/cq:tags/` in your content package filter when migrating content                       |
+| Authors creating ad-hoc tags     | Close the namespace and restrict tag creation to administrators                                         |
 
 ## See also
 

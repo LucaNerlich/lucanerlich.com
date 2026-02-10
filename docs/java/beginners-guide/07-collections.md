@@ -15,7 +15,8 @@ sidebar_position: 7
 
 # Collections
 
-Arrays have a fixed size. Collections are dynamic data structures that grow and shrink as needed. The Java Collections Framework provides `List`, `Set`, and `Map` -- the three data structures you will use in almost every program.
+Arrays have a fixed size. Collections are dynamic data structures that grow and shrink as needed. The Java Collections
+Framework provides `List`, `Set`, and `Map` -- the three data structures you will use in almost every program.
 
 ## Arrays -- a quick recap
 
@@ -34,6 +35,7 @@ System.out.println(java.util.Arrays.toString(names));
 ```
 
 Result:
+
 ```text
 3
 [10, 20, 30]
@@ -60,13 +62,16 @@ System.out.println(first);
 ```
 
 Result:
+
 ```text
 Ada
 ```
 
-The `<String>` part is the **type parameter**. It tells the compiler what the list contains, catching errors at compile time instead of runtime.
+The `<String>` part is the **type parameter**. It tells the compiler what the list contains, catching errors at compile
+time instead of runtime.
 
-**Note:** generics work with objects only -- you cannot use primitives (`int`, `double`, etc.). Use wrapper classes (`Integer`, `Double`) instead:
+**Note:** generics work with objects only -- you cannot use primitives (`int`, `double`, etc.). Use wrapper classes (
+`Integer`, `Double`) instead:
 
 ```java
 List<Integer> numbers = new ArrayList<>();
@@ -111,6 +116,7 @@ System.out.println(fruits);
 ```
 
 Result:
+
 ```text
 [apple, banana, cherry]
 apple
@@ -134,6 +140,7 @@ System.out.println(colors.isEmpty());
 ```
 
 Result:
+
 ```text
 true
 false
@@ -162,6 +169,7 @@ names.forEach(name -> System.out.println("Hello, " + name));
 ```
 
 Result:
+
 ```text
 Ada
 Bob
@@ -195,6 +203,7 @@ System.out.println(numbers);
 ```
 
 Result:
+
 ```text
 [Ada, Bob, Charlie]
 [10, 20, 30, 40, 50]
@@ -225,6 +234,7 @@ System.out.println(people);
 ```
 
 Result:
+
 ```text
 [Person[name=Bob, age=17], Person[name=Charlie, age=25], Person[name=Ada, age=36]]
 [Person[name=Ada, age=36], Person[name=Bob, age=17], Person[name=Charlie, age=25]]
@@ -266,6 +276,7 @@ System.out.println(ages);
 ```
 
 Result:
+
 ```text
 {Ada=36, Bob=25, Charlie=30}
 36
@@ -310,6 +321,7 @@ capitals.forEach((country, city) ->
 ```
 
 Result:
+
 ```text
 Germany
 France
@@ -339,6 +351,7 @@ System.out.println(counts);
 ```
 
 Result:
+
 ```text
 {banana=2, cherry=1, apple=3}
 ```
@@ -376,6 +389,7 @@ System.out.println(tags);
 ```
 
 Result:
+
 ```text
 [java, tutorial, programming]
 Size: 3
@@ -406,6 +420,7 @@ System.out.println("Difference: " + difference);
 ```
 
 Result:
+
 ```text
 Union: [1, 2, 3, 4, 5, 6, 7, 8]
 Intersection: [4, 5]
@@ -421,6 +436,7 @@ System.out.println(unique);
 ```
 
 Result:
+
 ```text
 [a, b, c]
 ```
@@ -443,6 +459,7 @@ try {
 ```
 
 Result:
+
 ```text
 [a, b, c]
 Cannot modify immutable list
@@ -457,6 +474,7 @@ System.out.println(mutable);
 ```
 
 Result:
+
 ```text
 [a, b, c, d]
 ```
@@ -483,6 +501,7 @@ System.out.println("Frequency of 1: " + Collections.frequency(numbers, 1));
 ```
 
 Result:
+
 ```text
 Sorted: [1, 1, 3, 4, 5, 9]
 Reversed: [9, 5, 4, 3, 1, 1]
@@ -494,18 +513,19 @@ Frequency of 1: 2
 
 ## Choosing the right collection
 
-| Need | Use | Why |
-|------|-----|-----|
-| Ordered list, access by index | `ArrayList` | Fast random access, fast iteration |
-| Unique elements, no order needed | `HashSet` | O(1) add/remove/contains |
-| Unique elements, insertion order | `LinkedHashSet` | Like `HashSet` but ordered |
-| Unique elements, sorted | `TreeSet` | Elements kept in natural order |
-| Key-value pairs, no order | `HashMap` | O(1) get/put |
-| Key-value pairs, insertion order | `LinkedHashMap` | Like `HashMap` but ordered |
-| Key-value pairs, sorted keys | `TreeMap` | Keys kept in natural order |
-| Queue (FIFO) | `ArrayDeque` | Fast add/remove at both ends |
+| Need                             | Use             | Why                                |
+|----------------------------------|-----------------|------------------------------------|
+| Ordered list, access by index    | `ArrayList`     | Fast random access, fast iteration |
+| Unique elements, no order needed | `HashSet`       | O(1) add/remove/contains           |
+| Unique elements, insertion order | `LinkedHashSet` | Like `HashSet` but ordered         |
+| Unique elements, sorted          | `TreeSet`       | Elements kept in natural order     |
+| Key-value pairs, no order        | `HashMap`       | O(1) get/put                       |
+| Key-value pairs, insertion order | `LinkedHashMap` | Like `HashMap` but ordered         |
+| Key-value pairs, sorted keys     | `TreeMap`       | Keys kept in natural order         |
+| Queue (FIFO)                     | `ArrayDeque`    | Fast add/remove at both ends       |
 
-For a comprehensive guide covering concurrent collections and advanced usage, see the [Collections deep dive](../collections.md).
+For a comprehensive guide covering concurrent collections and advanced usage, see
+the [Collections deep dive](../collections.md).
 
 ## Summary
 

@@ -670,7 +670,7 @@ Custom Java workflow steps for rendition generation **do not run** on AEMaaCS. I
 - Custom processing uses **Processing Profiles** (configured in the DAM admin UI)
 - For advanced custom processing, use **Asset Compute workers** (Adobe I/O Runtime)
 - **Post-processing workflows** can still run custom Java steps for metadata operations, but not
-  binary manipulation
+binary manipulation
 
 If you are building for AEMaaCS, plan your DAM workflow customisations around Processing Profiles
 and Asset Compute rather than custom `WorkflowProcess` steps.
@@ -724,8 +724,8 @@ If your workflow modifies the payload (e.g. sets a property), the modification c
 creating an infinite loop. Prevent this by:
 
 1. **`excludeList`** -- list properties that should not re-trigger the launcher:
-   ```text
-   jcr:lastModified,cq:lastModified,jcr:lastModifiedBy,cq:lastRolledout
+```text
+jcr:lastModified,cq:lastModified,jcr:lastModifiedBy,cq:lastRolledout
    ```
 2. **Conditions** -- add a condition to the launcher that checks for a "processed" flag
 3. **Workflow logic** -- have your process step set a flag property, and check for it before re-processing
@@ -737,7 +737,7 @@ external API) blocks the thread and can starve the workflow engine.
 
 For long-running operations:
 - Use a **Sling Job** (via `JobManager`) and have the workflow step start the job, then use an
-  **External Process Step** that waits for a callback
+**External Process Step** that waits for a callback
 - Set timeouts on HTTP calls
 - Consider asynchronous patterns with a polling step
 

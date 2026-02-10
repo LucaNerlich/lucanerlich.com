@@ -448,7 +448,7 @@ for a specific component, scope it by checking for a field unique to that dialog
 ```javascript
 $(document).on('dialog-ready', function() {
     var $myField = $('[name="./myUniqueFieldName"]');
-    if (!$myField.length) return; // Not our dialog
+    if (!$myField.length)  // Not our dialog
     // ... custom logic ...
 });
 ```

@@ -134,13 +134,13 @@ myspa/
 
 ### Key npm packages
 
-| Package | Purpose |
-|---------|---------|
-| `@adobe/aem-react-editable-components` | React components with editor support (MapTo, EditableComponent) |
-| `@adobe/aem-spa-page-model-manager` | Fetches and caches the page JSON model |
-| `@adobe/aem-spa-component-mapping` | Registry that maps AEM resource types to React components |
-| `@adobe/aem-core-components-react-base` | React wrappers for AEM Core Components |
-| `@adobe/aem-core-components-react-spa` | SPA-specific Core Component wrappers |
+| Package                                 | Purpose                                                         |
+|-----------------------------------------|-----------------------------------------------------------------|
+| `@adobe/aem-react-editable-components`  | React components with editor support (MapTo, EditableComponent) |
+| `@adobe/aem-spa-page-model-manager`     | Fetches and caches the page JSON model                          |
+| `@adobe/aem-spa-component-mapping`      | Registry that maps AEM resource types to React components       |
+| `@adobe/aem-core-components-react-base` | React wrappers for AEM Core Components                          |
+| `@adobe/aem-core-components-react-spa`  | SPA-specific Core Component wrappers                            |
 
 ```bash
 npm install @adobe/aem-react-editable-components \
@@ -207,11 +207,11 @@ graph LR
 
 ### Edit config options
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `emptyLabel` | string | Label shown in the placeholder when the component is empty |
+| Property         | Type     | Description                                                 |
+|------------------|----------|-------------------------------------------------------------|
+| `emptyLabel`     | string   | Label shown in the placeholder when the component is empty  |
 | `isEmpty(props)` | function | Returns `true` if the component should show the placeholder |
-| `resourceType` | string | Override the resource type (rarely needed) |
+| `resourceType`   | string   | Override the resource type (rarely needed)                  |
 
 ---
 
@@ -375,6 +375,7 @@ function App() {
 ```
 
 When a user navigates to a new page:
+
 1. React Router handles the URL change
 2. `ModelManager` fetches the JSON model for the new page (if not cached)
 3. The `Page` component re-renders with the new model
@@ -414,27 +415,27 @@ ModelManager.initialize({
 
 ### When to use Remote SPA
 
-| Scenario | Remote SPA | Embedded SPA |
-|----------|-----------|--------------|
-| SPA hosted on external CDN | Yes | No |
-| SPA needs independent deployment | Yes | No |
-| Tight AEM integration needed | No | Yes |
-| Multiple teams own different parts | Yes | No |
-| Maximum authoring fidelity | No | Yes (same origin) |
+| Scenario                           | Remote SPA | Embedded SPA      |
+|------------------------------------|------------|-------------------|
+| SPA hosted on external CDN         | Yes        | No                |
+| SPA needs independent deployment   | Yes        | No                |
+| Tight AEM integration needed       | No         | Yes               |
+| Multiple teams own different parts | Yes        | No                |
+| Maximum authoring fidelity         | No         | Yes (same origin) |
 
 ---
 
 ## SPA vs Headless vs Edge Delivery
 
-| Aspect | SPA Editor | Headless (GraphQL) | Edge Delivery |
-|--------|-----------|-------------------|---------------|
-| **Authoring** | Visual, in-context | No visual editing (external frontend) | Universal Editor or document-based |
-| **Frontend** | React / Angular (AEM-hosted or remote) | Any framework (decoupled) | Vanilla JS + CSS |
-| **Content model** | Page model (JSON tree) | Content Fragments (structured) | Content Bus (tables to HTML) |
-| **Rendering** | Client-side (SPA) | Client-side or SSR (custom) | Edge-side (CDN) |
-| **Performance** | Good (but SPA overhead) | Depends on implementation | Excellent (100 Lighthouse) |
-| **Complexity** | High (SDK, mapping, exporters) | Medium (GraphQL queries) | Low (HTML, CSS, JS) |
-| **Best for** | Complex interactive apps | Multi-channel content delivery | Marketing sites, docs |
+| Aspect            | SPA Editor                             | Headless (GraphQL)                    | Edge Delivery                      |
+|-------------------|----------------------------------------|---------------------------------------|------------------------------------|
+| **Authoring**     | Visual, in-context                     | No visual editing (external frontend) | Universal Editor or document-based |
+| **Frontend**      | React / Angular (AEM-hosted or remote) | Any framework (decoupled)             | Vanilla JS + CSS                   |
+| **Content model** | Page model (JSON tree)                 | Content Fragments (structured)        | Content Bus (tables to HTML)       |
+| **Rendering**     | Client-side (SPA)                      | Client-side or SSR (custom)           | Edge-side (CDN)                    |
+| **Performance**   | Good (but SPA overhead)                | Depends on implementation             | Excellent (100 Lighthouse)         |
+| **Complexity**    | High (SDK, mapping, exporters)         | Medium (GraphQL queries)              | Low (HTML, CSS, JS)                |
+| **Best for**      | Complex interactive apps               | Multi-channel content delivery        | Marketing sites, docs              |
 
 ---
 
@@ -443,6 +444,7 @@ ModelManager.initialize({
 ### Edit mode
 
 Authors see the SPA with blue overlays on each editable component. They can:
+
 - Click to select a component
 - Use the component toolbar (edit, configure, delete, move)
 - Drag components from the side panel
@@ -545,16 +547,16 @@ editable content must flow through the JSON model.
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Component renders on publish but not in editor | Ensure `MapTo` is imported and executed before the page renders |
-| Empty placeholder never disappears | Check the `isEmpty()` function -- it may not be checking the right props |
-| Drag-and-drop doesn't work | Verify the container component is correctly mapped (e.g., `ResponsiveGrid`) |
-| JSON model is empty or missing components | Check that Sling Models implement `ComponentExporter` and have `@Exporter` |
-| SPA loads but shows blank page in editor | Verify the SPA page component in AEM has `sling:resourceSuperType = core/wcm/components/page/v3/page` |
-| Client-side routing breaks the editor | Ensure `ModelManager.initialize()` completes before rendering routes |
-| Styles look different in author vs publish | The editor adds wrapper divs; scope your CSS to handle both cases |
-| Build fails with `aem-react-editable-components` version mismatch | Pin all `@adobe/aem-*` packages to compatible versions |
+| Pitfall                                                           | Solution                                                                                              |
+|-------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| Component renders on publish but not in editor                    | Ensure `MapTo` is imported and executed before the page renders                                       |
+| Empty placeholder never disappears                                | Check the `isEmpty()` function -- it may not be checking the right props                              |
+| Drag-and-drop doesn't work                                        | Verify the container component is correctly mapped (e.g., `ResponsiveGrid`)                           |
+| JSON model is empty or missing components                         | Check that Sling Models implement `ComponentExporter` and have `@Exporter`                            |
+| SPA loads but shows blank page in editor                          | Verify the SPA page component in AEM has `sling:resourceSuperType = core/wcm/components/page/v3/page` |
+| Client-side routing breaks the editor                             | Ensure `ModelManager.initialize()` completes before rendering routes                                  |
+| Styles look different in author vs publish                        | The editor adds wrapper divs; scope your CSS to handle both cases                                     |
+| Build fails with `aem-react-editable-components` version mismatch | Pin all `@adobe/aem-*` packages to compatible versions                                                |
 
 ---
 

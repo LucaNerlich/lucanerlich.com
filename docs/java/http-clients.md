@@ -325,39 +325,39 @@ HttpResponse<String> response = sendWithRetry(client, request,
 
 ## Library comparison
 
-| Feature | `java.net.http` | OkHttp | Apache HttpClient 5 |
-|---------|----------------|--------|---------------------|
-| **JDK version** | 11+ (built-in) | External dependency | External dependency |
-| **HTTP/2** | Yes | Yes | Yes |
-| **Async** | `CompletableFuture` | `Call.enqueue(Callback)` | `SimpleHttpAsyncClient` |
-| **Interceptors** | No (manual) | Yes (built-in chain) | Yes (request/response interceptors) |
-| **Connection pooling** | Yes (automatic) | Yes (configurable) | Yes (configurable) |
-| **WebSocket** | Yes | Yes | No |
-| **Multipart upload** | Manual | `MultipartBody` | `MultipartEntityBuilder` |
-| **Cookie handling** | `CookieHandler` | `CookieJar` | `CookieStore` |
-| **Bundle size** | 0 KB (JDK) | ~400 KB | ~800 KB |
+| Feature                | `java.net.http`     | OkHttp                   | Apache HttpClient 5                 |
+|------------------------|---------------------|--------------------------|-------------------------------------|
+| **JDK version**        | 11+ (built-in)      | External dependency      | External dependency                 |
+| **HTTP/2**             | Yes                 | Yes                      | Yes                                 |
+| **Async**              | `CompletableFuture` | `Call.enqueue(Callback)` | `SimpleHttpAsyncClient`             |
+| **Interceptors**       | No (manual)         | Yes (built-in chain)     | Yes (request/response interceptors) |
+| **Connection pooling** | Yes (automatic)     | Yes (configurable)       | Yes (configurable)                  |
+| **WebSocket**          | Yes                 | Yes                      | No                                  |
+| **Multipart upload**   | Manual              | `MultipartBody`          | `MultipartEntityBuilder`            |
+| **Cookie handling**    | `CookieHandler`     | `CookieJar`              | `CookieStore`                       |
+| **Bundle size**        | 0 KB (JDK)          | ~400 KB                  | ~800 KB                             |
 
 ### When to use which
 
-| Scenario | Recommendation |
-|----------|---------------|
-| Simple API calls, no extra dependencies | `java.net.http` |
-| Need interceptors, logging, retry middleware | OkHttp |
-| Enterprise, fine-grained connection management | Apache HttpClient 5 |
-| Android development | OkHttp (standard in Android ecosystem) |
+| Scenario                                       | Recommendation                         |
+|------------------------------------------------|----------------------------------------|
+| Simple API calls, no extra dependencies        | `java.net.http`                        |
+| Need interceptors, logging, retry middleware   | OkHttp                                 |
+| Enterprise, fine-grained connection management | Apache HttpClient 5                    |
+| Android development                            | OkHttp (standard in Android ecosystem) |
 
 ---
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| No timeout configured | Request hangs forever on slow servers | Set both `connectTimeout` and per-request `timeout` |
-| Ignoring status codes | Treating 4xx/5xx as success | Check `response.statusCode()` before processing body |
-| Not closing InputStream body handlers | Resource leak | Use `ofString()` or ensure streams are closed |
-| Creating a new `HttpClient` per request | Misses connection pooling and HTTP/2 multiplexing | Reuse a single `HttpClient` instance |
-| Blocking on `CompletableFuture` in async code | Defeats the purpose of async | Chain with `thenApply` / `thenAccept` |
-| Hardcoded base URLs | Difficult to test, environment-specific | Inject base URL via configuration |
+| Pitfall                                       | Problem                                           | Fix                                                  |
+|-----------------------------------------------|---------------------------------------------------|------------------------------------------------------|
+| No timeout configured                         | Request hangs forever on slow servers             | Set both `connectTimeout` and per-request `timeout`  |
+| Ignoring status codes                         | Treating 4xx/5xx as success                       | Check `response.statusCode()` before processing body |
+| Not closing InputStream body handlers         | Resource leak                                     | Use `ofString()` or ensure streams are closed        |
+| Creating a new `HttpClient` per request       | Misses connection pooling and HTTP/2 multiplexing | Reuse a single `HttpClient` instance                 |
+| Blocking on `CompletableFuture` in async code | Defeats the purpose of async                      | Chain with `thenApply` / `thenAccept`                |
+| Hardcoded base URLs                           | Difficult to test, environment-specific           | Inject base URL via configuration                    |
 
 ---
 

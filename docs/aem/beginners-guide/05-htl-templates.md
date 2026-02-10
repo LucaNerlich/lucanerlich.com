@@ -15,7 +15,9 @@ sidebar_position: 5
 
 # HTL Templates
 
-HTL (HTML Template Language, formerly Sightly) is AEM's server-side templating language. It replaces JSP and is the standard for all component rendering. HTL is designed to be **secure by default** -- it automatically escapes output to prevent XSS attacks.
+HTL (HTML Template Language, formerly Sightly) is AEM's server-side templating language. It replaces JSP and is the
+standard for all component rendering. HTL is designed to be **secure by default** -- it automatically escapes output to
+prevent XSS attacks.
 
 ## Expressions
 
@@ -54,16 +56,17 @@ Options modify how values are rendered:
 
 HTL automatically picks an escaping context, but you can override it:
 
-| Context | Use for | Example |
-|---------|---------|---------|
-| `html` (default) | HTML content | `<p>${text}</p>` |
-| `text` | Plain text | `<title>${title @ context='text'}</title>` |
-| `attribute` | HTML attributes | `<div class="${cssClass @ context='attribute'}">` |
-| `uri` | URLs | `<a href="${url @ context='uri'}">` |
-| `scriptString` | JS strings | `var x = "${val @ context='scriptString'}"` |
-| `unsafe` | No escaping | `${richText @ context='unsafe'}` -- use with extreme caution |
+| Context          | Use for         | Example                                                      |
+|------------------|-----------------|--------------------------------------------------------------|
+| `html` (default) | HTML content    | `<p>${text}</p>`                                             |
+| `text`           | Plain text      | `<title>${title @ context='text'}</title>`                   |
+| `attribute`      | HTML attributes | `<div class="${cssClass @ context='attribute'}">`            |
+| `uri`            | URLs            | `<a href="${url @ context='uri'}">`                          |
+| `scriptString`   | JS strings      | `var x = "${val @ context='scriptString'}"`                  |
+| `unsafe`         | No escaping     | `${richText @ context='unsafe'}` -- use with extreme caution |
 
-> **Security:** Never use `context='unsafe'` unless you are absolutely sure the content is safe. HTL's automatic escaping is one of its strongest features.
+> **Security:** Never use `context='unsafe'` unless you are absolutely sure the content is safe. HTL's automatic
+> escaping is one of its strongest features.
 
 ## Block statements
 
@@ -124,15 +127,15 @@ The `data-sly-test` attribute doubles as a variable assignment when you add an i
 
 List helper variables:
 
-| Variable | Description |
-|----------|-------------|
-| `itemList.index` | Zero-based index |
-| `itemList.count` | Total items |
-| `itemList.first` | True if first item |
-| `itemList.last` | True if last item |
+| Variable          | Description               |
+|-------------------|---------------------------|
+| `itemList.index`  | Zero-based index          |
+| `itemList.count`  | Total items               |
+| `itemList.first`  | True if first item        |
+| `itemList.last`   | True if last item         |
 | `itemList.middle` | True if not first or last |
-| `itemList.odd` | True if index is odd |
-| `itemList.even` | True if index is even |
+| `itemList.odd`    | True if index is odd      |
+| `itemList.even`   | True if index is even     |
 
 ### data-sly-repeat -- iterate and keep the host element
 
@@ -249,20 +252,20 @@ Useful when you need a container for HTL logic but do not want it in the output.
 
 HTL provides several global objects available in every template:
 
-| Object | Type | Description |
-|--------|------|-------------|
-| `properties` | `ValueMap` | Properties of the current resource |
-| `pageProperties` | `ValueMap` | Properties of the current page's `jcr:content` |
-| `inheritedPageProperties` | `ValueMap` | Page properties with inheritance |
-| `currentPage` | `Page` | The current page object |
-| `currentNode` | `Node` | The current JCR node |
-| `resource` | `Resource` | The current Sling resource |
-| `request` | `SlingHttpServletRequest` | The current request |
-| `response` | `SlingHttpServletResponse` | The current response |
-| `log` | `Logger` | SLF4J logger |
-| `wcmmode` | `WCMMode` | Current WCM mode (edit, preview, disabled) |
-| `currentDesign` | `Design` | Current page design |
-| `currentStyle` | `Style` | Current component policy |
+| Object                    | Type                       | Description                                    |
+|---------------------------|----------------------------|------------------------------------------------|
+| `properties`              | `ValueMap`                 | Properties of the current resource             |
+| `pageProperties`          | `ValueMap`                 | Properties of the current page's `jcr:content` |
+| `inheritedPageProperties` | `ValueMap`                 | Page properties with inheritance               |
+| `currentPage`             | `Page`                     | The current page object                        |
+| `currentNode`             | `Node`                     | The current JCR node                           |
+| `resource`                | `Resource`                 | The current Sling resource                     |
+| `request`                 | `SlingHttpServletRequest`  | The current request                            |
+| `response`                | `SlingHttpServletResponse` | The current response                           |
+| `log`                     | `Logger`                   | SLF4J logger                                   |
+| `wcmmode`                 | `WCMMode`                  | Current WCM mode (edit, preview, disabled)     |
+| `currentDesign`           | `Design`                   | Current page design                            |
+| `currentStyle`            | `Style`                    | Current component policy                       |
 
 ### Common usage
 
@@ -384,7 +387,9 @@ This template:
 6. **Provide edit placeholders** using `wcmmode.edit` checks
 7. **Use `data-sly-test`** to guard against null values
 
-> For the full HTL specification and advanced patterns, see the [HTL Templates (Sightly)](/aem/htl-templates) reference. For customizing the authoring UI itself, see [Overlays](/aem/ui/overlays) and [Render Conditions](/aem/ui/render-conditions).
+> For the full HTL specification and advanced patterns, see the [HTL Templates (Sightly)](/aem/htl-templates) reference.
+> For customizing the authoring UI itself, see [Overlays](/aem/ui/overlays)
+> and [Render Conditions](/aem/ui/render-conditions).
 
 ## Summary
 
@@ -392,10 +397,13 @@ You learned:
 
 - **Expressions** (`${}`) with options for formatting, context, and i18n
 - **Display contexts** for secure output escaping
-- All major **block statements**: `data-sly-use`, `data-sly-test`, `data-sly-list`, `data-sly-repeat`, `data-sly-resource`, `data-sly-include`, `data-sly-template`/`data-sly-call`, `data-sly-element`, `data-sly-attribute`, `data-sly-text`, `data-sly-unwrap`
+- All major **block statements**: `data-sly-use`, `data-sly-test`, `data-sly-list`, `data-sly-repeat`,
+  `data-sly-resource`, `data-sly-include`, `data-sly-template`/`data-sly-call`, `data-sly-element`,
+  `data-sly-attribute`, `data-sly-text`, `data-sly-unwrap`
 - **Global objects** available in every template
 - The **Use API** for connecting to Sling Models
 - A practical **Article Card** example combining multiple features
 - HTL **best practices**
 
-Next up: [Component Dialogs](./06-component-dialogs.md) -- Touch UI dialogs with Granite/Coral, field types, tabs, multifields, validation, and conditional fields.
+Next up: [Component Dialogs](./06-component-dialogs.md) -- Touch UI dialogs with Granite/Coral, field types, tabs,
+multifields, validation, and conditional fields.

@@ -16,7 +16,8 @@ sidebar_position: 12
 
 # Configuration & Deployment
 
-Our blog CMS is feature-complete. Now let's deploy it to a production server. We will configure environment-based settings, switch to PostgreSQL, set up a process manager, put nginx in front, enable HTTPS, and harden security.
+Our blog CMS is feature-complete. Now let's deploy it to a production server. We will configure environment-based
+settings, switch to PostgreSQL, set up a process manager, put nginx in front, enable HTTPS, and harden security.
 
 ## Deployment architecture
 
@@ -39,13 +40,13 @@ flowchart LR
 
 The components:
 
-| Layer | Role |
-|-------|------|
-| **nginx** | Reverse proxy, SSL termination, static file caching |
-| **Strapi** | Application server (Node.js) |
-| **PostgreSQL** | Production database |
-| **S3 / Cloudinary** | Media storage (chapter 10) |
-| **CDN** (optional) | Cache and deliver static assets globally |
+| Layer               | Role                                                |
+|---------------------|-----------------------------------------------------|
+| **nginx**           | Reverse proxy, SSL termination, static file caching |
+| **Strapi**          | Application server (Node.js)                        |
+| **PostgreSQL**      | Production database                                 |
+| **S3 / Cloudinary** | Media storage (chapter 10)                          |
+| **CDN** (optional)  | Cache and deliver static assets globally            |
 
 ## Environment-based configuration
 
@@ -77,7 +78,8 @@ JWT_SECRET=your-jwt-secret
 DATABASE_FILENAME=.tmp/data.db
 ```
 
-> **Security:** Generate all secrets with a cryptographic random generator. Never use default values in production. Never commit `.env` to version control.
+> **Security:** Generate all secrets with a cryptographic random generator. Never use default values in production.
+> Never commit `.env` to version control.
 
 ### Production database -- PostgreSQL
 
@@ -130,7 +132,8 @@ export default ({ env }) => ({
 });
 ```
 
-The `url` setting is critical -- it tells Strapi its public URL, which is used for generating absolute URLs in API responses and the admin panel.
+The `url` setting is critical -- it tells Strapi its public URL, which is used for generating absolute URLs in API
+responses and the admin panel.
 
 ### Production admin config
 
@@ -153,7 +156,8 @@ export default ({ env }) => ({
 
 ## Preparing the server
 
-We will use an Ubuntu VPS. If you followed the JavaScript or Java deployment chapters, you already have a server set up. The same server can host Strapi.
+We will use an Ubuntu VPS. If you followed the JavaScript or Java deployment chapters, you already have a server set up.
+The same server can host Strapi.
 
 ### Install prerequisites
 
@@ -330,14 +334,14 @@ pm2 startup systemd
 
 ### PM2 commands
 
-| Command | Description |
-|---------|-------------|
-| `pm2 list` | Show running processes |
-| `pm2 logs strapi` | View live logs |
-| `pm2 restart strapi` | Restart the app |
-| `pm2 stop strapi` | Stop the app |
-| `pm2 delete strapi` | Remove from PM2 |
-| `pm2 monit` | Real-time monitoring dashboard |
+| Command              | Description                    |
+|----------------------|--------------------------------|
+| `pm2 list`           | Show running processes         |
+| `pm2 logs strapi`    | View live logs                 |
+| `pm2 restart strapi` | Restart the app                |
+| `pm2 stop strapi`    | Stop the app                   |
+| `pm2 delete strapi`  | Remove from PM2                |
+| `pm2 monit`          | Real-time monitoring dashboard |
 
 ## Alternative -- systemd
 
@@ -610,22 +614,22 @@ sudo dpkg-reconfigure -plow unattended-upgrades
 
 Before going live, verify:
 
-| Check | Status |
-|-------|--------|
-| PostgreSQL configured and accessible | |
-| All environment variables set (secrets are unique, random) | |
-| `.env` is not in version control | |
-| Admin panel built (`npm run build`) | |
-| PM2 or systemd starts on boot | |
-| nginx reverse proxy configured | |
-| HTTPS enabled with valid certificate | |
-| Firewall allows only ports 22, 80, 443 | |
-| CORS configured for your frontend domain(s) | |
-| Content Security Policy set | |
-| SSH hardened (key-only, no root login) | |
-| Fail2Ban installed | |
-| Automatic updates enabled | |
-| Backups configured (database + uploads) | |
+| Check                                                      | Status |
+|------------------------------------------------------------|--------|
+| PostgreSQL configured and accessible                       |        |
+| All environment variables set (secrets are unique, random) |        |
+| `.env` is not in version control                           |        |
+| Admin panel built (`npm run build`)                        |        |
+| PM2 or systemd starts on boot                              |        |
+| nginx reverse proxy configured                             |        |
+| HTTPS enabled with valid certificate                       |        |
+| Firewall allows only ports 22, 80, 443                     |        |
+| CORS configured for your frontend domain(s)                |        |
+| Content Security Policy set                                |        |
+| SSH hardened (key-only, no root login)                     |        |
+| Fail2Ban installed                                         |        |
+| Automatic updates enabled                                  |        |
+| Backups configured (database + uploads)                    |        |
 
 ## Database backups
 
@@ -680,7 +684,8 @@ pm2 restart strapi
 
 For zero-downtime deployments, consider using a blue-green deployment strategy or Docker containers.
 
-> For more advanced deployment patterns, see the [Configuration and Deployment](/strapi/configuration-and-deployment) reference.
+> For more advanced deployment patterns, see the [Configuration and Deployment](/strapi/configuration-and-deployment)
+> reference.
 
 ## Summary
 
@@ -695,7 +700,8 @@ You learned:
 - **Security hardening** -- firewall, CORS, CSP, SSH, Fail2Ban, automatic updates
 - **Database backups** and update procedures
 
-Congratulations -- your Strapi 5 blog CMS is now running in production! You have gone from a blank project to a fully configured, secured, and deployed content management system.
+Congratulations -- your Strapi 5 blog CMS is now running in production! You have gone from a blank project to a fully
+configured, secured, and deployed content management system.
 
 ## Where to go from here
 

@@ -15,7 +15,8 @@ sidebar_position: 5
 
 # Classes & Objects
 
-Java is an **object-oriented** language. Almost everything revolves around classes and objects. A class is a blueprint; an object is an instance of that blueprint.
+Java is an **object-oriented** language. Almost everything revolves around classes and objects. A class is a blueprint;
+an object is an instance of that blueprint.
 
 ## Your first class
 
@@ -53,6 +54,7 @@ public class Main {
 ```
 
 Result:
+
 ```text
 Rex says: Woof!
 Bella says: Woof!
@@ -86,13 +88,15 @@ System.out.println(user.name + " is " + user.age);
 ```
 
 Result:
+
 ```text
 Ada is 36
 ```
 
 ### `this`
 
-Inside a method or constructor, `this` refers to the current object. It is commonly used when parameter names match field names:
+Inside a method or constructor, `this` refers to the current object. It is commonly used when parameter names match
+field names:
 
 ```java
 User(String name, int age) {
@@ -103,7 +107,8 @@ User(String name, int age) {
 
 ### Default constructor
 
-If you define **no** constructors, Java provides a default no-argument constructor. If you define **any** constructor, the default is no longer generated:
+If you define **no** constructors, Java provides a default no-argument constructor. If you define **any** constructor,
+the default is no longer generated:
 
 ```java
 public class Product {
@@ -155,6 +160,7 @@ System.out.println(u3.name + " -- " + u3.age);
 ```
 
 Result:
+
 ```text
 Ada -- admin
 Bob -- user
@@ -167,12 +173,12 @@ Charlie -- 0
 
 Control who can see and use your fields, methods, and classes:
 
-| Modifier | Class | Package | Subclass | World |
-|----------|-------|---------|----------|-------|
-| `public` | Yes | Yes | Yes | Yes |
-| `protected` | Yes | Yes | Yes | No |
-| (none -- package-private) | Yes | Yes | No | No |
-| `private` | Yes | No | No | No |
+| Modifier                  | Class | Package | Subclass | World |
+|---------------------------|-------|---------|----------|-------|
+| `public`                  | Yes   | Yes     | Yes      | Yes   |
+| `protected`               | Yes   | Yes     | Yes      | No    |
+| (none -- package-private) | Yes   | Yes     | No       | No    |
+| `private`                 | Yes   | No      | No       | No    |
 
 ```java
 public class BankAccount {
@@ -185,7 +191,8 @@ public class BankAccount {
 
 ## Encapsulation
 
-**Encapsulation** means hiding internal data and exposing it through methods. The pattern: `private` fields + `public` getters/setters.
+**Encapsulation** means hiding internal data and exposing it through methods. The pattern: `private` fields + `public`
+getters/setters.
 
 ```java
 public class BankAccount {
@@ -241,6 +248,7 @@ System.out.println(account.getBalance());
 ```
 
 Result:
+
 ```text
 Ada
 1000.0
@@ -249,6 +257,7 @@ Ada
 ```
 
 Why encapsulation matters:
+
 - You control **how** data is modified (validation in `deposit`/`withdraw`)
 - You can change internal representation without breaking callers
 - The class enforces its own invariants (balance cannot go negative)
@@ -280,15 +289,18 @@ System.out.println(user);
 ```
 
 Result:
+
 ```text
 User{name='Ada', age=36}
 ```
 
-The `@Override` annotation tells the compiler you intend to override a method from a parent class. If you misspell the method name, the compiler will flag it.
+The `@Override` annotation tells the compiler you intend to override a method from a parent class. If you misspell the
+method name, the compiler will flag it.
 
 ## `equals` and `hashCode`
 
-By default, `==` and `.equals()` compare object **references** (whether they are the same object in memory). Override both to compare by **content**:
+By default, `==` and `.equals()` compare object **references** (whether they are the same object in memory). Override
+both to compare by **content**:
 
 ```java
 import java.util.Objects;
@@ -333,13 +345,15 @@ System.out.println(a.equals(c));  // false -- different content
 ```
 
 Result:
+
 ```text
 false
 true
 false
 ```
 
-**Rule:** if you override `equals`, you **must** also override `hashCode`. Collections like `HashMap` and `HashSet` depend on this contract.
+**Rule:** if you override `equals`, you **must** also override `hashCode`. Collections like `HashMap` and `HashSet`
+depend on this contract.
 
 ## `static` fields and methods
 
@@ -376,34 +390,38 @@ System.out.println(a.getLabel());
 ```
 
 Result:
+
 ```text
 Total counters: 3
 A
 ```
 
 Common uses of `static`:
+
 - **Constants:** `static final double PI = 3.14159;`
 - **Utility methods:** `Math.abs()`, `Integer.parseInt()`
 - **Factory methods:** creating instances with descriptive names
 
 ### Static vs instance
 
-| | Static | Instance |
-|---|--------|----------|
-| Belongs to | The class | An object |
-| Accessed via | `ClassName.method()` | `object.method()` |
-| Can access instance fields? | No | Yes |
-| Can access static fields? | Yes | Yes |
+|                             | Static               | Instance          |
+|-----------------------------|----------------------|-------------------|
+| Belongs to                  | The class            | An object         |
+| Accessed via                | `ClassName.method()` | `object.method()` |
+| Can access instance fields? | No                   | Yes               |
+| Can access static fields?   | Yes                  | Yes               |
 
 ## Records (Java 16+)
 
-Records are a concise way to create immutable data classes. They auto-generate the constructor, getters, `toString`, `equals`, and `hashCode`:
+Records are a concise way to create immutable data classes. They auto-generate the constructor, getters, `toString`,
+`equals`, and `hashCode`:
 
 ```java
 public record Point(int x, int y) {}
 ```
 
 This single line generates the equivalent of:
+
 - A constructor `Point(int x, int y)`
 - Accessor methods `x()` and `y()` (not `getX()`)
 - `toString()`: `Point[x=3, y=4]`
@@ -422,6 +440,7 @@ System.out.println(p1.equals(p3));
 ```
 
 Result:
+
 ```text
 Point[x=3, y=4]
 3
@@ -458,6 +477,7 @@ try {
 ```
 
 Result:
+
 ```text
 User[name=Ada, age=36]
 Error: Name cannot be blank
@@ -487,12 +507,14 @@ System.out.println("Perimeter: " + r.perimeter());
 ```
 
 Result:
+
 ```text
 Area: 15.0
 Perimeter: 16.0
 ```
 
-**When to use records:** whenever you need a simple data carrier -- DTOs, value objects, configuration, return multiple values from a method.
+**When to use records:** whenever you need a simple data carrier -- DTOs, value objects, configuration, return multiple
+values from a method.
 
 ## Builder pattern (brief introduction)
 
@@ -560,6 +582,7 @@ System.out.println(request);
 ```
 
 Result:
+
 ```text
 POST https://api.example.com/users (timeout=3000ms)
 ```
@@ -567,6 +590,7 @@ POST https://api.example.com/users (timeout=3000ms)
 ## Organizing files
 
 Java convention:
+
 - One public class per file
 - Filename matches the class name: `User.java` → `public class User`
 - Package structure matches directory structure
@@ -592,4 +616,5 @@ src/
 - **Records** (Java 16+) auto-generate constructors, accessors, `toString`, `equals`, `hashCode`.
 - The **builder pattern** handles objects with many optional parameters.
 
-Next up: [Inheritance & Interfaces](./06-inheritance-and-interfaces.md) -- extending classes, implementing contracts, and polymorphism.
+Next up: [Inheritance & Interfaces](./06-inheritance-and-interfaces.md) -- extending classes, implementing contracts,
+and polymorphism.

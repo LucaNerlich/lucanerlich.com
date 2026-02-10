@@ -15,35 +15,38 @@ sidebar_position: 10
 
 # Building Pages
 
-With components, templates, and client libraries in place, it is time to build actual pages. In this chapter we will assemble a homepage and an article page using Core Components and the responsive grid.
+With components, templates, and client libraries in place, it is time to build actual pages. In this chapter we will
+assemble a homepage and an article page using Core Components and the responsive grid.
 
 ## Core Components
 
-AEM Core Components are production-ready, accessible, and SEO-optimized components maintained by Adobe. Your project uses them through proxy components (chapter 8).
+AEM Core Components are production-ready, accessible, and SEO-optimized components maintained by Adobe. Your project
+uses them through proxy components (chapter 8).
 
 ### Commonly used Core Components
 
-| Component | What it does |
-|-----------|-------------|
-| **Title** | Heading (H1--H6) with link option |
-| **Text** | Rich text content |
-| **Image** | Responsive images with lazy loading |
-| **Button** | Link button with label and icon |
-| **Teaser** | Card with image, title, description, and CTA |
-| **List** | Dynamic list of child pages, tagged pages, or search results |
-| **Navigation** | Site navigation tree |
-| **Language Navigation** | Language switcher |
-| **Breadcrumb** | Breadcrumb trail |
-| **Container** | Layout container (responsive grid) |
-| **Tabs** | Tabbed content |
-| **Accordion** | Collapsible content panels |
-| **Carousel** | Rotating content panels |
-| **Experience Fragment** | Include an Experience Fragment |
-| **Content Fragment** | Render a Content Fragment |
-| **Embed** | Embed external content (YouTube, etc.) |
-| **Separator** | Visual separator |
+| Component               | What it does                                                 |
+|-------------------------|--------------------------------------------------------------|
+| **Title**               | Heading (H1--H6) with link option                            |
+| **Text**                | Rich text content                                            |
+| **Image**               | Responsive images with lazy loading                          |
+| **Button**              | Link button with label and icon                              |
+| **Teaser**              | Card with image, title, description, and CTA                 |
+| **List**                | Dynamic list of child pages, tagged pages, or search results |
+| **Navigation**          | Site navigation tree                                         |
+| **Language Navigation** | Language switcher                                            |
+| **Breadcrumb**          | Breadcrumb trail                                             |
+| **Container**           | Layout container (responsive grid)                           |
+| **Tabs**                | Tabbed content                                               |
+| **Accordion**           | Collapsible content panels                                   |
+| **Carousel**            | Rotating content panels                                      |
+| **Experience Fragment** | Include an Experience Fragment                               |
+| **Content Fragment**    | Render a Content Fragment                                    |
+| **Embed**               | Embed external content (YouTube, etc.)                       |
+| **Separator**           | Visual separator                                             |
 
-The Maven archetype creates proxy components for all of these. They appear in the component browser under your project's component group.
+The Maven archetype creates proxy components for all of these. They appear in the component browser under your project's
+component group.
 
 ## Page anatomy
 
@@ -81,15 +84,18 @@ The header typically contains:
 - **Language switcher** -- the Language Navigation component
 - **Search** -- optional search component
 
-The header is defined as a **locked component** in the template structure. It reads content from a dedicated header Experience Fragment or from page properties.
+The header is defined as a **locked component** in the template structure. It reads content from a dedicated header
+Experience Fragment or from page properties.
 
 ### Main content area
 
-The main area is a **responsive grid** (layout container) where authors drop in components. Templates define which components are allowed here.
+The main area is a **responsive grid** (layout container) where authors drop in components. Templates define which
+components are allowed here.
 
 ### Footer
 
-Like the header, the footer is typically locked in the template and reads from a shared source (Experience Fragment or configuration).
+Like the header, the footer is typically locked in the template and reads from a shared source (Experience Fragment or
+configuration).
 
 ## Building the homepage
 
@@ -108,18 +114,19 @@ Let's build a homepage step by step:
 1. In the editor, click the layout container
 2. From the component browser (side panel), drag a **Teaser** (or your custom Hero) onto the page
 3. Configure it:
-   - **Title:** Welcome to My Site
-   - **Description:** We build amazing digital experiences
-   - **Image:** Upload or select from DAM
-   - **Link:** Point to an article page
-   - **CTA:** Learn More
+    - **Title:** Welcome to My Site
+    - **Description:** We build amazing digital experiences
+    - **Image:** Upload or select from DAM
+    - **Link:** Point to an article page
+    - **CTA:** Learn More
 
 ### 3. Add content sections
 
 Add a **Container** component to create a content section. Inside it:
 
 1. **Title** component -- "Latest Articles"
-2. **List** component -- configured to show child pages from `/content/mysite/en/blog`, sorted by date, limited to 3 items
+2. **List** component -- configured to show child pages from `/content/mysite/en/blog`, sorted by date, limited to 3
+   items
 3. **Button** component -- "View All Articles" linking to the blog listing page
 
 ### 4. Use layout mode for responsive design
@@ -127,9 +134,9 @@ Add a **Container** component to create a content section. Inside it:
 1. Switch to **Layout** mode (ruler icon in the toolbar)
 2. Select a component and drag its resize handles
 3. Set column widths per breakpoint:
-   - Desktop: Cards in a 3-column grid (4+4+4)
-   - Tablet: 2-column grid (6+6)
-   - Phone: Full width (12)
+    - Desktop: Cards in a 3-column grid (4+4+4)
+    - Tablet: 2-column grid (6+6)
+    - Phone: Full width (12)
 
 ## Building an article page
 
@@ -143,14 +150,14 @@ Add a **Container** component to create a content section. Inside it:
 
 Click the **Page Information** button (top left) > **Open Properties**:
 
-| Tab | Property | Value |
-|-----|----------|-------|
-| **Basic** | Title | Getting Started with AEM Components |
-| **Basic** | Subtitle | A guide for new AEM developers |
-| **Basic** | Description | Learn how to create your first AEM component... |
-| **Basic** | Tags | Select relevant tags |
-| **Advanced** | Featured Image | Select from DAM |
-| **Social Media** | og:title, og:description | For social sharing |
+| Tab              | Property                 | Value                                           |
+|------------------|--------------------------|-------------------------------------------------|
+| **Basic**        | Title                    | Getting Started with AEM Components             |
+| **Basic**        | Subtitle                 | A guide for new AEM developers                  |
+| **Basic**        | Description              | Learn how to create your first AEM component... |
+| **Basic**        | Tags                     | Select relevant tags                            |
+| **Advanced**     | Featured Image           | Select from DAM                                 |
+| **Social Media** | og:title, og:description | For social sharing                              |
 
 ### 3. Add content
 
@@ -223,12 +230,12 @@ The Navigation Core Component builds a navigation tree from the site structure:
 
 Configure the Navigation component:
 
-| Property | Value | Effect |
-|----------|-------|--------|
-| **Navigation Root** | `/content/mysite/en` | Start point |
-| **Exclude Root Level** | 1 | Skip the root page |
-| **Structure Depth** | 2 | Show 2 levels of pages |
-| **Collect all child pages** | No | Only show navigable pages |
+| Property                    | Value                | Effect                    |
+|-----------------------------|----------------------|---------------------------|
+| **Navigation Root**         | `/content/mysite/en` | Start point               |
+| **Exclude Root Level**      | 1                    | Skip the root page        |
+| **Structure Depth**         | 2                    | Show 2 levels of pages    |
+| **Collect all child pages** | No                   | Only show navigable pages |
 
 Pages can opt out of navigation via the **Hide in Navigation** property in page properties.
 
@@ -245,7 +252,8 @@ Experience Fragments are reusable content blocks that can appear on multiple pag
 
 ### Include on pages
 
-In the template structure, add an **Experience Fragment** component (locked) and point it to the header fragment. Every page using this template gets the same header.
+In the template structure, add an **Experience Fragment** component (locked) and point it to the header fragment. Every
+page using this template gets the same header.
 
 When you update the fragment, all pages automatically reflect the change.
 
@@ -266,15 +274,17 @@ When you update the fragment, all pages automatically reflect the change.
 
 Toggle between modes in the page toolbar:
 
-| Mode | What it shows |
-|------|--------------|
-| **Edit** | Full authoring chrome, component placeholders |
-| **Layout** | Responsive column resizing |
-| **Preview** | Page as visitors see it |
-| **Targeting** | Personalization targeting |
-| **Timewarp** | View the page as it was at a specific date/time |
+| Mode          | What it shows                                   |
+|---------------|-------------------------------------------------|
+| **Edit**      | Full authoring chrome, component placeholders   |
+| **Layout**    | Responsive column resizing                      |
+| **Preview**   | Page as visitors see it                         |
+| **Targeting** | Personalization targeting                       |
+| **Timewarp**  | View the page as it was at a specific date/time |
 
-> For more on Core Components, see the [Core Components](/aem/components/core-components) reference. See also [Experience Fragments](/aem/content/experience-fragments) for reusable content blocks and [Tags and Taxonomies](/aem/content/tags-taxonomies) for content classification.
+> For more on Core Components, see the [Core Components](/aem/components/core-components) reference. See
+> also [Experience Fragments](/aem/content/experience-fragments) for reusable content blocks
+> and [Tags and Taxonomies](/aem/content/tags-taxonomies) for content classification.
 
 ## Summary
 
@@ -289,6 +299,8 @@ You learned:
 - **Experience Fragments** for reusable content blocks
 - **Authoring tips** for content editors
 
-Your site now has pages with content. The next chapter moves to headless -- delivering content as structured data via Content Fragments and GraphQL.
+Your site now has pages with content. The next chapter moves to headless -- delivering content as structured data via
+Content Fragments and GraphQL.
 
-Next up: [Content Fragments & GraphQL](./11-content-fragments-and-graphql.md) -- Content Fragment Models, creating fragments, the AEM GraphQL API, persisted queries, and headless content delivery.
+Next up: [Content Fragments & GraphQL](./11-content-fragments-and-graphql.md) -- Content Fragment Models, creating
+fragments, the AEM GraphQL API, persisted queries, and headless content delivery.

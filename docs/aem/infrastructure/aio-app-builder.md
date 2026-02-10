@@ -300,17 +300,17 @@ Builder actions react to them automatically.
 
 ### Common AEM event types
 
-| Event Provider | Event Type | Triggered when |
-|---------------|------------|----------------|
-| AEM Assets | `asset_created` | A new asset is uploaded |
-| AEM Assets | `asset_updated` | An asset is modified or reprocessed |
-| AEM Assets | `asset_deleted` | An asset is removed |
-| AEM Content Fragments | `content_fragment_created` | A new CF is created |
-| AEM Content Fragments | `content_fragment_modified` | A CF is updated |
-| AEM Content Fragments | `content_fragment_published` | A CF is published |
-| AEM Content Fragments | `content_fragment_unpublished` | A CF is unpublished |
-| AEM Pages | `page_published` | A page is activated |
-| AEM Pages | `page_unpublished` | A page is deactivated |
+| Event Provider        | Event Type                     | Triggered when                      |
+|-----------------------|--------------------------------|-------------------------------------|
+| AEM Assets            | `asset_created`                | A new asset is uploaded             |
+| AEM Assets            | `asset_updated`                | An asset is modified or reprocessed |
+| AEM Assets            | `asset_deleted`                | An asset is removed                 |
+| AEM Content Fragments | `content_fragment_created`     | A new CF is created                 |
+| AEM Content Fragments | `content_fragment_modified`    | A CF is updated                     |
+| AEM Content Fragments | `content_fragment_published`   | A CF is published                   |
+| AEM Content Fragments | `content_fragment_unpublished` | A CF is unpublished                 |
+| AEM Pages             | `page_published`               | A page is activated                 |
+| AEM Pages             | `page_unpublished`             | A page is deactivated               |
 
 ### Registering an event consumer
 
@@ -1083,17 +1083,17 @@ logger.info({ assetPath, fileSize, duration }, 'Asset upload complete');
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Action times out during large upload | Increase `timeout` in manifest; use multi-part upload with concurrency |
-| `401 Unauthorized` when calling AEM | Token expired or wrong scope; regenerate or use OAuth Server-to-Server |
-| Cold start latency is too high | Keep action bundles small; avoid heavy `require()` chains at the top level |
-| `.env` file committed to git | Add `.env` to `.gitignore` immediately; rotate any exposed credentials |
-| Event handler misses events | Use the **Journaling API** (polling) instead of webhooks for reliability |
-| Action works locally but fails deployed | Check that all environment variables are configured in the Developer Console workspace |
-| `413 Payload Too Large` from AEM | Use the Direct Binary Upload API (presigned URLs) instead of posting binary to AEM directly |
-| Memory limit exceeded | Increase `memory` in manifest (max 2048 MB); process files in streaming chunks |
-| Rate limiting from AEM | Implement throttling and batch processing; respect `Retry-After` headers |
+| Pitfall                                 | Solution                                                                                    |
+|-----------------------------------------|---------------------------------------------------------------------------------------------|
+| Action times out during large upload    | Increase `timeout` in manifest; use multi-part upload with concurrency                      |
+| `401 Unauthorized` when calling AEM     | Token expired or wrong scope; regenerate or use OAuth Server-to-Server                      |
+| Cold start latency is too high          | Keep action bundles small; avoid heavy `require()` chains at the top level                  |
+| `.env` file committed to git            | Add `.env` to `.gitignore` immediately; rotate any exposed credentials                      |
+| Event handler misses events             | Use the **Journaling API** (polling) instead of webhooks for reliability                    |
+| Action works locally but fails deployed | Check that all environment variables are configured in the Developer Console workspace      |
+| `413 Payload Too Large` from AEM        | Use the Direct Binary Upload API (presigned URLs) instead of posting binary to AEM directly |
+| Memory limit exceeded                   | Increase `memory` in manifest (max 2048 MB); process files in streaming chunks              |
+| Rate limiting from AEM                  | Implement throttling and batch processing; respect `Retry-After` headers                    |
 
 ---
 
@@ -1102,8 +1102,10 @@ logger.info({ assetPath, fileSize, duration }, 'Asset upload complete');
 - [App Builder documentation](https://developer.adobe.com/app-builder/docs/overview/) -- official docs
 - [Adobe I/O Runtime](https://developer.adobe.com/runtime/docs/) -- serverless platform reference
 - [I/O Events documentation](https://developer.adobe.com/events/docs/) -- event-driven architecture
-- [Asset Compute SDK](https://experienceleague.adobe.com/docs/asset-compute/using/extend/develop-custom-application.html) -- custom asset workers
-- [AEM Assets HTTP API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/admin/developer-reference-material-apis) -- direct binary upload
+- [Asset Compute SDK](https://experienceleague.adobe.com/docs/asset-compute/using/extend/develop-custom-application.html) --
+  custom asset workers
+- [AEM Assets HTTP API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/admin/developer-reference-material-apis) --
+  direct binary upload
 - [Adobe Developer Console](https://developer.adobe.com/console/) -- project and credential management
 - [AIO CLI reference](https://developer.adobe.com/app-builder/docs/getting_started/) -- CLI commands
 

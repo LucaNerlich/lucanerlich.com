@@ -43,19 +43,19 @@ created in the AEM configuration space (`/conf`) and must be enabled per site co
 
 ### Available field types
 
-| Field Type | JCR Storage | Java Type | Use case |
-|-----------|-------------|-----------|----------|
-| Single-line text | `String` | `String` | Titles, labels, short text |
-| Multi-line text | `String` | `String` | Rich text (HTML), Markdown, or plain text |
-| Number | `Long` / `Double` | `Long` / `Double` | Quantities, prices, ratings |
-| Boolean | `Boolean` | `Boolean` | Toggles, flags |
-| Date and Time | `Calendar` | `Calendar` | Publish dates, event dates |
-| Enumeration | `String` | `String` | Predefined choices (dropdown) |
-| Tags | `String[]` | `String[]` | AEM tag references |
-| Content Reference | `String` | `String` | Path to a page or asset |
-| Fragment Reference | `String[]` | `String[]` | References to other Content Fragments |
-| JSON Object | `String` (JSON) | `String` | Arbitrary structured data |
-| Tab Placeholder | -- | -- | Visual grouping in the editor (no data) |
+| Field Type         | JCR Storage       | Java Type         | Use case                                  |
+|--------------------|-------------------|-------------------|-------------------------------------------|
+| Single-line text   | `String`          | `String`          | Titles, labels, short text                |
+| Multi-line text    | `String`          | `String`          | Rich text (HTML), Markdown, or plain text |
+| Number             | `Long` / `Double` | `Long` / `Double` | Quantities, prices, ratings               |
+| Boolean            | `Boolean`         | `Boolean`         | Toggles, flags                            |
+| Date and Time      | `Calendar`        | `Calendar`        | Publish dates, event dates                |
+| Enumeration        | `String`          | `String`          | Predefined choices (dropdown)             |
+| Tags               | `String[]`        | `String[]`        | AEM tag references                        |
+| Content Reference  | `String`          | `String`          | Path to a page or asset                   |
+| Fragment Reference | `String[]`        | `String[]`        | References to other Content Fragments     |
+| JSON Object        | `String` (JSON)   | `String`          | Arbitrary structured data                 |
+| Tab Placeholder    | --                | --                | Visual grouping in the editor (no data)   |
 
 ### Model JCR structure
 
@@ -79,14 +79,14 @@ created in the AEM configuration space (`/conf`) and must be enabled per site co
 
 Models support built-in validation rules:
 
-| Validation | Applies to | Effect |
-|-----------|-----------|--------|
-| **Required** | All types | Field must have a value |
-| **Min/Max length** | Text fields | Character count limits |
-| **Min/Max value** | Number fields | Numeric range |
-| **Unique** | Text fields | Value must be unique across fragments of this model |
-| **Pattern (Regex)** | Text fields | Value must match the regex |
-| **Accept** (for references) | Content/Fragment references | Limits selectable models or paths |
+| Validation                  | Applies to                  | Effect                                              |
+|-----------------------------|-----------------------------|-----------------------------------------------------|
+| **Required**                | All types                   | Field must have a value                             |
+| **Min/Max length**          | Text fields                 | Character count limits                              |
+| **Min/Max value**           | Number fields               | Numeric range                                       |
+| **Unique**                  | Text fields                 | Value must be unique across fragments of this model |
+| **Pattern (Regex)**         | Text fields                 | Value must match the regex                          |
+| **Accept** (for references) | Content/Fragment references | Limits selectable models or paths                   |
 
 ---
 
@@ -189,31 +189,31 @@ public class ArticleModel {
 
 ### ContentFragment API reference
 
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `getTitle()` | `String` | Fragment title |
-| `getDescription()` | `String` | Fragment description |
-| `getName()` | `String` | Node name (URL-safe) |
-| `getElement(name)` | `ContentElement` | Access a specific element by field name |
-| `getElements()` | `Iterator<ContentElement>` | Iterate over all elements |
-| `getVariations()` | `Iterator<ContentVariation>` | List available variations |
-| `hasElement(name)` | `boolean` | Check if an element exists |
-| `getAssociatedContent()` | `Iterator<Resource>` | Get associated content (collections) |
-| `adaptTo(Resource.class)` | `Resource` | Get the underlying Sling resource |
+| Method                    | Returns                      | Description                             |
+|---------------------------|------------------------------|-----------------------------------------|
+| `getTitle()`              | `String`                     | Fragment title                          |
+| `getDescription()`        | `String`                     | Fragment description                    |
+| `getName()`               | `String`                     | Node name (URL-safe)                    |
+| `getElement(name)`        | `ContentElement`             | Access a specific element by field name |
+| `getElements()`           | `Iterator<ContentElement>`   | Iterate over all elements               |
+| `getVariations()`         | `Iterator<ContentVariation>` | List available variations               |
+| `hasElement(name)`        | `boolean`                    | Check if an element exists              |
+| `getAssociatedContent()`  | `Iterator<Resource>`         | Get associated content (collections)    |
+| `adaptTo(Resource.class)` | `Resource`                   | Get the underlying Sling resource       |
 
 ### ContentElement API reference
 
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `getName()` | `String` | Element/field name |
-| `getTitle()` | `String` | Display title |
-| `getContent()` | `String` | String value (for text fields) |
-| `setContent(content, mimeType)` | `void` | Set content with MIME type |
-| `getValue()` | `FragmentData` | Typed value container |
-| `setValue(FragmentData)` | `void` | Set typed value |
-| `getContentType()` | `String` | MIME type (`text/plain`, `text/html`, etc.) |
-| `getVariation(name)` | `ContentVariation` | Get a specific variation of this element |
-| `getVariations()` | `Iterator<ContentVariation>` | List variations |
+| Method                          | Returns                      | Description                                 |
+|---------------------------------|------------------------------|---------------------------------------------|
+| `getName()`                     | `String`                     | Element/field name                          |
+| `getTitle()`                    | `String`                     | Display title                               |
+| `getContent()`                  | `String`                     | String value (for text fields)              |
+| `setContent(content, mimeType)` | `void`                       | Set content with MIME type                  |
+| `getValue()`                    | `FragmentData`               | Typed value container                       |
+| `setValue(FragmentData)`        | `void`                       | Set typed value                             |
+| `getContentType()`              | `String`                     | MIME type (`text/plain`, `text/html`, etc.) |
+| `getVariation(name)`            | `ContentVariation`           | Get a specific variation of this element    |
+| `getVariations()`               | `Iterator<ContentVariation>` | List variations                             |
 
 ### Reading typed values
 
@@ -747,15 +747,15 @@ public List<Map<String, Object>> exportFragments(ResourceResolver resolver,
 
 ## AEMaaCS Considerations
 
-| Topic | Details |
-|-------|---------|
-| **Content Fragment API** | Same API as AEM 6.5; the `com.adobe.cq.dam.cfm` package is fully available |
-| **GraphQL** | Built-in and enabled by default on AEMaaCS; requires Dispatcher configuration for caching |
-| **Persisted queries** | Preferred over ad-hoc queries for production use; cacheable by Dispatcher/CDN |
-| **Assets HTTP API** | REST API for CRUD operations on fragments without Java code |
-| **CF Console** | AEMaaCS has a dedicated Content Fragments Console at `/ui#/aem/cf/admin/` |
-| **OpenAPI** | AEMaaCS supports the Content Fragments OpenAPI for headless delivery |
-| **Bulk imports** | Use the Content Fragment Migration tool or the Assets HTTP API for large imports |
+| Topic                    | Details                                                                                   |
+|--------------------------|-------------------------------------------------------------------------------------------|
+| **Content Fragment API** | Same API as AEM 6.5; the `com.adobe.cq.dam.cfm` package is fully available                |
+| **GraphQL**              | Built-in and enabled by default on AEMaaCS; requires Dispatcher configuration for caching |
+| **Persisted queries**    | Preferred over ad-hoc queries for production use; cacheable by Dispatcher/CDN             |
+| **Assets HTTP API**      | REST API for CRUD operations on fragments without Java code                               |
+| **CF Console**           | AEMaaCS has a dedicated Content Fragments Console at `/ui#/aem/cf/admin/`                 |
+| **OpenAPI**              | AEMaaCS supports the Content Fragments OpenAPI for headless delivery                      |
+| **Bulk imports**         | Use the Content Fragment Migration tool or the Assets HTTP API for large imports          |
 
 ### Assets HTTP API (REST)
 
@@ -815,15 +815,15 @@ curl -u admin:admin \
 
 ### Common pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Fragment returns `null` when adapted | The resource must be a `dam:Asset` with a valid CF model reference |
-| `getElement()` returns `null` | The field name must match the model exactly (case-sensitive) |
-| Rich text displays raw HTML | Use `context='html'` in HTL: `${model.body @ context='html'}` |
-| Fragment references not resolving | References are stored as paths; if the target is moved, the reference breaks |
-| Slow fragment queries | Add an Oak index for the `cq:model` property and your custom filter properties |
-| Variation content is empty | Variations inherit from `master`; only fields explicitly set on a variation are stored |
-| CORS errors on GraphQL | Configure CORS and referrer filters; see [Headless GraphQL](./graphql.mdx) |
+| Pitfall                              | Solution                                                                               |
+|--------------------------------------|----------------------------------------------------------------------------------------|
+| Fragment returns `null` when adapted | The resource must be a `dam:Asset` with a valid CF model reference                     |
+| `getElement()` returns `null`        | The field name must match the model exactly (case-sensitive)                           |
+| Rich text displays raw HTML          | Use `context='html'` in HTL: `${model.body @ context='html'}`                          |
+| Fragment references not resolving    | References are stored as paths; if the target is moved, the reference breaks           |
+| Slow fragment queries                | Add an Oak index for the `cq:model` property and your custom filter properties         |
+| Variation content is empty           | Variations inherit from `master`; only fields explicitly set on a variation are stored |
+| CORS errors on GraphQL               | Configure CORS and referrer filters; see [Headless GraphQL](./graphql.mdx)             |
 
 ## See also
 

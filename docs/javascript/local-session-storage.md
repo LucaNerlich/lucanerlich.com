@@ -15,7 +15,9 @@ sidebar_position: 7
 
 # LocalStorage and SessionStorage in JavaScript: Save, Load, and Remove Data
 
-The Web Storage API gives you two simple key/value stores: **localStorage** (persistent) and **sessionStorage** (cleared when the tab closes). This guide shows how to **save, load, update, and remove data**, including JSON handling, safe parsing, and common pitfalls. Examples are TypeScript and include the expected results.
+The Web Storage API gives you two simple key/value stores: **localStorage** (persistent) and **sessionStorage** (cleared
+when the tab closes). This guide shows how to **save, load, update, and remove data**, including JSON handling, safe
+parsing, and common pitfalls. Examples are TypeScript and include the expected results.
 
 ## Quick start
 
@@ -27,6 +29,7 @@ console.log(theme);
 ```
 
 Result:
+
 ```text
 dark
 ```
@@ -53,6 +56,7 @@ console.log(sessionStorage.getItem("sessionOnly"));
 ```
 
 Result:
+
 ```text
 yes
 yes
@@ -68,6 +72,7 @@ console.log(value);
 ```
 
 Result:
+
 ```text
 Hello
 ```
@@ -87,6 +92,7 @@ console.log(parsed);
 ```
 
 Result:
+
 ```text
 { theme: "dark", pageSize: 20 }
 ```
@@ -110,6 +116,7 @@ console.log(value);
 ```
 
 Result:
+
 ```text
 { ok: true }
 ```
@@ -124,6 +131,7 @@ console.log(localStorage.getItem("temp"));
 ```
 
 Result:
+
 ```text
 null
 ```
@@ -139,6 +147,7 @@ console.log(localStorage.getItem("a"));
 ```
 
 Result:
+
 ```text
 null
 ```
@@ -161,6 +170,7 @@ console.log(cart.items);
 ```
 
 Result:
+
 ```text
 [ 1, 2, 3 ]
 ```
@@ -177,6 +187,7 @@ console.log(localStorage.getItem(key));
 ```
 
 Result:
+
 ```text
 token-value
 ```
@@ -193,6 +204,7 @@ console.log(page + 1);
 ```
 
 Result:
+
 ```text
 4
 ```
@@ -225,6 +237,7 @@ console.log(getWithTtl("welcome"));
 ```
 
 Result:
+
 ```text
 hello
 ```
@@ -244,6 +257,7 @@ localStorage.setItem("theme", "light");
 ```
 
 Result:
+
 ```text
 theme changed to light
 ```
@@ -280,6 +294,7 @@ console.log(prefs.theme);
 ```
 
 Result:
+
 ```text
 dark
 ```
@@ -293,6 +308,7 @@ console.log(Boolean(localStorage));
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -308,10 +324,12 @@ console.log(localStorage.getItem("temp"));
 ```
 
 Result:
+
 ```text
 null
 ```
 
 ## Summary
 
-Use localStorage and sessionStorage for small, non-sensitive data. Store strings, stringify objects, parse safely, and handle missing values. For larger data or sensitive information, use a proper backend or secure storage instead.
+Use localStorage and sessionStorage for small, non-sensitive data. Store strings, stringify objects, parse safely, and
+handle missing values. For larger data or sensitive information, use a proper backend or secure storage instead.

@@ -7,7 +7,8 @@ tags: [strapi, controllers, services, backend]
 
 # Custom Controllers and Services
 
-Controllers handle incoming requests and return responses. Services encapsulate reusable business logic. Strapi generates default CRUD controllers for every content type, but real projects almost always need to customise them.
+Controllers handle incoming requests and return responses. Services encapsulate reusable business logic. Strapi
+generates default CRUD controllers for every content type, but real projects almost always need to customise them.
 
 ## How controllers and services relate
 
@@ -34,7 +35,8 @@ sequenceDiagram
 
 ## Extending a core controller
 
-The `createCoreController` factory gives you the default CRUD actions. Override individual methods while keeping the rest:
+The `createCoreController` factory gives you the default CRUD actions. Override individual methods while keeping the
+rest:
 
 ```js
 // src/api/article/controllers/article.js
@@ -133,7 +135,8 @@ You also need a custom route for each new action -- see the [Custom Routes](cust
 
 ## Custom services
 
-Services are where heavy business logic belongs. Strapi auto-generates one per content type, but you can extend or create new ones.
+Services are where heavy business logic belongs. Strapi auto-generates one per content type, but you can extend or
+create new ones.
 
 ### Extending a core service
 
@@ -250,13 +253,13 @@ async find(ctx) {
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Business logic in controller | Hard to reuse, test, or compose | Move logic to a service |
-| Missing `sanitizeOutput` | Leaks private fields (emails, internal IDs) | Always sanitize before returning |
-| Forgetting `super.create(ctx)` | Loses built-in validation and lifecycle hooks | Call `super` when extending, not replacing |
+| Pitfall                         | Problem                                                 | Fix                                                     |
+|---------------------------------|---------------------------------------------------------|---------------------------------------------------------|
+| Business logic in controller    | Hard to reuse, test, or compose                         | Move logic to a service                                 |
+| Missing `sanitizeOutput`        | Leaks private fields (emails, internal IDs)             | Always sanitize before returning                        |
+| Forgetting `super.create(ctx)`  | Loses built-in validation and lifecycle hooks           | Call `super` when extending, not replacing              |
 | Not calling `transformResponse` | API response format differs from standard Strapi output | Use `this.transformResponse()` for consistent structure |
-| Hardcoded content-type UIDs | Breaks on rename | Define UIDs as constants |
+| Hardcoded content-type UIDs     | Breaks on rename                                        | Define UIDs as constants                                |
 
 ---
 

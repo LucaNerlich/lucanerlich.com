@@ -15,18 +15,20 @@ sidebar_position: 14
 
 # Gradle
 
-Gradle is the other major build tool in the Java ecosystem. It is newer than Maven, uses code (Kotlin or Groovy) instead of XML for configuration, and is generally faster thanks to incremental builds and a build cache. This chapter shows how to set up the same REST API project with Gradle using the **Kotlin DSL** (`build.gradle.kts`).
+Gradle is the other major build tool in the Java ecosystem. It is newer than Maven, uses code (Kotlin or Groovy) instead
+of XML for configuration, and is generally faster thanks to incremental builds and a build cache. This chapter shows how
+to set up the same REST API project with Gradle using the **Kotlin DSL** (`build.gradle.kts`).
 
 ## Maven vs Gradle
 
-| Feature | Maven | Gradle |
-|---------|-------|--------|
-| Configuration | XML (`pom.xml`) | Kotlin/Groovy (`build.gradle.kts`) |
-| Speed | Good | Faster (incremental builds, daemon, cache) |
-| Flexibility | Convention-based, less customizable | Highly customizable |
-| Learning curve | Lower (XML is declarative) | Moderate (Kotlin DSL is a real language) |
-| Ecosystem | Largest, most enterprise projects | Growing, default for Android/Kotlin |
-| IDE support | Excellent in all IDEs | Excellent in IntelliJ, good in others |
+| Feature        | Maven                               | Gradle                                     |
+|----------------|-------------------------------------|--------------------------------------------|
+| Configuration  | XML (`pom.xml`)                     | Kotlin/Groovy (`build.gradle.kts`)         |
+| Speed          | Good                                | Faster (incremental builds, daemon, cache) |
+| Flexibility    | Convention-based, less customizable | Highly customizable                        |
+| Learning curve | Lower (XML is declarative)          | Moderate (Kotlin DSL is a real language)   |
+| Ecosystem      | Largest, most enterprise projects   | Growing, default for Android/Kotlin        |
+| IDE support    | Excellent in all IDEs               | Excellent in IntelliJ, good in others      |
 
 Neither is "better" -- pick whichever your team or project uses. Both solve the same problems.
 
@@ -56,6 +58,7 @@ gradle --version
 ```
 
 Result:
+
 ```text
 ------------------------------------------------------------
 Gradle 8.10
@@ -148,6 +151,7 @@ tasks.register<Jar>("fatJar") {
 ```
 
 Compare this to the Maven `pom.xml`:
+
 - **Shorter** -- Kotlin DSL is more concise than XML
 - **`plugins { java; application }`** -- declares this is a Java application
 - **`repositories { mavenCentral() }`** -- where to download dependencies (same Maven Central)
@@ -171,21 +175,23 @@ The compact `group:artifact:version` string is much easier to read.
 
 ### Dependency configurations
 
-| Gradle | Maven equivalent | Meaning |
-|--------|-----------------|---------|
-| `implementation` | `compile` | Compile + runtime, not exposed to consumers |
-| `api` | `compile` | Compile + runtime, exposed to consumers |
-| `testImplementation` | `test` | Test compile + runtime only |
-| `compileOnly` | `provided` | Compile only, not in JAR |
-| `runtimeOnly` | `runtime` | Runtime only |
+| Gradle               | Maven equivalent | Meaning                                     |
+|----------------------|------------------|---------------------------------------------|
+| `implementation`     | `compile`        | Compile + runtime, not exposed to consumers |
+| `api`                | `compile`        | Compile + runtime, exposed to consumers     |
+| `testImplementation` | `test`           | Test compile + runtime only                 |
+| `compileOnly`        | `provided`       | Compile only, not in JAR                    |
+| `runtimeOnly`        | `runtime`        | Runtime only                                |
 
 ## Improving the REST API with Jackson
 
-In the Maven chapter we used Gson. Here we use **Jackson** -- the other popular JSON library -- to show both options. Jackson is the industry default for most Java projects.
+In the Maven chapter we used Gson. Here we use **Jackson** -- the other popular JSON library -- to show both options.
+Jackson is the industry default for most Java projects.
 
 ### Updated `TaskHandler.java` with Jackson
 
-The source files (`Task.java`, `TaskStore.java`, `ApiServer.java`) are identical to the Maven chapter. Only `TaskHandler.java` changes to use Jackson instead of Gson:
+The source files (`Task.java`, `TaskStore.java`, `ApiServer.java`) are identical to the Maven chapter. Only
+`TaskHandler.java` changes to use Jackson instead of Gson:
 
 ```java
 // src/main/java/taskapi/TaskHandler.java
@@ -359,17 +365,18 @@ public class TaskHandler implements HttpHandler {
 
 ### Gson vs Jackson comparison
 
-| Feature | Gson | Jackson |
-|---------|------|---------|
-| Serialize | `gson.toJson(object)` | `mapper.writeValueAsString(object)` |
-| Deserialize | `gson.fromJson(json, Type.class)` | `mapper.readValue(json, Type.class)` |
-| Tree model | `JsonObject` / `JsonElement` | `JsonNode` |
-| Size | ~300 KB | ~1.7 MB (core + databind + annotations) |
-| Performance | Good | Faster for large payloads |
-| Ecosystem | Google | Industry standard, Spring default |
-| Record support | Works out of the box | Works out of the box (2.12+) |
+| Feature        | Gson                              | Jackson                                 |
+|----------------|-----------------------------------|-----------------------------------------|
+| Serialize      | `gson.toJson(object)`             | `mapper.writeValueAsString(object)`     |
+| Deserialize    | `gson.fromJson(json, Type.class)` | `mapper.readValue(json, Type.class)`    |
+| Tree model     | `JsonObject` / `JsonElement`      | `JsonNode`                              |
+| Size           | ~300 KB                           | ~1.7 MB (core + databind + annotations) |
+| Performance    | Good                              | Faster for large payloads               |
+| Ecosystem      | Google                            | Industry standard, Spring default       |
+| Record support | Works out of the box              | Works out of the box (2.12+)            |
 
-Both are excellent. Gson is simpler and smaller. Jackson is faster and more feature-rich. Choose based on your project's needs.
+Both are excellent. Gson is simpler and smaller. Jackson is faster and more feature-rich. Choose based on your project's
+needs.
 
 ## Gradle commands
 
@@ -405,6 +412,7 @@ java -jar build/libs/task-api-1.0.0-all.jar
 ```
 
 Result:
+
 ```text
 Task API running on http://localhost:8080
 Press Ctrl+C to stop.
@@ -418,7 +426,8 @@ Like Maven, Gradle has a wrapper so builds work without a global installation. G
 gradle wrapper
 ```
 
-This creates `gradlew` (Unix), `gradlew.bat` (Windows), and a `gradle/wrapper/` directory. Commit these to version control.
+This creates `gradlew` (Unix), `gradlew.bat` (Windows), and a `gradle/wrapper/` directory. Commit these to version
+control.
 
 Now anyone can build with:
 
@@ -474,16 +483,17 @@ curl -sf https://yoursite.com/api/health && echo " -- OK" || echo " -- FAILED"
 
 ## Which build tool should you use?
 
-| Situation | Recommendation |
-|-----------|---------------|
-| New project, small team | Either -- personal preference |
-| Joining an existing project | Use what the project uses |
-| Enterprise / Spring Boot | Maven is more common |
-| Android / Kotlin | Gradle is required |
-| Need maximum build speed | Gradle |
-| Want simplest setup | Maven |
+| Situation                   | Recommendation                |
+|-----------------------------|-------------------------------|
+| New project, small team     | Either -- personal preference |
+| Joining an existing project | Use what the project uses     |
+| Enterprise / Spring Boot    | Maven is more common          |
+| Android / Kotlin            | Gradle is required            |
+| Need maximum build speed    | Gradle                        |
+| Want simplest setup         | Maven                         |
 
 Both Maven and Gradle:
+
 - Download dependencies from Maven Central
 - Follow the same `src/main/java` directory layout
 - Produce the same JAR output

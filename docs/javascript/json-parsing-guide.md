@@ -15,7 +15,10 @@ sidebar_position: 5
 
 # JSON Parsing in JavaScript: Safe Patterns and Practical Tips
 
-JSON is the default data format for web APIs, config files, and lightweight storage. But parsing JSON safely is more than calling `JSON.parse`. You need to consider **error handling**, **validation**, **types**, and **serialization** so the data you read is trustworthy and predictable. This guide covers the full workflow with TypeScript examples and expected results.
+JSON is the default data format for web APIs, config files, and lightweight storage. But parsing JSON safely is more
+than calling `JSON.parse`. You need to consider **error handling**, **validation**, **types**, and **serialization** so
+the data you read is trustworthy and predictable. This guide covers the full workflow with TypeScript examples and
+expected results.
 
 ## Quick start
 
@@ -27,6 +30,7 @@ console.log(user.name);
 ```
 
 Result:
+
 ```text
 Ada
 ```
@@ -56,6 +60,7 @@ console.log(result);
 ```
 
 Result:
+
 ```text
 { ok: true, value: { id: 1 } }
 ```
@@ -78,6 +83,7 @@ console.log(isUser(parsed));
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -94,6 +100,7 @@ console.log(jsonText);
 ```
 
 Result:
+
 ```text
 {"id":1,"name":"Ada","active":true}
 ```
@@ -108,6 +115,7 @@ console.log(pretty);
 ```
 
 Result:
+
 ```text
 {
   "id": 1,
@@ -133,6 +141,7 @@ console.log(withDates.createdAt.toISOString());
 ```
 
 Result:
+
 ```text
 2026-02-02T14:30:00.000Z
 ```
@@ -149,6 +158,7 @@ console.log(publicJson);
 ```
 
 Result:
+
 ```text
 {"id":1,"name":"Ada"}
 ```
@@ -169,13 +179,15 @@ console.log(toPublicUser(raw));
 ```
 
 Result:
+
 ```text
 { id: 1, name: "Ada" }
 ```
 
 ## Stable JSON for comparisons
 
-JSON output is not stable if key order varies. If you compare JSON strings (for caching or hashing), normalize key order.
+JSON output is not stable if key order varies. If you compare JSON strings (for caching or hashing), normalize key
+order.
 
 ```ts
 function stableStringify(value: Record<string, unknown>): string {
@@ -192,6 +204,7 @@ console.log(left === right);
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -215,6 +228,7 @@ console.log(normalizeSettings(parsedSettings));
 ```
 
 Result:
+
 ```text
 { theme: "light", pageSize: 20 }
 ```
@@ -231,6 +245,7 @@ console.log(text);
 ```
 
 Result:
+
 ```text
 {"id":1,"createdAt":"2026-02-02T14:30:00.000Z"}
 ```
@@ -251,6 +266,7 @@ console.log(redact(payload));
 ```
 
 Result:
+
 ```text
 { id: 1, token: "***" }
 ```
@@ -268,6 +284,7 @@ console.log(total);
 ```
 
 Result:
+
 ```text
 10
 ```
@@ -300,6 +317,7 @@ console.log(parsed.ok);
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -314,6 +332,7 @@ console.log(isUser(raw));
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -328,6 +347,7 @@ console.log(formatted);
 ```
 
 Result:
+
 ```text
 {
   "id": 1
@@ -336,4 +356,5 @@ Result:
 
 ## Summary
 
-Safe JSON handling is about more than parsing. Validate shapes, handle errors, normalize defaults, and control serialization. Those habits make your data layer resilient and your code easier to maintain.
+Safe JSON handling is about more than parsing. Validate shapes, handle errors, normalize defaults, and control
+serialization. Those habits make your data layer resilient and your code easier to maintain.

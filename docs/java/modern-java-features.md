@@ -13,20 +13,20 @@ introduced in Java 11 through 21 -- the features that change how you write every
 
 ## Feature table by version
 
-| Feature | Java version | Status |
-|---------|-------------|--------|
-| `var` (local variable type inference) | 10 | Final |
-| HTTP Client API | 11 | Final |
-| Switch expressions | 14 | Final |
-| Text blocks | 15 | Final |
-| Records | 16 | Final |
-| Pattern matching for `instanceof` | 16 | Final |
-| Sealed classes | 17 | Final |
-| Pattern matching for `switch` | 21 | Final |
-| Record patterns | 21 | Final |
-| Virtual threads | 21 | Final |
-| Sequenced collections | 21 | Final |
-| String templates | 22 (preview) | Preview |
+| Feature                               | Java version | Status  |
+|---------------------------------------|--------------|---------|
+| `var` (local variable type inference) | 10           | Final   |
+| HTTP Client API                       | 11           | Final   |
+| Switch expressions                    | 14           | Final   |
+| Text blocks                           | 15           | Final   |
+| Records                               | 16           | Final   |
+| Pattern matching for `instanceof`     | 16           | Final   |
+| Sealed classes                        | 17           | Final   |
+| Pattern matching for `switch`         | 21           | Final   |
+| Record patterns                       | 21           | Final   |
+| Virtual threads                       | 21           | Final   |
+| Sequenced collections                 | 21           | Final   |
+| String templates                      | 22 (preview) | Preview |
 
 ---
 
@@ -101,13 +101,13 @@ record Money(BigDecimal amount, String currency) implements Comparable<Money> {
 
 ### When to use records vs classes
 
-| Use a record when... | Use a class when... |
-|----------------------|---------------------|
-| Data is immutable | You need mutable state |
-| Identity is based on data (value semantics) | Identity is based on reference |
-| You need `equals/hashCode` based on all fields | You need custom `equals` logic |
-| Few fields, no inheritance needed | You need to extend a class |
-| DTOs, API responses, value objects | Entities with behaviour, services |
+| Use a record when...                           | Use a class when...               |
+|------------------------------------------------|-----------------------------------|
+| Data is immutable                              | You need mutable state            |
+| Identity is based on data (value semantics)    | Identity is based on reference    |
+| You need `equals/hashCode` based on all fields | You need custom `equals` logic    |
+| Few fields, no inheritance needed              | You need to extend a class        |
+| DTOs, API responses, value objects             | Entities with behaviour, services |
 
 ---
 
@@ -159,10 +159,10 @@ non-sealed class Motorcycle extends Vehicle {}
 // non-sealed -- anyone can extend Motorcycle
 ```
 
-| Modifier | Meaning |
-|----------|---------|
-| `sealed` | Only the listed subtypes can extend this class |
-| `final` | Cannot be extended at all |
+| Modifier     | Meaning                                          |
+|--------------|--------------------------------------------------|
+| `sealed`     | Only the listed subtypes can extend this class   |
+| `final`      | Cannot be extended at all                        |
 | `non-sealed` | Opens up the hierarchy again (anyone can extend) |
 
 ---
@@ -326,11 +326,11 @@ for (var entry : map.entrySet()) {
 
 ### When to use `var`
 
-| Use `var` | Avoid `var` |
-|-----------|-------------|
-| Type is obvious from the right side (`var list = new ArrayList<>()`) | Type is not obvious (`var result = process()`) |
-| Complex generic types that add noise | Method parameters or return types (not allowed) |
-| Local variables in short methods | When the type name adds documentation value |
+| Use `var`                                                            | Avoid `var`                                     |
+|----------------------------------------------------------------------|-------------------------------------------------|
+| Type is obvious from the right side (`var list = new ArrayList<>()`) | Type is not obvious (`var result = process()`)  |
+| Complex generic types that add noise                                 | Method parameters or return types (not allowed) |
+| Local variables in short methods                                     | When the type name adds documentation value     |
 
 ---
 
@@ -383,13 +383,13 @@ use it when the type name provides important documentation.
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Records are not beans | Records use `name()` not `getName()`, which breaks some frameworks | Use `@JsonProperty` or configure Jackson for records |
-| Records cannot extend classes | Records implicitly extend `java.lang.Record` | Use interfaces (records can implement multiple interfaces) |
-| Sealed class in different file | `permits` clause requires all subtypes in the same package (or same file for nested) | Keep sealed hierarchies in the same package |
-| `var` with diamond operator | `var list = new ArrayList<>()` infers `ArrayList<Object>` | Either specify the type or use `var list = new ArrayList<String>()` |
-| Pattern matching variable scope | Binding variables are only in scope where the pattern is guaranteed to match | Be careful with negated conditions and `else` branches |
+| Pitfall                         | Problem                                                                              | Fix                                                                 |
+|---------------------------------|--------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| Records are not beans           | Records use `name()` not `getName()`, which breaks some frameworks                   | Use `@JsonProperty` or configure Jackson for records                |
+| Records cannot extend classes   | Records implicitly extend `java.lang.Record`                                         | Use interfaces (records can implement multiple interfaces)          |
+| Sealed class in different file  | `permits` clause requires all subtypes in the same package (or same file for nested) | Keep sealed hierarchies in the same package                         |
+| `var` with diamond operator     | `var list = new ArrayList<>()` infers `ArrayList<Object>`                            | Either specify the type or use `var list = new ArrayList<String>()` |
+| Pattern matching variable scope | Binding variables are only in scope where the pattern is guaranteed to match         | Be careful with negated conditions and `else` branches              |
 
 ---
 

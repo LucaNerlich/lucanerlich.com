@@ -89,25 +89,25 @@ groupId:artifactId:version
 com.fasterxml.jackson.core:jackson-databind:2.17.0
 ```
 
-| Coordinate | Purpose | Convention |
-|-----------|---------|-----------|
-| `groupId` | Organisation / company | Reverse domain: `com.example`, `org.apache` |
-| `artifactId` | Project name | Lowercase, hyphenated: `my-app`, `jackson-databind` |
-| `version` | Release version | SemVer: `1.2.3`, `-SNAPSHOT` for development |
-| `packaging` | Output format | `jar` (default), `war`, `pom`, `bundle` |
+| Coordinate   | Purpose                | Convention                                          |
+|--------------|------------------------|-----------------------------------------------------|
+| `groupId`    | Organisation / company | Reverse domain: `com.example`, `org.apache`         |
+| `artifactId` | Project name           | Lowercase, hyphenated: `my-app`, `jackson-databind` |
+| `version`    | Release version        | SemVer: `1.2.3`, `-SNAPSHOT` for development        |
+| `packaging`  | Output format          | `jar` (default), `war`, `pom`, `bundle`             |
 
 ---
 
 ## Dependency scopes
 
-| Scope | Compile | Test | Runtime | Packaged | Use case |
-|-------|---------|------|---------|----------|----------|
-| `compile` (default) | Yes | Yes | Yes | Yes | Most dependencies |
-| `test` | No | Yes | No | No | JUnit, Mockito, AssertJ |
-| `provided` | Yes | Yes | No | No | Servlet API, Lombok (provided by container) |
-| `runtime` | No | Yes | Yes | Yes | JDBC drivers, SLF4J backends |
-| `system` | Yes | Yes | No | No | Local JARs (avoid) |
-| `import` | -- | -- | -- | -- | BOM imports (in `<dependencyManagement>`) |
+| Scope               | Compile | Test | Runtime | Packaged | Use case                                    |
+|---------------------|---------|------|---------|----------|---------------------------------------------|
+| `compile` (default) | Yes     | Yes  | Yes     | Yes      | Most dependencies                           |
+| `test`              | No      | Yes  | No      | No       | JUnit, Mockito, AssertJ                     |
+| `provided`          | Yes     | Yes  | No      | No       | Servlet API, Lombok (provided by container) |
+| `runtime`           | No      | Yes  | Yes     | Yes      | JDBC drivers, SLF4J backends                |
+| `system`            | Yes     | Yes  | No      | No       | Local JARs (avoid)                          |
+| `import`            | --      | --   | --      | --       | BOM imports (in `<dependencyManagement>`)   |
 
 ---
 
@@ -444,32 +444,32 @@ mvn help:active-profiles    # see which profiles are active
 
 ## Common Maven commands
 
-| Command | Purpose |
-|---------|---------|
-| `mvn clean` | Delete `target/` |
-| `mvn compile` | Compile main sources |
-| `mvn test` | Run unit tests |
-| `mvn package` | Compile + test + package (JAR/WAR) |
-| `mvn install` | Package + install to local `.m2` repository |
-| `mvn dependency:tree` | Print dependency tree |
-| `mvn dependency:analyze` | Find unused / undeclared dependencies |
-| `mvn versions:display-dependency-updates` | Show available dependency updates |
-| `mvn help:effective-pom` | Show the fully resolved POM (all inheritance applied) |
+| Command                                   | Purpose                                               |
+|-------------------------------------------|-------------------------------------------------------|
+| `mvn clean`                               | Delete `target/`                                      |
+| `mvn compile`                             | Compile main sources                                  |
+| `mvn test`                                | Run unit tests                                        |
+| `mvn package`                             | Compile + test + package (JAR/WAR)                    |
+| `mvn install`                             | Package + install to local `.m2` repository           |
+| `mvn dependency:tree`                     | Print dependency tree                                 |
+| `mvn dependency:analyze`                  | Find unused / undeclared dependencies                 |
+| `mvn versions:display-dependency-updates` | Show available dependency updates                     |
+| `mvn help:effective-pom`                  | Show the fully resolved POM (all inheritance applied) |
 
 ---
 
 ## Maven vs Gradle
 
-| Aspect | Maven | Gradle |
-|--------|-------|--------|
-| **Configuration** | XML (`pom.xml`) | Groovy/Kotlin DSL (`build.gradle.kts`) |
-| **Convention** | Strong (standard layout) | Flexible (but more setup) |
-| **Build speed** | Moderate | Faster (incremental, daemon) |
-| **Learning curve** | Lower (well-documented conventions) | Higher (DSL, scripting) |
-| **Plugin ecosystem** | Very large | Large (growing) |
-| **IDE support** | Excellent (IntelliJ, Eclipse) | Excellent (IntelliJ, VS Code) |
-| **Multi-module** | Reactor, parent POMs | Composite builds, included builds |
-| **Popular in** | Enterprise Java, AEM | Android, Spring Boot, Kotlin |
+| Aspect               | Maven                               | Gradle                                 |
+|----------------------|-------------------------------------|----------------------------------------|
+| **Configuration**    | XML (`pom.xml`)                     | Groovy/Kotlin DSL (`build.gradle.kts`) |
+| **Convention**       | Strong (standard layout)            | Flexible (but more setup)              |
+| **Build speed**      | Moderate                            | Faster (incremental, daemon)           |
+| **Learning curve**   | Lower (well-documented conventions) | Higher (DSL, scripting)                |
+| **Plugin ecosystem** | Very large                          | Large (growing)                        |
+| **IDE support**      | Excellent (IntelliJ, Eclipse)       | Excellent (IntelliJ, VS Code)          |
+| **Multi-module**     | Reactor, parent POMs                | Composite builds, included builds      |
+| **Popular in**       | Enterprise Java, AEM                | Android, Spring Boot, Kotlin           |
 
 > Both are excellent. Maven is the safer choice for enterprise Java projects.
 > Gradle is faster and more flexible, especially for large builds and Android.
@@ -478,15 +478,15 @@ mvn help:active-profiles    # see which profiles are active
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Hardcoded versions everywhere | Inconsistent versions across modules | Use `<properties>` and `<dependencyManagement>` |
-| Missing `<scope>test</scope>` | Test libraries leak into production JAR | Always set scope for JUnit, Mockito, etc. |
+| Pitfall                             | Problem                                     | Fix                                               |
+|-------------------------------------|---------------------------------------------|---------------------------------------------------|
+| Hardcoded versions everywhere       | Inconsistent versions across modules        | Use `<properties>` and `<dependencyManagement>`   |
+| Missing `<scope>test</scope>`       | Test libraries leak into production JAR     | Always set scope for JUnit, Mockito, etc.         |
 | `mvn install` for local development | Unnecessary (IDE resolves modules directly) | Use `mvn verify` unless you need the JAR in `.m2` |
-| Relying on transitive dependencies | Build breaks when upstream changes | Declare every dependency you use directly |
-| SNAPSHOT versions in releases | Unpredictable builds | Use release versions for production artifacts |
-| Circular module dependencies | Build fails | Restructure to break the cycle |
-| Not using `.mvn/maven.config` | Every developer uses different flags | Add common flags: `--fail-at-end --threads 1C` |
+| Relying on transitive dependencies  | Build breaks when upstream changes          | Declare every dependency you use directly         |
+| SNAPSHOT versions in releases       | Unpredictable builds                        | Use release versions for production artifacts     |
+| Circular module dependencies        | Build fails                                 | Restructure to break the cycle                    |
+| Not using `.mvn/maven.config`       | Every developer uses different flags        | Add common flags: `--fail-at-end --threads 1C`    |
 
 ---
 

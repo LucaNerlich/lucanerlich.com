@@ -15,7 +15,9 @@ sidebar_position: 11
 
 # Content Fragments & GraphQL
 
-Content Fragments are **channel-neutral, structured content** -- text, images, data -- stored independently of any page layout. Combined with GraphQL, they enable **headless** content delivery to any frontend: websites, mobile apps, digital signage, or anything that speaks HTTP.
+Content Fragments are **channel-neutral, structured content** -- text, images, data -- stored independently of any page
+layout. Combined with GraphQL, they enable **headless** content delivery to any frontend: websites, mobile apps, digital
+signage, or anything that speaks HTTP.
 
 ## Content Fragments vs pages
 
@@ -42,17 +44,18 @@ flowchart TD
     end
 ```
 
-| Feature | Pages | Content Fragments |
-|---------|-------|------------------|
-| **Layout** | Tied to AEM templates | No layout -- pure data |
-| **Delivery** | AEM renders HTML | Client renders (any format) |
-| **Reuse** | One page = one URL | One fragment = many consumers |
-| **Editing** | Page editor with components | Content Fragment editor |
-| **API** | Sling model export (`.model.json`) | GraphQL API |
+| Feature      | Pages                              | Content Fragments             |
+|--------------|------------------------------------|-------------------------------|
+| **Layout**   | Tied to AEM templates              | No layout -- pure data        |
+| **Delivery** | AEM renders HTML                   | Client renders (any format)   |
+| **Reuse**    | One page = one URL                 | One fragment = many consumers |
+| **Editing**  | Page editor with components        | Content Fragment editor       |
+| **API**      | Sling model export (`.model.json`) | GraphQL API                   |
 
 ## Content Fragment Models
 
-A Content Fragment Model defines the **structure** of a fragment -- like a database schema. Models are created in the configuration:
+A Content Fragment Model defines the **structure** of a fragment -- like a database schema. Models are created in the
+configuration:
 
 ### Create a model
 
@@ -64,47 +67,47 @@ A Content Fragment Model defines the **structure** of a fragment -- like a datab
 
 ### Common field types
 
-| Field type | Description | Example |
-|-----------|-------------|---------|
-| **Single line text** | Short text | Title, author name |
-| **Multi line text** | Long text with formatting | Body, description |
-| **Number** | Integer or float | Rating, price |
-| **Boolean** | True/false | Featured, published |
-| **Date and Time** | Date/time picker | Publish date |
-| **Enumeration** | Predefined options | Category, status |
-| **Tags** | AEM tags | Topic tags |
-| **Content Reference** | Link to other content | Related page |
-| **Fragment Reference** | Link to another CF | Author fragment |
-| **JSON Object** | Arbitrary JSON | Metadata |
-| **Tab Placeholder** | Visual tab separator | Organize fields |
+| Field type             | Description               | Example             |
+|------------------------|---------------------------|---------------------|
+| **Single line text**   | Short text                | Title, author name  |
+| **Multi line text**    | Long text with formatting | Body, description   |
+| **Number**             | Integer or float          | Rating, price       |
+| **Boolean**            | True/false                | Featured, published |
+| **Date and Time**      | Date/time picker          | Publish date        |
+| **Enumeration**        | Predefined options        | Category, status    |
+| **Tags**               | AEM tags                  | Topic tags          |
+| **Content Reference**  | Link to other content     | Related page        |
+| **Fragment Reference** | Link to another CF        | Author fragment     |
+| **JSON Object**        | Arbitrary JSON            | Metadata            |
+| **Tab Placeholder**    | Visual tab separator      | Organize fields     |
 
 ### Article model example
 
 Create these fields for an Article model:
 
-| Field | Type | Configuration |
-|-------|------|---------------|
-| Title | Single line text | Required |
-| Slug | Single line text | Required, unique |
-| Body | Multi line text | Rich text, required |
-| Excerpt | Multi line text | Plain text, max 300 chars |
-| Featured Image | Content Reference | Asset reference |
-| Publish Date | Date and Time | Date only |
-| Featured | Boolean | Default: false |
-| Author | Fragment Reference | References Author model |
-| Category | Enumeration | tech, business, design |
-| Tags | Tags | -- |
+| Field          | Type               | Configuration             |
+|----------------|--------------------|---------------------------|
+| Title          | Single line text   | Required                  |
+| Slug           | Single line text   | Required, unique          |
+| Body           | Multi line text    | Rich text, required       |
+| Excerpt        | Multi line text    | Plain text, max 300 chars |
+| Featured Image | Content Reference  | Asset reference           |
+| Publish Date   | Date and Time      | Date only                 |
+| Featured       | Boolean            | Default: false            |
+| Author         | Fragment Reference | References Author model   |
+| Category       | Enumeration        | tech, business, design    |
+| Tags           | Tags               | --                        |
 
 ### Author model example
 
 Create a separate **Author** model:
 
-| Field | Type |
-|-------|------|
-| Name | Single line text (required) |
-| Bio | Multi line text |
-| Avatar | Content Reference |
-| Email | Single line text |
+| Field  | Type                        |
+|--------|-----------------------------|
+| Name   | Single line text (required) |
+| Bio    | Multi line text             |
+| Avatar | Content Reference           |
+| Email  | Single line text            |
 
 ## Creating Content Fragments
 
@@ -137,7 +140,8 @@ Each variation can override specific fields while inheriting others from the mas
 
 ## The GraphQL API
 
-AEM automatically generates a GraphQL API from your Content Fragment Models. No code needed -- install the model, and the API is ready.
+AEM automatically generates a GraphQL API from your Content Fragment Models. No code needed -- install the model, and
+the API is ready.
 
 ### GraphQL endpoint
 
@@ -298,14 +302,15 @@ curl http://localhost:4502/graphql/execute.json/mysite/article-list
 
 ### Benefits of persisted queries
 
-| Feature | Ad-hoc queries | Persisted queries |
-|---------|---------------|-------------------|
-| **Caching** | Not cached by Dispatcher | Cached (GET request) |
-| **Security** | Client defines the query | Server controls the query |
-| **Performance** | Parsed on every request | Parsed once, executed many |
-| **CDN** | Cannot cache POST | CDN-cacheable GET |
+| Feature         | Ad-hoc queries           | Persisted queries          |
+|-----------------|--------------------------|----------------------------|
+| **Caching**     | Not cached by Dispatcher | Cached (GET request)       |
+| **Security**    | Client defines the query | Server controls the query  |
+| **Performance** | Parsed on every request  | Parsed once, executed many |
+| **CDN**         | Cannot cache POST        | CDN-cacheable GET          |
 
-> **Best practice:** Always use persisted queries in production. Ad-hoc queries are for development and the GraphiQL IDE only.
+> **Best practice:** Always use persisted queries in production. Ad-hoc queries are for development and the GraphiQL IDE
+> only.
 
 ## Headless content delivery
 
@@ -347,7 +352,8 @@ Content Fragments can also be rendered on AEM pages using the **Content Fragment
 
 This bridges traditional page-based and headless approaches.
 
-> For advanced patterns, see the [Content Fragments](/aem/content/content-fragments) and [Headless GraphQL](/aem/content/graphql) references.
+> For advanced patterns, see the [Content Fragments](/aem/content/content-fragments)
+> and [Headless GraphQL](/aem/content/graphql) references.
 
 ## Summary
 
@@ -362,4 +368,5 @@ You learned:
 - The **headless delivery flow** from author to frontend
 - Using Content Fragments **on pages** with the Content Fragment component
 
-Next up: [Multi-Site Manager & i18n](./12-multi-site-manager-and-i18n.md) -- Blueprints, Live Copies, rollout configs, language copies, and the translation framework.
+Next up: [Multi-Site Manager & i18n](./12-multi-site-manager-and-i18n.md) -- Blueprints, Live Copies, rollout configs,
+language copies, and the translation framework.

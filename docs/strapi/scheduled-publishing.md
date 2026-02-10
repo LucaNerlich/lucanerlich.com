@@ -7,11 +7,14 @@ tags: [strapi, scheduling, publishing, cron, workflows]
 
 # Scheduled Publishing
 
-Strapi does not ship with built-in scheduled publishing. This page shows how to implement it reliably, explains the draft/published duality that makes naive approaches fail, and covers advanced patterns like scheduled unpublishing, editorial review, and timezone handling.
+Strapi does not ship with built-in scheduled publishing. This page shows how to implement it reliably, explains the
+draft/published duality that makes naive approaches fail, and covers advanced patterns like scheduled unpublishing,
+editorial review, and timezone handling.
 
 ## The problem: draft/published duality
 
-In Strapi 5, every document can have **two versions simultaneously**: a draft and a published version. When you publish a document, the draft row remains in the database as a shadow copy.
+In Strapi 5, every document can have **two versions simultaneously**: a draft and a published version. When you publish
+a document, the draft row remains in the database as a shadow copy.
 
 ```mermaid
 flowchart LR
@@ -54,7 +57,8 @@ This completely sidesteps the draft duality issue.
 
 ### Step 1: add the field to your content type
 
-In the Content-Type Builder, add a `scheduledPublishAt` field of type **DateTime** to every content type that needs scheduling. Or add it directly in the schema:
+In the Content-Type Builder, add a `scheduledPublishAt` field of type **DateTime** to every content type that needs
+scheduling. Or add it directly in the schema:
 
 ```json
 // src/api/article/content-types/article/schema.json
@@ -141,12 +145,12 @@ async function publishScheduled(strapi) {
 
 ### Why this works for all scenarios
 
-| Scenario | What happens |
-|----------|-------------|
-| New draft, never published | `publish()` creates the published version. Correct. |
+| Scenario                                      | What happens                                                     |
+|-----------------------------------------------|------------------------------------------------------------------|
+| New draft, never published                    | `publish()` creates the published version. Correct.              |
 | Already published, editor schedules an update | `publish()` re-publishes with the latest draft content. Correct. |
-| Published, no `scheduledPublishAt` set | Not picked up by the filter. Correct. |
-| Already processed by cron | `scheduledPublishAt` was cleared. Not picked up again. Correct. |
+| Published, no `scheduledPublishAt` set        | Not picked up by the filter. Correct.                            |
+| Already processed by cron                     | `scheduledPublishAt` was cleared. Not picked up again. Correct.  |
 
 ---
 
@@ -309,7 +313,8 @@ The cron job becomes a one-liner:
 
 ## Preventing manual publish of scheduled content
 
-Editors might accidentally click "Publish" on a document that's scheduled for the future. Guard against this with a Document Service middleware:
+Editors might accidentally click "Publish" on a document that's scheduled for the future. Guard against this with a
+Document Service middleware:
 
 ```js
 // src/index.js
@@ -446,7 +451,8 @@ module.exports = {
 
 ## Timezone handling
 
-Strapi stores all dates in UTC. If your editors work in different timezones, make sure the frontend converts local time to UTC before sending it to the API:
+Strapi stores all dates in UTC. If your editors work in different timezones, make sure the frontend converts local time
+to UTC before sending it to the API:
 
 ```js
 // Frontend: convert local datetime input to UTC ISO string
@@ -465,7 +471,8 @@ await fetch('/api/articles/abc123', {
 });
 ```
 
-The cron job compares against `new Date().toISOString()` which is always UTC, so no conversion is needed on the server side.
+The cron job compares against `new Date().toISOString()` which is always UTC, so no conversion is needed on the server
+side.
 
 ---
 
@@ -524,27 +531,28 @@ async processScheduledPublish() {
 
 ## Cron interval considerations
 
-| Interval | Expression | Use case |
-|----------|-----------|----------|
-| Every minute | `* * * * *` | Near real-time publishing (higher DB load) |
-| Every 5 minutes | `*/5 * * * *` | Good default for most projects |
-| Every 15 minutes | `*/15 * * * *` | Low-traffic sites, less DB overhead |
-| Every hour | `0 * * * *` | When exact timing doesn't matter |
+| Interval         | Expression     | Use case                                   |
+|------------------|----------------|--------------------------------------------|
+| Every minute     | `* * * * *`    | Near real-time publishing (higher DB load) |
+| Every 5 minutes  | `*/5 * * * *`  | Good default for most projects             |
+| Every 15 minutes | `*/15 * * * *` | Low-traffic sites, less DB overhead        |
+| Every hour       | `0 * * * *`    | When exact timing doesn't matter           |
 
-Keep in mind that the maximum delay equals the cron interval. A 5-minute cron means content publishes within 5 minutes of the scheduled time.
+Keep in mind that the maximum delay equals the cron interval. A 5-minute cron means content publishes within 5 minutes
+of the scheduled time.
 
 ---
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Filtering by `status: 'draft'` alone | Includes shadow drafts of published documents | Use `scheduledPublishAt` as the discriminator |
-| Not clearing `scheduledPublishAt` after publish | Document gets re-processed every cron run | Always set it to `null` after publishing |
-| Cron not enabled | Jobs never run | Set `cron.enabled: true` in `config/server.js` |
-| Timezone mismatch | Content publishes at the wrong time | Always store and compare in UTC |
-| No error handling in cron | One failure stops processing remaining documents | Wrap each publish in try/catch |
-| Multiple Strapi instances | Same document published by multiple instances | Use a distributed lock (Redis) or run cron on one instance only |
+| Pitfall                                         | Problem                                          | Fix                                                             |
+|-------------------------------------------------|--------------------------------------------------|-----------------------------------------------------------------|
+| Filtering by `status: 'draft'` alone            | Includes shadow drafts of published documents    | Use `scheduledPublishAt` as the discriminator                   |
+| Not clearing `scheduledPublishAt` after publish | Document gets re-processed every cron run        | Always set it to `null` after publishing                        |
+| Cron not enabled                                | Jobs never run                                   | Set `cron.enabled: true` in `config/server.js`                  |
+| Timezone mismatch                               | Content publishes at the wrong time              | Always store and compare in UTC                                 |
+| No error handling in cron                       | One failure stops processing remaining documents | Wrap each publish in try/catch                                  |
+| Multiple Strapi instances                       | Same document published by multiple instances    | Use a distributed lock (Redis) or run cron on one instance only |
 
 ---
 

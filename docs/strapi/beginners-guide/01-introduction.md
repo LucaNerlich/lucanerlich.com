@@ -15,9 +15,11 @@ sidebar_position: 1
 
 # Introduction & Setup
 
-Strapi is an open-source **headless CMS** built on Node.js. This guide takes you from a fresh install to a fully configured, production-deployed Strapi 5 instance -- step by step.
+Strapi is an open-source **headless CMS** built on Node.js. This guide takes you from a fresh install to a fully
+configured, production-deployed Strapi 5 instance -- step by step.
 
-We assume you already know JavaScript and Node.js basics. If not, work through the [JavaScript Beginners Guide](/javascript/beginners-guide/introduction) first.
+We assume you already know JavaScript and Node.js basics. If not, work through
+the [JavaScript Beginners Guide](/javascript/beginners-guide/introduction) first.
 
 ## How this guide is structured
 
@@ -29,11 +31,13 @@ We assume you already know JavaScript and Node.js basics. If not, work through t
 | **4 -- Production Features**     | 10--11   | File uploads, media providers, TypeScript integration                          |
 | **5 -- Deploy**                  | 12       | Environment config, PostgreSQL, nginx, HTTPS, security hardening               |
 
-By the end you will have a blog CMS with authors, posts, categories, and tags -- fully customized and running in production.
+By the end you will have a blog CMS with authors, posts, categories, and tags -- fully customized and running in
+production.
 
 ## What is a headless CMS?
 
-A **traditional CMS** (like WordPress) bundles content management and content display into one system. The admin panel and the website are tightly coupled.
+A **traditional CMS** (like WordPress) bundles content management and content display into one system. The admin panel
+and the website are tightly coupled.
 
 A **headless CMS** separates these concerns:
 
@@ -46,7 +50,8 @@ flowchart LR
     API --> Other["Any Client"]
 ```
 
-The CMS manages content and exposes it through an API. **Any** frontend can consume that API -- a website, a mobile app, a CLI tool, anything that speaks HTTP.
+The CMS manages content and exposes it through an API. **Any** frontend can consume that API -- a website, a mobile app,
+a CLI tool, anything that speaks HTTP.
 
 Benefits of going headless:
 
@@ -110,7 +115,8 @@ Strapi starts on `http://localhost:1337`. On first launch it opens the admin reg
 
 ## Register your admin account
 
-The first time Strapi starts, it asks you to create an admin account. This is **not** an API user -- it is the super-admin for the admin panel.
+The first time Strapi starts, it asks you to create an admin account. This is **not** an API user -- it is the
+super-admin for the admin panel.
 
 Fill in:
 
@@ -120,7 +126,8 @@ Fill in:
 
 Click **Let's start** and you are in the admin panel.
 
-> **Important:** This admin account is stored in the database. There is no default password. If you lose access, you can reset it via the CLI: `npm run strapi admin:reset-user-password`.
+> **Important:** This admin account is stored in the database. There is no default password. If you lose access, you can
+> reset it via the CLI: `npm run strapi admin:reset-user-password`.
 
 ## Project structure
 
@@ -165,11 +172,13 @@ The admin panel is your content management interface. Let's explore the key sect
 
 ### Content Manager
 
-This is where you create, edit, and publish content. It is empty right now because we have not created any content types yet -- that comes in the next chapter.
+This is where you create, edit, and publish content. It is empty right now because we have not created any content types
+yet -- that comes in the next chapter.
 
 ### Content-Type Builder
 
-This visual tool lets you define your data model: collection types, single types, and components. We will use it extensively in chapters 2 and 3.
+This visual tool lets you define your data model: collection types, single types, and components. We will use it
+extensively in chapters 2 and 3.
 
 ### Settings
 
@@ -183,7 +192,8 @@ The settings area contains:
 
 ### Marketplace
 
-Browse and install community plugins to extend Strapi's functionality. We will touch on plugin development concepts in chapter 9.
+Browse and install community plugins to extend Strapi's functionality. We will touch on plugin development concepts in
+chapter 9.
 
 ## How Strapi works under the hood
 
@@ -219,7 +229,8 @@ You do not need to understand all of this yet. We will build on each layer as th
 
 ## The Document Service
 
-Strapi 5 introduces the **Document Service** as the primary way to interact with your data programmatically. Instead of querying the database directly, you use the Document Service API:
+Strapi 5 introduces the **Document Service** as the primary way to interact with your data programmatically. Instead of
+querying the database directly, you use the Document Service API:
 
 ```javascript
 // Find all published blog posts
@@ -251,12 +262,14 @@ We will use it extensively starting in chapter 7.
 Here is the typical workflow when developing with Strapi:
 
 1. **Define content types** -- use the Content-Type Builder in the admin panel or edit schema files directly
-2. **Restart the server** -- Strapi regenerates APIs, types, and database tables on restart (the dev server auto-restarts when schemas change)
+2. **Restart the server** -- Strapi regenerates APIs, types, and database tables on restart (the dev server
+   auto-restarts when schemas change)
 3. **Add content** -- create entries in the Content Manager
 4. **Consume the API** -- fetch content via REST or GraphQL from any client
 5. **Customize** -- add controllers, services, middleware, and policies as needed
 
-> **Tip:** During development, Strapi watches for file changes and restarts automatically. If you change a content type schema via the admin panel, the server restarts on its own.
+> **Tip:** During development, Strapi watches for file changes and restarts automatically. If you change a content type
+> schema via the admin panel, the server restarts on its own.
 
 ## Useful CLI commands
 
@@ -280,4 +293,5 @@ You now have a running Strapi 5 instance with:
 
 The admin panel is empty because we have not defined any content types yet. That changes in the next chapter.
 
-Next up: [Content Modeling](./02-content-modeling.md) -- defining collection types, single types, fields, components, and dynamic zones to structure your blog's data.
+Next up: [Content Modeling](./02-content-modeling.md) -- defining collection types, single types, fields, components,
+and dynamic zones to structure your blog's data.

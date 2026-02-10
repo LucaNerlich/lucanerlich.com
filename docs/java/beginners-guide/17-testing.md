@@ -15,11 +15,13 @@ sidebar_position: 17
 
 # Testing
 
-Tests are code that verifies other code works correctly. They catch bugs early, give you confidence to refactor, and serve as living documentation of how your code is supposed to behave.
+Tests are code that verifies other code works correctly. They catch bugs early, give you confidence to refactor, and
+serve as living documentation of how your code is supposed to behave.
 
 ## Why test?
 
-Without tests, every change is risky. You edit one function, and something unrelated breaks -- but you do not find out until a user reports it. With tests:
+Without tests, every change is risky. You edit one function, and something unrelated breaks -- but you do not find out
+until a user reports it. With tests:
 
 - **Catch bugs early** -- a failing test tells you immediately that something broke.
 - **Refactor with confidence** -- change the implementation, run the tests, know it still works.
@@ -108,6 +110,7 @@ gradle test
 ```
 
 Output:
+
 ```text
 [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 ```
@@ -226,6 +229,7 @@ void completingATaskMarksItDone() {
 ```
 
 This pattern keeps tests focused and readable:
+
 1. **Arrange** -- create objects, prepare data
 2. **Act** -- call the method you are testing
 3. **Assert** -- check the result
@@ -683,6 +687,7 @@ class ApiServerTest {
 ```
 
 **Key patterns:**
+
 - Use port `0` to let the OS assign a random free port -- avoids conflicts when running tests in parallel.
 - Start a fresh server in `@BeforeEach` so tests are isolated.
 - Stop the server in `@AfterEach` to free the port.
@@ -694,6 +699,7 @@ JUnit's built-in assertions work, but [AssertJ](https://assertj.github.io/doc/) 
 ### Adding AssertJ
 
 **Maven:**
+
 ```xml
 <dependency>
     <groupId>org.assertj</groupId>
@@ -704,6 +710,7 @@ JUnit's built-in assertions work, but [AssertJ](https://assertj.github.io/doc/) 
 ```
 
 **Gradle:**
+
 ```kotlin
 testImplementation("org.assertj:assertj-core:3.26.3")
 ```
@@ -770,30 +777,31 @@ void assertJExamples() {
 }
 ```
 
-AssertJ's fluent API provides much better error messages on failure. Instead of "expected true but was false", you get "expected list to contain 'Ada' but it was [Bob, Charlie]".
+AssertJ's fluent API provides much better error messages on failure. Instead of "expected true but was false", you get "
+expected list to contain 'Ada' but it was [Bob, Charlie]".
 
 ## What makes a good test
 
 Follow the **FIRST** principles:
 
-| Principle | Meaning |
-|-----------|---------|
-| **Fast** | Tests should run in milliseconds, not seconds |
-| **Isolated** | Each test is independent -- no shared state, no required execution order |
-| **Repeatable** | Same result every time, on any machine |
-| **Self-validating** | Passes or fails automatically -- no manual inspection |
-| **Timely** | Written alongside the code, not months later |
+| Principle           | Meaning                                                                  |
+|---------------------|--------------------------------------------------------------------------|
+| **Fast**            | Tests should run in milliseconds, not seconds                            |
+| **Isolated**        | Each test is independent -- no shared state, no required execution order |
+| **Repeatable**      | Same result every time, on any machine                                   |
+| **Self-validating** | Passes or fails automatically -- no manual inspection                    |
+| **Timely**          | Written alongside the code, not months later                             |
 
 ### Dos and Don'ts
 
-| Do | Don't |
-|----|-------|
-| Test one thing per test | Test multiple unrelated behaviors |
-| Use descriptive test names | Name tests `test1`, `test2`, `test3` |
-| Test edge cases (empty, null, boundary) | Only test the happy path |
-| Keep tests independent | Rely on test execution order |
-| Make tests deterministic | Use `Math.random()` or current time |
-| Test behavior, not implementation | Assert internal state of private fields |
+| Do                                      | Don't                                   |
+|-----------------------------------------|-----------------------------------------|
+| Test one thing per test                 | Test multiple unrelated behaviors       |
+| Use descriptive test names              | Name tests `test1`, `test2`, `test3`    |
+| Test edge cases (empty, null, boundary) | Only test the happy path                |
+| Keep tests independent                  | Rely on test execution order            |
+| Make tests deterministic                | Use `Math.random()` or current time     |
+| Test behavior, not implementation       | Assert internal state of private fields |
 
 ### How much to test
 
@@ -825,6 +833,7 @@ gradle test --tests taskapi.TaskStoreTest
 ### IDE
 
 Most IDEs (IntelliJ IDEA, VS Code with Java extensions) let you:
+
 - Click the green play button next to a test to run it
 - Right-click a test class to run all tests in it
 - See results inline with pass/fail icons
@@ -840,4 +849,5 @@ Most IDEs (IntelliJ IDEA, VS Code with Java extensions) let you:
 - **AssertJ** provides fluent, readable assertions with better error messages.
 - Good tests are **fast, isolated, repeatable, and self-validating**.
 
-For advanced patterns including mocking with Mockito, test doubles, integration testing, and test-driven development, see the [Testing reference](/java/testing).
+For advanced patterns including mocking with Mockito, test doubles, integration testing, and test-driven development,
+see the [Testing reference](/java/testing).

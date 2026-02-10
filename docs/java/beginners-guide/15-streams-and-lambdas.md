@@ -15,7 +15,9 @@ sidebar_position: 15
 
 # Streams & Lambdas
 
-Java 8 introduced **lambdas** and the **Stream API**, bringing functional programming to Java. Instead of writing loops that describe *how* to process data step by step, you build pipelines that describe *what* you want -- filter this, transform that, collect the result.
+Java 8 introduced **lambdas** and the **Stream API**, bringing functional programming to Java. Instead of writing loops
+that describe *how* to process data step by step, you build pipelines that describe *what* you want -- filter this,
+transform that, collect the result.
 
 ## Lambda expressions
 
@@ -54,23 +56,25 @@ name -> name.toUpperCase()
 ```
 
 **Rules:**
+
 - If the body is a single expression, omit `{}` and `return`.
 - If there is exactly one parameter, omit the parentheses.
 - If there are zero or two+ parameters, parentheses are required.
 
 ## Functional interfaces
 
-A lambda can only be used where a **functional interface** is expected -- an interface with exactly one abstract method. Java provides many built-in ones:
+A lambda can only be used where a **functional interface** is expected -- an interface with exactly one abstract method.
+Java provides many built-in ones:
 
-| Interface | Method | Use case |
-|-----------|--------|----------|
-| `Predicate<T>` | `boolean test(T t)` | Filtering -- is this item valid? |
-| `Function<T, R>` | `R apply(T t)` | Transforming -- convert T to R |
-| `Consumer<T>` | `void accept(T t)` | Side effects -- print, log, save |
-| `Supplier<T>` | `T get()` | Producing -- create a value |
-| `Comparator<T>` | `int compare(T a, T b)` | Ordering -- sort items |
-| `UnaryOperator<T>` | `T apply(T t)` | Transform T to T (same type) |
-| `BiFunction<T, U, R>` | `R apply(T t, U u)` | Two inputs, one output |
+| Interface             | Method                  | Use case                         |
+|-----------------------|-------------------------|----------------------------------|
+| `Predicate<T>`        | `boolean test(T t)`     | Filtering -- is this item valid? |
+| `Function<T, R>`      | `R apply(T t)`          | Transforming -- convert T to R   |
+| `Consumer<T>`         | `void accept(T t)`      | Side effects -- print, log, save |
+| `Supplier<T>`         | `T get()`               | Producing -- create a value      |
+| `Comparator<T>`       | `int compare(T a, T b)` | Ordering -- sort items           |
+| `UnaryOperator<T>`    | `T apply(T t)`          | Transform T to T (same type)     |
+| `BiFunction<T, U, R>` | `R apply(T t, U u)`     | Two inputs, one output           |
 
 ```java
 import java.util.function.*;
@@ -120,12 +124,12 @@ System.out.println(trimThenUpper.apply("  hello  ")); // "HELLO"
 
 A **method reference** is shorthand for a lambda that just calls an existing method:
 
-| Type | Lambda | Method reference |
-|------|--------|-----------------|
-| Static method | `s -> Integer.parseInt(s)` | `Integer::parseInt` |
-| Instance method on parameter | `s -> s.toUpperCase()` | `String::toUpperCase` |
-| Instance method on object | `s -> printer.print(s)` | `printer::print` |
-| Constructor | `s -> new StringBuilder(s)` | `StringBuilder::new` |
+| Type                         | Lambda                      | Method reference      |
+|------------------------------|-----------------------------|-----------------------|
+| Static method                | `s -> Integer.parseInt(s)`  | `Integer::parseInt`   |
+| Instance method on parameter | `s -> s.toUpperCase()`      | `String::toUpperCase` |
+| Instance method on object    | `s -> printer.print(s)`     | `printer::print`      |
+| Constructor                  | `s -> new StringBuilder(s)` | `StringBuilder::new`  |
 
 ```java
 List<String> names = List.of("grace", "ada", "alan");
@@ -138,7 +142,8 @@ names.stream().map(String::toUpperCase).toList();
 // ["GRACE", "ADA", "ALAN"]
 ```
 
-Use method references when the lambda simply delegates to a single method call. Use lambdas when you need additional logic.
+Use method references when the lambda simply delegates to a single method call. Use lambdas when you need additional
+logic.
 
 ## The Stream API
 
@@ -165,6 +170,7 @@ Every pipeline has three parts:
 ### Streams are lazy
 
 Intermediate operations are not executed until a terminal operation is called. This means:
+
 - No unnecessary work is done
 - Operations are fused -- the stream processes each element through the entire pipeline before moving to the next
 
@@ -473,6 +479,7 @@ System.out.println(summary);
 ```
 
 Result:
+
 ```text
 [x] Write introduction
 [ ] Add error handling
@@ -515,11 +522,11 @@ Stream<String> lines = Files.lines(Path.of("data.txt"));
 
 Java provides specialized streams for primitives to avoid boxing overhead:
 
-| Stream | For type | Key extra methods |
-|--------|----------|------------------|
-| `IntStream` | `int` | `sum()`, `average()`, `range()` |
-| `LongStream` | `long` | `sum()`, `average()`, `range()` |
-| `DoubleStream` | `double` | `sum()`, `average()` |
+| Stream         | For type | Key extra methods               |
+|----------------|----------|---------------------------------|
+| `IntStream`    | `int`    | `sum()`, `average()`, `range()` |
+| `LongStream`   | `long`   | `sum()`, `average()`, `range()` |
+| `DoubleStream` | `double` | `sum()`, `average()`            |
 
 ```java
 int sum = IntStream.rangeClosed(1, 100).sum();
@@ -572,7 +579,8 @@ List<String> results = names.stream()
 
 ### Performance-critical code
 
-Streams have overhead from creating objects and method calls. For tight inner loops processing millions of elements where every nanosecond counts, a plain `for` loop may be faster. Profile before optimizing.
+Streams have overhead from creating objects and method calls. For tight inner loops processing millions of elements
+where every nanosecond counts, a plain `for` loop may be faster. Profile before optimizing.
 
 ### Checked exceptions
 
@@ -602,11 +610,14 @@ If every lambda needs a try/catch, a loop is usually cleaner.
 - **Functional interfaces** (`Predicate`, `Function`, `Consumer`, `Supplier`) define the shape of a lambda.
 - **Method references** (`String::toUpperCase`) are shorthand for simple lambdas.
 - **Streams** process collections declaratively through pipelines of filter/map/collect.
-- **Intermediate operations** (`filter`, `map`, `sorted`, `distinct`) are lazy -- they do not run until a terminal operation.
+- **Intermediate operations** (`filter`, `map`, `sorted`, `distinct`) are lazy -- they do not run until a terminal
+  operation.
 - **Terminal operations** (`toList`, `forEach`, `reduce`, `count`) trigger the pipeline and produce a result.
 - **Collectors** (`groupingBy`, `joining`, `toMap`) provide powerful aggregation.
 - Use streams for data processing pipelines; use loops for simple iterations and side effects.
 
-For advanced patterns including custom collectors, parallel streams, and function composition, see the [Streams and Collectors reference](/java/java-streams) and [Functional Interfaces reference](/java/functional-interfaces).
+For advanced patterns including custom collectors, parallel streams, and function composition, see
+the [Streams and Collectors reference](/java/java-streams)
+and [Functional Interfaces reference](/java/functional-interfaces).
 
 Next up: [Optionals](./16-optionals.md) -- eliminating `NullPointerException` with Java's `Optional<T>`.

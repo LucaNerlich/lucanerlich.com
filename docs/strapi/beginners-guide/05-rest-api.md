@@ -15,31 +15,34 @@ sidebar_position: 5
 
 # REST API
 
-Every content type in Strapi automatically gets a full REST API. No code required -- Strapi generates endpoints for CRUD operations, filtering, sorting, pagination, and more.
+Every content type in Strapi automatically gets a full REST API. No code required -- Strapi generates endpoints for CRUD
+operations, filtering, sorting, pagination, and more.
 
-In this chapter we will explore every aspect of the REST API using curl. Make sure your Strapi server is running (`npm run develop`) and you have some published content from the previous chapter.
+In this chapter we will explore every aspect of the REST API using curl. Make sure your Strapi server is running (
+`npm run develop`) and you have some published content from the previous chapter.
 
 ## Auto-generated endpoints
 
 For each **collection type**, Strapi creates these endpoints:
 
-| Method | Endpoint | Action |
-|--------|----------|--------|
-| `GET` | `/api/posts` | Find all posts |
-| `GET` | `/api/posts/:documentId` | Find one post |
-| `POST` | `/api/posts` | Create a post |
-| `PUT` | `/api/posts/:documentId` | Update a post |
-| `DELETE` | `/api/posts/:documentId` | Delete a post |
+| Method   | Endpoint                 | Action         |
+|----------|--------------------------|----------------|
+| `GET`    | `/api/posts`             | Find all posts |
+| `GET`    | `/api/posts/:documentId` | Find one post  |
+| `POST`   | `/api/posts`             | Create a post  |
+| `PUT`    | `/api/posts/:documentId` | Update a post  |
+| `DELETE` | `/api/posts/:documentId` | Delete a post  |
 
 For **single types**, the endpoints are simpler (no ID needed):
 
-| Method | Endpoint | Action |
-|--------|----------|--------|
-| `GET` | `/api/site-setting` | Get the single type |
-| `PUT` | `/api/site-setting` | Update the single type |
+| Method   | Endpoint            | Action                 |
+|----------|---------------------|------------------------|
+| `GET`    | `/api/site-setting` | Get the single type    |
+| `PUT`    | `/api/site-setting` | Update the single type |
 | `DELETE` | `/api/site-setting` | Delete the single type |
 
-> **Note:** By default, all endpoints require authentication. We will set up public access for read endpoints shortly. For now, we will use the admin panel to enable public access to the **find** and **findOne** actions.
+> **Note:** By default, all endpoints require authentication. We will set up public access for read endpoints shortly.
+> For now, we will use the admin panel to enable public access to the **find** and **findOne** actions.
 
 ## Enabling public access
 
@@ -91,12 +94,13 @@ Response:
 
 The response has two top-level keys:
 
-| Key | Contents |
-|-----|----------|
+| Key    | Contents                                          |
+|--------|---------------------------------------------------|
 | `data` | Array of entries (or a single object for findOne) |
-| `meta` | Pagination info |
+| `meta` | Pagination info                                   |
 
-Notice that **relations are not included** by default. The `author`, `category`, and `tags` fields are missing. You need to explicitly **populate** them.
+Notice that **relations are not included** by default. The `author`, `category`, and `tags` fields are missing. You need
+to explicitly **populate** them.
 
 ## Population
 
@@ -173,7 +177,8 @@ Dynamic zones need explicit population of each component type:
 curl "http://localhost:1337/api/pages?populate[blocks][populate]=*"
 ```
 
-> For advanced population patterns and performance considerations, see the [Relations and Population](/strapi/relations-and-population) reference.
+> For advanced population patterns and performance considerations, see
+> the [Relations and Population](/strapi/relations-and-population) reference.
 
 ## Filtering
 
@@ -191,22 +196,22 @@ curl "http://localhost:1337/api/posts?filters[title][$eq]=Getting%20Started%20wi
 
 ### Filter operators
 
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `$eq` | Equal | `filters[featured][$eq]=true` |
-| `$ne` | Not equal | `filters[featured][$ne]=true` |
-| `$lt` | Less than | `filters[id][$lt]=5` |
-| `$lte` | Less than or equal | `filters[id][$lte]=5` |
-| `$gt` | Greater than | `filters[id][$gt]=2` |
-| `$gte` | Greater than or equal | `filters[id][$gte]=2` |
-| `$in` | In array | `filters[id][$in][0]=1&filters[id][$in][1]=3` |
-| `$notIn` | Not in array | `filters[id][$notIn][0]=1` |
-| `$contains` | Contains (case-sensitive) | `filters[title][$contains]=Strapi` |
-| `$containsi` | Contains (case-insensitive) | `filters[title][$containsi]=strapi` |
-| `$startsWith` | Starts with | `filters[title][$startsWith]=Getting` |
-| `$endsWith` | Ends with | `filters[slug][$endsWith]=strapi` |
-| `$null` | Is null | `filters[excerpt][$null]=true` |
-| `$notNull` | Is not null | `filters[excerpt][$notNull]=true` |
+| Operator      | Description                 | Example                                       |
+|---------------|-----------------------------|-----------------------------------------------|
+| `$eq`         | Equal                       | `filters[featured][$eq]=true`                 |
+| `$ne`         | Not equal                   | `filters[featured][$ne]=true`                 |
+| `$lt`         | Less than                   | `filters[id][$lt]=5`                          |
+| `$lte`        | Less than or equal          | `filters[id][$lte]=5`                         |
+| `$gt`         | Greater than                | `filters[id][$gt]=2`                          |
+| `$gte`        | Greater than or equal       | `filters[id][$gte]=2`                         |
+| `$in`         | In array                    | `filters[id][$in][0]=1&filters[id][$in][1]=3` |
+| `$notIn`      | Not in array                | `filters[id][$notIn][0]=1`                    |
+| `$contains`   | Contains (case-sensitive)   | `filters[title][$contains]=Strapi`            |
+| `$containsi`  | Contains (case-insensitive) | `filters[title][$containsi]=strapi`           |
+| `$startsWith` | Starts with                 | `filters[title][$startsWith]=Getting`         |
+| `$endsWith`   | Ends with                   | `filters[slug][$endsWith]=strapi`             |
+| `$null`       | Is null                     | `filters[excerpt][$null]=true`                |
+| `$notNull`    | Is not null                 | `filters[excerpt][$notNull]=true`             |
 
 ### Filtering on relations
 
@@ -347,7 +352,8 @@ The `id` and `documentId` fields are always included.
 
 ## Creating entries via the API
 
-To create, update, or delete entries you need authentication (covered in the next chapter). Here is a preview using an API token:
+To create, update, or delete entries you need authentication (covered in the next chapter). Here is a preview using an
+API token:
 
 ```bash
 curl -X POST http://localhost:1337/api/posts \
@@ -465,15 +471,15 @@ Strapi returns structured errors:
 
 Common status codes:
 
-| Code | Meaning |
-|------|---------|
-| `200` | Success |
-| `201` | Created |
-| `400` | Bad request (validation error) |
+| Code  | Meaning                                 |
+|-------|-----------------------------------------|
+| `200` | Success                                 |
+| `201` | Created                                 |
+| `400` | Bad request (validation error)          |
 | `401` | Unauthorized (missing or invalid token) |
-| `403` | Forbidden (insufficient permissions) |
-| `404` | Not found |
-| `500` | Internal server error |
+| `403` | Forbidden (insufficient permissions)    |
+| `404` | Not found                               |
+| `500` | Internal server error                   |
 
 ## Summary
 
@@ -488,6 +494,8 @@ You learned:
 - **CRUD operations** via the API (create, read, update, delete)
 - The consistent **response format** and error handling
 
-The API is powerful but currently wide open for reads. In the next chapter we will lock it down with authentication and role-based permissions.
+The API is powerful but currently wide open for reads. In the next chapter we will lock it down with authentication and
+role-based permissions.
 
-Next up: [Authentication & Permissions](./06-authentication-and-permissions.md) -- JWT auth, user registration, roles, API tokens, and controlling who can access what.
+Next up: [Authentication & Permissions](./06-authentication-and-permissions.md) -- JWT auth, user registration, roles,
+API tokens, and controlling who can access what.

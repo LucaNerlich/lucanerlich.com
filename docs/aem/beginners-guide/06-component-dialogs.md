@@ -15,7 +15,9 @@ sidebar_position: 6
 
 # Component Dialogs
 
-Dialogs are the authoring interface for components. When an author double-clicks a component on a page, a dialog opens with form fields for configuring it. Every value the author enters is stored as a JCR property on the component's content node.
+Dialogs are the authoring interface for components. When an author double-clicks a component on a page, a dialog opens
+with form fields for configuring it. Every value the author enters is stored as a JCR property on the component's
+content node.
 
 ## Dialog structure
 
@@ -130,11 +132,11 @@ The dialog lives in `_cq_dialog/.content.xml` inside the component folder.
       filter="hierarchyNotFile"/>
 ```
 
-| `filter` value | Shows |
-|----------------|-------|
+| `filter` value     | Shows                  |
+|--------------------|------------------------|
 | `hierarchyNotFile` | Pages only (no assets) |
-| `nosystem` | Hides system paths |
-| (none) | Shows everything |
+| `nosystem`         | Hides system paths     |
+| (none)             | Shows everything       |
 
 ### Image upload (file upload)
 
@@ -210,10 +212,10 @@ Most components group fields into tabs:
 
 A common tab pattern:
 
-| Tab | Fields |
-|-----|--------|
-| **Content** | Title, text, image -- the main content |
-| **Style** | Alignment, color, size -- visual configuration |
+| Tab          | Fields                                             |
+|--------------|----------------------------------------------------|
+| **Content**  | Title, text, image -- the main content             |
+| **Style**    | Alignment, color, size -- visual configuration     |
 | **Advanced** | ID, CSS class, accessibility -- technical settings |
 
 ## Multifield -- repeatable field groups
@@ -288,10 +290,10 @@ Shows a red asterisk and prevents saving without a value.
 
 Built-in validators:
 
-| Validator | Validates |
-|-----------|-----------|
-| `email` | Email format |
-| `url` | URL format |
+| Validator             | Validates           |
+|-----------------------|---------------------|
+| `email`               | Email format        |
+| `url`                 | URL format          |
 | `foundation.jcr.name` | Valid JCR node name |
 
 ### Custom validation with granite:data
@@ -346,17 +348,18 @@ Show or hide fields based on another field's value using `granite:hide`:
 </externalLink>
 ```
 
-> **Note:** Show/hide requires custom JavaScript in the dialog or the use of a community library. The exact implementation depends on your project's setup.
+> **Note:** Show/hide requires custom JavaScript in the dialog or the use of a community library. The exact
+> implementation depends on your project's setup.
 
 ## The name attribute
 
 The `name` attribute on each field controls where the value is stored in the JCR:
 
-| Name value | Stored at |
-|-----------|-----------|
-| `./title` | `title` property on the component node |
-| `./jcr:title` | `jcr:title` property (standard JCR property) |
-| `./links/item0/label` | Nested under `links/item0` child node |
+| Name value            | Stored at                                    |
+|-----------------------|----------------------------------------------|
+| `./title`             | `title` property on the component node       |
+| `./jcr:title`         | `jcr:title` property (standard JCR property) |
+| `./links/item0/label` | Nested under `links/item0` child node        |
 
 The `./` prefix means "relative to the current resource" (the component's content node).
 
@@ -469,14 +472,17 @@ A complete dialog for a Hero banner component:
 </jcr:root>
 ```
 
-> For more dialog patterns and the full Granite UI component reference, see the [Touch UI Component Dialogs](/aem/component-dialogs) reference. See also [Coral UI](/aem/ui/coral-ui) for the underlying design system and [Custom Dialog Widgets](/aem/ui/custom-dialog-widgets) for building your own field types.
+> For more dialog patterns and the full Granite UI component reference, see
+> the [Touch UI Component Dialogs](/aem/component-dialogs) reference. See also [Coral UI](/aem/ui/coral-ui) for the
+> underlying design system and [Custom Dialog Widgets](/aem/ui/custom-dialog-widgets) for building your own field types.
 
 ## Summary
 
 You learned:
 
 - Dialog **structure** -- the nested XML hierarchy of containers, tabs, and fields
-- Common **field types**: textfield, textarea, RTE, numberfield, checkbox, select, pathfield, file upload, datepicker, colorfield, hidden
+- Common **field types**: textfield, textarea, RTE, numberfield, checkbox, select, pathfield, file upload, datepicker,
+  colorfield, hidden
 - **Tabs** for organizing fields into logical groups
 - **Multifield** for repeatable field groups
 - **Validation** -- required fields, regex patterns, built-in validators
@@ -484,4 +490,5 @@ You learned:
 - The **`name` attribute** and how it maps to JCR properties
 - A complete **Hero component dialog** example
 
-Next up: [Sling Models](./07-sling-models.md) -- injecting content into Java models, common annotations, adapters, exporters, and best practices.
+Next up: [Sling Models](./07-sling-models.md) -- injecting content into Java models, common annotations, adapters,
+exporters, and best practices.

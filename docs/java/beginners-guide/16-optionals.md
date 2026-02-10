@@ -15,14 +15,16 @@ sidebar_position: 16
 
 # Optionals
 
-`NullPointerException` is the most common runtime error in Java. It happens when you call a method on a `null` reference:
+`NullPointerException` is the most common runtime error in Java. It happens when you call a method on a `null`
+reference:
 
 ```java
 String name = null;
 System.out.println(name.length()); // NullPointerException
 ```
 
-`Optional<T>` is a container that either holds a value or is empty. It forces you to explicitly handle the "no value" case instead of hoping `null` never shows up.
+`Optional<T>` is a container that either holds a value or is empty. It forces you to explicitly handle the "no value"
+case instead of hoping `null` never shows up.
 
 ## The problem with `null`
 
@@ -42,7 +44,8 @@ User user = findUser(42);
 System.out.println(user.name()); // NullPointerException if user is null
 ```
 
-The problem: nothing in the method signature tells the caller that `null` is possible. The `null` check is easy to forget, and the crash happens somewhere far from the actual cause.
+The problem: nothing in the method signature tells the caller that `null` is possible. The `null` check is easy to
+forget, and the crash happens somewhere far from the actual cause.
 
 ## Creating Optionals
 
@@ -68,7 +71,8 @@ Optional<String> name = Optional.ofNullable(input);
 // Optional.empty if input is null
 ```
 
-Use `ofNullable()` when the value comes from code you do not control (database lookups, map gets, method calls that might return null).
+Use `ofNullable()` when the value comes from code you do not control (database lookups, map gets, method calls that
+might return null).
 
 ### `Optional.empty()` -- no value
 
@@ -103,7 +107,8 @@ Optional<String> empty = Optional.empty();
 empty.get(); // NoSuchElementException -- just as bad as NullPointerException
 ```
 
-**Never call `get()` without checking `isPresent()` first.** And if you are checking `isPresent()` before `get()`, there is always a better alternative below.
+**Never call `get()` without checking `isPresent()` first.** And if you are checking `isPresent()` before `get()`, there
+is always a better alternative below.
 
 ### `orElse()` -- provide a default value
 
@@ -233,7 +238,8 @@ This reads like a sentence: "Take the input, trim it, keep it if non-empty, uppe
 
 ## Refactoring the Task Manager
 
-In the CLI Task Manager from chapter 10, finding a task by ID returns null if not found. Let us refactor it to use Optional:
+In the CLI Task Manager from chapter 10, finding a task by ID returns null if not found. Let us refactor it to use
+Optional:
 
 ### Before -- returning null
 
@@ -274,7 +280,8 @@ Task task = manager.findById(id)
     .orElseThrow(() -> new IllegalArgumentException("Task " + id + " not found"));
 ```
 
-The return type `Optional<Task>` makes it clear that the task might not exist. The compiler forces the caller to handle it.
+The return type `Optional<Task>` makes it clear that the task might not exist. The compiler forces the caller to handle
+it.
 
 ### Using Optional with streams
 
@@ -357,7 +364,8 @@ class User {
 }
 ```
 
-`Optional` is designed for **return types** -- it signals that a method might not return a value. Using it for fields, parameters, or collections adds overhead and complexity.
+`Optional` is designed for **return types** -- it signals that a method might not return a value. Using it for fields,
+parameters, or collections adds overhead and complexity.
 
 ### Using Optional as a method parameter
 
@@ -403,26 +411,29 @@ return optional.map(String::toUpperCase).orElse("N/A");
 
 ## When to use what
 
-| Situation | Use |
-|-----------|-----|
-| Method might not return a value | `Optional<T>` return type |
-| Providing a default for a missing value | `orElse()` or `orElseGet()` |
-| Missing value is an error | `orElseThrow()` |
-| Transforming a value that might be null | `Optional.ofNullable(x).map(...)` |
-| Field that can be null | Plain `null` (Optional for the getter) |
-| Collection that can be empty | Return empty collection, not Optional |
-| Method parameter | Plain type with `@Nullable` annotation |
+| Situation                               | Use                                    |
+|-----------------------------------------|----------------------------------------|
+| Method might not return a value         | `Optional<T>` return type              |
+| Providing a default for a missing value | `orElse()` or `orElseGet()`            |
+| Missing value is an error               | `orElseThrow()`                        |
+| Transforming a value that might be null | `Optional.ofNullable(x).map(...)`      |
+| Field that can be null                  | Plain `null` (Optional for the getter) |
+| Collection that can be empty            | Return empty collection, not Optional  |
+| Method parameter                        | Plain type with `@Nullable` annotation |
 
 ## Summary
 
 - **`NullPointerException`** is Java's most common error -- `Optional` helps prevent it.
-- **`Optional.of()`** for non-null values, **`Optional.ofNullable()`** for possibly-null values, **`Optional.empty()`** for no value.
+- **`Optional.of()`** for non-null values, **`Optional.ofNullable()`** for possibly-null values, **`Optional.empty()`**
+  for no value.
 - **`orElse()`** and **`orElseGet()`** provide defaults; **`orElseThrow()`** fails with a clear error.
-- **`map()`** transforms the value; **`flatMap()`** unwraps nested Optionals; **`filter()`** conditionally keeps the value.
+- **`map()`** transforms the value; **`flatMap()`** unwraps nested Optionals; **`filter()`** conditionally keeps the
+  value.
 - **Chain operations** to build readable pipelines: `optional.map(...).filter(...).orElse(...)`.
 - Use Optional for **return types**, not for fields, parameters, or collections.
 - **Never call `get()`** without knowing the Optional is non-empty -- use `orElse` or `orElseThrow` instead.
 
-For advanced patterns including Optional with CompletableFuture and custom utility methods, see the [Optionals reference](/java/optionals).
+For advanced patterns including Optional with CompletableFuture and custom utility methods, see
+the [Optionals reference](/java/optionals).
 
 Next up: [Testing](./17-testing.md) -- writing tests for the Task Manager with JUnit 5.

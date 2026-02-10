@@ -31,15 +31,15 @@ graph TD
 Editable Templates replaced the legacy **Static Templates** (`cq:Template`, design mode,
 `/etc/designs/`). Key advantages:
 
-| Feature | Editable Templates | Static Templates (legacy) |
-|---------|-------------------|--------------------------|
-| **Who creates templates** | Template authors (non-developers) | Developers only |
-| **Structure changes** | Visual editor (no code deploy) | Code change + deploy |
-| **Component configuration** | Policies (per-template) | Design mode (global) |
-| **Storage** | `/conf/` (content) | `/etc/designs/` (code) |
-| **Initial content** | Visual authoring | JSP/HTML in code |
-| **Allowed components** | Per-container, per-template | Global or per-component-group |
-| **AEMaaCS** | Fully supported | Deprecated |
+| Feature                     | Editable Templates                | Static Templates (legacy)     |
+|-----------------------------|-----------------------------------|-------------------------------|
+| **Who creates templates**   | Template authors (non-developers) | Developers only               |
+| **Structure changes**       | Visual editor (no code deploy)    | Code change + deploy          |
+| **Component configuration** | Policies (per-template)           | Design mode (global)          |
+| **Storage**                 | `/conf/` (content)                | `/etc/designs/` (code)        |
+| **Initial content**         | Visual authoring                  | JSP/HTML in code              |
+| **Allowed components**      | Per-container, per-template       | Global or per-component-group |
+| **AEMaaCS**                 | Fully supported                   | Deprecated                    |
 
 ---
 
@@ -166,6 +166,7 @@ The Template Editor (**Tools > General > Templates**) provides three modes:
 ### Structure Mode
 
 Defines the **layout skeleton** of the page. Template authors can:
+
 - Add layout containers (responsive grids)
 - Lock or unlock containers (locked = authors cannot move/delete)
 - Configure allowed components per container
@@ -175,6 +176,7 @@ Defines the **layout skeleton** of the page. Template authors can:
 
 Sets **default content** that every new page created from this template starts with.
 For example:
+
 - A hero component with placeholder text
 - A breadcrumb component
 - A default footer fragment
@@ -185,6 +187,7 @@ Authors can modify this initial content when they create a page.
 
 Assigns **policies** to the page and to individual components. This is where you
 configure:
+
 - Which clientlibs the page loads
 - Which RTE formats are allowed in text components
 - Which image sizes are permitted
@@ -198,12 +201,12 @@ Page policies control **page-level settings** applied to all pages using a templ
 
 ### Common page policy properties
 
-| Property | Description |
-|----------|-------------|
-| `clientlibs` | Clientlib categories to load on every page |
-| `appResourcesPath` | Path prefix for clientlib proxy resolution |
-| `htmlPageItemsConfig` | Controls `<head>` and `<body>` element ordering |
-| `responsive/breakpoints` | Responsive grid breakpoint configuration |
+| Property                 | Description                                     |
+|--------------------------|-------------------------------------------------|
+| `clientlibs`             | Clientlib categories to load on every page      |
+| `appResourcesPath`       | Path prefix for clientlib proxy resolution      |
+| `htmlPageItemsConfig`    | Controls `<head>` and `<body>` element ordering |
+| `responsive/breakpoints` | Responsive grid breakpoint configuration        |
 
 ### Setting page policy via JCR
 
@@ -464,11 +467,11 @@ manages these mappings automatically.
 
 Template authors can **lock** containers and components in the structure:
 
-| Lock state | Author can... |
-|-----------|---------------|
-| **Locked** | Cannot move, delete, or restructure (can still edit content) |
-| **Unlocked (editable structure)** | Can add, move, and delete components |
-| **Initial content only** | Component is in initial content but not locked in structure |
+| Lock state                        | Author can...                                                |
+|-----------------------------------|--------------------------------------------------------------|
+| **Locked**                        | Cannot move, delete, or restructure (can still edit content) |
+| **Unlocked (editable structure)** | Can add, move, and delete components                         |
+| **Initial content only**          | Component is in initial content but not locked in structure  |
 
 Locking is set via the `cq:editable` property on the structure node.
 
@@ -557,15 +560,15 @@ content repository.
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Template not showing in "Create Page" | Check `status` is `enabled` and `allowedPaths` matches the current content path |
-| Component not available in a container | Open the template in Structure mode and check the container's policy for allowed components |
-| Policy values not picked up | Verify the `cq:policy` reference on the template points to the correct policy node |
-| Style System classes not applied | Ensure the component's HTL wrapper includes the `data-sly-use.style` binding or uses Core Components (which include it by default) |
-| Design mode settings ignored | Editable Templates do not use `/etc/designs/`; migrate to policies |
-| Initial content not appearing | Check the template's Initial Content mode; verify the components have content authored |
-| Template locked for editing | Only users with `template-authors` group membership can edit templates |
+| Pitfall                                | Solution                                                                                                                           |
+|----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| Template not showing in "Create Page"  | Check `status` is `enabled` and `allowedPaths` matches the current content path                                                    |
+| Component not available in a container | Open the template in Structure mode and check the container's policy for allowed components                                        |
+| Policy values not picked up            | Verify the `cq:policy` reference on the template points to the correct policy node                                                 |
+| Style System classes not applied       | Ensure the component's HTL wrapper includes the `data-sly-use.style` binding or uses Core Components (which include it by default) |
+| Design mode settings ignored           | Editable Templates do not use `/etc/designs/`; migrate to policies                                                                 |
+| Initial content not appearing          | Check the template's Initial Content mode; verify the components have content authored                                             |
+| Template locked for editing            | Only users with `template-authors` group membership can edit templates                                                             |
 
 ## See also
 

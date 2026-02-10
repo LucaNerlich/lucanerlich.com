@@ -15,11 +15,14 @@ sidebar_position: 1
 
 # Introduction & Environment Setup
 
-JavaScript is the programming language of the web. Every modern browser runs it, and with Node.js it runs on servers too. This guide takes you from zero to deploying a website on a VPS with nginx -- no prior programming experience required.
+JavaScript is the programming language of the web. Every modern browser runs it, and with Node.js it runs on servers
+too. This guide takes you from zero to deploying a website on a VPS with nginx -- no prior programming experience
+required.
 
 ## What is JavaScript?
 
-JavaScript is a **high-level, interpreted programming language**. That means you write human-readable code and the computer executes it directly -- no separate compilation step needed.
+JavaScript is a **high-level, interpreted programming language**. That means you write human-readable code and the
+computer executes it directly -- no separate compilation step needed.
 
 Three facts to remember:
 
@@ -27,7 +30,8 @@ Three facts to remember:
 2. **It runs on servers.** Node.js lets you use JavaScript outside the browser.
 3. **It is dynamically typed.** You do not need to declare what kind of data a variable holds.
 
-JavaScript was created in 1995 by Brendan Eich at Netscape. Despite the name, it has nothing to do with Java. Today it is one of the most widely used programming languages in the world.
+JavaScript was created in 1995 by Brendan Eich at Netscape. Despite the name, it has nothing to do with Java. Today it
+is one of the most widely used programming languages in the world.
 
 ## Where JavaScript runs
 
@@ -35,14 +39,15 @@ JavaScript was created in 1995 by Brendan Eich at Netscape. Despite the name, it
 
 Every web browser (Chrome, Firefox, Safari, Edge) has a built-in **JavaScript engine**:
 
-| Browser | Engine      |
-|---------|-------------|
-| Chrome  | V8          |
-| Firefox | SpiderMonkey|
+| Browser | Engine         |
+|---------|----------------|
+| Chrome  | V8             |
+| Firefox | SpiderMonkey   |
 | Safari  | JavaScriptCore |
-| Edge    | V8          |
+| Edge    | V8             |
 
-When you load a web page, the browser reads the HTML, applies the CSS, and executes any JavaScript it finds. This is **client-side** JavaScript.
+When you load a web page, the browser reads the HTML, applies the CSS, and executes any JavaScript it finds. This is *
+*client-side** JavaScript.
 
 ### Node.js
 
@@ -57,7 +62,8 @@ This is **server-side** JavaScript.
 
 ### Which one will we use?
 
-Both. We start with Node.js for learning fundamentals (it is simpler to run a script in the terminal), then move to the browser when we start working with HTML and the DOM.
+Both. We start with Node.js for learning fundamentals (it is simpler to run a script in the terminal), then move to the
+browser when we start working with HTML and the DOM.
 
 ## Setting up your environment
 
@@ -69,7 +75,8 @@ You need three things:
 
 ### Installing Node.js
 
-Go to [https://nodejs.org](https://nodejs.org) and download the **LTS** (Long Term Support) version. LTS is the stable, recommended release.
+Go to [https://nodejs.org](https://nodejs.org) and download the **LTS** (Long Term Support) version. LTS is the stable,
+recommended release.
 
 **macOS (with Homebrew):**
 
@@ -97,6 +104,7 @@ node --version
 ```
 
 Result:
+
 ```text
 v22.13.1
 ```
@@ -110,6 +118,7 @@ npm --version
 ```
 
 Result:
+
 ```text
 10.9.2
 ```
@@ -118,14 +127,15 @@ Result:
 
 Use any editor you like. Popular choices:
 
-| Editor | Notes |
-|--------|-------|
-| **VS Code** | Free, excellent JavaScript support, huge extension ecosystem |
-| **Cursor** | AI-powered fork of VS Code |
-| **WebStorm** | Paid, powerful refactoring and debugging tools |
-| **Sublime Text** | Lightweight and fast |
+| Editor           | Notes                                                        |
+|------------------|--------------------------------------------------------------|
+| **VS Code**      | Free, excellent JavaScript support, huge extension ecosystem |
+| **Cursor**       | AI-powered fork of VS Code                                   |
+| **WebStorm**     | Paid, powerful refactoring and debugging tools               |
+| **Sublime Text** | Lightweight and fast                                         |
 
-If you have no preference, start with [VS Code](https://code.visualstudio.com/) -- it is free and has the best JavaScript tooling out of the box.
+If you have no preference, start with [VS Code](https://code.visualstudio.com/) -- it is free and has the best
+JavaScript tooling out of the box.
 
 ### Using the browser console
 
@@ -142,6 +152,7 @@ console.log("Hello from the browser!");
 ```
 
 Result:
+
 ```text
 Hello from the browser!
 ```
@@ -165,6 +176,7 @@ node hello.js
 ```
 
 Result:
+
 ```text
 Hello, world!
 ```
@@ -192,7 +204,8 @@ Create a file called `index.html`:
 </html>
 ```
 
-Open this file in your browser (double-click it or drag it into the browser window). You will see the heading and the paragraph that JavaScript added. Open the console and you will see the log message.
+Open this file in your browser (double-click it or drag it into the browser window). You will see the heading and the
+paragraph that JavaScript added. Open the console and you will see the log message.
 
 ### Linking an external script
 
@@ -223,7 +236,8 @@ Refresh the page. Same result, but now your JavaScript lives in its own file.
 
 ## Comments
 
-Comments are notes in your code that JavaScript ignores. Use them to explain **why** something is done, not **what** it does.
+Comments are notes in your code that JavaScript ignores. Use them to explain **why** something is done, not **what** it
+does.
 
 ```js
 // This is a single-line comment
@@ -237,13 +251,15 @@ console.log("Comments do not affect execution"); // inline comment
 ```
 
 Result:
+
 ```text
 Comments do not affect execution
 ```
 
 ## Semicolons
 
-JavaScript has **automatic semicolon insertion** (ASI) -- the engine adds semicolons for you in most cases. However, relying on ASI can cause subtle bugs. The convention in this guide is to **always use semicolons**:
+JavaScript has **automatic semicolon insertion** (ASI) -- the engine adds semicolons for you in most cases. However,
+relying on ASI can cause subtle bugs. The convention in this guide is to **always use semicolons**:
 
 ```js
 // Recommended
@@ -270,6 +286,7 @@ undeclaredVariable = 42; // ReferenceError: undeclaredVariable is not defined
 ```
 
 Strict mode catches common mistakes like:
+
 - Using undeclared variables
 - Assigning to read-only properties
 - Duplicating parameter names
@@ -278,15 +295,16 @@ Always use strict mode. In modern JavaScript modules (which we will cover later)
 
 ## How this guide is structured
 
-| Part | Chapters | What you will learn |
-|------|----------|-------------------|
-| **1 -- Fundamentals** | 1--6 | Variables, types, control flow, functions, arrays, objects |
-| **2 -- The Browser** | 7--10 | HTML/CSS basics, DOM manipulation, events, fetching data |
-| **3 -- Build & Deploy** | 11--12 | Build a complete website, deploy it to a VPS with nginx |
-| **4 -- TypeScript** | 13 | Static types, interfaces, generics, utility types, migration |
-| **5 -- Going Deeper** | 14--15 | Error handling, regular expressions |
+| Part                    | Chapters | What you will learn                                          |
+|-------------------------|----------|--------------------------------------------------------------|
+| **1 -- Fundamentals**   | 1--6     | Variables, types, control flow, functions, arrays, objects   |
+| **2 -- The Browser**    | 7--10    | HTML/CSS basics, DOM manipulation, events, fetching data     |
+| **3 -- Build & Deploy** | 11--12   | Build a complete website, deploy it to a VPS with nginx      |
+| **4 -- TypeScript**     | 13       | Static types, interfaces, generics, utility types, migration |
+| **5 -- Going Deeper**   | 14--15   | Error handling, regular expressions                          |
 
-Each chapter builds on the previous one. Code examples include expected output so you can verify your work. By chapter 12, you will have a website live on the internet.
+Each chapter builds on the previous one. Code examples include expected output so you can verify your work. By chapter
+12, you will have a website live on the internet.
 
 ## Summary
 
@@ -296,4 +314,5 @@ Each chapter builds on the previous one. Code examples include expected output s
 - `console.log()` prints output to the terminal or browser console.
 - Use semicolons and strict mode for cleaner, safer code.
 
-Next up: [Variables, Types & Operators](./02-variables-and-types.md) -- where you will learn how to store and work with data.
+Next up: [Variables, Types & Operators](./02-variables-and-types.md) -- where you will learn how to store and work with
+data.

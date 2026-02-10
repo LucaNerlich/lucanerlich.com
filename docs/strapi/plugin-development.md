@@ -7,7 +7,8 @@ tags: [strapi, plugins, development, extensibility]
 
 # Plugin Development
 
-Plugins are Strapi's primary extension mechanism. They bundle backend logic (content types, services, controllers) and admin UI (React components, sidebar links, settings pages) into reusable packages.
+Plugins are Strapi's primary extension mechanism. They bundle backend logic (content types, services, controllers) and
+admin UI (React components, sidebar links, settings pages) into reusable packages.
 
 ## Plugin architecture
 
@@ -459,11 +460,11 @@ async create(data) {
 
 ## Plugin lifecycle
 
-| Phase | Method | Use case |
-|-------|--------|----------|
-| **Register** | `register()` | Register Document Service middleware, extend GraphQL schema, add middleware |
-| **Bootstrap** | `bootstrap()` | Seed data, set up cron jobs, register event listeners |
-| **Destroy** | `destroy()` | Clean up connections, stop timers |
+| Phase         | Method        | Use case                                                                    |
+|---------------|---------------|-----------------------------------------------------------------------------|
+| **Register**  | `register()`  | Register Document Service middleware, extend GraphQL schema, add middleware |
+| **Bootstrap** | `bootstrap()` | Seed data, set up cron jobs, register event listeners                       |
+| **Destroy**   | `destroy()`   | Clean up connections, stop timers                                           |
 
 ```ts
 export default {
@@ -545,13 +546,13 @@ npm install strapi-plugin-bookmarks
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Forgetting to export content types | Strapi doesn't create the database tables | Export from `server/src/content-types/index.ts` |
-| Plugin routes not working | 404 on all plugin endpoints | Routes are auto-prefixed with the plugin name |
-| Admin page not loading | Blank page in admin | Ensure `register()` calls `app.registerPlugin()` |
-| Missing translations | UI shows translation keys | Export `registerTrads` with locale files |
-| Accessing wrong service | `strapi.service()` returns undefined | Use `strapi.plugin('name').service('name')` |
+| Pitfall                            | Problem                                   | Fix                                              |
+|------------------------------------|-------------------------------------------|--------------------------------------------------|
+| Forgetting to export content types | Strapi doesn't create the database tables | Export from `server/src/content-types/index.ts`  |
+| Plugin routes not working          | 404 on all plugin endpoints               | Routes are auto-prefixed with the plugin name    |
+| Admin page not loading             | Blank page in admin                       | Ensure `register()` calls `app.registerPlugin()` |
+| Missing translations               | UI shows translation keys                 | Export `registerTrads` with locale files         |
+| Accessing wrong service            | `strapi.service()` returns undefined      | Use `strapi.plugin('name').service('name')`      |
 
 ---
 

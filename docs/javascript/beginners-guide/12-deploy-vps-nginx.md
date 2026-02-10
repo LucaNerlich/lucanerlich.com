@@ -15,24 +15,28 @@ sidebar_position: 12
 
 # Deploying to a VPS with Nginx
 
-You have a working website. Now let us put it on the internet. This chapter walks through the entire process: getting a server, setting it up, configuring nginx to serve your files, and securing the site with HTTPS.
+You have a working website. Now let us put it on the internet. This chapter walks through the entire process: getting a
+server, setting it up, configuring nginx to serve your files, and securing the site with HTTPS.
 
 ## What is a VPS?
 
-A **Virtual Private Server** (VPS) is a virtual machine running in a data center. You get root access to a full Linux server that runs 24/7. Unlike shared hosting, you control everything -- the operating system, the software, the firewall.
+A **Virtual Private Server** (VPS) is a virtual machine running in a data center. You get root access to a full Linux
+server that runs 24/7. Unlike shared hosting, you control everything -- the operating system, the software, the
+firewall.
 
 ### Choosing a provider
 
 Popular VPS providers:
 
-| Provider | Starting price | Notes |
-|----------|---------------|-------|
-| **Hetzner** | ~€4/month | Excellent value, EU and US data centers |
-| **DigitalOcean** | $6/month | Simple interface, good documentation |
-| **Linode (Akamai)** | $5/month | Solid reliability, good support |
-| **Vultr** | $6/month | Many locations worldwide |
+| Provider            | Starting price | Notes                                   |
+|---------------------|----------------|-----------------------------------------|
+| **Hetzner**         | ~€4/month      | Excellent value, EU and US data centers |
+| **DigitalOcean**    | $6/month       | Simple interface, good documentation    |
+| **Linode (Akamai)** | $5/month       | Solid reliability, good support         |
+| **Vultr**           | $6/month       | Many locations worldwide                |
 
-For a simple static website, the cheapest plan from any provider is more than enough. This guide uses **Ubuntu 22.04 LTS** as the operating system -- choose it when creating your server.
+For a simple static website, the cheapest plan from any provider is more than enough. This guide uses **Ubuntu 22.04 LTS
+** as the operating system -- choose it when creating your server.
 
 ### What you need before starting
 
@@ -43,7 +47,8 @@ For a simple static website, the cheapest plan from any provider is more than en
 
 ## Step 1: initial server setup
 
-When you create a VPS, the provider gives you the server's **IP address** and a **root password** (or lets you add an SSH key).
+When you create a VPS, the provider gives you the server's **IP address** and a **root password** (or lets you add an
+SSH key).
 
 ### Connect to your server
 
@@ -51,7 +56,8 @@ When you create a VPS, the provider gives you the server's **IP address** and a 
 ssh root@YOUR_SERVER_IP
 ```
 
-Replace `YOUR_SERVER_IP` with the actual IP (e.g., `203.0.113.42`). On the first connection, you will be asked to confirm the server's fingerprint -- type `yes`.
+Replace `YOUR_SERVER_IP` with the actual IP (e.g., `203.0.113.42`). On the first connection, you will be asked to
+confirm the server's fingerprint -- type `yes`.
 
 ### Update the system
 
@@ -77,7 +83,8 @@ usermod -aG sudo deploy
 
 ### Set up SSH key authentication
 
-SSH keys are more secure than passwords. On your **local machine** (not the server), generate a key pair if you do not already have one:
+SSH keys are more secure than passwords. On your **local machine** (not the server), generate a key pair if you do not
+already have one:
 
 ```bash
 ssh-keygen -t ed25519 -C "your_email@example.com"
@@ -120,7 +127,8 @@ Restart the SSH service:
 sudo systemctl restart sshd
 ```
 
-**Warning:** Make sure your SSH key login works before doing this. If you lock yourself out, you will need to use the provider's console access.
+**Warning:** Make sure your SSH key login works before doing this. If you lock yourself out, you will need to use the
+provider's console access.
 
 ## Step 2: set up the firewall
 
@@ -141,6 +149,7 @@ sudo ufw status
 ```
 
 Result:
+
 ```text
 Status: active
 
@@ -168,16 +177,17 @@ Open your browser and navigate to `http://YOUR_SERVER_IP`. You should see the de
 
 ### How nginx works
 
-Nginx is a **web server** -- it listens for HTTP requests and serves files in response. For a static website, nginx simply serves your HTML, CSS, and JavaScript files directly to the browser.
+Nginx is a **web server** -- it listens for HTTP requests and serves files in response. For a static website, nginx
+simply serves your HTML, CSS, and JavaScript files directly to the browser.
 
 The configuration lives in `/etc/nginx/`. Key paths:
 
-| Path | Purpose |
-|------|---------|
-| `/etc/nginx/nginx.conf` | Main configuration |
-| `/etc/nginx/sites-available/` | Site configurations (available) |
-| `/etc/nginx/sites-enabled/` | Site configurations (active -- symlinks) |
-| `/var/www/` | Convention for website files |
+| Path                          | Purpose                                  |
+|-------------------------------|------------------------------------------|
+| `/etc/nginx/nginx.conf`       | Main configuration                       |
+| `/etc/nginx/sites-available/` | Site configurations (available)          |
+| `/etc/nginx/sites-enabled/`   | Site configurations (active -- symlinks) |
+| `/var/www/`                   | Convention for website files             |
 
 ## Step 4: upload your website files
 
@@ -195,6 +205,7 @@ rsync -avz --delete ./my-website/ deploy@YOUR_SERVER_IP:/var/www/mysite/
 ```
 
 Breakdown:
+
 - `-a` -- archive mode (preserves permissions, timestamps)
 - `-v` -- verbose output
 - `-z` -- compress during transfer
@@ -213,6 +224,7 @@ ssh deploy@YOUR_SERVER_IP "ls -la /var/www/mysite/"
 ```
 
 Result:
+
 ```text
 total 24
 drwxr-xr-x 5 deploy deploy 4096 Jan 15 10:00 .
@@ -287,6 +299,7 @@ sudo nginx -t
 ```
 
 Result:
+
 ```text
 nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 nginx: configuration file /etc/nginx/nginx.conf test is successful
@@ -307,10 +320,10 @@ If you have a domain name, point it to your server:
 1. Go to your domain registrar's DNS settings
 2. Add an **A record** pointing to your server's IP:
 
-| Type | Name | Value | TTL |
-|------|------|-------|-----|
-| A | @ | YOUR_SERVER_IP | 300 |
-| A | www | YOUR_SERVER_IP | 300 |
+| Type | Name | Value          | TTL |
+|------|------|----------------|-----|
+| A    | @    | YOUR_SERVER_IP | 300 |
+| A    | www  | YOUR_SERVER_IP | 300 |
 
 DNS changes can take a few minutes to a few hours to propagate. You can check with:
 
@@ -347,6 +360,7 @@ sudo certbot --nginx -d yoursite.com -d www.yoursite.com
 ```
 
 Certbot will:
+
 1. Verify you own the domain
 2. Obtain a certificate
 3. Automatically update your nginx config to use HTTPS
@@ -529,7 +543,8 @@ Here is everything we did, in order:
 
 ## What comes next
 
-You now have a website live on the internet, served by nginx over HTTPS. The next chapter introduces **TypeScript** -- static types for JavaScript that catch bugs before they reach production.
+You now have a website live on the internet, served by nginx over HTTPS. The next chapter introduces **TypeScript** --
+static types for JavaScript that catch bugs before they reach production.
 
 Continue with: [TypeScript](./13-typescript.md)
 
@@ -551,4 +566,6 @@ After that, you could:
 - **Fail2Ban** and **unattended-upgrades** protect against common threats.
 - Deploy updates with a single `rsync` command.
 
-Congratulations -- you have gone from writing your first `console.log("Hello, world!")` to deploying a live website. The fundamentals you have learned (variables, functions, arrays, objects, DOM, events, fetch, deployment) are the foundation for everything else in web development. Keep building.
+Congratulations -- you have gone from writing your first `console.log("Hello, world!")` to deploying a live website. The
+fundamentals you have learned (variables, functions, arrays, objects, DOM, events, fetch, deployment) are the foundation
+for everything else in web development. Keep building.

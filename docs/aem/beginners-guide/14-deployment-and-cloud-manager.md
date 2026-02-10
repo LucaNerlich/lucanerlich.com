@@ -15,7 +15,9 @@ sidebar_position: 14
 
 # Deployment & Cloud Manager
 
-In AEM as a Cloud Service, you do not deploy by copying files to a server. Instead, you push code to a **Git repository** and **Cloud Manager** builds, tests, and deploys it through a pipeline. This chapter covers the entire path from code to production.
+In AEM as a Cloud Service, you do not deploy by copying files to a server. Instead, you push code to a **Git repository
+** and **Cloud Manager** builds, tests, and deploys it through a pipeline. This chapter covers the entire path from code
+to production.
 
 ## The deployment model
 
@@ -37,13 +39,13 @@ flowchart LR
     Stage -->|"Approve & promote"| Prod
 ```
 
-| Step | What happens |
-|------|-------------|
-| **Push** | Developer pushes code to the Cloud Manager Git repo |
-| **Build** | Maven builds the project, runs tests, validates code quality |
-| **Deploy to Dev** | The `all` package is deployed to the development environment |
-| **Promote to Stage** | After dev validation, promote to staging |
-| **Approve & go live** | Business approval, then deploy to production |
+| Step                  | What happens                                                 |
+|-----------------------|--------------------------------------------------------------|
+| **Push**              | Developer pushes code to the Cloud Manager Git repo          |
+| **Build**             | Maven builds the project, runs tests, validates code quality |
+| **Deploy to Dev**     | The `all` package is deployed to the development environment |
+| **Promote to Stage**  | After dev validation, promote to staging                     |
+| **Approve & go live** | Business approval, then deploy to production                 |
 
 ## Cloud Manager
 
@@ -76,12 +78,12 @@ flowchart TD
     Program --> RDE
 ```
 
-| Environment | Purpose | Access |
-|-------------|---------|--------|
-| **Dev** | Development and integration testing | Developers |
-| **Stage** | Pre-production testing, UAT | QA team, stakeholders |
-| **Production** | Live site | End users |
-| **RDE** | Rapid iteration (no pipeline needed) | Developers |
+| Environment    | Purpose                              | Access                |
+|----------------|--------------------------------------|-----------------------|
+| **Dev**        | Development and integration testing  | Developers            |
+| **Stage**      | Pre-production testing, UAT          | QA team, stakeholders |
+| **Production** | Live site                            | End users             |
+| **RDE**        | Rapid iteration (no pipeline needed) | Developers            |
 
 ## Git repository
 
@@ -110,7 +112,8 @@ git remote add adobe https://git.cloudmanager.adobe.com/<org>/<program>/
 git push adobe main
 ```
 
-Or use Cloud Manager's Git directly as your primary repo. Many teams use GitHub/GitLab as the primary repo and sync to Cloud Manager via CI/CD.
+Or use Cloud Manager's Git directly as your primary repo. Many teams use GitHub/GitLab as the primary repo and sync to
+Cloud Manager via CI/CD.
 
 ## Pipelines
 
@@ -118,12 +121,12 @@ Pipelines automate the build-test-deploy process.
 
 ### Pipeline types
 
-| Type | What it does |
-|------|-------------|
+| Type           | What it does                                                |
+|----------------|-------------------------------------------------------------|
 | **Full-stack** | Builds and deploys everything (code + content + Dispatcher) |
-| **Frontend** | Builds and deploys only `ui.frontend` (fast CSS/JS updates) |
-| **Config** | Deploys only configuration (CDN, WAF, traffic filter rules) |
-| **Web Tier** | Deploys only Dispatcher configuration |
+| **Frontend**   | Builds and deploys only `ui.frontend` (fast CSS/JS updates) |
+| **Config**     | Deploys only configuration (CDN, WAF, traffic filter rules) |
+| **Web Tier**   | Deploys only Dispatcher configuration                       |
 
 ### Full-stack pipeline stages
 
@@ -162,8 +165,8 @@ flowchart LR
 3. Choose **Production** or **Non-Production**
 4. Select the pipeline type (Full-stack)
 5. Configure the trigger:
-   - **On Git Changes** -- auto-trigger on push
-   - **Manual** -- trigger manually
+    - **On Git Changes** -- auto-trigger on push
+    - **Manual** -- trigger manually
 6. Select the Git branch
 7. Configure quality gates (code coverage thresholds, etc.)
 
@@ -172,26 +175,27 @@ flowchart LR
 1. Click **Run** on the pipeline
 2. Watch the stages execute in the Cloud Manager UI
 3. If a stage fails, review the logs:
-   - Build logs for compilation errors
-   - Test logs for test failures
-   - Quality logs for SonarQube issues
+    - Build logs for compilation errors
+    - Test logs for test failures
+    - Quality logs for SonarQube issues
 
 ### Code quality gates
 
 Cloud Manager enforces code quality:
 
-| Gate | Requirement |
-|------|-------------|
+| Gate                   | Requirement                 |
+|------------------------|-----------------------------|
 | **Unit test coverage** | Minimum coverage percentage |
-| **Reliability rating** | No critical bugs |
-| **Security rating** | No critical vulnerabilities |
-| **Maintainability** | Acceptable code smell count |
+| **Reliability rating** | No critical bugs            |
+| **Security rating**    | No critical vulnerabilities |
+| **Maintainability**    | Acceptable code smell count |
 
 Failing quality gates blocks deployment. You can override non-critical failures, but this requires manager approval.
 
 ## Rapid Development Environments (RDE)
 
-RDEs are **fast-iteration environments** for developers. Unlike the full pipeline (which takes 30--60 minutes), RDE deployments take **seconds**.
+RDEs are **fast-iteration environments** for developers. Unlike the full pipeline (which takes 30--60 minutes), RDE
+deployments take **seconds**.
 
 ### Setting up an RDE
 
@@ -271,12 +275,12 @@ flowchart LR
 
 ### What to transfer
 
-| Content | When to transfer |
-|---------|-----------------|
-| **Pages** | Copy production pages to dev for testing |
-| **Assets** | Copy DAM assets for realistic testing |
-| **Users/Groups** | Sync permissions |
-| **Configurations** | Templates, Cloud Configs |
+| Content            | When to transfer                         |
+|--------------------|------------------------------------------|
+| **Pages**          | Copy production pages to dev for testing |
+| **Assets**         | Copy DAM assets for realistic testing    |
+| **Users/Groups**   | Sync permissions                         |
+| **Configurations** | Templates, Cloud Configs                 |
 
 > **Warning:** Never transfer content from dev to production. The pipeline handles code deployment.
 
@@ -302,11 +306,11 @@ AEMaaCS supports environment-specific variables in Cloud Manager:
 2. Click **Configuration**
 3. Add variables:
 
-| Variable | Type | Example |
-|----------|------|---------|
-| `API_KEY` | Secret | `sk-abc123...` |
-| `ANALYTICS_ID` | Standard | `UA-12345-1` |
-| `FEATURE_FLAG` | Standard | `true` |
+| Variable       | Type     | Example        |
+|----------------|----------|----------------|
+| `API_KEY`      | Secret   | `sk-abc123...` |
+| `ANALYTICS_ID` | Standard | `UA-12345-1`   |
+| `FEATURE_FLAG` | Standard | `true`         |
 
 Access in OSGi configs:
 
@@ -336,13 +340,13 @@ Access logs from Cloud Manager:
 2. Click **Logs**
 3. Available logs:
 
-| Log | Contains |
-|-----|----------|
-| **aemerror** | AEM error log |
+| Log            | Contains         |
+|----------------|------------------|
+| **aemerror**   | AEM error log    |
 | **aemrequest** | HTTP request log |
-| **aemaccess** | Access log |
-| **dispatcher** | Dispatcher log |
-| **cdn** | CDN log |
+| **aemaccess**  | Access log       |
+| **dispatcher** | Dispatcher log   |
+| **cdn**        | CDN log          |
 
 ### Log tailing
 
@@ -368,22 +372,24 @@ Configure log levels via OSGi:
 
 Before your first production deployment:
 
-| Area | Check |
-|------|-------|
-| **Code quality** | All quality gates pass |
-| **Tests** | Unit, integration, and UI tests pass |
-| **Dispatcher** | Config validated with Dispatcher SDK |
-| **Performance** | Load testing completed |
-| **Security** | Security scan passes, sensitive paths blocked |
-| **SEO** | Sitemap, robots.txt, canonical URLs, meta tags |
-| **Analytics** | Tracking configured and verified |
-| **Content** | Content authored and reviewed |
-| **Redirects** | Old URL redirects configured |
-| **DNS** | Domain pointed to Adobe CDN |
-| **SSL** | Certificate provisioned via Cloud Manager |
-| **Monitoring** | Alerts configured for errors and performance |
+| Area             | Check                                          |
+|------------------|------------------------------------------------|
+| **Code quality** | All quality gates pass                         |
+| **Tests**        | Unit, integration, and UI tests pass           |
+| **Dispatcher**   | Config validated with Dispatcher SDK           |
+| **Performance**  | Load testing completed                         |
+| **Security**     | Security scan passes, sensitive paths blocked  |
+| **SEO**          | Sitemap, robots.txt, canonical URLs, meta tags |
+| **Analytics**    | Tracking configured and verified               |
+| **Content**      | Content authored and reviewed                  |
+| **Redirects**    | Old URL redirects configured                   |
+| **DNS**          | Domain pointed to Adobe CDN                    |
+| **SSL**          | Certificate provisioned via Cloud Manager      |
+| **Monitoring**   | Alerts configured for errors and performance   |
 
-> For deeper deployment patterns, see the [Deployment](/aem/infrastructure/deployment), [Cloud Service](/aem/infrastructure/cloud-service), [Testing](/aem/infrastructure/testing), and [Security Basics](/aem/infrastructure/security) references.
+> For deeper deployment patterns, see
+> the [Deployment](/aem/infrastructure/deployment), [Cloud Service](/aem/infrastructure/cloud-service), [Testing](/aem/infrastructure/testing),
+> and [Security Basics](/aem/infrastructure/security) references.
 
 ## Summary
 
@@ -410,4 +416,5 @@ You have completed the AEM Beginners Guide! You now understand:
 - **Multi-site and multi-language** management (MSM, i18n)
 - **Production operations** (Dispatcher, Cloud Manager, deployment)
 
-From here, explore the [AEM reference documentation](/aem/architecture) for deep dives into specific topics, and start building your own AEM project!
+From here, explore the [AEM reference documentation](/aem/architecture) for deep dives into specific topics, and start
+building your own AEM project!

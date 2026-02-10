@@ -212,12 +212,12 @@ Optional<Integer> sum = List.of(1, 2, 3)
 
 ## Optional vs null: when to use which
 
-| Use Optional | Use null |
-|-------------|---------|
-| Method return types where "no value" is a valid outcome | Private fields (Optional has memory overhead) |
-| API boundaries (public methods) | Performance-critical inner loops |
-| Stream terminal operations (findFirst, min, max) | When the method contract clearly states non-null |
-| When you want to chain transformations | Collections (use empty collection instead of null) |
+| Use Optional                                            | Use null                                           |
+|---------------------------------------------------------|----------------------------------------------------|
+| Method return types where "no value" is a valid outcome | Private fields (Optional has memory overhead)      |
+| API boundaries (public methods)                         | Performance-critical inner loops                   |
+| Stream terminal operations (findFirst, min, max)        | When the method contract clearly states non-null   |
+| When you want to chain transformations                  | Collections (use empty collection instead of null) |
 
 ### Rule of thumb
 
@@ -296,14 +296,14 @@ return optional.map(String::toUpperCase).orElse("DEFAULT");
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| `Optional.of(null)` | Throws `NullPointerException` immediately | Use `Optional.ofNullable(value)` |
-| `Optional.get()` without check | Throws `NoSuchElementException` | Use `orElse()`, `orElseThrow()`, or `ifPresent()` |
-| Optional as field | Not Serializable; memory overhead | Store null, expose `Optional` via getter |
-| `orElse()` with expensive default | `orElse(expensiveCall())` always evaluates the argument | Use `orElseGet(() -> expensiveCall())` for lazy evaluation |
-| Optional in collections | `List<Optional<String>>` is confusing | Filter nulls before collecting, or use `flatMap(Optional::stream)` |
-| Nested Optionals | `Optional<Optional<T>>` from `map` returning Optional | Use `flatMap` instead of `map` |
+| Pitfall                           | Problem                                                 | Fix                                                                |
+|-----------------------------------|---------------------------------------------------------|--------------------------------------------------------------------|
+| `Optional.of(null)`               | Throws `NullPointerException` immediately               | Use `Optional.ofNullable(value)`                                   |
+| `Optional.get()` without check    | Throws `NoSuchElementException`                         | Use `orElse()`, `orElseThrow()`, or `ifPresent()`                  |
+| Optional as field                 | Not Serializable; memory overhead                       | Store null, expose `Optional` via getter                           |
+| `orElse()` with expensive default | `orElse(expensiveCall())` always evaluates the argument | Use `orElseGet(() -> expensiveCall())` for lazy evaluation         |
+| Optional in collections           | `List<Optional<String>>` is confusing                   | Filter nulls before collecting, or use `flatMap(Optional::stream)` |
+| Nested Optionals                  | `Optional<Optional<T>>` from `map` returning Optional   | Use `flatMap` instead of `map`                                     |
 
 ---
 

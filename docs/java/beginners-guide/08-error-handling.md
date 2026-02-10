@@ -15,7 +15,8 @@ sidebar_position: 8
 
 # Error Handling
 
-Things go wrong. Files are missing, network requests fail, users enter bad data. Java uses **exceptions** to handle errors in a structured way. This chapter covers the essentials.
+Things go wrong. Files are missing, network requests fail, users enter bad data. Java uses **exceptions** to handle
+errors in a structured way. This chapter covers the essentials.
 
 ## The basics: `try` / `catch`
 
@@ -33,6 +34,7 @@ System.out.println("Program continues");
 ```
 
 Result:
+
 ```text
 Error: / by zero
 Program continues
@@ -61,14 +63,15 @@ Throwable
 
 ### Checked vs unchecked
 
-| | Checked | Unchecked |
-|---|---------|-----------|
-| **Extends** | `Exception` | `RuntimeException` |
-| **Compiler enforcement** | Must be caught or declared with `throws` | No enforcement |
-| **Cause** | External factors (files, network, I/O) | Programming bugs |
-| **Examples** | `IOException`, `SQLException` | `NullPointerException`, `IllegalArgumentException` |
+|                          | Checked                                  | Unchecked                                          |
+|--------------------------|------------------------------------------|----------------------------------------------------|
+| **Extends**              | `Exception`                              | `RuntimeException`                                 |
+| **Compiler enforcement** | Must be caught or declared with `throws` | No enforcement                                     |
+| **Cause**                | External factors (files, network, I/O)   | Programming bugs                                   |
+| **Examples**             | `IOException`, `SQLException`            | `NullPointerException`, `IllegalArgumentException` |
 
-The compiler forces you to handle checked exceptions. Unchecked exceptions indicate bugs that should be fixed in the code.
+The compiler forces you to handle checked exceptions. Unchecked exceptions indicate bugs that should be fixed in the
+code.
 
 ## `finally`
 
@@ -87,13 +90,15 @@ try {
 ```
 
 Result:
+
 ```text
 Trying...
 Result: 5
 This always runs
 ```
 
-`finally` is commonly used for cleanup (closing files, connections). But in modern Java, **try-with-resources** is preferred (covered below).
+`finally` is commonly used for cleanup (closing files, connections). But in modern Java, **try-with-resources** is
+preferred (covered below).
 
 ## Catching multiple exceptions
 
@@ -111,6 +116,7 @@ try {
 ```
 
 Result:
+
 ```text
 Null pointer: Cannot invoke "String.length()" because "text" is null
 ```
@@ -133,6 +139,7 @@ try {
 ```
 
 Result:
+
 ```text
 Bad input: Index 0 out of bounds for length 0
 ```
@@ -161,6 +168,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 5
 Error: Divisor cannot be zero
@@ -190,6 +198,7 @@ public static void main(String[] args) {
 ```
 
 Result (when file does not exist):
+
 ```text
 File error: data.txt
 ```
@@ -251,6 +260,7 @@ try {
 ```
 
 Result:
+
 ```text
 Balance: 50.0
 Error: Cannot withdraw 80.00 from balance 50.00
@@ -259,8 +269,10 @@ Tried to withdraw: 80.0
 
 ### When to use checked vs unchecked
 
-- **Unchecked (`RuntimeException`):** programming errors, invalid arguments, illegal state -- the caller cannot reasonably recover.
-- **Checked (`Exception`):** recoverable situations like file not found, network timeout -- the caller should be forced to handle it.
+- **Unchecked (`RuntimeException`):** programming errors, invalid arguments, illegal state -- the caller cannot
+  reasonably recover.
+- **Checked (`Exception`):** recoverable situations like file not found, network timeout -- the caller should be forced
+  to handle it.
 
 In practice, most modern Java code favors unchecked exceptions.
 
@@ -284,7 +296,8 @@ try (BufferedReader reader = new BufferedReader(new FileReader("example.txt"))) 
 // reader is automatically closed here, even if an exception occurred
 ```
 
-Resources in the `try(...)` declaration must implement `AutoCloseable`. This pattern replaces the old `try/finally` approach for cleanup and is less error-prone.
+Resources in the `try(...)` declaration must implement `AutoCloseable`. This pattern replaces the old `try/finally`
+approach for cleanup and is less error-prone.
 
 ### Multiple resources
 
@@ -306,19 +319,19 @@ try (
 
 ## Common exceptions and what they mean
 
-| Exception | When it happens |
-|-----------|----------------|
-| `NullPointerException` | Calling a method on `null` |
-| `ArrayIndexOutOfBoundsException` | Array index is negative or >= length |
-| `StringIndexOutOfBoundsException` | String index out of range |
-| `NumberFormatException` | Parsing a non-numeric string as a number |
-| `IllegalArgumentException` | Method called with invalid arguments |
-| `IllegalStateException` | Object is in wrong state for the operation |
-| `ClassCastException` | Invalid type cast |
-| `IOException` | File/network I/O failure |
-| `FileNotFoundException` | File does not exist |
-| `StackOverflowError` | Infinite recursion |
-| `OutOfMemoryError` | JVM ran out of memory |
+| Exception                         | When it happens                            |
+|-----------------------------------|--------------------------------------------|
+| `NullPointerException`            | Calling a method on `null`                 |
+| `ArrayIndexOutOfBoundsException`  | Array index is negative or >= length       |
+| `StringIndexOutOfBoundsException` | String index out of range                  |
+| `NumberFormatException`           | Parsing a non-numeric string as a number   |
+| `IllegalArgumentException`        | Method called with invalid arguments       |
+| `IllegalStateException`           | Object is in wrong state for the operation |
+| `ClassCastException`              | Invalid type cast                          |
+| `IOException`                     | File/network I/O failure                   |
+| `FileNotFoundException`           | File does not exist                        |
+| `StackOverflowError`              | Infinite recursion                         |
+| `OutOfMemoryError`                | JVM ran out of memory                      |
 
 ## Exception best practices
 
@@ -429,7 +442,8 @@ public static void main(String[] args) {
 }
 ```
 
-For a comprehensive guide covering Result/Either patterns and advanced exception strategies, see the [Error Handling deep dive](../error-handling.md).
+For a comprehensive guide covering Result/Either patterns and advanced exception strategies, see
+the [Error Handling deep dive](../error-handling.md).
 
 ## Summary
 

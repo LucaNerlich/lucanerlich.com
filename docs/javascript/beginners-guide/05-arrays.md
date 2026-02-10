@@ -34,6 +34,7 @@ console.log(mixed);
 ```
 
 Result:
+
 ```text
 [ 'apple', 'banana', 'cherry' ]
 []
@@ -54,6 +55,7 @@ console.log(colors[3]); // out of bounds -- undefined, not an error
 ```
 
 Result:
+
 ```text
 red
 green
@@ -69,6 +71,7 @@ console.log(items.length);
 ```
 
 Result:
+
 ```text
 4
 ```
@@ -85,6 +88,7 @@ console.log(items.at(-2));
 ```
 
 Result:
+
 ```text
 d
 d
@@ -100,11 +104,13 @@ console.log(colors);
 ```
 
 Result:
+
 ```text
 [ 'red', 'yellow', 'blue' ]
 ```
 
-Note: even though `colors` is declared with `const`, you can modify the array contents. `const` prevents reassigning the variable, not mutating the value.
+Note: even though `colors` is declared with `const`, you can modify the array contents. `const` prevents reassigning the
+variable, not mutating the value.
 
 ## Adding and removing elements
 
@@ -122,6 +128,7 @@ console.log(stack);
 ```
 
 Result:
+
 ```text
 [ 1, 2, 3, 4 ]
 4
@@ -142,6 +149,7 @@ console.log(queue);
 ```
 
 Result:
+
 ```text
 [ 1, 2, 3, 4 ]
 1
@@ -160,6 +168,7 @@ console.log(letters);
 ```
 
 Result:
+
 ```text
 [ 'b', 'c' ]
 [ 'a', 'd', 'e' ]
@@ -176,6 +185,7 @@ console.log(nums);
 ```
 
 Result:
+
 ```text
 [ 1, 2, 3, 4, 5, 6 ]
 ```
@@ -191,6 +201,7 @@ console.log(items);
 ```
 
 Result:
+
 ```text
 [ 'a', 'B', 'c' ]
 ```
@@ -207,6 +218,7 @@ console.log(fruits.indexOf("grape")); // -1 means not found
 ```
 
 Result:
+
 ```text
 true
 false
@@ -229,6 +241,7 @@ for (const name of names) {
 ```
 
 Result:
+
 ```text
 Alice
 Bob
@@ -248,6 +261,7 @@ numbers.forEach((num, index) => {
 ```
 
 Result:
+
 ```text
 Index 0: 10
 Index 1: 20
@@ -271,6 +285,7 @@ console.log(numbers); // original unchanged
 ```
 
 Result:
+
 ```text
 [ 2, 4, 6, 8, 10 ]
 [ 1, 2, 3, 4, 5 ]
@@ -290,6 +305,7 @@ console.log(names);
 ```
 
 Result:
+
 ```text
 [ 'Ada', 'Grace', 'Alan' ]
 ```
@@ -306,6 +322,7 @@ console.log(evens);
 ```
 
 Result:
+
 ```text
 [ 2, 4, 6, 8, 10 ]
 ```
@@ -325,6 +342,7 @@ console.log(affordable);
 ```
 
 Result:
+
 ```text
 [ { name: 'Mouse', price: 29 }, { name: 'Keyboard', price: 79 } ]
 ```
@@ -344,6 +362,7 @@ console.log(sum);
 ```
 
 Result:
+
 ```text
 15
 ```
@@ -352,11 +371,11 @@ How it works, step by step:
 
 | Step | accumulator | current | Result |
 |------|-------------|---------|--------|
-| 1 | 0 (initial) | 1 | 1 |
-| 2 | 1 | 2 | 3 |
-| 3 | 3 | 3 | 6 |
-| 4 | 6 | 4 | 10 |
-| 5 | 10 | 5 | 15 |
+| 1    | 0 (initial) | 1       | 1      |
+| 2    | 1           | 2       | 3      |
+| 3    | 3           | 3       | 6      |
+| 4    | 6           | 4       | 10     |
+| 5    | 10          | 5       | 15     |
 
 Practical example -- counting occurrences:
 
@@ -372,6 +391,7 @@ console.log(counts);
 ```
 
 Result:
+
 ```text
 { apple: 3, banana: 2, cherry: 1 }
 ```
@@ -392,6 +412,7 @@ console.log(admin);
 ```
 
 Result:
+
 ```text
 { name: 'Ada', role: 'admin' }
 ```
@@ -405,6 +426,7 @@ console.log(index);
 ```
 
 Result:
+
 ```text
 2
 ```
@@ -425,6 +447,7 @@ console.log(allExcellent);
 ```
 
 Result:
+
 ```text
 true
 true
@@ -453,6 +476,7 @@ console.log(adultNames);
 ```
 
 Result:
+
 ```text
 [ 'Ada', 'Charlie', 'Eve' ]
 ```
@@ -470,6 +494,7 @@ console.log(fruits);
 ```
 
 Result:
+
 ```text
 [ 'apple', 'banana', 'cherry' ]
 ```
@@ -483,6 +508,7 @@ console.log(numbers);
 ```
 
 Result:
+
 ```text
 [ 10, 2, 30, 4, 5 ]
 ```
@@ -502,12 +528,14 @@ console.log(numbers);
 ```
 
 Result:
+
 ```text
 [ 2, 4, 5, 10, 30 ]
 [ 30, 10, 5, 4, 2 ]
 ```
 
 The compare function returns:
+
 - A **negative** number: `a` comes first
 - **Zero**: order unchanged
 - A **positive** number: `b` comes first
@@ -526,6 +554,7 @@ console.log(users.map((u) => `${u.name} (${u.age})`));
 ```
 
 Result:
+
 ```text
 [ 'Bob (17)', 'Charlie (25)', 'Ada (36)' ]
 ```
@@ -541,6 +570,7 @@ console.log(sorted);
 ```
 
 Result:
+
 ```text
 [ 3, 1, 2 ]
 [ 1, 2, 3 ]
@@ -558,6 +588,7 @@ console.log(combined);
 ```
 
 Result:
+
 ```text
 [ 1, 2, 3, 4 ]
 ```
@@ -573,6 +604,7 @@ console.log(deep.flat(Infinity));
 ```
 
 Result:
+
 ```text
 [ 1, 2, 3, 4, 5, 6 ]
 [ 1, 2, 3, 4 ]
@@ -588,6 +620,7 @@ console.log(words.join(""));
 ```
 
 Result:
+
 ```text
 Hello world
 Hello-world
@@ -603,6 +636,7 @@ console.log(nums);
 ```
 
 Result:
+
 ```text
 [ 5, 4, 3, 2, 1 ]
 ```
@@ -621,6 +655,7 @@ console.log(letters);                // original unchanged
 ```
 
 Result:
+
 ```text
 [ 'b', 'c' ]
 [ 'c', 'd', 'e' ]
@@ -642,6 +677,7 @@ console.log(blue);
 ```
 
 Result:
+
 ```text
 255
 128
@@ -659,6 +695,7 @@ console.log(third);
 ```
 
 Result:
+
 ```text
 1
 3
@@ -674,6 +711,7 @@ console.log(tail);
 ```
 
 Result:
+
 ```text
 1
 [ 2, 3, 4, 5 ]
@@ -690,6 +728,7 @@ console.log(c);
 ```
 
 Result:
+
 ```text
 10
 20
@@ -709,6 +748,7 @@ console.log(y);
 ```
 
 Result:
+
 ```text
 2
 1
@@ -738,6 +778,7 @@ console.log(middle);
 ```
 
 Result:
+
 ```text
 [ 1, 2, 3, 4, 5, 6 ]
 [ 1, 2, 3 ]

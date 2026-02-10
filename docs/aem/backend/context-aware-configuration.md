@@ -12,6 +12,7 @@ OSGi configurations (which are global or per-run-mode), CA Config values are
 **site-specific, tenant-specific, or even page-specific** -- without any code branching.
 
 Use cases:
+
 - Different analytics tracking IDs per site
 - API keys that vary between tenants
 - Feature flags scoped to a specific brand
@@ -119,14 +120,14 @@ public @interface SiteConfig {
 
 ### Supported property types
 
-| Type | Example | Notes |
-|------|---------|-------|
-| `String` | `"UA-12345"` | Default: `""` |
-| `boolean` | `true` / `false` | Default: `false` |
-| `int` | `10` | Default: `0` |
-| `long` | `1000L` | Default: `0L` |
-| `double` | `3.14` | Default: `0.0` |
-| `String[]` | `{"a", "b"}` | Arrays of any primitive type |
+| Type       | Example          | Notes                        |
+|------------|------------------|------------------------------|
+| `String`   | `"UA-12345"`     | Default: `""`                |
+| `boolean`  | `true` / `false` | Default: `false`             |
+| `int`      | `10`             | Default: `0`                 |
+| `long`     | `1000L`          | Default: `0L`                |
+| `double`   | `3.14`           | Default: `0.0`               |
+| `String[]` | `{"a", "b"}`     | Arrays of any primitive type |
 
 ---
 
@@ -295,14 +296,14 @@ public @interface SocialLink {
 
 ## OSGi Config vs CA Config
 
-| Aspect | OSGi Configuration | CA Config |
-|--------|-------------------|-----------|
-| **Scope** | Global or per-run-mode | Per-site, per-tenant, per-page |
-| **Storage** | `/apps/*/osgiconfig/` (code) | `/conf/*/sling:configs/` (content) |
-| **Managed by** | Developers (code deployment) | Authors or admins (content authoring) |
+| Aspect          | OSGi Configuration                                  | CA Config                                            |
+|-----------------|-----------------------------------------------------|------------------------------------------------------|
+| **Scope**       | Global or per-run-mode                              | Per-site, per-tenant, per-page                       |
+| **Storage**     | `/apps/*/osgiconfig/` (code)                        | `/conf/*/sling:configs/` (content)                   |
+| **Managed by**  | Developers (code deployment)                        | Authors or admins (content authoring)                |
 | **Typical use** | Service endpoints, feature toggles, system settings | Site-specific branding, analytics IDs, feature flags |
-| **Lookup** | Direct PID lookup | Context-aware tree walk |
-| **AEMaaCS** | Deployed via Cloud Manager | Stored in content, replicated |
+| **Lookup**      | Direct PID lookup                                   | Context-aware tree walk                              |
+| **AEMaaCS**     | Deployed via Cloud Manager                          | Stored in content, replicated                        |
 
 **Rule of thumb:** If the value is the same across all sites, use OSGi. If it varies per
 site or tenant, use CA Config.
@@ -443,15 +444,15 @@ belong in OSGi configurations.
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Config values are always defaults | Check that `sling:configRef` is set on the site root node |
-| `ConfigurationResolver` returns null | Ensure the CA Config bundles are installed and active; check OSGi console |
-| Config works on author but not publish | Replicate the `/conf/` content to publish instances |
-| Nested config items are empty | Verify the JCR structure matches the annotation hierarchy (child nodes under `items/`) |
-| wcm.io editor not showing | Check that the context path strategy is configured correctly for your site structure |
-| Wrong site config resolved | Verify the `sling:configRef` points to the correct `/conf/` path; check for overlapping context path strategies |
-| Config changes not picked up | CA Config caching may delay updates; clear the Sling CA Config cache |
+| Pitfall                                | Solution                                                                                                        |
+|----------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| Config values are always defaults      | Check that `sling:configRef` is set on the site root node                                                       |
+| `ConfigurationResolver` returns null   | Ensure the CA Config bundles are installed and active; check OSGi console                                       |
+| Config works on author but not publish | Replicate the `/conf/` content to publish instances                                                             |
+| Nested config items are empty          | Verify the JCR structure matches the annotation hierarchy (child nodes under `items/`)                          |
+| wcm.io editor not showing              | Check that the context path strategy is configured correctly for your site structure                            |
+| Wrong site config resolved             | Verify the `sling:configRef` points to the correct `/conf/` path; check for overlapping context path strategies |
+| Config changes not picked up           | CA Config caching may delay updates; clear the Sling CA Config cache                                            |
 
 ## See also
 

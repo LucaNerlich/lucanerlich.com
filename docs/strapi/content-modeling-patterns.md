@@ -7,7 +7,8 @@ tags: [strapi, content-modeling, components, dynamic-zones, architecture]
 
 # Content Modeling Patterns
 
-Bad content modeling decisions are the hardest thing to fix later. This page covers the trade-offs between Strapi's modeling primitives and patterns that scale.
+Bad content modeling decisions are the hardest thing to fix later. This page covers the trade-offs between Strapi's
+modeling primitives and patterns that scale.
 
 ## Content modeling overview
 
@@ -27,12 +28,12 @@ flowchart TD
 
 ## Collection types vs single types
 
-| Use | Collection Type | Single Type |
-|-----|----------------|-------------|
-| **Entries** | Many (articles, products, users) | Exactly one (homepage, site settings, footer) |
-| **API** | `/api/articles`, `/api/articles/:id` | `/api/homepage` |
-| **Create new entries** | Yes, unlimited | No, only update the single entry |
-| **Use when** | You have multiple items of the same shape | There is only ever one instance |
+| Use                    | Collection Type                           | Single Type                                   |
+|------------------------|-------------------------------------------|-----------------------------------------------|
+| **Entries**            | Many (articles, products, users)          | Exactly one (homepage, site settings, footer) |
+| **API**                | `/api/articles`, `/api/articles/:id`      | `/api/homepage`                               |
+| **Create new entries** | Yes, unlimited                            | No, only update the single entry              |
+| **Use when**           | You have multiple items of the same shape | There is only ever one instance               |
 
 ### Common single types
 
@@ -46,13 +47,15 @@ Global SEO         -- default meta tags, OG image fallback
 
 ### When NOT to use a single type
 
-If you ever think "what if we need a second one?", use a collection type. Converting a single type to a collection type later is painful.
+If you ever think "what if we need a second one?", use a collection type. Converting a single type to a collection type
+later is painful.
 
 ---
 
 ## Components
 
-Components are reusable groups of fields that can be embedded in any content type. They do **not** have their own API endpoint -- they only exist as part of a parent document.
+Components are reusable groups of fields that can be embedded in any content type. They do **not** have their own API
+endpoint -- they only exist as part of a parent document.
 
 ### When to use components
 
@@ -220,13 +223,13 @@ function DynamicZone({ blocks }) {
 
 ## Components vs relations: decision guide
 
-| Factor | Component | Relation |
-|--------|-----------|----------|
-| **Own API endpoint** | No | Yes |
-| **Reusable across entries** | Embedded (duplicated per entry) | Referenced (single source of truth) |
-| **Editable independently** | No, only via parent | Yes, has its own edit page |
-| **Performance** | Fetched with parent (no join) | Requires `populate` (join query) |
-| **Use for** | SEO metadata, address, FAQ items | Authors, Categories, Tags |
+| Factor                      | Component                        | Relation                            |
+|-----------------------------|----------------------------------|-------------------------------------|
+| **Own API endpoint**        | No                               | Yes                                 |
+| **Reusable across entries** | Embedded (duplicated per entry)  | Referenced (single source of truth) |
+| **Editable independently**  | No, only via parent              | Yes, has its own edit page          |
+| **Performance**             | Fetched with parent (no join)    | Requires `populate` (join query)    |
+| **Use for**                 | SEO metadata, address, FAQ items | Authors, Categories, Tags           |
 
 ### When to use a component
 
@@ -343,43 +346,44 @@ NavigationItem (component: layout.nav-item)
 └── children (repeatable component: layout.nav-item)  ← self-referencing
 ```
 
-> Strapi allows components to reference themselves for tree-like structures, but limit the nesting depth to avoid performance issues.
+> Strapi allows components to reference themselves for tree-like structures, but limit the nesting depth to avoid
+> performance issues.
 
 ---
 
 ## Naming conventions
 
-| Convention | Example | Rationale |
-|------------|---------|-----------|
-| Singular collection names | `article`, not `articles` | Strapi auto-pluralizes for API endpoints |
-| Kebab-case for slugs | `blog-post`, not `blogPost` | Consistent URL-friendly identifiers |
-| Category prefix for components | `shared.seo`, `blocks.hero` | Groups related components in the admin |
-| Descriptive field names | `publishedDate`, not `date` | Unambiguous when used alongside other dates |
-| Boolean prefix | `isActive`, `hasFeatured` | Clear intent |
+| Convention                     | Example                     | Rationale                                   |
+|--------------------------------|-----------------------------|---------------------------------------------|
+| Singular collection names      | `article`, not `articles`   | Strapi auto-pluralizes for API endpoints    |
+| Kebab-case for slugs           | `blog-post`, not `blogPost` | Consistent URL-friendly identifiers         |
+| Category prefix for components | `shared.seo`, `blocks.hero` | Groups related components in the admin      |
+| Descriptive field names        | `publishedDate`, not `date` | Unambiguous when used alongside other dates |
+| Boolean prefix                 | `isActive`, `hasFeatured`   | Clear intent                                |
 
 ---
 
 ## Schema evolution tips
 
-| Situation | Approach |
-|-----------|----------|
-| Adding a new field | Non-breaking. Add with a sensible default. |
-| Renaming a field | Breaking. Create new field, migrate data, remove old field. |
-| Changing a component to a relation | Breaking. Requires a data migration script. |
-| Adding a new block to a dynamic zone | Non-breaking. Just add the component UID to the array. |
-| Removing a block from a dynamic zone | Breaking if existing entries use it. Migrate first. |
+| Situation                            | Approach                                                    |
+|--------------------------------------|-------------------------------------------------------------|
+| Adding a new field                   | Non-breaking. Add with a sensible default.                  |
+| Renaming a field                     | Breaking. Create new field, migrate data, remove old field. |
+| Changing a component to a relation   | Breaking. Requires a data migration script.                 |
+| Adding a new block to a dynamic zone | Non-breaking. Just add the component UID to the array.      |
+| Removing a block from a dynamic zone | Breaking if existing entries use it. Migrate first.         |
 
 ---
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Too many relations on one type | Slow queries, complex population | Limit to 5-7 relations max; denormalize if needed |
-| Deep component nesting | Hard to query, hard to populate | Keep nesting to 2-3 levels max |
-| Using JSON fields instead of components | No admin UI, no validation, no population | Use components for structured data |
-| One giant "Page" type for everything | Bloated schema, confusing editor UX | Create separate types: `LandingPage`, `BlogPost`, `ProductPage` |
-| Not planning for i18n | Retrofit is painful | Decide localization per field upfront |
+| Pitfall                                 | Problem                                   | Fix                                                             |
+|-----------------------------------------|-------------------------------------------|-----------------------------------------------------------------|
+| Too many relations on one type          | Slow queries, complex population          | Limit to 5-7 relations max; denormalize if needed               |
+| Deep component nesting                  | Hard to query, hard to populate           | Keep nesting to 2-3 levels max                                  |
+| Using JSON fields instead of components | No admin UI, no validation, no population | Use components for structured data                              |
+| One giant "Page" type for everything    | Bloated schema, confusing editor UX       | Create separate types: `LandingPage`, `BlogPost`, `ProductPage` |
+| Not planning for i18n                   | Retrofit is painful                       | Decide localization per field upfront                           |
 
 ---
 

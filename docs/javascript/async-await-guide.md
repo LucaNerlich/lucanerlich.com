@@ -15,7 +15,9 @@ sidebar_position: 4
 
 # Async/Await in JavaScript: Practical Patterns and Pitfalls
 
-`async/await` is the modern way to write asynchronous JavaScript. It reads like synchronous code but runs on promises. This guide covers **real-world async patterns**, how to avoid common mistakes, and how to make async code reliable. All examples are TypeScript and include the output you should expect.
+`async/await` is the modern way to write asynchronous JavaScript. It reads like synchronous code but runs on promises.
+This guide covers **real-world async patterns**, how to avoid common mistakes, and how to make async code reliable. All
+examples are TypeScript and include the output you should expect.
 
 ## Quick start
 
@@ -33,6 +35,7 @@ main();
 ```
 
 Result:
+
 ```text
 Ada
 ```
@@ -60,6 +63,7 @@ console.log(result instanceof Promise);
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -80,6 +84,7 @@ parallel().then((values) => console.log(values));
 ```
 
 Result:
+
 ```text
 [ "task-1", "task-2", "task-3" ]
 ```
@@ -96,6 +101,7 @@ sequential().then((values) => console.log(values));
 ```
 
 Result:
+
 ```text
 [ "task-1", "task-2", "task-3" ]
 ```
@@ -119,6 +125,7 @@ mapAsync();
 ```
 
 Result:
+
 ```text
 [ "user-1", "user-2", "user-3" ]
 ```
@@ -145,6 +152,7 @@ run();
 ```
 
 Result:
+
 ```text
 Request failed
 ```
@@ -165,6 +173,7 @@ logIds([1, 2, 3]);
 ```
 
 Result:
+
 ```text
 id-1
 id-2
@@ -193,6 +202,7 @@ runAll();
 ```
 
 Result:
+
 ```text
 [ "ok-1", "error: Timeout", "ok-3" ]
 ```
@@ -218,6 +228,7 @@ Promise.race([slowTask(), timeout(100)])
 ```
 
 Result:
+
 ```text
 done
 ```
@@ -226,7 +237,8 @@ Note: in real code, the timeout may win if the task is truly slow.
 
 ## Cancellation with AbortController
 
-When working with browser APIs like `fetch`, use `AbortController` to cancel requests. This prevents wasted work and can improve UX.
+When working with browser APIs like `fetch`, use `AbortController` to cancel requests. This prevents wasted work and can
+improve UX.
 
 ```ts
 const controller = new AbortController();
@@ -241,6 +253,7 @@ run();
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -272,6 +285,7 @@ runWithLimit(tasks, 2).then((values) => console.log(values));
 ```
 
 Result:
+
 ```text
 [ "job-1", "job-2", "job-3", "job-4" ]
 ```
@@ -292,6 +306,7 @@ safeFireAndForget(Promise.reject(new Error("boom")));
 ```
 
 Result:
+
 ```text
 Unhandled: boom
 ```
@@ -309,6 +324,7 @@ main().catch((err) => console.log(err instanceof Error ? err.message : "Unknown"
 ```
 
 Result:
+
 ```text
 start
 ```
@@ -336,6 +352,7 @@ consume();
 ```
 
 Result:
+
 ```text
 [ 1, 2, 3 ]
 ```
@@ -371,6 +388,7 @@ value().then((v) => console.log(v));
 ```
 
 Result:
+
 ```text
 42
 ```
@@ -386,6 +404,7 @@ Promise.all([a, b]).then((values) => console.log(values));
 ```
 
 Result:
+
 ```text
 [ "A", "B" ]
 ```
@@ -408,10 +427,12 @@ safe();
 ```
 
 Result:
+
 ```text
 Bad
 ```
 
 ## Summary
 
-`async/await` makes async code readable, but you still need to be explicit about parallelism, timeouts, and error handling. Use `Promise.all` where possible, `allSettled` for partial success, and always make errors observable.
+`async/await` makes async code readable, but you still need to be explicit about parallelism, timeouts, and error
+handling. Use `Promise.all` where possible, `allSettled` for partial success, and always make errors observable.

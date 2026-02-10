@@ -51,56 +51,56 @@ Alternatively, download the `.zip` package from the
 ### Legacy CID15 version
 
 <details>
-<summary>Installation steps for the older org.cid15 version</summary>
+    <summary>Installation steps for the older org.cid15 version</summary>
 
-Add the dependency to your root `pom.xml`:
+    Add the dependency to your root `pom.xml`:
 
-```xml title="pom.xml"
-<dependency>
-    <groupId>org.cid15.aem.groovy.console</groupId>
-    <artifactId>aem-groovy-console-all</artifactId>
-    <version>18.0.2</version>
-    <type>zip</type>
-</dependency>
-```
+    ```xml title="pom.xml"
+    <dependency>
+        <groupId>org.cid15.aem.groovy.console</groupId>
+        <artifactId>aem-groovy-console-all</artifactId>
+        <version>18.0.2</version>
+        <type>zip</type>
+    </dependency>
+    ```
 
-In your `all` module, add the dependency and embed:
+    In your `all` module, add the dependency and embed:
 
-```xml title="all/pom.xml"
-<plugin>
-    <groupId>org.apache.jackrabbit</groupId>
-    <artifactId>filevault-package-maven-plugin</artifactId>
-    <extensions>true</extensions>
-    <configuration>
-        <showImportPackageReport>false</showImportPackageReport>
-        <group>some.group</group>
-        <packageType>container</packageType>
-        <skipSubPackageValidation>true</skipSubPackageValidation>
-        <embeddeds>
-            <embedded>
-                <groupId>org.cid15.aem.groovy.console</groupId>
-                <artifactId>aem-groovy-console-all</artifactId>
-                <type>zip</type>
-                <target>/apps/groovy-vendor-packages/container/install</target>
-            </embedded>
-        </embeddeds>
-    </configuration>
-</plugin>
-```
+    ```xml title="all/pom.xml"
+    <plugin>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>filevault-package-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+            <showImportPackageReport>false</showImportPackageReport>
+            <group>some.group</group>
+            <packageType>container</packageType>
+            <skipSubPackageValidation>true</skipSubPackageValidation>
+            <embeddeds>
+                <embedded>
+                    <groupId>org.cid15.aem.groovy.console</groupId>
+                    <artifactId>aem-groovy-console-all</artifactId>
+                    <type>zip</type>
+                    <target>/apps/groovy-vendor-packages/container/install</target>
+                </embedded>
+            </embeddeds>
+        </configuration>
+    </plugin>
+    ```
 
-```xml title="all/pom.xml -- dependency"
-<dependency>
-    <groupId>org.cid15.aem.groovy.console</groupId>
-    <artifactId>aem-groovy-console-all</artifactId>
-    <type>zip</type>
-</dependency>
-```
+    ```xml title="all/pom.xml -- dependency"
+    <dependency>
+        <groupId>org.cid15.aem.groovy.console</groupId>
+        <artifactId>aem-groovy-console-all</artifactId>
+        <type>zip</type>
+    </dependency>
+    ```
 
-Add the root path in `all/src/main/content/META-INF/vault/filter.xml`:
+    Add the root path in `all/src/main/content/META-INF/vault/filter.xml`:
 
-```xml
-<filter root="/apps/groovy-vendor-packages"/>
-```
+    ```xml
+    <filter root="/apps/groovy-vendor-packages"/>
+    ```
 
 </details>
 

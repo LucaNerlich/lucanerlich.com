@@ -7,7 +7,8 @@ tags: [strapi, i18n, internationalization, locale, translation]
 
 # i18n and Multi-Locale Content
 
-Strapi's Internationalization (i18n) plugin lets you manage content in multiple languages. It sounds simple in theory -- in practice, locale-aware querying, relation population, and fallback strategies are where most developers get stuck.
+Strapi's Internationalization (i18n) plugin lets you manage content in multiple languages. It sounds simple in theory --
+in practice, locale-aware querying, relation population, and fallback strategies are where most developers get stuck.
 
 ## Enabling i18n
 
@@ -126,7 +127,8 @@ await strapi.documents('api::article.article').create({
 
 ## The locale fallback problem
 
-Strapi does **not** provide automatic locale fallback out of the box. If you request `locale=de` and the German version doesn't exist, you get `null` -- not the English fallback.
+Strapi does **not** provide automatic locale fallback out of the box. If you request `locale=de` and the German version
+doesn't exist, you get `null` -- not the English fallback.
 
 ### Implementing fallback in a service
 
@@ -202,7 +204,8 @@ module.exports = createCoreService('api::article.article', ({ strapi }) => ({
 
 ### Field-level fallback
 
-Sometimes you want to fall back individual fields (e.g., show the German title but fall back to the English description if the German one is empty):
+Sometimes you want to fall back individual fields (e.g., show the German title but fall back to the English description
+if the German one is empty):
 
 ```js
 async findOneWithFieldFallback(documentId, { locale, fallbackLocale = 'en', populate } = {}) {
@@ -244,7 +247,8 @@ async findOneWithFieldFallback(documentId, { locale, fallbackLocale = 'en', popu
 
 ## Populating localized relations
 
-This is one of the biggest gotchas. When you populate a relation on a localized document, the related document must exist in the **same locale**, or the relation appears empty.
+This is one of the biggest gotchas. When you populate a relation on a localized document, the related document must
+exist in the **same locale**, or the relation appears empty.
 
 ```js
 // Article (locale: de) -> Author (locale: de) -- works
@@ -255,7 +259,8 @@ This is one of the biggest gotchas. When you populate a relation on a localized 
 
 **Option A: make the related type non-localized**
 
-If the related content type doesn't need translation (e.g., Authors, Categories with just a slug), disable i18n on it. Non-localized types always resolve.
+If the related content type doesn't need translation (e.g., Authors, Categories with just a slug), disable i18n on it.
+Non-localized types always resolve.
 
 **Option B: ensure related entries exist in all locales**
 
@@ -300,7 +305,8 @@ module.exports = (config, { strapi }) => {
 
 ## Components and dynamic zones with i18n
 
-Components inherit the localization setting from their parent content type. If the parent is localized, component data is stored per locale.
+Components inherit the localization setting from their parent content type. If the parent is localized, component data
+is stored per locale.
 
 ```json
 {
@@ -432,14 +438,14 @@ async function getAvailableLocales(documentId) {
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| No locale param in query | Returns default locale only | Always pass `locale` explicitly |
-| Relation points to wrong locale | Populated relation is `null` | Make shared types non-localized, or ensure entries exist in all locales |
-| Slug not localized | Same slug for all languages, causes routing conflicts | Enable `localized: true` on the slug field |
-| No fallback strategy | Missing translations return empty pages | Implement service-level or frontend fallback |
-| Forgetting to create locale entries | Content appears missing | Set up editorial workflows that require all locales |
-| Media not locale-aware | Same image for all locales | Media fields can be localized if needed |
+| Pitfall                             | Problem                                               | Fix                                                                     |
+|-------------------------------------|-------------------------------------------------------|-------------------------------------------------------------------------|
+| No locale param in query            | Returns default locale only                           | Always pass `locale` explicitly                                         |
+| Relation points to wrong locale     | Populated relation is `null`                          | Make shared types non-localized, or ensure entries exist in all locales |
+| Slug not localized                  | Same slug for all languages, causes routing conflicts | Enable `localized: true` on the slug field                              |
+| No fallback strategy                | Missing translations return empty pages               | Implement service-level or frontend fallback                            |
+| Forgetting to create locale entries | Content appears missing                               | Set up editorial workflows that require all locales                     |
+| Media not locale-aware              | Same image for all locales                            | Media fields can be localized if needed                                 |
 
 ---
 

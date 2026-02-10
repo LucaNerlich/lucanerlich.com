@@ -2,7 +2,6 @@
     "label": "Infrastructure",
     "link": {
         "slug": "/aem/infrastructure",
-
         "type": "generated-index",
         "description": "Development setup, deployment, Dispatcher, cloud service, performance, security, and testing."
     }

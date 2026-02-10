@@ -89,18 +89,18 @@ mail server):
 
 ### Configuration reference
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `smtp.host` | String | SMTP server hostname |
-| `smtp.port` | int | SMTP port (25, 465, 587) |
-| `smtp.user` | String | SMTP authentication user |
-| `smtp.password` | String | SMTP authentication password |
-| `from.address` | String | Default "From" address |
-| `smtp.ssl` | boolean | Use implicit SSL (port 465) |
-| `smtp.starttls` | boolean | Upgrade to TLS after connecting (port 587) |
-| `smtp.requiretls` | boolean | Fail if STARTTLS is not available |
-| `debug.email` | boolean | Log full SMTP conversation (never enable in production) |
-| `oauth.flow` | boolean | Use OAuth 2.0 for authentication (Microsoft 365, Google Workspace) |
+| Property          | Type    | Description                                                        |
+|-------------------|---------|--------------------------------------------------------------------|
+| `smtp.host`       | String  | SMTP server hostname                                               |
+| `smtp.port`       | int     | SMTP port (25, 465, 587)                                           |
+| `smtp.user`       | String  | SMTP authentication user                                           |
+| `smtp.password`   | String  | SMTP authentication password                                       |
+| `from.address`    | String  | Default "From" address                                             |
+| `smtp.ssl`        | boolean | Use implicit SSL (port 465)                                        |
+| `smtp.starttls`   | boolean | Upgrade to TLS after connecting (port 587)                         |
+| `smtp.requiretls` | boolean | Fail if STARTTLS is not available                                  |
+| `debug.email`     | boolean | Log full SMTP conversation (never enable in production)            |
+| `oauth.flow`      | boolean | Use OAuth 2.0 for authentication (Microsoft 365, Google Workspace) |
 
 ---
 
@@ -527,7 +527,7 @@ configure **Advanced Networking** to allow AEM to reach an external SMTP server.
 2. **Add a port forwarding rule** for your SMTP server:
 
    | Name | Value |
-   |------|-------|
+      |------|-------|
    | Port forward name | `smtp_sendgrid` |
    | Protocol | TCP |
    | Port | 587 |
@@ -597,12 +597,12 @@ services:
 
 ### MailHog features
 
-| Feature | URL / Details |
-|---------|--------------|
-| Web UI | `http://localhost:8025` |
-| SMTP | `localhost:1025` |
-| REST API | `http://localhost:8025/api/v2/messages` |
-| Search | Filter by sender, recipient, or subject in the UI |
+| Feature  | URL / Details                                     |
+|----------|---------------------------------------------------|
+| Web UI   | `http://localhost:8025`                           |
+| SMTP     | `localhost:1025`                                  |
+| REST API | `http://localhost:8025/api/v2/messages`           |
+| Search   | Filter by sender, recipient, or subject in the UI |
 
 ### Alternative: Mailpit
 
@@ -647,12 +647,12 @@ println "Mail sent successfully!"
 
 ## Common Mail Types at a Glance
 
-| Class | Use case | Gateway type |
-|-------|----------|-------------|
-| `SimpleEmail` | Plain-text messages | `Email.class` |
-| `HtmlEmail` | HTML with plain-text fallback | `HtmlEmail.class` |
-| `MultiPartEmail` | Attachments | `MultiPartEmail.class` |
-| `ImageHtmlEmail` | HTML with inline images | `HtmlEmail.class` |
+| Class            | Use case                      | Gateway type           |
+|------------------|-------------------------------|------------------------|
+| `SimpleEmail`    | Plain-text messages           | `Email.class`          |
+| `HtmlEmail`      | HTML with plain-text fallback | `HtmlEmail.class`      |
+| `MultiPartEmail` | Attachments                   | `MultiPartEmail.class` |
+| `ImageHtmlEmail` | HTML with inline images       | `HtmlEmail.class`      |
 
 All classes are from the `org.apache.commons.mail` package, bundled with AEM.
 
@@ -712,16 +712,16 @@ block the calling thread. Consider:
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| `MessageGateway` is null | OSGi config missing or invalid; verify in Felix console under **Day CQ Mail Service** |
-| Mails sent locally but not on AEMaaCS | Configure Advanced Networking with port forwarding; `smtp.host` must be `localhost` |
-| Authentication failure on Microsoft 365 | Microsoft deprecated basic auth; use `oauth.flow: true` with a registered app |
-| Mails land in spam | Set proper SPF, DKIM, and DMARC DNS records for the sending domain |
-| `javax.mail.AuthenticationFailedException` | Wrong credentials or wrong auth mechanism; check `smtp.user` and `smtp.password` |
-| Mails not arriving on publish | Ensure the OSGi config exists for the publish run mode (`config.publish/`) |
-| Attachment too large | Check your SMTP provider's size limits; consider linking to a download URL instead |
-| Encoding issues in subject/body | Always call `email.setCharset("utf-8")` before setting content |
+| Pitfall                                    | Solution                                                                              |
+|--------------------------------------------|---------------------------------------------------------------------------------------|
+| `MessageGateway` is null                   | OSGi config missing or invalid; verify in Felix console under **Day CQ Mail Service** |
+| Mails sent locally but not on AEMaaCS      | Configure Advanced Networking with port forwarding; `smtp.host` must be `localhost`   |
+| Authentication failure on Microsoft 365    | Microsoft deprecated basic auth; use `oauth.flow: true` with a registered app         |
+| Mails land in spam                         | Set proper SPF, DKIM, and DMARC DNS records for the sending domain                    |
+| `javax.mail.AuthenticationFailedException` | Wrong credentials or wrong auth mechanism; check `smtp.user` and `smtp.password`      |
+| Mails not arriving on publish              | Ensure the OSGi config exists for the publish run mode (`config.publish/`)            |
+| Attachment too large                       | Check your SMTP provider's size limits; consider linking to a download URL instead    |
+| Encoding issues in subject/body            | Always call `email.setCharset("utf-8")` before setting content                        |
 
 ---
 

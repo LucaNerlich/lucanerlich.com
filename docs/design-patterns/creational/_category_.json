@@ -1,7 +1,7 @@
 {
-  "label": "Creational",
-  "link": {
-    "type": "generated-index",
-    "description": "Patterns that create objects or families of objects."
-  }
+    "label": "Creational",
+    "link": {
+        "type": "generated-index",
+        "description": "Patterns that create objects or families of objects."
+    }
 }

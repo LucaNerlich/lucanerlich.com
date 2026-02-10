@@ -60,13 +60,13 @@ String first = names.get(0); // O(1)
 names.remove("Bob");
 ```
 
-| Operation | Time complexity |
-|-----------|----------------|
-| `get(index)` | O(1) |
-| `add(element)` (end) | O(1) amortised |
-| `add(index, element)` (middle) | O(n) |
-| `remove(index)` | O(n) |
-| `contains(element)` | O(n) |
+| Operation                      | Time complexity |
+|--------------------------------|-----------------|
+| `get(index)`                   | O(1)            |
+| `add(element)` (end)           | O(1) amortised  |
+| `add(index, element)` (middle) | O(n)            |
+| `remove(index)`                | O(n)            |
+| `contains(element)`            | O(n)            |
 
 ### LinkedList
 
@@ -85,12 +85,12 @@ deque.removeFirst();            // O(1)
 
 ### When to use which List
 
-| Scenario | Choose |
-|----------|--------|
-| General purpose | `ArrayList` |
-| Frequent head/tail add/remove, no indexing | `LinkedList` |
-| Thread-safe, read-heavy | `CopyOnWriteArrayList` |
-| Fixed content, never changes | `List.of(...)` |
+| Scenario                                   | Choose                 |
+|--------------------------------------------|------------------------|
+| General purpose                            | `ArrayList`            |
+| Frequent head/tail add/remove, no indexing | `LinkedList`           |
+| Thread-safe, read-heavy                    | `CopyOnWriteArrayList` |
+| Fixed content, never changes               | `List.of(...)`         |
 
 ---
 
@@ -135,12 +135,12 @@ sorted.add("cherry");
 Set<String> ci = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 ```
 
-| Set type | Order | Lookup | Null values |
-|----------|-------|--------|-------------|
-| `HashSet` | None | O(1) average | One null |
-| `LinkedHashSet` | Insertion order | O(1) average | One null |
-| `TreeSet` | Sorted | O(log n) | No nulls |
-| `EnumSet` | Enum declaration order | O(1) | No nulls |
+| Set type        | Order                  | Lookup       | Null values |
+|-----------------|------------------------|--------------|-------------|
+| `HashSet`       | None                   | O(1) average | One null    |
+| `LinkedHashSet` | Insertion order        | O(1) average | One null    |
+| `TreeSet`       | Sorted                 | O(log n)     | No nulls    |
+| `EnumSet`       | Enum declaration order | O(1)         | No nulls    |
 
 ---
 
@@ -209,12 +209,12 @@ String lastKey = sorted.lastKey();
 NavigableMap<String, Integer> sub = sorted.subMap("A", true, "D", false);
 ```
 
-| Map type | Order | Lookup | Null keys |
-|----------|-------|--------|-----------|
-| `HashMap` | None | O(1) average | One null |
-| `LinkedHashMap` | Insertion / access order | O(1) average | One null |
-| `TreeMap` | Sorted | O(log n) | No null keys |
-| `EnumMap` | Enum order | O(1) | No null keys |
+| Map type        | Order                    | Lookup       | Null keys    |
+|-----------------|--------------------------|--------------|--------------|
+| `HashMap`       | None                     | O(1) average | One null     |
+| `LinkedHashMap` | Insertion / access order | O(1) average | One null     |
+| `TreeMap`       | Sorted                   | O(log n)     | No null keys |
+| `EnumMap`       | Enum order               | O(1)         | No null keys |
 
 ---
 
@@ -329,45 +329,45 @@ String task = queue.poll(5, TimeUnit.SECONDS);
 
 ### Choosing the right concurrent collection
 
-| Collection | Thread safety | Best for |
-|-----------|--------------|----------|
-| `ConcurrentHashMap` | Segment-level locking | Read/write-balanced maps |
-| `CopyOnWriteArrayList` | Copy-on-write | Read-heavy lists (event listeners) |
-| `CopyOnWriteArraySet` | Copy-on-write | Read-heavy small sets |
-| `ConcurrentLinkedQueue` | Lock-free (CAS) | High-throughput FIFO queues |
-| `LinkedBlockingQueue` | Lock-based | Producer-consumer with backpressure |
-| `ConcurrentSkipListMap` | Lock-free | Sorted concurrent map |
+| Collection              | Thread safety         | Best for                            |
+|-------------------------|-----------------------|-------------------------------------|
+| `ConcurrentHashMap`     | Segment-level locking | Read/write-balanced maps            |
+| `CopyOnWriteArrayList`  | Copy-on-write         | Read-heavy lists (event listeners)  |
+| `CopyOnWriteArraySet`   | Copy-on-write         | Read-heavy small sets               |
+| `ConcurrentLinkedQueue` | Lock-free (CAS)       | High-throughput FIFO queues         |
+| `LinkedBlockingQueue`   | Lock-based            | Producer-consumer with backpressure |
+| `ConcurrentSkipListMap` | Lock-free             | Sorted concurrent map               |
 
 ---
 
 ## Choosing the right collection
 
-| I need... | Use |
-|-----------|-----|
-| Indexed access, general purpose | `ArrayList` |
-| Unique elements, fast lookup | `HashSet` |
-| Key-value pairs | `HashMap` |
-| Sorted elements | `TreeSet` / `TreeMap` |
-| Insertion-ordered key-values | `LinkedHashMap` |
-| FIFO queue | `ArrayDeque` |
-| Thread-safe map | `ConcurrentHashMap` |
-| Thread-safe list (read-heavy) | `CopyOnWriteArrayList` |
-| Producer-consumer queue | `LinkedBlockingQueue` |
-| Immutable list / set / map | `List.of()` / `Set.of()` / `Map.of()` |
+| I need...                       | Use                                   |
+|---------------------------------|---------------------------------------|
+| Indexed access, general purpose | `ArrayList`                           |
+| Unique elements, fast lookup    | `HashSet`                             |
+| Key-value pairs                 | `HashMap`                             |
+| Sorted elements                 | `TreeSet` / `TreeMap`                 |
+| Insertion-ordered key-values    | `LinkedHashMap`                       |
+| FIFO queue                      | `ArrayDeque`                          |
+| Thread-safe map                 | `ConcurrentHashMap`                   |
+| Thread-safe list (read-heavy)   | `CopyOnWriteArrayList`                |
+| Producer-consumer queue         | `LinkedBlockingQueue`                 |
+| Immutable list / set / map      | `List.of()` / `Set.of()` / `Map.of()` |
 
 ---
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Modifying `List.of()` / `Map.of()` | `UnsupportedOperationException` | Copy to `new ArrayList<>(list)` if you need mutability |
-| `HashMap` with mutable keys | If the key's `hashCode` changes, the entry is lost | Use immutable keys (String, Integer, records) |
-| `ConcurrentModificationException` | Modifying a collection while iterating it | Use `Iterator.remove()`, or collect changes and apply after |
-| `Collections.synchronizedList` for iteration | Iteration is not synchronized | Hold the lock manually, or use `CopyOnWriteArrayList` |
-| Using `LinkedList` for indexing | `get(index)` is O(n) | Use `ArrayList` |
-| `TreeSet` / `TreeMap` with inconsistent `equals` / `compareTo` | Elements disappear or duplicate | Ensure `compareTo` is consistent with `equals` |
-| Null keys in `TreeMap` | `NullPointerException` | Use `HashMap` if you need null keys |
+| Pitfall                                                        | Problem                                            | Fix                                                         |
+|----------------------------------------------------------------|----------------------------------------------------|-------------------------------------------------------------|
+| Modifying `List.of()` / `Map.of()`                             | `UnsupportedOperationException`                    | Copy to `new ArrayList<>(list)` if you need mutability      |
+| `HashMap` with mutable keys                                    | If the key's `hashCode` changes, the entry is lost | Use immutable keys (String, Integer, records)               |
+| `ConcurrentModificationException`                              | Modifying a collection while iterating it          | Use `Iterator.remove()`, or collect changes and apply after |
+| `Collections.synchronizedList` for iteration                   | Iteration is not synchronized                      | Hold the lock manually, or use `CopyOnWriteArrayList`       |
+| Using `LinkedList` for indexing                                | `get(index)` is O(n)                               | Use `ArrayList`                                             |
+| `TreeSet` / `TreeMap` with inconsistent `equals` / `compareTo` | Elements disappear or duplicate                    | Ensure `compareTo` is consistent with `equals`              |
+| Null keys in `TreeMap`                                         | `NullPointerException`                             | Use `HashMap` if you need null keys                         |
 
 ---
 

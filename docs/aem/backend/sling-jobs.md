@@ -35,14 +35,14 @@ graph LR
 
 ### Why Sling Jobs?
 
-| Feature | Sling Jobs | Direct execution | EventHandler |
-|---------|-----------|-----------------|--------------|
-| **Guaranteed execution** | Yes (persisted to JCR) | No | No |
-| **Survives restart** | Yes | No | No |
-| **Automatic retries** | Yes (configurable) | No | No |
-| **Cluster-aware** | Yes (runs on one node) | No | All nodes |
-| **Monitoring** | Felix console, JMX | None | None |
-| **Async** | Always | Depends | Async but fire-and-forget |
+| Feature                  | Sling Jobs             | Direct execution | EventHandler              |
+|--------------------------|------------------------|------------------|---------------------------|
+| **Guaranteed execution** | Yes (persisted to JCR) | No               | No                        |
+| **Survives restart**     | Yes                    | No               | No                        |
+| **Automatic retries**    | Yes (configurable)     | No               | No                        |
+| **Cluster-aware**        | Yes (runs on one node) | No               | All nodes                 |
+| **Monitoring**           | Felix console, JMX     | None             | None                      |
+| **Async**                | Always                 | Depends          | Async but fire-and-forget |
 
 Use Sling Jobs whenever failure of the operation would mean **data loss** or an
 **inconsistent state** -- e.g., sending emails, replication, third-party API calls,
@@ -189,12 +189,12 @@ public class AssetImportJobConsumer implements JobConsumer {
 
 ### JobResult values
 
-| Result | Behaviour |
-|--------|-----------|
-| `JobResult.OK` | Job completed successfully; removed from queue |
-| `JobResult.FAILED` | Job failed; will be retried if retries remain |
-| `JobResult.CANCEL` | Job failed permanently; removed from queue, no retry |
-| `JobResult.ASYNC` | Job is processing asynchronously; call `job.acknowledge()` later |
+| Result             | Behaviour                                                        |
+|--------------------|------------------------------------------------------------------|
+| `JobResult.OK`     | Job completed successfully; removed from queue                   |
+| `JobResult.FAILED` | Job failed; will be retried if retries remain                    |
+| `JobResult.CANCEL` | Job failed permanently; removed from queue, no retry             |
+| `JobResult.ASYNC`  | Job is processing asynchronously; call `job.acknowledge()` later |
 
 ---
 
@@ -262,21 +262,21 @@ OSGi:
 
 #### Queue types
 
-| Type | Behaviour |
-|------|-----------|
-| `ORDERED` | Jobs processed one at a time, in order; if one fails, the queue pauses |
-| `UNORDERED` | Jobs processed in parallel (up to `maxparallel`); failures don't block other jobs |
-| `TOPIC_ROUND_ROBIN` | Distributes jobs across cluster nodes in round-robin fashion |
+| Type                | Behaviour                                                                         |
+|---------------------|-----------------------------------------------------------------------------------|
+| `ORDERED`           | Jobs processed one at a time, in order; if one fails, the queue pauses            |
+| `UNORDERED`         | Jobs processed in parallel (up to `maxparallel`); failures don't block other jobs |
+| `TOPIC_ROUND_ROBIN` | Distributes jobs across cluster nodes in round-robin fashion                      |
 
 #### Key properties
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `queue.retries` | 10 | Max retry attempts before giving up |
-| `queue.retrydelay` | 2000 | Delay between retries (ms) |
-| `queue.maxparallel` | 15 | Max concurrent job processing threads |
-| `queue.keepJobs` | false | Keep finished jobs in the JCR (for auditing) |
-| `queue.preferRunOnCreationInstance` | false | Prefer running the job on the node that created it |
+| Property                            | Default | Description                                        |
+|-------------------------------------|---------|----------------------------------------------------|
+| `queue.retries`                     | 10      | Max retry attempts before giving up                |
+| `queue.retrydelay`                  | 2000    | Delay between retries (ms)                         |
+| `queue.maxparallel`                 | 15      | Max concurrent job processing threads              |
+| `queue.keepJobs`                    | false   | Keep finished jobs in the JCR (for auditing)       |
+| `queue.preferRunOnCreationInstance` | false   | Prefer running the job on the node that created it |
 
 ---
 
@@ -366,14 +366,14 @@ OSGi config to deploy:
 
 ### Cron expression reference
 
-| Expression | Meaning |
-|-----------|---------|
-| `0 0 * * * ?` | Every hour at :00 |
-| `0 0/15 * * * ?` | Every 15 minutes |
-| `0 0 2 * * ?` | Daily at 2:00 AM |
-| `0 0 2 ? * MON-FRI` | Weekdays at 2:00 AM |
-| `0 0 0 1 * ?` | First day of each month at midnight |
-| `0 0/5 8-17 * * ?` | Every 5 minutes during business hours (8-17) |
+| Expression          | Meaning                                      |
+|---------------------|----------------------------------------------|
+| `0 0 * * * ?`       | Every hour at :00                            |
+| `0 0/15 * * * ?`    | Every 15 minutes                             |
+| `0 0 2 * * ?`       | Daily at 2:00 AM                             |
+| `0 0 2 ? * MON-FRI` | Weekdays at 2:00 AM                          |
+| `0 0 0 1 * ?`       | First day of each month at midnight          |
+| `0 0/5 8-17 * * ?`  | Every 5 minutes during business hours (8-17) |
 
 ### Pattern 2: Sling Scheduler API (programmatic)
 
@@ -563,6 +563,7 @@ println "Queued import jobs: $count"
 ### JMX
 
 Sling Jobs expose JMX MBeans under `org.apache.sling:type=queues`. Monitor:
+
 - Queue depth
 - Processing times
 - Failure rates
@@ -572,15 +573,15 @@ Sling Jobs expose JMX MBeans under `org.apache.sling:type=queues`. Monitor:
 
 ## Sling Jobs vs EventHandler vs Workflow
 
-| Aspect | Sling Jobs | EventHandler | Workflow |
-|--------|-----------|-------------|---------|
-| **Guaranteed execution** | Yes | No | Yes |
-| **Retries** | Automatic (configurable) | None | Manual (retry step) |
-| **Persistence** | JCR (`/var/eventing/jobs`) | None | JCR (`/var/workflow`) |
-| **Visual modelling** | No | No | Yes (workflow editor) |
-| **User tasks** | No | No | Yes (inbox, participant steps) |
-| **Cluster** | Runs on one node | Runs on all nodes | Runs on one node |
-| **Best for** | Backend tasks, integrations | Lightweight reactions | Multi-step business processes |
+| Aspect                   | Sling Jobs                  | EventHandler          | Workflow                       |
+|--------------------------|-----------------------------|-----------------------|--------------------------------|
+| **Guaranteed execution** | Yes                         | No                    | Yes                            |
+| **Retries**              | Automatic (configurable)    | None                  | Manual (retry step)            |
+| **Persistence**          | JCR (`/var/eventing/jobs`)  | None                  | JCR (`/var/workflow`)          |
+| **Visual modelling**     | No                          | No                    | Yes (workflow editor)          |
+| **User tasks**           | No                          | No                    | Yes (inbox, participant steps) |
+| **Cluster**              | Runs on one node            | Runs on all nodes     | Runs on one node               |
+| **Best for**             | Backend tasks, integrations | Lightweight reactions | Multi-step business processes  |
 
 ---
 
@@ -643,15 +644,15 @@ with a dedicated service user.
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Jobs never execute | Check that a `JobConsumer` is registered for the topic; verify in Felix console |
-| Jobs execute on all cluster nodes | This is EventHandler behaviour, not Sling Jobs; make sure you're using `JobManager.addJob()` |
-| Queue is stuck / paused | An ORDERED queue pauses when a job fails; check for failed jobs and fix or cancel them |
-| Scheduler runs but nothing happens | Verify the cron expression; check that `scheduler.concurrent` is set correctly |
+| Pitfall                             | Solution                                                                                                  |
+|-------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| Jobs never execute                  | Check that a `JobConsumer` is registered for the topic; verify in Felix console                           |
+| Jobs execute on all cluster nodes   | This is EventHandler behaviour, not Sling Jobs; make sure you're using `JobManager.addJob()`              |
+| Queue is stuck / paused             | An ORDERED queue pauses when a job fails; check for failed jobs and fix or cancel them                    |
+| Scheduler runs but nothing happens  | Verify the cron expression; check that `scheduler.concurrent` is set correctly                            |
 | Scheduler runs too often on AEMaaCS | AEMaaCS may run multiple instances; use `scheduler.concurrent = false` and Sling Jobs for the actual work |
-| Memory issues with bulk jobs | Process in batches; commit the ResourceResolver periodically; don't accumulate results in memory |
-| Job retries endlessly | Return `JobResult.CANCEL` for permanent failures; configure `queue.retries` |
+| Memory issues with bulk jobs        | Process in batches; commit the ResourceResolver periodically; don't accumulate results in memory          |
+| Job retries endlessly               | Return `JobResult.CANCEL` for permanent failures; configure `queue.retries`                               |
 
 ## See also
 

@@ -32,7 +32,8 @@ graph LR
 
 ### The problem
 
-The Granite [PathField](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/pathfield/index.html)
+The
+Granite [PathField](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/pathfield/index.html)
 has a `rootPath` property that determines where the path browser opens. In a standard dialog, this
 is hardcoded in the XML:
 
@@ -537,13 +538,13 @@ graph TD
 
 ### When to use which approach
 
-| Technique | Server / Client | Use case |
-|-----------|----------------|----------|
-| **Custom PathField widget** (servlet/JSP) | Server-side | Dynamic `rootPath` for PathField or PathBrowser |
-| **Asset finder searchRoot override** | Client-side (JS) | Dynamic root for the asset side panel |
-| **DataSource servlet** | Server-side | Dynamic options for Select, Autocomplete, TagField |
-| **Render Condition** | Server-side | Show/hide entire fields based on context |
-| **Dialog clientlib show/hide** | Client-side (JS) | Toggle field visibility based on other field values |
+| Technique                                 | Server / Client  | Use case                                            |
+|-------------------------------------------|------------------|-----------------------------------------------------|
+| **Custom PathField widget** (servlet/JSP) | Server-side      | Dynamic `rootPath` for PathField or PathBrowser     |
+| **Asset finder searchRoot override**      | Client-side (JS) | Dynamic root for the asset side panel               |
+| **DataSource servlet**                    | Server-side      | Dynamic options for Select, Autocomplete, TagField  |
+| **Render Condition**                      | Server-side      | Show/hide entire fields based on context            |
+| **Dialog clientlib show/hide**            | Client-side (JS) | Toggle field visibility based on other field values |
 
 ---
 
@@ -599,14 +600,14 @@ return rootPath;
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Custom PathField shows `/content` for all sites | Check that the Referer header or suffix contains the content path; verify `computeRootPath` logic |
-| Widget works in CRXDE but not after deploy | Ensure the widget component and servlet are included in the content package and `filter.xml` |
-| Asset finder override doesn't work | Verify the clientlib category is `cq.authoring.editor`; check that `Granite.author.ui.assetFinder.registry` exists before overriding |
-| PathField still uses the hardcoded rootPath | Make sure the dialog references your custom `sling:resourceType`, not the standard `granite/.../pathfield` |
-| DataSource returns empty options | Check that the suffix path is correctly extracted; log the computed tag root |
-| Custom widget breaks on AEM upgrade | Because you use `sling:resourceSuperType`, upgrades to the parent component are inherited automatically |
+| Pitfall                                         | Solution                                                                                                                             |
+|-------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| Custom PathField shows `/content` for all sites | Check that the Referer header or suffix contains the content path; verify `computeRootPath` logic                                    |
+| Widget works in CRXDE but not after deploy      | Ensure the widget component and servlet are included in the content package and `filter.xml`                                         |
+| Asset finder override doesn't work              | Verify the clientlib category is `cq.authoring.editor`; check that `Granite.author.ui.assetFinder.registry` exists before overriding |
+| PathField still uses the hardcoded rootPath     | Make sure the dialog references your custom `sling:resourceType`, not the standard `granite/.../pathfield`                           |
+| DataSource returns empty options                | Check that the suffix path is correctly extracted; log the computed tag root                                                         |
+| Custom widget breaks on AEM upgrade             | Because you use `sling:resourceSuperType`, upgrades to the parent component are inherited automatically                              |
 
 ## See also
 

@@ -70,10 +70,10 @@ the JCR.
 
 ### Rollout vs Synchronize
 
-| Action | Direction | Triggered from | When to use |
-|--------|-----------|---------------|-------------|
-| **Rollout** | Blueprint -> Live Copy | Blueprint page or system event | Push source changes to one or more Live Copies |
-| **Synchronize** | Blueprint -> Live Copy | Live Copy page | Pull latest Blueprint changes into this Live Copy |
+| Action          | Direction              | Triggered from                 | When to use                                       |
+|-----------------|------------------------|--------------------------------|---------------------------------------------------|
+| **Rollout**     | Blueprint -> Live Copy | Blueprint page or system event | Push source changes to one or more Live Copies    |
+| **Synchronize** | Blueprint -> Live Copy | Live Copy page                 | Pull latest Blueprint changes into this Live Copy |
 
 Both operations execute the same rollout configuration actions -- the difference is where the
 operation is initiated.
@@ -145,6 +145,7 @@ public void createLiveCopy(ResourceResolver resolver,
 
 MSM is the mechanism behind AEM's **language copy** feature. When you create a language copy via
 **Sites > Create > Language Copy**, AEM creates a Live Copy with:
+
 - A translation-specific rollout configuration
 - Integration with the AEM Translation Framework
 - Language-specific `jcr:language` property
@@ -168,35 +169,35 @@ product default is at `/libs/msm/wcm/rolloutconfigs/default`.
 
 ### Built-in rollout configurations
 
-| Configuration | Location | Trigger | Actions |
-|--------------|----------|---------|---------|
-| **Standard Rollout Config** | `/libs/msm/wcm/rolloutconfigs/default` | `rollout` | `contentUpdate`, `contentCopy`, `contentDelete`, `referencesUpdate`, `orderChildren` |
-| **Activate on Blueprint Activation** | `/libs/msm/wcm/rolloutconfigs/activate` | `activate` | `targetActivate` |
-| **Deactivate on Blueprint Deactivation** | `/libs/msm/wcm/rolloutconfigs/deactivate` | `deactivate` | `targetDeactivate` |
-| **Push on Modify** | `/libs/msm/wcm/rolloutconfigs/pushonmodify` | `modification` | `contentUpdate`, `contentCopy`, `contentDelete`, `orderChildren` |
+| Configuration                            | Location                                    | Trigger        | Actions                                                                              |
+|------------------------------------------|---------------------------------------------|----------------|--------------------------------------------------------------------------------------|
+| **Standard Rollout Config**              | `/libs/msm/wcm/rolloutconfigs/default`      | `rollout`      | `contentUpdate`, `contentCopy`, `contentDelete`, `referencesUpdate`, `orderChildren` |
+| **Activate on Blueprint Activation**     | `/libs/msm/wcm/rolloutconfigs/activate`     | `activate`     | `targetActivate`                                                                     |
+| **Deactivate on Blueprint Deactivation** | `/libs/msm/wcm/rolloutconfigs/deactivate`   | `deactivate`   | `targetDeactivate`                                                                   |
+| **Push on Modify**                       | `/libs/msm/wcm/rolloutconfigs/pushonmodify` | `modification` | `contentUpdate`, `contentCopy`, `contentDelete`, `orderChildren`                     |
 
 ### Rollout triggers (`cq:trigger`)
 
-| Trigger | Fires when |
-|---------|-----------|
-| `rollout` | Author manually triggers a rollout |
-| `modification` | Blueprint page is modified (saved) |
-| `activate` | Blueprint page is activated (published) |
-| `deactivate` | Blueprint page is deactivated (unpublished) |
+| Trigger        | Fires when                                  |
+|----------------|---------------------------------------------|
+| `rollout`      | Author manually triggers a rollout          |
+| `modification` | Blueprint page is modified (saved)          |
+| `activate`     | Blueprint page is activated (published)     |
+| `deactivate`   | Blueprint page is deactivated (unpublished) |
 
 ### Built-in rollout actions
 
-| Action | What it does |
-|--------|-------------|
-| `contentUpdate` | Updates Live Copy content from Blueprint |
-| `contentCopy` | Copies new content from Blueprint to Live Copy |
-| `contentDelete` | Deletes Live Copy content that was deleted in Blueprint |
-| `referencesUpdate` | Updates internal references (links, images) to point to Live Copy paths |
-| `orderChildren` | Syncs the order of child pages |
-| `targetActivate` | Activates (publishes) the Live Copy page |
-| `targetDeactivate` | Deactivates (unpublishes) the Live Copy page |
-| `markLiveRelationship` | Marks the relationship as live (internal bookkeeping) |
-| `PageMoveAction` | Handles Blueprint page moves (see below) |
+| Action                 | What it does                                                            |
+|------------------------|-------------------------------------------------------------------------|
+| `contentUpdate`        | Updates Live Copy content from Blueprint                                |
+| `contentCopy`          | Copies new content from Blueprint to Live Copy                          |
+| `contentDelete`        | Deletes Live Copy content that was deleted in Blueprint                 |
+| `referencesUpdate`     | Updates internal references (links, images) to point to Live Copy paths |
+| `orderChildren`        | Syncs the order of child pages                                          |
+| `targetActivate`       | Activates (publishes) the Live Copy page                                |
+| `targetDeactivate`     | Deactivates (unpublishes) the Live Copy page                            |
+| `markLiveRelationship` | Marks the relationship as live (internal bookkeeping)                   |
+| `PageMoveAction`       | Handles Blueprint page moves (see below)                                |
 
 ### Custom rollout configuration
 
@@ -242,6 +243,7 @@ a `sling:OrderedFolder`:
 ### Assigning rollout configs to a Live Copy
 
 Set rollout configurations on a Live Copy page via:
+
 - **Page Properties > Live Copy tab** (UI)
 - JCR property `cq:rolloutConfigs` on the `cq:LiveSyncConfig` node (programmatic)
 
@@ -386,15 +388,15 @@ The central API for programmatic MSM operations:
 private LiveRelationshipManager liveRelationshipManager;
 ```
 
-| Method | Purpose |
-|--------|---------|
-| `create(source, parent, title, deep, configs)` | Create a new Live Copy |
-| `getLiveRelationship(resource, advancedStatus)` | Get the relationship for a resource |
-| `getLiveRelationships(source, path, deep)` | Get all Live Copies of a Blueprint resource |
-| `isSource(resource)` | Check if a resource is a Blueprint source |
-| `endRelationship(resolver, relation, deep)` | Detach a Live Copy from its Blueprint |
-| `reenableRelationship(resolver, relation, deep)` | Re-enable inheritance on a detached Live Copy |
-| `cancelRelationship(resolver, relation, deep, triggerRollout)` | Cancel inheritance (make local) |
+| Method                                                         | Purpose                                       |
+|----------------------------------------------------------------|-----------------------------------------------|
+| `create(source, parent, title, deep, configs)`                 | Create a new Live Copy                        |
+| `getLiveRelationship(resource, advancedStatus)`                | Get the relationship for a resource           |
+| `getLiveRelationships(source, path, deep)`                     | Get all Live Copies of a Blueprint resource   |
+| `isSource(resource)`                                           | Check if a resource is a Blueprint source     |
+| `endRelationship(resolver, relation, deep)`                    | Detach a Live Copy from its Blueprint         |
+| `reenableRelationship(resolver, relation, deep)`               | Re-enable inheritance on a detached Live Copy |
+| `cancelRelationship(resolver, relation, deep, triggerRollout)` | Cancel inheritance (make local)               |
 
 ### Checking MSM status
 
@@ -651,15 +653,15 @@ through intermediate levels. Test thoroughly before adopting this pattern.
 When a rollout encounters a Live Copy page that has been locally modified, AEM uses the following
 rules:
 
-| Scenario | Behaviour |
-|----------|----------|
-| Inherited component, Blueprint updated | Live Copy component is updated |
-| Component with cancelled inheritance, Blueprint updated | Live Copy component is **not** updated (local wins) |
-| Component deleted in Blueprint | Component is deleted in Live Copy (if inherited) |
-| New component added in Blueprint | Component is added to Live Copy |
-| Page deleted in Blueprint | Page is deleted in Live Copy |
-| Page added in Blueprint | Page is added to Live Copy |
-| Conflicting property changes (both sides changed) | Blueprint wins for inherited components; local wins for cancelled |
+| Scenario                                                | Behaviour                                                         |
+|---------------------------------------------------------|-------------------------------------------------------------------|
+| Inherited component, Blueprint updated                  | Live Copy component is updated                                    |
+| Component with cancelled inheritance, Blueprint updated | Live Copy component is **not** updated (local wins)               |
+| Component deleted in Blueprint                          | Component is deleted in Live Copy (if inherited)                  |
+| New component added in Blueprint                        | Component is added to Live Copy                                   |
+| Page deleted in Blueprint                               | Page is deleted in Live Copy                                      |
+| Page added in Blueprint                                 | Page is added to Live Copy                                        |
+| Conflicting property changes (both sides changed)       | Blueprint wins for inherited components; local wins for cancelled |
 
 ### Rollout conflict handler
 
@@ -706,23 +708,24 @@ Tools > Operations > Web Console > Day CQ WCM Rollout Conflict Handler
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| Page moves not propagated | Create a separate rollout config with `PageMoveAction` |
-| Rollout overwrites local changes | Author must cancel inheritance on components that should be local |
-| "Suspended" Live Copy relationship | Re-enable inheritance or re-attach the Live Copy via the Sites console |
-| Deep rollout takes very long | Reduce scope to specific pages or subtrees; run overnight for full-site rollouts |
-| References point to Blueprint paths | Ensure `referencesUpdate` action is in the rollout config |
-| Live Copy shows stale content | Check if rollout was triggered; synchronize from the Live Copy page |
-| Nested blueprints cascade unexpectedly | Test multi-level rollouts in a staging environment first |
-| Translation integration not working | Ensure language copies are created via **Sites > Create > Language Copy**, not manual Live Copy |
-| AEMaaCS: Rollout performance | AEMaaCS has improved rollout performance; use the latest dispatcher cache invalidation patterns |
+| Pitfall                                | Solution                                                                                        |
+|----------------------------------------|-------------------------------------------------------------------------------------------------|
+| Page moves not propagated              | Create a separate rollout config with `PageMoveAction`                                          |
+| Rollout overwrites local changes       | Author must cancel inheritance on components that should be local                               |
+| "Suspended" Live Copy relationship     | Re-enable inheritance or re-attach the Live Copy via the Sites console                          |
+| Deep rollout takes very long           | Reduce scope to specific pages or subtrees; run overnight for full-site rollouts                |
+| References point to Blueprint paths    | Ensure `referencesUpdate` action is in the rollout config                                       |
+| Live Copy shows stale content          | Check if rollout was triggered; synchronize from the Live Copy page                             |
+| Nested blueprints cascade unexpectedly | Test multi-level rollouts in a staging environment first                                        |
+| Translation integration not working    | Ensure language copies are created via **Sites > Create > Language Copy**, not manual Live Copy |
+| AEMaaCS: Rollout performance           | AEMaaCS has improved rollout performance; use the latest dispatcher cache invalidation patterns |
 
 ## External Resources
 
 - [MSM Best Practices](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/introduction/msm-best-practices)
 - [Creating a New Rollout Configuration](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/configuring-and-extending/msm#creating-a-new-rollout-configuration)
-- [Rollout `cq:trigger` Enum](https://developer.adobe.com/experience-manager/reference-materials/6-5/javadoc/com/day/cq/wcm/msm/api/RolloutManager.Trigger.html)
+- [Rollout
+  `cq:trigger` Enum](https://developer.adobe.com/experience-manager/reference-materials/6-5/javadoc/com/day/cq/wcm/msm/api/RolloutManager.Trigger.html)
 - [Product Rollout Actions Reference](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/reusing-content/msm/live-copy-sync-config#synchronization-actions)
 - [Live Copy Overview Console](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/reusing-content/msm/live-copy-overview)
 - [MSM Structure Changes and Rollouts](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/introduction/msm-best-practices#structure-changes-and-rollouts)

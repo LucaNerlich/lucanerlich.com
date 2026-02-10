@@ -41,32 +41,32 @@ Java provides a rich set in `java.util.function`:
 
 ### Core four
 
-| Interface | Signature | Purpose | Example |
-|-----------|-----------|---------|---------|
-| `Function<T, R>` | `R apply(T t)` | Transform T to R | `String::length` |
-| `Predicate<T>` | `boolean test(T t)` | Test a condition | `s -> s.isEmpty()` |
-| `Consumer<T>` | `void accept(T t)` | Perform a side effect | `System.out::println` |
-| `Supplier<T>` | `T get()` | Produce a value | `() -> new ArrayList<>()` |
+| Interface        | Signature           | Purpose               | Example                   |
+|------------------|---------------------|-----------------------|---------------------------|
+| `Function<T, R>` | `R apply(T t)`      | Transform T to R      | `String::length`          |
+| `Predicate<T>`   | `boolean test(T t)` | Test a condition      | `s -> s.isEmpty()`        |
+| `Consumer<T>`    | `void accept(T t)`  | Perform a side effect | `System.out::println`     |
+| `Supplier<T>`    | `T get()`           | Produce a value       | `() -> new ArrayList<>()` |
 
 ### Two-argument variants
 
-| Interface | Signature | Example |
-|-----------|-----------|---------|
-| `BiFunction<T, U, R>` | `R apply(T t, U u)` | `(a, b) -> a + b` |
-| `BiPredicate<T, U>` | `boolean test(T t, U u)` | `(s, len) -> s.length() > len` |
-| `BiConsumer<T, U>` | `void accept(T t, U u)` | `map::put` |
+| Interface             | Signature                | Example                        |
+|-----------------------|--------------------------|--------------------------------|
+| `BiFunction<T, U, R>` | `R apply(T t, U u)`      | `(a, b) -> a + b`              |
+| `BiPredicate<T, U>`   | `boolean test(T t, U u)` | `(s, len) -> s.length() > len` |
+| `BiConsumer<T, U>`    | `void accept(T t, U u)`  | `map::put`                     |
 
 ### Specialised variants
 
-| Interface | Signature | Avoids |
-|-----------|-----------|--------|
-| `UnaryOperator<T>` | `T apply(T t)` | `Function<T, T>` |
-| `BinaryOperator<T>` | `T apply(T t1, T t2)` | `BiFunction<T, T, T>` |
-| `IntFunction<R>` | `R apply(int value)` | Boxing |
-| `ToIntFunction<T>` | `int applyAsInt(T value)` | Boxing |
-| `IntPredicate` | `boolean test(int value)` | Boxing |
-| `IntConsumer` | `void accept(int value)` | Boxing |
-| `IntSupplier` | `int getAsInt()` | Boxing |
+| Interface           | Signature                 | Avoids                |
+|---------------------|---------------------------|-----------------------|
+| `UnaryOperator<T>`  | `T apply(T t)`            | `Function<T, T>`      |
+| `BinaryOperator<T>` | `T apply(T t1, T t2)`     | `BiFunction<T, T, T>` |
+| `IntFunction<R>`    | `R apply(int value)`      | Boxing                |
+| `ToIntFunction<T>`  | `int applyAsInt(T value)` | Boxing                |
+| `IntPredicate`      | `boolean test(int value)` | Boxing                |
+| `IntConsumer`       | `void accept(int value)`  | Boxing                |
+| `IntSupplier`       | `int getAsInt()`          | Boxing                |
 
 ---
 
@@ -105,12 +105,12 @@ s -> s.length()
 
 Method references are a shorthand for lambdas that just call an existing method:
 
-| Type | Syntax | Equivalent lambda |
-|------|--------|------------------|
-| Static method | `Integer::parseInt` | `s -> Integer.parseInt(s)` |
-| Instance method (on parameter) | `String::toUpperCase` | `s -> s.toUpperCase()` |
-| Instance method (on object) | `System.out::println` | `s -> System.out.println(s)` |
-| Constructor | `ArrayList::new` | `() -> new ArrayList<>()` |
+| Type                           | Syntax                | Equivalent lambda            |
+|--------------------------------|-----------------------|------------------------------|
+| Static method                  | `Integer::parseInt`   | `s -> Integer.parseInt(s)`   |
+| Instance method (on parameter) | `String::toUpperCase` | `s -> s.toUpperCase()`       |
+| Instance method (on object)    | `System.out::println` | `s -> System.out.println(s)` |
+| Constructor                    | `ArrayList::new`      | `() -> new ArrayList<>()`    |
 
 ```java
 List<String> words = List.of("hello", "world");
@@ -293,13 +293,13 @@ double finalPrice = strategy.apply(new Order(100.0));
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Checked exceptions in lambdas | `Function<T,R>` does not allow checked exceptions | Wrap in try/catch inside the lambda, or create a custom functional interface that throws |
-| Capturing mutable variables | `for (int i...)` -- lambda captures effectively final variables only | Use a final copy or IntStream |
-| `this` in lambdas | `this` refers to the enclosing class, not the lambda | Expected behavior, but can be surprising |
-| Overusing lambdas | Complex multi-line lambdas are hard to read | Extract to a named method and use a method reference |
-| Missing `@FunctionalInterface` | Non-annotated interfaces can accidentally gain a second abstract method | Always annotate custom functional interfaces |
+| Pitfall                        | Problem                                                                 | Fix                                                                                      |
+|--------------------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| Checked exceptions in lambdas  | `Function<T,R>` does not allow checked exceptions                       | Wrap in try/catch inside the lambda, or create a custom functional interface that throws |
+| Capturing mutable variables    | `for (int i...)` -- lambda captures effectively final variables only    | Use a final copy or IntStream                                                            |
+| `this` in lambdas              | `this` refers to the enclosing class, not the lambda                    | Expected behavior, but can be surprising                                                 |
+| Overusing lambdas              | Complex multi-line lambdas are hard to read                             | Extract to a named method and use a method reference                                     |
+| Missing `@FunctionalInterface` | Non-annotated interfaces can accidentally gain a second abstract method | Always annotate custom functional interfaces                                             |
 
 ---
 

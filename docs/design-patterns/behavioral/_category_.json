@@ -1,8 +1,8 @@
 {
-  "label": "Behavioral",
-  "link": {
-    "type": "generated-index",
-    "description": "Patterns that focus on communication and responsibilities."
-  },
-  "collapsed": true
+    "label": "Behavioral",
+    "link": {
+        "type": "generated-index",
+        "description": "Patterns that focus on communication and responsibilities."
+    },
+    "collapsed": true
 }

@@ -7,7 +7,8 @@ tags: [strapi, middleware, policies, security]
 
 # Middleware and Policies
 
-Middleware and policies sit between the incoming request and the controller. **Policies** decide whether a request is allowed (yes/no). **Middleware** can modify the request or response (transform, log, cache, etc.).
+Middleware and policies sit between the incoming request and the controller. **Policies** decide whether a request is
+allowed (yes/no). **Middleware** can modify the request or response (transform, log, cache, etc.).
 
 ```mermaid
 flowchart LR
@@ -273,26 +274,26 @@ module.exports = {
 
 ## Policies vs middleware
 
-| Aspect | Policies | Middleware |
-|--------|----------|-----------|
-| **Purpose** | Access control (allow/deny) | Request/response transformation |
-| **Return value** | `true` or `false` | Calls `next()` |
-| **Can modify request** | No | Yes |
-| **Can modify response** | No | Yes |
-| **Scope** | Route-level only | Global or route-level |
-| **Use case** | Is-owner, role check, feature flag | Logging, caching, rate limiting, CORS |
+| Aspect                  | Policies                           | Middleware                            |
+|-------------------------|------------------------------------|---------------------------------------|
+| **Purpose**             | Access control (allow/deny)        | Request/response transformation       |
+| **Return value**        | `true` or `false`                  | Calls `next()`                        |
+| **Can modify request**  | No                                 | Yes                                   |
+| **Can modify response** | No                                 | Yes                                   |
+| **Scope**               | Route-level only                   | Global or route-level                 |
+| **Use case**            | Is-owner, role check, feature flag | Logging, caching, rate limiting, CORS |
 
 ---
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Forgetting `await next()` in middleware | Request hangs, never reaches controller | Always call `await next()` |
-| Modifying `ctx.body` before `next()` | Overwrites the controller response | Modify after `next()` for response manipulation |
-| Policy returning `undefined` | Treated as `false` (403 Forbidden) | Explicitly return `true` |
-| Global middleware not in `config/middlewares.js` | Middleware never loads | Add it to the array |
-| Expensive logic in middleware | Runs on every matched request | Guard with conditions, use caching |
+| Pitfall                                          | Problem                                 | Fix                                             |
+|--------------------------------------------------|-----------------------------------------|-------------------------------------------------|
+| Forgetting `await next()` in middleware          | Request hangs, never reaches controller | Always call `await next()`                      |
+| Modifying `ctx.body` before `next()`             | Overwrites the controller response      | Modify after `next()` for response manipulation |
+| Policy returning `undefined`                     | Treated as `false` (403 Forbidden)      | Explicitly return `true`                        |
+| Global middleware not in `config/middlewares.js` | Middleware never loads                  | Add it to the array                             |
+| Expensive logic in middleware                    | Runs on every matched request           | Guard with conditions, use caching              |
 
 ---
 

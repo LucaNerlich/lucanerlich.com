@@ -15,11 +15,13 @@ sidebar_position: 12
 
 # Multi-Site Manager & i18n
 
-Enterprise websites often span multiple countries, languages, and brands. AEM provides two complementary systems: **Multi-Site Manager (MSM)** for content reuse across sites, and **i18n** for language translation.
+Enterprise websites often span multiple countries, languages, and brands. AEM provides two complementary systems: *
+*Multi-Site Manager (MSM)** for content reuse across sites, and **i18n** for language translation.
 
 ## Multi-Site Manager (MSM)
 
-MSM lets you create **Live Copies** -- sites that inherit content from a **Blueprint** (source) site and can be customized locally.
+MSM lets you create **Live Copies** -- sites that inherit content from a **Blueprint** (source) site and can be
+customized locally.
 
 ```mermaid
 flowchart TD
@@ -35,24 +37,24 @@ flowchart TD
 
 ### When to use MSM
 
-| Scenario | Solution |
-|----------|----------|
-| Same language, different regions (US/UK/AU English) | MSM Live Copies |
-| Different languages (English/German/French) | Language Copies + Translation |
-| Different brands sharing content | MSM with Blueprint |
-| Franchise sites with local customization | MSM Live Copies |
+| Scenario                                            | Solution                      |
+|-----------------------------------------------------|-------------------------------|
+| Same language, different regions (US/UK/AU English) | MSM Live Copies               |
+| Different languages (English/German/French)         | Language Copies + Translation |
+| Different brands sharing content                    | MSM with Blueprint            |
+| Franchise sites with local customization            | MSM Live Copies               |
 
 ### Key concepts
 
-| Concept | Description |
-|---------|-------------|
-| **Blueprint** | The source site -- the "master" content |
-| **Live Copy** | A site that inherits from the blueprint |
-| **Rollout** | Push changes from blueprint to live copies |
-| **Inheritance** | Live copy pages/components inherit from blueprint |
-| **Detach** | Break inheritance for a page or component (local override) |
-| **Suspend** | Temporarily pause inheritance |
-| **Rollout Config** | Rules that define what gets rolled out and how |
+| Concept            | Description                                                |
+|--------------------|------------------------------------------------------------|
+| **Blueprint**      | The source site -- the "master" content                    |
+| **Live Copy**      | A site that inherits from the blueprint                    |
+| **Rollout**        | Push changes from blueprint to live copies                 |
+| **Inheritance**    | Live copy pages/components inherit from blueprint          |
+| **Detach**         | Break inheritance for a page or component (local override) |
+| **Suspend**        | Temporarily pause inheritance                              |
+| **Rollout Config** | Rules that define what gets rolled out and how             |
 
 ### Creating a Blueprint
 
@@ -76,10 +78,10 @@ flowchart TD
 
 Rollout configs define the synchronization behavior:
 
-| Config | Behavior |
-|--------|----------|
-| **Standard Rollout Config** | Push content on rollout trigger |
-| **Push on Modify** | Auto-push when blueprint is modified |
+| Config                        | Behavior                                  |
+|-------------------------------|-------------------------------------------|
+| **Standard Rollout Config**   | Push content on rollout trigger           |
+| **Push on Modify**            | Auto-push when blueprint is modified      |
 | **Push on Modify and Create** | Auto-push on modify and new page creation |
 
 You can also create custom rollout configs that combine triggers and actions.
@@ -98,7 +100,8 @@ Or use **bulk rollout**: go to the Blueprint console, select the blueprint, and 
 
 ### Inheritance and local overrides
 
-By default, live copy components inherit their content from the blueprint. When an author edits a component on a live copy:
+By default, live copy components inherit their content from the blueprint. When an author edits a component on a live
+copy:
 
 - The **inheritance breaks** for that component
 - Future rollouts will **not** overwrite the local change
@@ -110,11 +113,11 @@ Authors can re-establish inheritance from the component toolbar.
 
 When both the blueprint and live copy have been modified:
 
-| Blueprint changed | Live copy changed | Rollout result |
-|-------------------|-------------------|----------------|
-| Yes | No | Live copy updated |
-| No | Yes | Live copy keeps local change |
-| Yes | Yes | **Conflict** -- live copy keeps local change (inheritance was broken) |
+| Blueprint changed | Live copy changed | Rollout result                                                        |
+|-------------------|-------------------|-----------------------------------------------------------------------|
+| Yes               | No                | Live copy updated                                                     |
+| No                | Yes               | Live copy keeps local change                                          |
+| Yes               | Yes               | **Conflict** -- live copy keeps local change (inheritance was broken) |
 
 ## Language copies and translation
 
@@ -148,8 +151,8 @@ Each language root (`en`, `de`, `fr`, `ja`) contains a parallel site structure.
 3. Click **Create** > **Language Copy**
 4. Select target languages
 5. Choose:
-   - **Create structure only** -- creates empty pages with the same structure
-   - **Create a new translation project** -- creates pages and a translation project
+    - **Create structure only** -- creates empty pages with the same structure
+    - **Create a new translation project** -- creates pages and a translation project
 
 ### Translation projects
 
@@ -169,13 +172,15 @@ flowchart LR
 ```
 
 1. A translation project is created from the source content
-2. Translation jobs are sent to a **translation provider** (human translator, machine translation, or a service like SDL, Smartling, etc.)
+2. Translation jobs are sent to a **translation provider** (human translator, machine translation, or a service like
+   SDL, Smartling, etc.)
 3. Translated content is reviewed and approved
 4. Approved content is published to the target language
 
 ### Machine translation
 
-AEM integrates with machine translation services. Configure in **Tools** > **Cloud Services** > **Translation Cloud Configuration**:
+AEM integrates with machine translation services. Configure in **Tools** > **Cloud Services** > **Translation Cloud
+Configuration**:
 
 - **Microsoft Translator**
 - **Google Cloud Translation**
@@ -259,7 +264,9 @@ public class MyModel {
 }
 ```
 
-> For more details, see the [Multi-Site Manager (MSM)](/aem/content/multi-site-manager-msm), [i18n and Translation](/aem/content/i18n-translation), and [Replication and Activation](/aem/content/replication-activation) references.
+> For more details, see
+> the [Multi-Site Manager (MSM)](/aem/content/multi-site-manager-msm), [i18n and Translation](/aem/content/i18n-translation),
+> and [Replication and Activation](/aem/content/replication-activation) references.
 
 ## Summary
 
@@ -273,6 +280,8 @@ You learned:
 - **Machine translation** integration
 - **i18n dictionaries** -- translating UI strings in HTL and Java
 
-The content side is complete. The final two chapters cover production concerns: Dispatcher caching and Cloud Manager deployment.
+The content side is complete. The final two chapters cover production concerns: Dispatcher caching and Cloud Manager
+deployment.
 
-Next up: [Dispatcher & Caching](./13-dispatcher-and-caching.md) -- Dispatcher architecture, cache rules, filters, rewrites, vanity URLs, invalidation, and local SDK testing.
+Next up: [Dispatcher & Caching](./13-dispatcher-and-caching.md) -- Dispatcher architecture, cache rules, filters,
+rewrites, vanity URLs, invalidation, and local SDK testing.

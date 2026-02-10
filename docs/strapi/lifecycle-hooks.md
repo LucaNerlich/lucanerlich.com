@@ -7,11 +7,14 @@ tags: [strapi, lifecycle, hooks, events]
 
 # Lifecycle Hooks
 
-Lifecycle hooks run automatically before or after database operations. They are the right place for auto-computed fields, audit logging, cache invalidation, and side effects that should always happen regardless of which controller triggers the operation.
+Lifecycle hooks run automatically before or after database operations. They are the right place for auto-computed
+fields, audit logging, cache invalidation, and side effects that should always happen regardless of which controller
+triggers the operation.
 
 ## Document Service middleware as lifecycle hooks
 
-In Strapi 5, lifecycle hooks are implemented as **Document Service middleware**. They intercept calls on the Document Service API.
+In Strapi 5, lifecycle hooks are implemented as **Document Service middleware**. They intercept calls on the Document
+Service API.
 
 ```mermaid
 sequenceDiagram
@@ -49,12 +52,12 @@ module.exports = {
 
 Every middleware receives a `context` with:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `uid` | `string` | Content type UID (e.g., `api::article.article`) |
-| `action` | `string` | Method name: `findOne`, `findMany`, `create`, `update`, `delete`, `publish`, `unpublish` |
-| `params` | `object` | The parameters passed to the method (data, filters, populate, etc.) |
-| `contentType` | `object` | Full content type schema |
+| Property      | Type     | Description                                                                              |
+|---------------|----------|------------------------------------------------------------------------------------------|
+| `uid`         | `string` | Content type UID (e.g., `api::article.article`)                                          |
+| `action`      | `string` | Method name: `findOne`, `findMany`, `create`, `update`, `delete`, `publish`, `unpublish` |
+| `params`      | `object` | The parameters passed to the method (data, filters, populate, etc.)                      |
+| `contentType` | `object` | Full content type schema                                                                 |
 
 ---
 
@@ -293,13 +296,13 @@ module.exports = {
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Not returning `next()` | Breaks the entire middleware chain | Always `return next()` or `return await next()` |
-| Blocking side effects | Slow responses if email/webhook is synchronous | Use `setImmediate()` for fire-and-forget tasks |
-| Infinite loops | Middleware triggers another `update` which triggers itself | Use `strapi.db.query()` for silent updates |
-| No UID guard | Middleware runs for all content types | Check `context.uid` early and `return next()` |
-| Heavy computations | Slows down every matching operation | Move to a queue or async job |
+| Pitfall                | Problem                                                    | Fix                                             |
+|------------------------|------------------------------------------------------------|-------------------------------------------------|
+| Not returning `next()` | Breaks the entire middleware chain                         | Always `return next()` or `return await next()` |
+| Blocking side effects  | Slow responses if email/webhook is synchronous             | Use `setImmediate()` for fire-and-forget tasks  |
+| Infinite loops         | Middleware triggers another `update` which triggers itself | Use `strapi.db.query()` for silent updates      |
+| No UID guard           | Middleware runs for all content types                      | Check `context.uid` early and `return next()`   |
+| Heavy computations     | Slows down every matching operation                        | Move to a queue or async job                    |
 
 ---
 

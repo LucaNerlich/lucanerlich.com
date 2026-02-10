@@ -15,7 +15,9 @@ sidebar_position: 7
 
 # HTML & CSS Essentials
 
-Before we can manipulate web pages with JavaScript, we need to understand how they are built. This chapter covers enough HTML and CSS to build real pages. It is not a comprehensive reference -- it is the working knowledge you need for the rest of this guide.
+Before we can manipulate web pages with JavaScript, we need to understand how they are built. This chapter covers enough
+HTML and CSS to build real pages. It is not a comprehensive reference -- it is the working knowledge you need for the
+rest of this guide.
 
 ## HTML: the structure
 
@@ -38,15 +40,15 @@ Before we can manipulate web pages with JavaScript, we need to understand how th
 </html>
 ```
 
-| Part | Purpose |
-|------|---------|
-| `<!DOCTYPE html>` | Tells the browser this is an HTML5 document |
-| `<html lang="en">` | Root element; `lang` helps screen readers and search engines |
-| `<head>` | Metadata -- not displayed on the page |
-| `<meta charset="UTF-8">` | Character encoding (supports all languages) |
-| `<meta name="viewport" ...>` | Makes the page responsive on mobile devices |
-| `<title>` | Browser tab title |
-| `<body>` | All visible content goes here |
+| Part                         | Purpose                                                      |
+|------------------------------|--------------------------------------------------------------|
+| `<!DOCTYPE html>`            | Tells the browser this is an HTML5 document                  |
+| `<html lang="en">`           | Root element; `lang` helps screen readers and search engines |
+| `<head>`                     | Metadata -- not displayed on the page                        |
+| `<meta charset="UTF-8">`     | Character encoding (supports all languages)                  |
+| `<meta name="viewport" ...>` | Makes the page responsive on mobile devices                  |
+| `<title>`                    | Browser tab title                                            |
+| `<body>`                     | All visible content goes here                                |
 
 ### Elements and attributes
 
@@ -104,7 +106,8 @@ Use headings in order -- do not skip levels. A page should have exactly one `<h1
 <a href="https://example.com" target="_blank" rel="noopener noreferrer">Opens in new tab</a>
 ```
 
-Always include `rel="noopener noreferrer"` when using `target="_blank"` -- it prevents the linked page from accessing your page's `window.opener`.
+Always include `rel="noopener noreferrer"` when using `target="_blank"` -- it prevents the linked page from accessing
+your page's `window.opener`.
 
 ### Images
 
@@ -112,7 +115,8 @@ Always include `rel="noopener noreferrer"` when using `target="_blank"` -- it pr
 <img src="photo.jpg" alt="Description of the photo" width="400" height="300">
 ```
 
-The `alt` attribute is required for accessibility -- it describes the image to screen readers and displays if the image fails to load.
+The `alt` attribute is required for accessibility -- it describes the image to screen readers and displays if the image
+fails to load.
 
 ### Lists
 
@@ -201,17 +205,18 @@ Generic containers:
 </footer>
 ```
 
-| Element | Use for |
-|---------|---------|
-| `<header>` | Page or section header |
-| `<nav>` | Navigation links |
-| `<main>` | Primary page content (one per page) |
+| Element     | Use for                                          |
+|-------------|--------------------------------------------------|
+| `<header>`  | Page or section header                           |
+| `<nav>`     | Navigation links                                 |
+| `<main>`    | Primary page content (one per page)              |
 | `<article>` | Self-contained content (blog post, news article) |
-| `<section>` | Thematic grouping of content |
-| `<aside>` | Sidebar, related content |
-| `<footer>` | Page or section footer |
+| `<section>` | Thematic grouping of content                     |
+| `<aside>`   | Sidebar, related content                         |
+| `<footer>`  | Page or section footer                           |
 
-Semantic HTML improves accessibility (screen readers understand the structure), SEO (search engines rank it better), and maintainability.
+Semantic HTML improves accessibility (screen readers understand the structure), SEO (search engines rank it better), and
+maintainability.
 
 ## Forms
 
@@ -265,6 +270,7 @@ Forms collect user input. They are essential for interactive web pages:
 ```
 
 Key points:
+
 - `<label for="id">` links a label to an input -- clicking the label focuses the input.
 - `required`, `minlength`, `type="email"` provide **built-in validation**.
 - `name` attributes identify form data when submitted.
@@ -272,17 +278,17 @@ Key points:
 
 ### Common input types
 
-| Type | Renders as |
-|------|-----------|
-| `text` | Single-line text field |
-| `email` | Text field with email validation |
-| `password` | Masked text field |
-| `number` | Numeric input with up/down arrows |
-| `checkbox` | Toggle on/off |
-| `radio` | Select one from a group |
-| `date` | Date picker |
-| `file` | File upload |
-| `hidden` | Invisible (for sending data) |
+| Type       | Renders as                        |
+|------------|-----------------------------------|
+| `text`     | Single-line text field            |
+| `email`    | Text field with email validation  |
+| `password` | Masked text field                 |
+| `number`   | Numeric input with up/down arrows |
+| `checkbox` | Toggle on/off                     |
+| `radio`    | Select one from a group           |
+| `date`     | Date picker                       |
+| `file`     | File upload                       |
+| `hidden`   | Invisible (for sending data)      |
 
 ## CSS: the presentation
 
@@ -377,12 +383,12 @@ li:first-child {
 
 When multiple rules target the same element, **specificity** determines which wins:
 
-| Selector | Specificity | Example |
-|----------|-------------|---------|
-| Element | Lowest | `p { }` |
-| Class | Medium | `.card { }` |
-| ID | High | `#header { }` |
-| Inline style | Highest | `style="..."` |
+| Selector     | Specificity | Example       |
+|--------------|-------------|---------------|
+| Element      | Lowest      | `p { }`       |
+| Class        | Medium      | `.card { }`   |
+| ID           | High        | `#header { }` |
+| Inline style | Highest     | `style="..."` |
 
 When specificity is equal, the **last** rule wins. Prefer classes over IDs for styling.
 
@@ -631,14 +637,14 @@ Apply CSS rules based on screen size:
 
 ### Responsive units
 
-| Unit | Meaning |
-|------|---------|
-| `px` | Fixed pixels |
-| `%` | Relative to parent |
-| `em` | Relative to parent font size |
-| `rem` | Relative to root (`<html>`) font size |
-| `vw` / `vh` | Percentage of viewport width / height |
-| `fr` | Fraction of available space (CSS Grid) |
+| Unit        | Meaning                                |
+|-------------|----------------------------------------|
+| `px`        | Fixed pixels                           |
+| `%`         | Relative to parent                     |
+| `em`        | Relative to parent font size           |
+| `rem`       | Relative to root (`<html>`) font size  |
+| `vw` / `vh` | Percentage of viewport width / height  |
+| `fr`        | Fraction of available space (CSS Grid) |
 
 Prefer `rem` for font sizes and spacing -- it respects user zoom preferences.
 
@@ -846,7 +852,8 @@ footer {
 }
 ```
 
-Save both files in the same folder, open `index.html` in a browser, and resize the window to see the responsive behavior.
+Save both files in the same folder, open `index.html` in a browser, and resize the window to see the responsive
+behavior.
 
 ## Summary
 

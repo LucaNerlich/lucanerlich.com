@@ -15,7 +15,8 @@ sidebar_position: 3
 
 # Control Flow
 
-Control flow statements let your program make decisions and repeat actions. Java's control flow is similar to other C-family languages, but with some Java-specific features like enhanced switch and for-each.
+Control flow statements let your program make decisions and repeat actions. Java's control flow is similar to other
+C-family languages, but with some Java-specific features like enhanced switch and for-each.
 
 ## `if` / `else if` / `else`
 
@@ -34,11 +35,13 @@ if (temperature > 30) {
 ```
 
 Result:
+
 ```text
 It's warm
 ```
 
 Rules:
+
 - The condition must be a `boolean` expression. Java does not coerce integers or objects -- `if (1)` is a compile error.
 - Only the first matching branch executes.
 - Always use braces `{}`, even for single-line bodies.
@@ -67,6 +70,7 @@ if (!isLoggedIn) {
 ```
 
 Result:
+
 ```text
 You can drive
 Day off!
@@ -84,6 +88,7 @@ System.out.println(status);
 ```
 
 Result:
+
 ```text
 adult
 ```
@@ -115,6 +120,7 @@ switch (day) {
 ```
 
 Result:
+
 ```text
 Weekday
 ```
@@ -140,11 +146,13 @@ System.out.println(type);
 ```
 
 Result:
+
 ```text
 Weekend
 ```
 
 Key differences:
+
 - Arrow `->` instead of colon `:`
 - No fall-through -- no `break` needed
 - Can return a value (switch **expression**)
@@ -171,6 +179,7 @@ System.out.println(name);
 ```
 
 Result:
+
 ```text
 Processing day 3...
 Wednesday
@@ -187,6 +196,7 @@ for (int i = 0; i < 5; i++) {
 ```
 
 Result:
+
 ```text
 Iteration 0
 Iteration 1
@@ -196,6 +206,7 @@ Iteration 4
 ```
 
 The three parts:
+
 1. **Initialization:** `int i = 0` -- runs once
 2. **Condition:** `i < 5` -- checked before each iteration
 3. **Update:** `i++` -- runs after each iteration
@@ -209,6 +220,7 @@ for (int i = 5; i > 0; i--) {
 ```
 
 Result:
+
 ```text
 5
 4
@@ -226,6 +238,7 @@ for (int i = 0; i <= 10; i += 2) {
 ```
 
 Result:
+
 ```text
 0
 2
@@ -248,6 +261,7 @@ for (String fruit : fruits) {
 ```
 
 Result:
+
 ```text
 apple
 banana
@@ -270,6 +284,7 @@ while (count < 3) {
 ```
 
 Result:
+
 ```text
 Count is 0
 Count is 1
@@ -289,6 +304,7 @@ System.out.println(number);
 ```
 
 Result:
+
 ```text
 128
 ```
@@ -307,6 +323,7 @@ do {
 ```
 
 Result:
+
 ```text
 Attempt 1
 Attempt 2
@@ -327,6 +344,7 @@ for (int i = 0; i < 10; i++) {
 ```
 
 Result:
+
 ```text
 0
 1
@@ -347,6 +365,7 @@ for (int i = 0; i < 6; i++) {
 ```
 
 Result:
+
 ```text
 1
 3
@@ -370,6 +389,7 @@ for (int i = 0; i < 3; i++) {
 ```
 
 Result:
+
 ```text
 i=0, j=0
 i=0, j=1
@@ -390,6 +410,7 @@ for (int row = 1; row <= 3; row++) {
 ```
 
 Result:
+
 ```text
 (1,1) (1,2) (1,3)
 (2,1) (2,2) (2,3)
@@ -412,6 +433,7 @@ System.out.println("Sum: " + sum);
 ```
 
 Result:
+
 ```text
 Sum: 150
 ```
@@ -433,6 +455,7 @@ System.out.println("Found: " + found);
 ```
 
 Result:
+
 ```text
 Found: Charlie
 ```
@@ -454,6 +477,7 @@ for (int i = 1; i <= 20; i++) {
 ```
 
 Result:
+
 ```text
 1
 2
@@ -490,6 +514,7 @@ for (int i = 1; i <= n; i++) {
 ```
 
 Result:
+
 ```text
    1   2   3   4   5
    2   4   6   8  10

@@ -7,7 +7,8 @@ tags: [strapi, authentication, permissions, security, jwt]
 
 # Authentication and Permissions
 
-Strapi ships with a full authentication system out of the box via the **Users & Permissions** plugin. Understanding how to configure and extend it is critical for any production application.
+Strapi ships with a full authentication system out of the box via the **Users & Permissions** plugin. Understanding how
+to configure and extend it is critical for any production application.
 
 ## Authentication flow
 
@@ -82,12 +83,13 @@ const articles = await fetch('/api/articles', {
 
 Strapi comes with two default roles for API users:
 
-| Role | Default behaviour |
-|------|-------------------|
-| **Public** | Unauthenticated requests. No permissions by default. |
-| **Authenticated** | Logged-in users. Basic read permissions by default. |
+| Role              | Default behaviour                                    |
+|-------------------|------------------------------------------------------|
+| **Public**        | Unauthenticated requests. No permissions by default. |
+| **Authenticated** | Logged-in users. Basic read permissions by default.  |
 
-You can create additional roles (e.g., Editor, Moderator, Premium) in the admin panel under **Settings > Users & Permissions > Roles**.
+You can create additional roles (e.g., Editor, Moderator, Premium) in the admin panel under **Settings > Users &
+Permissions > Roles**.
 
 ### Checking roles in code
 
@@ -148,11 +150,11 @@ module.exports = createCoreRouter('api::article.article', {
 
 For server-to-server communication, use API tokens instead of user JWTs. Create them in **Settings > API Tokens**.
 
-| Token type | Use case |
-|------------|----------|
-| **Read-only** | External frontend fetching published content |
-| **Full access** | CI/CD pipelines, automated imports |
-| **Custom** | Fine-grained per-content-type permissions |
+| Token type      | Use case                                     |
+|-----------------|----------------------------------------------|
+| **Read-only**   | External frontend fetching published content |
+| **Full access** | CI/CD pipelines, automated imports           |
+| **Custom**      | Fine-grained per-content-type permissions    |
 
 ```bash
 # Using an API token
@@ -162,7 +164,8 @@ curl -H "Authorization: Bearer YOUR_API_TOKEN" \
 
 ### Transfer tokens
 
-Transfer tokens are a separate concept, used by the `strapi transfer` CLI command to move data between Strapi instances. Do not confuse them with API tokens.
+Transfer tokens are a separate concept, used by the `strapi transfer` CLI command to move data between Strapi instances.
+Do not confuse them with API tokens.
 
 ---
 
@@ -285,28 +288,28 @@ module.exports = ({ env }) => ({
 
 ## Hardening permissions checklist
 
-| Action | Why |
-|--------|-----|
-| Review the **Public** role permissions | By default, nothing is exposed. Only enable what anonymous users need. |
-| Use `find` and `findOne` only for public | Never expose `create`, `update`, `delete` to the Public role |
-| Set strong JWT secrets | Use long, random secrets via environment variables |
-| Rotate API tokens | Treat API tokens like passwords. Rotate regularly. |
-| Enable rate limiting | Prevent brute-force attacks on `/api/auth/local` |
-| Validate email before login | Enable email confirmation in Users & Permissions settings |
-| Restrict registration | If your app doesn't need public sign-up, disable it |
-| Use HTTPS | Never send JWTs over unencrypted connections |
+| Action                                   | Why                                                                    |
+|------------------------------------------|------------------------------------------------------------------------|
+| Review the **Public** role permissions   | By default, nothing is exposed. Only enable what anonymous users need. |
+| Use `find` and `findOne` only for public | Never expose `create`, `update`, `delete` to the Public role           |
+| Set strong JWT secrets                   | Use long, random secrets via environment variables                     |
+| Rotate API tokens                        | Treat API tokens like passwords. Rotate regularly.                     |
+| Enable rate limiting                     | Prevent brute-force attacks on `/api/auth/local`                       |
+| Validate email before login              | Enable email confirmation in Users & Permissions settings              |
+| Restrict registration                    | If your app doesn't need public sign-up, disable it                    |
+| Use HTTPS                                | Never send JWTs over unencrypted connections                           |
 
 ---
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Storing JWT in `localStorage` | Vulnerable to XSS attacks | Use `httpOnly` cookies or secure session storage |
-| Public role exposes `create` | Anyone can create content | Audit Public role permissions |
-| No email confirmation | Fake accounts flood the system | Enable email confirmation |
-| Hardcoded JWT secret | Same secret across environments | Use env vars: `env('JWT_SECRET')` |
-| Forgetting `ctx.state.user` check | Controller assumes user exists | Always guard with `if (!ctx.state.user)` |
+| Pitfall                           | Problem                         | Fix                                              |
+|-----------------------------------|---------------------------------|--------------------------------------------------|
+| Storing JWT in `localStorage`     | Vulnerable to XSS attacks       | Use `httpOnly` cookies or secure session storage |
+| Public role exposes `create`      | Anyone can create content       | Audit Public role permissions                    |
+| No email confirmation             | Fake accounts flood the system  | Enable email confirmation                        |
+| Hardcoded JWT secret              | Same secret across environments | Use env vars: `env('JWT_SECRET')`                |
+| Forgetting `ctx.state.user` check | Controller assumes user exists  | Always guard with `if (!ctx.state.user)`         |
 
 ---
 

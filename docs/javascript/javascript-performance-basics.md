@@ -16,7 +16,9 @@ sidebar_position: 3
 
 # JavaScript Performance Basics: Measure, Optimize, and Scale
 
-Performance work is part engineering, part discipline. The best results come from **measuring first**, then optimizing the **actual bottleneck**. This guide focuses on practical JavaScript performance: algorithmic choices, memory behavior, caching, and safe micro-optimizations. Every section includes TypeScript examples and expected output.
+Performance work is part engineering, part discipline. The best results come from **measuring first**, then optimizing
+the **actual bottleneck**. This guide focuses on practical JavaScript performance: algorithmic choices, memory behavior,
+caching, and safe micro-optimizations. Every section includes TypeScript examples and expected output.
 
 ## Quick start
 
@@ -28,6 +30,7 @@ console.log(sum);
 ```
 
 Result:
+
 ```text
 15
 ```
@@ -43,11 +46,14 @@ Result:
 
 ## Start with a performance baseline
 
-Performance work should start with a baseline so you can prove improvements later. A baseline can be as simple as a timing measurement in a test script or a small benchmark in your dev environment. What matters most is that you compare the **same code path** before and after changes.
+Performance work should start with a baseline so you can prove improvements later. A baseline can be as simple as a
+timing measurement in a test script or a small benchmark in your dev environment. What matters most is that you compare
+the **same code path** before and after changes.
 
 ## Measure with simple timers
 
-In production, use real profilers, but local measurements still help validate assumptions. You can use `performance.now()` in browsers or `Date.now()` in any JS runtime.
+In production, use real profilers, but local measurements still help validate assumptions. You can use
+`performance.now()` in browsers or `Date.now()` in any JS runtime.
 
 ```ts
 function measure(label: string, fn: () => void): void {
@@ -64,6 +70,7 @@ measure("sum", () => {
 ```
 
 Result:
+
 ```text
 sum: 0ms
 ```
@@ -72,7 +79,8 @@ The exact number will vary, but the **relative change** is what matters.
 
 ## Prefer the simplest algorithm that scales
 
-Big O is not just theory. A slower algorithm can be fine for 100 items but catastrophic for 10,000. Start by estimating your data size and growth rate.
+Big O is not just theory. A slower algorithm can be fine for 100 items but catastrophic for 10,000. Start by estimating
+your data size and growth rate.
 
 ## Choose the right algorithm
 
@@ -101,6 +109,7 @@ console.log(hasDuplicateFast([1, 2, 3, 2]));
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -120,13 +129,15 @@ console.log(visits.get("home"));
 ```
 
 Result:
+
 ```text
 2
 ```
 
 ## Build strings efficiently
 
-Repeated string concatenation in loops can create many intermediate strings. When you are assembling a known list of parts, `Array.join` is often cleaner and faster.
+Repeated string concatenation in loops can create many intermediate strings. When you are assembling a known list of
+parts, `Array.join` is often cleaner and faster.
 
 ```ts
 const parts = ["JavaScript", "performance", "matters"];
@@ -136,6 +147,7 @@ console.log(sentence);
 ```
 
 Result:
+
 ```text
 JavaScript performance matters
 ```
@@ -164,6 +176,7 @@ save("draft-1");
 ```
 
 Result:
+
 ```text
 saved: draft-1
 ```
@@ -185,6 +198,7 @@ console.log(sumInline([1, 2, 3, 4]));
 ```
 
 Result:
+
 ```text
 10
 ```
@@ -202,6 +216,7 @@ console.log(scaled);
 ```
 
 Result:
+
 ```text
 [ 10, 20, 30, 40, 50 ]
 ```
@@ -228,6 +243,7 @@ console.log(fastSquare(12));
 ```
 
 Result:
+
 ```text
 144
 ```
@@ -248,6 +264,7 @@ console.log(containsNegative([1, 2, -1, 3]));
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -262,6 +279,7 @@ console.log(ids.has(11));
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -281,6 +299,7 @@ console.log(statusLabel[404]);
 ```
 
 Result:
+
 ```text
 Not Found
 ```
@@ -300,6 +319,7 @@ console.log(factorialIterative(6));
 ```
 
 Result:
+
 ```text
 720
 ```
@@ -317,17 +337,21 @@ console.log(total);
 ```
 
 Result:
+
 ```text
 10
 ```
 
 ## Browser note: avoid layout thrashing
 
-If you are updating the DOM, batch reads and writes. Alternating `read -> write -> read` can force the browser to recalculate layout multiple times. Collect the measurements first, then apply updates in one pass. This is less about code syntax and more about **how you structure the work**.
+If you are updating the DOM, batch reads and writes. Alternating `read -> write -> read` can force the browser to
+recalculate layout multiple times. Collect the measurements first, then apply updates in one pass. This is less about
+code syntax and more about **how you structure the work**.
 
 ## Memory awareness
 
-Performance is also about memory. Large arrays, caches, or retained objects can slow down GC. If you cache data, set limits or eviction strategies, and avoid retaining references to unused objects.
+Performance is also about memory. Large arrays, caches, or retained objects can slow down GC. If you cache data, set
+limits or eviction strategies, and avoid retaining references to unused objects.
 
 ## Common pitfalls
 
@@ -360,6 +384,7 @@ console.log(`${end - start}ms`);
 ```
 
 Result:
+
 ```text
 0ms
 ```
@@ -374,6 +399,7 @@ console.log(fast.has(3));
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -389,10 +415,12 @@ console.log(memo.size);
 ```
 
 Result:
+
 ```text
 1
 ```
 
 ## Summary
 
-JavaScript performance is about **measuring**, **choosing the right algorithms**, and **reducing unnecessary work**. Start with profiling, then apply targeted changes that you can justify with data.
+JavaScript performance is about **measuring**, **choosing the right algorithms**, and **reducing unnecessary work**.
+Start with profiling, then apply targeted changes that you can justify with data.

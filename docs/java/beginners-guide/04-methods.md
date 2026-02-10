@@ -15,11 +15,13 @@ sidebar_position: 4
 
 # Methods
 
-A method is a reusable block of code that performs a specific task. In Java, every piece of code lives inside a method, and every method lives inside a class.
+A method is a reusable block of code that performs a specific task. In Java, every piece of code lives inside a method,
+and every method lives inside a class.
 
 ## Defining and calling methods
 
-Until we cover classes and objects (next chapter), all our methods are `static` -- they belong to the class itself rather than to an instance.
+Until we cover classes and objects (next chapter), all our methods are `static` -- they belong to the class itself
+rather than to an instance.
 
 ```java
 public class Greeter {
@@ -36,11 +38,13 @@ public class Greeter {
 ```
 
 Result:
+
 ```text
 Hello, Ada!
 ```
 
 Anatomy:
+
 - `static` -- belongs to the class, not to an instance
 - `String` -- the return type
 - `greet` -- the method name
@@ -63,6 +67,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 [INFO] Server started
 [WARN] Disk usage high
@@ -93,6 +98,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 7
 3.3333333333333335
@@ -141,6 +147,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 A
 B
@@ -175,6 +182,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 3
 6
@@ -206,6 +214,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 6
 100
@@ -213,6 +222,7 @@ Result:
 ```
 
 Inside the method, `numbers` is an `int[]` (array). Rules:
+
 - Only **one** varargs parameter per method
 - It must be the **last** parameter
 
@@ -229,6 +239,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 [INFO] Server started
 [INFO] Listening on port 8080
@@ -236,7 +247,8 @@ Result:
 
 ## Pass-by-value
 
-Java is **always pass-by-value**. For primitives, the value is copied. For objects, the **reference** is copied (not the object itself).
+Java is **always pass-by-value**. For primitives, the value is copied. For objects, the **reference** is copied (not the
+object itself).
 
 ### Primitives are copied
 
@@ -254,6 +266,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 Inside method: 999
 After method: 42
@@ -277,11 +290,13 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 [original, added by method]
 ```
 
-The method receives a copy of the **reference** -- it points to the same list object. So modifications to the object are visible to the caller. But reassigning the reference inside the method does not affect the caller:
+The method receives a copy of the **reference** -- it points to the same list object. So modifications to the object are
+visible to the caller. But reassigning the reference inside the method does not affect the caller:
 
 ```java
 static void reassign(java.util.List<String> list) {
@@ -299,6 +314,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 Inside: [new list]
 After: [original]
@@ -323,6 +339,7 @@ static void example() {
 ```
 
 Result:
+
 ```text
 30
 10
@@ -357,6 +374,7 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 120
 1
@@ -364,6 +382,7 @@ Result:
 ```
 
 Every recursive method needs:
+
 1. A **base case** that stops the recursion
 2. A **recursive case** that moves toward the base case
 
@@ -387,11 +406,13 @@ public static void main(String[] args) {
 ```
 
 Result:
+
 ```text
 0 1 1 2 3 5 8 13 21 34 55
 ```
 
-This naive implementation is slow for large `n` because it recalculates the same values repeatedly. For production code, use iteration or memoization.
+This naive implementation is slow for large `n` because it recalculates the same values repeatedly. For production code,
+use iteration or memoization.
 
 ## Practical example: utility methods
 
@@ -429,6 +450,7 @@ public class StringUtils {
 ```
 
 Result:
+
 ```text
 true
 false
@@ -443,7 +465,8 @@ ababab
 - **Guard clauses** (early returns) keep methods flat and readable.
 - **Overloading** lets multiple methods share a name with different parameter lists.
 - **Varargs** (`type... name`) accept a variable number of arguments as an array.
-- Java is **pass-by-value** -- primitives are copied, object references are copied (but the object they point to is shared).
+- Java is **pass-by-value** -- primitives are copied, object references are copied (but the object they point to is
+  shared).
 - **Scope** is block-level -- variables exist only within their enclosing `{}`.
 - **Recursion** requires a base case to avoid `StackOverflowError`.
 

@@ -15,7 +15,8 @@ sidebar_position: 3
 
 # Relations
 
-A blog post has an author. A post belongs to a category. A post can have many tags, and a tag can appear on many posts. These are **relations** -- links between content types.
+A blog post has an author. A post belongs to a category. A post can have many tags, and a tag can appear on many posts.
+These are **relations** -- links between content types.
 
 In this chapter we create four content types and connect them to build a complete blog data model.
 
@@ -23,12 +24,12 @@ In this chapter we create four content types and connect them to build a complet
 
 Strapi supports four relation types:
 
-| Relation | Description | Example |
-|----------|-------------|---------|
-| **One-to-one** | Each A has exactly one B, and vice versa | User -- Profile |
-| **One-to-many** | One A has many Bs, each B belongs to one A | Author -- Posts |
-| **Many-to-many** | Many As can relate to many Bs | Posts -- Tags |
-| **Many-way** | One-sided many, no inverse | Post -- Related Posts |
+| Relation         | Description                                | Example               |
+|------------------|--------------------------------------------|-----------------------|
+| **One-to-one**   | Each A has exactly one B, and vice versa   | User -- Profile       |
+| **One-to-many**  | One A has many Bs, each B belongs to one A | Author -- Posts       |
+| **Many-to-many** | Many As can relate to many Bs              | Posts -- Tags         |
+| **Many-way**     | One-sided many, no inverse                 | Post -- Related Posts |
 
 ```mermaid
 erDiagram
@@ -44,12 +45,12 @@ erDiagram
 2. Create a new collection type: **Author**
 3. Add fields:
 
-| Field name | Type | Configuration |
-|------------|------|---------------|
-| `name` | Text (Short text) | Required |
-| `bio` | Text (Long text) | -- |
-| `avatar` | Media (Single media) | Images only |
-| `email` | Email | Required, unique |
+| Field name | Type                 | Configuration    |
+|------------|----------------------|------------------|
+| `name`     | Text (Short text)    | Required         |
+| `bio`      | Text (Long text)     | --               |
+| `avatar`   | Media (Single media) | Images only      |
+| `email`    | Email                | Required, unique |
 
 4. Click **Save**
 
@@ -58,11 +59,11 @@ erDiagram
 1. Create a new collection type: **Category**
 2. Add fields:
 
-| Field name | Type | Configuration |
-|------------|------|---------------|
-| `name` | Text (Short text) | Required, unique |
-| `slug` | UID | Attached to `name`, required |
-| `description` | Text (Long text) | -- |
+| Field name    | Type              | Configuration                |
+|---------------|-------------------|------------------------------|
+| `name`        | Text (Short text) | Required, unique             |
+| `slug`        | UID               | Attached to `name`, required |
+| `description` | Text (Long text)  | --                           |
 
 3. Click **Save**
 
@@ -71,10 +72,10 @@ erDiagram
 1. Create a new collection type: **Tag**
 2. Add fields:
 
-| Field name | Type | Configuration |
-|------------|------|---------------|
-| `name` | Text (Short text) | Required, unique |
-| `slug` | UID | Attached to `name`, required |
+| Field name | Type              | Configuration                |
+|------------|-------------------|------------------------------|
+| `name`     | Text (Short text) | Required, unique             |
+| `slug`     | UID               | Attached to `name`, required |
 
 3. Click **Save**
 
@@ -191,12 +192,12 @@ After adding relations, the Post schema has new attributes:
 
 Key properties:
 
-| Property | Meaning |
-|----------|---------|
-| `relation` | The relation type (`manyToOne`, `oneToMany`, `manyToMany`, `oneToOne`) |
-| `target` | The UID of the related content type (`api::author.author`) |
-| `inversedBy` | The field name on the other side of the relation |
-| `mappedBy` | Used on the inverse side to point back (Strapi manages this automatically) |
+| Property     | Meaning                                                                    |
+|--------------|----------------------------------------------------------------------------|
+| `relation`   | The relation type (`manyToOne`, `oneToMany`, `manyToMany`, `oneToOne`)     |
+| `target`     | The UID of the related content type (`api::author.author`)                 |
+| `inversedBy` | The field name on the other side of the relation                           |
+| `mappedBy`   | Used on the inverse side to point back (Strapi manages this automatically) |
 
 ## Owning side vs inverse side
 
@@ -212,7 +213,8 @@ In a many-to-one relation (Post belongs to Author):
 
 For many-to-many relations, Strapi creates a **join table** automatically.
 
-> **Tip:** You usually do not need to worry about this distinction. Strapi handles it for you. It matters when you are debugging database queries or optimizing performance.
+> **Tip:** You usually do not need to worry about this distinction. Strapi handles it for you. It matters when you are
+> debugging database queries or optimizing performance.
 
 ## One-to-one relations
 
@@ -248,7 +250,8 @@ This creates a join table linking posts to other posts.
 
 ## Polymorphic relations
 
-Strapi also supports **polymorphic relations** where a field can relate to multiple content types. For example, a **Comment** might belong to either a Post or a Page:
+Strapi also supports **polymorphic relations** where a field can relate to multiple content types. For example, a *
+*Comment** might belong to either a Post or a Page:
 
 ```json
 {
@@ -263,7 +266,8 @@ Strapi also supports **polymorphic relations** where a field can relate to multi
 }
 ```
 
-Polymorphic relations are advanced -- we mention them here for completeness. For most blog use cases, standard relations are sufficient.
+Polymorphic relations are advanced -- we mention them here for completeness. For most blog use cases, standard relations
+are sufficient.
 
 ## Relation best practices
 
@@ -294,7 +298,8 @@ Avoid:  post.relation1, post.ref, post.data
 
 ### Plan for population
 
-By default, the REST API does **not** return related data. You must explicitly **populate** relations when querying. We will cover this in detail in [chapter 5 (REST API)](./05-rest-api.md).
+By default, the REST API does **not** return related data. You must explicitly **populate** relations when querying. We
+will cover this in detail in [chapter 5 (REST API)](./05-rest-api.md).
 
 > For more advanced relation patterns, see the [Relations and Population](/strapi/relations-and-population) reference.
 
@@ -309,6 +314,8 @@ You learned:
 - Self-referencing and polymorphic relations
 - Best practices for modeling relations
 
-Our blog data model is now complete with Authors, Posts, Categories, and Tags all properly connected. In the next chapter we will learn how to manage content through the admin panel.
+Our blog data model is now complete with Authors, Posts, Categories, and Tags all properly connected. In the next
+chapter we will learn how to manage content through the admin panel.
 
-Next up: [Managing Content](./04-managing-content.md) -- creating entries, drafts & publishing, the media library, and bulk operations in the admin panel.
+Next up: [Managing Content](./04-managing-content.md) -- creating entries, drafts & publishing, the media library, and
+bulk operations in the admin panel.

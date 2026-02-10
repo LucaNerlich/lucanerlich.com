@@ -7,7 +7,8 @@ tags: [strapi, uploads, media, s3, cloudinary]
 
 # File Uploads and Media
 
-Strapi's Upload plugin handles file storage, image processing, and media management. By default, files are stored locally, but production deployments should use cloud providers like S3 or Cloudinary.
+Strapi's Upload plugin handles file storage, image processing, and media management. By default, files are stored
+locally, but production deployments should use cloud providers like S3 or Cloudinary.
 
 ## Upload flow
 
@@ -189,12 +190,12 @@ module.exports = ({ env }) => ({
 
 Strapi automatically generates responsive image formats using [Sharp](https://sharp.pixelplumbing.com/):
 
-| Format | Max width | Default |
-|--------|-----------|---------|
-| `thumbnail` | 245px | Enabled |
-| `small` | 500px | Enabled |
-| `medium` | 750px | Enabled |
-| `large` | 1000px | Enabled |
+| Format      | Max width | Default |
+|-------------|-----------|---------|
+| `thumbnail` | 245px     | Enabled |
+| `small`     | 500px     | Enabled |
+| `medium`    | 750px     | Enabled |
+| `large`     | 1000px    | Enabled |
 
 ### Customizing breakpoints
 
@@ -375,13 +376,13 @@ formData.append('path', '/Blog Images');  # or folder ID
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Local uploads in production | Files lost on redeploy, no CDN | Use S3 or Cloudinary |
-| Missing `PUBLIC_URL` | Media URLs point to localhost | Set the correct public URL |
-| No `forcePathStyle` for MinIO | S3 client tries virtual-hosted-style URLs | Set `forcePathStyle: true` |
-| Huge image uploads | Memory spikes, slow responses | Set `sizeLimit` and compress client-side first |
-| No alt text | Accessibility and SEO suffer | Require `alternativeText` in your frontend upload form |
+| Pitfall                       | Problem                                   | Fix                                                    |
+|-------------------------------|-------------------------------------------|--------------------------------------------------------|
+| Local uploads in production   | Files lost on redeploy, no CDN            | Use S3 or Cloudinary                                   |
+| Missing `PUBLIC_URL`          | Media URLs point to localhost             | Set the correct public URL                             |
+| No `forcePathStyle` for MinIO | S3 client tries virtual-hosted-style URLs | Set `forcePathStyle: true`                             |
+| Huge image uploads            | Memory spikes, slow responses             | Set `sizeLimit` and compress client-side first         |
+| No alt text                   | Accessibility and SEO suffer              | Require `alternativeText` in your frontend upload form |
 
 ---
 

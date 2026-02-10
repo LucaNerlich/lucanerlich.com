@@ -57,13 +57,13 @@ public class UserService {
 
 ### Log levels
 
-| Level | Use case | Example |
-|-------|----------|---------|
-| `TRACE` | Very detailed diagnostic info | Method entry/exit, loop iterations |
-| `DEBUG` | Diagnostic info useful during development | Variable values, query parameters |
-| `INFO` | Normal operational events | Service started, user created, request handled |
-| `WARN` | Unexpected but recoverable conditions | Retry attempt, deprecated API usage, slow query |
-| `ERROR` | Failures that need attention | Unhandled exception, external service down |
+| Level   | Use case                                  | Example                                         |
+|---------|-------------------------------------------|-------------------------------------------------|
+| `TRACE` | Very detailed diagnostic info             | Method entry/exit, loop iterations              |
+| `DEBUG` | Diagnostic info useful during development | Variable values, query parameters               |
+| `INFO`  | Normal operational events                 | Service started, user created, request handled  |
+| `WARN`  | Unexpected but recoverable conditions     | Retry attempt, deprecated API usage, slow query |
+| `ERROR` | Failures that need attention              | Unhandled exception, external service down      |
 
 ```java
 log.trace("Entering method with args: {}, {}", a, b);
@@ -153,16 +153,16 @@ Place in `src/main/resources/logback.xml`:
 
 ### Pattern format reference
 
-| Token | Output | Example |
-|-------|--------|---------|
-| `%d{pattern}` | Date/time | `2024-01-15 14:30:45.123` |
-| `%thread` | Thread name | `main`, `http-nio-8080-exec-1` |
-| `%-5level` | Log level (left-padded) | `INFO `, `DEBUG` |
-| `%logger{n}` | Logger name (abbreviated to n chars) | `c.e.m.UserService` |
-| `%msg` | Log message | `Creating user: Alice` |
-| `%n` | Newline | |
-| `%X{key}` | MDC value | see MDC section below |
-| `%ex` | Exception stack trace | (auto-appended for error logs) |
+| Token         | Output                               | Example                        |
+|---------------|--------------------------------------|--------------------------------|
+| `%d{pattern}` | Date/time                            | `2024-01-15 14:30:45.123`      |
+| `%thread`     | Thread name                          | `main`, `http-nio-8080-exec-1` |
+| `%-5level`    | Log level (left-padded)              | `INFO `, `DEBUG`               |
+| `%logger{n}`  | Logger name (abbreviated to n chars) | `c.e.m.UserService`            |
+| `%msg`        | Log message                          | `Creating user: Alice`         |
+| `%n`          | Newline                              |                                |
+| `%X{key}`     | MDC value                            | see MDC section below          |
+| `%ex`         | Exception stack trace                | (auto-appended for error logs) |
 
 ### Environment-specific config
 
@@ -238,15 +238,15 @@ Place in `src/main/resources/log4j2.xml`:
 
 ## Logback vs Log4j2
 
-| Feature | Logback | Log4j2 |
-|---------|---------|--------|
-| **Performance** | Good | Better (async logging, lock-free) |
-| **Config format** | XML, Groovy | XML, JSON, YAML, properties |
-| **Async logging** | Via `AsyncAppender` | Built-in `AsyncLogger` (LMAX Disruptor) |
-| **Conditional config** | With Janino library | Built-in `<Filters>` |
-| **Garbage-free** | No | Yes (reduces GC pressure) |
-| **Popularity** | Spring Boot default | Common in high-performance apps |
-| **SLF4J integration** | Native (same author) | Via bridge (`log4j-slf4j2-impl`) |
+| Feature                | Logback              | Log4j2                                  |
+|------------------------|----------------------|-----------------------------------------|
+| **Performance**        | Good                 | Better (async logging, lock-free)       |
+| **Config format**      | XML, Groovy          | XML, JSON, YAML, properties             |
+| **Async logging**      | Via `AsyncAppender`  | Built-in `AsyncLogger` (LMAX Disruptor) |
+| **Conditional config** | With Janino library  | Built-in `<Filters>`                    |
+| **Garbage-free**       | No                   | Yes (reduces GC pressure)               |
+| **Popularity**         | Spring Boot default  | Common in high-performance apps         |
+| **SLF4J integration**  | Native (same author) | Via bridge (`log4j-slf4j2-impl`)        |
 
 > For most projects, Logback is fine. Choose Log4j2 if you need maximum throughput
 > or garbage-free logging.
@@ -400,30 +400,30 @@ graph LR
 
 ## Performance tips
 
-| Tip | Explanation |
-|-----|-------------|
-| Use parameterised messages | `log.debug("User {}", user)` avoids string concatenation when DEBUG is off |
-| Guard expensive computations | `if (log.isDebugEnabled()) { log.debug("State: {}", computeState()); }` |
-| Use async appenders for I/O | Writing to files blocks the calling thread; async decouples this |
-| Avoid logging in tight loops | Millions of log calls per second overwhelm any appender |
-| Set appropriate levels per package | `com.example=DEBUG`, `org.hibernate=WARN` |
-| Use MDC instead of string formatting | Structured context is searchable; string concatenation is not |
-| Rotate and compress log files | Prevent disk exhaustion |
+| Tip                                  | Explanation                                                                |
+|--------------------------------------|----------------------------------------------------------------------------|
+| Use parameterised messages           | `log.debug("User {}", user)` avoids string concatenation when DEBUG is off |
+| Guard expensive computations         | `if (log.isDebugEnabled()) { log.debug("State: {}", computeState()); }`    |
+| Use async appenders for I/O          | Writing to files blocks the calling thread; async decouples this           |
+| Avoid logging in tight loops         | Millions of log calls per second overwhelm any appender                    |
+| Set appropriate levels per package   | `com.example=DEBUG`, `org.hibernate=WARN`                                  |
+| Use MDC instead of string formatting | Structured context is searchable; string concatenation is not              |
+| Rotate and compress log files        | Prevent disk exhaustion                                                    |
 
 ---
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| String concatenation in log messages | `log.debug("x=" + x)` always evaluates, even if DEBUG is off | Use `log.debug("x={}", x)` |
-| Logging sensitive data | Passwords, tokens, PII in logs | Mask or exclude sensitive fields; review log output |
-| Multiple SLF4J bindings on classpath | `SLF4J: Class path contains multiple SLF4J bindings` | Exclude duplicate bindings (check `mvn dependency:tree`) |
-| Not clearing MDC | MDC leaks between requests in thread pools | Always `MDC.clear()` in a `finally` block |
-| Logging and rethrowing | Same error appears multiple times in logs | Either log OR rethrow -- not both |
-| `e.printStackTrace()` | Prints to stderr, not the logging framework | Use `log.error("message", e)` |
-| Catching `Exception` just to log it | Swallows the exception silently | Log and rethrow, or handle appropriately |
-| Missing logback.xml / log4j2.xml | SLF4J falls back to NOP logger (no output) | Include the config file in `src/main/resources/` |
+| Pitfall                              | Problem                                                      | Fix                                                      |
+|--------------------------------------|--------------------------------------------------------------|----------------------------------------------------------|
+| String concatenation in log messages | `log.debug("x=" + x)` always evaluates, even if DEBUG is off | Use `log.debug("x={}", x)`                               |
+| Logging sensitive data               | Passwords, tokens, PII in logs                               | Mask or exclude sensitive fields; review log output      |
+| Multiple SLF4J bindings on classpath | `SLF4J: Class path contains multiple SLF4J bindings`         | Exclude duplicate bindings (check `mvn dependency:tree`) |
+| Not clearing MDC                     | MDC leaks between requests in thread pools                   | Always `MDC.clear()` in a `finally` block                |
+| Logging and rethrowing               | Same error appears multiple times in logs                    | Either log OR rethrow -- not both                        |
+| `e.printStackTrace()`                | Prints to stderr, not the logging framework                  | Use `log.error("message", e)`                            |
+| Catching `Exception` just to log it  | Swallows the exception silently                              | Log and rethrow, or handle appropriately                 |
+| Missing logback.xml / log4j2.xml     | SLF4J falls back to NOP logger (no output)                   | Include the config file in `src/main/resources/`         |
 
 ---
 

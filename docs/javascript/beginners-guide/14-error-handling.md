@@ -15,7 +15,9 @@ sidebar_position: 14
 
 # Error Handling
 
-Errors happen. Network requests fail, users enter unexpected data, and code has bugs. Good error handling means your program fails **gracefully** -- it tells the user what went wrong instead of silently breaking or crashing the entire page.
+Errors happen. Network requests fail, users enter unexpected data, and code has bugs. Good error handling means your
+program fails **gracefully** -- it tells the user what went wrong instead of silently breaking or crashing the entire
+page.
 
 ## The `Error` object
 
@@ -29,13 +31,14 @@ console.log(error.name);    // "Error"
 console.log(error.stack);   // Stack trace showing where the error was created
 ```
 
-| Property | What it contains |
-|----------|-----------------|
-| `message` | A human-readable description of what went wrong |
-| `name` | The error type (e.g., `"TypeError"`, `"RangeError"`) |
-| `stack` | A trace showing the call chain that led to the error |
+| Property  | What it contains                                     |
+|-----------|------------------------------------------------------|
+| `message` | A human-readable description of what went wrong      |
+| `name`    | The error type (e.g., `"TypeError"`, `"RangeError"`) |
+| `stack`   | A trace showing the call chain that led to the error |
 
-The `stack` property is invaluable for debugging -- it tells you exactly which function, file, and line number created the error.
+The `stack` property is invaluable for debugging -- it tells you exactly which function, file, and line number created
+the error.
 
 ## `try` / `catch` / `finally`
 
@@ -55,6 +58,7 @@ try {
 ```
 
 Result:
+
 ```text
 Parsing failed: Unexpected token 'o', "not valid json" is not valid JSON
 Done.
@@ -65,7 +69,8 @@ Done.
 1. JavaScript executes the `try` block line by line.
 2. If no error occurs, the `catch` block is skipped entirely.
 3. If an error is thrown, execution jumps immediately to `catch`. The remaining lines in `try` do not run.
-4. The `finally` block always runs -- whether there was an error or not. Use it for cleanup (closing files, hiding loaders, resetting state).
+4. The `finally` block always runs -- whether there was an error or not. Use it for cleanup (closing files, hiding
+   loaders, resetting state).
 
 ### `catch` without `finally`
 
@@ -95,13 +100,13 @@ try {
 
 JavaScript has several specific error types that inherit from `Error`:
 
-| Type | When it occurs | Example |
-|------|---------------|---------|
-| `TypeError` | Wrong type used in an operation | `null.toString()` |
-| `ReferenceError` | Using an undeclared variable | `console.log(x)` where `x` is not defined |
-| `SyntaxError` | Code cannot be parsed | `JSON.parse("{invalid}")` |
-| `RangeError` | A value is outside the allowed range | `new Array(-1)` |
-| `URIError` | Invalid use of URI functions | `decodeURIComponent("%")` |
+| Type             | When it occurs                       | Example                                   |
+|------------------|--------------------------------------|-------------------------------------------|
+| `TypeError`      | Wrong type used in an operation      | `null.toString()`                         |
+| `ReferenceError` | Using an undeclared variable         | `console.log(x)` where `x` is not defined |
+| `SyntaxError`    | Code cannot be parsed                | `JSON.parse("{invalid}")`                 |
+| `RangeError`     | A value is outside the allowed range | `new Array(-1)`                           |
+| `URIError`       | Invalid use of URI functions         | `decodeURIComponent("%")`                 |
 
 ### Checking the error type
 
@@ -204,11 +209,13 @@ try {
 ```
 
 Result:
+
 ```text
 Field "email": Email must contain @
 ```
 
 Custom error classes let you:
+
 - Add extra properties (like `field`, `resource`, `statusCode`)
 - Handle different error categories differently with `instanceof`
 - Provide clearer error messages for specific situations
@@ -238,7 +245,8 @@ try {
 }
 ```
 
-`cause` preserves the original error while wrapping it in a higher-level message. This is useful when a low-level error (network failure) should be reported as a domain-level error (failed to load profile).
+`cause` preserves the original error while wrapping it in a higher-level message. This is useful when a low-level
+error (network failure) should be reported as a domain-level error (failed to load profile).
 
 ## Async error handling
 
@@ -514,7 +522,8 @@ if (result.ok) {
 }
 ```
 
-This pattern avoids exceptions for expected failures (invalid user input is not exceptional -- it is normal). Reserve `throw` for truly unexpected situations.
+This pattern avoids exceptions for expected failures (invalid user input is not exceptional -- it is normal). Reserve
+`throw` for truly unexpected situations.
 
 ## Anti-patterns
 
@@ -599,7 +608,8 @@ try {
 ## Summary
 
 - **`try`/`catch`/`finally`** is the core error handling mechanism -- `finally` always runs.
-- JavaScript has built-in error types (`TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`) -- use `instanceof` to distinguish them.
+- JavaScript has built-in error types (`TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`) -- use `instanceof`
+  to distinguish them.
 - **Always throw `Error` objects** (not strings) to get stack traces.
 - **Custom error classes** let you add properties and handle errors by category.
 - **Error `cause`** (ES2022) chains errors to preserve the original failure.
@@ -608,6 +618,8 @@ try {
 - **The result pattern** (returning `{ ok, value, error }`) avoids exceptions for expected failures.
 - Never swallow errors with empty `catch` blocks -- at minimum, log them.
 
-For advanced patterns including TypeScript error types, error boundaries, and structured logging, see the [Error Handling reference](/javascript/error-handling).
+For advanced patterns including TypeScript error types, error boundaries, and structured logging, see
+the [Error Handling reference](/javascript/error-handling).
 
-Next up: [Regular Expressions](./15-regular-expressions.md) -- pattern matching for validation, parsing, and search-and-replace.
+Next up: [Regular Expressions](./15-regular-expressions.md) -- pattern matching for validation, parsing, and
+search-and-replace.

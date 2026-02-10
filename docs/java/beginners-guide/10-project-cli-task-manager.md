@@ -15,7 +15,8 @@ sidebar_position: 10
 
 # Project: CLI Task Manager
 
-Time to put everything together. In this chapter you will build a command-line task manager that supports creating, listing, completing, and deleting tasks -- all persisted to a file. Then you will package it as a runnable JAR.
+Time to put everything together. In this chapter you will build a command-line task manager that supports creating,
+listing, completing, and deleting tasks -- all persisted to a file. Then you will package it as a runnable JAR.
 
 ## What we are building
 
@@ -29,6 +30,7 @@ java -jar tasks.jar delete 1
 ```
 
 Features:
+
 - **Add** tasks with a description
 - **List** all tasks (showing ID, status, and description)
 - **Complete** a task by ID
@@ -100,6 +102,7 @@ public record Task(int id, String description, boolean done) {
 ```
 
 Key points:
+
 - Records auto-generate `equals`, `hashCode`, and accessor methods
 - `toLine` / `fromLine` handle serialization (pipe-delimited, one task per line)
 - `complete()` returns a new `Task` with `done = true` (records are immutable)
@@ -350,6 +353,7 @@ java TaskApp add "Buy groceries"
 ```
 
 Result:
+
 ```text
 Added: [ ]   1: Buy groceries
 ```
@@ -361,6 +365,7 @@ java TaskApp list
 ```
 
 Result:
+
 ```text
 Added: [ ]   2: Learn Java
 Added: [ ]   3: Build a project
@@ -377,6 +382,7 @@ java TaskApp list
 ```
 
 Result:
+
 ```text
 Completed: [x]   2: Learn Java
 Tasks (1/3 completed):
@@ -392,6 +398,7 @@ java TaskApp list
 ```
 
 Result:
+
 ```text
 Deleted task 1
 Tasks (1/2 completed):
@@ -405,6 +412,7 @@ java TaskApp
 ```
 
 Result:
+
 ```text
 Task Manager -- a simple CLI to-do list
 
@@ -443,6 +451,7 @@ jar cfm tasks.jar MANIFEST.MF *.class
 ```
 
 Breakdown:
+
 - `c` -- create a new archive
 - `f` -- output to a file (`tasks.jar`)
 - `m` -- include a manifest file (`MANIFEST.MF`)
@@ -457,6 +466,7 @@ java -jar tasks.jar list
 ```
 
 Result:
+
 ```text
 Tasks (1/2 completed):
 ──────────────────────────────────────────────────
@@ -498,16 +508,16 @@ chmod +x build.sh
 
 This project ties together everything from chapters 1–9:
 
-| Concept | Where it is used |
-|---------|-----------------|
-| Variables & types | Task fields, command parsing, ID handling |
-| Control flow | Switch for commands, loop for listing |
-| Methods | `addTask`, `listTasks`, `completeTask`, `deleteTask`, `parseId` |
-| Classes & objects | `TaskApp`, `TaskStore` -- encapsulated responsibilities |
-| Records | `Task` -- immutable data with auto-generated methods |
-| Collections | `ArrayList` for in-memory task list, `removeIf`, streams |
-| Error handling | `try/catch` for IOException, validation for bad input |
-| File I/O | `Files.readAllLines`, `Files.write` for persistence |
+| Concept           | Where it is used                                                |
+|-------------------|-----------------------------------------------------------------|
+| Variables & types | Task fields, command parsing, ID handling                       |
+| Control flow      | Switch for commands, loop for listing                           |
+| Methods           | `addTask`, `listTasks`, `completeTask`, `deleteTask`, `parseId` |
+| Classes & objects | `TaskApp`, `TaskStore` -- encapsulated responsibilities         |
+| Records           | `Task` -- immutable data with auto-generated methods            |
+| Collections       | `ArrayList` for in-memory task list, `removeIf`, streams        |
+| Error handling    | `try/catch` for IOException, validation for bad input           |
+| File I/O          | `Files.readAllLines`, `Files.write` for persistence             |
 
 ## Summary
 

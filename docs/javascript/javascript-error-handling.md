@@ -16,7 +16,10 @@ sidebar_position: 2
 
 # JavaScript Error Handling: Patterns, Types, and Best Practices
 
-Modern JavaScript runs in browsers, Node.js, and edge runtimes, but error handling fundamentals stay the same: detect failures early, report them clearly, and recover when possible. This post focuses on **practical error handling** with **TypeScript examples** and the output you can expect. The goal is to build reliable systems without hiding the real cause of failures.
+Modern JavaScript runs in browsers, Node.js, and edge runtimes, but error handling fundamentals stay the same: detect
+failures early, report them clearly, and recover when possible. This post focuses on **practical error handling** with *
+*TypeScript examples** and the output you can expect. The goal is to build reliable systems without hiding the real
+cause of failures.
 
 ## Quick start
 
@@ -38,6 +41,7 @@ console.log(parseUser('{"id": 1, "name": "Ada"}'));
 ```
 
 Result:
+
 ```text
 { id: 1, name: "Ada" }
 ```
@@ -52,7 +56,8 @@ Result:
 
 ## Understanding Error types
 
-JavaScript has built-in error classes like `Error`, `TypeError`, and `RangeError`. These should be your default. Custom errors are useful when you need to distinguish **expected failures** from **unexpected bugs**.
+JavaScript has built-in error classes like `Error`, `TypeError`, and `RangeError`. These should be your default. Custom
+errors are useful when you need to distinguish **expected failures** from **unexpected bugs**.
 
 ```ts
 class NotFoundError extends Error {
@@ -82,13 +87,15 @@ try {
 ```
 
 Result:
+
 ```text
 404
 ```
 
 ## Wrapping errors with context
 
-Wrapping errors lets you add higher-level context while preserving the original cause. This is especially useful across layers (data access -> service -> API).
+Wrapping errors lets you add higher-level context while preserving the original cause. This is especially useful across
+layers (data access -> service -> API).
 
 ```ts
 function readConfig(jsonText: string): { port: number } {
@@ -112,13 +119,15 @@ try {
 ```
 
 Result:
+
 ```text
 Config JSON is invalid
 ```
 
 ## Sync vs async errors
 
-Synchronous errors are thrown and caught via `try/catch`. Asynchronous errors happen in promises and must be caught with `await` or `.catch()`.
+Synchronous errors are thrown and caught via `try/catch`. Asynchronous errors happen in promises and must be caught with
+`await` or `.catch()`.
 
 ```ts
 async function fetchUser(id: number): Promise<string> {
@@ -142,13 +151,15 @@ example();
 ```
 
 Result:
+
 ```text
 User not found
 ```
 
 ## Result objects for expected failures
 
-Some failures are expected (e.g., "user not found"). Throwing exceptions in those cases can make control flow noisy. A **Result object** keeps the error explicit and avoids catch blocks for common cases.
+Some failures are expected (e.g., "user not found"). Throwing exceptions in those cases can make control flow noisy. A *
+*Result object** keeps the error explicit and avoids catch blocks for common cases.
 
 ```ts
 type Result<T> = { ok: true; value: T } | { ok: false; error: string };
@@ -166,6 +177,7 @@ console.log(result);
 ```
 
 Result:
+
 ```text
 { ok: true, value: 42 }
 ```
@@ -174,7 +186,8 @@ This pattern works well at API boundaries and form validation, while internal er
 
 ## Handling multiple failures with Promise.allSettled
 
-If you want to run tasks in parallel but keep going even if one fails, `Promise.allSettled` is the safe tool. It returns a result for every promise.
+If you want to run tasks in parallel but keep going even if one fails, `Promise.allSettled` is the safe tool. It returns
+a result for every promise.
 
 ```ts
 function task(id: number): Promise<string> {
@@ -194,6 +207,7 @@ run();
 ```
 
 Result:
+
 ```text
 [ "task-1 ok", "error: Network timeout", "task-3 ok" ]
 ```
@@ -229,6 +243,7 @@ retry(flaky, 3).then((value) => console.log(value));
 ```
 
 Result:
+
 ```text
 ok
 ```
@@ -252,13 +267,15 @@ console.log(publicError);
 ```
 
 Result:
+
 ```text
 { status: 404, message: "Resource not found" }
 ```
 
 ## Safe logging without leaking data
 
-Logs are for operators, not users. Include identifiers that help trace issues, but avoid raw user input, tokens, or secrets. You can structure logs as simple objects.
+Logs are for operators, not users. Include identifiers that help trace issues, but avoid raw user input, tokens, or
+secrets. You can structure logs as simple objects.
 
 ```ts
 type LogEntry = {
@@ -279,6 +296,7 @@ console.log(entry);
 ```
 
 Result:
+
 ```text
 { level: "error", message: "Failed to load profile", requestId: "req_7e9c", userId: "user_42" }
 ```
@@ -298,13 +316,15 @@ console.log(error.message);
 ```
 
 Result:
+
 ```text
 Unknown error
 ```
 
 ## Error handling at UI boundaries
 
-UI code should be defensive because user events can be unpredictable. Wrap event handlers to ensure errors are reported and don't break the rest of the page.
+UI code should be defensive because user events can be unpredictable. Wrap event handlers to ensure errors are reported
+and don't break the rest of the page.
 
 ```ts
 function runSafely<T>(fn: () => T): T | null {
@@ -325,6 +345,7 @@ console.log(resultValue);
 ```
 
 Result:
+
 ```text
 UI error: Button handler failed
 null
@@ -362,6 +383,7 @@ try {
 ```
 
 Result:
+
 ```text
 Unexpected token b in JSON at position 1
 ```
@@ -384,6 +406,7 @@ main();
 ```
 
 Result:
+
 ```text
 Request failed
 ```
@@ -406,10 +429,13 @@ console.log(err.name);
 ```
 
 Result:
+
 ```text
 ValidationError
 ```
 
 ## Summary
 
-Good error handling is a balance: **fail fast**, **fail clearly**, and **recover when you can**. Use `try/catch` for sync code, `await` for async code, preserve causes, and keep user messages safe. Your future self (and your logs) will thank you.
+Good error handling is a balance: **fail fast**, **fail clearly**, and **recover when you can**. Use `try/catch` for
+sync code, `await` for async code, preserve causes, and keep user messages safe. Your future self (and your logs) will
+thank you.

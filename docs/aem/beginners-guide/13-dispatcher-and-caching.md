@@ -15,7 +15,9 @@ sidebar_position: 13
 
 # Dispatcher & Caching
 
-The Dispatcher is a **caching and load-balancing** layer that sits in front of AEM Publish instances. It is the first line of defense for performance and security. In AEMaaCS, the Dispatcher runs on Apache HTTP Server with a custom module.
+The Dispatcher is a **caching and load-balancing** layer that sits in front of AEM Publish instances. It is the first
+line of defense for performance and security. In AEMaaCS, the Dispatcher runs on Apache HTTP Server with a custom
+module.
 
 ## Architecture
 
@@ -44,13 +46,13 @@ Most requests should be served from CDN or Dispatcher cache, never reaching Publ
 
 ### What the Dispatcher does
 
-| Function | Description |
-|----------|-------------|
-| **Caching** | Stores rendered HTML, images, CSS, JS on disk |
-| **Filtering** | Blocks malicious or unnecessary requests |
+| Function           | Description                                   |
+|--------------------|-----------------------------------------------|
+| **Caching**        | Stores rendered HTML, images, CSS, JS on disk |
+| **Filtering**      | Blocks malicious or unnecessary requests      |
 | **Load balancing** | Distributes requests across Publish instances |
-| **URL rewriting** | Maps vanity URLs and redirects |
-| **Security** | Blocks access to sensitive paths |
+| **URL rewriting**  | Maps vanity URLs and redirects                |
+| **Security**       | Blocks access to sensitive paths              |
 
 ## Dispatcher configuration in your project
 
@@ -183,7 +185,8 @@ RewriteRule ^/old-page$ /new-page [R=301,L]
 
 ### Vanity URLs
 
-AEM supports vanity URLs in page properties. An author can set `/products` as a vanity URL for `/content/mysite/en/products-and-services`. The Dispatcher resolves these through a vanity URL mapping file.
+AEM supports vanity URLs in page properties. An author can set `/products` as a vanity URL for
+`/content/mysite/en/products-and-services`. The Dispatcher resolves these through a vanity URL mapping file.
 
 ## Cache invalidation
 
@@ -191,7 +194,8 @@ When content is published, the Dispatcher cache must be updated. AEM handles thi
 
 ### Auto-invalidation
 
-When a page is published, AEM sends an invalidation request to the Dispatcher. The Dispatcher marks the cached file (and potentially related files) as **stale**:
+When a page is published, AEM sends an invalidation request to the Dispatcher. The Dispatcher marks the cached file (and
+potentially related files) as **stale**:
 
 ```mermaid
 sequenceDiagram
@@ -219,11 +223,11 @@ The Dispatcher uses a `.stat` file mechanism:
 
 The `statfileslevel` setting controls how broadly invalidation spreads:
 
-| Level | Behavior |
-|-------|----------|
-| 0 | One `.stat` at the root -- all content invalidated on any publish |
-| 1 | `.stat` per first-level directory -- `/en/` and `/de/` independent |
-| 2 | `.stat` per second-level -- `/en/blog/` and `/en/about/` independent |
+| Level | Behavior                                                             |
+|-------|----------------------------------------------------------------------|
+| 0     | One `.stat` at the root -- all content invalidated on any publish    |
+| 1     | `.stat` per first-level directory -- `/en/` and `/de/` independent   |
+| 2     | `.stat` per second-level -- `/en/blog/` and `/en/about/` independent |
 
 Higher levels = more granular invalidation = better cache hit ratio.
 
@@ -279,20 +283,23 @@ This validates your Dispatcher configuration against AEMaaCS rules. Common check
 ./bin/docker_run.sh dispatcher/src host.docker.internal:4503
 ```
 
-This starts an Apache + Dispatcher instance pointing to your local Publish on port 4503. Test at `http://localhost:8080`.
+This starts an Apache + Dispatcher instance pointing to your local Publish on port 4503. Test at
+`http://localhost:8080`.
 
 ### Testing checklist
 
-| Test | What to verify |
-|------|---------------|
-| **Page loads** | Pages render correctly through the Dispatcher |
-| **Caching** | Reload and check the `X-Dispatcher` response header |
-| **Filters** | Admin paths return 403 or 404 |
-| **Rewrites** | Vanity URLs resolve correctly |
-| **Invalidation** | Publish a page and verify the cache is refreshed |
-| **Static assets** | CSS, JS, images served with proper cache headers |
+| Test              | What to verify                                      |
+|-------------------|-----------------------------------------------------|
+| **Page loads**    | Pages render correctly through the Dispatcher       |
+| **Caching**       | Reload and check the `X-Dispatcher` response header |
+| **Filters**       | Admin paths return 403 or 404                       |
+| **Rewrites**      | Vanity URLs resolve correctly                       |
+| **Invalidation**  | Publish a page and verify the cache is refreshed    |
+| **Static assets** | CSS, JS, images served with proper cache headers    |
 
-> For detailed configuration, see the [Dispatcher Configuration](/aem/infrastructure/dispatcher-configuration) reference. See also [Performance](/aem/infrastructure/performance) for broader optimization strategies and [Security Basics](/aem/infrastructure/security) for hardening your Publish tier.
+> For detailed configuration, see the [Dispatcher Configuration](/aem/infrastructure/dispatcher-configuration)
+> reference. See also [Performance](/aem/infrastructure/performance) for broader optimization strategies
+> and [Security Basics](/aem/infrastructure/security) for hardening your Publish tier.
 
 ## Summary
 
@@ -306,4 +313,5 @@ You learned:
 - **Stat file level** -- controlling invalidation granularity
 - **Local testing** with the Dispatcher SDK
 
-Next up: [Deployment & Cloud Manager](./14-deployment-and-cloud-manager.md) -- Git repo structure, Cloud Manager pipelines, environments, content transfer, and Rapid Development Environments.
+Next up: [Deployment & Cloud Manager](./14-deployment-and-cloud-manager.md) -- Git repo structure, Cloud Manager
+pipelines, environments, content transfer, and Rapid Development Environments.

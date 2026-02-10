@@ -362,13 +362,13 @@ long count = IntStream.rangeClosed(1, 10_000_000)
 
 ### When parallel streams help
 
-| Scenario | Parallel benefit |
-|----------|-----------------|
-| Large dataset (100k+ elements) | Likely beneficial |
-| CPU-intensive computation per element | Beneficial |
-| Simple operations (filter, map) on small lists | No benefit (overhead > gain) |
-| I/O-bound operations | No benefit (use async instead) |
-| Order-dependent operations | Harmful (forces sequential coordination) |
+| Scenario                                       | Parallel benefit                         |
+|------------------------------------------------|------------------------------------------|
+| Large dataset (100k+ elements)                 | Likely beneficial                        |
+| CPU-intensive computation per element          | Beneficial                               |
+| Simple operations (filter, map) on small lists | No benefit (overhead > gain)             |
+| I/O-bound operations                           | No benefit (use async instead)           |
+| Order-dependent operations                     | Harmful (forces sequential coordination) |
 
 ### When to avoid
 
@@ -449,16 +449,16 @@ Map<String, List<String>> itemsByCustomer = orders.stream()
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Reusing a stream | Streams can only be consumed once; second terminal op throws `IllegalStateException` | Create a new stream from the source |
-| Mutating state in `forEach` | Race conditions with parallel streams; violates functional contract | Use `collect` or `reduce` instead |
-| `Stream.of(array)` with primitives | `Stream.of(new int[]{1,2,3})` creates `Stream<int[]>`, not `Stream<Integer>` | Use `Arrays.stream(array)` or `IntStream.of(1,2,3)` |
-| Forgetting terminal operation | Intermediate ops are lazy; nothing happens without a terminal op | Always end with `collect`, `forEach`, `count`, etc. |
-| Infinite streams without `limit` | `Stream.generate(...)` or `Stream.iterate(...)` runs forever | Always add `.limit(n)` |
-| `peek` for business logic | `peek` is for debugging; it may not execute for short-circuiting ops | Use `map` + side effect, or process after collecting |
-| `Optional.get()` without check | Throws `NoSuchElementException` if empty | Use `orElse`, `orElseThrow`, or `ifPresent` |
-| Parallel stream on small data | Thread coordination overhead exceeds the computation benefit | Only use parallel for large datasets with CPU-bound work |
+| Pitfall                            | Problem                                                                              | Fix                                                      |
+|------------------------------------|--------------------------------------------------------------------------------------|----------------------------------------------------------|
+| Reusing a stream                   | Streams can only be consumed once; second terminal op throws `IllegalStateException` | Create a new stream from the source                      |
+| Mutating state in `forEach`        | Race conditions with parallel streams; violates functional contract                  | Use `collect` or `reduce` instead                        |
+| `Stream.of(array)` with primitives | `Stream.of(new int[]{1,2,3})` creates `Stream<int[]>`, not `Stream<Integer>`         | Use `Arrays.stream(array)` or `IntStream.of(1,2,3)`      |
+| Forgetting terminal operation      | Intermediate ops are lazy; nothing happens without a terminal op                     | Always end with `collect`, `forEach`, `count`, etc.      |
+| Infinite streams without `limit`   | `Stream.generate(...)` or `Stream.iterate(...)` runs forever                         | Always add `.limit(n)`                                   |
+| `peek` for business logic          | `peek` is for debugging; it may not execute for short-circuiting ops                 | Use `map` + side effect, or process after collecting     |
+| `Optional.get()` without check     | Throws `NoSuchElementException` if empty                                             | Use `orElse`, `orElseThrow`, or `ifPresent`              |
+| Parallel stream on small data      | Thread coordination overhead exceeds the computation benefit                         | Only use parallel for large datasets with CPU-bound work |
 
 ---
 

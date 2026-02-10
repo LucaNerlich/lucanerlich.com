@@ -7,13 +7,17 @@ tags: [strapi, graphql, api, resolvers, schema]
 
 # GraphQL Customization
 
-Strapi auto-generates a full GraphQL schema from your content types. This page covers how to extend that schema, add custom resolvers, apply middleware, secure queries, and avoid performance traps.
+Strapi auto-generates a full GraphQL schema from your content types. This page covers how to extend that schema, add
+custom resolvers, apply middleware, secure queries, and avoid performance traps.
 
 :::danger Mutations are exposed by default
 
-When you install `@strapi/plugin-graphql`, Strapi generates **full CRUD mutations** (`create`, `update`, `delete`) for **every** content type. If you only configure the Public role's REST permissions in the admin panel, the GraphQL mutations may **still be accessible** unless you explicitly lock them down.
+When you install `@strapi/plugin-graphql`, Strapi generates **full CRUD mutations** (`create`, `update`, `delete`) for *
+*every** content type. If you only configure the Public role's REST permissions in the admin panel, the GraphQL
+mutations may **still be accessible** unless you explicitly lock them down.
 
-**Any attacker who can reach `/graphql` can potentially create, update, or delete content** if you don't take action. See [Securing the default schema](#securing-the-default-schema-critical) below.
+**Any attacker who can reach `/graphql` can potentially create, update, or delete content** if you don't take action.
+See [Securing the default schema](#securing-the-default-schema-critical) below.
 
 :::
 
@@ -48,7 +52,8 @@ module.exports = {
 
 ## Auto-generated schema
 
-For a content type `Article` with fields `title`, `content`, `author` (relation), and `tags` (relation), Strapi generates:
+For a content type `Article` with fields `title`, `content`, `author` (relation), and `tags` (relation), Strapi
+generates:
 
 ```graphql
 type Article {
@@ -90,7 +95,8 @@ type Mutation {
 
 ## Securing the default schema (critical)
 
-This is the **most important section** on this page. By default, the auto-generated schema exposes mutations that allow anyone to create, update, and delete your content -- unless you explicitly deny it.
+This is the **most important section** on this page. By default, the auto-generated schema exposes mutations that allow
+anyone to create, update, and delete your content -- unless you explicitly deny it.
 
 ### The problem
 
@@ -113,7 +119,9 @@ mutation {
 }
 ```
 
-Even if you carefully configured the Public role in **Settings > Users & Permissions** to only allow `find` and `findOne` for the REST API, the GraphQL plugin generates its own permission layer. You must explicitly configure GraphQL permissions **separately**.
+Even if you carefully configured the Public role in **Settings > Users & Permissions** to only allow `find` and
+`findOne` for the REST API, the GraphQL plugin generates its own permission layer. You must explicitly configure GraphQL
+permissions **separately**.
 
 ### Solution 1: disable all mutations for public-facing types (recommended)
 
@@ -280,7 +288,8 @@ module.exports = {
 
 ### Complete recommended setup for a typical CMS frontend
 
-Most Strapi projects use GraphQL as a **read-only API** for the frontend, while content is managed via the admin panel. Here is the recommended secure configuration:
+Most Strapi projects use GraphQL as a **read-only API** for the frontend, while content is managed via the admin panel.
+Here is the recommended secure configuration:
 
 ```js
 // src/index.js
@@ -751,16 +760,16 @@ query ArticleBySlug($slug: String!) {
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| **Mutations exposed by default** | **Anyone can create/update/delete content** | **`disableMutations()` on all read-only types** |
-| Introspection enabled in production | Schema leaks to attackers | Set `introspection: false` in production config |
-| No depth limit | Malicious nested queries crash the server | Set `depthLimit: 5-7` |
-| Trusting REST permissions for GraphQL | GraphQL has its own permission layer | Configure `resolversConfig` and `shadowCRUD` separately |
-| N+1 queries on relations | Slow list queries | Use DataLoader or ensure population is optimized |
-| Missing `auth: false` on public queries | 403 for anonymous users | Set `auth: false` in `resolversConfig` |
-| Playground enabled in production | Security and information disclosure risk | Set `playgroundAlways: false` |
-| Sensitive user fields exposed | Email, password hash visible in schema | `field('email').disable()` on user type |
+| Pitfall                                 | Problem                                     | Fix                                                     |
+|-----------------------------------------|---------------------------------------------|---------------------------------------------------------|
+| **Mutations exposed by default**        | **Anyone can create/update/delete content** | **`disableMutations()` on all read-only types**         |
+| Introspection enabled in production     | Schema leaks to attackers                   | Set `introspection: false` in production config         |
+| No depth limit                          | Malicious nested queries crash the server   | Set `depthLimit: 5-7`                                   |
+| Trusting REST permissions for GraphQL   | GraphQL has its own permission layer        | Configure `resolversConfig` and `shadowCRUD` separately |
+| N+1 queries on relations                | Slow list queries                           | Use DataLoader or ensure population is optimized        |
+| Missing `auth: false` on public queries | 403 for anonymous users                     | Set `auth: false` in `resolversConfig`                  |
+| Playground enabled in production        | Security and information disclosure risk    | Set `playgroundAlways: false`                           |
+| Sensitive user fields exposed           | Email, password hash visible in schema      | `field('email').disable()` on user type                 |
 
 ---
 

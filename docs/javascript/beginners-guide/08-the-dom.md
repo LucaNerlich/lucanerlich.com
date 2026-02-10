@@ -15,7 +15,8 @@ sidebar_position: 8
 
 # The DOM
 
-The **Document Object Model** (DOM) is the browser's representation of an HTML page as a tree of objects. JavaScript uses the DOM to read and change anything on the page -- text, styles, attributes, structure, everything.
+The **Document Object Model** (DOM) is the browser's representation of an HTML page as a tree of objects. JavaScript
+uses the DOM to read and change anything on the page -- text, styles, attributes, structure, everything.
 
 ## What is the DOM?
 
@@ -49,7 +50,8 @@ document
             └── "World"
 ```
 
-Every tag becomes a **node** (an object) in this tree. JavaScript can access and modify any node through the global `document` object.
+Every tag becomes a **node** (an object) in this tree. JavaScript can access and modify any node through the global
+`document` object.
 
 ## Selecting elements
 
@@ -87,6 +89,7 @@ if (element) {
 ```
 
 Result:
+
 ```text
 Element not found
 ```
@@ -110,7 +113,8 @@ paragraphs.forEach((p, index) => {
 });
 ```
 
-A NodeList is **not** an array. It supports `forEach` and `for...of`, but not `map`, `filter`, etc. To use array methods, convert it:
+A NodeList is **not** an array. It supports `forEach` and `for...of`, but not `map`, `filter`, etc. To use array
+methods, convert it:
 
 ```js
 const items = document.querySelectorAll("li");
@@ -160,6 +164,7 @@ console.log(p.textContent);
 ```
 
 Result:
+
 ```text
 Hello, world!
 Goodbye, world!
@@ -196,7 +201,8 @@ div.innerHTML = userInput; // executes the attack
 div.textContent = userInput; // displays as plain text
 ```
 
-Use `textContent` for plain text. Use `innerHTML` only with trusted, hardcoded content. For building complex elements safely, use `createElement` (covered below).
+Use `textContent` for plain text. Use `innerHTML` only with trusted, hardcoded content. For building complex elements
+safely, use `createElement` (covered below).
 
 ## Modifying attributes
 
@@ -223,6 +229,7 @@ console.log(link.getAttribute("target"));
 ```
 
 Result:
+
 ```text
 https://example.com
 _blank
@@ -272,6 +279,7 @@ div.dataset.status = "active";
 ```
 
 Result:
+
 ```text
 42
 admin
@@ -346,7 +354,8 @@ console.log(computed.fontSize);
 console.log(computed.color);
 ```
 
-For most styling, **add/remove CSS classes** instead of setting inline styles. It keeps your JavaScript clean and your styles in CSS where they belong.
+For most styling, **add/remove CSS classes** instead of setting inline styles. It keeps your JavaScript clean and your
+styles in CSS where they belong.
 
 ## Creating elements
 
@@ -494,6 +503,7 @@ console.log(closestUl.id);
 ```
 
 Result:
+
 ```text
 3
 Home
@@ -506,12 +516,12 @@ menu
 
 ### Element vs Node traversal
 
-| Element property | Node property | Difference |
-|-----------------|---------------|------------|
-| `children` | `childNodes` | `childNodes` includes text nodes and comments |
-| `firstElementChild` | `firstChild` | Same |
-| `parentElement` | `parentNode` | Same |
-| `nextElementSibling` | `nextSibling` | Same |
+| Element property     | Node property | Difference                                    |
+|----------------------|---------------|-----------------------------------------------|
+| `children`           | `childNodes`  | `childNodes` includes text nodes and comments |
+| `firstElementChild`  | `firstChild`  | Same                                          |
+| `parentElement`      | `parentNode`  | Same                                          |
+| `nextElementSibling` | `nextSibling` | Same                                          |
 
 Use the **Element** versions (left column) unless you specifically need to work with text nodes.
 
@@ -584,6 +594,7 @@ for (const user of users) {
 ```
 
 This renders:
+
 ```text
 • Ada -- Admin
 • Bob -- User
@@ -593,14 +604,14 @@ This renders:
 
 ## When to use which approach
 
-| Task | Method |
-|------|--------|
-| Set plain text | `textContent` |
-| Set HTML from trusted source | `innerHTML` (never with user input) |
-| Build elements from user data | `createElement` + `textContent` |
-| Add/remove CSS classes | `classList.add()` / `.remove()` / `.toggle()` |
-| Change styles dynamically | Prefer toggling classes; use `style` for computed values |
-| Add many elements at once | `DocumentFragment` |
+| Task                          | Method                                                   |
+|-------------------------------|----------------------------------------------------------|
+| Set plain text                | `textContent`                                            |
+| Set HTML from trusted source  | `innerHTML` (never with user input)                      |
+| Build elements from user data | `createElement` + `textContent`                          |
+| Add/remove CSS classes        | `classList.add()` / `.remove()` / `.toggle()`            |
+| Change styles dynamically     | Prefer toggling classes; use `style` for computed values |
+| Add many elements at once     | `DocumentFragment`                                       |
 
 ## Summary
 

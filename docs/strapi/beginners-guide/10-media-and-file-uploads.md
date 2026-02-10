@@ -15,7 +15,8 @@ sidebar_position: 10
 
 # Media & File Uploads
 
-Every blog needs images. Strapi's Upload plugin handles file uploads, image processing, and storage. By default, files are stored locally in `public/uploads/`. For production, you will want a cloud provider like S3 or Cloudinary.
+Every blog needs images. Strapi's Upload plugin handles file uploads, image processing, and storage. By default, files
+are stored locally in `public/uploads/`. For production, you will want a cloud provider like S3 or Cloudinary.
 
 ## How uploads work
 
@@ -117,12 +118,12 @@ curl -X POST http://localhost:1337/api/upload \
   -F "field=avatar"
 ```
 
-| Parameter | Description |
-|-----------|-------------|
-| `files` | The file(s) to upload |
-| `ref` | Content type UID |
-| `refId` | Document ID of the entry |
-| `field` | Field name on the content type |
+| Parameter | Description                    |
+|-----------|--------------------------------|
+| `files`   | The file(s) to upload          |
+| `ref`     | Content type UID               |
+| `refId`   | Document ID of the entry       |
+| `field`   | Field name on the content type |
 
 ### Upload multiple files
 
@@ -529,6 +530,8 @@ You learned:
 - **Managing media** via the API and admin panel
 - **Best practices** -- alt text, optimization, CDN, CORS
 
-Your blog can now handle images for post covers, author avatars, and inline content. The next chapter adds TypeScript to the project for better developer experience.
+Your blog can now handle images for post covers, author avatars, and inline content. The next chapter adds TypeScript to
+the project for better developer experience.
 
-Next up: [TypeScript Integration](./11-typescript-integration.md) -- converting your project to TypeScript, generating types from content schemas, and typing controllers and services.
+Next up: [TypeScript Integration](./11-typescript-integration.md) -- converting your project to TypeScript, generating
+types from content schemas, and typing controllers and services.

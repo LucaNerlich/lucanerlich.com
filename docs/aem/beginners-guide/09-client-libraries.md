@@ -15,7 +15,8 @@ sidebar_position: 9
 
 # Client Libraries
 
-AEM uses **client libraries** (clientlibs) to manage CSS and JavaScript. Instead of linking to individual files, you reference a **category** name and AEM bundles everything together.
+AEM uses **client libraries** (clientlibs) to manage CSS and JavaScript. Instead of linking to individual files, you
+reference a **category** name and AEM bundles everything together.
 
 ## How client libraries work
 
@@ -68,12 +69,12 @@ apps/mysite/clientlibs/
           allowProxy="{Boolean}true"/>
 ```
 
-| Property | Description |
-|----------|-------------|
-| `categories` | The category name(s) -- used to include this clientlib in pages |
-| `allowProxy` | Serve via `/etc.clientlibs/` proxy (required for AEMaaCS) |
-| `dependencies` | Other categories that must load **before** this one |
-| `embed` | Other categories to inline **into** this one |
+| Property       | Description                                                     |
+|----------------|-----------------------------------------------------------------|
+| `categories`   | The category name(s) -- used to include this clientlib in pages |
+| `allowProxy`   | Serve via `/etc.clientlibs/` proxy (required for AEMaaCS)       |
+| `dependencies` | Other categories that must load **before** this one             |
+| `embed`        | Other categories to inline **into** this one                    |
 
 ### css.txt and js.txt
 
@@ -147,14 +148,15 @@ Embedding inlines another clientlib **into** this one -- a single HTTP request:
 
 Result: one HTTP request (`mysite.site.css` containing everything).
 
-| Strategy | HTTP Requests | Use when |
-|----------|--------------|----------|
-| **Dependencies** | Multiple | Shared libs that other things also depend on |
-| **Embedding** | Single | Combining project-specific libs for performance |
+| Strategy         | HTTP Requests | Use when                                        |
+|------------------|---------------|-------------------------------------------------|
+| **Dependencies** | Multiple      | Shared libs that other things also depend on    |
+| **Embedding**    | Single        | Combining project-specific libs for performance |
 
 ## Proxy serving
 
-In AEMaaCS, clientlibs must be served through the `/etc.clientlibs/` proxy path. Set `allowProxy="{Boolean}true"` on every clientlib.
+In AEMaaCS, clientlibs must be served through the `/etc.clientlibs/` proxy path. Set `allowProxy="{Boolean}true"` on
+every clientlib.
 
 Without proxy:
 
@@ -229,22 +231,24 @@ The build process:
 2. The output is copied to `ui.apps/src/main/content/jcr_root/apps/mysite/clientlibs/clientlib-site/`
 3. Maven deploys the clientlib to AEM
 
-This lets you use modern frontend tooling (SCSS, TypeScript, PostCSS, autoprefixer) while AEM serves the compiled output.
+This lets you use modern frontend tooling (SCSS, TypeScript, PostCSS, autoprefixer) while AEM serves the compiled
+output.
 
 ### Automatic sync during development
 
-The archetype sets up `aem-clientlib-generator` to automatically copy compiled assets to the correct clientlib folder during builds. You can also use `npx aemsync` or a similar tool for live-reload during development.
+The archetype sets up `aem-clientlib-generator` to automatically copy compiled assets to the correct clientlib folder
+during builds. You can also use `npx aemsync` or a similar tool for live-reload during development.
 
 ## Clientlib categories convention
 
 A typical project has these categories:
 
-| Category | Contains | Loaded |
-|----------|----------|--------|
-| `mysite.base` | Reset, fonts, CSS variables, global styles | Every page |
-| `mysite.components` | Component-specific CSS/JS | Every page |
-| `mysite.site` | Embeds base + components | Every page (via embed) |
-| `mysite.dependencies` | Third-party libraries (if any) | Dependency of site |
+| Category              | Contains                                   | Loaded                 |
+|-----------------------|--------------------------------------------|------------------------|
+| `mysite.base`         | Reset, fonts, CSS variables, global styles | Every page             |
+| `mysite.components`   | Component-specific CSS/JS                  | Every page             |
+| `mysite.site`         | Embeds base + components                   | Every page (via embed) |
+| `mysite.dependencies` | Third-party libraries (if any)             | Dependency of site     |
 
 ## Debugging clientlibs
 
@@ -269,7 +273,8 @@ http://localhost:4502/etc.clientlibs/mysite/clientlibs/clientlib-base.css
 http://localhost:4502/etc.clientlibs/mysite/clientlibs/clientlib-base.js
 ```
 
-> For advanced clientlib patterns, see the [Client Libraries](/aem/client-libraries) reference. For multi-brand frontend setups, see [Multi-Tenancy UI Frontend Themes](/aem/ui/multi-tenancy-support-ui-frontend).
+> For advanced clientlib patterns, see the [Client Libraries](/aem/client-libraries) reference. For multi-brand frontend
+> setups, see [Multi-Tenancy UI Frontend Themes](/aem/ui/multi-tenancy-support-ui-frontend).
 
 ## Summary
 
@@ -284,4 +289,5 @@ You learned:
 - The **ui.frontend** module for modern build tooling
 - **Debugging** -- `debugClientLibs`, dump/rebuild tools
 
-Next up: [Building Pages](./10-building-pages.md) -- using Core Components, responsive grid, navigation, header/footer, and assembling a homepage and article page.
+Next up: [Building Pages](./10-building-pages.md) -- using Core Components, responsive grid, navigation, header/footer,
+and assembling a homepage and article page.

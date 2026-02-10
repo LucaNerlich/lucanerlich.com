@@ -15,7 +15,9 @@ sidebar_position: 6
 
 # User Input Sanitization in JavaScript: Practical and Safe Patterns
 
-User input is untrusted by default. Whether it comes from a form, URL parameters, or an API request, it must be **validated** and **sanitized** before you use it. This post explains safe, practical patterns for both frontend and backend scenarios using TypeScript examples and expected output.
+User input is untrusted by default. Whether it comes from a form, URL parameters, or an API request, it must be *
+*validated** and **sanitized** before you use it. This post explains safe, practical patterns for both frontend and
+backend scenarios using TypeScript examples and expected output.
 
 ## Quick start
 
@@ -28,6 +30,7 @@ console.log(sanitizeText("  hello   world  "));
 ```
 
 Result:
+
 ```text
 hello world
 ```
@@ -63,6 +66,7 @@ console.log(safe.textContent);
 ```
 
 Result:
+
 ```text
 <b>Hi</b>
 ```
@@ -71,7 +75,8 @@ The string is treated as text, not HTML.
 
 ## When you must output HTML, escape it
 
-If you absolutely must output HTML from user input, escape it first. This prevents scripts or tags from being interpreted by the browser.
+If you absolutely must output HTML from user input, escape it first. This prevents scripts or tags from being
+interpreted by the browser.
 
 ```ts
 function escapeHtml(input: string): string {
@@ -88,6 +93,7 @@ console.log(escapeHtml(unsafe));
 ```
 
 Result:
+
 ```text
 &lt;img src=x onerror=&quot;alert(1)&quot;&gt;
 ```
@@ -106,6 +112,7 @@ console.log(attribute);
 ```
 
 Result:
+
 ```text
 hello &quot;world&quot;
 ```
@@ -123,6 +130,7 @@ console.log(isValidUsername("luca_nerlich"));
 ```
 
 Result:
+
 ```text
 true
 ```
@@ -140,6 +148,7 @@ console.log(normalizeEmail("  USER@EXAMPLE.COM  "));
 ```
 
 Result:
+
 ```text
 user@example.com
 ```
@@ -159,6 +168,7 @@ console.log(toPositiveInt("42"));
 ```
 
 Result:
+
 ```text
 42
 ```
@@ -183,6 +193,7 @@ console.log(validateCreateUser(candidate));
 ```
 
 Result:
+
 ```text
 { name: "Ada", age: 36 }
 ```
@@ -199,17 +210,21 @@ console.log(url);
 ```
 
 Result:
+
 ```text
 https://example.com/search?q=cats%20%26%20dogs
 ```
 
 ## Avoid unsafe sinks
 
-Some APIs interpret strings as code or HTML. Avoid passing user input into these sinks. Prefer safe APIs such as `textContent`, parameterized queries, and built-in templating that escapes by default.
+Some APIs interpret strings as code or HTML. Avoid passing user input into these sinks. Prefer safe APIs such as
+`textContent`, parameterized queries, and built-in templating that escapes by default.
 
 ## Handling rich text safely
 
-If you allow rich text, use a **well-maintained sanitizer** on the backend to allow only a small subset of tags and attributes. Keep the allow-list tight and explicitly defined. Avoid writing a custom HTML parser unless you have a strong reason.
+If you allow rich text, use a **well-maintained sanitizer** on the backend to allow only a small subset of tags and
+attributes. Keep the allow-list tight and explicitly defined. Avoid writing a custom HTML parser unless you have a
+strong reason.
 
 ## Common pitfalls
 
@@ -240,6 +255,7 @@ console.log(sanitized);
 ```
 
 Result:
+
 ```text
 hello
 ```
@@ -255,6 +271,7 @@ console.log(safeText);
 ```
 
 Result:
+
 ```text
 <script>alert(1)</script>
 ```
@@ -269,10 +286,12 @@ console.log(isValid);
 ```
 
 Result:
+
 ```text
 true
 ```
 
 ## Summary
 
-Sanitization and validation are essential for secure JavaScript. Validate inputs with allow-lists, normalize consistently, escape output by context, and never rely on the frontend alone.
+Sanitization and validation are essential for secure JavaScript. Validate inputs with allow-lists, normalize
+consistently, escape output by context, and never rely on the frontend alone.

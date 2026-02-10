@@ -15,7 +15,8 @@ sidebar_position: 10
 
 # Working with Data
 
-Real web applications need data -- from APIs, from the user, from the browser. This chapter covers fetching data from external sources, handling JSON, and storing data locally.
+Real web applications need data -- from APIs, from the user, from the browser. This chapter covers fetching data from
+external sources, handling JSON, and storing data locally.
 
 ## The Fetch API
 
@@ -29,21 +30,23 @@ fetch("https://jsonplaceholder.typicode.com/users/1")
 ```
 
 Result:
+
 ```text
 Leanne Graham
 ```
 
-This uses **promises** -- `fetch` returns a promise that resolves to a `Response` object. `.json()` parses the response body as JSON (also returns a promise).
+This uses **promises** -- `fetch` returns a promise that resolves to a `Response` object. `.json()` parses the response
+body as JSON (also returns a promise).
 
 ## Promises -- a quick overview
 
 A **promise** represents a value that will be available in the future. It has three states:
 
-| State | Meaning |
-|-------|---------|
-| **Pending** | Operation in progress |
+| State         | Meaning                              |
+|---------------|--------------------------------------|
+| **Pending**   | Operation in progress                |
 | **Fulfilled** | Operation succeeded, value available |
-| **Rejected** | Operation failed, error available |
+| **Rejected**  | Operation failed, error available    |
 
 ```js
 const promise = fetch("https://jsonplaceholder.typicode.com/users/1");
@@ -65,6 +68,7 @@ promise
 ```
 
 Result:
+
 ```text
 Status: 200
 User: Leanne Graham
@@ -98,6 +102,7 @@ main();
 ```
 
 Result:
+
 ```text
 Leanne Graham
 Sincere@april.biz
@@ -107,7 +112,8 @@ Sincere@april.biz
 
 ## Error handling with fetch
 
-`fetch` only rejects on **network errors** (no internet, DNS failure). HTTP errors like 404 or 500 are **not** rejections -- you must check `response.ok`:
+`fetch` only rejects on **network errors** (no internet, DNS failure). HTTP errors like 404 or 500 are **not**
+rejections -- you must check `response.ok`:
 
 ```js
 async function getUser(id) {
@@ -133,6 +139,7 @@ main();
 ```
 
 Result:
+
 ```text
 User: Leanne Graham
 ```
@@ -148,6 +155,7 @@ try {
 ```
 
 Result:
+
 ```text
 HTTP error: 404 Not Found
 ```
@@ -182,6 +190,7 @@ main();
 ```
 
 Result:
+
 ```text
 Fetched 10 users
 User 1 has 10 posts
@@ -221,6 +230,7 @@ main();
 ```
 
 Result:
+
 ```text
 Created post: { title: 'My Title', body: 'My post content', userId: 1, id: 101 }
 ```
@@ -264,6 +274,7 @@ console.log(url);
 ```
 
 Result:
+
 ```text
 https://api.example.com/search?q=javascript&page=1&limit=10
 ```
@@ -276,6 +287,7 @@ console.log(params.toString());
 ```
 
 Result:
+
 ```text
 q=hello+world+%26+more
 ```
@@ -303,11 +315,13 @@ getDashboardData();
 ```
 
 Result:
+
 ```text
 10 users, 100 posts
 ```
 
-`Promise.all` runs all promises concurrently and waits for all to complete. If any fails, the entire `Promise.all` rejects.
+`Promise.all` runs all promises concurrently and waits for all to complete. If any fails, the entire `Promise.all`
+rejects.
 
 ## Loading data into the DOM
 
@@ -364,17 +378,18 @@ async function loadUsers() {
 document.addEventListener("DOMContentLoaded", loadUsers);
 ```
 
-This pattern -- loading indicator, fetch data, build DOM, handle errors -- is the foundation of every data-driven web page.
+This pattern -- loading indicator, fetch data, build DOM, handle errors -- is the foundation of every data-driven web
+page.
 
 ## `localStorage` and `sessionStorage`
 
 The browser provides two storage mechanisms for saving data on the client:
 
-| Feature | `localStorage` | `sessionStorage` |
-|---------|---------------|-------------------|
-| **Persists** | Until manually cleared | Until the tab is closed |
-| **Scope** | Shared across tabs (same origin) | Per tab |
-| **Size limit** | ~5–10 MB | ~5–10 MB |
+| Feature        | `localStorage`                   | `sessionStorage`        |
+|----------------|----------------------------------|-------------------------|
+| **Persists**   | Until manually cleared           | Until the tab is closed |
+| **Scope**      | Shared across tabs (same origin) | Per tab                 |
+| **Size limit** | ~5–10 MB                         | ~5–10 MB                |
 
 ### Basic usage
 
@@ -394,6 +409,7 @@ localStorage.clear();
 ```
 
 Result:
+
 ```text
 Ada
 ```
@@ -419,6 +435,7 @@ console.log(loaded.theme);
 ```
 
 Result:
+
 ```text
 { theme: 'dark', fontSize: 16, language: 'en' }
 dark
@@ -444,6 +461,7 @@ console.log(theme);
 ```
 
 Result (if nothing is stored):
+
 ```text
 light
 ```
@@ -473,6 +491,7 @@ console.log(restored);
 ```
 
 Result:
+
 ```text
 [
   { text: 'Learn JavaScript', done: false },
@@ -491,6 +510,7 @@ console.log(temp);
 ```
 
 Result:
+
 ```text
 gone when tab closes
 ```
@@ -615,6 +635,7 @@ Here is a complete example that fetches user data, displays it, and caches resul
 ```
 
 This example demonstrates:
+
 - Fetching data from an API
 - Error handling with user-friendly messages
 - Rendering data into the DOM safely (no `innerHTML` with user data)
@@ -631,4 +652,5 @@ This example demonstrates:
 - Both storage APIs only store strings -- use `JSON.stringify`/`JSON.parse` for objects.
 - Combine fetch, DOM manipulation, and storage for data-driven pages.
 
-Next up: [Project: Build a Complete Website](./11-project-build-a-website.md) -- putting everything together into a real, multi-page site.
+Next up: [Project: Build a Complete Website](./11-project-build-a-website.md) -- putting everything together into a
+real, multi-page site.

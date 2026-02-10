@@ -15,7 +15,8 @@ sidebar_position: 8
 
 # Routes, Policies & Middleware
 
-In the previous chapter we created custom controller actions, but they are unreachable without routes. In this chapter we will map URLs to those actions, add access control with policies, and intercept requests with middleware.
+In the previous chapter we created custom controller actions, but they are unreachable without routes. In this chapter
+we will map URLs to those actions, add access control with policies, and intercept requests with middleware.
 
 ## The request lifecycle
 
@@ -56,13 +57,13 @@ module.exports = createCoreRouter("api::post.post");
 
 This creates the standard REST routes:
 
-| Method | Path | Action | Handler |
-|--------|------|--------|---------|
-| `GET` | `/api/posts` | find | `post.find` |
-| `GET` | `/api/posts/:id` | findOne | `post.findOne` |
-| `POST` | `/api/posts` | create | `post.create` |
-| `PUT` | `/api/posts/:id` | update | `post.update` |
-| `DELETE` | `/api/posts/:id` | delete | `post.delete` |
+| Method   | Path             | Action  | Handler        |
+|----------|------------------|---------|----------------|
+| `GET`    | `/api/posts`     | find    | `post.find`    |
+| `GET`    | `/api/posts/:id` | findOne | `post.findOne` |
+| `POST`   | `/api/posts`     | create  | `post.create`  |
+| `PUT`    | `/api/posts/:id` | update  | `post.update`  |
+| `DELETE` | `/api/posts/:id` | delete  | `post.delete`  |
 
 ## Configuring core routes
 
@@ -94,7 +95,8 @@ module.exports = createCoreRouter("api::post.post", {
 
 ## Custom routes
 
-Custom controller actions (like `findFeatured` and `findBySlug` from chapter 7) need custom routes. Create a new route file:
+Custom controller actions (like `findFeatured` and `findBySlug` from chapter 7) need custom routes. Create a new route
+file:
 
 ```javascript
 // src/api/post/routes/custom-post.js
@@ -128,11 +130,14 @@ module.exports = {
 };
 ```
 
-> **Important:** Custom route files must be placed in the `routes/` directory of your content type API. The filename can be anything except `post.js` (which is reserved for the core router). A common convention is `custom-post.js` or `01-custom-post.js`.
+> **Important:** Custom route files must be placed in the `routes/` directory of your content type API. The filename can
+> be anything except `post.js` (which is reserved for the core router). A common convention is `custom-post.js` or
+`01-custom-post.js`.
 
 ### Route order matters
 
-Strapi matches routes in order. Custom routes are loaded **before** core routes if the filename sorts before the core route file. To ensure custom routes match first, prefix with a number:
+Strapi matches routes in order. Custom routes are loaded **before** core routes if the filename sorts before the core
+route file. To ensure custom routes match first, prefix with a number:
 
 ```
 src/api/post/routes/
@@ -140,7 +145,8 @@ src/api/post/routes/
 └── post.js              # Core routes (matched second)
 ```
 
-This matters when paths overlap. For example, `/api/posts/featured` could match the core `findOne` route (`/api/posts/:id`) if core routes are checked first. Putting custom routes first prevents this.
+This matters when paths overlap. For example, `/api/posts/featured` could match the core `findOne` route (
+`/api/posts/:id`) if core routes are checked first. Putting custom routes first prevents this.
 
 ### Route configuration
 
@@ -163,12 +169,12 @@ Each route accepts a `config` object:
 }
 ```
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `auth` | `true` | Require authentication (`false` for public) |
-| `policies` | `[]` | Array of policy names to apply |
-| `middlewares` | `[]` | Array of middleware names to apply |
-| `tag` | -- | Links to admin panel permissions |
+| Option        | Default | Description                                 |
+|---------------|---------|---------------------------------------------|
+| `auth`        | `true`  | Require authentication (`false` for public) |
+| `policies`    | `[]`    | Array of policy names to apply              |
+| `middlewares` | `[]`    | Array of middleware names to apply          |
+| `tag`         | --      | Links to admin panel permissions            |
 
 ### URL parameters
 
@@ -193,17 +199,19 @@ async findBySlug(ctx) {
 
 ## Policies
 
-Policies are **access control checks** that run before the controller. They either pass (allow the request) or fail (return 403 Forbidden).
+Policies are **access control checks** that run before the controller. They either pass (allow the request) or fail (
+return 403 Forbidden).
 
 ### Built-in policies
 
 Strapi provides global policies you can reference by name:
 
-| Policy | Description |
-|--------|-------------|
+| Policy                        | Description                   |
+|-------------------------------|-------------------------------|
 | `admin::isAuthenticatedAdmin` | Requires admin authentication |
 
-For API users, authentication is handled by the `auth` config on routes, not a separate policy. You write custom policies for finer-grained control.
+For API users, authentication is handled by the `auth` config on routes, not a separate policy. You write custom
+policies for finer-grained control.
 
 ### Creating a custom policy
 
@@ -321,7 +329,8 @@ config: {
 
 ## Middleware
 
-Middleware intercepts requests and responses. Unlike policies (which are binary pass/fail), middleware can transform the request, add headers, log data, or modify the response.
+Middleware intercepts requests and responses. Unlike policies (which are binary pass/fail), middleware can transform the
+request, add headers, log data, or modify the response.
 
 ### Creating route middleware
 
@@ -549,9 +558,11 @@ curl http://localhost:1337/api/posts/by-slug/getting-started-with-strapi
 curl http://localhost:1337/api/posts/abc123def456/related
 ```
 
-> **Tip:** Run `npm run strapi routes:list` whenever you change routes. It shows all registered routes, their methods, and handlers -- useful for debugging route conflicts.
+> **Tip:** Run `npm run strapi routes:list` whenever you change routes. It shows all registered routes, their methods,
+> and handlers -- useful for debugging route conflicts.
 
-> For more advanced patterns, see the [Custom Routes and Endpoints](/strapi/custom-routes-and-endpoints) and [Middleware and Policies](/strapi/middleware-and-policies) references.
+> For more advanced patterns, see the [Custom Routes and Endpoints](/strapi/custom-routes-and-endpoints)
+> and [Middleware and Policies](/strapi/middleware-and-policies) references.
 
 ## Summary
 
@@ -566,6 +577,8 @@ You learned:
 - How to **configure built-in middleware** (CORS, security, etc.)
 - A practical **rate limiting** example
 
-Your blog API now has custom endpoints for featured posts and slug-based lookups, access control to ensure users can only edit their own posts, and request logging middleware. The next chapter covers event-driven patterns.
+Your blog API now has custom endpoints for featured posts and slug-based lookups, access control to ensure users can
+only edit their own posts, and request logging middleware. The next chapter covers event-driven patterns.
 
-Next up: [Lifecycle Hooks & Webhooks](./09-lifecycle-hooks-and-webhooks.md) -- reacting to content events with Document Service middleware and notifying external services with webhooks.
+Next up: [Lifecycle Hooks & Webhooks](./09-lifecycle-hooks-and-webhooks.md) -- reacting to content events with Document
+Service middleware and notifying external services with webhooks.

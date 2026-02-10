@@ -15,7 +15,8 @@ sidebar_position: 12
 
 # Deploying to a VPS with Nginx
 
-You have a working REST API. Now let us put it on the internet. This chapter covers deploying your Java application to a VPS with nginx as a reverse proxy and HTTPS via Let's Encrypt.
+You have a working REST API. Now let us put it on the internet. This chapter covers deploying your Java application to a
+VPS with nginx as a reverse proxy and HTTPS via Let's Encrypt.
 
 The deployment architecture:
 
@@ -34,7 +35,8 @@ Client (browser, curl, mobile app)
 └──────────┘
 ```
 
-Nginx handles the public-facing connection (HTTPS, compression, rate limiting). It forwards API requests to your Java process running on `localhost:8080`. This is called a **reverse proxy**.
+Nginx handles the public-facing connection (HTTPS, compression, rate limiting). It forwards API requests to your Java
+process running on `localhost:8080`. This is called a **reverse proxy**.
 
 ## Prerequisites
 
@@ -46,7 +48,9 @@ Before starting, you need:
 4. Your **task-api.jar** file from the previous chapter
 5. Optionally, a **domain name** pointed to your server's IP
 
-If you have not set up a VPS before, the initial server setup (creating a user, SSH keys, firewall) is covered in the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx). The steps are identical -- follow that guide through Step 2, then return here.
+If you have not set up a VPS before, the initial server setup (creating a user, SSH keys, firewall) is covered in
+the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx). The steps are identical --
+follow that guide through Step 2, then return here.
 
 ## Step 1: install Java on the server
 
@@ -63,7 +67,8 @@ sudo apt update
 sudo apt install openjdk-21-jre-headless -y
 ```
 
-We install `openjdk-21-jre-headless` (not the full JDK) -- the server only needs to **run** Java, not compile it. This is a smaller installation.
+We install `openjdk-21-jre-headless` (not the full JDK) -- the server only needs to **run** Java, not compile it. This
+is a smaller installation.
 
 Verify:
 
@@ -72,6 +77,7 @@ java --version
 ```
 
 Result:
+
 ```text
 openjdk 21.0.2 2024-01-16
 OpenJDK Runtime Environment (build 21.0.2+13-Ubuntu)
@@ -106,6 +112,7 @@ ls -la /opt/task-api/
 ```
 
 Result:
+
 ```text
 total 12
 drwxr-xr-x 2 deploy deploy 4096 Jan 15 10:00 .
@@ -127,6 +134,7 @@ curl http://localhost:8080/api/health
 ```
 
 Result:
+
 ```json
 {"status":"ok"}
 ```
@@ -175,6 +183,7 @@ WantedBy=multi-user.target
 ```
 
 Key settings:
+
 - `User=deploy` -- runs as the deploy user, not root
 - `Restart=on-failure` -- automatically restarts on crashes
 - `WorkingDirectory` -- sets the working directory so `tasks.dat` is stored in `/opt/task-api/`
@@ -198,6 +207,7 @@ sudo systemctl status task-api
 ```
 
 Result:
+
 ```text
 ● task-api.service - Task Manager REST API
      Loaded: loaded (/etc/systemd/system/task-api.service; enabled)
@@ -292,6 +302,7 @@ sudo nginx -t
 ```
 
 Result:
+
 ```text
 nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 nginx: configuration file /etc/nginx/nginx.conf test is successful
@@ -309,6 +320,7 @@ curl http://YOUR_DOMAIN_OR_IP/api/health
 ```
 
 Result:
+
 ```json
 {"status":"ok"}
 ```
@@ -330,6 +342,7 @@ sudo certbot --nginx -d yoursite.com
 ```
 
 Certbot will:
+
 1. Verify domain ownership
 2. Obtain and install the certificate
 3. Update nginx config for HTTPS
@@ -342,6 +355,7 @@ curl https://yoursite.com/api/health
 ```
 
 Result:
+
 ```json
 {"status":"ok"}
 ```
@@ -356,7 +370,8 @@ Certbot sets up a systemd timer for automatic renewal every 90 days.
 
 ## Step 6: restrict the Java server to localhost
 
-Since nginx handles all public traffic, the Java server should only accept connections from `localhost`. Update `ApiServer.java`:
+Since nginx handles all public traffic, the Java server should only accept connections from `localhost`. Update
+`ApiServer.java`:
 
 ```java
 // Bind to localhost only -- nginx will proxy public traffic
@@ -461,11 +476,13 @@ jcmd $(pgrep -f task-api) VM.info
 
 ### Health check endpoint
 
-The `/api/health` endpoint we built lets you verify the API is working. Monitoring services like UptimeRobot or Healthchecks.io can hit this endpoint periodically and alert you if it goes down.
+The `/api/health` endpoint we built lets you verify the API is working. Monitoring services like UptimeRobot or
+Healthchecks.io can hit this endpoint periodically and alert you if it goes down.
 
 ## Security checklist
 
-Review the full server hardening steps from the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx) -- the same steps apply here:
+Review the full server hardening steps from
+the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx) -- the same steps apply here:
 
 - [ ] Non-root user with sudo
 - [ ] SSH key authentication (password auth disabled)
@@ -495,7 +512,8 @@ Local machine                          VPS
 
 ## What comes next
 
-You now have a Java REST API running in production. The next two chapters cover **build tools** that make managing dependencies, compiling, and packaging much easier:
+You now have a Java REST API running in production. The next two chapters cover **build tools** that make managing
+dependencies, compiling, and packaging much easier:
 
 - [Maven](./13-maven.md) -- the most widely used Java build tool, with Gson for JSON
 - [Gradle](./14-gradle.md) -- the modern alternative, with Jackson for JSON
@@ -520,4 +538,5 @@ Beyond that, you could:
 - Deploy with a simple `rsync` + `systemctl restart` workflow.
 - Monitor with `journalctl` and a `/api/health` endpoint.
 
-Your REST API is live. Continue to [Maven](./13-maven.md) and [Gradle](./14-gradle.md) to learn how build tools manage dependencies, simplify packaging, and improve the API project with proper JSON libraries.
+Your REST API is live. Continue to [Maven](./13-maven.md) and [Gradle](./14-gradle.md) to learn how build tools manage
+dependencies, simplify packaging, and improve the API project with proper JSON libraries.

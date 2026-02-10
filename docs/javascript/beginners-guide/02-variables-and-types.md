@@ -15,7 +15,8 @@ sidebar_position: 2
 
 # Variables, Types & Operators
 
-Variables store data. Types describe what kind of data you have. Operators let you do things with that data. This chapter covers all three.
+Variables store data. Types describe what kind of data you have. Operators let you do things with that data. This
+chapter covers all three.
 
 ## Declaring variables
 
@@ -32,6 +33,7 @@ console.log(score);
 ```
 
 Result:
+
 ```text
 0
 10
@@ -46,7 +48,8 @@ console.log(name);
 name = "Grace"; // TypeError: Assignment to constant variable.
 ```
 
-`const` does not mean the value is immutable -- it means the **binding** cannot change. Objects and arrays declared with `const` can still have their contents modified (more on this in later chapters).
+`const` does not mean the value is immutable -- it means the **binding** cannot change. Objects and arrays declared with
+`const` can still have their contents modified (more on this in later chapters).
 
 ### `var` -- the old way
 
@@ -56,15 +59,18 @@ console.log(count);
 ```
 
 Result:
+
 ```text
 5
 ```
 
-`var` is function-scoped instead of block-scoped, which leads to confusing behavior. **Always use `let` or `const` instead.** You will see `var` in older code, but there is no reason to use it in new code.
+`var` is function-scoped instead of block-scoped, which leads to confusing behavior. **Always use `let` or `const`
+instead.** You will see `var` in older code, but there is no reason to use it in new code.
 
 ### When to use `let` vs `const`
 
-Use `const` by default. Switch to `let` only when you need to reassign the variable. This makes your code easier to reason about -- if you see `const`, you know the binding never changes.
+Use `const` by default. Switch to `let` only when you need to reassign the variable. This makes your code easier to
+reason about -- if you see `const`, you know the binding never changes.
 
 ```js
 const API_URL = "https://api.example.com"; // never changes
@@ -73,7 +79,8 @@ let retryCount = 0; // will be incremented
 
 ## Primitive data types
 
-JavaScript has **seven primitive types**. A primitive is a value that is not an object and has no methods of its own (though JavaScript auto-wraps them when you call methods).
+JavaScript has **seven primitive types**. A primitive is a value that is not an object and has no methods of its own (
+though JavaScript auto-wraps them when you call methods).
 
 ### String
 
@@ -90,6 +97,7 @@ console.log(backtick);
 ```
 
 Result:
+
 ```text
 hello
 hello
@@ -111,6 +119,7 @@ console.log(integer, decimal, negative);
 ```
 
 Result:
+
 ```text
 42 3.14 -7
 ```
@@ -125,6 +134,7 @@ console.log(0.1 + 0.2); // floating-point precision
 ```
 
 Result:
+
 ```text
 Infinity
 -Infinity
@@ -132,7 +142,8 @@ NaN
 0.30000000000000004
 ```
 
-The `0.1 + 0.2` result is a famous floating-point quirk, not a JavaScript bug. It happens in every language that uses IEEE 754 floating-point numbers.
+The `0.1 + 0.2` result is a famous floating-point quirk, not a JavaScript bug. It happens in every language that uses
+IEEE 754 floating-point numbers.
 
 ### BigInt
 
@@ -145,6 +156,7 @@ console.log(typeof big);
 ```
 
 Result:
+
 ```text
 9007199254740993n
 bigint
@@ -165,6 +177,7 @@ console.log(isDeleted);
 ```
 
 Result:
+
 ```text
 true
 false
@@ -180,6 +193,7 @@ console.log(selectedUser);
 ```
 
 Result:
+
 ```text
 null
 ```
@@ -194,6 +208,7 @@ console.log(score);
 ```
 
 Result:
+
 ```text
 undefined
 ```
@@ -211,6 +226,7 @@ console.log(typeof id);
 ```
 
 Result:
+
 ```text
 Symbol(id)
 symbol
@@ -233,6 +249,7 @@ console.log(typeof 123n);
 ```
 
 Result:
+
 ```text
 string
 number
@@ -243,7 +260,9 @@ symbol
 bigint
 ```
 
-Notice that `typeof null` returns `"object"`. This is a [well-known historical bug](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#typeof_null) in JavaScript that was never fixed because too much code depends on it.
+Notice that `typeof null` returns `"object"`. This is
+a [well-known historical bug](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#typeof_null)
+in JavaScript that was never fixed because too much code depends on it.
 
 ## Template literals
 
@@ -269,6 +288,7 @@ console.log(poem);
 ```
 
 Result:
+
 ```text
 Hello, Ada! You are 36 years old.
 2 + 3 = 5
@@ -282,7 +302,8 @@ Use template literals whenever you need to embed values in strings. They are cle
 
 ## Type coercion
 
-JavaScript **automatically converts** types when it thinks you need it to. This is called **coercion** and it is the source of many beginner mistakes.
+JavaScript **automatically converts** types when it thinks you need it to. This is called **coercion** and it is the
+source of many beginner mistakes.
 
 ### String coercion
 
@@ -295,6 +316,7 @@ console.log(1 + "2" + 3);
 ```
 
 Result:
+
 ```text
 53
 hellotrue
@@ -314,6 +336,7 @@ console.log("10" / 2);
 ```
 
 Result:
+
 ```text
 2
 10
@@ -343,6 +366,7 @@ console.log(Boolean(1));
 ```
 
 Result:
+
 ```text
 42 number
 10 string
@@ -356,16 +380,16 @@ true
 
 These values are `false` when converted to boolean:
 
-| Value | Type |
-|-------|------|
-| `false` | boolean |
-| `0` | number |
-| `-0` | number |
-| `0n` | bigint |
-| `""` | string (empty) |
-| `null` | null |
-| `undefined` | undefined |
-| `NaN` | number |
+| Value       | Type           |
+|-------------|----------------|
+| `false`     | boolean        |
+| `0`         | number         |
+| `-0`        | number         |
+| `0n`        | bigint         |
+| `""`        | string (empty) |
+| `null`      | null           |
+| `undefined` | undefined      |
+| `NaN`       | number         |
 
 Everything else is **truthy** -- including `"0"`, `"false"`, `[]`, and `{}`.
 
@@ -380,6 +404,7 @@ if ([]) {
 ```
 
 Result:
+
 ```text
 The string '0' is truthy!
 An empty array is truthy!
@@ -397,6 +422,7 @@ console.log(10 ** 3); // Exponentiation
 ```
 
 Result:
+
 ```text
 13
 7
@@ -428,6 +454,7 @@ console.log(b);   // 6
 ```
 
 Result:
+
 ```text
 6
 5
@@ -461,6 +488,7 @@ console.log(x); // 2
 ```
 
 Result:
+
 ```text
 15
 12
@@ -481,6 +509,7 @@ console.log(5 <= 4);  // less than or equal
 ```
 
 Result:
+
 ```text
 true
 false
@@ -501,6 +530,7 @@ console.log(null === undefined); // false -- different types
 ```
 
 Result:
+
 ```text
 true
 false
@@ -509,7 +539,8 @@ true
 false
 ```
 
-`==` (loose equality) performs type coercion before comparing, which leads to [surprising results](https://dorey.github.io/JavaScript-Equality-Table/). Avoid it.
+`==` (loose equality) performs type coercion before comparing, which leads
+to [surprising results](https://dorey.github.io/JavaScript-Equality-Table/). Avoid it.
 
 Similarly, use `!==` (strict inequality) instead of `!=`:
 
@@ -519,6 +550,7 @@ console.log(5 != "5");  // false (coercion strikes again)
 ```
 
 Result:
+
 ```text
 true
 false
@@ -541,6 +573,7 @@ console.log(!false); // true
 ```
 
 Result:
+
 ```text
 true
 false
@@ -566,6 +599,7 @@ console.log(0 && "never");      // 0
 ```
 
 Result:
+
 ```text
 hello
 fallback
@@ -583,6 +617,7 @@ console.log(displayName);
 ```
 
 Result:
+
 ```text
 Anonymous
 ```
@@ -598,6 +633,7 @@ console.log(count ?? 10);  // 0 -- 0 is not null/undefined
 ```
 
 Result:
+
 ```text
 10
 0
@@ -642,6 +678,7 @@ console.log("hello world".replace("world", "JavaScript"));
 ```
 
 Result:
+
 ```text
 Hello World
 5

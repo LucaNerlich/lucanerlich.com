@@ -1,8 +1,8 @@
 {
-  "label": "Structural",
-  "link": {
-    "type": "generated-index",
-    "description": "Patterns that compose objects into larger structures."
-  },
-  "collapsed": true
+    "label": "Structural",
+    "link": {
+        "type": "generated-index",
+        "description": "Patterns that compose objects into larger structures."
+    },
+    "collapsed": true
 }

@@ -19,9 +19,12 @@ sidebar_position: 1
 
 # JavaScript Intl API: Currency, Date, and Number Formatting (TypeScript)
 
-The JavaScript Intl API is the built-in way to handle **currency formatting**, **date formatting**, **number formatting**, and a lot more. This guide walks through the most useful Intl features with expressive TypeScript examples you can drop into any app.
+The JavaScript Intl API is the built-in way to handle **currency formatting**, **date formatting**, **number formatting
+**, and a lot more. This guide walks through the most useful Intl features with expressive TypeScript examples you can
+drop into any app.
 
-Note: results below show typical output for `en-US` in modern browsers/Node. Minor punctuation or casing can vary by runtime and ICU data.
+Note: results below show typical output for `en-US` in modern browsers/Node. Minor punctuation or casing can vary by
+runtime and ICU data.
 
 ## Quick start: currency and date formatting
 
@@ -46,6 +49,7 @@ console.log(dateTime.format(createdAt));
 ```
 
 Result:
+
 ```text
 USD 1,234.56
 Feb 2, 2026, 2:30 PM
@@ -74,6 +78,7 @@ console.log(noGrouping.format(number));
 ```
 
 Result:
+
 ```text
 9.9M
 9876543.21
@@ -102,6 +107,7 @@ console.log(eurCode.format(price));
 ```
 
 Result:
+
 ```text
 $20.00
 EUR 20.00
@@ -130,6 +136,7 @@ console.log(percent.format(ratio));
 ```
 
 Result:
+
 ```text
 88.5 km/h
 23.7%
@@ -157,6 +164,7 @@ console.log({ currencySymbol, integer, fraction });
 ```
 
 Result:
+
 ```text
 { currencySymbol: "$", integer: "1,234", fraction: "50" }
 ```
@@ -185,6 +193,7 @@ console.log(shortDate.format(now));
 ```
 
 Result:
+
 ```text
 Monday, February 2, 2026 at 2:30 PM
 2/2/26, 2:30 PM
@@ -212,6 +221,7 @@ console.log(berlin.format(meeting));
 ```
 
 Result:
+
 ```text
 Feb 2, 2026, 11:00 AM
 Feb 2, 2026, 5:00 PM
@@ -233,6 +243,7 @@ console.log(range.formatRange(start, end));
 ```
 
 Result:
+
 ```text
 Feb 2, 2026, 8:00 AM - 10:30 AM
 ```
@@ -253,6 +264,7 @@ console.log({ day, month, year });
 ```
 
 Result:
+
 ```text
 { day: "2", month: "February", year: "2026" }
 ```
@@ -271,6 +283,7 @@ console.log(list.format(tools));
 ```
 
 Result:
+
 ```text
 TypeScript, Docusaurus, and Intl API
 ```
@@ -288,6 +301,7 @@ console.log(rtf.format(3, "week"));
 ```
 
 Result:
+
 ```text
 yesterday
 in 3 weeks
@@ -313,6 +327,7 @@ console.log(formatMessages(5));
 ```
 
 Result:
+
 ```text
 You have 1 message
 You have 5 messages
@@ -333,6 +348,7 @@ console.log(items);
 ```
 
 Result:
+
 ```text
 [ "file-1", "file-2", "file-10" ]
 ```
@@ -347,6 +363,7 @@ console.log(display.of("EUR"));
 ```
 
 Result:
+
 ```text
 US Dollar
 Euro
@@ -366,6 +383,7 @@ console.log(words);
 ```
 
 Result:
+
 ```text
 [ "Intl", "API", "makes", "i18n", "easier" ]
 ```
@@ -385,6 +403,7 @@ if (typeof Intl.supportedValuesOf === "function") {
 ```
 
 Result:
+
 ```text
 en-US
 gregory
@@ -415,6 +434,7 @@ console.log(cachedUsd.format(1234.56));
 ```
 
 Result:
+
 ```text
 $1,234.56
 ```
@@ -435,6 +455,7 @@ console.log(usd.format(1234.56));
 ```
 
 Result:
+
 ```text
 $1,234.56
 ```
@@ -455,6 +476,7 @@ console.log(fmt.format(exampleDate));
 ```
 
 Result:
+
 ```text
 February 2, 2026 at 2:30 PM
 ```

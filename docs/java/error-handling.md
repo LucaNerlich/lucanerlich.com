@@ -32,11 +32,11 @@ graph TD
     RuntimeException --> IndexOutOfBoundsException
 ```
 
-| Type | Checked? | Catch required? | When to use |
-|------|----------|----------------|-------------|
-| `Error` | No | No (don't catch) | JVM problems (OutOfMemory, StackOverflow) |
-| `Exception` (checked) | Yes | Yes | Recoverable failures (IO, SQL, network) |
-| `RuntimeException` (unchecked) | No | Optional | Programming errors, validation failures |
+| Type                           | Checked? | Catch required?  | When to use                               |
+|--------------------------------|----------|------------------|-------------------------------------------|
+| `Error`                        | No       | No (don't catch) | JVM problems (OutOfMemory, StackOverflow) |
+| `Exception` (checked)          | Yes      | Yes              | Recoverable failures (IO, SQL, network)   |
+| `RuntimeException` (unchecked) | No       | Optional         | Programming errors, validation failures   |
 
 ---
 
@@ -90,12 +90,12 @@ public void withdraw(BigDecimal amount) {
 
 ### When to use which
 
-| Use checked exceptions | Use unchecked exceptions |
-|----------------------|------------------------|
-| Caller can reasonably recover | Programming error (bug) |
-| External system failure (I/O, network, DB) | Validation failure (bad input) |
-| Unusual but expected condition | Invariant violation |
-| API boundary (forces caller to think about failure) | Internal logic errors |
+| Use checked exceptions                              | Use unchecked exceptions       |
+|-----------------------------------------------------|--------------------------------|
+| Caller can reasonably recover                       | Programming error (bug)        |
+| External system failure (I/O, network, DB)          | Validation failure (bad input) |
+| Unusual but expected condition                      | Invariant violation            |
+| API boundary (forces caller to think about failure) | Internal logic errors          |
 
 > Modern Java style leans toward **unchecked exceptions** for most application-level
 > errors, reserving checked exceptions for truly recoverable I/O operations.
@@ -324,12 +324,12 @@ switch (greeting) {
 
 ### When to use Result vs Exceptions
 
-| Use Result | Use Exceptions |
-|-----------|---------------|
-| Expected failure (validation, not-found) | Unexpected failure (bug, infrastructure) |
-| Caller should handle inline | Error should propagate up the stack |
-| Functional pipelines | Traditional imperative code |
-| You want exhaustive handling at compile time | You want a global error handler |
+| Use Result                                   | Use Exceptions                           |
+|----------------------------------------------|------------------------------------------|
+| Expected failure (validation, not-found)     | Unexpected failure (bug, infrastructure) |
+| Caller should handle inline                  | Error should propagate up the stack      |
+| Functional pipelines                         | Traditional imperative code              |
+| You want exhaustive handling at compile time | You want a global error handler          |
 
 ---
 
@@ -404,15 +404,15 @@ ParseResult parseNumbers(List<String> inputs) {
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Catching `Exception` or `Throwable` broadly | Masks bugs, catches things you cannot handle | Catch specific exception types |
-| Empty catch block | Exception silently swallowed | At minimum, log the error |
-| Catching and rethrowing without the cause | Loses the original stack trace | `throw new AppException("msg", originalException)` |
-| Using exceptions for control flow | Very slow (stack trace creation is expensive) | Use `if`/`else`, Optional, or Result |
-| `finally` with return | Return in finally overrides the try-block return | Never return from `finally` |
-| Logging and rethrowing | Same error logged twice (or more as it propagates) | Either log OR rethrow, not both |
-| Not closing resources | File handles, connections leak | Use try-with-resources |
+| Pitfall                                     | Problem                                            | Fix                                                |
+|---------------------------------------------|----------------------------------------------------|----------------------------------------------------|
+| Catching `Exception` or `Throwable` broadly | Masks bugs, catches things you cannot handle       | Catch specific exception types                     |
+| Empty catch block                           | Exception silently swallowed                       | At minimum, log the error                          |
+| Catching and rethrowing without the cause   | Loses the original stack trace                     | `throw new AppException("msg", originalException)` |
+| Using exceptions for control flow           | Very slow (stack trace creation is expensive)      | Use `if`/`else`, Optional, or Result               |
+| `finally` with return                       | Return in finally overrides the try-block return   | Never return from `finally`                        |
+| Logging and rethrowing                      | Same error logged twice (or more as it propagates) | Either log OR rethrow, not both                    |
+| Not closing resources                       | File handles, connections leak                     | Use try-with-resources                             |
 
 ---
 

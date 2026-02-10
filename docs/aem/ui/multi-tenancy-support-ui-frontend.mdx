@@ -419,14 +419,14 @@ public class PageModel {
 Adding a third tenant (`site-Z`) requires only four steps:
 
 1. **Add to the `SITES` array** in both `webpack.common.js` and `clientlib.config.js`:
-   ```javascript
-   const SITES = ['site-X', 'site-Y', 'site-Z'];
+```javascript
+const SITES = ['site-X', 'site-Y', 'site-Z'];
    ```
 
 2. **Create entry files** at `src/main/webpack/site-Z/main.ts` and `main.scss`
 
 3. **Add tenant-specific overrides** in `src/main/webpack/components/*/site-Z/` (only for components
-   that differ from the shared base)
+that differ from the shared base)
 
 4. **Create or update the page template** to reference `site-Z.site` as its clientlib category
 
@@ -565,7 +565,7 @@ Or use the `dependencies` property in the tenant clientlib definition so AEM loa
 
 ```javascript
 // In clientlib.config.js
-categories: ['site-X.site'],
+['site-X.site'],
 dependencies: ['myproject.dependencies'],
 ```
 

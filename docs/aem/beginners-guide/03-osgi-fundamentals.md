@@ -15,20 +15,23 @@ sidebar_position: 3
 
 # OSGi Fundamentals
 
-OSGi is the module system that manages all Java code in AEM. Every piece of Java -- your code, AEM's code, third-party libraries -- runs inside an **OSGi bundle**. Understanding OSGi is essential for writing services, managing configurations, and debugging.
+OSGi is the module system that manages all Java code in AEM. Every piece of Java -- your code, AEM's code, third-party
+libraries -- runs inside an **OSGi bundle**. Understanding OSGi is essential for writing services, managing
+configurations, and debugging.
 
 ## What is OSGi?
 
-OSGi (Open Services Gateway initiative) is a specification for modular Java applications. In AEM, it is implemented by **Apache Felix**.
+OSGi (Open Services Gateway initiative) is a specification for modular Java applications. In AEM, it is implemented by *
+*Apache Felix**.
 
 Key concepts:
 
-| Concept | Description |
-|---------|-------------|
-| **Bundle** | A JAR file with special metadata. The unit of deployment |
-| **Service** | A Java interface registered in the service registry. Other bundles can look it up |
-| **Component** | A managed Java class that can provide services and consume other services |
-| **Configuration** | Key-value settings that can change a component's behavior without redeployment |
+| Concept           | Description                                                                       |
+|-------------------|-----------------------------------------------------------------------------------|
+| **Bundle**        | A JAR file with special metadata. The unit of deployment                          |
+| **Service**       | A Java interface registered in the service registry. Other bundles can look it up |
+| **Component**     | A managed Java class that can provide services and consume other services         |
+| **Configuration** | Key-value settings that can change a component's behavior without redeployment    |
 
 ```mermaid
 flowchart TD
@@ -57,7 +60,8 @@ Import-Package: org.apache.sling.api, javax.inject
 Export-Package: com.mysite.core.models
 ```
 
-In your Maven project, the `core/` module produces an OSGi bundle. The `maven-bundle-plugin` (or `bnd-maven-plugin`) generates the manifest automatically.
+In your Maven project, the `core/` module produces an OSGi bundle. The `maven-bundle-plugin` (or `bnd-maven-plugin`)
+generates the manifest automatically.
 
 ### Bundle lifecycle
 
@@ -76,14 +80,15 @@ stateDiagram-v2
     Resolved --> [*]: Uninstall
 ```
 
-| State | Meaning |
-|-------|---------|
+| State         | Meaning                                                      |
+|---------------|--------------------------------------------------------------|
 | **Installed** | Bundle is in the container but dependencies are not resolved |
-| **Resolved** | All imports are satisfied; ready to start |
-| **Active** | Running -- services are registered |
-| **Stopping** | Shutting down |
+| **Resolved**  | All imports are satisfied; ready to start                    |
+| **Active**    | Running -- services are registered                           |
+| **Stopping**  | Shutting down                                                |
 
-If a bundle stays in **Installed** instead of **Active**, it has unresolved dependencies. The Web Console shows which packages are missing.
+If a bundle stays in **Installed** instead of **Active**, it has unresolved dependencies. The Web Console shows which
+packages are missing.
 
 ## Services
 
@@ -149,7 +154,8 @@ public class SomeOtherServiceImpl implements SomeOtherService {
 }
 ```
 
-OSGi **injects** the service automatically. If the service is not available, the component will not activate (this is called **dependency satisfaction**).
+OSGi **injects** the service automatically. If the service is not available, the component will not activate (this is
+called **dependency satisfaction**).
 
 ### Service ranking
 
@@ -167,7 +173,8 @@ public class CustomGreetingServiceImpl implements GreetingService {
 }
 ```
 
-Higher ranking wins. This is how you override AEM's default services -- register your implementation with a higher ranking.
+Higher ranking wins. This is how you override AEM's default services -- register your implementation with a higher
+ranking.
 
 ## The Web Console
 
@@ -181,14 +188,14 @@ Credentials: **admin / admin**.
 
 ### Key console pages
 
-| Console | URL | What it shows |
-|---------|-----|--------------|
-| **Bundles** | `/system/console/bundles` | All installed bundles and their states |
-| **Components** | `/system/console/components` | All DS components and their state (active, satisfied, unsatisfied) |
-| **Services** | `/system/console/services` | All registered services |
-| **Configuration** | `/system/console/configMgr` | All OSGi configurations |
-| **Sling** > **Resource Resolver** | `/system/console/jcrresolver` | Test resource resolution |
-| **Sling** > **Log Support** | `/system/console/slinglog` | Configure logging |
+| Console                           | URL                           | What it shows                                                      |
+|-----------------------------------|-------------------------------|--------------------------------------------------------------------|
+| **Bundles**                       | `/system/console/bundles`     | All installed bundles and their states                             |
+| **Components**                    | `/system/console/components`  | All DS components and their state (active, satisfied, unsatisfied) |
+| **Services**                      | `/system/console/services`    | All registered services                                            |
+| **Configuration**                 | `/system/console/configMgr`   | All OSGi configurations                                            |
+| **Sling** > **Resource Resolver** | `/system/console/jcrresolver` | Test resource resolution                                           |
+| **Sling** > **Log Support**       | `/system/console/slinglog`    | Configure logging                                                  |
 
 ### Debugging a bundle that will not start
 
@@ -215,7 +222,8 @@ This is invaluable for debugging "page not found" or "wrong component rendered" 
 
 ## OSGi Configurations
 
-Configurations let you change service behavior without changing code. They are stored in the JCR and can vary by **run mode** (author, publish, dev, stage, prod).
+Configurations let you change service behavior without changing code. They are stored in the JCR and can vary by **run
+mode** (author, publish, dev, stage, prod).
 
 ### Configuration via annotations
 
@@ -304,15 +312,16 @@ A configuration file:
 
 Run modes determine which configurations are active:
 
-| Run mode | When active |
-|----------|-------------|
-| `author` | On author instances |
-| `publish` | On publish instances |
-| `dev` | Development environment |
-| `stage` | Stage environment |
-| `prod` | Production environment |
+| Run mode  | When active             |
+|-----------|-------------------------|
+| `author`  | On author instances     |
+| `publish` | On publish instances    |
+| `dev`     | Development environment |
+| `stage`   | Stage environment       |
+| `prod`    | Production environment  |
 
-Configurations are **cumulative** -- `config/` applies everywhere, `config.author/` adds/overrides on author, `config.prod/` adds/overrides in production.
+Configurations are **cumulative** -- `config/` applies everywhere, `config.author/` adds/overrides on author,
+`config.prod/` adds/overrides in production.
 
 ```mermaid
 flowchart TD
@@ -336,7 +345,8 @@ During development, you can edit configurations live:
 2. Search for your service name
 3. Edit values and click **Save**
 
-> **Important:** Changes made in the Web Console are temporary -- they are lost when the instance restarts. For persistent configurations, use `.cfg.json` files in the `ui.config` module.
+> **Important:** Changes made in the Web Console are temporary -- they are lost when the instance restarts. For
+> persistent configurations, use `.cfg.json` files in the `ui.config` module.
 
 ## Component lifecycle annotations
 
@@ -366,15 +376,16 @@ public class MyServiceImpl implements MyService {
 }
 ```
 
-| Annotation | When called |
-|-----------|------------|
-| `@Activate` | Component starts (all dependencies satisfied) |
-| `@Modified` | Configuration changes while component is active |
+| Annotation    | When called                                        |
+|---------------|----------------------------------------------------|
+| `@Activate`   | Component starts (all dependencies satisfied)      |
+| `@Modified`   | Configuration changes while component is active    |
 | `@Deactivate` | Component stops (bundle stopping, dependency lost) |
 
 ## Sling Models are OSGi components too
 
-The Sling Models you will write in chapter 7 are a special kind of OSGi component. They are registered as adaptable types:
+The Sling Models you will write in chapter 7 are a special kind of OSGi component. They are registered as adaptable
+types:
 
 ```java
 @Model(adaptables = Resource.class, adapters = MyModel.class)
@@ -383,7 +394,8 @@ public class MyModelImpl implements MyModel {
 }
 ```
 
-Under the hood, Sling Models use OSGi to register adapters. This is why your `core/` bundle needs the correct OSGi metadata -- without it, your models will not be found.
+Under the hood, Sling Models use OSGi to register adapters. This is why your `core/` bundle needs the correct OSGi
+metadata -- without it, your models will not be found.
 
 ## Common OSGi patterns in AEM
 
@@ -398,7 +410,8 @@ com.mysite.core.services/
     └── GreetingServiceImpl.java  # Implementation (not exported)
 ```
 
-The interface is in a package that is **exported** by your bundle. The implementation is in an `impl` sub-package that is **not exported**. This is clean encapsulation.
+The interface is in a package that is **exported** by your bundle. The implementation is in an `impl` sub-package that
+is **not exported**. This is clean encapsulation.
 
 ### Scheduler service
 
@@ -442,7 +455,11 @@ public class ReplicationEventHandler implements EventHandler {
 }
 ```
 
-> For more advanced OSGi topics, see the [OSGi Configuration](/aem/backend/osgi-configuration) reference. For deeper coverage of the patterns introduced above, see [Sling Jobs and Schedulers](/aem/backend/sling-jobs), [Event Listeners and Handlers](/aem/backend/event-listener), [Servlets](/aem/backend/servlets), and [Filters](/aem/backend/filter). For environment-specific configuration beyond run modes, see [Context-Aware Configuration](/aem/backend/context-aware-configuration).
+> For more advanced OSGi topics, see the [OSGi Configuration](/aem/backend/osgi-configuration) reference. For deeper
+> coverage of the patterns introduced above,
+> see [Sling Jobs and Schedulers](/aem/backend/sling-jobs), [Event Listeners and Handlers](/aem/backend/event-listener), [Servlets](/aem/backend/servlets),
+> and [Filters](/aem/backend/filter). For environment-specific configuration beyond run modes,
+> see [Context-Aware Configuration](/aem/backend/context-aware-configuration).
 
 ## Summary
 
@@ -459,4 +476,5 @@ You learned:
 
 With the foundation covered (JCR, Sling, OSGi), we are ready to build our first AEM component.
 
-Next up: [Your First Component](./04-your-first-component.md) -- component anatomy, creating a simple component, placing it on a page, and understanding the component-dialog-model triad.
+Next up: [Your First Component](./04-your-first-component.md) -- component anatomy, creating a simple component, placing
+it on a page, and understanding the component-dialog-model triad.

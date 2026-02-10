@@ -100,12 +100,12 @@ ObjectMapper mapper = new ObjectMapper()
 
 ### Common modules
 
-| Module | Dependency | Purpose |
-|--------|-----------|---------|
-| `JavaTimeModule` | `jackson-datatype-jsr310` | Java 8+ date/time (`LocalDate`, `Instant`, etc.) |
-| `Jdk8Module` | `jackson-datatype-jdk8` | `Optional` support |
+| Module                 | Dependency                       | Purpose                                            |
+|------------------------|----------------------------------|----------------------------------------------------|
+| `JavaTimeModule`       | `jackson-datatype-jsr310`        | Java 8+ date/time (`LocalDate`, `Instant`, etc.)   |
+| `Jdk8Module`           | `jackson-datatype-jdk8`          | `Optional` support                                 |
 | `ParameterNamesModule` | `jackson-module-parameter-names` | Constructor parameter names (avoid `@JsonCreator`) |
-| `KotlinModule` | `jackson-module-kotlin` | Kotlin data classes |
+| `KotlinModule`         | `jackson-module-kotlin`          | Kotlin data classes                                |
 
 ---
 
@@ -306,17 +306,17 @@ List<User> users = gson.fromJson(json, new TypeToken<List<User>>() {}.getType())
 
 ### Jackson vs Gson
 
-| Feature | Jackson | Gson |
-|---------|---------|------|
-| **Performance** | Faster (streaming parser) | Slower |
-| **Annotations** | `@JsonProperty`, `@JsonIgnore`, etc. | `@SerializedName`, `@Expose` |
-| **Tree model** | `JsonNode` | `JsonElement` |
-| **Module system** | Yes (Java 8 dates, Kotlin, etc.) | Limited |
-| **Streaming API** | `JsonParser` / `JsonGenerator` | `JsonReader` / `JsonWriter` |
-| **Null handling** | Omits nulls by default | Includes nulls by default |
-| **Bundle size** | ~1.5 MB (core + databind + annotations) | ~300 KB |
-| **Default in Spring** | Yes | No |
-| **Default in Android** | No | Common |
+| Feature                | Jackson                                 | Gson                         |
+|------------------------|-----------------------------------------|------------------------------|
+| **Performance**        | Faster (streaming parser)               | Slower                       |
+| **Annotations**        | `@JsonProperty`, `@JsonIgnore`, etc.    | `@SerializedName`, `@Expose` |
+| **Tree model**         | `JsonNode`                              | `JsonElement`                |
+| **Module system**      | Yes (Java 8 dates, Kotlin, etc.)        | Limited                      |
+| **Streaming API**      | `JsonParser` / `JsonGenerator`          | `JsonReader` / `JsonWriter`  |
+| **Null handling**      | Omits nulls by default                  | Includes nulls by default    |
+| **Bundle size**        | ~1.5 MB (core + databind + annotations) | ~300 KB                      |
+| **Default in Spring**  | Yes                                     | No                           |
+| **Default in Android** | No                                      | Common                       |
 
 > **Recommendation**: Use Jackson for server-side Java (it is the Spring default and
 > has the richest feature set). Use Gson if you need a smaller footprint or are on
@@ -326,15 +326,15 @@ List<User> users = gson.fromJson(json, new TypeToken<List<User>>() {}.getType())
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Creating `ObjectMapper` per request | Expensive (class metadata caching) | Create once and reuse |
-| Unknown properties cause failure | `UnrecognizedPropertyException` on extra JSON fields | `FAIL_ON_UNKNOWN_PROPERTIES = false` or `@JsonIgnoreProperties(ignoreUnknown = true)` |
-| Java 8 dates serialise as numbers | `LocalDate` becomes `[2024, 1, 15]` | Register `JavaTimeModule`, disable `WRITE_DATES_AS_TIMESTAMPS` |
-| Circular references | `StackOverflowError` during serialisation | `@JsonManagedReference` / `@JsonBackReference`, or `@JsonIdentityInfo` |
-| Records need parameter names | Jackson can't match constructor params without `-parameters` flag | Add `jackson-module-parameter-names` or use `@JsonProperty` |
-| Mutable `ObjectMapper` after sharing | Thread-safety issues | Configure once, then call `mapper.copy()` if you need a variant |
-| `Optional` fields | Serialised as `{"present":true,"value":"x"}` | Register `Jdk8Module` for correct `"x"` / `null` handling |
+| Pitfall                              | Problem                                                           | Fix                                                                                   |
+|--------------------------------------|-------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| Creating `ObjectMapper` per request  | Expensive (class metadata caching)                                | Create once and reuse                                                                 |
+| Unknown properties cause failure     | `UnrecognizedPropertyException` on extra JSON fields              | `FAIL_ON_UNKNOWN_PROPERTIES = false` or `@JsonIgnoreProperties(ignoreUnknown = true)` |
+| Java 8 dates serialise as numbers    | `LocalDate` becomes `[2024, 1, 15]`                               | Register `JavaTimeModule`, disable `WRITE_DATES_AS_TIMESTAMPS`                        |
+| Circular references                  | `StackOverflowError` during serialisation                         | `@JsonManagedReference` / `@JsonBackReference`, or `@JsonIdentityInfo`                |
+| Records need parameter names         | Jackson can't match constructor params without `-parameters` flag | Add `jackson-module-parameter-names` or use `@JsonProperty`                           |
+| Mutable `ObjectMapper` after sharing | Thread-safety issues                                              | Configure once, then call `mapper.copy()` if you need a variant                       |
+| `Optional` fields                    | Serialised as `{"present":true,"value":"x"}`                      | Register `Jdk8Module` for correct `"x"` / `null` handling                             |
 
 ---
 

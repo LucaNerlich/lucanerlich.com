@@ -2,8 +2,7 @@
     "label": "Content & Data",
     "link": {
         "slug": "/aem/content",
-
         "type": "generated-index",
         "description": "JCR repository, content fragments, GraphQL, replication, and multi-site management."
-    },
+    }
 }

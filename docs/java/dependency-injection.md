@@ -61,13 +61,13 @@ class UserService {
 
 ### Why this is better
 
-| Benefit | Explanation |
-|---------|-------------|
-| **Testability** | Swap real implementations for test doubles |
-| **Loose coupling** | `UserService` depends on interfaces, not concrete classes |
-| **Explicit dependencies** | The constructor signature documents what the class needs |
-| **Immutability** | Fields can be `final` -- set once, never changed |
-| **Flexibility** | Different configurations (dev, staging, prod) without code changes |
+| Benefit                   | Explanation                                                        |
+|---------------------------|--------------------------------------------------------------------|
+| **Testability**           | Swap real implementations for test doubles                         |
+| **Loose coupling**        | `UserService` depends on interfaces, not concrete classes          |
+| **Explicit dependencies** | The constructor signature documents what the class needs           |
+| **Immutability**          | Fields can be `final` -- set once, never changed                   |
+| **Flexibility**           | Different configurations (dev, staging, prod) without code changes |
 
 ### Wiring it together
 
@@ -204,13 +204,13 @@ class UserService {
 
 ### Why Service Locator is problematic
 
-| Problem | Explanation |
-|---------|-------------|
-| **Hidden dependencies** | You cannot see what a class needs from its API |
-| **Hard to test** | Must set up a global registry before each test |
-| **Runtime failures** | Missing registrations fail at runtime, not compile time |
-| **Tight coupling** | Every class depends on the ServiceLocator itself |
-| **Order-dependent** | Registration order matters; easy to get wrong |
+| Problem                 | Explanation                                             |
+|-------------------------|---------------------------------------------------------|
+| **Hidden dependencies** | You cannot see what a class needs from its API          |
+| **Hard to test**        | Must set up a global registry before each test          |
+| **Runtime failures**    | Missing registrations fail at runtime, not compile time |
+| **Tight coupling**      | Every class depends on the ServiceLocator itself        |
+| **Order-dependent**     | Registration order matters; easy to get wrong           |
 
 > **Rule**: Always prefer constructor injection. The constructor is the single source
 > of truth for a class's dependencies.
@@ -314,12 +314,12 @@ class Application {
 Manual DI (constructor injection + a composition root) works well for small-to-medium
 applications. Consider a DI framework when:
 
-| Scenario | Framework |
-|----------|-----------|
-| Large application with dozens of services | **Spring** (most popular, full ecosystem) |
-| Need lightweight DI only | **Guice** (Google, minimal overhead) |
-| OSGi environment (AEM, Eclipse) | **OSGi Declarative Services** (`@Component`, `@Reference`) |
-| Compile-time DI (GraalVM-friendly) | **Dagger** (Google, generates code at compile time) |
+| Scenario                                  | Framework                                                  |
+|-------------------------------------------|------------------------------------------------------------|
+| Large application with dozens of services | **Spring** (most popular, full ecosystem)                  |
+| Need lightweight DI only                  | **Guice** (Google, minimal overhead)                       |
+| OSGi environment (AEM, Eclipse)           | **OSGi Declarative Services** (`@Component`, `@Reference`) |
+| Compile-time DI (GraalVM-friendly)        | **Dagger** (Google, generates code at compile time)        |
 
 ### Spring example (for comparison)
 
@@ -344,13 +344,13 @@ still receives its dependencies, and the class is still testable without Spring.
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| `new` inside business logic | Tight coupling, untestable | Inject the dependency through the constructor |
-| Static method dependencies | Cannot be swapped in tests | Wrap in an interface (e.g., `Clock` instead of `System.currentTimeMillis()`) |
-| God class with 10+ constructor params | Too many responsibilities | Split the class; extract collaborators |
-| Circular dependencies (A needs B, B needs A) | Stack overflow or design smell | Introduce a mediator, event bus, or restructure |
-| Injecting framework classes | Tests require the full framework | Depend on your own interfaces; adapt framework classes behind them |
+| Pitfall                                      | Problem                          | Fix                                                                          |
+|----------------------------------------------|----------------------------------|------------------------------------------------------------------------------|
+| `new` inside business logic                  | Tight coupling, untestable       | Inject the dependency through the constructor                                |
+| Static method dependencies                   | Cannot be swapped in tests       | Wrap in an interface (e.g., `Clock` instead of `System.currentTimeMillis()`) |
+| God class with 10+ constructor params        | Too many responsibilities        | Split the class; extract collaborators                                       |
+| Circular dependencies (A needs B, B needs A) | Stack overflow or design smell   | Introduce a mediator, event bus, or restructure                              |
+| Injecting framework classes                  | Tests require the full framework | Depend on your own interfaces; adapt framework classes behind them           |
 
 ---
 

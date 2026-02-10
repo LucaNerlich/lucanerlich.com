@@ -15,7 +15,8 @@ sidebar_position: 4
 
 # Your First Component
 
-Components are the building blocks of AEM pages. A button, a text block, an image carousel, a hero banner -- each is a component. In this chapter we will create a simple component from scratch and understand every file involved.
+Components are the building blocks of AEM pages. A button, a text block, an image carousel, a hero banner -- each is a
+component. In this chapter we will create a simple component from scratch and understand every file involved.
 
 ## The component triad
 
@@ -38,13 +39,14 @@ flowchart TD
     Template -->|"Renders"| HTML["HTML Output"]
 ```
 
-| Part | File type | Purpose |
-|------|-----------|---------|
-| **Dialog** | XML (`.content.xml`) | Defines the authoring UI -- what fields the author fills in |
-| **HTL Template** | `.html` | Renders the HTML output using content from the model |
-| **Sling Model** | `.java` | Reads content from the JCR and provides it to the template |
+| Part             | File type            | Purpose                                                     |
+|------------------|----------------------|-------------------------------------------------------------|
+| **Dialog**       | XML (`.content.xml`) | Defines the authoring UI -- what fields the author fills in |
+| **HTL Template** | `.html`              | Renders the HTML output using content from the model        |
+| **Sling Model**  | `.java`              | Reads content from the JCR and provides it to the template  |
 
-Not every component needs all three. A simple component can use just an HTL template. But most real-world components use all three.
+Not every component needs all three. A simple component can use just an HTL template. But most real-world components use
+all three.
 
 ## Component files in the project
 
@@ -80,14 +82,15 @@ The `.content.xml` at the component root defines the `cq:Component` node:
           componentGroup="My Site - Content"/>
 ```
 
-| Property | Purpose |
-|----------|---------|
-| `jcr:primaryType` | Must be `cq:Component` |
-| `jcr:title` | Display name in the component browser |
-| `jcr:description` | Tooltip in the component browser |
-| `componentGroup` | Groups related components in the authoring UI |
+| Property          | Purpose                                       |
+|-------------------|-----------------------------------------------|
+| `jcr:primaryType` | Must be `cq:Component`                        |
+| `jcr:title`       | Display name in the component browser         |
+| `jcr:description` | Tooltip in the component browser              |
+| `componentGroup`  | Groups related components in the authoring UI |
 
-The `componentGroup` is important -- it determines where the component appears when an author inserts it on a page. Use a consistent group name like `"My Site - Content"` for all your content components.
+The `componentGroup` is important -- it determines where the component appears when an author inserts it on a page. Use
+a consistent group name like `"My Site - Content"` for all your content components.
 
 ## Step 2 -- Create the HTL template
 
@@ -107,9 +110,11 @@ This template:
 2. Reads `greeting` and `message` from the model
 3. Outputs them in a structured HTML block
 
-The CSS class naming follows **BEM** (Block Element Modifier) convention with a `cmp-` prefix -- this is the AEM Core Components convention.
+The CSS class naming follows **BEM** (Block Element Modifier) convention with a `cmp-` prefix -- this is the AEM Core
+Components convention.
 
-We will explore HTL in depth in the next chapter. For now, just know that `data-sly-use` loads a Java class and `${}` outputs its properties.
+We will explore HTL in depth in the next chapter. For now, just know that `data-sly-use` loads a Java class and `${}`
+outputs its properties.
 
 ## Step 3 -- Create the Sling Model
 
@@ -146,13 +151,14 @@ public class HelloModel {
 
 Breaking this down:
 
-| Annotation | Purpose |
-|-----------|---------|
-| `@Model(adaptables = Resource.class)` | This class is a Sling Model adapted from a `Resource` |
-| `@ValueMapValue` | Inject a property from the resource's `ValueMap` (JCR properties) |
-| `@Default` | Provide a fallback value if the property is not set |
+| Annotation                            | Purpose                                                           |
+|---------------------------------------|-------------------------------------------------------------------|
+| `@Model(adaptables = Resource.class)` | This class is a Sling Model adapted from a `Resource`             |
+| `@ValueMapValue`                      | Inject a property from the resource's `ValueMap` (JCR properties) |
+| `@Default`                            | Provide a fallback value if the property is not set               |
 
-When an author has not configured the component yet, the default values are shown. Once the author fills in the dialog, the actual values from the JCR replace the defaults.
+When an author has not configured the component yet, the default values are shown. Once the author fills in the dialog,
+the actual values from the JCR replace the defaults.
 
 ## Step 4 -- Create the author dialog
 
@@ -235,16 +241,17 @@ flowchart TD
 
 The key parts:
 
-| Element | `sling:resourceType` | Purpose |
-|---------|---------------------|---------|
-| Dialog root | `cq/gui/components/authoring/dialog` | Marks this as a component dialog |
-| Container | `granite/ui/components/coral/foundation/container` | Generic layout container |
-| Tabs | `granite/ui/components/coral/foundation/tabs` | Tab navigation |
-| Fixed Columns | `granite/ui/components/coral/foundation/fixedcolumns` | Column layout |
-| Textfield | `granite/ui/components/coral/foundation/form/textfield` | Single-line text input |
-| Textarea | `granite/ui/components/coral/foundation/form/textarea` | Multi-line text input |
+| Element       | `sling:resourceType`                                    | Purpose                          |
+|---------------|---------------------------------------------------------|----------------------------------|
+| Dialog root   | `cq/gui/components/authoring/dialog`                    | Marks this as a component dialog |
+| Container     | `granite/ui/components/coral/foundation/container`      | Generic layout container         |
+| Tabs          | `granite/ui/components/coral/foundation/tabs`           | Tab navigation                   |
+| Fixed Columns | `granite/ui/components/coral/foundation/fixedcolumns`   | Column layout                    |
+| Textfield     | `granite/ui/components/coral/foundation/form/textfield` | Single-line text input           |
+| Textarea      | `granite/ui/components/coral/foundation/form/textarea`  | Multi-line text input            |
 
-The `name` attribute on each field (e.g., `./greeting`) maps to the JCR property name. When the author saves the dialog, the value is stored at `./greeting` relative to the component's content node.
+The `name` attribute on each field (e.g., `./greeting`) maps to the JCR property name. When the author saves the dialog,
+the value is stored at `./greeting` relative to the component's content node.
 
 We will explore dialogs in much more detail in chapter 6.
 
@@ -273,7 +280,8 @@ You should see your component rendered on the page with the values you entered.
 
 ### Verify in CRXDE Lite
 
-Open CRXDE Lite and navigate to the page's `jcr:content` node (e.g., `/content/mysite/en/jcr:content/root/container/hello`). You will see:
+Open CRXDE Lite and navigate to the page's `jcr:content` node (e.g.,
+`/content/mysite/en/jcr:content/root/container/hello`). You will see:
 
 ```
 hello
@@ -283,7 +291,8 @@ hello
 └── message = "We build amazing things."
 ```
 
-The dialog values are stored as properties on the component's JCR node, and the Sling Model reads them with `@ValueMapValue`.
+The dialog values are stored as properties on the component's JCR node, and the Sling Model reads them with
+`@ValueMapValue`.
 
 ## The component rendering flow
 
@@ -317,7 +326,8 @@ sequenceDiagram
 
 ## Proxy components
 
-In real projects, you rarely write everything from scratch. AEM Core Components provide ready-made, production-quality components (text, image, title, teaser, list, etc.).
+In real projects, you rarely write everything from scratch. AEM Core Components provide ready-made, production-quality
+components (text, image, title, teaser, list, etc.).
 
 Your project uses them through **proxy components** -- lightweight wrappers that point to Core Components:
 
@@ -331,11 +341,15 @@ Your project uses them through **proxy components** -- lightweight wrappers that
           sling:resourceSuperType="core/wcm/components/text/v2/text"/>
 ```
 
-The `sling:resourceSuperType` property creates an inheritance chain -- your proxy inherits everything from the Core Component. You can then override specific files (HTL, dialog, model) in your proxy to customize behavior.
+The `sling:resourceSuperType` property creates an inheritance chain -- your proxy inherits everything from the Core
+Component. You can then override specific files (HTL, dialog, model) in your proxy to customize behavior.
 
 The Maven archetype generates proxy components for common Core Components automatically.
 
-> For more on custom components and Core Components, see the [Custom Component Guide](/aem/custom-component), [Components Overview](/aem/components/overview), and [Touch UI Component Dialogs](/aem/component-dialogs) references. For Java coding standards in AEM, see [Java Best Practices](/aem/backend/java-best-practices).
+> For more on custom components and Core Components, see
+> the [Custom Component Guide](/aem/custom-component), [Components Overview](/aem/components/overview),
+> and [Touch UI Component Dialogs](/aem/component-dialogs) references. For Java coding standards in AEM,
+> see [Java Best Practices](/aem/backend/java-best-practices).
 
 ## Summary
 
@@ -351,6 +365,8 @@ You learned:
 - The **rendering flow** from HTTP request to HTML output
 - **Proxy components** for reusing Core Components
 
-This was a quick tour -- we glossed over HTL syntax, dialog field types, and Sling Model annotations. The next three chapters dive deep into each.
+This was a quick tour -- we glossed over HTL syntax, dialog field types, and Sling Model annotations. The next three
+chapters dive deep into each.
 
-Next up: [HTL Templates](./05-htl-templates.md) -- the HTML Template Language in depth, including expressions, block statements, global objects, and the Use API.
+Next up: [HTL Templates](./05-htl-templates.md) -- the HTML Template Language in depth, including expressions, block
+statements, global objects, and the Use API.

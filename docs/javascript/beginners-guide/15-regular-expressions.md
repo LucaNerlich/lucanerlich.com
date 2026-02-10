@@ -15,7 +15,9 @@ sidebar_position: 15
 
 # Regular Expressions
 
-A **regular expression** (regex) is a pattern that describes a set of strings. You use them to search, validate, extract, and replace text. They look cryptic at first, but once you learn the building blocks, they become a powerful tool.
+A **regular expression** (regex) is a pattern that describes a set of strings. You use them to search, validate,
+extract, and replace text. They look cryptic at first, but once you learn the building blocks, they become a powerful
+tool.
 
 ## Creating a regex
 
@@ -29,7 +31,8 @@ const pattern = /hello/;
 const pattern2 = new RegExp("hello");
 ```
 
-Use the literal syntax when the pattern is known at write time. Use the constructor when you need to build the pattern from a variable:
+Use the literal syntax when the pattern is known at write time. Use the constructor when you need to build the pattern
+from a variable:
 
 ```js
 const searchTerm = "hello";
@@ -99,6 +102,7 @@ for (const match of text.matchAll(pattern)) {
 ```
 
 Result:
+
 ```text
 Full match: $42.99, amount: 42.99, index: 7
 Full match: $3.50, amount: 3.50, index: 20
@@ -108,15 +112,15 @@ Full match: $3.50, amount: 3.50, index: 20
 
 Character classes match **one character** from a set:
 
-| Pattern | Matches | Example |
-|---------|---------|---------|
-| `\d` | Any digit (0--9) | `\d\d` matches `"42"` |
-| `\D` | Any non-digit | `\D` matches `"a"` |
-| `\w` | Word character (a--z, A--Z, 0--9, _) | `\w+` matches `"hello_42"` |
-| `\W` | Non-word character | `\W` matches `" "`, `"!"` |
-| `\s` | Whitespace (space, tab, newline) | `\s+` matches `"  "` |
-| `\S` | Non-whitespace | `\S+` matches `"hello"` |
-| `.` | Any character except newline | `a.c` matches `"abc"`, `"a1c"` |
+| Pattern | Matches                              | Example                        |
+|---------|--------------------------------------|--------------------------------|
+| `\d`    | Any digit (0--9)                     | `\d\d` matches `"42"`          |
+| `\D`    | Any non-digit                        | `\D` matches `"a"`             |
+| `\w`    | Word character (a--z, A--Z, 0--9, _) | `\w+` matches `"hello_42"`     |
+| `\W`    | Non-word character                   | `\W` matches `" "`, `"!"`      |
+| `\s`    | Whitespace (space, tab, newline)     | `\s+` matches `"  "`           |
+| `\S`    | Non-whitespace                       | `\S+` matches `"hello"`        |
+| `.`     | Any character except newline         | `a.c` matches `"abc"`, `"a1c"` |
 
 ### Custom character classes
 
@@ -138,14 +142,14 @@ Character classes match **one character** from a set:
 
 Quantifiers specify **how many times** a pattern should match:
 
-| Quantifier | Meaning | Example |
-|-----------|---------|---------|
-| `*` | Zero or more | `a*` matches `""`, `"a"`, `"aaa"` |
-| `+` | One or more | `a+` matches `"a"`, `"aaa"` but not `""` |
-| `?` | Zero or one | `colou?r` matches `"color"` and `"colour"` |
-| `{n}` | Exactly n | `\d{4}` matches `"2025"` |
-| `{n,}` | n or more | `\d{2,}` matches `"42"`, `"123"`, `"9999"` |
-| `{n,m}` | Between n and m | `\d{2,4}` matches `"42"`, `"123"`, `"2025"` |
+| Quantifier | Meaning         | Example                                     |
+|------------|-----------------|---------------------------------------------|
+| `*`        | Zero or more    | `a*` matches `""`, `"a"`, `"aaa"`           |
+| `+`        | One or more     | `a+` matches `"a"`, `"aaa"` but not `""`    |
+| `?`        | Zero or one     | `colou?r` matches `"color"` and `"colour"`  |
+| `{n}`      | Exactly n       | `\d{4}` matches `"2025"`                    |
+| `{n,}`     | n or more       | `\d{2,}` matches `"42"`, `"123"`, `"9999"`  |
+| `{n,m}`    | Between n and m | `\d{2,4}` matches `"42"`, `"123"`, `"2025"` |
 
 ### Greedy vs lazy
 
@@ -167,11 +171,11 @@ Add `?` after any quantifier to make it lazy (match as little as possible).
 
 Anchors match a **position**, not a character:
 
-| Anchor | Matches |
-|--------|---------|
-| `^` | Start of string (or start of line with `m` flag) |
-| `$` | End of string (or end of line with `m` flag) |
-| `\b` | Word boundary |
+| Anchor | Matches                                          |
+|--------|--------------------------------------------------|
+| `^`    | Start of string (or start of line with `m` flag) |
+| `$`    | End of string (or end of line with `m` flag)     |
+| `\b`   | Word boundary                                    |
 
 ```js
 // Must start with "Hello"
@@ -271,14 +275,14 @@ console.log(iso); // "2025-01-15"
 
 Flags modify how the pattern is applied:
 
-| Flag | Name | Effect |
-|------|------|--------|
-| `g` | Global | Find all matches, not just the first |
-| `i` | Case-insensitive | `a` matches both `a` and `A` |
-| `m` | Multiline | `^` and `$` match start/end of each line |
-| `s` | Dotall | `.` matches newline characters too |
-| `u` | Unicode | Enables full Unicode matching |
-| `v` | Unicode sets | Extended Unicode character classes (ES2024) |
+| Flag | Name             | Effect                                      |
+|------|------------------|---------------------------------------------|
+| `g`  | Global           | Find all matches, not just the first        |
+| `i`  | Case-insensitive | `a` matches both `a` and `A`                |
+| `m`  | Multiline        | `^` and `$` match start/end of each line    |
+| `s`  | Dotall           | `.` matches newline characters too          |
+| `u`  | Unicode          | Enables full Unicode matching               |
+| `v`  | Unicode sets     | Extended Unicode character classes (ES2024) |
 
 ```js
 // Global + case-insensitive
@@ -310,13 +314,14 @@ console.log(protocol.test("https://example.com")); // true
 
 ## Lookahead and lookbehind
 
-These assert that a pattern exists (or does not exist) before or after the current position, **without including it in the match**:
+These assert that a pattern exists (or does not exist) before or after the current position, **without including it in
+the match**:
 
-| Syntax | Name | Meaning |
-|--------|------|---------|
-| `(?=...)` | Positive lookahead | Followed by ... |
-| `(?!...)` | Negative lookahead | NOT followed by ... |
-| `(?<=...)` | Positive lookbehind | Preceded by ... |
+| Syntax     | Name                | Meaning             |
+|------------|---------------------|---------------------|
+| `(?=...)`  | Positive lookahead  | Followed by ...     |
+| `(?!...)`  | Negative lookahead  | NOT followed by ... |
+| `(?<=...)` | Positive lookbehind | Preceded by ...     |
 | `(?<!...)` | Negative lookbehind | NOT preceded by ... |
 
 ```js
@@ -348,15 +353,15 @@ console.log(emailPattern.test("user+tag@mail.co.uk"));   // true
 
 Breaking it down:
 
-| Part | Meaning |
-|------|---------|
-| `^` | Start of string |
+| Part                | Meaning                               |
+|---------------------|---------------------------------------|
+| `^`                 | Start of string                       |
 | `[a-zA-Z0-9._%+-]+` | One or more valid characters before @ |
-| `@` | The @ symbol |
-| `[a-zA-Z0-9.-]+` | Domain name |
-| `\.` | A literal dot |
-| `[a-zA-Z]{2,}` | Top-level domain (at least 2 letters) |
-| `$` | End of string |
+| `@`                 | The @ symbol                          |
+| `[a-zA-Z0-9.-]+`    | Domain name                           |
+| `\.`                | A literal dot                         |
+| `[a-zA-Z]{2,}`      | Top-level domain (at least 2 letters) |
+| `$`                 | End of string                         |
 
 ### URL extraction
 
@@ -395,6 +400,7 @@ for (const { label, passed } of result) {
 ```
 
 Result:
+
 ```text
 PASS: At least 8 characters
 PASS: Lowercase letter
@@ -421,6 +427,7 @@ for (const match of log.matchAll(logPattern)) {
 ```
 
 Result:
+
 ```text
 ERROR at 2025-01-15 10:30:00: Connection timeout
 INFO at 2025-01-15 10:31:15: Retry successful
@@ -462,7 +469,8 @@ console.log(stripTags("<p>Hello <b>world</b></p>")); // "Hello world"
 
 ### Form validation (tying back to chapter 11)
 
-The contact form in chapter 11 validates email with a simple `includes("@")`. Here is a more thorough version using regex:
+The contact form in chapter 11 validates email with a simple `includes("@")`. Here is a more thorough version using
+regex:
 
 ```js
 function validateField(input) {
@@ -534,6 +542,7 @@ console.log(pattern.test("abc")); // true -- wraps around
 ```
 
 This is a common source of bugs. If you use `test()` in a loop or a function, either:
+
 - Do not use the `g` flag with `test()`
 - Create a new regex each time
 - Reset `lastIndex` to 0
@@ -550,29 +559,30 @@ const bad = /^(a+)+$/;
 // bad.test("aaaaaaaaaaaaaaaaaaaaaaaaaaab");
 ```
 
-Avoid nested quantifiers like `(a+)+`, `(a*)*`, or `(a|b)*` when possible. If you need them, use atomic groups or possessive quantifiers (available in some engines, not in JavaScript).
+Avoid nested quantifiers like `(a+)+`, `(a*)*`, or `(a|b)*` when possible. If you need them, use atomic groups or
+possessive quantifiers (available in some engines, not in JavaScript).
 
 ## Quick reference
 
-| Pattern | Meaning |
-|---------|---------|
-| `.` | Any character (except newline) |
-| `\d` / `\D` | Digit / non-digit |
-| `\w` / `\W` | Word character / non-word character |
-| `\s` / `\S` | Whitespace / non-whitespace |
-| `[abc]` | Any of a, b, or c |
-| `[^abc]` | Any character except a, b, or c |
-| `^` / `$` | Start / end of string |
-| `\b` | Word boundary |
-| `*` / `+` / `?` | Zero+, one+, zero or one |
-| `{n}` / `{n,m}` | Exactly n / between n and m |
-| `(...)` | Capturing group |
-| `(?:...)` | Non-capturing group |
-| `(?<name>...)` | Named group |
-| `\1` | Backreference to group 1 |
-| `a\|b` | a or b |
-| `(?=...)` / `(?!...)` | Positive / negative lookahead |
-| `(?<=...)` / `(?<!...)` | Positive / negative lookbehind |
+| Pattern                 | Meaning                             |
+|-------------------------|-------------------------------------|
+| `.`                     | Any character (except newline)      |
+| `\d` / `\D`             | Digit / non-digit                   |
+| `\w` / `\W`             | Word character / non-word character |
+| `\s` / `\S`             | Whitespace / non-whitespace         |
+| `[abc]`                 | Any of a, b, or c                   |
+| `[^abc]`                | Any character except a, b, or c     |
+| `^` / `$`               | Start / end of string               |
+| `\b`                    | Word boundary                       |
+| `*` / `+` / `?`         | Zero+, one+, zero or one            |
+| `{n}` / `{n,m}`         | Exactly n / between n and m         |
+| `(...)`                 | Capturing group                     |
+| `(?:...)`               | Non-capturing group                 |
+| `(?<name>...)`          | Named group                         |
+| `\1`                    | Backreference to group 1            |
+| `a\|b`                  | a or b                              |
+| `(?=...)` / `(?!...)`   | Positive / negative lookahead       |
+| `(?<=...)` / `(?<!...)` | Positive / negative lookbehind      |
 
 ## Summary
 
@@ -585,4 +595,5 @@ Avoid nested quantifiers like `(a+)+`, `(a*)*`, or `(a|b)*` when possible. If yo
 - **Groups** capture parts of a match; **named groups** (`(?<name>...)`) make patterns readable.
 - **Lookahead/lookbehind** assert context without consuming characters.
 - Always escape special characters (`\.`, `\$`, `\\`) when matching them literally.
-- Use regex for validation, extraction, and replacement -- but keep patterns readable. If a regex becomes unreadable, break it into smaller pieces or use string methods instead.
+- Use regex for validation, extraction, and replacement -- but keep patterns readable. If a regex becomes unreadable,
+  break it into smaller pieces or use string methods instead.

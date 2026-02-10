@@ -4,7 +4,6 @@ sidebar_position: 1
 tags: [aem, setup, local-development]
 ---
 
-
 # Local Development Setup
 
 This post describes the steps and software requirements you need to create and set up a working local AEM instance.
@@ -365,14 +364,16 @@ repo get -u admin -p admin http://localhost:4502 /content/mysite/en
 9. Analyse your local project
     - Navigate to your projects root pom.xml file
     - Execute the sonar
-      command `mvn clean verify sonar:sonar -Dsonar.projectKey=<your-project-name> -Dsonar.host.url=http://localhost:9000 -Dsonar.login=<your-token>`
+      command
+      `mvn clean verify sonar:sonar -Dsonar.projectKey=<your-project-name> -Dsonar.host.url=http://localhost:9000 -Dsonar.login=<your-token>`
     - Replace `<your-project-name>` and `<your-token>` with your own values generated in step 7.
 
 ### Add JaCoCo Unit Test Coverage
 
 1. Navigate to your projects root `/pom.xml` file
 2. Add the following line to the `<properties>` section
-    - `<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>`
+    -
+    `<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>`
     - `<sonar.coverage.exclusions>ui.apps/**/*,ui.tests/**/*,it.tests/**/*</sonar.coverage.exclusions>`
         - to exclude specific paths from the (coverage) analysis
 3. Add the Jacoco Plugin

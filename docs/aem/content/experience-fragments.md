@@ -35,16 +35,16 @@ graph TD
 
 ## Experience Fragments vs Content Fragments
 
-| Aspect | Experience Fragment (XF) | Content Fragment (CF) |
-|--------|------------------------|-----------------------|
-| **What it stores** | Rendered content (components + layout) | Structured data (fields) |
-| **Authoring** | Visual editor (like a page) | Form-based editor (model fields) |
-| **Rendering** | Has its own HTML rendering | No rendering -- data only |
-| **Variations** | Web, email, social, plain text | Named content variations |
-| **Personalisation** | Adobe Target integration | Not directly (via GraphQL) |
-| **Headless** | JSON export (limited) | GraphQL, Assets HTTP API |
-| **Use case** | Reusable page sections (headers, promos, CTAs) | Structured content (articles, products, FAQ) |
-| **Storage** | `/content/experience-fragments/` | `/content/dam/` |
+| Aspect              | Experience Fragment (XF)                       | Content Fragment (CF)                        |
+|---------------------|------------------------------------------------|----------------------------------------------|
+| **What it stores**  | Rendered content (components + layout)         | Structured data (fields)                     |
+| **Authoring**       | Visual editor (like a page)                    | Form-based editor (model fields)             |
+| **Rendering**       | Has its own HTML rendering                     | No rendering -- data only                    |
+| **Variations**      | Web, email, social, plain text                 | Named content variations                     |
+| **Personalisation** | Adobe Target integration                       | Not directly (via GraphQL)                   |
+| **Headless**        | JSON export (limited)                          | GraphQL, Assets HTTP API                     |
+| **Use case**        | Reusable page sections (headers, promos, CTAs) | Structured content (articles, products, FAQ) |
+| **Storage**         | `/content/experience-fragments/`               | `/content/dam/`                              |
 
 **Rule of thumb:** Use CFs for **data**, use XFs for **experiences**.
 
@@ -87,13 +87,13 @@ graph TD
 Each XF can have multiple **variations** that represent the same content adapted for
 different channels or test scenarios:
 
-| Variation type | Purpose | HTML output |
-|---------------|---------|-------------|
-| **Web** | Regular web page inclusion | Full HTML with all components |
-| **Email** (HTML) | Email campaigns | Inlined CSS, table-based layout |
-| **Social** | Social media platforms | Simplified HTML |
-| **Plain Text** | Headless or fallback | Text-only rendering |
-| **Custom** | Any custom channel | Developer-defined rendering |
+| Variation type   | Purpose                    | HTML output                     |
+|------------------|----------------------------|---------------------------------|
+| **Web**          | Regular web page inclusion | Full HTML with all components   |
+| **Email** (HTML) | Email campaigns            | Inlined CSS, table-based layout |
+| **Social**       | Social media platforms     | Simplified HTML                 |
+| **Plain Text**   | Headless or fallback       | Text-only rendering             |
+| **Custom**       | Any custom channel         | Developer-defined rendering     |
 
 ---
 
@@ -324,14 +324,15 @@ XF content alongside other structured data.
 
 XFs use their own template types, separate from page templates:
 
-| Template | Purpose |
-|----------|---------|
-| **Experience Fragment - Web Variation** | Standard web content |
-| **Experience Fragment - Facebook Variation** | Social media format |
-| **Experience Fragment - Pinterest Variation** | Pinterest-specific format |
-| **Experience Fragment - Custom** | Custom rendering (define your own) |
+| Template                                      | Purpose                            |
+|-----------------------------------------------|------------------------------------|
+| **Experience Fragment - Web Variation**       | Standard web content               |
+| **Experience Fragment - Facebook Variation**  | Social media format                |
+| **Experience Fragment - Pinterest Variation** | Pinterest-specific format          |
+| **Experience Fragment - Custom**              | Custom rendering (define your own) |
 
 Create custom XF templates under:
+
 ```
 /conf/mysite/settings/wcm/templates/xf-custom-template/
 ```
@@ -344,11 +345,11 @@ Create custom XF templates under:
 
 In multi-site architectures, XFs can be shared across brands/sites:
 
-| Strategy | XF location | Use case |
-|----------|-------------|----------|
-| **Per-site** | `/content/experience-fragments/mysite/` | Site-specific headers, footers |
-| **Shared** | `/content/experience-fragments/shared/` | Global promos, legal disclaimers |
-| **Live Copy** | MSM-managed XF copies | Same XF localised per market |
+| Strategy      | XF location                             | Use case                         |
+|---------------|-----------------------------------------|----------------------------------|
+| **Per-site**  | `/content/experience-fragments/mysite/` | Site-specific headers, footers   |
+| **Shared**    | `/content/experience-fragments/shared/` | Global promos, legal disclaimers |
+| **Live Copy** | MSM-managed XF copies                   | Same XF localised per market     |
 
 ### XF language copies
 
@@ -449,14 +450,14 @@ Create a new variation or version before making breaking changes.
 
 ## Common Pitfalls
 
-| Pitfall | Solution |
-|---------|----------|
-| XF shows empty on the page | Check that `fragmentVariationPath` points to the correct variation (not the XF root) |
-| Language fallback not working | Ensure the XF language structure mirrors the site structure; check `jcr:language` |
-| XF changes not reflected on publish | XFs need to be activated/replicated independently from the pages that reference them |
-| Target export fails | Verify the Adobe Target cloud service configuration and IMS credentials |
-| XF renders differently in email | Email clients have limited CSS support; use the email variation with inlined styles |
-| Performance degradation with many XFs per page | Each XF reference is a Sling include; consider caching strategies |
+| Pitfall                                        | Solution                                                                             |
+|------------------------------------------------|--------------------------------------------------------------------------------------|
+| XF shows empty on the page                     | Check that `fragmentVariationPath` points to the correct variation (not the XF root) |
+| Language fallback not working                  | Ensure the XF language structure mirrors the site structure; check `jcr:language`    |
+| XF changes not reflected on publish            | XFs need to be activated/replicated independently from the pages that reference them |
+| Target export fails                            | Verify the Adobe Target cloud service configuration and IMS credentials              |
+| XF renders differently in email                | Email clients have limited CSS support; use the email variation with inlined styles  |
+| Performance degradation with many XFs per page | Each XF reference is a Sling include; consider caching strategies                    |
 
 ## See also
 

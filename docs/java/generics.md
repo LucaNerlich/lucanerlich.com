@@ -183,11 +183,11 @@ addNumbers(objects); // works
 
 The **PECS** principle (coined by Joshua Bloch) determines which wildcard to use:
 
-| Role | Wildcard | You can... | Example |
-|------|----------|-----------|---------|
-| **Producer** (you read from it) | `? extends T` | Read T values | `List<? extends Number>` -- read Number |
-| **Consumer** (you write to it) | `? super T` | Write T values | `List<? super Integer>` -- add Integer |
-| **Both** (read and write) | `T` (exact type) | Read and write | `List<Integer>` |
+| Role                            | Wildcard         | You can...     | Example                                 |
+|---------------------------------|------------------|----------------|-----------------------------------------|
+| **Producer** (you read from it) | `? extends T`    | Read T values  | `List<? extends Number>` -- read Number |
+| **Consumer** (you write to it)  | `? super T`      | Write T values | `List<? super Integer>` -- add Integer  |
+| **Both** (read and write)       | `T` (exact type) | Read and write | `List<Integer>`                         |
 
 ### Real-world example: `Collections.copy`
 
@@ -220,12 +220,12 @@ strings.getClass().getName();          // "java.util.ArrayList"
 
 ### Consequences of erasure
 
-| What you cannot do | Why |
-|-------------------|-----|
-| `new T()` | The runtime does not know what T is |
-| `new T[10]` | Cannot create generic arrays |
-| `instanceof List<String>` | Type parameter is erased at runtime |
-| `T.class` | Type parameter has no Class object |
+| What you cannot do                                                     | Why                                   |
+|------------------------------------------------------------------------|---------------------------------------|
+| `new T()`                                                              | The runtime does not know what T is   |
+| `new T[10]`                                                            | Cannot create generic arrays          |
+| `instanceof List<String>`                                              | Type parameter is erased at runtime   |
+| `T.class`                                                              | Type parameter has no Class object    |
 | Overload on generic type (`foo(List<String>)` vs `foo(List<Integer>)`) | Same erasure: both become `foo(List)` |
 
 ### Workaround: type tokens
@@ -325,14 +325,14 @@ User user = new UserBuilder().name("Alice").age(30).build();
 
 ## Common pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Raw types | `List list = new ArrayList()` loses type safety | Always specify the type: `List<String>` |
-| `instanceof` with generics | `obj instanceof List<String>` does not compile (erasure) | Use `obj instanceof List<?>` and cast, or use type tokens |
-| Generic array creation | `new T[10]` does not compile | Use `(T[]) new Object[10]` with `@SuppressWarnings`, or use `List<T>` |
-| Heap pollution | Mixing raw types with generics causes runtime `ClassCastException` | Avoid raw types; heed compiler warnings |
-| Overloading with same erasure | `void foo(List<String>)` and `void foo(List<Integer>)` clash | Rename one method, or use a single generic method |
-| Recursive bounds confusion | `<T extends Comparable<T>>` looks circular but is valid | T must be a type that can compare with itself |
+| Pitfall                       | Problem                                                            | Fix                                                                   |
+|-------------------------------|--------------------------------------------------------------------|-----------------------------------------------------------------------|
+| Raw types                     | `List list = new ArrayList()` loses type safety                    | Always specify the type: `List<String>`                               |
+| `instanceof` with generics    | `obj instanceof List<String>` does not compile (erasure)           | Use `obj instanceof List<?>` and cast, or use type tokens             |
+| Generic array creation        | `new T[10]` does not compile                                       | Use `(T[]) new Object[10]` with `@SuppressWarnings`, or use `List<T>` |
+| Heap pollution                | Mixing raw types with generics causes runtime `ClassCastException` | Avoid raw types; heed compiler warnings                               |
+| Overloading with same erasure | `void foo(List<String>)` and `void foo(List<Integer>)` clash       | Rename one method, or use a single generic method                     |
+| Recursive bounds confusion    | `<T extends Comparable<T>>` looks circular but is valid            | T must be a type that can compare with itself                         |
 
 ---
 

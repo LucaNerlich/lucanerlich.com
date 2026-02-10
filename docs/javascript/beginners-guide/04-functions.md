@@ -15,7 +15,8 @@ sidebar_position: 4
 
 # Functions
 
-A function is a reusable block of code that performs a specific task. Functions are the fundamental building block of any JavaScript program.
+A function is a reusable block of code that performs a specific task. Functions are the fundamental building block of
+any JavaScript program.
 
 ## Function declarations
 
@@ -31,11 +32,13 @@ console.log(message);
 ```
 
 Result:
+
 ```text
 Hello, Ada!
 ```
 
 Anatomy:
+
 - `function` -- the keyword
 - `greet` -- the function name
 - `(name)` -- the parameter list
@@ -56,6 +59,7 @@ console.log(result);
 ```
 
 Result:
+
 ```text
 [LOG] Server started
 undefined
@@ -74,6 +78,7 @@ console.log(add(3, 4));
 ```
 
 Result:
+
 ```text
 7
 ```
@@ -93,6 +98,7 @@ console.log(multiply(3, 4));
 ```
 
 Result:
+
 ```text
 12
 ```
@@ -110,6 +116,7 @@ console.log(greet("Grace"));
 ```
 
 Result:
+
 ```text
 10
 Hello, Grace!
@@ -125,23 +132,26 @@ console.log(square(4));
 ```
 
 Result:
+
 ```text
 16
 ```
 
 ### When to use which
 
-| Syntax | Best for |
-|--------|----------|
-| `function` declaration | Named functions, top-level functions, functions that need hoisting |
-| `function` expression | Assigning to variables, passing as arguments |
-| Arrow `=>` | Short callbacks, inline functions, methods that do not need their own `this` |
+| Syntax                 | Best for                                                                     |
+|------------------------|------------------------------------------------------------------------------|
+| `function` declaration | Named functions, top-level functions, functions that need hoisting           |
+| `function` expression  | Assigning to variables, passing as arguments                                 |
+| Arrow `=>`             | Short callbacks, inline functions, methods that do not need their own `this` |
 
-Arrow functions have a different `this` behavior compared to regular functions. This matters when working with objects (covered in the Objects chapter). For now, arrow functions are your go-to for short, simple functions.
+Arrow functions have a different `this` behavior compared to regular functions. This matters when working with objects (
+covered in the Objects chapter). For now, arrow functions are your go-to for short, simple functions.
 
 ## Parameters and arguments
 
-**Parameters** are the names listed in the function definition. **Arguments** are the actual values passed to the function.
+**Parameters** are the names listed in the function definition. **Arguments** are the actual values passed to the
+function.
 
 ### Default parameters
 
@@ -157,6 +167,7 @@ console.log(greet());
 ```
 
 Result:
+
 ```text
 Hello, Ada!
 Hello, stranger!
@@ -180,6 +191,7 @@ console.log(sum(10, 20, 30, 40));
 ```
 
 Result:
+
 ```text
 6
 100
@@ -198,6 +210,7 @@ log("INFO", "Server started", "Listening on port 3000");
 ```
 
 Result:
+
 ```text
 [INFO] Server started
 [INFO] Listening on port 3000
@@ -221,6 +234,7 @@ console.log(user.age);
 ```
 
 Result:
+
 ```text
 Ada
 36
@@ -243,12 +257,14 @@ console.log(divide(10, 0));
 ```
 
 Result:
+
 ```text
 5
 Cannot divide by zero
 ```
 
-This pattern -- handling errors early and returning -- is called a **guard clause**. It keeps your code flat instead of deeply nested.
+This pattern -- handling errors early and returning -- is called a **guard clause**. It keeps your code flat instead of
+deeply nested.
 
 ## Scope
 
@@ -268,6 +284,7 @@ if (true) {
 ```
 
 Result:
+
 ```text
 inside block
 ```
@@ -287,6 +304,7 @@ example();
 ```
 
 Result:
+
 ```text
 42
 ```
@@ -306,6 +324,7 @@ printAppName();
 ```
 
 Result:
+
 ```text
 MyApp
 ```
@@ -333,6 +352,7 @@ outer();
 ```
 
 Result:
+
 ```text
 30
 ```
@@ -350,6 +370,7 @@ function greet(name) {
 ```
 
 Result:
+
 ```text
 Hello, Ada!
 ```
@@ -364,15 +385,18 @@ console.log(add(1, 2));
 ```
 
 Result:
+
 ```text
 3
 ```
 
-`var` declarations are hoisted too, but only the declaration -- not the assignment. This is another reason to avoid `var`.
+`var` declarations are hoisted too, but only the declaration -- not the assignment. This is another reason to avoid
+`var`.
 
 ## Closures
 
-A **closure** is a function that remembers the variables from the scope where it was created, even after that scope has finished executing:
+A **closure** is a function that remembers the variables from the scope where it was created, even after that scope has
+finished executing:
 
 ```js
 function createCounter() {
@@ -391,13 +415,15 @@ console.log(counter());
 ```
 
 Result:
+
 ```text
 1
 2
 3
 ```
 
-The inner function "closes over" the `count` variable. Each call to `createCounter()` creates a new, independent counter:
+The inner function "closes over" the `count` variable. Each call to `createCounter()` creates a new, independent
+counter:
 
 ```js
 const counterA = createCounter();
@@ -409,6 +435,7 @@ console.log(counterB()); // 1 -- independent from counterA
 ```
 
 Result:
+
 ```text
 1
 2
@@ -451,6 +478,7 @@ console.log(wallet.getBalance());
 ```
 
 Result:
+
 ```text
 100
 150
@@ -477,6 +505,7 @@ doTask("Download file", handleComplete);
 ```
 
 Result:
+
 ```text
 Starting: Download file
 Finished: Download file
@@ -495,6 +524,7 @@ doTask("Process data", (name) => {
 ```
 
 Result:
+
 ```text
 Starting: Process data
 Done processing: Process data
@@ -502,7 +532,8 @@ Done processing: Process data
 
 ## Higher-order functions
 
-A **higher-order function** is a function that takes a function as an argument or returns a function. You have already seen both:
+A **higher-order function** is a function that takes a function as an argument or returns a function. You have already
+seen both:
 
 - `doTask` takes a callback -- higher-order (takes a function)
 - `createCounter` returns a function -- higher-order (returns a function)
@@ -518,13 +549,15 @@ repeat(3, (i) => console.log(`Step ${i}`));
 ```
 
 Result:
+
 ```text
 Step 0
 Step 1
 Step 2
 ```
 
-Higher-order functions are everywhere in JavaScript -- array methods like `map`, `filter`, and `reduce` (covered in the next chapter) are all higher-order functions.
+Higher-order functions are everywhere in JavaScript -- array methods like `map`, `filter`, and `reduce` (covered in the
+next chapter) are all higher-order functions.
 
 ## Pure functions
 
@@ -551,6 +584,7 @@ console.log(addToTotal(10)); // 20 -- different result for same input
 ```
 
 Result:
+
 ```text
 5
 5
@@ -572,11 +606,13 @@ A function that runs immediately after it is defined:
 ```
 
 Result:
+
 ```text
 IIFE running with secret: hidden
 ```
 
-IIFEs were historically used to create private scope before `let`/`const` and modules existed. You will see them in older code.
+IIFEs were historically used to create private scope before `let`/`const` and modules existed. You will see them in
+older code.
 
 ## Summary
 

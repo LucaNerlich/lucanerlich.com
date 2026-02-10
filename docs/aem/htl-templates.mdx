@@ -388,7 +388,7 @@ with `@ context='...'`. Always use the most restrictive context that works for y
 <div title="${model.tooltip @ context='attribute'}">Hover me</div>
 
 <!-- Script context (for inline JS values) -->
-<script>var config = ${model.jsonConfig @ context='scriptString'};</script>
+<script>var config = ${model.jsonConfig @ context='scriptString'}</script>
 
 <!-- Style context -->
 <div style="${model.inlineStyles @ context='styleString'}">Styled</div>
