@@ -576,6 +576,7 @@ When one widget controls the visibility of another, you can use dialog JS that r
 <variant
     jcr:primaryType="nt:unstructured"
     sling:resourceType="granite/ui/components/coral/foundation/form/radiogroup"
+    granite:class="some-radiogroup-source"
     fieldLabel="Variant"
     name="./variant">
     <items jcr:primaryType="nt:unstructured">
@@ -628,22 +629,30 @@ dialog-visibility.js
 
 **3) Toggle visibility in JS**
 
+Following JQuery Example is for a multifield
+
 ```js title="ui.apps/.../clientlibs/clientlib-dialog/js/dialog-visibility.js"
-(function ($document, Coral) {
-    const controllerSelector = 'coral-radio-group[name="./variant"]';
-    const targetSelector = '.cmp-dialog-advanced';
+(function (window, document, Granite, $) {
+    "use strict"
 
-    function toggle() {
-        const selected = document.querySelector(`${controllerSelector} coral-radio[checked]`);
-        const value = selected ? selected.value : 'simple';
-        document.querySelectorAll(targetSelector).forEach((el) => {
-            el.hidden = value !== 'advanced';
-        });
-    }
+    $(document).on('dialog-ready', (event) => {
+        const component = $(event.target);
 
-    $document.on('dialog-ready', toggle);
-    $document.on('change', controllerSelector, toggle);
-})(jQuery(document), Coral);
+        // Its plural, since a multifield can contain multiple item containers
+        const sources = $('coral-select.some-source');
+        if (!sources) {
+            return;
+        }
+
+        sources.each((index, select) => {
+            select.addEventListener('change', function (event) {
+                let value = select.value;
+                // do whatever you want with the selected value
+            })
+        })
+
+    });
+})(window, document, Granite, $);
 ```
 
 ### Select Dropdown
