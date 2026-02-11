@@ -63,6 +63,17 @@ Practical JavaScript and TypeScript topics with code examples and browser compat
 CMS-agnostic guide to architecting content models -- content types, field selection, relations, performance pitfalls,
 complexity traps, and a practical blog example. Applies to AEM, Strapi, and any headless CMS.
 
+### [Git](./git.md)
+
+Practical Git reference -- branching strategies (trunk-based, Git Flow, GitHub Flow), merge vs rebase vs squash,
+interactive rebase, staging and stashing, undoing mistakes with reset/revert/reflog, cherry-pick, bisect, tags, aliases,
+and commit message conventions.
+
+### [Web Performance](./web-performance.md)
+
+Core Web Vitals (LCP, INP, CLS), measuring performance with Lighthouse and field data, image and font optimization,
+JavaScript and CSS strategies, HTTP caching, CDN patterns, resource hints, performance budgets, and common anti-patterns.
+
 ### [Design Patterns](./design-patterns/overview.mdx)
 
 GoF design patterns explained with Java and TypeScript examples: creational, structural, and behavioural patterns, plus
