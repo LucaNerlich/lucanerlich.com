@@ -276,6 +276,16 @@ For extended quotations from another source:
 </blockquote>
 ```
 
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered:</strong>
+
+<blockquote cite="https://www.w3.org/WAI/">
+    <p>The power of the Web is in its universality. Access by everyone
+    regardless of disability is an essential aspect.</p>
+    <footer>-- <cite>Tim Berners-Lee</cite></footer>
+</blockquote>
+</div>
+
 ### Figure and figcaption
 
 Self-contained content with an optional caption -- images, diagrams, code listings, tables.
@@ -293,6 +303,15 @@ Self-contained content with an optional caption -- images, diagrams, code listin
     <figcaption>A simple JavaScript variable declaration.</figcaption>
 </figure>
 ```
+
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered:</strong>
+
+<figure>
+    <pre><code>const greeting = "Hello, world!";</code></pre>
+    <figcaption>A simple JavaScript variable declaration.</figcaption>
+</figure>
+</div>
 
 ### Pre and code
 
@@ -326,6 +345,12 @@ A thematic break between sections (not just a visual line):
 </section>
 ```
 
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered:</strong>
+
+<hr />
+</div>
+
 ## Inline text semantics
 
 These elements give meaning to words and phrases within a block of text.
@@ -349,6 +374,25 @@ These elements give meaning to words and phrases within a block of text.
 | `<q>` | Inline quotation | `She said <q>it works on my machine</q>.` |
 | `<dfn>` | Definition term | `A <dfn>CDN</dfn> is a content delivery network.` |
 | `<data>` | Machine-readable value | `<data value="42">forty-two</data>` |
+
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered examples:</strong>
+
+<p><strong>Warning:</strong> this will delete all data.</p>
+<p>You <em>must</em> restart the server.</p>
+<p>Search results for <mark>semantic</mark> HTML.</p>
+<p>Price: <del>$49</del> <ins>$29</ins></p>
+<p><abbr title="Hypertext Markup Language">HTML</abbr> is the standard markup language.</p>
+<p>Read <cite>The Pragmatic Programmer</cite> by Hunt and Thomas.</p>
+<p>Published on <time dateTime="2025-03-15">15 March 2025</time>.</p>
+<p>Press <kbd>Ctrl</kbd>+<kbd>S</kbd> to save.</p>
+<p>The console prints <samp>Hello, world!</samp></p>
+<p>Let <var>x</var> be the number of users.</p>
+<p><small>Terms and conditions apply.</small></p>
+<p>H<sub>2</sub>O &nbsp;&nbsp; E = mc<sup>2</sup></p>
+<p>She said <q>it works on my machine</q>.</p>
+<p>A <dfn>CDN</dfn> is a content delivery network.</p>
+</div>
 
 ### strong vs b, em vs i
 
@@ -426,6 +470,19 @@ Key-value pairs -- glossaries, metadata, FAQs:
 </dl>
 ```
 
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered:</strong>
+
+<dl>
+    <dt><strong>HTML</strong></dt>
+    <dd>HyperText Markup Language -- the standard language for web pages.</dd>
+    <dt><strong>CSS</strong></dt>
+    <dd>Cascading Style Sheets -- controls the visual presentation of HTML.</dd>
+    <dt><strong>JavaScript</strong></dt>
+    <dd>A programming language for interactive web content.</dd>
+</dl>
+</div>
+
 A `<dt>` can have multiple `<dd>` values, and multiple `<dt>` terms can share a `<dd>`.
 
 ## Tables
@@ -463,6 +520,40 @@ Tables are for **tabular data** -- never for layout.
     </tfoot>
 </table>
 ```
+
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered:</strong>
+
+<table>
+    <caption>Quarterly Revenue (in thousands)</caption>
+    <thead>
+        <tr>
+            <th scope="col">Quarter</th>
+            <th scope="col">Revenue</th>
+            <th scope="col">Growth</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">Q1 2025</th>
+            <td>$120</td>
+            <td>+5%</td>
+        </tr>
+        <tr>
+            <th scope="row">Q2 2025</th>
+            <td>$148</td>
+            <td>+23%</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <th scope="row">Total</th>
+            <td>$268</td>
+            <td>--</td>
+        </tr>
+    </tfoot>
+</table>
+</div>
 
 ### Table elements
 
@@ -512,6 +603,25 @@ Forms are where semantic HTML provides the most built-in functionality for free.
     </fieldset>
 </form>
 ```
+
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered:</strong>
+
+<form onSubmit={(e) => e.preventDefault()}>
+    <fieldset>
+        <legend>Newsletter Signup</legend>
+        <div style={{marginBottom: '0.75rem'}}>
+            <label htmlFor="demo-email" style={{display: 'block', marginBottom: '0.25rem'}}>Email address</label>
+            <input type="email" id="demo-email" placeholder="you@example.com" style={{padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)', width: '100%', maxWidth: '320px'}} />
+        </div>
+        <div style={{marginBottom: '0.75rem'}}>
+            <label htmlFor="demo-name" style={{display: 'block', marginBottom: '0.25rem'}}>Full name</label>
+            <input type="text" id="demo-name" style={{padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)', width: '100%', maxWidth: '320px'}} />
+        </div>
+        <button type="submit" style={{padding: '0.4rem 1rem', borderRadius: '4px', cursor: 'pointer'}}>Subscribe</button>
+    </fieldset>
+</form>
+</div>
 
 ### fieldset and legend
 
@@ -572,6 +682,54 @@ Using the correct `type` gives you free validation, the right mobile keyboard, a
 | `radio` | One-of-many selection | Radio button |
 | `hidden` | Hidden value (not for secrets) | Not visible |
 
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered -- native input types:</strong>
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.75rem', marginTop: '0.75rem'}}>
+<div>
+    <label htmlFor="demo-text" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>text</label>
+    <input type="text" id="demo-text" placeholder="Text input" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
+</div>
+<div>
+    <label htmlFor="demo-email2" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>email</label>
+    <input type="email" id="demo-email2" placeholder="you@example.com" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
+</div>
+<div>
+    <label htmlFor="demo-number" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>number</label>
+    <input type="number" id="demo-number" placeholder="42" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
+</div>
+<div>
+    <label htmlFor="demo-date" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>date</label>
+    <input type="date" id="demo-date" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
+</div>
+<div>
+    <label htmlFor="demo-time" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>time</label>
+    <input type="time" id="demo-time" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
+</div>
+<div>
+    <label htmlFor="demo-color" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>color</label>
+    <input type="color" id="demo-color" defaultValue="#3578e5" style={{width: '100%', height: '34px', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)', cursor: 'pointer'}} />
+</div>
+<div>
+    <label htmlFor="demo-range" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>range</label>
+    <input type="range" id="demo-range" min="0" max="100" defaultValue="50" style={{width: '100%'}} />
+</div>
+<div>
+    <label htmlFor="demo-search" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>search</label>
+    <input type="search" id="demo-search" placeholder="Search..." style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
+</div>
+<div>
+    <label style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>checkbox</label>
+    <label><input type="checkbox" defaultChecked /> Remember me</label>
+</div>
+<div>
+    <label style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>radio</label>
+    <label><input type="radio" name="demo-radio" defaultChecked /> Option A</label>{' '}
+    <label><input type="radio" name="demo-radio" /> Option B</label>
+</div>
+</div>
+</div>
+
 ### select
 
 Dropdown selection:
@@ -590,6 +748,25 @@ Dropdown selection:
     </optgroup>
 </select>
 ```
+
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered:</strong>
+
+<div>
+<label htmlFor="demo-country" style={{display: 'block', marginBottom: '0.25rem'}}>Country</label>
+<select id="demo-country" style={{padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}}>
+    <option value="">-- Select --</option>
+    <optgroup label="Europe">
+        <option value="de">Germany</option>
+        <option value="fr">France</option>
+    </optgroup>
+    <optgroup label="North America">
+        <option value="us">United States</option>
+        <option value="ca">Canada</option>
+    </optgroup>
+</select>
+</div>
+</div>
 
 ### textarea
 
@@ -631,6 +808,19 @@ Displays the result of a calculation or user action:
 | `<progress>` | Task completion (upload, loading bar) | Represents progress toward a goal |
 | `<meter>` | Scalar measurement (disk usage, score, rating) | Represents a value within a known range |
 
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered:</strong>
+
+<div style={{marginBottom: '0.75rem'}}>
+<label htmlFor="demo-progress" style={{marginRight: '0.5rem'}}>Upload progress:</label>
+<progress id="demo-progress" value="70" max="100">70%</progress>
+</div>
+<div>
+<label htmlFor="demo-meter" style={{marginRight: '0.5rem'}}>Disk usage:</label>
+<meter id="demo-meter" value="0.7" min="0" max="1" low="0.3" high="0.8" optimum="0.1">70%</meter>
+</div>
+</div>
+
 ## Interactive elements
 
 ### details and summary
@@ -653,6 +843,24 @@ A native collapsible disclosure widget -- no JavaScript required:
     <pre><code>npm create next-app@latest</code></pre>
 </details>
 ```
+
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered (click to toggle):</strong>
+
+<details>
+    <summary>System requirements</summary>
+    <ul>
+        <li>Node.js 18+</li>
+        <li>npm 9+</li>
+        <li>Git 2.30+</li>
+    </ul>
+</details>
+
+<details open>
+    <summary>Quick start</summary>
+    <pre><code>npm create next-app@latest</code></pre>
+</details>
+</div>
 
 ### dialog
 
@@ -738,6 +946,15 @@ Contact information for the nearest `<article>` or `<body>` ancestor:
     <a href="https://github.com/LucaNerlich">GitHub</a>
 </address>
 ```
+
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<strong>Rendered:</strong>
+
+<address>
+    <span style={{color: 'var(--ifm-link-color)', textDecoration: 'underline'}}>luca.nerlich@gmail.com</span><br />
+    <span style={{color: 'var(--ifm-link-color)', textDecoration: 'underline'}}>GitHub</span>
+</address>
+</div>
 
 Not for arbitrary postal addresses -- use `<p>` for those.
 
