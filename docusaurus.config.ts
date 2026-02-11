@@ -225,7 +225,8 @@ const config: Config = {
                     {from: '/aem/ui/assets-siderail/', to: '/aem/ui/custom-dialog-widgets/'},
 
                     // Flattened other/tech/ into other/
-                    {from: '/other/tech/commands/', to: '/other/commands/'},
+                    {from: '/other/tech/commands/', to: '/git/'},
+                    {from: '/other/commands/', to: '/git/'},
                     {from: '/other/tech/docusaurus/', to: '/other/docusaurus/'},
                     {from: '/other/tech/local-llm-for-coding/', to: '/other/local-llm-for-coding/'},
                     {from: '/other/tech/mermaid-diagrams/', to: '/other/mermaid-diagrams/'},
