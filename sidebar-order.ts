@@ -22,6 +22,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'content-modeling',
         'git',
         'web-performance',
+        'semantic-html',
         'javascript',
         'java',
         'design-patterns',

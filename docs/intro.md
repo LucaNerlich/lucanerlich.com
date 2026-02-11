@@ -74,6 +74,12 @@ and commit message conventions.
 Core Web Vitals (LCP, INP, CLS), measuring performance with Lighthouse and field data, image and font optimization,
 JavaScript and CSS strategies, HTTP caching, CDN patterns, resource hints, performance budgets, and common anti-patterns.
 
+### [Semantic HTML](./semantic-html.md)
+
+What semantic HTML is, why it matters for accessibility and SEO, and a practical reference for every relevant element --
+document structure, headings, text, inline semantics, lists, tables, forms, media, interactive elements, and common
+anti-patterns.
+
 ### [Design Patterns](./design-patterns/overview.mdx)
 
 GoF design patterns explained with Java and TypeScript examples: creational, structural, and behavioural patterns, plus
