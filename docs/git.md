@@ -24,7 +24,7 @@ Every team needs a branching strategy. The three most common:
 ### Trunk-based development
 
 ```mermaid
-gitgraph
+gitGraph
     commit id: "A"
     commit id: "B"
     branch feature1
@@ -64,7 +64,7 @@ Best for open-source and teams that rely on code review.
 ### Git Flow
 
 ```mermaid
-gitgraph
+gitGraph
     commit id: "init"
     branch develop
     commit id: "D1"
