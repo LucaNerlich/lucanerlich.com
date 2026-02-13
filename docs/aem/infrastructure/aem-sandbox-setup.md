@@ -35,7 +35,8 @@ This guide additionally assumes, that you have Maven 3 and Java JDK 21 installed
     - https://experienceleague.adobe.com/en/docs/experience-manager-core-components/using/developing/archetype/overview
 5. Boot up a local Author and Publish instance
 6. Deploy your initial maven archetype code to the local Author instance
-    - `mvn clean install -PautoInstallSinglePackage`
+    - `mvn clean install -PautoInstallSinglePackage` -> Author
+    - `mvn clean install -PautoInstallSinglePackagePublish` -> Publish
 7. Initialize your local Git repository and push your code to your private repository
 8. Add your Cloud Git repository as a second origin to your local Git repository
     1. `git remote add cloudmanager https://git.cloudmanager.adobe.com/some-org/some-program`
