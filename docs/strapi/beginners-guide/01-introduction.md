@@ -79,10 +79,13 @@ Strapi is one of the most popular headless CMS options. Here is why:
 
 Before we start, make sure you have:
 
-- **Node.js 18 or later** -- check with `node --version`
-- **npm, yarn, or pnpm** -- any package manager works
-- **A code editor**
+- **Node.js 18.x or 20.x (LTS versions)** -- check with `node --version`
+  - Strapi 5 requires Node.js 18.17.0+ or 20.x
+  - Node.js 21+ is not yet officially supported
+- **npm 7+, yarn 3+, or pnpm 8+** -- any package manager works
+- **A code editor** -- VS Code recommended for TypeScript support
 - **A terminal**
+- **Git** -- for version control
 
 If you need to install Node.js, see the [JavaScript guide's setup chapter](/javascript/beginners-guide/introduction).
 

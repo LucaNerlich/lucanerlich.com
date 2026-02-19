@@ -516,16 +516,22 @@ export default [
             "'self'",
             "data:",
             "blob:",
-            // Add your CDN/S3 domain
+            "your-s3-bucket.s3.amazonaws.com", // Add your CDN/S3 domain
           ],
           "media-src": [
             "'self'",
             "data:",
             "blob:",
-            // Add your CDN/S3 domain
+            "your-s3-bucket.s3.amazonaws.com", // Add your CDN/S3 domain
           ],
           upgradeInsecureRequests: null,
         },
+      },
+      hsts: {
+        enabled: true,
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
       },
     },
   },
@@ -538,15 +544,92 @@ export default [
       ],
       methods: ["GET", "POST", "PUT", "DELETE"],
       headers: ["Content-Type", "Authorization"],
+      credentials: true,
+    },
+  },
+  {
+    name: "strapi::rateLimit",
+    config: {
+      interval: 60000, // 1 minute
+      max: 100, // 100 requests per minute per IP
+      delayAfter: 50, // Start slowing down after 50 requests
+      timeWait: 10000, // 10 seconds of delay
+      prefixKey: "strapi", // Redis key prefix if using Redis
+      whitelist: ["127.0.0.1"], // IPs to exclude from rate limiting
+      store: {
+        // Optional: Use Redis for distributed rate limiting
+        // type: "redis",
+        // client: require("redis").createClient({ url: "redis://localhost:6379" })
+      },
     },
   },
   "strapi::poweredBy",
   "strapi::query",
-  "strapi::body",
+  {
+    name: "strapi::body",
+    config: {
+      jsonLimit: "10mb", // Adjust based on your needs
+      textLimit: "10mb",
+      formLimit: "10mb",
+      formidable: {
+        maxFileSize: 200 * 1024 * 1024, // 200MB max file size
+      },
+    },
+  },
   "strapi::session",
   "strapi::favicon",
   "strapi::public",
 ];
+```
+
+### Additional security headers with Helmet
+
+For enhanced security, install and configure helmet:
+
+```bash
+npm install koa-helmet
+```
+
+```typescript
+// config/env/production/middlewares.ts
+import helmet from "koa-helmet";
+
+export default [
+  // ... other middleware
+  {
+    resolve: "./src/middlewares/helmet",
+    config: {},
+  },
+  // ... rest of middleware
+];
+```
+
+```typescript
+// src/middlewares/helmet.ts
+import helmet from "koa-helmet";
+
+export default (config, { strapi }) => {
+  return helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: false, // Using Strapi's CSP instead
+    crossOriginOpenerPolicy: { policy: "same-origin" },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    dnsPrefetchControl: { allow: false },
+    frameguard: { action: "deny" },
+    hidePoweredBy: true,
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+    ieNoOpen: true,
+    noSniff: true,
+    originAgentCluster: true,
+    permittedCrossDomainPolicies: false,
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    xssFilter: true,
+  });
+};
 ```
 
 ### Restrict admin panel access

@@ -365,9 +365,15 @@ curl -X POST http://localhost:1337/api/posts \
       "slug": "my-api-post",
       "excerpt": "Created via the REST API",
       "featured": false,
-      "author": 1,
-      "category": 1,
-      "tags": [1, 2]
+      "author": {
+        "connect": ["author-document-id-here"]
+      },
+      "category": {
+        "connect": ["category-document-id-here"]
+      },
+      "tags": {
+        "connect": ["tag1-document-id", "tag2-document-id"]
+      }
     }
   }'
 ```
@@ -375,9 +381,46 @@ curl -X POST http://localhost:1337/api/posts \
 Key points:
 
 - The body must be wrapped in a `data` object
-- Relations are set by ID (the numeric `id`, not `documentId`)
+- **Relations in Strapi 5**: Use `connect` with an array of `documentId` values
+  - For single relations: `{ "connect": ["documentId"] }`
+  - For multiple relations: `{ "connect": ["id1", "id2"] }`
+  - To disconnect: `{ "disconnect": ["documentId"] }`
+  - To set (replace all): `{ "set": ["id1", "id2"] }`
 - The entry is created as a **draft** by default
-- To publish immediately, add `"status": "published"` to the request
+- To publish immediately, add `"status": "published"` to the data object
+
+## Draft & Publish System in Strapi 5
+
+Strapi 5 introduces a new draft/publish system where drafts and published versions are separate document instances:
+
+```bash
+# Get only published posts (default for public API)
+curl "http://localhost:1337/api/posts?status=published"
+
+# Get only draft posts (requires authentication)
+curl "http://localhost:1337/api/posts?status=draft" \
+  -H "Authorization: Bearer YOUR_API_TOKEN"
+
+# Get both drafts and published posts
+curl "http://localhost:1337/api/posts?status=draft&status=published" \
+  -H "Authorization: Bearer YOUR_API_TOKEN"
+```
+
+### Publishing and Unpublishing
+
+```bash
+# Publish a draft
+curl -X POST http://localhost:1337/api/posts/abc123def456/publish \
+  -H "Authorization: Bearer YOUR_API_TOKEN"
+
+# Unpublish (convert to draft)
+curl -X POST http://localhost:1337/api/posts/abc123def456/unpublish \
+  -H "Authorization: Bearer YOUR_API_TOKEN"
+
+# Discard draft changes (revert to published version)
+curl -X POST http://localhost:1337/api/posts/abc123def456/discard \
+  -H "Authorization: Bearer YOUR_API_TOKEN"
+```
 
 ## Updating entries
 
@@ -394,7 +437,8 @@ curl -X PUT http://localhost:1337/api/posts/abc123def456 \
 
 - Use the `documentId` in the URL (not the numeric `id`)
 - Only send the fields you want to change -- other fields are preserved
-- Updating a published entry creates a draft with the changes
+- Updating a published entry creates a draft version with the changes
+- The published version remains unchanged until you explicitly publish the draft
 
 ## Deleting entries
 
