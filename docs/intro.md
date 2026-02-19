@@ -2,143 +2,91 @@
 sidebar_position: 1
 slug: /
 title: Home
-description: "Technical documentation and guides for AEM, Java, JavaScript, and software design patterns."
+description: "Technical documentation and guides for AEM, Java, JavaScript, Strapi, and software design patterns."
 ---
 
 # Luca Nerlich -- Tech Documentation
 
-<div class="alert alert--success" style={{marginBottom: '2rem'}}>
-<p style={{fontSize: '1.1rem', margin: 0}}>
-Practical guides and reference documentation for <strong>Adobe Experience Manager</strong>, <strong>Java</strong>, <strong>JavaScript</strong>, and <strong>software design patterns</strong>. Every page focuses on real-world examples, common pitfalls, and patterns you can apply immediately.
-</p>
-</div>
+Reference documentation and practical guides for Adobe Experience Manager, Java, JavaScript, Strapi, and
+software design patterns. Every page is built around real-world code examples and common pitfalls.
 
 ---
 
-## Documentation
+## Start Here -- Beginners' Guides
 
-### [AEM](./aem/architecture.mdx)
+Multi-chapter guided introductions, from zero to working knowledge:
 
-Comprehensive Adobe Experience Manager documentation covering the full stack -- from architecture and components to
-Dispatcher, security, and AEM as a Cloud Service.
+- [**AEM Beginners' Guide**](./aem/beginners-guide/01-introduction.md) -- 14 chapters covering JCR, Sling, OSGi, components, HTL, Sling Models, templates, clientlibs, and deployment
+- [**Java Beginners' Guide**](./java/beginners-guide/01-introduction.md) -- 17 chapters from variables and control flow through streams, testing, and build tools
+- [**JavaScript Beginners' Guide**](./javascript/beginners-guide/01-introduction.md) -- 15 chapters covering fundamentals, the DOM, events, TypeScript, error handling, and deployment
+- [**Strapi Beginners' Guide**](./strapi/beginners-guide/01-introduction.md) -- 12 chapters on content modeling, REST API, authentication, lifecycle hooks, and deployment
 
-- [Architecture](./aem/architecture.mdx) -- How Sling, JCR, and OSGi fit together in the AEM request processing pipeline
-- [Component Dialogs](./aem/component-dialogs.mdx) -- Copy-paste reference for the most useful Granite UI dialog widgets
-- [Custom Component Guide](./aem/custom-component.mdx) -- Step-by-step walkthrough: Sling Model, dialog, HTL template,
-  and clientlib
-- [HTL Templates](./aem/htl-templates.mdx) -- Sightly syntax, block elements, expression language, and XSS protection
-- [Sling Models](./aem/backend/sling-models.mdx) -- Annotations, injectors, exporters, testing, and best practices
-- [Client Libraries](./aem/client-libraries.mdx) -- Clientlib categories, dependencies, embedding, and the HTML Library
-  Manager
-- [Groovy Console](./aem/groovy-console.mdx) -- Interactive scripting for content operations, migrations, and debugging
-- [Workflows](./aem/backend/workflows.mdx) -- Business process mapping, custom process steps, and launchers
+---
 
-### [Java](./java/java-streams.md)
+## AEM
 
-Core Java language guides independent of any framework -- practical examples, pitfall tables, and patterns you can apply
-immediately.
+Comprehensive Adobe Experience Manager documentation covering the full stack.
+
+- [Architecture](./aem/architecture.mdx) -- How Sling, JCR, and OSGi fit together in the request processing pipeline
+- [Custom Component Guide](./aem/custom-component.mdx) -- End-to-end walkthrough: Sling Model, dialog, HTL template, and clientlib
+- [Component Dialogs](./aem/component-dialogs.mdx) -- Copy-paste reference for Granite UI dialog widgets
+- [Sling Models](./aem/backend/sling-models.mdx) -- Annotations, injectors, exporters, and best practices
+
+## Java
+
+Core Java language guides -- practical examples, pitfall tables, and patterns.
 
 - [Streams and Collectors](./java/java-streams.md) -- Stream pipelines, groupingBy, partitioningBy, and parallel streams
-- [Modern Java Features](./java/modern-java-features.md) -- Records, sealed classes, pattern matching, and a Java
-  11-to-21 feature table
 - [Concurrency](./java/concurrency.md) -- Threads, ExecutorService, CompletableFuture, and Virtual Threads
-- [Generics](./java/generics.md) -- Bounded types, wildcards, the PECS principle, and type erasure
-- [Testing](./java/testing.md) -- JUnit 5, Mockito mocking, AssertJ assertions, and parameterised tests
-- [Error Handling](./java/error-handling.md) -- Checked vs unchecked exceptions, try-with-resources, and the Result
-  pattern
+- [Modern Java Features](./java/modern-java-features.md) -- Records, sealed classes, pattern matching (Java 11--21)
+- [Generics](./java/generics.md) -- Bounded types, wildcards, PECS, and type erasure
 
-### [JavaScript](./javascript/javascript-intl-api-formatting.md)
+## JavaScript
 
 Practical JavaScript and TypeScript topics with code examples and browser compatibility notes.
 
-- [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) -- Locale-aware number, date, currency, and
-  relative time formatting
-- [Async/Await Patterns](./javascript/async-await-guide.md) -- Promises, error handling, concurrency control, and common
-  pitfalls
-- [Error Handling](./javascript/javascript-error-handling.md) -- Custom error classes, global handlers, and structured
-  error reporting
+- [Async/Await Patterns](./javascript/async-await-guide.md) -- Promises, error handling, concurrency control, and pitfalls
+- [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) -- Locale-aware number, date, and currency formatting
+- [Error Handling](./javascript/javascript-error-handling.md) -- Custom error classes, global handlers, and structured reporting
 
-### [Content Modeling](./content-modeling.md)
+## Strapi
 
-CMS-agnostic guide to architecting content models -- content types, field selection, relations, performance pitfalls,
-complexity traps, and a practical blog example. Applies to AEM, Strapi, and any headless CMS.
+Guides for building and extending a Strapi headless CMS.
 
-### [Git](./git.md)
+- [Custom Controllers and Services](./strapi/custom-controllers-services.md) -- Extending core CRUD, custom actions, and service delegation
+- [Relations and Population](./strapi/relations-and-population.md) -- Deep population, filtering, and performance optimization
+- [Authentication and Permissions](./strapi/authentication-and-permissions.md) -- JWT flow, RBAC, API tokens, and OAuth providers
 
-Practical Git reference -- branching strategies (trunk-based, Git Flow, GitHub Flow), merge vs rebase vs squash,
-interactive rebase, staging and stashing, undoing mistakes with reset/revert/reflog, cherry-pick, bisect, tags, aliases,
-and commit message conventions.
+## Design Patterns
 
-### [Web Performance](./web-performance.md)
+GoF patterns explained with Java and TypeScript examples -- creational, structural, and behavioural --
+plus a section on [anti-patterns](./design-patterns/anti-patterns.mdx) and common misuse.
 
-Core Web Vitals (LCP, INP, CLS), measuring performance with Lighthouse and field data, image and font optimization,
-JavaScript and CSS strategies, HTTP caching, CDN patterns, resource hints, performance budgets, and common anti-patterns.
+- [Pattern Overview](./design-patterns/overview.mdx) -- When and why to use each pattern
+- [Glossary](./design-patterns/glossary.mdx) -- Quick reference for design pattern terminology
 
-### [Semantic HTML](./semantic-html.mdx)
+## More Topics
 
-What semantic HTML is, why it matters for accessibility and SEO, and a practical reference for every relevant element --
-document structure, headings, text, inline semantics, lists, tables, forms, media, interactive elements, and common
-anti-patterns.
-
-### [Design Patterns](./design-patterns/overview.mdx)
-
-GoF design patterns explained with Java and TypeScript examples: creational, structural, and behavioural patterns, plus
-a dedicated section on anti-patterns and common misuse.
-
-### [Other](./other/mermaid-diagrams.mdx)
-
-Shell and terminal setup, Docusaurus tips, a comprehensive Mermaid diagram guide, useful link collections, and practical
-Strapi CMS guides.
-
-- [Strapi: Custom Controllers and Services](./strapi/custom-controllers-services.md) -- Extending core CRUD, custom
-  actions, and service delegation
-- [Strapi: Relations and Population](./strapi/relations-and-population.md) -- Deep population, filtering, and
-  performance optimization
-- [Strapi: Authentication and Permissions](./strapi/authentication-and-permissions.md) -- JWT flow, RBAC, API tokens,
-  and OAuth providers
-- [Mermaid Diagram Guide](./other/mermaid-diagrams.mdx) -- Flowcharts, sequence diagrams, class diagrams, and more
-
----
-
-## Featured content
-
-A selection of the most useful pages across all categories:
-
-- [Component Dialog Examples](./aem/component-dialogs.mdx) -- Copy-paste Granite UI dialog widgets for AEM components
-- [AEM Architecture](./aem/architecture.mdx) -- How Sling, JCR, and OSGi fit together
-- [Streams and Collectors](./java/java-streams.md) -- Java Streams API from basics to advanced collectors
-- [Concurrency and Virtual Threads](./java/concurrency.md) -- Modern Java concurrency with practical examples
-- [Sling Model Annotations](./aem/components/annotations/sling-model-annotations.mdx) -- `@Self`, `@Inject`,
-  `@ChildResource`, and more
-- [AEM Workflows](./aem/backend/workflows.mdx) -- From business process mapping to custom workflow steps
-- [Mermaid Diagram Guide](./other/mermaid-diagrams.mdx) -- Flowcharts, sequence diagrams, class diagrams, and more
-- [Multi-Tenancy ui.frontend](./aem/ui/multi-tenancy-support-ui-frontend.mdx) -- Multi-tenant frontend architecture for
-  AEM
-- [Templates and Policies](./aem/components/templates-policies.md) -- Editable templates, allowed components, Style
-  System
-- [ACLs and Permissions](./aem/infrastructure/acl-permissions.md) -- Repoinit, Netcentric ACL Tool, service users
+- [Content Modeling](./content-modeling.md) -- CMS-agnostic guide to content types, relations, and performance pitfalls
+- [Git](./git.md) -- Branching strategies, merge vs rebase, interactive rebase, and commit conventions
+- [Web Performance](./web-performance.md) -- Core Web Vitals, Lighthouse, image optimization, caching, and CDN patterns
+- [Semantic HTML](./semantic-html.mdx) -- Element reference, accessibility, and common anti-patterns
+- [Mermaid Diagrams](./other/mermaid-diagrams.mdx) -- Flowcharts, sequence diagrams, class diagrams, and more
 
 ---
 
 ## Projects
 
-### Professional
-
-- [First Class Performance](https://first-class-performance.com/) -- Design, development, and hosting. *Strapi CMS,
-  Next.js, React, SCSS, Material UI*
-- [Complete Motion CrossFit](https://complete-motion-crossfit.de/) -- Design, development, and hosting. *Next.js, React,
-  SCSS*
-- [Nerlich / Puls GbR](https://pnn-it.de/) -- GbR business website. *Next.js, React, SCSS*
-
-### Hobby
-
-- [Steam5](https://steam5.org) -- Steam review guessing game. *Spring Boot, Next.js, React, PostgreSQL*
-- [RSS-Analyzer](https://rssanalyzer.org) -- Audio RSS feed parser with aggregated release stats. *Java, Next.js, React*
-- [EZ-Budget](https://ez-budget.lucanerlich.com) -- Monthly and yearly budget tracker. *Next.js, React, Bootstrap CSS*
+- [Steam5](https://steam5.org) -- Steam review guessing game. *Spring Boot, Next.js, PostgreSQL*
+- [RSS-Analyzer](https://rssanalyzer.org) -- Audio RSS feed parser with aggregated release stats. *Java, Next.js*
+- [EZ-Budget](https://ez-budget.lucanerlich.com) -- Monthly and yearly budget tracker. *Next.js, Bootstrap CSS*
 - [Mindestens 10 Zeichen](https://m10z.de) -- Community gaming and media blog. *Docusaurus 3*
+- [First Class Performance](https://first-class-performance.com/) -- Design, development, and hosting. *Strapi, Next.js, Material UI*
+- [Complete Motion CrossFit](https://complete-motion-crossfit.de/) -- Design, development, and hosting. *Next.js, SCSS*
+- [Nerlich / Puls GbR](https://pnn-it.de/) -- Business website. *Next.js, SCSS*
 
-> All projects are self-hosted on a [Hetzner](https://www.hetzner.com/cloud) VPS using [Coolify](https://coolify.io/)
-> and Docker.
+> All projects are self-hosted on a [Hetzner](https://www.hetzner.com/cloud) VPS using
+> [Coolify](https://coolify.io/) and Docker.
 > Lightweight, GDPR-friendly analytics via self-hosted [Umami](https://umami.is/).
 
 ---
