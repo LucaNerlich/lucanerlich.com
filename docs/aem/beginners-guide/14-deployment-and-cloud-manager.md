@@ -35,7 +35,6 @@ flowchart LR
     Git -->|"Triggers"| CM
     CM --> Build
     Build -->|"Deploy"| DevEnv
-    DevEnv -->|"Promote"| Stage
     Stage -->|"Approve & promote"| Prod
 ```
 
@@ -44,7 +43,6 @@ flowchart LR
 | **Push**              | Developer pushes code to the Cloud Manager Git repo          |
 | **Build**             | Maven builds the project, runs tests, validates code quality |
 | **Deploy to Dev**     | The `all` package is deployed to the development environment |
-| **Promote to Stage**  | After dev validation, promote to staging                     |
 | **Approve & go live** | Business approval, then deploy to production                 |
 
 ## Cloud Manager
@@ -78,12 +76,12 @@ flowchart TD
     Program --> RDE
 ```
 
-| Environment    | Purpose                              | Access                |
-|----------------|--------------------------------------|-----------------------|
-| **Dev**        | Development and integration testing  | Developers            |
-| **Stage**      | Pre-production testing, UAT          | QA team, stakeholders |
-| **Production** | Live site                            | End users             |
-| **RDE**        | Rapid iteration (no pipeline needed) | Developers            |
+| Environment    | Purpose                                    | Access                |
+|----------------|--------------------------------------------|-----------------------|
+| **Dev**        | Development and integration testing        | Developers            |
+| **Stage**      | Pre-production testing, UAT                | QA team, stakeholders |
+| **Production** | Live site                                  | End users             |
+| **RDE**        | Rapid Development Env (no pipeline needed) | Developers            |
 
 ## Git repository
 
@@ -118,15 +116,6 @@ Cloud Manager via CI/CD.
 ## Pipelines
 
 Pipelines automate the build-test-deploy process.
-
-### Pipeline types
-
-| Type           | What it does                                                |
-|----------------|-------------------------------------------------------------|
-| **Full-stack** | Builds and deploys everything (code + content + Dispatcher) |
-| **Frontend**   | Builds and deploys only `ui.frontend` (fast CSS/JS updates) |
-| **Config**     | Deploys only configuration (CDN, WAF, traffic filter rules) |
-| **Web Tier**   | Deploys only Dispatcher configuration                       |
 
 ### Full-stack pipeline stages
 
@@ -254,36 +243,6 @@ The cycle time is dramatically shorter than a full pipeline. Use RDEs for:
 
 > **Note:** RDE is for development only. Always use the full pipeline for stage and production.
 
-## Content Transfer Tool
-
-Moving content between environments (e.g., production content to dev for testing) uses the **Content Transfer Tool**:
-
-### Steps
-
-1. **Extract** -- create a content package from the source environment
-2. **Ingest** -- import the package into the target environment
-
-```mermaid
-flowchart LR
-    Prod["Production"]
-    CTT["Content Transfer Tool"]
-    Dev["Dev Environment"]
-
-    Prod -->|"Extract"| CTT
-    CTT -->|"Ingest"| Dev
-```
-
-### What to transfer
-
-| Content            | When to transfer                         |
-|--------------------|------------------------------------------|
-| **Pages**          | Copy production pages to dev for testing |
-| **Assets**         | Copy DAM assets for realistic testing    |
-| **Users/Groups**   | Sync permissions                         |
-| **Configurations** | Templates, Cloud Configs                 |
-
-> **Warning:** Never transfer content from dev to production. The pipeline handles code deployment.
-
 ## Environment-specific configuration
 
 OSGi configurations vary by environment using run mode folders (chapter 3):
@@ -356,18 +315,6 @@ Use the CLI to tail logs in real time:
 aio aem:log:tail --environment <env-id> --service author --name aemerror
 ```
 
-### Custom logging
-
-Configure log levels via OSGi:
-
-```json
-{
-    "org.apache.sling.commons.log.names": ["com.mysite"],
-    "org.apache.sling.commons.log.level": "debug",
-    "org.apache.sling.commons.log.file": "logs/mysite.log"
-}
-```
-
 ## Going to production -- checklist
 
 Before your first production deployment:
@@ -397,12 +344,11 @@ You learned:
 
 - The **deployment model** -- Git > Cloud Manager > pipeline > environments
 - **Cloud Manager** -- Git, pipelines, environments, monitoring
-- **Pipeline types** -- full-stack, frontend, config, web tier
 - **Pipeline stages** -- build, test, code quality, security, deploy
 - **Rapid Development Environments** -- fast iteration with the RDE CLI
 - **Content Transfer Tool** -- moving content between environments
 - **Environment-specific config** -- run modes, environment variables
-- **Monitoring** -- logs, tailing, custom logging
+- **Monitoring** -- logs, tailing
 - **Production checklist** -- what to verify before going live
 
 ## Congratulations

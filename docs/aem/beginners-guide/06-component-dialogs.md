@@ -268,89 +268,6 @@ component-node/
 
 In your Sling Model, use `@ChildResource` to read multifield items (covered in the next chapter).
 
-## Field validation
-
-### Required fields
-
-```xml
-<title ... required="{Boolean}true"/>
-```
-
-Shows a red asterisk and prevents saving without a value.
-
-### Regex validation
-
-```xml
-<email jcr:primaryType="nt:unstructured"
-       sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-       fieldLabel="Email"
-       name="./email"
-       validation="email"/>
-```
-
-Built-in validators:
-
-| Validator             | Validates           |
-|-----------------------|---------------------|
-| `email`               | Email format        |
-| `url`                 | URL format          |
-| `foundation.jcr.name` | Valid JCR node name |
-
-### Custom validation with granite:data
-
-You can pass custom validation attributes:
-
-```xml
-<phone jcr:primaryType="nt:unstructured"
-       sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-       fieldLabel="Phone"
-       name="./phone"
-       pattern="^\+?[0-9\s\-]+$"
-       maxlength="20"/>
-```
-
-> For advanced dialog validation, see the [Dialog Validation](/aem/components/dialog-validation) reference.
-
-## Conditional field visibility
-
-Show or hide fields based on another field's value using `granite:hide`:
-
-```xml
-<linkType jcr:primaryType="nt:unstructured"
-          sling:resourceType="granite/ui/components/coral/foundation/form/select"
-          fieldLabel="Link Type"
-          name="./linkType">
-    <items jcr:primaryType="nt:unstructured">
-        <internal jcr:primaryType="nt:unstructured"
-                  text="Internal Page" value="internal"/>
-        <external jcr:primaryType="nt:unstructured"
-                  text="External URL" value="external"/>
-    </items>
-</linkType>
-
-<internalLink jcr:primaryType="nt:unstructured"
-              sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
-              fieldLabel="Internal Link"
-              name="./internalLink"
-              rootPath="/content"
-              granite:class="hide"
-              showhidetargetvalue="internal">
-    <granite:data jcr:primaryType="nt:unstructured"
-                  showhidetargetvalue="internal"/>
-</internalLink>
-
-<externalLink jcr:primaryType="nt:unstructured"
-              sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-              fieldLabel="External URL"
-              name="./externalLink">
-    <granite:data jcr:primaryType="nt:unstructured"
-                  showhidetargetvalue="external"/>
-</externalLink>
-```
-
-> **Note:** Show/hide requires custom JavaScript in the dialog or the use of a community library. The exact
-> implementation depends on your project's setup.
-
 ## The name attribute
 
 The `name` attribute on each field controls where the value is stored in the JCR:
@@ -485,8 +402,6 @@ You learned:
   colorfield, hidden
 - **Tabs** for organizing fields into logical groups
 - **Multifield** for repeatable field groups
-- **Validation** -- required fields, regex patterns, built-in validators
-- **Conditional visibility** -- showing/hiding fields based on other values
 - The **`name` attribute** and how it maps to JCR properties
 - A complete **Hero component dialog** example
 

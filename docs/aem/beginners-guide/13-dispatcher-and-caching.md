@@ -236,22 +236,6 @@ Higher levels = more granular invalidation = better cache hit ratio.
 /statfileslevel "2"
 ```
 
-### Manual cache flush
-
-For emergencies, you can flush the cache manually:
-
-```bash
-# Flush a specific path
-curl -H "CQ-Action: Activate" \
-     -H "CQ-Handle: /content/mysite/en/about" \
-     http://dispatcher-host/dispatcher/invalidate.cache
-
-# Flush everything (use sparingly)
-curl -H "CQ-Action: Activate" \
-     -H "CQ-Handle: /" \
-     http://dispatcher-host/dispatcher/invalidate.cache
-```
-
 ## Local Dispatcher testing with the SDK
 
 The AEMaaCS SDK includes a Dispatcher SDK for local testing.
@@ -309,7 +293,7 @@ You learned:
 - **Cache rules** -- what gets cached and what does not
 - **Filters** -- blocking malicious requests, allowing legitimate ones
 - **URL rewrites** -- vanity URLs and redirects
-- **Cache invalidation** -- stat files, auto-invalidation on publish, manual flush
+- **Cache invalidation** -- stat files, auto-invalidation on publish
 - **Stat file level** -- controlling invalidation granularity
 - **Local testing** with the Dispatcher SDK
 
