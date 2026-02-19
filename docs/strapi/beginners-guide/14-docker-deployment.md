@@ -840,4 +840,4 @@ You learned:
 
 With Docker and CI/CD automation, you have a professional deployment pipeline that ensures consistent, reliable deployments from development to production.
 
-Next up: [Troubleshooting & Common Issues](./15-troubleshooting.md) -- debugging common problems, performance issues, and migration strategies.
+Next up: [Performance Optimization](./15-performance-optimization.md) -- database indexing, query optimization, caching strategies, CDN setup, and monitoring for high-performance Strapi applications.
