@@ -125,10 +125,11 @@ package com.mysite.core.models;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
-@Model(adaptables = Resource.class)
+@Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class HelloModel {
 
     @ValueMapValue
@@ -154,8 +155,14 @@ Breaking this down:
 | Annotation                            | Purpose                                                           |
 |---------------------------------------|-------------------------------------------------------------------|
 | `@Model(adaptables = Resource.class)` | This class is a Sling Model adapted from a `Resource`             |
+| `defaultInjectionStrategy = OPTIONAL` | Fields that cannot be injected become `null` instead of failing   |
 | `@ValueMapValue`                      | Inject a property from the resource's `ValueMap` (JCR properties) |
 | `@Default`                            | Provide a fallback value if the property is not set               |
+
+> **Important:** Without `defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL`, the default strategy is
+> `REQUIRED`. This means if an author has not configured the component yet (no dialog values saved), `adaptTo()` returns
+> `null` and the component renders nothing -- or worse, throws an error. Always set `OPTIONAL` and provide `@Default`
+> values for a safe authoring experience.
 
 When an author has not configured the component yet, the default values are shown. Once the author fills in the dialog,
 the actual values from the JCR replace the defaults.

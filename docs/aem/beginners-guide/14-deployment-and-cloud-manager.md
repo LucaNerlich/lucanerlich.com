@@ -35,6 +35,7 @@ flowchart LR
     Git -->|"Triggers"| CM
     CM --> Build
     Build -->|"Deploy"| DevEnv
+    DevEnv -->|"Promote"| Stage
     Stage -->|"Approve & promote"| Prod
 ```
 
@@ -280,12 +281,21 @@ Access in OSGi configs:
 }
 ```
 
-Or in Java:
+The `$[env:...]` and `$[secret:...]` placeholders are resolved by AEM at config loading time. To use these values in
+Java, read them through the OSGi configuration -- not directly from the environment:
 
 ```java
-@Activate
-protected void activate(BundleContext ctx) {
-    String analyticsId = ctx.getProperty("ANALYTICS_ID");
+@Component(service = AnalyticsService.class)
+@Designate(ocd = AnalyticsConfig.class)
+public class AnalyticsServiceImpl implements AnalyticsService {
+
+    private String analyticsId;
+
+    @Activate
+    protected void activate(AnalyticsConfig config) {
+        // The value comes from the .cfg.json that references $[env:ANALYTICS_ID]
+        this.analyticsId = config.analytics_id();
+    }
 }
 ```
 
@@ -346,7 +356,6 @@ You learned:
 - **Cloud Manager** -- Git, pipelines, environments, monitoring
 - **Pipeline stages** -- build, test, code quality, security, deploy
 - **Rapid Development Environments** -- fast iteration with the RDE CLI
-- **Content Transfer Tool** -- moving content between environments
 - **Environment-specific config** -- run modes, environment variables
 - **Monitoring** -- logs, tailing
 - **Production checklist** -- what to verify before going live

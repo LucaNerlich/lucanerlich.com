@@ -155,6 +155,33 @@ Your project's page component typically extends the Core Components page:
 Then you customize by overriding specific HTL files (like `customheaderlibs.html` and `customfooterlibs.html`) rather
 than rewriting the entire page.
 
+### Overriding customheaderlibs and customfooterlibs
+
+The Core Components page component provides extension points for injecting custom CSS and JS. Create these files in your
+page component to add your own includes:
+
+```html
+<!-- apps/mysite/components/page/customheaderlibs.html -->
+<!-- Loaded in the <head> -- use for CSS and critical resources -->
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
+    <sly data-sly-call="${clientlib.css @ categories='mysite.site'}"/>
+</sly>
+
+<!-- Custom meta tags, preconnects, etc. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+```
+
+```html
+<!-- apps/mysite/components/page/customfooterlibs.html -->
+<!-- Loaded before </body> -- use for JS -->
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
+    <sly data-sly-call="${clientlib.js @ categories='mysite.site'}"/>
+</sly>
+```
+
+This approach is preferred because you only override the extension points, while the Core Components page component
+handles the full HTML structure, SEO meta tags, and other boilerplate.
+
 ## Component policies
 
 Policies control how components behave within a template. They are configured per template, per container.

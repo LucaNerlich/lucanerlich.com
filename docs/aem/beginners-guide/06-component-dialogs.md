@@ -393,6 +393,61 @@ A complete dialog for a Hero banner component:
 > the [Touch UI Component Dialogs](/aem/component-dialogs) reference. See also [Coral UI](/aem/ui/coral-ui) for the
 > underlying design system and [Custom Dialog Widgets](/aem/ui/custom-dialog-widgets) for building your own field types.
 
+## Conditional field visibility (show/hide)
+
+A common requirement is showing or hiding fields based on the value of another field. Granite UI supports this with the
+`granite:class` and `showhide` target pattern. For example, show a "Link URL" field only when the author selects "Custom
+Link" from a dropdown:
+
+```xml
+<!-- The controlling field: a select dropdown -->
+<linkType jcr:primaryType="nt:unstructured"
+          sling:resourceType="granite/ui/components/coral/foundation/form/select"
+          fieldLabel="Link Type"
+          name="./linkType"
+          granite:class="cq-dialog-dropdown-showhide">
+    <granite:data jcr:primaryType="nt:unstructured"
+                  cq-dialog-dropdown-showhide-target=".link-type-showhide-target"/>
+    <items jcr:primaryType="nt:unstructured">
+        <none jcr:primaryType="nt:unstructured"
+              text="None" value="none"/>
+        <page jcr:primaryType="nt:unstructured"
+              text="Page Link" value="page"/>
+        <custom jcr:primaryType="nt:unstructured"
+                text="Custom URL" value="custom"/>
+    </items>
+</linkType>
+
+<!-- Shown only when linkType = "page" -->
+<pagePath jcr:primaryType="nt:unstructured"
+          sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+          fieldLabel="Page"
+          name="./pagePath"
+          rootPath="/content"
+          granite:class="hide link-type-showhide-target">
+    <granite:data jcr:primaryType="nt:unstructured"
+                  showhidetargetvalue="page"/>
+</pagePath>
+
+<!-- Shown only when linkType = "custom" -->
+<customUrl jcr:primaryType="nt:unstructured"
+           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+           fieldLabel="Custom URL"
+           name="./customUrl"
+           granite:class="hide link-type-showhide-target">
+    <granite:data jcr:primaryType="nt:unstructured"
+                  showhidetargetvalue="custom"/>
+</customUrl>
+```
+
+How it works:
+
+1. The controlling field has `granite:class="cq-dialog-dropdown-showhide"` and a `granite:data` child that specifies the
+   CSS target class via `cq-dialog-dropdown-showhide-target`
+2. Each conditional field has `granite:class="hide <target-class>"` (hidden by default) and a `granite:data` child with
+   `showhidetargetvalue` matching the dropdown value that should reveal it
+3. AEM's built-in `cq-dialog-dropdown-showhide` client library handles the show/hide logic automatically
+
 ## Summary
 
 You learned:

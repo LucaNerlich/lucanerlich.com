@@ -183,7 +183,7 @@ apps/mysite/components/hero/
 ├── _cq_dialog/
 │   └── .content.xml
 └── clientlibs/
-    └── .content.xml      # Component clientlib
+    ├── .content.xml      # Component clientlib
     ├── css.txt
     ├── js.txt
     ├── css/

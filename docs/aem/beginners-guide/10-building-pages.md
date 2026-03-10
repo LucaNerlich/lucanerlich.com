@@ -211,6 +211,20 @@ public class ArticlePageModel {
 }
 ```
 
+> **Note:** `currentPage.getTags()` returns resolved `Tag` objects. If you need to work with tags programmatically
+> (e.g., find pages by tag, resolve tag IDs to titles in a specific locale), use the `TagManager` service:
+>
+> ```java
+> @OSGiService
+> private ResourceResolverFactory resolverFactory;
+>
+> public String getLocalizedTagTitle(String tagId, Locale locale) {
+>     TagManager tagManager = resource.getResourceResolver().adaptTo(TagManager.class);
+>     Tag tag = tagManager.resolve(tagId);
+>     return tag != null ? tag.getTitle(locale) : tagId;
+> }
+> ```
+
 ## Navigation
 
 The Navigation Core Component builds a navigation tree from the site structure:

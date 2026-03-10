@@ -177,8 +177,8 @@ This is how components include other components -- it triggers a full Sling reso
 <!-- Include a static HTL fragment -->
 <div data-sly-include="partials/footer.html"></div>
 
-<!-- Include from a different component -->
-<div data-sly-include="${'path/to/template.html' @ prependPath='/apps'}"></div>
+<!-- Include with an absolute path -->
+<div data-sly-include="/apps/mysite/components/shared/utils.html"></div>
 ```
 
 Unlike `data-sly-resource`, `data-sly-include` does **not** trigger resource resolution -- it just inlines the HTL file.

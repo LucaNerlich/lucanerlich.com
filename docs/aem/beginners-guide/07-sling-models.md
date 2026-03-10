@@ -293,15 +293,15 @@ public class ArticleModel {
 
 ## Optional injection
 
-By default, `@ValueMapValue` injection is **optional** -- if the property does not exist, the field is `null`. To make
-injection required:
+By default, Sling Model injection is **required** -- if a property does not exist, the model fails to adapt (
+`adaptTo()` returns `null`). To make injection optional:
 
 ```java
-@ValueMapValue(injectionStrategy = InjectionStrategy.REQUIRED)
-private String title; // Throws exception if missing
+@ValueMapValue(injectionStrategy = InjectionStrategy.OPTIONAL)
+private String title; // null if missing, no exception
 ```
 
-Or at the model level:
+Or at the model level (recommended):
 
 ```java
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
@@ -400,7 +400,7 @@ Export your model as JSON (or other formats) for headless use cases:
 ```java
 @Model(
     adaptables = Resource.class,
-    adapters = { Hero.class, Exporter.class },
+    adapters = { Hero.class, ComponentExporter.class },
     resourceType = "mysite/components/hero",
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
@@ -410,7 +410,8 @@ public class HeroImpl implements Hero {
 }
 ```
 
-Now you can access the component as JSON:
+The `ComponentExporter` interface (from `com.adobe.cq.export.json`) is what enables the `.model.json` export. Now you
+can access the component as JSON:
 
 ```bash
 curl http://localhost:4502/content/mysite/en/jcr:content/root/container/hero.model.json

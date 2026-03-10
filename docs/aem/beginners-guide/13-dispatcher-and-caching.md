@@ -270,6 +270,23 @@ This validates your Dispatcher configuration against AEMaaCS rules. Common check
 This starts an Apache + Dispatcher instance pointing to your local Publish on port 4503. Test at
 `http://localhost:8080`.
 
+### AEMaaCS Dispatcher restrictions
+
+In AEMaaCS, the Dispatcher configuration is **partially immutable**. Adobe manages the base Apache/Dispatcher
+configuration, and your project can only customize specific areas:
+
+| Allowed                                                  | Not allowed                                                   |
+|----------------------------------------------------------|---------------------------------------------------------------|
+| Custom virtual hosts in `conf.d/available_vhosts/`       | Custom Apache modules (`LoadModule`)                          |
+| Rewrite rules in `conf.d/rewrites/`                      | Modifying `httpd.conf` or `dispatcher.any` directly           |
+| Custom filters in `conf.dispatcher.d/filters/`           | Changing the render address (managed by Adobe)                |
+| Cache rules in `conf.dispatcher.d/cache/`                | Adding `AllowOverride` or `.htaccess` files                   |
+| Custom variables in `conf.d/variables/`                  | Inline PHP, CGI, or other scripting modules                   |
+| Client headers in `conf.dispatcher.d/clientheaders/`     | Directives that conflict with Adobe's base configuration      |
+
+The Dispatcher SDK validator (`./bin/validator full`) enforces these restrictions locally. Always validate before
+pushing to Cloud Manager -- the pipeline will reject invalid configurations.
+
 ### Testing checklist
 
 | Test              | What to verify                                      |

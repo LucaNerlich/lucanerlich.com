@@ -244,7 +244,7 @@ For a resource with `sling:resourceType = "mysite/components/text"`, Sling looks
 | Request             | Script looked up                     |
 |---------------------|--------------------------------------|
 | `GET .html`         | `text.html` or `html.html`           |
-| `GET .json`         | `text.json` or `json.html`           |
+| `GET .json`         | `text.json` (or Sling Default GET Servlet for JSON) |
 | `GET .article.html` | `text.article.html` then `text.html` |
 | `POST .html`        | `text.POST.html`                     |
 
@@ -352,6 +352,41 @@ http://localhost:4502/bin/querybuilder.json?
   &p.limit=10
 ```
 
+In Java (e.g., inside a Sling Model or OSGi service), you use the `QueryBuilder` service:
+
+```java
+@OSGiService
+private QueryBuilder queryBuilder;
+
+@Self
+private Resource resource;
+
+public List<String> findPageTitles() {
+    Map<String, String> params = new HashMap<>();
+    params.put("path", "/content/mysite");
+    params.put("type", "cq:Page");
+    params.put("property", "jcr:content/jcr:title");
+    params.put("property.operation", "like");
+    params.put("property.value", "%about%");
+    params.put("p.limit", "10");
+
+    ResourceResolver resolver = resource.getResourceResolver();
+    Session session = resolver.adaptTo(Session.class);
+    Query query = queryBuilder.createQuery(PredicateGroup.create(params), session);
+    SearchResult result = query.getResult();
+
+    List<String> titles = new ArrayList<>();
+    for (Hit hit : result.getHits()) {
+        try {
+            titles.add(hit.getTitle());
+        } catch (RepositoryException e) {
+            // handle exception
+        }
+    }
+    return titles;
+}
+```
+
 ### JCR-SQL2
 
 SQL-like syntax for JCR queries:
@@ -359,9 +394,8 @@ SQL-like syntax for JCR queries:
 ```sql
 SELECT *
 FROM [cq:Page] AS page
-WHERE ISDESCENDANTNODE(page
-    , '/content/mysite')
-  AND page.[jcr: content /jcr:title] LIKE '%about%'
+WHERE ISDESCENDANTNODE(page, '/content/mysite')
+  AND page.[jcr:content/jcr:title] LIKE '%about%'
 ```
 
 You can run queries in CRXDE Lite's query tool (bottom panel) or the QueryBuilder Debugger at

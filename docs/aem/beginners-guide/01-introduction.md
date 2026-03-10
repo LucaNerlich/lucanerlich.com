@@ -144,6 +144,24 @@ On first start, AEM:
 
 Default credentials: **admin / admin**.
 
+> **Tip:** First startup can take 5--10 minutes. You can verify the instance is ready by checking the system console
+> bundles endpoint:
+>
+> ```bash
+> curl -s -u admin:admin http://localhost:4502/system/console/bundles.json | python3 -c "
+> import sys, json
+> data = json.load(sys.stdin)
+> s = data['s']
+> print(f'Bundles: {s[0]} total, {s[1]} active, {s[2]} fragment, {s[3]} resolved, {s[4]} installed')
+> if s[4] == 0:
+>     print('All bundles resolved -- instance is ready.')
+> else:
+>     print(f'{s[4]} bundles still installing -- wait and retry.')
+> "
+> ```
+>
+> When the installed count reaches 0, all bundles are resolved or active and the instance is ready.
+
 ### Step 3 -- Start the Publish instance (optional for now)
 
 For a publish instance, use a different port:

@@ -330,6 +330,16 @@ A configuration file:
 }
 ```
 
+> **Naming convention:** Notice that the annotation method `greeting_prefix()` maps to the config key `greeting.prefix`.
+> OSGi converts underscores (`_`) in method names to periods (`.`) in configuration property names. A double underscore
+> (`__`) maps to a single underscore, and a single trailing underscore (`_`) is removed. For example:
+>
+> | Method name         | Config property key |
+> |---------------------|---------------------|
+> | `greeting_prefix()` | `greeting.prefix`   |
+> | `my__property()`    | `my_property`       |
+> | `trailing_()`       | `trailing`          |
+
 ### Run modes
 
 Run modes determine which configurations are active:
@@ -464,15 +474,19 @@ React to repository events:
 @Component(
     service = EventHandler.class,
     property = {
-        "event.topics=com/day/cq/replication"
+        "event.topics=com/day/cq/replication/job/publish"
     }
 )
 public class ReplicationEventHandler implements EventHandler {
 
     @Override
     public void handleEvent(Event event) {
-        String path = (String) event.getProperty("paths");
-        // React to replication
+        String[] paths = (String[]) event.getProperty("paths");
+        if (paths != null) {
+            for (String path : paths) {
+                // React to replication of each path
+            }
+        }
     }
 }
 ```
