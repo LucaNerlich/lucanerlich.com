@@ -18,10 +18,140 @@ SQL (Structured Query Language) is the standard language for working with relati
 PostgreSQL, MySQL, SQLite, MariaDB, or SQL Server -- the core SQL syntax is the same. This guide covers everything from
 basic queries to database design.
 
+## Before you start -- the very basics
+
+This section covers the foundational concepts behind databases and SQL. If you already know what tables, rows, and
+queries are, skip ahead to [What is a relational database?](#what-is-a-relational-database).
+
+### What is a database?
+
+A **database** is an organized collection of data stored electronically and managed by software called a **database
+management system** (DBMS). You interact with the DBMS -- not with the raw files on disk.
+
+Without a database, you might store data in text files or spreadsheets. That works for small amounts of data, but it
+breaks down quickly:
+
+- How do you prevent two people from editing the same record at the same time?
+- How do you enforce that every order has a valid customer?
+- How do you efficiently search through millions of rows?
+
+Databases solve all of these problems. They come in two broad families:
+
+| Family                      | Also called | Examples                          | Data model              |
+|-----------------------------|-------------|-----------------------------------|-------------------------|
+| **Relational databases**    | SQL         | PostgreSQL, MySQL, SQLite, Oracle | Tables with rows/columns |
+| **Non-relational databases** | NoSQL       | MongoDB, Redis, Cassandra         | Documents, key-value, graphs |
+
+This guide focuses entirely on **relational databases** and the SQL language used to interact with them.
+
+```mermaid
+flowchart LR
+    A["Flat files\n(CSV, TXT)"] -->|"adds structure\nand types"| B["Spreadsheets\n(Excel, Sheets)"]
+    B -->|"adds relationships,\nrules, and scale"| C["Relational\nDatabase"]
+```
+
+### Why use a relational database?
+
+| Concern              | Spreadsheet                          | Relational database                             |
+|----------------------|--------------------------------------|-------------------------------------------------|
+| **Data integrity**   | No enforcement -- any cell can hold anything | Strict types, constraints, and foreign keys     |
+| **Relationships**    | Manual cross-referencing between sheets | Built-in joins across tables                    |
+| **Concurrent access** | Conflicts when multiple users edit   | Transactions guarantee consistency              |
+| **Querying**         | Filters and formulas, limited        | Full SQL -- aggregation, joins, subqueries      |
+| **Scalability**      | Slows at thousands of rows           | Handles millions to billions of rows            |
+
+### What is SQL?
+
+SQL stands for **Structured Query Language**. It is pronounced either "S-Q-L" (letter by letter) or "sequel" -- both
+are common.
+
+SQL is a **declarative** language. You describe **what** data you want, not **how** to get it. The database engine
+figures out the most efficient way to retrieve or modify the data. This is different from imperative languages like
+Java or Python, where you write step-by-step instructions.
+
+SQL commands fall into four categories:
+
+```mermaid
+flowchart TD
+    SQL["SQL Commands"]
+    SQL --> DQL["DQL -- Data Query Language\nSELECT"]
+    SQL --> DML["DML -- Data Manipulation Language\nINSERT, UPDATE, DELETE"]
+    SQL --> DDL["DDL -- Data Definition Language\nCREATE, ALTER, DROP"]
+    SQL --> DCL["DCL -- Data Control Language\nGRANT, REVOKE"]
+```
+
+| Category | Purpose                          | Key statements              |
+|----------|----------------------------------|-----------------------------|
+| **DQL**  | Read data                        | `SELECT`                    |
+| **DML**  | Create, modify, or remove data   | `INSERT`, `UPDATE`, `DELETE` |
+| **DDL**  | Define or change database structure | `CREATE`, `ALTER`, `DROP`  |
+| **DCL**  | Control access permissions       | `GRANT`, `REVOKE`          |
+
+### How a SQL query works -- a mental model
+
+When you send a SQL query to the database, several things happen before you get results back:
+
+```mermaid
+flowchart LR
+    A["You write\na SQL query"] --> B["Parser\nchecks syntax"]
+    B --> C["Query Optimizer\nfinds the fastest\nexecution plan"]
+    C --> D["Execution Engine\nreads/writes data"]
+    D --> E["Result Set\nreturned to you"]
+```
+
+The **query optimizer** is the reason SQL is powerful. You write `SELECT name FROM users WHERE age > 30` and the
+database decides whether to scan the whole table, use an index, or combine multiple strategies -- whichever is fastest.
+
+### Anatomy of a table
+
+A table is the fundamental structure in a relational database. Here is a `users` table:
+
+```text
+                         Table: users
+    ┌────────────────────────────────────────────────┐
+    │  id (PK)  │  name           │  email           │
+    ├───────────┼─────────────────┼──────────────────┤
+    │  1        │  Ada Lovelace   │  ada@example.com │  ← row (record)
+    │  2        │  Grace Hopper   │  grace@example.com│
+    │  3        │  Alan Turing    │  alan@example.com │
+    └────────────────────────────────────────────────┘
+         ↑              ↑                 ↑
+      column         column            column
+    (integer)       (text)             (text)
+```
+
+- **Table** -- a named collection of data about one type of thing (users, orders, products).
+- **Column** -- a single attribute. Every column has a **name** and a **data type** (integer, text, date). The database
+  rejects data that does not match the type.
+- **Row** -- one record. Each row contains one value per column.
+- **Primary key (PK)** -- a column (or set of columns) that uniquely identifies each row. No two rows can share the
+  same primary key value.
+
+### Reading your first query
+
+Before diving into the full guide, read through this single query line by line:
+
+```sql
+SELECT name, email
+FROM users
+WHERE active = TRUE
+ORDER BY name;
+```
+
+1. **`SELECT name, email`** -- pick the columns you want in the result. You do not have to retrieve every column.
+2. **`FROM users`** -- specify which table to read from.
+3. **`WHERE active = TRUE`** -- filter: only include rows where the `active` column is `TRUE`.
+4. **`ORDER BY name`** -- sort the results alphabetically by the `name` column.
+
+The result is a new table containing only the `name` and `email` columns of active users, sorted by name. You described
+*what* you wanted. The database figured out *how* to get it.
+
+---
+
 ## What is a relational database?
 
-A relational database stores data in **tables** (also called relations). Each table has **columns** (attributes) and *
-*rows** (records). Tables are related to each other through **keys**.
+A relational database stores data in **tables** (also called relations). Each table has **columns** (attributes) and
+**rows** (records). Tables are related to each other through **keys**.
 
 ```mermaid
 erDiagram
@@ -102,6 +232,10 @@ CREATE TABLE users (
 | `TIMESTAMP`                | Date and time          | `'2025-01-15 10:30:00'` |
 | `BLOB`                     | Binary data            | Images, files           |
 
+**Note on `BOOLEAN`:** Not all databases have a native boolean type. MySQL stores `BOOLEAN` as `TINYINT(1)` (0 or 1),
+SQL Server uses `BIT`, and SQLite stores booleans as plain integers. Standard SQL uses `TRUE` and `FALSE`, but the
+underlying storage varies.
+
 ### Column constraints
 
 | Constraint              | Meaning                          |
@@ -138,21 +272,65 @@ CREATE TABLE post_tags (
 );
 ```
 
+### Foreign key actions -- `ON DELETE` and `ON UPDATE`
+
+When you define a foreign key, you can specify what happens when the referenced row is deleted or updated. Without an
+explicit action, most databases default to `RESTRICT` -- the operation fails if dependent rows exist.
+
+```mermaid
+flowchart TD
+    Q["Referenced row is deleted or updated"]
+    Q --> CASCADE["CASCADE\nAutomatically delete/update\ndependent rows"]
+    Q --> SET_NULL["SET NULL\nSet the FK column to NULL\n(column must be nullable)"]
+    Q --> RESTRICT["RESTRICT\nBlock the operation\nif dependent rows exist"]
+    Q --> SET_DEFAULT["SET DEFAULT\nSet the FK column to\nits default value"]
+    Q --> NO_ACTION["NO ACTION\nSimilar to RESTRICT\n(checked at end of statement)"]
+```
+
+| Action          | On DELETE                                | On UPDATE                                |
+|-----------------|------------------------------------------|------------------------------------------|
+| `CASCADE`       | Delete dependent rows                    | Update the FK value in dependent rows    |
+| `SET NULL`      | Set FK to `NULL`                         | Set FK to `NULL`                         |
+| `RESTRICT`      | Block the delete                         | Block the update                         |
+| `SET DEFAULT`   | Set FK to its default value              | Set FK to its default value              |
+| `NO ACTION`     | Same as `RESTRICT` (deferred checking)   | Same as `RESTRICT` (deferred checking)   |
+
+```sql
+-- Deleting a user also deletes their posts
+CREATE TABLE posts (
+    id      INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title   TEXT NOT NULL,
+    body    TEXT
+);
+
+-- Deleting a user keeps comments but sets user_id to NULL (anonymous)
+CREATE TABLE comments (
+    id      INTEGER PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    body    TEXT NOT NULL
+);
+```
+
+Choose the action that matches your business logic. `CASCADE` is convenient but dangerous -- deleting one user could
+remove thousands of related rows. `RESTRICT` is the safest default.
+
 ## Inserting data
 
 ### `INSERT INTO`
 
 ```sql
 -- Single row
-INSERT INTO users (name, email, age)
-VALUES ('Ada Lovelace', 'ada@example.com', 36);
+INSERT INTO users (id, name, email, age)
+VALUES (1, 'Ada Lovelace', 'ada@example.com', 36);
 
 -- Multiple rows
-INSERT INTO users (name, email, age) VALUES
-    ('Grace Hopper', 'grace@example.com', 85),
-    ('Alan Turing', 'alan@example.com', 41),
-    ('Linus Torvalds', 'linus@example.com', 54),
-    ('Margaret Hamilton', 'margaret@example.com', 88);
+INSERT INTO users (id, name, email, age) VALUES
+    (2, 'Grace Hopper', 'grace@example.com', 85),
+    (3, 'Alan Turing', 'alan@example.com', 41),
+    (4, 'Linus Torvalds', 'linus@example.com', 54),
+    (5, 'Margaret Hamilton', 'margaret@example.com', 88);
 ```
 
 Insert posts:
@@ -164,6 +342,25 @@ INSERT INTO posts (user_id, title, body, published) VALUES
     (2, 'COBOL to SQL', 'Migrating legacy systems...', TRUE),
     (3, 'Turing Machines', 'A theoretical framework...', FALSE),
     (4, 'Linux Kernel Design', 'How the kernel handles...', TRUE);
+```
+
+### `INSERT INTO ... SELECT` -- inserting from a query
+
+You can insert rows by selecting from another table or query. This is useful for archiving, copying, or transforming
+data:
+
+```sql
+-- Copy all published posts into an archive table
+INSERT INTO archived_posts (user_id, title, body)
+SELECT user_id, title, body
+FROM posts
+WHERE published = TRUE;
+
+-- Create a summary table from aggregated data
+INSERT INTO user_stats (user_id, post_count)
+SELECT user_id, COUNT(*)
+FROM posts
+GROUP BY user_id;
 ```
 
 ## Querying data
@@ -201,7 +398,19 @@ SELECT * FROM users WHERE name = 'Ada Lovelace';
 
 -- Comparison
 SELECT * FROM users WHERE age > 50;
+```
 
+Result of `WHERE age > 50`:
+
+```text
+id | name              | email                | age | active
+---+-------------------+----------------------+-----+-------
+2  | Grace Hopper      | grace@example.com    | 85  | TRUE
+4  | Linus Torvalds    | linus@example.com    | 54  | TRUE
+5  | Margaret Hamilton | margaret@example.com | 88  | TRUE
+```
+
+```sql
 -- Multiple conditions
 SELECT * FROM users WHERE age > 30 AND active = TRUE;
 
@@ -218,10 +427,33 @@ SELECT * FROM users WHERE age IS NOT NULL;
 -- Pattern matching
 SELECT * FROM users WHERE email LIKE '%example.com';
 SELECT * FROM users WHERE name LIKE 'A%'; -- starts with A
+```
 
+Result of `WHERE name LIKE 'A%'`:
+
+```text
+id | name         | email             | age | active
+---+--------------+-------------------+-----+-------
+1  | Ada Lovelace | ada@example.com   | 36  | TRUE
+3  | Alan Turing  | alan@example.com  | 41  | TRUE
+```
+
+```sql
 -- Range
 SELECT * FROM users WHERE age BETWEEN 30 AND 60;
+```
 
+Result:
+
+```text
+id | name           | email              | age | active
+---+----------------+--------------------+-----+-------
+1  | Ada Lovelace   | ada@example.com    | 36  | TRUE
+3  | Alan Turing    | alan@example.com   | 41  | TRUE
+4  | Linus Torvalds | linus@example.com  | 54  | TRUE
+```
+
+```sql
 -- List membership
 SELECT * FROM users WHERE name IN ('Ada Lovelace', 'Alan Turing', 'Grace Hopper');
 ```
@@ -239,6 +471,18 @@ SELECT * FROM users ORDER BY age DESC;
 SELECT * FROM users ORDER BY active DESC, name ASC;
 ```
 
+Result of `ORDER BY age DESC`:
+
+```text
+id | name              | email                | age | active
+---+-------------------+----------------------+-----+-------
+5  | Margaret Hamilton | margaret@example.com | 88  | TRUE
+2  | Grace Hopper      | grace@example.com    | 85  | TRUE
+4  | Linus Torvalds    | linus@example.com    | 54  | TRUE
+3  | Alan Turing       | alan@example.com     | 41  | TRUE
+1  | Ada Lovelace      | ada@example.com      | 36  | TRUE
+```
+
 ### `LIMIT` and `OFFSET` -- pagination
 
 ```sql
@@ -249,12 +493,41 @@ SELECT * FROM users ORDER BY id LIMIT 3;
 SELECT * FROM users ORDER BY id LIMIT 3 OFFSET 2;
 ```
 
+Result of `LIMIT 3`:
+
+```text
+id | name         | email              | age | active
+---+--------------+--------------------+-----+-------
+1  | Ada Lovelace | ada@example.com    | 36  | TRUE
+2  | Grace Hopper | grace@example.com  | 85  | TRUE
+3  | Alan Turing  | alan@example.com   | 41  | TRUE
+```
+
+Result of `LIMIT 3 OFFSET 2`:
+
+```text
+id | name              | email                | age | active
+---+-------------------+----------------------+-----+-------
+3  | Alan Turing       | alan@example.com     | 41  | TRUE
+4  | Linus Torvalds    | linus@example.com    | 54  | TRUE
+5  | Margaret Hamilton | margaret@example.com | 88  | TRUE
+```
+
 **Note:** In SQL Server, use `TOP` or `FETCH FIRST` instead of `LIMIT`.
 
 ### `DISTINCT` -- unique values
 
 ```sql
 SELECT DISTINCT active FROM users;
+```
+
+Result:
+
+```text
+active
+------
+TRUE
+FALSE
 ```
 
 ## Updating data
@@ -294,6 +567,13 @@ DELETE FROM users;
 -- Removes all rows, resets auto-increment (not available in SQLite)
 TRUNCATE TABLE users;
 ```
+
+`TRUNCATE` is **DDL** (Data Definition Language), not DML. This has important consequences:
+
+- In most databases (MySQL, Oracle, SQL Server), `TRUNCATE` **cannot be rolled back** inside a transaction.
+- PostgreSQL is the exception -- it supports transactional `TRUNCATE`.
+- `TRUNCATE` resets auto-increment counters; `DELETE` does not.
+- `TRUNCATE` does not fire row-level `DELETE` triggers.
 
 ## Aggregate functions
 
@@ -349,6 +629,16 @@ WHERE published = TRUE
 GROUP BY user_id
 HAVING COUNT(*) > 1;
 ```
+
+Result:
+
+```text
+user_id | post_count
+--------+-----------
+1       | 2
+```
+
+Only Ada (user_id 1) has more than one published post.
 
 ### Query execution order
 
@@ -463,6 +753,18 @@ FROM users
 RIGHT JOIN posts ON users.id = posts.user_id;
 ```
 
+Result (identical to `INNER JOIN` here because every post has a valid `user_id`):
+
+```text
+name           | title
+---------------+-------------------------
+Ada Lovelace   | Introduction to SQL
+Ada Lovelace   | Advanced Joins
+Grace Hopper   | COBOL to SQL
+Alan Turing    | Turing Machines
+Linus Torvalds | Linux Kernel Design
+```
+
 Not all databases support `RIGHT JOIN` (e.g., SQLite does not). You can always rewrite it as a `LEFT JOIN` by swapping
 the table order.
 
@@ -475,6 +777,22 @@ SELECT users.name, posts.title
 FROM users
 FULL OUTER JOIN posts ON users.id = posts.user_id;
 ```
+
+Result:
+
+```text
+name              | title
+------------------+-------------------------
+Ada Lovelace      | Introduction to SQL
+Ada Lovelace      | Advanced Joins
+Grace Hopper      | COBOL to SQL
+Alan Turing       | Turing Machines
+Linus Torvalds    | Linux Kernel Design
+Margaret Hamilton | NULL
+```
+
+In this dataset the result looks like `LEFT JOIN` because every post has a valid user. In practice, `FULL OUTER JOIN`
+also shows orphaned right-side rows (e.g., posts with a deleted user would appear as `NULL | title`).
 
 ### Join type visual summary
 
@@ -504,11 +822,36 @@ FROM users
 CROSS JOIN tags;
 ```
 
-If `users` has 5 rows and `tags` has 3 rows, the result has 15 rows. Rarely useful, but good to understand.
+If `users` has 5 rows and `tags` has 3 rows, the result has 15 rows. Example (assuming tags: sql, linux, theory):
+
+```text
+name              | tag
+------------------+--------
+Ada Lovelace      | sql
+Ada Lovelace      | linux
+Ada Lovelace      | theory
+Grace Hopper      | sql
+Grace Hopper      | linux
+Grace Hopper      | theory
+...               | ...
+```
+
+Rarely useful, but good to understand.
 
 ### Self join -- joining a table to itself
 
 Useful when rows in the same table have a parent-child relationship:
+
+```mermaid
+flowchart TD
+    Alice["Alice (CEO)\nmanager_id: NULL"]
+    Bob["Bob\nmanager_id: 1"]
+    Charlie["Charlie\nmanager_id: 1"]
+    Diana["Diana\nmanager_id: 2"]
+    Alice --> Bob
+    Alice --> Charlie
+    Bob --> Diana
+```
 
 ```sql
 CREATE TABLE employees (
@@ -558,6 +901,17 @@ INNER JOIN tags t ON pt.tag_id = t.id
 ORDER BY u.name, p.title;
 ```
 
+Result (assuming tags have been assigned via the `post_tags` junction table):
+
+```text
+author         | post                | tag
+---------------+---------------------+---------
+Ada Lovelace   | Advanced Joins      | sql
+Ada Lovelace   | Introduction to SQL | sql
+Ada Lovelace   | Introduction to SQL | database
+Linus Torvalds | Linux Kernel Design | linux
+```
+
 ### Join performance
 
 ```mermaid
@@ -572,7 +926,16 @@ flowchart LR
 
 ## Subqueries
 
-A subquery is a `SELECT` inside another query:
+A subquery is a `SELECT` inside another query. Subqueries can appear in several places:
+
+```mermaid
+flowchart TD
+    SQ["Subquery types"]
+    SQ --> W["In WHERE\nFilter rows based on\nanother query's results"]
+    SQ --> S["In SELECT\nCompute a value for\neach row (scalar)"]
+    SQ --> F["In FROM\nUse a query result\nas a virtual table"]
+    SQ --> E["With EXISTS\nCheck whether matching\nrows exist"]
+```
 
 ### In `WHERE`
 
@@ -582,6 +945,16 @@ SELECT name FROM users
 WHERE id IN (
     SELECT user_id FROM posts WHERE published = TRUE
 );
+```
+
+Result:
+
+```text
+name
+---------------
+Ada Lovelace
+Grace Hopper
+Linus Torvalds
 ```
 
 ### Correlated subquery
@@ -594,6 +967,14 @@ SELECT name FROM users u
 WHERE (
     SELECT COUNT(*) FROM posts p WHERE p.user_id = u.id
 ) > 1;
+```
+
+Result:
+
+```text
+name
+------------
+Ada Lovelace
 ```
 
 ### In `SELECT` (scalar subquery)
@@ -631,6 +1012,17 @@ WHERE post_count > 0
 ORDER BY post_count DESC;
 ```
 
+Result:
+
+```text
+author         | post_count
+---------------+-----------
+Ada Lovelace   | 2
+Grace Hopper   | 1
+Alan Turing    | 1
+Linus Torvalds | 1
+```
+
 ### `EXISTS`
 
 Checks whether a subquery returns any rows (more efficient than `IN` for large datasets):
@@ -643,6 +1035,41 @@ WHERE EXISTS (
     WHERE p.user_id = u.id AND p.published = TRUE
 );
 ```
+
+Result:
+
+```text
+name
+---------------
+Ada Lovelace
+Grace Hopper
+Linus Torvalds
+```
+
+### `NOT EXISTS` -- anti-join
+
+The inverse of `EXISTS`. Finds rows that have **no** matching rows in the subquery. This is often called an anti-join:
+
+```sql
+-- Users who have NO published posts
+SELECT name FROM users u
+WHERE NOT EXISTS (
+    SELECT 1 FROM posts p
+    WHERE p.user_id = u.id AND p.published = TRUE
+);
+```
+
+Result:
+
+```text
+name
+------------------
+Alan Turing
+Margaret Hamilton
+```
+
+`NOT EXISTS` is generally more efficient than `NOT IN` for this type of query, especially when the subquery might
+contain `NULL` values (which cause `NOT IN` to behave unexpectedly).
 
 ## Common Table Expressions (CTEs)
 
@@ -713,7 +1140,20 @@ SELECT
 FROM users;
 ```
 
-`RANK` skips numbers after ties; `DENSE_RANK` does not.
+Result (all ages are unique here, so `RANK` and `DENSE_RANK` are identical):
+
+```text
+name              | age | rank | dense_rank
+------------------+-----+------+-----------
+Margaret Hamilton | 88  | 1    | 1
+Grace Hopper      | 85  | 2    | 2
+Linus Torvalds    | 54  | 3    | 3
+Alan Turing       | 41  | 4    | 4
+Ada Lovelace      | 36  | 5    | 5
+```
+
+`RANK` skips numbers after ties; `DENSE_RANK` does not. For example, if two users shared age 85, `RANK` would assign
+both rank 1, then skip to 3. `DENSE_RANK` would assign both rank 1, then continue with 2.
 
 ### `PARTITION BY` -- windowing within groups
 
@@ -725,6 +1165,18 @@ SELECT
     ROW_NUMBER() OVER (PARTITION BY u.id ORDER BY p.created_at DESC) AS post_rank
 FROM users u
 INNER JOIN posts p ON u.id = p.user_id;
+```
+
+Result:
+
+```text
+name           | title               | created_at          | post_rank
+---------------+---------------------+---------------------+----------
+Ada Lovelace   | Advanced Joins      | 2025-01-15 10:30:00 | 1
+Ada Lovelace   | Introduction to SQL | 2025-01-10 08:00:00 | 2
+Grace Hopper   | COBOL to SQL        | 2025-01-12 14:00:00 | 1
+Alan Turing    | Turing Machines     | 2025-01-11 09:00:00 | 1
+Linus Torvalds | Linux Kernel Design | 2025-01-14 16:00:00 | 1
 ```
 
 This numbers each user's posts from newest to oldest. You can then filter to get the latest post per user:
@@ -741,6 +1193,17 @@ WITH ranked AS (
 SELECT name, title FROM ranked WHERE rn = 1;
 ```
 
+Result:
+
+```text
+name           | title
+---------------+---------------------
+Ada Lovelace   | Advanced Joins
+Grace Hopper   | COBOL to SQL
+Alan Turing    | Turing Machines
+Linus Torvalds | Linux Kernel Design
+```
+
 ### Running totals
 
 ```sql
@@ -749,6 +1212,52 @@ SELECT
     age,
     SUM(age) OVER (ORDER BY id) AS running_total
 FROM users;
+```
+
+Result:
+
+```text
+name              | age | running_total
+------------------+-----+--------------
+Ada Lovelace      | 36  | 36
+Grace Hopper      | 85  | 121
+Alan Turing       | 41  | 162
+Linus Torvalds    | 54  | 216
+Margaret Hamilton | 88  | 304
+```
+
+### `LAG` and `LEAD` -- accessing adjacent rows
+
+`LAG` looks at the **previous** row and `LEAD` looks at the **next** row in the window order. These are essential for
+comparing a row to its neighbors:
+
+```sql
+SELECT
+    name,
+    age,
+    LAG(age) OVER (ORDER BY age) AS prev_age,
+    LEAD(age) OVER (ORDER BY age) AS next_age,
+    age - LAG(age) OVER (ORDER BY age) AS gap_from_prev
+FROM users;
+```
+
+Result:
+
+```text
+name              | age | prev_age | next_age | gap_from_prev
+------------------+-----+----------+----------+--------------
+Ada Lovelace      | 36  | NULL     | 41       | NULL
+Alan Turing       | 41  | 36       | 54       | 5
+Linus Torvalds    | 54  | 41       | 85       | 13
+Grace Hopper      | 85  | 54       | 88       | 31
+Margaret Hamilton | 88  | 85       | NULL     | 3
+```
+
+`LAG` and `LEAD` accept an optional offset (default 1) and a default value:
+
+```sql
+-- Look 2 rows back, default to 0 if no row exists
+LAG(age, 2, 0) OVER (ORDER BY age)
 ```
 
 ## Modifying table structure
@@ -793,6 +1302,29 @@ flowchart LR
     end
 ```
 
+A **B-tree index** works like a sorted tree structure. Instead of scanning every row, the database navigates through a
+few levels to find the exact row:
+
+```mermaid
+flowchart TD
+    Root["Root node\n[D - M - T]"]
+    Root --> L1["[A - B - C]"]
+    Root --> L2["[E - G - K]"]
+    Root --> L3["[N - P - R]"]
+    Root --> L4["[U - W - Z]"]
+    L1 --> R1["Row: ada@..."]
+    L2 --> R2["Row: grace@..."]
+    L3 --> R3["Row: margaret@..."]
+    L4 --> R4["Row: zoe@..."]
+    style Root fill:#f0f0f0,stroke:#333
+    style R1 fill:#e1f5e1,stroke:#4a4
+    style R2 fill:#e1f5e1,stroke:#4a4
+    style R3 fill:#e1f5e1,stroke:#4a4
+    style R4 fill:#e1f5e1,stroke:#4a4
+```
+
+With an index, looking up `email = 'grace@...'` takes 2-3 steps instead of scanning thousands of rows.
+
 ### Creating indexes
 
 ```sql
@@ -804,6 +1336,14 @@ CREATE INDEX idx_posts_user_published ON posts(user_id, published);
 
 -- Unique index (enforces uniqueness)
 CREATE UNIQUE INDEX idx_users_email_unique ON users(email);
+
+-- Partial index (PostgreSQL) -- index only a subset of rows
+-- Smaller and faster than indexing the entire table
+CREATE INDEX idx_active_users_email ON users(email) WHERE active = TRUE;
+
+-- Covering index -- includes extra columns to avoid table lookups
+-- PostgreSQL uses INCLUDE, other databases vary
+CREATE INDEX idx_posts_user ON posts(user_id) INCLUDE (title, created_at);
 ```
 
 ### When to create indexes
@@ -851,6 +1391,25 @@ flowchart LR
 | **Consistency** | The database moves from one valid state to another                  |
 | **Isolation**   | Concurrent transactions do not see each other's uncommitted changes |
 | **Durability**  | Once committed, data is permanent even after a crash                |
+
+### Transaction lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Active : BEGIN
+    Active --> Active : SQL statements
+    Active --> Savepoint : SAVEPOINT name
+    Savepoint --> Active : ROLLBACK TO name
+    Savepoint --> Active : RELEASE name
+    Active --> Committed : COMMIT
+    Active --> Aborted : ROLLBACK
+    Committed --> [*]
+    Aborted --> [*]
+```
+
+A transaction starts with `BEGIN` and ends with either `COMMIT` (save all changes) or `ROLLBACK` (discard all changes).
+**Savepoints** allow partial rollbacks within a transaction -- useful for complex operations where you want to undo one
+step without losing everything.
 
 ### Using transactions
 
@@ -910,6 +1469,17 @@ Now you can query it like a table:
 SELECT * FROM published_posts ORDER BY created_at DESC;
 ```
 
+Result:
+
+```text
+author         | title               | created_at
+---------------+---------------------+---------------------
+Linus Torvalds | Linux Kernel Design | 2025-01-14 16:00:00
+Ada Lovelace   | Advanced Joins      | 2025-01-15 10:30:00
+Grace Hopper   | COBOL to SQL        | 2025-01-12 14:00:00
+Ada Lovelace   | Introduction to SQL | 2025-01-10 08:00:00
+```
+
 Views:
 
 - Simplify complex queries by giving them a name
@@ -920,7 +1490,24 @@ Views:
 
 ### Normalization
 
-Normalization reduces data duplication by organizing data into separate, related tables.
+Normalization reduces data duplication by organizing data into separate, related tables. There are several levels
+(normal forms), each building on the previous:
+
+```mermaid
+flowchart LR
+    UNF["Unnormalized\nRepeating groups,\nduplicate data"] -->|"Remove repeating\ngroups"| 1NF["1NF\nAtomic values,\none value per cell"]
+    1NF -->|"Remove partial\ndependencies"| 2NF["2NF\nEvery non-key column\ndepends on the full PK"]
+    2NF -->|"Remove transitive\ndependencies"| 3NF["3NF\nNon-key columns depend\nonly on the PK"]
+```
+
+| Normal form | Rule                                                                 | In plain terms                                          |
+|-------------|----------------------------------------------------------------------|---------------------------------------------------------|
+| **1NF**     | All columns contain atomic (single) values; no repeating groups      | One value per cell, no lists or nested tables            |
+| **2NF**     | 1NF + every non-key column depends on the entire primary key         | No column depends on only *part* of a composite key      |
+| **3NF**     | 2NF + no transitive dependencies between non-key columns            | Non-key columns describe the PK, not each other          |
+
+For most applications, **3NF is sufficient**. Higher normal forms (BCNF, 4NF, 5NF) exist but are rarely needed in
+practice.
 
 **Before normalization (denormalized):**
 
@@ -1006,6 +1593,14 @@ systems, public-facing IDs).
 
 Instead of deleting rows, mark them as deleted:
 
+```mermaid
+stateDiagram-v2
+    [*] --> Active : INSERT
+    Active --> SoftDeleted : SET deleted_at = NOW()
+    SoftDeleted --> Active : SET deleted_at = NULL
+    SoftDeleted --> [*] : DELETE (hard delete)
+```
+
 ```sql
 ALTER TABLE users ADD COLUMN deleted_at TIMESTAMP;
 
@@ -1028,6 +1623,42 @@ CREATE TABLE articles (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+```
+
+**Important:** `DEFAULT CURRENT_TIMESTAMP` only sets the value on `INSERT`. It does **not** auto-update when the row is
+modified. Handling auto-update depends on the database:
+
+```sql
+-- MySQL: use ON UPDATE
+CREATE TABLE articles (
+    id         INTEGER PRIMARY KEY AUTO_INCREMENT,
+    title      TEXT NOT NULL,
+    body       TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- PostgreSQL: create a trigger function
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_updated_at
+    BEFORE UPDATE ON articles
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at();
+
+-- SQLite: use a trigger
+CREATE TRIGGER set_updated_at
+    AFTER UPDATE ON articles
+    FOR EACH ROW
+BEGIN
+    UPDATE articles SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
+END;
 ```
 
 ### Pagination
@@ -1065,8 +1696,69 @@ ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
 INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
 ON DUPLICATE KEY UPDATE name = VALUES(name);
 
--- SQLite
+-- SQLite (3.24+, true upsert using ON CONFLICT)
+INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
+ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
+
+-- SQLite (older versions -- caution: deletes then re-inserts the row)
+-- This resets the rowid, fires DELETE triggers, and cascades foreign keys
 INSERT OR REPLACE INTO users (email, name) VALUES ('ada@example.com', 'Ada L.');
+```
+
+## NULL handling functions
+
+`NULL` represents missing or unknown data. It is not the same as zero or an empty string. Two functions make working
+with `NULL` much easier:
+
+### `COALESCE` -- first non-NULL value
+
+`COALESCE` returns the first argument that is not `NULL`. Use it to provide fallback values:
+
+```sql
+-- Show 0 instead of NULL for users without an age
+SELECT name, COALESCE(age, 0) AS age FROM users;
+```
+
+Result (all users here have an age, so `COALESCE` has no effect -- but if any had `NULL`, it would show `0`):
+
+```text
+name              | age
+------------------+----
+Ada Lovelace      | 36
+Grace Hopper      | 85
+Alan Turing       | 41
+Linus Torvalds    | 54
+Margaret Hamilton | 88
+```
+
+```sql
+-- Use a chain of fallbacks
+SELECT COALESCE(nickname, name, email) AS display_name FROM users;
+```
+
+Result (assuming Ada has no `nickname` column set):
+
+```text
+display_name
+-----------------
+Ada Lovelace
+Grace Hopper
+Alan Turing
+Linus Torvalds
+Margaret Hamilton
+```
+
+### `NULLIF` -- conditional NULL
+
+`NULLIF(a, b)` returns `NULL` if `a` equals `b`, otherwise returns `a`. Useful for avoiding division by zero or
+treating sentinel values as unknown:
+
+```sql
+-- Avoid division by zero: returns NULL instead of an error
+SELECT total / NULLIF(count, 0) AS average FROM stats;
+
+-- Treat empty strings as NULL
+SELECT NULLIF(email, '') AS email FROM users;
 ```
 
 ## String functions
@@ -1082,12 +1774,30 @@ SELECT
     CONCAT('hello', ' ', 'world'); -- hello world
 ```
 
+Result:
+
+```text
+upper | lower | length | trim  | substring | replace | concat
+------+-------+--------+-------+-----------+---------+------------
+HELLO | hello | 5      | hello | ell       | herro   | hello world
+```
+
 ## Date functions
 
 ```sql
 -- Current date/time
 SELECT CURRENT_DATE, CURRENT_TIMESTAMP;
+```
 
+Result:
+
+```text
+current_date | current_timestamp
+-------------+------------------------
+2025-01-15   | 2025-01-15 10:30:00+00
+```
+
+```sql
 -- Extract parts (PostgreSQL)
 SELECT EXTRACT(YEAR FROM created_at) AS year FROM posts;
 SELECT EXTRACT(MONTH FROM created_at) AS month FROM posts;
@@ -1102,6 +1812,14 @@ SELECT
 FROM posts
 GROUP BY DATE_TRUNC('month', created_at)
 ORDER BY month;
+```
+
+Result of `GROUP BY month`:
+
+```text
+month      | post_count
+-----------+-----------
+2025-01-01 | 5
 ```
 
 ## `CASE` expressions
@@ -1133,6 +1851,29 @@ Linus Torvalds    | 54  | Experienced
 Margaret Hamilton | 88  | Senior
 ```
 
+### `CASE` in `UPDATE` -- conditional bulk updates
+
+`CASE` is not limited to `SELECT`. Use it in `UPDATE` to set values based on conditions in a single statement:
+
+```sql
+-- Bulk categorize users based on age
+UPDATE users
+SET category = CASE
+    WHEN age >= 80 THEN 'Senior'
+    WHEN age >= 50 THEN 'Experienced'
+    WHEN age >= 30 THEN 'Mid-career'
+    ELSE 'Junior'
+END;
+
+-- Conditional price adjustment
+UPDATE products
+SET price = CASE
+    WHEN stock = 0 THEN price * 0.5    -- clearance for out-of-stock
+    WHEN stock < 10 THEN price * 1.1   -- premium for low stock
+    ELSE price
+END;
+```
+
 ## `UNION` -- combining result sets
 
 ```sql
@@ -1140,11 +1881,75 @@ Margaret Hamilton | 88  | Senior
 SELECT name FROM users WHERE age > 50
 UNION
 SELECT name FROM users WHERE active = TRUE;
+```
 
+Result (Grace, Linus, and Margaret appear in both queries but are listed only once):
+
+```text
+name
+------------------
+Ada Lovelace
+Alan Turing
+Grace Hopper
+Linus Torvalds
+Margaret Hamilton
+```
+
+```sql
 -- UNION ALL keeps duplicates (faster)
 SELECT name FROM users WHERE age > 50
 UNION ALL
 SELECT name FROM users WHERE active = TRUE;
+```
+
+Result (duplicates preserved -- 8 rows instead of 5):
+
+```text
+name
+------------------
+Grace Hopper
+Linus Torvalds
+Margaret Hamilton
+Ada Lovelace
+Grace Hopper
+Alan Turing
+Linus Torvalds
+Margaret Hamilton
+```
+
+## String aggregation
+
+A common need is to combine multiple values into a single comma-separated string. The function name varies by database:
+
+```sql
+-- PostgreSQL: STRING_AGG
+SELECT
+    u.name,
+    STRING_AGG(t.name, ', ' ORDER BY t.name) AS tags
+FROM users u
+INNER JOIN posts p ON u.id = p.user_id
+INNER JOIN post_tags pt ON p.id = pt.post_id
+INNER JOIN tags t ON pt.tag_id = t.id
+GROUP BY u.name;
+
+-- MySQL / SQLite: GROUP_CONCAT
+SELECT
+    u.name,
+    GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') AS tags
+FROM users u
+INNER JOIN posts p ON u.id = p.user_id
+INNER JOIN post_tags pt ON p.id = pt.post_id
+INNER JOIN tags t ON pt.tag_id = t.id
+GROUP BY u.name;
+```
+
+Example result:
+
+```text
+name           | tags
+---------------+-------------------
+Ada Lovelace   | database, sql
+Linus Torvalds | kernel, linux
 ```
 
 ## Security: SQL injection
