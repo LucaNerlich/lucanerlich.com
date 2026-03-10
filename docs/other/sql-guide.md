@@ -46,8 +46,8 @@ This guide focuses entirely on **relational databases** and the SQL language use
 
 ```mermaid
 flowchart LR
-    A["Flat files\n(CSV, TXT)"] -->|"adds structure\nand types"| B["Spreadsheets\n(Excel, Sheets)"]
-    B -->|"adds relationships,\nrules, and scale"| C["Relational\nDatabase"]
+    A["Flat files<br/>(CSV, TXT)"] -->|"adds structure<br/>and types"| B["Spreadsheets<br/>(Excel, Sheets)"]
+    B -->|"adds relationships,<br/>rules, and scale"| C["Relational<br/>Database"]
 ```
 
 ### Why use a relational database?
@@ -74,10 +74,10 @@ SQL commands fall into four categories:
 ```mermaid
 flowchart TD
     SQL["SQL Commands"]
-    SQL --> DQL["DQL -- Data Query Language\nSELECT"]
-    SQL --> DML["DML -- Data Manipulation Language\nINSERT, UPDATE, DELETE"]
-    SQL --> DDL["DDL -- Data Definition Language\nCREATE, ALTER, DROP"]
-    SQL --> DCL["DCL -- Data Control Language\nGRANT, REVOKE"]
+    SQL --> DQL["DQL -- Data Query Language<br/>SELECT"]
+    SQL --> DML["DML -- Data Manipulation Language<br/>INSERT, UPDATE, DELETE"]
+    SQL --> DDL["DDL -- Data Definition Language<br/>CREATE, ALTER, DROP"]
+    SQL --> DCL["DCL -- Data Control Language<br/>GRANT, REVOKE"]
 ```
 
 | Category | Purpose                          | Key statements              |
@@ -93,10 +93,10 @@ When you send a SQL query to the database, several things happen before you get 
 
 ```mermaid
 flowchart LR
-    A["You write\na SQL query"] --> B["Parser\nchecks syntax"]
-    B --> C["Query Optimizer\nfinds the fastest\nexecution plan"]
-    C --> D["Execution Engine\nreads/writes data"]
-    D --> E["Result Set\nreturned to you"]
+    A["You write<br/>a SQL query"] --> B["Parser<br/>checks syntax"]
+    B --> C["Query Optimizer<br/>finds the fastest<br/>execution plan"]
+    C --> D["Execution Engine<br/>reads/writes data"]
+    D --> E["Result Set<br/>returned to you"]
 ```
 
 The **query optimizer** is the reason SQL is powerful. You write `SELECT name FROM users WHERE age > 30` and the
@@ -280,11 +280,11 @@ explicit action, most databases default to `RESTRICT` -- the operation fails if 
 ```mermaid
 flowchart TD
     Q["Referenced row is deleted or updated"]
-    Q --> CASCADE["CASCADE\nAutomatically delete/update\ndependent rows"]
-    Q --> SET_NULL["SET NULL\nSet the FK column to NULL\n(column must be nullable)"]
-    Q --> RESTRICT["RESTRICT\nBlock the operation\nif dependent rows exist"]
-    Q --> SET_DEFAULT["SET DEFAULT\nSet the FK column to\nits default value"]
-    Q --> NO_ACTION["NO ACTION\nSimilar to RESTRICT\n(checked at end of statement)"]
+    Q --> CASCADE["CASCADE<br/>Automatically delete/update<br/>dependent rows"]
+    Q --> SET_NULL["SET NULL<br/>Set the FK column to NULL<br/>(column must be nullable)"]
+    Q --> RESTRICT["RESTRICT<br/>Block the operation<br/>if dependent rows exist"]
+    Q --> SET_DEFAULT["SET DEFAULT<br/>Set the FK column to<br/>its default value"]
+    Q --> NO_ACTION["NO ACTION<br/>Similar to RESTRICT<br/>(checked at end of statement)"]
 ```
 
 | Action          | On DELETE                                | On UPDATE                                |
@@ -844,10 +844,10 @@ Useful when rows in the same table have a parent-child relationship:
 
 ```mermaid
 flowchart TD
-    Alice["Alice (CEO)\nmanager_id: NULL"]
-    Bob["Bob\nmanager_id: 1"]
-    Charlie["Charlie\nmanager_id: 1"]
-    Diana["Diana\nmanager_id: 2"]
+    Alice["Alice (CEO)<br/>manager_id: NULL"]
+    Bob["Bob<br/>manager_id: 1"]
+    Charlie["Charlie<br/>manager_id: 1"]
+    Diana["Diana<br/>manager_id: 2"]
     Alice --> Bob
     Alice --> Charlie
     Bob --> Diana
@@ -931,10 +931,10 @@ A subquery is a `SELECT` inside another query. Subqueries can appear in several 
 ```mermaid
 flowchart TD
     SQ["Subquery types"]
-    SQ --> W["In WHERE\nFilter rows based on\nanother query's results"]
-    SQ --> S["In SELECT\nCompute a value for\neach row (scalar)"]
-    SQ --> F["In FROM\nUse a query result\nas a virtual table"]
-    SQ --> E["With EXISTS\nCheck whether matching\nrows exist"]
+    SQ --> W["In WHERE<br/>Filter rows based on<br/>another query's results"]
+    SQ --> S["In SELECT<br/>Compute a value for<br/>each row (scalar)"]
+    SQ --> F["In FROM<br/>Use a query result<br/>as a virtual table"]
+    SQ --> E["With EXISTS<br/>Check whether matching<br/>rows exist"]
 ```
 
 ### In `WHERE`
@@ -1307,7 +1307,7 @@ few levels to find the exact row:
 
 ```mermaid
 flowchart TD
-    Root["Root node\n[D - M - T]"]
+    Root["Root node<br/>[D - M - T]"]
     Root --> L1["[A - B - C]"]
     Root --> L2["[E - G - K]"]
     Root --> L3["[N - P - R]"]
@@ -1495,9 +1495,9 @@ Normalization reduces data duplication by organizing data into separate, related
 
 ```mermaid
 flowchart LR
-    UNF["Unnormalized\nRepeating groups,\nduplicate data"] -->|"Remove repeating\ngroups"| 1NF["1NF\nAtomic values,\none value per cell"]
-    1NF -->|"Remove partial\ndependencies"| 2NF["2NF\nEvery non-key column\ndepends on the full PK"]
-    2NF -->|"Remove transitive\ndependencies"| 3NF["3NF\nNon-key columns depend\nonly on the PK"]
+    UNF["Unnormalized<br/>Repeating groups,<br/>duplicate data"] -->|"Remove repeating<br/>groups"| 1NF["1NF<br/>Atomic values,<br/>one value per cell"]
+    1NF -->|"Remove partial<br/>dependencies"| 2NF["2NF<br/>Every non-key column<br/>depends on the full PK"]
+    2NF -->|"Remove transitive<br/>dependencies"| 3NF["3NF<br/>Non-key columns depend<br/>only on the PK"]
 ```
 
 | Normal form | Rule                                                                 | In plain terms                                          |
