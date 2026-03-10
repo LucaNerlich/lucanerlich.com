@@ -666,19 +666,18 @@ export default {
 
 ### 3. Implement request queuing
 
-Prevent overload with rate limiting:
+Prevent overload with rate limiting. Strapi does not include a built-in rate limiter, so use the custom middleware from
+[chapter 8](./08-routes-policies-middleware.md) or a third-party package:
 
 ```javascript
 // config/middlewares.js
 export default [
   // ... other middleware
   {
-    name: 'strapi::rateLimit',
+    name: 'global::rate-limit',
     config: {
-      interval: 60000, // 1 minute
       max: 100, // 100 requests per minute
-      delayAfter: 50, // Start slowing down after 50 requests
-      timeWait: 10000, // 10 second delay
+      window: 60000, // 1 minute
     },
   },
 ];

@@ -94,7 +94,7 @@ Create a setup file to initialize Strapi for tests:
 
 ```javascript
 // tests/setup.js
-const Strapi = require("@strapi/strapi");
+const { createStrapi, compileStrapi } = require("@strapi/strapi");
 const fs = require("fs");
 
 let instance;
@@ -107,11 +107,12 @@ async function setupStrapi() {
       fs.unlinkSync(dbFile);
     }
 
-    instance = await Strapi().load();
+    await compileStrapi();
+    instance = await createStrapi({ appDir: process.cwd() }).load();
     await instance.server.mount();
 
     // Create test data if needed
-    await createTestData();
+    await createTestData(instance);
   }
   return instance;
 }
@@ -124,17 +125,7 @@ async function cleanupStrapi() {
   }
 }
 
-async function createTestData() {
-  // Create test admin user
-  await strapi.admin.services.user.create({
-    email: "test@test.com",
-    password: "Test1234",
-    firstname: "Test",
-    lastname: "User",
-    isActive: true,
-    roles: [1], // Super Admin role
-  });
-
+async function createTestData(strapi) {
   // Create test content
   await strapi.documents("api::author.author").create({
     data: {
@@ -147,6 +138,9 @@ async function createTestData() {
 
 module.exports = { setupStrapi, cleanupStrapi };
 ```
+
+> **Note:** The Strapi 5 test bootstrapping API may change between versions. Check the
+> [official Strapi testing docs](https://docs.strapi.io/cms/testing) for the latest recommended setup.
 
 ### Add test scripts to package.json
 

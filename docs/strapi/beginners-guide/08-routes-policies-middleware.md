@@ -50,9 +50,9 @@ Strapi auto-generates routes for every content type:
 
 ```javascript
 // src/api/post/routes/post.js
-const { createCoreRouter } = require("@strapi/strapi").factories;
+import { factories } from "@strapi/strapi";
 
-module.exports = createCoreRouter("api::post.post");
+export default factories.createCoreRouter("api::post.post");
 ```
 
 This creates the standard REST routes:
@@ -71,9 +71,9 @@ You can customize the core routes without replacing them:
 
 ```javascript
 // src/api/post/routes/post.js
-const { createCoreRouter } = require("@strapi/strapi").factories;
+import { factories } from "@strapi/strapi";
 
-module.exports = createCoreRouter("api::post.post", {
+export default factories.createCoreRouter("api::post.post", {
   config: {
     find: {
       // Attach middleware to the find route
@@ -100,7 +100,7 @@ file:
 
 ```javascript
 // src/api/post/routes/custom-post.js
-module.exports = {
+export default {
   routes: [
     {
       method: "GET",
@@ -215,11 +215,15 @@ policies for finer-grained control.
 
 ### Creating a custom policy
 
-Let's create an **is-owner** policy that ensures users can only update or delete their own posts:
+Let's create an **is-owner** policy that ensures users can only update or delete their own posts.
+
+> **Note:** This example assumes you have linked your API users (from Users & Permissions) to your Author content type,
+> for example by adding a one-to-one relation between Author and User. Without this link, `user.id` (the API user) and
+> `post.author.id` (the Author entry) are unrelated. Adjust the comparison to match your data model.
 
 ```javascript
 // src/api/post/policies/is-owner.js
-module.exports = async (policyContext, config, { strapi }) => {
+export default async (policyContext, config, { strapi }) => {
   const user = policyContext.state.user;
 
   // No user = not authenticated
@@ -229,18 +233,18 @@ module.exports = async (policyContext, config, { strapi }) => {
 
   const { id } = policyContext.params;
 
-  // Fetch the post with its author
+  // Fetch the post with its author (and the author's linked user)
   const post = await strapi.documents("api::post.post").findOne({
     documentId: id,
-    populate: { author: { fields: ["id"] } },
+    populate: { author: { populate: { user: { fields: ["id"] } } } },
   });
 
   if (!post) {
     return false;
   }
 
-  // Check if the authenticated user is the author
-  if (post.author?.id !== user.id) {
+  // Check if the authenticated user matches the author's linked user
+  if (post.author?.user?.id !== user.id) {
     return false;
   }
 
@@ -254,7 +258,7 @@ Reference the policy in your route configuration:
 
 ```javascript
 // In core routes
-module.exports = createCoreRouter("api::post.post", {
+export default factories.createCoreRouter("api::post.post", {
   config: {
     update: {
       policies: ["api::post.is-owner"],
@@ -282,7 +286,7 @@ Policies shared across content types go in `src/policies/`:
 
 ```javascript
 // src/policies/is-authenticated.js
-module.exports = (policyContext, config, { strapi }) => {
+export default (policyContext, config, { strapi }) => {
   if (policyContext.state.user) {
     return true;
   }
@@ -305,7 +309,7 @@ Policies can accept configuration:
 
 ```javascript
 // src/policies/rate-limit.js
-module.exports = (policyContext, config, { strapi }) => {
+export default (policyContext, config, { strapi }) => {
   const maxRequests = config.max || 100;
   const windowMs = config.window || 60000;
 
@@ -336,7 +340,7 @@ request, add headers, log data, or modify the response.
 
 ```javascript
 // src/api/post/middlewares/log-request.js
-module.exports = (config, { strapi }) => {
+export default (config, { strapi }) => {
   return async (ctx, next) => {
     const start = Date.now();
 
@@ -361,7 +365,7 @@ Reference middleware in route configuration:
 
 ```javascript
 // Core routes
-module.exports = createCoreRouter("api::post.post", {
+export default factories.createCoreRouter("api::post.post", {
   config: {
     find: {
       middlewares: ["api::post.log-request"],
@@ -384,9 +388,9 @@ module.exports = createCoreRouter("api::post.post", {
 
 Global middleware runs on every request. It is configured in `config/middlewares.ts`:
 
-```javascript
+```typescript
 // config/middlewares.ts
-module.exports = [
+export default [
   "strapi::logger",
   "strapi::errors",
   "strapi::security",
@@ -412,7 +416,7 @@ Create a global middleware:
 
 ```javascript
 // src/middlewares/request-timer.js
-module.exports = (config, { strapi }) => {
+export default (config, { strapi }) => {
   return async (ctx, next) => {
     const start = Date.now();
     await next();
@@ -424,9 +428,9 @@ module.exports = (config, { strapi }) => {
 
 Add it to the middleware stack:
 
-```javascript
+```typescript
 // config/middlewares.ts
-module.exports = [
+export default [
   "strapi::logger",
   "strapi::errors",
   "strapi::security",
@@ -445,9 +449,9 @@ module.exports = [
 
 You can customize built-in middleware by passing configuration:
 
-```javascript
+```typescript
 // config/middlewares.ts
-module.exports = [
+export default [
   "strapi::logger",
   "strapi::errors",
   {
@@ -486,7 +490,7 @@ A simple in-memory rate limiter:
 // src/middlewares/rate-limit.js
 const requestCounts = new Map();
 
-module.exports = (config, { strapi }) => {
+export default (config, { strapi }) => {
   const maxRequests = config.max || 100;
   const windowMs = config.window || 60 * 1000;
 
@@ -526,9 +530,9 @@ module.exports = (config, { strapi }) => {
 
 Add to the middleware stack:
 
-```javascript
+```typescript
 // config/middlewares.ts
-module.exports = [
+export default [
   "strapi::logger",
   "strapi::errors",
   {

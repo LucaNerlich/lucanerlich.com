@@ -434,7 +434,7 @@ server {
     }
 
     # Cache admin panel assets
-    location /_next/ {
+    location /admin/ {
         proxy_pass http://127.0.0.1:1337;
         proxy_cache_valid 200 7d;
         add_header Cache-Control "public, max-age=604800";
@@ -547,22 +547,6 @@ export default [
       credentials: true,
     },
   },
-  {
-    name: "strapi::rateLimit",
-    config: {
-      interval: 60000, // 1 minute
-      max: 100, // 100 requests per minute per IP
-      delayAfter: 50, // Start slowing down after 50 requests
-      timeWait: 10000, // 10 seconds of delay
-      prefixKey: "strapi", // Redis key prefix if using Redis
-      whitelist: ["127.0.0.1"], // IPs to exclude from rate limiting
-      store: {
-        // Optional: Use Redis for distributed rate limiting
-        // type: "redis",
-        // client: require("redis").createClient({ url: "redis://localhost:6379" })
-      },
-    },
-  },
   "strapi::poweredBy",
   "strapi::query",
   {
@@ -582,6 +566,10 @@ export default [
 ];
 ```
 
+> **Note:** Strapi does not ship with a built-in rate limiter. For production, use the custom rate limiting middleware
+> from [chapter 8](./08-routes-policies-middleware.md), or install a third-party package like
+> [koa-ratelimit](https://github.com/koajs/ratelimit) or [koa2-ratelimit](https://github.com/ysocorp/koa2-ratelimit).
+
 ### Additional security headers with Helmet
 
 For enhanced security, install and configure helmet:
@@ -592,12 +580,10 @@ npm install koa-helmet
 
 ```typescript
 // config/env/production/middlewares.ts
-import helmet from "koa-helmet";
-
 export default [
   // ... other middleware
   {
-    resolve: "./src/middlewares/helmet",
+    name: "global::helmet",
     config: {},
   },
   // ... rest of middleware

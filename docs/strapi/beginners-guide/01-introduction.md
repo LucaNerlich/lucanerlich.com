@@ -29,7 +29,8 @@ the [JavaScript Beginners Guide](/javascript/beginners-guide/introduction) first
 | **2 -- Working with Data**       | 4--6     | Admin panel, REST API, authentication & permissions                            |
 | **3 -- Customizing the Backend** | 7--9     | Controllers, services, routes, policies, middleware, lifecycle hooks, webhooks |
 | **4 -- Production Features**     | 10--11   | File uploads, media providers, TypeScript integration                          |
-| **5 -- Deploy**                  | 12       | Environment config, PostgreSQL, nginx, HTTPS, security hardening               |
+| **5 -- Deploy**                  | 12--14   | Environment config, PostgreSQL, nginx, HTTPS, Docker, CI/CD                    |
+| **6 -- Production Quality**      | 15--16   | Testing, performance optimization, troubleshooting, Strapi 4 migration         |
 
 By the end you will have a blog CMS with authors, posts, categories, and tags -- fully customized and running in
 production.
@@ -79,9 +80,9 @@ Strapi is one of the most popular headless CMS options. Here is why:
 
 Before we start, make sure you have:
 
-- **Node.js 18.x or 20.x (LTS versions)** -- check with `node --version`
-  - Strapi 5 requires Node.js 18.17.0+ or 20.x
-  - Node.js 21+ is not yet officially supported
+- **Node.js 18.x, 20.x, or 22.x (LTS versions)** -- check with `node --version`
+  - Strapi 5 requires Node.js 18.17.0 or later (LTS releases: 18, 20, 22)
+  - Odd-numbered Node.js releases (19, 21, 23) are not officially supported
 - **npm 7+, yarn 3+, or pnpm 8+** -- any package manager works
 - **A code editor** -- VS Code recommended for TypeScript support
 - **A terminal**
@@ -167,6 +168,7 @@ The directories you will work with most:
 | `src/api/`        | Content type schemas, controllers, services, routes |
 | `src/components/` | Reusable component schemas                          |
 | `config/`         | Application configuration                           |
+| `config/env/`     | Environment-specific overrides (e.g., `production/database.ts`) |
 | `public/uploads/` | Uploaded files (local provider)                     |
 
 ## The admin panel
@@ -259,6 +261,10 @@ The Document Service handles:
 - **Validation** -- enforces your schema rules automatically
 
 We will use it extensively starting in chapter 7.
+
+> **Important:** The Document Service defaults to returning **draft** documents when no `status` parameter is provided.
+> This is different from the public REST API, which defaults to published documents. Always pass `status: "published"`
+> when you want only live content in your custom code.
 
 ## Development workflow
 

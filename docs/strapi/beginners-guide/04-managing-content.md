@@ -175,10 +175,10 @@ By default, Strapi creates multiple sizes for uploaded images:
 | `medium`    | 750px     |
 | `large`     | 1000px    |
 
-The original file is always preserved. You can configure these sizes in `config/plugins.ts`:
+The original file is always preserved. You can configure these sizes in `config/plugins.js`:
 
 ```javascript
-// config/plugins.ts
+// config/plugins.js
 module.exports = ({ env }) => ({
   upload: {
     config: {

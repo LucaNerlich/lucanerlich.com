@@ -1,7 +1,8 @@
 {
     "label": "Beginners Guide",
+    "position": 1,
     "link": {
         "type": "generated-index",
-        "description": "A comprehensive Strapi 5 beginners guide -- from your first project to deploying a fully configured CMS on a VPS with nginx."
+        "description": "A step-by-step guide to building a blog CMS with Strapi 5 -- from installation to production deployment."
     }
 }

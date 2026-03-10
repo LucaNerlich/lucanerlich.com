@@ -202,9 +202,9 @@ export default factories.createCoreController(
           author: { fields: ["name"] },
           category: { fields: ["name", "slug"] },
         },
-        sort: { publishedDate: "desc" },
-        limit: 5,
-      });
+      sort: { publishedDate: "desc" },
+      pagination: { page: 1, pageSize: 5 },
+    });
 
       const sanitized = await this.sanitizeOutput(posts, ctx);
       return { data: sanitized };
@@ -222,10 +222,10 @@ export default factories.createCoreController(
           tags: { fields: ["name", "slug"] },
           seo: true,
         },
-        limit: 1,
-      });
+      pagination: { page: 1, pageSize: 1 },
+    });
 
-      if (posts.length === 0) {
+    if (posts.length === 0) {
         return ctx.notFound("Post not found");
       }
 
@@ -256,7 +256,7 @@ export default factories.createCoreService(
       return await strapi.documents("api::post.post").findMany({
         status: "published",
         sort: { publishedDate: "desc" },
-        limit,
+        pagination: { page: 1, pageSize: limit },
         populate: {
           author: { fields: ["name"] },
           category: { fields: ["name"] },
@@ -285,7 +285,7 @@ export default factories.createCoreService(
           ],
         },
         status: "published",
-        limit,
+        pagination: { page: 1, pageSize: limit },
         populate: {
           author: { fields: ["name"] },
           category: { fields: ["name"] },

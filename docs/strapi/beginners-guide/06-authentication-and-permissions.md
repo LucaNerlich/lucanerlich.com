@@ -148,10 +148,10 @@ The JWT secret and expiration are configured via environment variables:
 JWT_SECRET=your-secret-key-here
 ```
 
-The default token expiration is **30 days**. You can change it in `config/plugins.ts`:
+The default token expiration is **30 days**. You can change it in `config/plugins.js`:
 
 ```javascript
-// config/plugins.ts
+// config/plugins.js
 module.exports = ({ env }) => ({
   "users-permissions": {
     config: {
@@ -356,7 +356,7 @@ curl -X POST http://localhost:1337/api/auth/reset-password \
 ```
 
 > **Note:** Email sending must be configured for forgot password to work. By default, Strapi uses `sendmail`. For
-> production, configure an email provider (e.g., SendGrid, Mailgun) in `config/plugins.ts`.
+> production, configure an email provider (e.g., SendGrid, Mailgun) in `config/plugins.js`.
 
 ## Blocking users
 

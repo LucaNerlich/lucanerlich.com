@@ -90,10 +90,7 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
     // Force published-only for public requests
     ctx.query = {
       ...ctx.query,
-      filters: {
-        ...ctx.query.filters,
-        publishedAt: { $notNull: true },
-      },
+      status: "published",
     };
 
     return await super.find(ctx);
@@ -161,7 +158,7 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
         category: { fields: ["name", "slug"] },
       },
       sort: { publishedDate: "desc" },
-      limit: 5,
+      pagination: { page: 1, pageSize: 5 },
     });
 
     return { data: posts };
@@ -180,7 +177,7 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
         tags: { fields: ["name", "slug"] },
         seo: true,
       },
-      limit: 1,
+      pagination: { page: 1, pageSize: 1 },
     });
 
     if (posts.length === 0) {
@@ -193,6 +190,16 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
 ```
 
 Custom actions need custom routes to be accessible -- we will add those in the next chapter.
+
+> **Tip:** Strapi 5 also provides a `findFirst()` method on the Document Service. It returns the first document matching
+> your filters -- ideal for slug-based lookups:
+>
+> ```javascript
+> const post = await strapi.documents("api::post.post").findFirst({
+>   filters: { slug },
+>   status: "published",
+> });
+> ```
 
 ## Default services
 
@@ -221,7 +228,7 @@ export default factories.createCoreService("api::post.post", ({ strapi }) => ({
     return await strapi.documents("api::post.post").findMany({
       status: "published",
       sort: { viewCount: "desc" },
-      limit,
+      pagination: { page: 1, pageSize: limit },
       populate: {
         author: { fields: ["name"] },
         category: { fields: ["name"] },
@@ -251,7 +258,7 @@ export default factories.createCoreService("api::post.post", ({ strapi }) => ({
         ].filter(f => Object.keys(f).length > 0),
       },
       status: "published",
-      limit,
+      pagination: { page: 1, pageSize: limit },
       populate: {
         author: { fields: ["name"] },
         category: { fields: ["name"] },
@@ -303,9 +310,15 @@ const posts = await docs.findMany({
   filters: { featured: true },
   status: "published",
   sort: { createdAt: "desc" },
-  limit: 10,
-  offset: 0,
+  pagination: { page: 1, pageSize: 10 },
   populate: { author: true },
+});
+
+// Find first (returns a single document or null)
+const post = await docs.findFirst({
+  filters: { slug: "my-post" },
+  status: "published",
+  populate: { author: true, tags: true },
 });
 
 // Find one by documentId
@@ -343,6 +356,11 @@ await docs.publish({
 
 // Unpublish
 await docs.unpublish({
+  documentId: "abc123",
+});
+
+// Discard draft changes (revert draft to the published version)
+await docs.discardDraft({
   documentId: "abc123",
 });
 
@@ -455,24 +473,28 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
   async findBySlug(ctx) {
     const { slug } = ctx.params;
 
-    const posts = await strapi.documents("api::post.post").findMany({
-      filters: { slug },
-      status: "published",
-      populate: {
-        author: { fields: ["name"], populate: { avatar: true } },
-        category: { fields: ["name", "slug"] },
-        tags: { fields: ["name", "slug"] },
-        seo: true,
-      },
-      limit: 1,
-    });
+    try {
+      const post = await strapi.documents("api::post.post").findFirst({
+        filters: { slug },
+        status: "published",
+        populate: {
+          author: { fields: ["name"], populate: { avatar: true } },
+          category: { fields: ["name", "slug"] },
+          tags: { fields: ["name", "slug"] },
+          seo: true,
+        },
+      });
 
-    if (posts.length === 0) {
-      return ctx.notFound("Post not found");
+      if (!post) {
+        return ctx.notFound("Post not found");
+      }
+
+      const sanitized = await this.sanitizeOutput(post, ctx);
+      return { data: sanitized };
+    } catch (error) {
+      strapi.log.error("Error finding post by slug:", error);
+      return ctx.internalServerError("Something went wrong");
     }
-
-    const sanitized = await this.sanitizeOutput(posts[0], ctx);
-    return { data: sanitized };
   },
 }));
 ```

@@ -56,6 +56,12 @@ Before we can query the API, we need to allow public access:
 
 Now unauthenticated requests can read (but not create, update, or delete) your content.
 
+> **Common beginner mistakes:**
+>
+> 1. **Forgetting to enable permissions** -- by default, nothing is public. You must explicitly grant access in Settings > Roles > Public.
+> 2. **Not populating relations** -- the REST API returns only scalar fields by default. You must use `?populate=` to include related data.
+> 3. **Querying unpublished content** -- the public REST API only returns **published** documents. If your entries are still drafts, the API returns an empty array.
+
 ## Your first API call
 
 ```bash
@@ -312,10 +318,10 @@ curl "http://localhost:1337/api/posts?pagination[start]=10&pagination[limit]=10"
 
 ### Pagination limits
 
-The default maximum `pageSize` is **100**. You can increase this in `config/api.ts`:
+The default maximum `pageSize` is **100**. You can increase this in `config/api.js`:
 
 ```javascript
-// config/api.ts
+// config/api.js
 module.exports = {
   rest: {
     defaultLimit: 25,
@@ -408,19 +414,46 @@ curl "http://localhost:1337/api/posts?status=draft&status=published" \
 
 ### Publishing and Unpublishing
 
+In Strapi 5, publishing and unpublishing is done by updating the document with the `status` field, or by using the
+Document Service API programmatically in custom controllers:
+
 ```bash
-# Publish a draft
-curl -X POST http://localhost:1337/api/posts/abc123def456/publish \
-  -H "Authorization: Bearer YOUR_API_TOKEN"
-
-# Unpublish (convert to draft)
-curl -X POST http://localhost:1337/api/posts/abc123def456/unpublish \
-  -H "Authorization: Bearer YOUR_API_TOKEN"
-
-# Discard draft changes (revert to published version)
-curl -X POST http://localhost:1337/api/posts/abc123def456/discard \
-  -H "Authorization: Bearer YOUR_API_TOKEN"
+# Publish a draft by updating it with status=published
+curl -X PUT http://localhost:1337/api/posts/abc123def456 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -d '{
+    "data": {
+      "title": "Getting Started with Strapi"
+    },
+    "status": "published"
+  }'
 ```
+
+To unpublish or discard drafts, use the Document Service API in a custom controller (see
+[chapter 7](./07-custom-controllers-and-services.md)):
+
+```javascript
+// In a custom controller action
+async unpublishPost(ctx) {
+  const { id } = ctx.params;
+  const result = await strapi.documents("api::post.post").unpublish({
+    documentId: id,
+  });
+  return { data: result };
+},
+
+async discardDraft(ctx) {
+  const { id } = ctx.params;
+  const result = await strapi.documents("api::post.post").discardDraft({
+    documentId: id,
+  });
+  return { data: result };
+},
+```
+
+> **Note:** The Document Service provides `publish()`, `unpublish()`, and `discardDraft()` methods. The REST API does
+> not expose dedicated publish/unpublish endpoints out of the box -- you need custom routes and controllers for that.
 
 ## Updating entries
 
@@ -477,6 +510,40 @@ This single request:
 4. Sorts by newest first
 5. Paginates to 10 per page
 
+### Using the API from JavaScript
+
+While `curl` is great for testing, you will typically consume the API from a frontend. Here is the same query using
+`fetch`:
+
+```javascript
+async function getBlogPosts(category = "javascript", page = 1) {
+  const params = new URLSearchParams({
+    "filters[category][slug][$eq]": category,
+    "populate[author][fields][0]": "name",
+    "populate[category][fields][0]": "name",
+    "populate[tags][fields][0]": "name",
+    "fields[0]": "title",
+    "fields[1]": "slug",
+    "fields[2]": "excerpt",
+    "fields[3]": "publishedDate",
+    "sort": "publishedDate:desc",
+    "pagination[page]": page,
+    "pagination[pageSize]": "10",
+  });
+
+  const response = await fetch(
+    `http://localhost:1337/api/posts?${params}`
+  );
+  const { data, meta } = await response.json();
+
+  return { posts: data, pagination: meta.pagination };
+}
+```
+
+> **Tip:** For complex queries, consider using the
+> [Strapi Client](https://docs.strapi.io/cms/api/client) library which provides a typed, fluent API for querying
+> Strapi from JavaScript and TypeScript applications.
+
 ## API response format
 
 All responses follow a consistent structure:
@@ -524,6 +591,44 @@ Common status codes:
 | `403` | Forbidden (insufficient permissions)    |
 | `404` | Not found                               |
 | `500` | Internal server error                   |
+
+## GraphQL alternative
+
+Strapi also generates a **GraphQL API** from your content types. Install the GraphQL plugin to enable it:
+
+```bash
+npm install @strapi/plugin-graphql
+```
+
+Then query your content at `http://localhost:1337/graphql`:
+
+```graphql
+query {
+  posts(
+    filters: { category: { slug: { eq: "javascript" } } }
+    sort: "publishedDate:desc"
+    pagination: { page: 1, pageSize: 10 }
+  ) {
+    documentId
+    title
+    slug
+    excerpt
+    publishedDate
+    author {
+      name
+    }
+    category {
+      name
+    }
+    tags {
+      name
+    }
+  }
+}
+```
+
+GraphQL handles population automatically -- you get exactly the fields you ask for in the query. This guide focuses on
+REST, but GraphQL is a great alternative if your frontend uses Apollo, urql, or another GraphQL client.
 
 ## Summary
 

@@ -393,7 +393,7 @@ function notifySlack(message) {
   req.end();
 }
 
-module.exports = async (context, next) => {
+module.exports = (strapi) => async (context, next) => {
   if (context.uid !== "api::post.post") {
     return await next();
   }
@@ -411,6 +411,19 @@ module.exports = async (context, next) => {
   }
 
   return result;
+};
+```
+
+Register it in `src/index.js`:
+
+```javascript
+// src/index.js
+const createPostLifecycle = require("./middlewares/post-lifecycle");
+
+module.exports = {
+  register({ strapi }) {
+    strapi.documents.use(createPostLifecycle(strapi));
+  },
 };
 ```
 
