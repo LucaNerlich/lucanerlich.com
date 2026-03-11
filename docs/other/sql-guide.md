@@ -106,19 +106,13 @@ database decides whether to scan the whole table, use an index, or combine multi
 
 A table is the fundamental structure in a relational database. Here is a `users` table:
 
-```text
-                         Table: users
-    ┌────────────────────────────────────────────────┐
-    │  id (PK)  │  name           │  email           │
-    ├───────────┼─────────────────┼──────────────────┤
-    │  1        │  Ada Lovelace   │  ada@example.com │  ← row (record)
-    │  2        │  Grace Hopper   │  grace@example.com│
-    │  3        │  Alan Turing    │  alan@example.com │
-    └────────────────────────────────────────────────┘
-         ↑              ↑                 ↑
-      column         column            column
-    (integer)       (text)             (text)
-```
+| id (PK) | name          | email              |
+|---------|---------------|--------------------|
+| 1       | Ada Lovelace  | ada@example.com    |
+| 2       | Grace Hopper  | grace@example.com  |
+| 3       | Alan Turing   | alan@example.com   |
+
+Each horizontal entry is a row (record), and each vertical field is a column with a defined type.
 
 - **Table** -- a named collection of data about one type of thing (users, orders, products).
 - **Column** -- a single attribute. Every column has a **name** and a **data type** (integer, text, date). The database
@@ -1449,13 +1443,11 @@ practice.
 
 **Before normalization (denormalized):**
 
-```text
 | order_id | customer_name | customer_email  | product | price |
-|----------|--------------|-----------------|---------|-------|
-| 1        | Ada          | ada@example.com | Laptop  | 999   |
-| 2        | Ada          | ada@example.com | Mouse   | 29    |
-| 3        | Bob          | bob@example.com | Laptop  | 999   |
-```
+|----------|---------------|-----------------|---------|-------|
+| 1        | Ada           | ada@example.com | Laptop  | 999   |
+| 2        | Ada           | ada@example.com | Mouse   | 29    |
+| 3        | Bob           | bob@example.com | Laptop  | 999   |
 
 Problem: Ada's name and email are repeated. If her email changes, you must update every row.
 
