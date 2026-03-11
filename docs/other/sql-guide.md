@@ -380,15 +380,13 @@ SELECT name AS user_name, email AS contact FROM users;
 
 Result:
 
-```text
-user_name          | contact
--------------------+------------------------
-Ada Lovelace       | ada@example.com
-Grace Hopper       | grace@example.com
-Alan Turing        | alan@example.com
-Linus Torvalds     | linus@example.com
-Margaret Hamilton  | margaret@example.com
-```
+| user_name         | contact               |
+|-------------------|-----------------------|
+| Ada Lovelace      | ada@example.com       |
+| Grace Hopper      | grace@example.com     |
+| Alan Turing       | alan@example.com      |
+| Linus Torvalds    | linus@example.com     |
+| Margaret Hamilton | margaret@example.com  |
 
 ### `WHERE` -- filtering rows
 
@@ -402,13 +400,11 @@ SELECT * FROM users WHERE age > 50;
 
 Result of `WHERE age > 50`:
 
-```text
-id | name              | email                | age | active
----+-------------------+----------------------+-----+-------
-2  | Grace Hopper      | grace@example.com    | 85  | TRUE
-4  | Linus Torvalds    | linus@example.com    | 54  | TRUE
-5  | Margaret Hamilton | margaret@example.com | 88  | TRUE
-```
+| id | name              | email                | age | active |
+|----|-------------------|----------------------|-----|--------|
+| 2  | Grace Hopper      | grace@example.com    | 85  | TRUE   |
+| 4  | Linus Torvalds    | linus@example.com    | 54  | TRUE   |
+| 5  | Margaret Hamilton | margaret@example.com | 88  | TRUE   |
 
 ```sql
 -- Multiple conditions
@@ -431,12 +427,10 @@ SELECT * FROM users WHERE name LIKE 'A%'; -- starts with A
 
 Result of `WHERE name LIKE 'A%'`:
 
-```text
-id | name         | email             | age | active
----+--------------+-------------------+-----+-------
-1  | Ada Lovelace | ada@example.com   | 36  | TRUE
-3  | Alan Turing  | alan@example.com  | 41  | TRUE
-```
+| id | name         | email            | age | active |
+|----|--------------|------------------|-----|--------|
+| 1  | Ada Lovelace | ada@example.com  | 36  | TRUE   |
+| 3  | Alan Turing  | alan@example.com | 41  | TRUE   |
 
 ```sql
 -- Range
@@ -445,13 +439,11 @@ SELECT * FROM users WHERE age BETWEEN 30 AND 60;
 
 Result:
 
-```text
-id | name           | email              | age | active
----+----------------+--------------------+-----+-------
-1  | Ada Lovelace   | ada@example.com    | 36  | TRUE
-3  | Alan Turing    | alan@example.com   | 41  | TRUE
-4  | Linus Torvalds | linus@example.com  | 54  | TRUE
-```
+| id | name           | email             | age | active |
+|----|----------------|-------------------|-----|--------|
+| 1  | Ada Lovelace   | ada@example.com   | 36  | TRUE   |
+| 3  | Alan Turing    | alan@example.com  | 41  | TRUE   |
+| 4  | Linus Torvalds | linus@example.com | 54  | TRUE   |
 
 ```sql
 -- List membership
@@ -473,15 +465,13 @@ SELECT * FROM users ORDER BY active DESC, name ASC;
 
 Result of `ORDER BY age DESC`:
 
-```text
-id | name              | email                | age | active
----+-------------------+----------------------+-----+-------
-5  | Margaret Hamilton | margaret@example.com | 88  | TRUE
-2  | Grace Hopper      | grace@example.com    | 85  | TRUE
-4  | Linus Torvalds    | linus@example.com    | 54  | TRUE
-3  | Alan Turing       | alan@example.com     | 41  | TRUE
-1  | Ada Lovelace      | ada@example.com      | 36  | TRUE
-```
+| id | name              | email                | age | active |
+|----|-------------------|----------------------|-----|--------|
+| 5  | Margaret Hamilton | margaret@example.com | 88  | TRUE   |
+| 2  | Grace Hopper      | grace@example.com    | 85  | TRUE   |
+| 4  | Linus Torvalds    | linus@example.com    | 54  | TRUE   |
+| 3  | Alan Turing       | alan@example.com     | 41  | TRUE   |
+| 1  | Ada Lovelace      | ada@example.com      | 36  | TRUE   |
 
 ### `LIMIT` and `OFFSET` -- pagination
 
@@ -495,23 +485,19 @@ SELECT * FROM users ORDER BY id LIMIT 3 OFFSET 2;
 
 Result of `LIMIT 3`:
 
-```text
-id | name         | email              | age | active
----+--------------+--------------------+-----+-------
-1  | Ada Lovelace | ada@example.com    | 36  | TRUE
-2  | Grace Hopper | grace@example.com  | 85  | TRUE
-3  | Alan Turing  | alan@example.com   | 41  | TRUE
-```
+| id | name         | email             | age | active |
+|----|--------------|-------------------|-----|--------|
+| 1  | Ada Lovelace | ada@example.com   | 36  | TRUE   |
+| 2  | Grace Hopper | grace@example.com | 85  | TRUE   |
+| 3  | Alan Turing  | alan@example.com  | 41  | TRUE   |
 
 Result of `LIMIT 3 OFFSET 2`:
 
-```text
-id | name              | email                | age | active
----+-------------------+----------------------+-----+-------
-3  | Alan Turing       | alan@example.com     | 41  | TRUE
-4  | Linus Torvalds    | linus@example.com    | 54  | TRUE
-5  | Margaret Hamilton | margaret@example.com | 88  | TRUE
-```
+| id | name              | email                | age | active |
+|----|-------------------|----------------------|-----|--------|
+| 3  | Alan Turing       | alan@example.com     | 41  | TRUE   |
+| 4  | Linus Torvalds    | linus@example.com    | 54  | TRUE   |
+| 5  | Margaret Hamilton | margaret@example.com | 88  | TRUE   |
 
 **Note:** In SQL Server, use `TOP` or `FETCH FIRST` instead of `LIMIT`.
 
@@ -523,12 +509,10 @@ SELECT DISTINCT active FROM users;
 
 Result:
 
-```text
-active
-------
-TRUE
-FALSE
-```
+| active |
+|--------|
+| TRUE   |
+| FALSE  |
 
 ## Updating data
 
@@ -590,13 +574,13 @@ SELECT MAX(age) AS oldest FROM users;
 
 Result:
 
-```text
-total_users: 5
-active_users: 4
-average_age: 60.8
-youngest: 36
-oldest: 88
-```
+| metric       | value |
+|--------------|-------|
+| total_users  | 5     |
+| active_users | 4     |
+| average_age  | 60.8  |
+| youngest     | 36    |
+| oldest       | 88    |
 
 ## `GROUP BY` -- aggregating groups
 
@@ -610,12 +594,10 @@ GROUP BY active;
 
 Result:
 
-```text
-active | count
--------+------
-FALSE  | 1
-TRUE   | 4
-```
+| active | count |
+|--------|-------|
+| FALSE  | 1     |
+| TRUE   | 4     |
 
 ### `HAVING` -- filtering groups
 
@@ -632,11 +614,9 @@ HAVING COUNT(*) > 1;
 
 Result:
 
-```text
-user_id | post_count
---------+-----------
-1       | 2
-```
+| user_id | post_count |
+|---------|------------|
+| 1       | 2          |
 
 Only Ada (user_id 1) has more than one published post.
 
@@ -706,15 +686,13 @@ INNER JOIN posts ON users.id = posts.user_id;
 
 Result:
 
-```text
-name           | title
----------------+-------------------------
-Ada Lovelace   | Introduction to SQL
-Ada Lovelace   | Advanced Joins
-Grace Hopper   | COBOL to SQL
-Alan Turing    | Turing Machines
-Linus Torvalds | Linux Kernel Design
-```
+| name           | title                |
+|----------------|----------------------|
+| Ada Lovelace   | Introduction to SQL  |
+| Ada Lovelace   | Advanced Joins       |
+| Grace Hopper   | COBOL to SQL         |
+| Alan Turing    | Turing Machines      |
+| Linus Torvalds | Linux Kernel Design  |
 
 Margaret does not appear -- she has no posts. `INNER JOIN` only returns rows with matches in both tables.
 
@@ -730,16 +708,14 @@ LEFT JOIN posts ON users.id = posts.user_id;
 
 Result:
 
-```text
-name              | title
-------------------+-------------------------
-Ada Lovelace      | Introduction to SQL
-Ada Lovelace      | Advanced Joins
-Grace Hopper      | COBOL to SQL
-Alan Turing       | Turing Machines
-Linus Torvalds    | Linux Kernel Design
-Margaret Hamilton | NULL
-```
+| name              | title                |
+|-------------------|----------------------|
+| Ada Lovelace      | Introduction to SQL  |
+| Ada Lovelace      | Advanced Joins       |
+| Grace Hopper      | COBOL to SQL         |
+| Alan Turing       | Turing Machines      |
+| Linus Torvalds    | Linux Kernel Design  |
+| Margaret Hamilton | NULL                 |
 
 Margaret appears with `NULL` for the post title -- she has no posts, but `LEFT JOIN` includes her.
 
@@ -755,15 +731,13 @@ RIGHT JOIN posts ON users.id = posts.user_id;
 
 Result (identical to `INNER JOIN` here because every post has a valid `user_id`):
 
-```text
-name           | title
----------------+-------------------------
-Ada Lovelace   | Introduction to SQL
-Ada Lovelace   | Advanced Joins
-Grace Hopper   | COBOL to SQL
-Alan Turing    | Turing Machines
-Linus Torvalds | Linux Kernel Design
-```
+| name           | title                |
+|----------------|----------------------|
+| Ada Lovelace   | Introduction to SQL  |
+| Ada Lovelace   | Advanced Joins       |
+| Grace Hopper   | COBOL to SQL         |
+| Alan Turing    | Turing Machines      |
+| Linus Torvalds | Linux Kernel Design  |
 
 Not all databases support `RIGHT JOIN` (e.g., SQLite does not). You can always rewrite it as a `LEFT JOIN` by swapping
 the table order.
@@ -780,16 +754,14 @@ FULL OUTER JOIN posts ON users.id = posts.user_id;
 
 Result:
 
-```text
-name              | title
-------------------+-------------------------
-Ada Lovelace      | Introduction to SQL
-Ada Lovelace      | Advanced Joins
-Grace Hopper      | COBOL to SQL
-Alan Turing       | Turing Machines
-Linus Torvalds    | Linux Kernel Design
-Margaret Hamilton | NULL
-```
+| name              | title                |
+|-------------------|----------------------|
+| Ada Lovelace      | Introduction to SQL  |
+| Ada Lovelace      | Advanced Joins       |
+| Grace Hopper      | COBOL to SQL         |
+| Alan Turing       | Turing Machines      |
+| Linus Torvalds    | Linux Kernel Design  |
+| Margaret Hamilton | NULL                 |
 
 In this dataset the result looks like `LEFT JOIN` because every post has a valid user. In practice, `FULL OUTER JOIN`
 also shows orphaned right-side rows (e.g., posts with a deleted user would appear as `NULL | title`).
@@ -824,17 +796,15 @@ CROSS JOIN tags;
 
 If `users` has 5 rows and `tags` has 3 rows, the result has 15 rows. Example (assuming tags: sql, linux, theory):
 
-```text
-name              | tag
-------------------+--------
-Ada Lovelace      | sql
-Ada Lovelace      | linux
-Ada Lovelace      | theory
-Grace Hopper      | sql
-Grace Hopper      | linux
-Grace Hopper      | theory
-...               | ...
-```
+| name         | tag    |
+|--------------|--------|
+| Ada Lovelace | sql    |
+| Ada Lovelace | linux  |
+| Ada Lovelace | theory |
+| Grace Hopper | sql    |
+| Grace Hopper | linux  |
+| Grace Hopper | theory |
+| ...          | ...    |
 
 Rarely useful, but good to understand.
 
@@ -876,14 +846,12 @@ LEFT JOIN employees m ON e.manager_id = m.id;
 
 Result:
 
-```text
-employee | manager
----------+--------
-Alice    | NULL
-Bob      | Alice
-Charlie  | Alice
-Diana    | Bob
-```
+| employee | manager |
+|----------|---------|
+| Alice    | NULL    |
+| Bob      | Alice   |
+| Charlie  | Alice   |
+| Diana    | Bob     |
 
 ### Multiple joins
 
@@ -903,14 +871,12 @@ ORDER BY u.name, p.title;
 
 Result (assuming tags have been assigned via the `post_tags` junction table):
 
-```text
-author         | post                | tag
----------------+---------------------+---------
-Ada Lovelace   | Advanced Joins      | sql
-Ada Lovelace   | Introduction to SQL | sql
-Ada Lovelace   | Introduction to SQL | database
-Linus Torvalds | Linux Kernel Design | linux
-```
+| author         | post                | tag      |
+|----------------|---------------------|----------|
+| Ada Lovelace   | Advanced Joins      | sql      |
+| Ada Lovelace   | Introduction to SQL | sql      |
+| Ada Lovelace   | Introduction to SQL | database |
+| Linus Torvalds | Linux Kernel Design | linux    |
 
 ### Join performance
 
@@ -949,13 +915,11 @@ WHERE id IN (
 
 Result:
 
-```text
-name
----------------
-Ada Lovelace
-Grace Hopper
-Linus Torvalds
-```
+| name           |
+|----------------|
+| Ada Lovelace   |
+| Grace Hopper   |
+| Linus Torvalds |
 
 ### Correlated subquery
 
@@ -971,11 +935,9 @@ WHERE (
 
 Result:
 
-```text
-name
-------------
-Ada Lovelace
-```
+| name         |
+|--------------|
+| Ada Lovelace |
 
 ### In `SELECT` (scalar subquery)
 
@@ -988,15 +950,13 @@ FROM users u;
 
 Result:
 
-```text
-name              | post_count
-------------------+-----------
-Ada Lovelace      | 2
-Grace Hopper      | 1
-Alan Turing       | 1
-Linus Torvalds    | 1
-Margaret Hamilton | 0
-```
+| name              | post_count |
+|-------------------|------------|
+| Ada Lovelace      | 2          |
+| Grace Hopper      | 1          |
+| Alan Turing       | 1          |
+| Linus Torvalds    | 1          |
+| Margaret Hamilton | 0          |
 
 ### In `FROM` (derived table)
 
@@ -1014,14 +974,12 @@ ORDER BY post_count DESC;
 
 Result:
 
-```text
-author         | post_count
----------------+-----------
-Ada Lovelace   | 2
-Grace Hopper   | 1
-Alan Turing    | 1
-Linus Torvalds | 1
-```
+| author         | post_count |
+|----------------|------------|
+| Ada Lovelace   | 2          |
+| Grace Hopper   | 1          |
+| Alan Turing    | 1          |
+| Linus Torvalds | 1          |
 
 ### `EXISTS`
 
@@ -1038,13 +996,11 @@ WHERE EXISTS (
 
 Result:
 
-```text
-name
----------------
-Ada Lovelace
-Grace Hopper
-Linus Torvalds
-```
+| name           |
+|----------------|
+| Ada Lovelace   |
+| Grace Hopper   |
+| Linus Torvalds |
 
 ### `NOT EXISTS` -- anti-join
 
@@ -1061,12 +1017,10 @@ WHERE NOT EXISTS (
 
 Result:
 
-```text
-name
-------------------
-Alan Turing
-Margaret Hamilton
-```
+| name              |
+|-------------------|
+| Alan Turing       |
+| Margaret Hamilton |
 
 `NOT EXISTS` is generally more efficient than `NOT IN` for this type of query, especially when the subquery might
 contain `NULL` values (which cause `NOT IN` to behave unexpectedly).
@@ -1093,13 +1047,11 @@ SELECT * FROM active_authors ORDER BY published_posts DESC;
 
 Result:
 
-```text
-name           | published_posts
----------------+----------------
-Ada Lovelace   | 2
-Grace Hopper   | 1
-Linus Torvalds | 1
-```
+| name           | published_posts |
+|----------------|-----------------|
+| Ada Lovelace   | 2               |
+| Grace Hopper   | 1               |
+| Linus Torvalds | 1               |
 
 CTEs are essentially named subqueries. They make long queries significantly easier to read, test, and debug.
 
@@ -1119,15 +1071,13 @@ FROM users;
 
 Result:
 
-```text
-name              | age | rank
-------------------+-----+-----
-Margaret Hamilton | 88  | 1
-Grace Hopper      | 85  | 2
-Linus Torvalds    | 54  | 3
-Alan Turing       | 41  | 4
-Ada Lovelace      | 36  | 5
-```
+| name              | age | rank |
+|-------------------|-----|------|
+| Margaret Hamilton | 88  | 1    |
+| Grace Hopper      | 85  | 2    |
+| Linus Torvalds    | 54  | 3    |
+| Alan Turing       | 41  | 4    |
+| Ada Lovelace      | 36  | 5    |
 
 ### `RANK` and `DENSE_RANK`
 
@@ -1142,15 +1092,13 @@ FROM users;
 
 Result (all ages are unique here, so `RANK` and `DENSE_RANK` are identical):
 
-```text
-name              | age | rank | dense_rank
-------------------+-----+------+-----------
-Margaret Hamilton | 88  | 1    | 1
-Grace Hopper      | 85  | 2    | 2
-Linus Torvalds    | 54  | 3    | 3
-Alan Turing       | 41  | 4    | 4
-Ada Lovelace      | 36  | 5    | 5
-```
+| name              | age | rank | dense_rank |
+|-------------------|-----|------|------------|
+| Margaret Hamilton | 88  | 1    | 1          |
+| Grace Hopper      | 85  | 2    | 2          |
+| Linus Torvalds    | 54  | 3    | 3          |
+| Alan Turing       | 41  | 4    | 4          |
+| Ada Lovelace      | 36  | 5    | 5          |
 
 `RANK` skips numbers after ties; `DENSE_RANK` does not. For example, if two users shared age 85, `RANK` would assign
 both rank 1, then skip to 3. `DENSE_RANK` would assign both rank 1, then continue with 2.
@@ -1169,15 +1117,13 @@ INNER JOIN posts p ON u.id = p.user_id;
 
 Result:
 
-```text
-name           | title               | created_at          | post_rank
----------------+---------------------+---------------------+----------
-Ada Lovelace   | Advanced Joins      | 2025-01-15 10:30:00 | 1
-Ada Lovelace   | Introduction to SQL | 2025-01-10 08:00:00 | 2
-Grace Hopper   | COBOL to SQL        | 2025-01-12 14:00:00 | 1
-Alan Turing    | Turing Machines     | 2025-01-11 09:00:00 | 1
-Linus Torvalds | Linux Kernel Design | 2025-01-14 16:00:00 | 1
-```
+| name           | title               | created_at           | post_rank |
+|----------------|---------------------|----------------------|-----------|
+| Ada Lovelace   | Advanced Joins      | 2025-01-15 10:30:00  | 1         |
+| Ada Lovelace   | Introduction to SQL | 2025-01-10 08:00:00  | 2         |
+| Grace Hopper   | COBOL to SQL        | 2025-01-12 14:00:00  | 1         |
+| Alan Turing    | Turing Machines     | 2025-01-11 09:00:00  | 1         |
+| Linus Torvalds | Linux Kernel Design | 2025-01-14 16:00:00  | 1         |
 
 This numbers each user's posts from newest to oldest. You can then filter to get the latest post per user:
 
@@ -1195,14 +1141,12 @@ SELECT name, title FROM ranked WHERE rn = 1;
 
 Result:
 
-```text
-name           | title
----------------+---------------------
-Ada Lovelace   | Advanced Joins
-Grace Hopper   | COBOL to SQL
-Alan Turing    | Turing Machines
-Linus Torvalds | Linux Kernel Design
-```
+| name           | title                |
+|----------------|----------------------|
+| Ada Lovelace   | Advanced Joins       |
+| Grace Hopper   | COBOL to SQL         |
+| Alan Turing    | Turing Machines      |
+| Linus Torvalds | Linux Kernel Design  |
 
 ### Running totals
 
@@ -1216,15 +1160,13 @@ FROM users;
 
 Result:
 
-```text
-name              | age | running_total
-------------------+-----+--------------
-Ada Lovelace      | 36  | 36
-Grace Hopper      | 85  | 121
-Alan Turing       | 41  | 162
-Linus Torvalds    | 54  | 216
-Margaret Hamilton | 88  | 304
-```
+| name              | age | running_total |
+|-------------------|-----|---------------|
+| Ada Lovelace      | 36  | 36            |
+| Grace Hopper      | 85  | 121           |
+| Alan Turing       | 41  | 162           |
+| Linus Torvalds    | 54  | 216           |
+| Margaret Hamilton | 88  | 304           |
 
 ### `LAG` and `LEAD` -- accessing adjacent rows
 
@@ -1243,15 +1185,13 @@ FROM users;
 
 Result:
 
-```text
-name              | age | prev_age | next_age | gap_from_prev
-------------------+-----+----------+----------+--------------
-Ada Lovelace      | 36  | NULL     | 41       | NULL
-Alan Turing       | 41  | 36       | 54       | 5
-Linus Torvalds    | 54  | 41       | 85       | 13
-Grace Hopper      | 85  | 54       | 88       | 31
-Margaret Hamilton | 88  | 85       | NULL     | 3
-```
+| name              | age | prev_age | next_age | gap_from_prev |
+|-------------------|-----|----------|----------|---------------|
+| Ada Lovelace      | 36  | NULL     | 41       | NULL          |
+| Alan Turing       | 41  | 36       | 54       | 5             |
+| Linus Torvalds    | 54  | 41       | 85       | 13            |
+| Grace Hopper      | 85  | 54       | 88       | 31            |
+| Margaret Hamilton | 88  | 85       | NULL     | 3             |
 
 `LAG` and `LEAD` accept an optional offset (default 1) and a default value:
 
@@ -1471,14 +1411,12 @@ SELECT * FROM published_posts ORDER BY created_at DESC;
 
 Result:
 
-```text
-author         | title               | created_at
----------------+---------------------+---------------------
-Linus Torvalds | Linux Kernel Design | 2025-01-14 16:00:00
-Ada Lovelace   | Advanced Joins      | 2025-01-15 10:30:00
-Grace Hopper   | COBOL to SQL        | 2025-01-12 14:00:00
-Ada Lovelace   | Introduction to SQL | 2025-01-10 08:00:00
-```
+| author         | title               | created_at           |
+|----------------|---------------------|----------------------|
+| Linus Torvalds | Linux Kernel Design | 2025-01-14 16:00:00  |
+| Ada Lovelace   | Advanced Joins      | 2025-01-15 10:30:00  |
+| Grace Hopper   | COBOL to SQL        | 2025-01-12 14:00:00  |
+| Ada Lovelace   | Introduction to SQL | 2025-01-10 08:00:00  |
 
 Views:
 
@@ -1721,15 +1659,13 @@ SELECT name, COALESCE(age, 0) AS age FROM users;
 
 Result (all users here have an age, so `COALESCE` has no effect -- but if any had `NULL`, it would show `0`):
 
-```text
-name              | age
-------------------+----
-Ada Lovelace      | 36
-Grace Hopper      | 85
-Alan Turing       | 41
-Linus Torvalds    | 54
-Margaret Hamilton | 88
-```
+| name              | age |
+|-------------------|-----|
+| Ada Lovelace      | 36  |
+| Grace Hopper      | 85  |
+| Alan Turing       | 41  |
+| Linus Torvalds    | 54  |
+| Margaret Hamilton | 88  |
 
 ```sql
 -- Use a chain of fallbacks
@@ -1738,15 +1674,13 @@ SELECT COALESCE(nickname, name, email) AS display_name FROM users;
 
 Result (assuming Ada has no `nickname` column set):
 
-```text
-display_name
------------------
-Ada Lovelace
-Grace Hopper
-Alan Turing
-Linus Torvalds
-Margaret Hamilton
-```
+| display_name      |
+|-------------------|
+| Ada Lovelace      |
+| Grace Hopper      |
+| Alan Turing       |
+| Linus Torvalds    |
+| Margaret Hamilton |
 
 ### `NULLIF` -- conditional NULL
 
@@ -1776,11 +1710,9 @@ SELECT
 
 Result:
 
-```text
-upper | lower | length | trim  | substring | replace | concat
-------+-------+--------+-------+-----------+---------+------------
-HELLO | hello | 5      | hello | ell       | herro   | hello world
-```
+| upper | lower | length | trim  | substring | replace | concat      |
+|-------|-------|--------|-------|-----------|---------|-------------|
+| HELLO | hello | 5      | hello | ell       | herro   | hello world |
 
 ## Date functions
 
@@ -1791,11 +1723,9 @@ SELECT CURRENT_DATE, CURRENT_TIMESTAMP;
 
 Result:
 
-```text
-current_date | current_timestamp
--------------+------------------------
-2025-01-15   | 2025-01-15 10:30:00+00
-```
+| current_date | current_timestamp       |
+|--------------|-------------------------|
+| 2025-01-15   | 2025-01-15 10:30:00+00  |
 
 ```sql
 -- Extract parts (PostgreSQL)
@@ -1816,11 +1746,9 @@ ORDER BY month;
 
 Result of `GROUP BY month`:
 
-```text
-month      | post_count
------------+-----------
-2025-01-01 | 5
-```
+| month      | post_count |
+|------------|------------|
+| 2025-01-01 | 5          |
 
 ## `CASE` expressions
 
@@ -1841,15 +1769,13 @@ FROM users;
 
 Result:
 
-```text
-name              | age | category
-------------------+-----+------------
-Ada Lovelace      | 36  | Mid-career
-Grace Hopper      | 85  | Senior
-Alan Turing       | 41  | Mid-career
-Linus Torvalds    | 54  | Experienced
-Margaret Hamilton | 88  | Senior
-```
+| name              | age | category    |
+|-------------------|-----|-------------|
+| Ada Lovelace      | 36  | Mid-career  |
+| Grace Hopper      | 85  | Senior      |
+| Alan Turing       | 41  | Mid-career  |
+| Linus Torvalds    | 54  | Experienced |
+| Margaret Hamilton | 88  | Senior      |
 
 ### `CASE` in `UPDATE` -- conditional bulk updates
 
@@ -1885,15 +1811,13 @@ SELECT name FROM users WHERE active = TRUE;
 
 Result (Grace, Linus, and Margaret appear in both queries but are listed only once):
 
-```text
-name
-------------------
-Ada Lovelace
-Alan Turing
-Grace Hopper
-Linus Torvalds
-Margaret Hamilton
-```
+| name              |
+|-------------------|
+| Ada Lovelace      |
+| Alan Turing       |
+| Grace Hopper      |
+| Linus Torvalds    |
+| Margaret Hamilton |
 
 ```sql
 -- UNION ALL keeps duplicates (faster)
@@ -1904,18 +1828,16 @@ SELECT name FROM users WHERE active = TRUE;
 
 Result (duplicates preserved -- 8 rows instead of 5):
 
-```text
-name
-------------------
-Grace Hopper
-Linus Torvalds
-Margaret Hamilton
-Ada Lovelace
-Grace Hopper
-Alan Turing
-Linus Torvalds
-Margaret Hamilton
-```
+| name              |
+|-------------------|
+| Grace Hopper      |
+| Linus Torvalds    |
+| Margaret Hamilton |
+| Ada Lovelace      |
+| Grace Hopper      |
+| Alan Turing       |
+| Linus Torvalds    |
+| Margaret Hamilton |
 
 ## String aggregation
 
@@ -1945,12 +1867,10 @@ GROUP BY u.name;
 
 Example result:
 
-```text
-name           | tags
----------------+-------------------
-Ada Lovelace   | database, sql
-Linus Torvalds | kernel, linux
-```
+| name           | tags          |
+|----------------|---------------|
+| Ada Lovelace   | database, sql |
+| Linus Torvalds | kernel, linux |
 
 ## Security: SQL injection
 
