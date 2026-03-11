@@ -301,6 +301,17 @@ hello
 The dialog values are stored as properties on the component's JCR node, and the Sling Model reads them with
 `@ValueMapValue`.
 
+## Debug recipe -- dialog to HTML in 4 checks
+
+When a component does not render as expected, run this sequence:
+
+1. **Dialog save check** -- open the component dialog, save, and confirm values persist after refresh.
+2. **JCR check** -- verify stored properties under the component node in CRXDE Lite.
+3. **Model check** -- confirm model adaptation/injections (logs or debugger in local SDK).
+4. **HTL check** -- verify property names in HTL match model getter names.
+
+This isolates whether the issue is in authoring, content persistence, model mapping, or template rendering.
+
 ## The component rendering flow
 
 Let's trace what happens when a page with our component is requested:

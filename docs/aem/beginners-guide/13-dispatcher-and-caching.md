@@ -24,7 +24,7 @@ module.
 ```mermaid
 flowchart LR
     User["Website Visitor"]
-    CDN["CDN (Fastly)"]
+    CDN["Adobe-managed CDN"]
     Dispatcher["Dispatcher (Apache)"]
     Publish["AEM Publish"]
 
@@ -38,7 +38,7 @@ flowchart LR
 
 In AEMaaCS, the flow is:
 
-1. **CDN (Fastly)** -- Adobe's managed CDN. First cache layer
+1. **Adobe-managed CDN** -- first cache layer
 2. **Dispatcher** -- Apache + Dispatcher module. Second cache layer
 3. **AEM Publish** -- renders the page if not cached
 
@@ -133,15 +133,17 @@ Filters control which requests reach AEM:
 ```
 # filters/filters.any
 
-# Allow basic content paths
+# Start from deny-by-default and allow only what is required
+/0000 { /type "deny" /url "*" }
+
+# Allow basic delivery paths
 /0001 { /type "allow" /method "GET" /url "/content/*" }
 /0002 { /type "allow" /method "GET" /url "/etc.clientlibs/*" }
-/0003 { /type "allow" /method "GET" /url "/libs/*" }
 
 # Allow GraphQL persisted queries
 /0010 { /type "allow" /method "GET" /url "/graphql/execute.json/*" }
 
-# Block sensitive paths
+# Block sensitive paths explicitly
 /0100 { /type "deny" /url "/system/*" }
 /0101 { /type "deny" /url "/crx/*" }
 /0102 { /type "deny" /url "/bin/*" }
@@ -159,9 +161,9 @@ Filters control which requests reach AEM:
 
 Filters are evaluated **top to bottom**. The last matching filter wins. A common pattern:
 
-1. **Deny all** (implicit or explicit)
-2. **Allow** specific paths
-3. **Deny** sensitive paths (overrides allows)
+1. **Deny all** baseline
+2. **Allow** only explicit delivery paths
+3. **Deny** sensitive selectors/paths explicitly
 
 > **Security:** Always deny access to `/crx/*`, `/system/console/*`, and other admin paths on Publish.
 
@@ -297,6 +299,16 @@ pushing to Cloud Manager -- the pipeline will reject invalid configurations.
 | **Rewrites**      | Vanity URLs resolve correctly                       |
 | **Invalidation**  | Publish a page and verify the cache is refreshed    |
 | **Static assets** | CSS, JS, images served with proper cache headers    |
+
+### Troubleshooting quick guide
+
+| Symptom                               | First check                                | Typical fix                                                |
+|---------------------------------------|--------------------------------------------|------------------------------------------------------------|
+| Unexpected 403 via Dispatcher         | `filters.any` order and last-match behavior | Add explicit allow for required path before deny selectors |
+| Cache never hits                      | Response headers and cache rules            | Remove non-cacheable headers where appropriate, adjust rules |
+| Content stale after publish           | Invalidation logs and `statfileslevel`      | Verify flush agent flow and tune invalidation granularity  |
+| Vanity URL fails                      | Rewrite/vanity mappings and vhost            | Rebuild mappings and validate rewrite conditions            |
+| Works direct publish, fails on CDN    | CDN cache/headers and dispatcher response    | Align cache headers and purge strategy                      |
 
 > For detailed configuration, see the [Dispatcher Configuration](/aem/infrastructure/dispatcher-configuration)
 > reference. See also [Performance](/aem/infrastructure/performance) for broader optimization strategies

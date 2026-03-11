@@ -145,15 +145,16 @@ the API is ready.
 
 ### GraphQL endpoint
 
-```
-http://localhost:4502/content/graphql/global/endpoint.json
-```
-
-Or use the GraphiQL IDE for development:
+GraphQL endpoints are configuration-specific (not always a single `global` endpoint). A common local SDK pattern is:
 
 ```
-http://localhost:4502/content/graphiql.html
+http://localhost:4502/content/_cq_graphql/<configuration>/endpoint.json
 ```
+
+Replace `<configuration>` with your site configuration name (for example `mysite`). Endpoint paths can differ by setup
+and AEM version, so verify in your GraphQL/endpoint UI before integrating clients.
+
+Use GraphiQL from the AEM GraphQL tooling UI for development and schema exploration.
 
 ### Basic queries
 
@@ -236,7 +237,7 @@ http://localhost:4502/content/graphiql.html
 
 ### Rich text fields
 
-Multi-line text fields with rich text return multiple formats:
+Multi-line text fields with rich text can return multiple formats (available fields can vary by setup/version):
 
 ```graphql
 {
@@ -245,7 +246,6 @@ Multi-line text fields with rich text return multiple formats:
       body {
         html        # Rendered HTML
         plaintext   # Plain text (stripped)
-        markdown    # Markdown format
         json        # Structured JSON
       }
     }
@@ -284,15 +284,8 @@ Persisted queries are **pre-defined, cached, server-side queries**. They are rec
 
 ### Create a persisted query
 
-```bash
-curl -X PUT \
-  http://localhost:4502/graphql/execute.json/mysite/article-list \
-  -H "Content-Type: application/json" \
-  -u admin:admin \
-  -d '{
-    "query": "{ articleList(sort: \"publishDate DESC\", limit: 10) { items { _path title slug excerpt publishDate featured category author { name } } } }"
-  }'
-```
+Persisted queries should be created and managed through AEM GraphQL tooling/workflow (and promoted as code/config), then
+executed via the persisted query endpoint.
 
 ### Execute a persisted query
 
@@ -311,6 +304,18 @@ curl http://localhost:4502/graphql/execute.json/mysite/article-list
 
 > **Best practice:** Always use persisted queries in production. Ad-hoc queries are for development and the GraphiQL IDE
 > only.
+
+## Production hardening checklist (headless)
+
+| Area                      | Recommendation                                                        |
+|---------------------------|------------------------------------------------------------------------|
+| Persisted query naming    | Use stable, versioned names (e.g., `article-list-v1`)                |
+| Caching                   | Prefer GET persisted queries behind Dispatcher/CDN                    |
+| Query complexity          | Keep response shape minimal; avoid unbounded list fields             |
+| Authorization             | Expose only intended endpoints/queries at Publish                    |
+| CORS                      | Allow only trusted frontend origins                                  |
+| Schema evolution          | Add fields in backward-compatible ways; deprecate before removal     |
+| Monitoring                | Track query latency, cache hit ratio, and error rates                |
 
 ## Headless content delivery
 

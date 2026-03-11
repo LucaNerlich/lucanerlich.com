@@ -197,17 +197,12 @@ Configuration**:
 
 For **UI strings** (labels, buttons, error messages), AEM uses i18n dictionaries stored in the repository.
 
-### Dictionary structure
+> **Important distinction:** AEM/Sling i18n dictionaries are repository resources used by HTL/Java i18n resolution.
+> Frontend translation JSON files used by SPA frameworks are a separate mechanism.
 
-```
-/apps/mysite/i18n/
-├── en.json       # English strings
-├── de.json       # German strings
-├── fr.json       # French strings
-└── ja.json       # Japanese strings
-```
+### Dictionary structure (Sling i18n)
 
-Or as Sling i18n nodes:
+Repository node structure example:
 
 ```
 /apps/mysite/i18n/

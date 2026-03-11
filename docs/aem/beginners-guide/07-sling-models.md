@@ -181,6 +181,9 @@ public class SearchModel {
 }
 ```
 
+> **Security note:** Request parameters are untrusted input. Validate and normalize values before using them in queries,
+> external calls, redirects, or authorization decisions.
+
 ### @OSGiService -- inject OSGi services
 
 ```java
@@ -447,6 +450,23 @@ class HeroImplTest {
     }
 }
 ```
+
+## Troubleshooting -- when models do not adapt
+
+| Symptom                                     | What to inspect                               | Typical fix                                                        |
+|---------------------------------------------|-----------------------------------------------|--------------------------------------------------------------------|
+| `resource.adaptTo(MyModel.class)` is `null` | `@Model` adaptable + injection strategy       | Match adaptable type, use OPTIONAL/defaults for authoring safety   |
+| Field is unexpectedly `null`                | Stored property key/path in JCR               | Align `@ValueMapValue(name=...)` with actual property              |
+| Multifield collection is empty              | Child node structure under component node     | Verify `composite=true` and `@ChildResource` target               |
+| `@OSGiService` not injected                 | OSGi component/service status                 | Ensure service is active and interface wiring is correct           |
+| Works in console edits but breaks on deploy | Source-controlled config/package contents     | Persist changes in code (`ui.config`, `ui.apps`, `core`)           |
+
+## Security and service access hints
+
+- Prefer the resolver already provided by AEM request/resource context.
+- For background jobs or elevated reads/writes, use service users with least privilege (`getServiceResourceResolver`).
+- Never use admin sessions in application code.
+- Avoid logging raw user input, tokens, or personally identifiable data.
 
 > For the full annotation reference, see
 > the [Sling Models and Services](/aem/backend/sling-models), [Sling Model Annotations](/aem/components/annotations/sling-model-annotations),

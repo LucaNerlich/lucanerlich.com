@@ -342,7 +342,8 @@ A configuration file:
 
 ### Run modes
 
-Run modes determine which configurations are active:
+Run modes determine which configurations are active. In AEMaaCS, runtime mode combinations are environment-specific (for
+example, author vs publish plus environment tier), so think of these folders as selectors, not a strict inheritance tree:
 
 | Run mode  | When active             |
 |-----------|-------------------------|
@@ -352,22 +353,11 @@ Run modes determine which configurations are active:
 | `stage`   | Stage environment       |
 | `prod`    | Production environment  |
 
-Configurations are **cumulative** -- `config/` applies everywhere, `config.author/` adds/overrides on author,
-`config.prod/` adds/overrides in production.
+Configurations are **cumulative** -- `config/` applies everywhere, and more specific folders add/override values when
+their run modes are active.
 
-```mermaid
-flowchart TD
-    Base["config/ (all environments)"]
-    Author["config.author/"]
-    Publish["config.publish/"]
-    Dev["config.dev/"]
-    Prod["config.prod/"]
-
-    Base --> Author
-    Base --> Publish
-    Author --> Dev
-    Author --> Prod
-```
+> **Tip:** Keep defaults in `config/`, then add only environment-specific overrides where needed (`config.author/`,
+> `config.publish/`, `config.dev/`, `config.stage/`, `config.prod/`).
 
 ### Editing configurations in the Web Console
 
@@ -414,10 +404,10 @@ public class MyServiceImpl implements MyService {
 | `@Modified`   | Configuration changes while component is active    |
 | `@Deactivate` | Component stops (bundle stopping, dependency lost) |
 
-## Sling Models are OSGi components too
+## How Sling Models relate to OSGi
 
-The Sling Models you will write in chapter 7 are a special kind of OSGi component. They are registered as adaptable
-types:
+Sling Models are **not** regular Declarative Services components (`@Component`). Instead, Sling Model metadata is
+discovered by the Sling Models framework, which is itself provided via OSGi services:
 
 ```java
 @Model(adaptables = Resource.class, adapters = MyModel.class)
@@ -426,8 +416,18 @@ public class MyModelImpl implements MyModel {
 }
 ```
 
-Under the hood, Sling Models use OSGi to register adapters. This is why your `core/` bundle needs the correct OSGi
-metadata -- without it, your models will not be found.
+In practice, your `core/` bundle still needs correct metadata and dependencies, because model discovery and adaptation run
+inside the OSGi runtime.
+
+## Troubleshooting checklist -- bundle/service issues
+
+| Symptom                                      | First check                                | Typical fix                                                 |
+|----------------------------------------------|--------------------------------------------|-------------------------------------------------------------|
+| Bundle stuck in `Installed`                  | `/system/console/bundles` imports/exports  | Add/fix dependency or package version                       |
+| Component is unsatisfied                      | `/system/console/components` references     | Register missing service or loosen reference cardinality    |
+| Config changes not applied                    | `/system/console/configMgr` PID and values | Fix PID/file name, verify run mode folder                  |
+| Service implementation not the expected one   | `/system/console/services` ranking          | Adjust `service.ranking` and target filters                 |
+| Works local SDK, fails in cloud               | Cloud logs + committed config files         | Move transient console edits into `ui.config` `.cfg.json`   |
 
 ## Common OSGi patterns in AEM
 

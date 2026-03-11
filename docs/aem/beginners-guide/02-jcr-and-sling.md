@@ -42,7 +42,7 @@ flowchart TD
 
     Apps --> MySiteApps["/apps/mysite"]
     MySiteApps --> Components["/apps/mysite/components"]
-    MySiteApps --> Templates["/apps/mysite/templates"]
+    MySiteApps --> Clientlibs["/apps/mysite/clientlibs"]
 ```
 
 | Path       | Contents                                                          |

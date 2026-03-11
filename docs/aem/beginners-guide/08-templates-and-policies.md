@@ -33,11 +33,11 @@ flowchart TD
     ET -->|"creates"| Page
 ```
 
-| Concept               | Stored in                              | Managed by            |
-|-----------------------|----------------------------------------|-----------------------|
-| **Template Type**     | `/apps/mysite/templates/`              | Developers (code)     |
-| **Editable Template** | `/conf/mysite/settings/wcm/templates/` | Template authors (UI) |
-| **Page**              | `/content/mysite/`                     | Content authors (UI)  |
+| Concept               | Stored in                                           | Managed by                  |
+|-----------------------|-----------------------------------------------------|-----------------------------|
+| **Template Type**     | `/conf/mysite/settings/wcm/template-types/`         | Developers + template admins |
+| **Editable Template** | `/conf/mysite/settings/wcm/templates/`              | Template authors (UI)       |
+| **Page**              | `/content/mysite/`                                  | Content authors (UI)        |
 
 ### Template Types
 
@@ -48,10 +48,10 @@ A template type is the blueprint for editable templates. It defines:
 - The **initial content** (default content for new pages)
 - The **initial policies** (default component policies)
 
-Template types are defined in code under `/apps/mysite/templates/`:
+Template types live under your site configuration in `/conf` (often seeded by code packages and then managed in the UI):
 
 ```
-apps/mysite/templates/
+conf/mysite/settings/wcm/template-types/
 └── page/
     ├── .content.xml           # Template type definition
     ├── structure/
@@ -121,7 +121,7 @@ Every page in AEM is rendered by a **page component**. This is the top-level com
     <div data-sly-resource="${'header' @ resourceType='mysite/components/header'}"></div>
 
     <main>
-        <div data-sly-resource="${@ path='root', resourceType='wcm/foundation/components/responsivegrid'}"></div>
+        <div data-sly-resource="${'root' @ resourceType='core/wcm/components/container/v1/container'}"></div>
     </main>
 
     <div data-sly-resource="${'footer' @ resourceType='mysite/components/footer'}"></div>
@@ -181,6 +181,11 @@ page component to add your own includes:
 
 This approach is preferred because you only override the extension points, while the Core Components page component
 handles the full HTML structure, SEO meta tags, and other boilerplate.
+
+## AEMaaCS note -- template persistence
+
+In cloud projects, template and policy changes made in the UI should be exported and committed so they are reproducible in
+other environments. Treat template setup as configuration-as-code, not environment-local state.
 
 ## Component policies
 
@@ -244,7 +249,7 @@ toolbar without touching code.
 
 ## Responsive grid (layout container)
 
-The responsive grid is the main layout mechanism. It provides:
+The responsive container/grid is the main layout mechanism. It provides:
 
 - **Drag-and-drop** component placement
 - **12-column grid** for responsive layout

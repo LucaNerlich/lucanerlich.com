@@ -142,7 +142,7 @@ flowchart LR
 
 1. **Maven Build** -- compiles your project (`mvn clean install`)
 2. **Unit Tests** -- runs `core/` tests
-3. **Code Quality** -- SonarQube analysis (coverage, bugs, code smells)
+3. **Code Quality** -- static analysis checks (coverage, bugs, maintainability)
 4. **Security Scan** -- checks for known vulnerabilities
 5. **Deploy** -- installs packages on the target environment
 6. **Functional Tests** -- runs integration tests (`it.tests/`)
@@ -167,18 +167,18 @@ flowchart LR
 3. If a stage fails, review the logs:
     - Build logs for compilation errors
     - Test logs for test failures
-    - Quality logs for SonarQube issues
+    - Quality logs for static analysis findings
 
 ### Code quality gates
 
-Cloud Manager enforces code quality:
+Cloud Manager enforces quality gates:
 
-| Gate                   | Requirement                 |
-|------------------------|-----------------------------|
-| **Unit test coverage** | Minimum coverage percentage |
-| **Reliability rating** | No critical bugs            |
-| **Security rating**    | No critical vulnerabilities |
-| **Maintainability**    | Acceptable code smell count |
+| Gate area              | Typical expectation                       |
+|------------------------|-------------------------------------------|
+| **Unit test coverage** | Meets configured threshold                |
+| **Reliability**        | No blocking/high-severity defects         |
+| **Security**           | No blocking/high-severity vulnerabilities |
+| **Maintainability**    | Within acceptable quality thresholds      |
 
 Failing quality gates blocks deployment. You can override non-critical failures, but this requires manager approval.
 

@@ -227,7 +227,8 @@ ui.frontend/
 
 The build process:
 
-1. `npm run build` in `ui.frontend/` compiles SCSS to CSS, TypeScript to JS, and bundles everything
+1. Run your frontend build script in `ui.frontend/` (for example `pnpm run build` or `npm run build`) to compile SCSS
+   and TypeScript/JavaScript assets
 2. The output is copied to `ui.apps/src/main/content/jcr_root/apps/mysite/clientlibs/clientlib-site/`
 3. Maven deploys the clientlib to AEM
 
@@ -272,6 +273,16 @@ Click **Invalidate Caches** and then **Rebuild Libraries**.
 http://localhost:4502/etc.clientlibs/mysite/clientlibs/clientlib-base.css
 http://localhost:4502/etc.clientlibs/mysite/clientlibs/clientlib-base.js
 ```
+
+### Quick troubleshooting matrix
+
+| Symptom                            | What to check first                          | Typical fix                                                  |
+|------------------------------------|----------------------------------------------|--------------------------------------------------------------|
+| CSS/JS not loading                 | Included category name in page component      | Align category string with `.content.xml`                    |
+| 404 under `/etc.clientlibs/...`    | `allowProxy` on clientlib                     | Set `allowProxy="{Boolean}true"` and redeploy                |
+| Changes not visible after deploy   | Browser/dispatcher cache + rebuilt clientlibs | Invalidate caches and rebuild libraries                      |
+| Wrong load order                   | `dependencies` and `embed` usage              | Move shared libs to `dependencies`, bundle app libs via embed |
+| One component script never runs    | `js.txt` entry and path                        | Add file in `js.txt` and verify folder under `#base`         |
 
 > For advanced clientlib patterns, see the [Client Libraries](/aem/client-libraries) reference. For multi-brand frontend
 > setups, see [Multi-Tenancy UI Frontend Themes](/aem/ui/multi-tenancy-support-ui-frontend).

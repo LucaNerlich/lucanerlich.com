@@ -357,8 +357,20 @@ Once logged in at `http://localhost:4502`, explore:
 `http://localhost:4502/crx/de` -- a lightweight IDE for browsing and editing the JCR repository directly. Invaluable for
 debugging.
 
-> **Note:** CRXDE Lite is available on local SDK instances and AEMaaCS development environments, but **not in production
-**. The apps directory (and others) is read-only in production.
+> **Note:** Treat CRXDE Lite as a **local SDK troubleshooting tool**. On AEM as a Cloud Service, direct repository
+> editing in cloud environments is intentionally restricted, and production access is not part of normal workflows.
+> Use authoring UI for content and Git + Cloud Manager for code/config changes.
+
+## AEMaaCS vs AEM 6.5 quick note
+
+This guide prioritizes AEMaaCS defaults:
+
+- **Code/config deployment** via Git + Cloud Manager, not direct server edits
+- **Immutable platform areas** in runtime environments
+- **Cloud pipelines and managed infrastructure** instead of customer-managed app servers
+
+If you are on AEM 6.5, many APIs and authoring concepts still apply, but operational behavior (deployment, runtime access,
+and infrastructure ownership) differs.
 
 ### OSGi Web Console
 

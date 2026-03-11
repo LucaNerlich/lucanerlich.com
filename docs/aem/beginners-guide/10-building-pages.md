@@ -215,15 +215,22 @@ public class ArticlePageModel {
 > (e.g., find pages by tag, resolve tag IDs to titles in a specific locale), use the `TagManager` service:
 >
 > ```java
-> @OSGiService
-> private ResourceResolverFactory resolverFactory;
->
 > public String getLocalizedTagTitle(String tagId, Locale locale) {
 >     TagManager tagManager = resource.getResourceResolver().adaptTo(TagManager.class);
 >     Tag tag = tagManager.resolve(tagId);
 >     return tag != null ? tag.getTitle(locale) : tagId;
 > }
 > ```
+
+## Troubleshooting -- page assembly issues
+
+| Symptom                                 | First check                                        | Typical fix                                           |
+|-----------------------------------------|----------------------------------------------------|-------------------------------------------------------|
+| Component not visible in side panel     | Template policy allowed components                  | Enable component in container policy                  |
+| Component renders placeholder only      | Dialog values + model defaults                      | Configure required fields or add safer defaults       |
+| Header/footer missing on some pages     | Template structure + locked components              | Reapply structure and verify XF/path references       |
+| Navigation items missing unexpectedly   | Navigation root, depth, hide-in-nav page property   | Update nav config and page properties                 |
+| Different author/publish output         | Published content + clientlibs + dispatcher cache   | Publish dependencies and invalidate relevant caches   |
 
 ## Navigation
 
