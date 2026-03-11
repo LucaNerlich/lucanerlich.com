@@ -235,28 +235,6 @@ const config: Config = {
                 ],
             },
         ],
-        ['@docusaurus/plugin-pwa',
-            {
-                debug: false,
-                offlineModeActivationStrategies: [
-                    'appInstalled',
-                    'standalone',
-                    'queryString',
-                ],
-                pwaHead: [
-                    {
-                        tagName: 'link',
-                        rel: 'manifest',
-                        href: '/manifest.json',
-                    },
-                    {
-                        tagName: 'meta',
-                        name: 'theme-color',
-                        content: '#FA0C00',
-                    },
-                ],
-            },
-        ],
     ],
 
     themeConfig: {

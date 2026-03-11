@@ -132,7 +132,6 @@ static/                # Static assets (images, favicon, manifest.json)
   `@docusaurus/plugin-client-redirects` plugin. When moving/renaming docs, add
   a redirect from the old path to the new path.
 - **Algolia search** is configured -- no action needed from agents.
-- **PWA** is enabled with offline mode.
 - **Future flags:** `experimental_faster: true` (SWC) and `v4: true`.
 
 ## Cursor Rules (`.cursor/rules/`)
