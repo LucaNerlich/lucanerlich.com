@@ -1,0 +1,8 @@
+{
+    "label": "Beginners Guide",
+    "position": 1,
+    "link": {
+        "type": "generated-index",
+        "description": "A step-by-step PHP beginners guide -- from installing PHP and writing your first script to building a complete web application."
+    }
+}

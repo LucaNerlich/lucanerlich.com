@@ -285,6 +285,11 @@ const config: Config = {
                     position: 'left',
                 },
                 {
+                    to: '/rust',
+                    label: 'Rust',
+                    position: 'left',
+                },
+                {
                     to: '/design-patterns',
                     label: 'Design Patterns',
                     position: 'left',
@@ -338,7 +343,7 @@ const config: Config = {
             copyright: `Copyright \u00a9 ${new Date().getFullYear()} Luca Nerlich - Built with Docusaurus v3.`,
         },
         prism: {
-            additionalLanguages: ['groovy', 'java', 'rust', 'python', 'bash', 'yaml', 'csv'],
+            additionalLanguages: ['groovy', 'java', 'rust', 'python', 'bash', 'yaml', 'csv', 'php'],
         },
         mermaid: {
             theme: {light: 'default', dark: 'dark'},

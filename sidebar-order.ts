@@ -23,8 +23,11 @@ export const sidebarOrder: Record<string, string[]> = {
         'git',
         'web-performance',
         'semantic-html',
+        'css',
         'javascript',
         'java',
+        'php',
+        'rust',
         'design-patterns',
         'other',
         'projects',
@@ -63,6 +66,7 @@ export const sidebarOrder: Record<string, string[]> = {
         '12-multi-site-manager-and-i18n',
         '13-dispatcher-and-caching',
         '14-deployment-and-cloud-manager',
+        '15-practice-projects',
     ],
 
     'aem/components': [
@@ -96,6 +100,34 @@ export const sidebarOrder: Record<string, string[]> = {
     ],
 
     // ------------------------------------------------------------------
+    // CSS – beginners guide first
+    // ------------------------------------------------------------------
+    'css': [
+        'beginners-guide',
+    ],
+
+    'css/beginners-guide': [
+        '01-introduction',
+        '02-selectors',
+        '03-the-box-model',
+        '04-colors-and-typography',
+        '05-units-and-sizing',
+        '06-display-and-positioning',
+        '07-flexbox',
+        '08-css-grid',
+        '09-responsive-design',
+        '10-backgrounds-borders-shadows',
+        '11-transitions-and-animations',
+        '12-pseudo-classes-and-pseudo-elements',
+        '13-css-custom-properties',
+        '14-specificity-and-the-cascade',
+        '15-modern-css-features',
+        '16-architecture-and-best-practices',
+        '17-debugging-and-common-pitfalls',
+        '18-practice-projects',
+    ],
+
+    // ------------------------------------------------------------------
     // JavaScript – beginners guide first, then individual topics
     // ------------------------------------------------------------------
     'javascript': [
@@ -118,6 +150,33 @@ export const sidebarOrder: Record<string, string[]> = {
         '13-typescript',
         '14-error-handling',
         '15-regular-expressions',
+    ],
+
+    // ------------------------------------------------------------------
+    // PHP – beginners guide first, then individual topics
+    // ------------------------------------------------------------------
+    'php': [
+        'beginners-guide',
+    ],
+
+    'php/beginners-guide': [
+        '01-introduction',
+        '02-variables-and-types',
+        '03-operators-and-expressions',
+        '04-control-flow',
+        '05-functions',
+        '06-strings-and-arrays',
+        '07-forms-and-http',
+        '08-oop-basics',
+        '09-oop-advanced',
+        '10-error-handling',
+        '11-working-with-files',
+        '12-working-with-databases',
+        '13-sessions-and-cookies',
+        '14-composer-and-packages',
+        '15-modern-php',
+        '16-building-a-web-application',
+        '17-practice-projects',
     ],
 
     // ------------------------------------------------------------------
@@ -145,6 +204,35 @@ export const sidebarOrder: Record<string, string[]> = {
         '15-streams-and-lambdas',
         '16-optionals',
         '17-testing',
+    ],
+
+    // ------------------------------------------------------------------
+    // Rust – beginners guide first, then individual topics
+    // ------------------------------------------------------------------
+    'rust': [
+        'beginners-guide',
+    ],
+
+    'rust/beginners-guide': [
+        '01-introduction',
+        '02-variables-and-types',
+        '03-control-flow',
+        '04-functions',
+        '05-ownership-and-borrowing',
+        '06-structs-and-enums',
+        '07-pattern-matching',
+        '08-collections',
+        '09-error-handling',
+        '10-modules-and-crates',
+        '11-traits-and-generics',
+        '12-lifetimes',
+        '13-iterators-and-closures',
+        '14-project-cli-task-manager',
+        '15-testing',
+        '16-concurrency',
+        '17-rest-api',
+        '18-deploy-vps-nginx',
+        '19-practice-projects',
     ],
 
     // ------------------------------------------------------------------

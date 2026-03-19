@@ -1,0 +1,8 @@
+{
+    "label": "PHP",
+    "link": {
+        "type": "generated-index",
+        "slug": "/php",
+        "description": "Guides and references for PHP development -- from your first script to modern object-oriented applications."
+    }
+}

@@ -394,5 +394,10 @@ You have completed the AEM Beginners Guide! You now understand:
 - **Multi-site and multi-language** management (MSM, i18n)
 - **Production operations** (Dispatcher, Cloud Manager, deployment)
 
-From here, explore the [AEM reference documentation](/aem/architecture) for deep dives into specific topics, and start
-building your own AEM project!
+Ready to put it all into practice? The next chapter has six hands-on projects -- from building a simple component to
+hardening a Dispatcher config -- designed to reinforce everything you have learned.
+
+Next up: [Practice Projects](./15-practice-projects.md) -- six progressively challenging projects to build your AEM
+skills through hands-on practice.
+
+For reference material beyond the beginner guide, explore the [AEM documentation section](/aem/architecture).

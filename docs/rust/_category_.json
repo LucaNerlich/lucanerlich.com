@@ -1,0 +1,8 @@
+{
+    "label": "Rust",
+    "link": {
+        "type": "generated-index",
+        "slug": "/rust",
+        "description": "Guides and references for the Rust programming language -- from ownership fundamentals to deploying production APIs."
+    }
+}
