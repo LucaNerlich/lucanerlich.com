@@ -79,8 +79,8 @@ Response:
     "formats": {
       "thumbnail": {
         "url": "/uploads/thumbnail_image_abc123.jpg",
-        "width": 245,
-        "height": 138
+        "width": 156,
+        "height": 88
       },
       "small": {
         "url": "/uploads/small_image_abc123.jpg",

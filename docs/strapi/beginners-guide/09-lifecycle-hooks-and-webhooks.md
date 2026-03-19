@@ -68,8 +68,8 @@ sequenceDiagram
 Document Service middleware is registered in the `register` lifecycle function of your Strapi app:
 
 ```javascript
-// src/index.js
-module.exports = {
+// src/index.js (or src/index.ts)
+export default {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       // This runs for ALL content types, ALL actions
@@ -100,8 +100,8 @@ The `context` object contains:
 Ensure all post titles are at least 5 characters:
 
 ```javascript
-// src/index.js
-module.exports = {
+// src/index.js (or src/index.ts)
+export default {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       if (
@@ -125,7 +125,7 @@ module.exports = {
 Automatically generate a slug from the title if one is not provided:
 
 ```javascript
-// src/index.js
+// src/index.js (or src/index.ts)
 function slugify(text) {
   return text
     .toLowerCase()
@@ -133,7 +133,7 @@ function slugify(text) {
     .replace(/(^-|-$)/g, "");
 }
 
-module.exports = {
+export default {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       if (
@@ -157,8 +157,8 @@ module.exports = {
 Track all changes to content:
 
 ```javascript
-// src/index.js
-module.exports = {
+// src/index.js (or src/index.ts)
+export default {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       const result = await next();
@@ -180,8 +180,8 @@ module.exports = {
 ### Example -- send notification after publish
 
 ```javascript
-// src/index.js
-module.exports = {
+// src/index.js (or src/index.ts)
+export default {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       const result = await next();
@@ -217,7 +217,7 @@ module.exports = {
 Middleware runs in the order it is registered. If you need multiple hooks, register them in the order you want:
 
 ```javascript
-module.exports = {
+export default {
   register({ strapi }) {
     // Runs first: validation
     strapi.documents.use(async (context, next) => {
@@ -246,11 +246,11 @@ module.exports = {
 For cleaner code, create separate functions for each content type:
 
 ```javascript
-// src/index.js
-const postMiddleware = require("./middlewares/post-lifecycle");
-const authorMiddleware = require("./middlewares/author-lifecycle");
+// src/index.js (or src/index.ts)
+import postMiddleware from "./middlewares/post-lifecycle";
+import authorMiddleware from "./middlewares/author-lifecycle";
 
-module.exports = {
+export default {
   register({ strapi }) {
     strapi.documents.use(postMiddleware);
     strapi.documents.use(authorMiddleware);
@@ -259,8 +259,8 @@ module.exports = {
 ```
 
 ```javascript
-// src/middlewares/post-lifecycle.js
-module.exports = async (context, next) => {
+// src/middlewares/post-lifecycle.js (or .ts)
+export default async (context, next) => {
   if (context.uid !== "api::post.post") {
     return await next();
   }
@@ -367,8 +367,8 @@ that transforms the webhook payload into Slack's message format.
 You can also trigger webhook-like behavior programmatically using lifecycle hooks:
 
 ```javascript
-// src/middlewares/post-lifecycle.js
-const https = require("https");
+// src/middlewares/post-lifecycle.js (or .ts)
+import https from "node:https";
 
 function notifySlack(message) {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL;
@@ -393,7 +393,7 @@ function notifySlack(message) {
   req.end();
 }
 
-module.exports = (strapi) => async (context, next) => {
+export default (strapi) => async (context, next) => {
   if (context.uid !== "api::post.post") {
     return await next();
   }
@@ -417,10 +417,10 @@ module.exports = (strapi) => async (context, next) => {
 Register it in `src/index.js`:
 
 ```javascript
-// src/index.js
-const createPostLifecycle = require("./middlewares/post-lifecycle");
+// src/index.js (or src/index.ts)
+import createPostLifecycle from "./middlewares/post-lifecycle";
 
-module.exports = {
+export default {
   register({ strapi }) {
     strapi.documents.use(createPostLifecycle(strapi));
   },

@@ -56,7 +56,12 @@ This one line gives you all five CRUD actions: `find`, `findOne`, `create`, `upd
 
 ## Extending a core controller
 
-You can extend the core controller by passing a function that receives the parent controller:
+You can extend the core controller by passing a function that receives the parent controller.
+
+> **How `super` works here:** The code below uses `super.find(ctx)` inside an object literal, which normally would not
+> work in JavaScript. Strapi's `createCoreController` factory wires `super` to the default core controller methods
+> behind the scenes. This is **not** standard JS prototypal inheritance -- it is a Strapi-specific mechanism. Just know
+> that `super.find()`, `super.findOne()`, `super.create()`, etc. call the original built-in CRUD actions.
 
 ```javascript
 // src/api/post/controllers/post.js
@@ -158,7 +163,7 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
         category: { fields: ["name", "slug"] },
       },
       sort: { publishedDate: "desc" },
-      pagination: { page: 1, pageSize: 5 },
+      limit: 5,
     });
 
     return { data: posts };
@@ -177,7 +182,7 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
         tags: { fields: ["name", "slug"] },
         seo: true,
       },
-      pagination: { page: 1, pageSize: 1 },
+      limit: 1,
     });
 
     if (posts.length === 0) {
@@ -228,7 +233,7 @@ export default factories.createCoreService("api::post.post", ({ strapi }) => ({
     return await strapi.documents("api::post.post").findMany({
       status: "published",
       sort: { viewCount: "desc" },
-      pagination: { page: 1, pageSize: limit },
+      limit,
       populate: {
         author: { fields: ["name"] },
         category: { fields: ["name"] },
@@ -258,7 +263,7 @@ export default factories.createCoreService("api::post.post", ({ strapi }) => ({
         ].filter(f => Object.keys(f).length > 0),
       },
       status: "published",
-      pagination: { page: 1, pageSize: limit },
+      limit,
       populate: {
         author: { fields: ["name"] },
         category: { fields: ["name"] },
@@ -310,7 +315,7 @@ const posts = await docs.findMany({
   filters: { featured: true },
   status: "published",
   sort: { createdAt: "desc" },
-  pagination: { page: 1, pageSize: 10 },
+  limit: 10,
   populate: { author: true },
 });
 

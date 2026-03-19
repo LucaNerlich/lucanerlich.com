@@ -81,6 +81,32 @@ DATABASE_FILENAME=.tmp/data.db
 > **Security:** Generate all secrets with a cryptographic random generator. Never use default values in production.
 > Never commit `.env` to version control.
 
+### Strapi environment helpers
+
+In configuration files, the `env` function is not just `process.env` -- Strapi provides typed helpers:
+
+| Helper        | Returns  | Example                                    |
+|---------------|----------|--------------------------------------------|
+| `env('KEY')`  | `string` | `env('HOST', '0.0.0.0')`                  |
+| `env.int()`   | `number` | `env.int('PORT', 1337)`                    |
+| `env.bool()`  | `boolean`| `env.bool('DATABASE_SSL', false)`          |
+| `env.array()` | `string[]`| `env.array('APP_KEYS', [])`              |
+| `env.json()`  | `object` | `env.json('CUSTOM_CONFIG', {})`            |
+
+These are available in all `config/` files and handle type conversion automatically. You will see them used throughout
+the configuration examples in this chapter.
+
+### Create the environment directory
+
+Strapi does not create the `config/env/` directory for you. Create it before adding production-specific config:
+
+```bash
+mkdir -p config/env/production
+```
+
+You can create directories for any environment: `development`, `staging`, `production`, `test`, etc. The directory
+name must match the `NODE_ENV` value.
+
 ### Production database -- PostgreSQL
 
 SQLite is great for development but not suitable for production. Switch to PostgreSQL:
@@ -595,9 +621,9 @@ export default [
 import helmet from "koa-helmet";
 
 export default (config, { strapi }) => {
-  return helmet({
+  const helmetMiddleware = helmet({
     crossOriginEmbedderPolicy: false,
-    contentSecurityPolicy: false, // Using Strapi's CSP instead
+    contentSecurityPolicy: false,
     crossOriginOpenerPolicy: { policy: "same-origin" },
     crossOriginResourcePolicy: { policy: "cross-origin" },
     dnsPrefetchControl: { allow: false },
@@ -615,8 +641,16 @@ export default (config, { strapi }) => {
     referrerPolicy: { policy: "strict-origin-when-cross-origin" },
     xssFilter: true,
   });
+
+  return async (ctx, next) => {
+    await helmetMiddleware(ctx, next);
+  };
 };
 ```
+
+> **Note:** Strapi's built-in `strapi::security` middleware already covers CSP and basic security headers. Only add
+> helmet if you need additional headers beyond what Strapi provides. Disable helmet's `contentSecurityPolicy` to avoid
+> conflicts with Strapi's own CSP configuration.
 
 ### Restrict admin panel access
 

@@ -67,6 +67,10 @@ HTL automatically picks an escaping context, but you can override it - here are 
 
 > **Security:** Never use `context='unsafe'` unless you are absolutely sure the content is safe. HTL's automatic
 > escaping is one of its strongest features.
+>
+> **Rich text from the RTE:** Content saved by the Rich Text Editor is already sanitized HTML. The default `html`
+> context handles it correctly -- `${model.richText}` is safe without specifying `context='unsafe'`. If you need to
+> be explicit, use `${model.richText @ context='html'}`.
 
 ## Block statements
 
@@ -248,6 +252,17 @@ The placeholder text is shown at design time and replaced at render time.
 
 Useful when you need a container for HTL logic but do not want it in the output.
 
+### data-sly-set -- assign a variable
+
+```html
+<!-- Assign a computed value without generating any DOM element -->
+<sly data-sly-set.fullName="${model.firstName} ${model.lastName}"/>
+<p>${fullName}</p>
+```
+
+`data-sly-set` (introduced in HTL 1.4) assigns a variable without producing any HTML side effect. It is cleaner than
+using `data-sly-test` with an identifier when you do not need the conditional behavior.
+
 ## Global objects
 
 HTL provides several global objects available in every template:
@@ -399,7 +414,7 @@ You learned:
 - **Display contexts** for secure output escaping
 - All major **block statements**: `data-sly-use`, `data-sly-test`, `data-sly-list`, `data-sly-repeat`,
   `data-sly-resource`, `data-sly-include`, `data-sly-template`/`data-sly-call`, `data-sly-element`,
-  `data-sly-attribute`, `data-sly-text`, `data-sly-unwrap`
+  `data-sly-attribute`, `data-sly-text`, `data-sly-unwrap`, `data-sly-set`
 - **Global objects** available in every template
 - The **Use API** for connecting to Sling Models
 - A practical **Article Card** example combining multiple features

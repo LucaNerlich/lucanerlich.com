@@ -66,7 +66,7 @@ FROM base AS dependencies
 COPY package*.json ./
 
 # Install production dependencies only
-RUN npm ci --production
+RUN npm ci --omit=dev
 
 # Builder stage
 FROM base AS builder
@@ -158,8 +158,6 @@ coverage/
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15-alpine
@@ -296,8 +294,9 @@ docker-compose up -d strapi
 # Access Strapi shell
 docker-compose exec strapi sh
 
-# Run database migrations
-docker-compose exec strapi npm run strapi migrate
+# Strapi runs database migrations automatically on startup.
+# To force a restart (which triggers migrations):
+docker-compose restart strapi
 
 # Clean everything (including volumes)
 docker-compose down -v
@@ -307,8 +306,6 @@ docker-compose down -v
 
 ```yaml
 # docker-compose.prod.yml
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15-alpine
@@ -546,7 +543,7 @@ jobs:
             cd /app/strapi
             docker-compose pull strapi
             docker-compose up -d strapi
-            docker-compose exec -T strapi npm run strapi migrate
+            # Strapi runs database migrations automatically on startup
 
       - name: Health check
         run: |
@@ -593,9 +590,7 @@ jobs:
             # Pull and deploy new version
             docker-compose pull strapi
             docker-compose up -d strapi
-
-            # Run migrations
-            docker-compose exec -T strapi npm run strapi migrate
+            # Strapi runs database migrations automatically on startup
 
             # Clear cache if using Redis
             docker-compose exec -T redis redis-cli FLUSHALL
@@ -772,7 +767,17 @@ USER strapi
 
 ## Kubernetes deployment (optional)
 
-For larger deployments, consider Kubernetes:
+For larger deployments, consider Kubernetes.
+
+> **Important:** Strapi has limitations with horizontal scaling. Before running multiple replicas, ensure:
+>
+> - **Media storage** uses an external provider (S3, Cloudinary) -- the local upload provider stores files on disk and
+>   will not sync across instances
+> - **Admin panel sessions** are sticky or backed by shared storage -- admin login state is not shared by default
+> - **Caching** uses Redis or another shared store -- in-memory caches are per-instance
+> - **Database connections** are properly pooled -- multiple replicas multiply connection usage
+>
+> Running a single replica with vertical scaling (more CPU/RAM) is simpler and avoids these issues for most workloads.
 
 ```yaml
 # k8s/deployment.yaml

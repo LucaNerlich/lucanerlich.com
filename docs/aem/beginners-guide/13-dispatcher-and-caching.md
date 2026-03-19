@@ -112,9 +112,14 @@ Cache rules define which responses the Dispatcher stores:
 
 # Do not cache JSON API responses (dynamic)
 /0100 { /type "deny" /glob "*.json" }
+
+# Exception: cache persisted GraphQL query responses
+/0101 { /type "allow" /glob "/graphql/execute.json/*" }
 ```
 
-> **Tip:** In AEMaaCS, the default rules are already good. Customize only when needed.
+> **Tip:** In AEMaaCS, the default rules are already good. Customize only when needed. Note that the blanket JSON deny
+> above would also block caching of GraphQL persisted query responses. If you use headless delivery (chapter 11), add
+> an explicit allow rule for the persisted query path as shown.
 
 ### Cacheable responses
 

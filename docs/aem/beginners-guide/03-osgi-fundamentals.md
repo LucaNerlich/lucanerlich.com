@@ -468,28 +468,31 @@ public class DailyCleanupJob implements Runnable {
 
 ### Event handler
 
-React to repository events:
+React to OSGi events:
 
 ```java
 @Component(
     service = EventHandler.class,
     property = {
-        "event.topics=com/day/cq/replication/job/publish"
+        "event.topics=org/apache/sling/api/resource/Resource/CHANGED"
     }
 )
-public class ReplicationEventHandler implements EventHandler {
+public class ResourceChangeHandler implements EventHandler {
 
     @Override
     public void handleEvent(Event event) {
-        String[] paths = (String[]) event.getProperty("paths");
-        if (paths != null) {
-            for (String path : paths) {
-                // React to replication of each path
-            }
+        String path = (String) event.getProperty("path");
+        if (path != null) {
+            // React to resource change at path
         }
     }
 }
 ```
+
+> **AEMaaCS note:** Classic replication events (`com/day/cq/replication/job/publish`) apply to AEM 6.5. In AEM as a
+> Cloud Service, content distribution replaces classic replication and uses different event topics. For observing content
+> changes, prefer Sling Resource Observation (`ResourceChangeListener`) or OSGi events with resource topics as shown
+> above.
 
 > For more advanced OSGi topics, see the [OSGi Configuration](/aem/backend/osgi-configuration) reference. For deeper
 > coverage of the patterns introduced above,

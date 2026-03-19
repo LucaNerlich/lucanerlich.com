@@ -187,7 +187,6 @@ Use GraphiQL from the AEM GraphQL tooling UI for development and schema explorat
       body {
         html
         plaintext
-        markdown
       }
       publishDate
       author {
@@ -313,7 +312,7 @@ curl http://localhost:4502/graphql/execute.json/mysite/article-list
 | Caching                   | Prefer GET persisted queries behind Dispatcher/CDN                    |
 | Query complexity          | Keep response shape minimal; avoid unbounded list fields             |
 | Authorization             | Expose only intended endpoints/queries at Publish                    |
-| CORS                      | Allow only trusted frontend origins                                  |
+| CORS                      | Allow only trusted frontend origins (configure via the `com.adobe.granite.cors.impl.CORSPolicyImpl` OSGi config) |
 | Schema evolution          | Add fields in backward-compatible ways; deprecate before removal     |
 | Monitoring                | Track query latency, cache hit ratio, and error rates                |
 

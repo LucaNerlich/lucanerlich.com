@@ -258,6 +258,28 @@ public class FooterModel {
 }
 ```
 
+### @Via -- control the injection source
+
+When your model adapts from `SlingHttpServletRequest` but you want a specific injector to read from the underlying
+resource instead, use `@Via`:
+
+```java
+@Model(adaptables = SlingHttpServletRequest.class)
+public class HybridModel {
+
+    @ValueMapValue
+    @Via("resource")
+    private String title;
+
+    @Self
+    private SlingHttpServletRequest request;
+}
+```
+
+`@Via("resource")` tells the injector to resolve the value from the request's resource rather than the request itself.
+This is useful when you need both request-level features (selectors, request attributes) and resource-level property
+injection in the same model.
+
 ## @PostConstruct -- initialization logic
 
 Run logic after all injections are complete:
@@ -461,6 +483,82 @@ class HeroImplTest {
 | `@OSGiService` not injected                 | OSGi component/service status                 | Ensure service is active and interface wiring is correct           |
 | Works in console edits but breaks on deploy | Source-controlled config/package contents     | Persist changes in code (`ui.config`, `ui.apps`, `core`)           |
 
+## Service users and repoinit
+
+When your code runs outside a request context (schedulers, event handlers, workflows) or needs elevated permissions, you
+cannot rely on the request-scoped resource resolver. Instead, you use a **service user** -- a dedicated system account
+with minimal permissions.
+
+### Why service users?
+
+- **Never use admin sessions** in application code -- this grants full access and is a security risk.
+- Service users follow the **principle of least privilege** -- only grant the permissions your service actually needs.
+- In AEMaaCS, CRXDE-based user creation is not available in production environments. Service users must be created via
+  **repoinit** (Repository Initializer) scripts committed in your codebase.
+
+### Creating a service user with repoinit
+
+Repoinit scripts run at bundle startup and set up repository state (users, groups, ACLs). Add them as OSGi
+configurations in `ui.config`:
+
+```json
+// ui.config/.../config/org.apache.sling.jcr.repoinit.RepositoryInitializer-mysite.cfg.json
+{
+    "scripts": [
+        "create service user mysite-reader\nset ACL for mysite-reader\n    allow jcr:read on /content/mysite\nend"
+    ]
+}
+```
+
+Or, more readably, with a multi-line script:
+
+```
+create service user mysite-reader
+
+set ACL for mysite-reader
+    allow jcr:read on /content/mysite
+    allow jcr:read on /content/dam/mysite
+end
+```
+
+### Mapping a service user
+
+Map your bundle to the service user so `getServiceResourceResolver` knows which user to use. Add an **amended service
+user mapping** configuration:
+
+```json
+// ui.config/.../config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-mysite.cfg.json
+{
+    "user.mapping": [
+        "com.mysite.core:mysite-reader=mysite-reader"
+    ]
+}
+```
+
+The format is `<bundle-symbolic-name>:<sub-service-name>=<service-user-name>`.
+
+### Using the service user in code
+
+```java
+@Component(service = ContentReaderService.class)
+public class ContentReaderServiceImpl implements ContentReaderService {
+
+    @Reference
+    private ResourceResolverFactory resolverFactory;
+
+    public Resource readContent(String path) throws LoginException {
+        Map<String, Object> params = Map.of(
+            ResourceResolverFactory.SUBSERVICE, "mysite-reader"
+        );
+        try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(params)) {
+            return resolver.getResource(path);
+        }
+    }
+}
+```
+
+> **Important:** Always close service resource resolvers (use try-with-resources). A leaked resolver is a resource leak.
+
 ## Security and service access hints
 
 - Prefer the resolver already provided by AEM request/resource context.
@@ -485,6 +583,7 @@ You learned:
 - **Interface-based models** with `adapters` for clean APIs
 - **Model Exporters** for JSON output
 - **Testing** with AemContext
+- **Service users** and repoinit scripts for background/elevated access
 
 With components (HTL + dialogs + Sling Models) covered, we are ready to build a complete site. The next chapter covers
 templates and policies -- how pages are structured and which components are allowed.

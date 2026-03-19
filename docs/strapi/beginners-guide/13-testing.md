@@ -782,10 +782,10 @@ jobs:
         node-version: [18.x, 20.x]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -802,7 +802,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           file: ./coverage/lcov.info
           fail_ci_if_error: true
@@ -851,14 +851,15 @@ const postFactory = Factory.define(({ sequence }) => ({
 module.exports = postFactory;
 ```
 
-### 4. Parallel test execution
+### 4. Sequential test execution
 
-Configure Jest to run tests in parallel for faster execution:
+Strapi is stateful -- it uses a single database connection and global state. Running tests in parallel causes race
+conditions. Always use a single worker:
 
 ```javascript
 // jest.config.js
 module.exports = {
-  maxWorkers: "50%", // Use 50% of available CPU cores
+  maxWorkers: 1,
   // ... other config
 };
 ```

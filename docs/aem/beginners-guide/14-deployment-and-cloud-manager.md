@@ -148,12 +148,25 @@ flowchart LR
 6. **Functional Tests** -- runs integration tests (`it.tests/`)
 7. **UI Tests** -- runs end-to-end browser tests (if configured)
 
+### Pipeline types
+
+Besides the full-stack pipeline, Cloud Manager supports specialized pipelines:
+
+| Pipeline type      | Deploys                                        | Use when                                      |
+|--------------------|------------------------------------------------|-----------------------------------------------|
+| **Full-stack**     | All modules (`core`, `ui.apps`, `ui.config`, `dispatcher`, etc.) | Java, component, config, or Dispatcher changes |
+| **Frontend-only**  | Only `ui.frontend` (compiled CSS/JS)           | CSS/JS-only changes -- much faster (~10 min)  |
+| **Config-only**    | OSGi configs and Dispatcher config             | Configuration changes without a full build    |
+
+Frontend-only pipelines skip the Java build entirely, which dramatically shortens the deploy cycle for UI work.
+Config-only pipelines are useful for toggling feature flags or updating Dispatcher rules without redeploying code.
+
 ### Creating a pipeline
 
 1. In Cloud Manager, go to **Pipelines**
 2. Click **Add Pipeline**
 3. Choose **Production** or **Non-Production**
-4. Select the pipeline type (Full-stack)
+4. Select the pipeline type (Full-stack, Frontend, or Config)
 5. Configure the trigger:
     - **On Git Changes** -- auto-trigger on push
     - **Manual** -- trigger manually
@@ -344,6 +357,14 @@ Before your first production deployment:
 | **SSL**          | Certificate provisioned via Cloud Manager      |
 | **Monitoring**   | Alerts configured for errors and performance   |
 
+## Migrating from AEM 6.5
+
+If you are moving an existing AEM 6.5 project to AEMaaCS, the **Content Transfer Tool (CTT)** migrates content (pages,
+assets, users) from your on-premise or managed-services instance to the cloud. The tool handles extraction, ingestion,
+and validation. See
+the [Content Transfer Tool documentation](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/migration-journey/cloud-migration/content-transfer-tool/overview-content-transfer-tool)
+for details.
+
 > For deeper deployment patterns, see
 > the [Deployment](/aem/infrastructure/deployment), [Cloud Service](/aem/infrastructure/cloud-service), [Testing](/aem/infrastructure/testing),
 > and [Security Basics](/aem/infrastructure/security) references.
@@ -354,11 +375,13 @@ You learned:
 
 - The **deployment model** -- Git > Cloud Manager > pipeline > environments
 - **Cloud Manager** -- Git, pipelines, environments, monitoring
+- **Pipeline types** -- full-stack, frontend-only, config-only
 - **Pipeline stages** -- build, test, code quality, security, deploy
 - **Rapid Development Environments** -- fast iteration with the RDE CLI
 - **Environment-specific config** -- run modes, environment variables
 - **Monitoring** -- logs, tailing
 - **Production checklist** -- what to verify before going live
+- **Content Transfer Tool** for AEM 6.5 to AEMaaCS migration
 
 ## Congratulations
 

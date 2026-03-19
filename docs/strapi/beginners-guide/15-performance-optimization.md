@@ -119,10 +119,8 @@ const allPosts = await strapi.documents("api::post.post").findMany({
 // Good: Paginate results
 const posts = await strapi.documents("api::post.post").findMany({
   status: "published",
-  pagination: {
-    page: 1,
-    pageSize: 20,
-  },
+  limit: 20,
+  start: 0,
 });
 ```
 
@@ -486,8 +484,8 @@ export default ({ env }) => ({
         small: 500,
         xsmall: 320,
       },
-      // Generate WebP versions
-      formats: ['webp', 'jpg'],
+      // Strapi does not natively generate WebP. To serve WebP, either convert
+      // images before uploading or use a CDN / Cloudinary transformation.
     },
   },
 });

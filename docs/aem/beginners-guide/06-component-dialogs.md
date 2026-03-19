@@ -448,6 +448,20 @@ How it works:
    `showhidetargetvalue` matching the dropdown value that should reveal it
 3. AEM's built-in `cq-dialog-dropdown-showhide` client library handles the show/hide logic automatically
 
+## Hiding inherited dialog fields
+
+When your proxy component extends a Core Component and you want to **remove** a field from the inherited dialog, use
+`granite:hide`:
+
+```xml
+<!-- In your proxy component's _cq_dialog/.content.xml, target the inherited field by node name -->
+<subtitle jcr:primaryType="nt:unstructured"
+          granite:hide="{Boolean}true"/>
+```
+
+This hides the `subtitle` field without needing to rewrite the entire dialog. The field must be referenced by the same
+node name used in the parent dialog.
+
 ## Summary
 
 You learned:
@@ -459,6 +473,8 @@ You learned:
 - **Multifield** for repeatable field groups
 - The **`name` attribute** and how it maps to JCR properties
 - A complete **Hero component dialog** example
+- **Conditional visibility** with the dropdown show/hide pattern
+- **`granite:hide`** for removing inherited dialog fields in proxy components
 
 Next up: [Sling Models](./07-sling-models.md) -- injecting content into Java models, common annotations, adapters,
 exporters, and best practices.

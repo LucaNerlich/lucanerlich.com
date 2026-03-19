@@ -80,9 +80,10 @@ Strapi is one of the most popular headless CMS options. Here is why:
 
 Before we start, make sure you have:
 
-- **Node.js 18.x, 20.x, or 22.x (LTS versions)** -- check with `node --version`
-  - Strapi 5 requires Node.js 18.17.0 or later (LTS releases: 18, 20, 22)
+- **Node.js 20.x or 22.x (LTS versions)** -- check with `node --version`
+  - Strapi 5 requires Node.js 20 or later. Node 18 support was dropped in Strapi 5.31.0 (April 2025).
   - Odd-numbered Node.js releases (19, 21, 23) are not officially supported
+  - Always check the [official Strapi docs](https://docs.strapi.io) for the latest requirements
 - **npm 7+, yarn 3+, or pnpm 8+** -- any package manager works
 - **A code editor** -- VS Code recommended for TypeScript support
 - **A terminal**
@@ -98,15 +99,19 @@ Open your terminal and run:
 npx create-strapi@latest my-blog
 ```
 
-The CLI will ask you a few questions:
+The CLI will ask you a few questions. TypeScript is the default in Strapi 5 -- we disable it here so we can learn the
+basics first and add it in chapter 11:
 
-| Question              | Recommended answer                    |
-|-----------------------|---------------------------------------|
-| Use TypeScript?       | **No** (we will add it in chapter 11) |
-| Install dependencies? | **Yes**                               |
-| Initialize git?       | **Yes**                               |
-| Use example template? | **No** (we will build from scratch)   |
-| Database              | **SQLite** (perfect for development)  |
+| Question              | Recommended answer                                            |
+|-----------------------|---------------------------------------------------------------|
+| Use TypeScript?       | **No** (select JavaScript -- we add TypeScript in chapter 11) |
+| Install dependencies? | **Yes**                                                       |
+| Initialize git?       | **Yes**                                                       |
+| Use example template? | **No** (we will build from scratch)                           |
+| Database              | **SQLite** (perfect for development)                          |
+
+> **Tip:** You can also pass `--javascript` to skip the TypeScript prompt:
+> `npx create-strapi@latest my-blog --javascript`
 
 Once the installation finishes, start the development server:
 
@@ -140,11 +145,11 @@ After creation, your project looks like this:
 ```
 my-blog/
 ├── config/             # Server, database, admin, plugin configuration
-│   ├── admin.ts        # Admin panel settings
-│   ├── database.ts     # Database connection
-│   ├── middlewares.ts   # Global middleware stack
-│   ├── plugins.ts      # Plugin configuration
-│   └── server.ts       # Host, port, app keys
+│   ├── admin.js        # Admin panel settings (.ts if you chose TypeScript)
+│   ├── database.js     # Database connection
+│   ├── middlewares.js   # Global middleware stack
+│   ├── plugins.js      # Plugin configuration
+│   └── server.js       # Host, port, app keys
 ├── database/           # SQLite file (in development)
 ├── public/             # Static files served by Strapi
 │   └── uploads/        # Uploaded media (local provider)

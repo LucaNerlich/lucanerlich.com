@@ -92,7 +92,9 @@ Many concepts transfer to AEM 6.5, but deployment and some APIs differ.
 
 Before we start:
 
-- **Java 21** (the JDK, not just the JRE) -- check with `java -version`
+- **Java 11 or later** (the JDK, not just the JRE) -- check with `java -version`. Java 21 is recommended for new
+  projects; Cloud Manager supports building with Java 17 and 21, and deploys the Java 21 runtime. Older projects may
+  still use Java 11.
 - **Maven 3.9+** -- check with `mvn -version`
 - **An AEMaaCS SDK** -- download from
   the [Software Distribution portal](https://experience.adobe.com/#/downloads/content/software-distribution/en/aemcloud.html) (
@@ -213,12 +215,16 @@ Adobe provides a Maven Archetype that scaffolds a complete AEM project:
 mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.2.1:generate \
   -D archetypeGroupId=com.adobe.aem \
   -D archetypeArtifactId=aem-project-archetype \
-  -D archetypeVersion=49 \
+  -D archetypeVersion=56 \
   -D appTitle="My Site" \
   -D appId="mysite" \
   -D groupId="com.mysite" \
   -D aemVersion="cloud"
 ```
+
+> **Tip:** The archetype version above (`56`) was the latest at the time of writing. Always check
+> the [releases page](https://github.com/adobe/aem-project-archetype/releases) for the current version before generating
+> your project.
 
 | Parameter    | Value      | Description                               |
 |--------------|------------|-------------------------------------------|
@@ -315,6 +321,29 @@ flowchart TD
 | **dispatcher**  | Apache/Dispatcher configuration                              | Deployed separately   |
 | **it.tests**    | Integration tests                                            | Run during build      |
 
+### Content package filters
+
+Each content package module (`ui.apps`, `ui.content`, `ui.config`) has a `filter.xml` file that defines which JCR paths
+are included in the package:
+
+```
+ui.apps/src/main/content/META-INF/vault/filter.xml
+```
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/apps/mysite"/>
+</workspaceFilter>
+```
+
+The filter controls what is deployed (and what is removed on install). Misconfigured filters are a common source of
+deployment issues -- if a path is missing from `filter.xml`, it will not be packaged and deployed. If a filter uses
+`mode="replace"`, existing content at that path is deleted and replaced on install.
+
+The archetype generates correct filters for you. You will need to update them when adding new top-level paths (e.g., a
+new i18n dictionary location).
+
 ## Build and deploy to your local instance
 
 Build the entire project and deploy to your running author instance:
@@ -374,8 +403,7 @@ and infrastructure ownership) differs.
 
 ### OSGi Web Console
 
-`http://localhost:4502/system/console` -- manage OSGi bundles, services, configurations. We will explore this in chapter
-
+`http://localhost:4502/system/console` -- manage OSGi bundles, services, configurations. We will explore this in chapter 3.
 
 ### Package Manager
 

@@ -25,17 +25,20 @@ This chapter covers common issues you'll encounter with Strapi, debugging techni
 
 **Error:**
 ```
-error strapi@5.0.0: The engine "node" is incompatible with this module. Expected version ">=18.0.0 <=20.x.x". Got "21.0.0"
+error strapi@5.x.x: The engine "node" is incompatible with this module. Expected version ">=20.0.0". Got "19.0.0"
 ```
+
+Strapi 5 only supports LTS versions of Node.js. Since Strapi 5.31.0, the minimum is Node 20. Odd-numbered
+releases (19, 21, 23) are never supported.
 
 **Solution:**
 ```bash
 # Use nvm to switch to a compatible version
-nvm install 20
-nvm use 20
+nvm install 22
+nvm use 22
 
 # Verify version
-node --version  # Should show v20.x.x
+node --version  # Should show v22.x.x
 ```
 
 #### Permission errors during installation
@@ -446,7 +449,31 @@ export default {
 };
 ```
 
-#### 4. REST API relation handling
+#### 4. Flattened REST API response format
+
+**Strapi 4** wrapped attributes inside a nested `attributes` object:
+
+```json
+{ "data": { "id": 1, "attributes": { "title": "My Post" } } }
+```
+
+**Strapi 5** flattens the response -- attributes are directly on the data object, and `documentId` replaces `id` as
+the primary identifier:
+
+```json
+{ "data": { "id": 1, "documentId": "abc123", "title": "My Post" } }
+```
+
+To ease migration, you can send the `Strapi-Response-Format: v4` header to temporarily restore the old nested format.
+This lets you migrate frontend consumers one at a time:
+
+```bash
+curl -H "Strapi-Response-Format: v4" http://localhost:1337/api/posts
+```
+
+Remove the header once all clients have been updated to the new format.
+
+#### 5. REST API relation handling
 
 **Strapi 4:**
 ```javascript
@@ -477,6 +504,23 @@ POST /api/posts
   }
 }
 ```
+
+### Automated upgrade tool
+
+Strapi provides `@strapi/upgrade` with codemods that automate many of the breaking changes. Run it before doing
+anything else:
+
+```bash
+npx @strapi/upgrade major
+```
+
+This tool scans your codebase and automatically applies transformations such as:
+
+- Converting Entity Service calls to Document Service syntax
+- Updating import paths
+- Converting lifecycle files to Document Service middleware
+
+Review the changes it makes, then proceed with manual migration steps for anything it could not handle automatically.
 
 ### Migration steps
 

@@ -189,7 +189,9 @@ other environments. Treat template setup as configuration-as-code, not environme
 
 ## Component policies
 
-Policies control how components behave within a template. They are configured per template, per container.
+Policies control how components behave within a template. They are configured per template, per container. Policies are
+stored in the JCR under `/conf/mysite/settings/wcm/policies/` -- this is useful to know when debugging or exporting
+template configurations.
 
 ### Setting allowed components
 

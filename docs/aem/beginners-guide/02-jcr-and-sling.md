@@ -234,7 +234,7 @@ The `sling:resourceType` on the node points to a component definition. Sling loo
 
 This is the **overlay mechanism** -- you can override any AEM component by placing your version in `/apps`.
 
-- [Sling Resource Merger](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/sling-resource-merger)
+- [Sling Resource Merger](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/sling-resource-merger)
 
 ### Script selection rules
 
@@ -352,38 +352,42 @@ http://localhost:4502/bin/querybuilder.json?
   &p.limit=10
 ```
 
-In Java (e.g., inside a Sling Model or OSGi service), you use the `QueryBuilder` service:
+In Java (e.g., inside a Sling Model), you use the `QueryBuilder` service:
 
 ```java
-@OSGiService
-private QueryBuilder queryBuilder;
+@Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class PageSearchModel {
 
-@Self
-private Resource resource;
+    @OSGiService
+    private QueryBuilder queryBuilder;
 
-public List<String> findPageTitles() {
-    Map<String, String> params = new HashMap<>();
-    params.put("path", "/content/mysite");
-    params.put("type", "cq:Page");
-    params.put("property", "jcr:content/jcr:title");
-    params.put("property.operation", "like");
-    params.put("property.value", "%about%");
-    params.put("p.limit", "10");
+    @Self
+    private Resource resource;
 
-    ResourceResolver resolver = resource.getResourceResolver();
-    Session session = resolver.adaptTo(Session.class);
-    Query query = queryBuilder.createQuery(PredicateGroup.create(params), session);
-    SearchResult result = query.getResult();
+    public List<String> findPageTitles() {
+        Map<String, String> params = new HashMap<>();
+        params.put("path", "/content/mysite");
+        params.put("type", "cq:Page");
+        params.put("property", "jcr:content/jcr:title");
+        params.put("property.operation", "like");
+        params.put("property.value", "%about%");
+        params.put("p.limit", "10");
 
-    List<String> titles = new ArrayList<>();
-    for (Hit hit : result.getHits()) {
-        try {
-            titles.add(hit.getTitle());
-        } catch (RepositoryException e) {
-            // handle exception
+        ResourceResolver resolver = resource.getResourceResolver();
+        Session session = resolver.adaptTo(Session.class);
+        Query query = queryBuilder.createQuery(PredicateGroup.create(params), session);
+        SearchResult result = query.getResult();
+
+        List<String> titles = new ArrayList<>();
+        for (Hit hit : result.getHits()) {
+            try {
+                titles.add(hit.getTitle());
+            } catch (RepositoryException e) {
+                // handle exception
+            }
         }
+        return titles;
     }
-    return titles;
 }
 ```
 

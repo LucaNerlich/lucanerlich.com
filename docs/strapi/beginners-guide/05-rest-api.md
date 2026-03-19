@@ -105,6 +105,19 @@ The response has two top-level keys:
 | `data` | Array of entries (or a single object for findOne) |
 | `meta` | Pagination info                                   |
 
+### `documentId` vs `id`
+
+Every entry in the response has both `id` and `documentId`. Understanding the difference is important:
+
+| Field        | Type   | Purpose                                                                    |
+|--------------|--------|----------------------------------------------------------------------------|
+| `id`         | Number | Internal database auto-increment ID. **Do not use this in API calls.**     |
+| `documentId` | String | The primary identifier for all API operations (URLs, relations, mutations) |
+
+In Strapi 5, **always use `documentId`** when referencing entries in REST URLs, relation `connect`/`disconnect`
+calls, and the Document Service API. The numeric `id` is an internal detail that may differ between draft and published
+versions of the same document.
+
 Notice that **relations are not included** by default. The `author`, `category`, and `tags` fields are missing. You need
 to explicitly **populate** them.
 
@@ -487,19 +500,7 @@ This permanently deletes both the draft and published versions.
 A real-world query to build a blog listing page:
 
 ```bash
-curl "http://localhost:1337/api/posts?\
-filters[category][slug][\$eq]=javascript&\
-populate[author][fields][0]=name&\
-populate[author][populate]=avatar&\
-populate[category][fields][0]=name&\
-populate[tags][fields][0]=name&\
-fields[0]=title&\
-fields[1]=slug&\
-fields[2]=excerpt&\
-fields[3]=publishedDate&\
-fields[4]=featured&\
-sort=publishedDate:desc&\
-pagination[pageSize]=10"
+curl 'http://localhost:1337/api/posts?filters[category][slug][$eq]=javascript&populate[author][fields][0]=name&populate[author][populate]=avatar&populate[category][fields][0]=name&populate[tags][fields][0]=name&fields[0]=title&fields[1]=slug&fields[2]=excerpt&fields[3]=publishedDate&fields[4]=featured&sort=publishedDate:desc&pagination[pageSize]=10'
 ```
 
 This single request:
@@ -543,6 +544,22 @@ async function getBlogPosts(category = "javascript", page = 1) {
 > **Tip:** For complex queries, consider using the
 > [Strapi Client](https://docs.strapi.io/cms/api/client) library which provides a typed, fluent API for querying
 > Strapi from JavaScript and TypeScript applications.
+
+> **Tip:** Building deeply nested query strings by hand is error-prone. The
+> [`qs`](https://www.npmjs.com/package/qs) library (recommended in Strapi's official docs) makes it much easier:
+>
+> ```javascript
+> import qs from "qs";
+>
+> const query = qs.stringify({
+>   filters: { category: { slug: { $eq: "javascript" } } },
+>   populate: { author: { fields: ["name"] }, tags: { fields: ["name"] } },
+>   sort: ["publishedDate:desc"],
+>   pagination: { page: 1, pageSize: 10 },
+> }, { encodeValuesOnly: true });
+>
+> const response = await fetch(`http://localhost:1337/api/posts?${query}`);
+> ```
 
 ## API response format
 
@@ -629,6 +646,30 @@ query {
 
 GraphQL handles population automatically -- you get exactly the fields you ask for in the query. This guide focuses on
 REST, but GraphQL is a great alternative if your frontend uses Apollo, urql, or another GraphQL client.
+
+## Rendering Blocks content
+
+The **Blocks** rich text field (used for our post `content`) returns structured JSON, not HTML. To render it on a
+frontend, use the official renderer for your framework:
+
+- **React:** `@strapi/blocks-react-renderer`
+- **Other frameworks:** Parse the JSON structure and render each block type (paragraph, heading, list, image, etc.)
+  manually
+
+```bash
+npm install @strapi/blocks-react-renderer
+```
+
+```javascript
+import { BlocksRenderer } from "@strapi/blocks-react-renderer";
+
+function PostBody({ content }) {
+  return <BlocksRenderer content={content} />;
+}
+```
+
+The renderer handles all built-in block types out of the box. You can customize rendering per block type by passing a
+`blocks` prop with override components.
 
 ## Summary
 
