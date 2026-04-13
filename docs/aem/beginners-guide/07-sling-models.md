@@ -224,6 +224,23 @@ public class PageHeaderModel {
 }
 ```
 
+### @Default -- type-specific variants
+
+The `@Default` annotation has different attributes for each property type:
+
+| Property type          | Annotation attribute                     | Example                                    |
+|------------------------|------------------------------------------|--------------------------------------------|
+| `String` / `String[]`  | `@Default(values = "...")`              | `@Default(values = "Default Title")`       |
+| `boolean`              | `@Default(booleanValues = ...)`         | `@Default(booleanValues = false)`          |
+| `int`                  | `@Default(intValues = ...)`             | `@Default(intValues = 10)`                 |
+| `long`                 | `@Default(longValues = ...)`            | `@Default(longValues = 0L)`               |
+| `double`               | `@Default(doubleValues = ...)`          | `@Default(doubleValues = 0.0)`             |
+| `float`                | `@Default(floatValues = ...)`           | `@Default(floatValues = 0.0f)`             |
+| `short`                | `@Default(shortValues = ...)`           | `@Default(shortValues = (short) 0)`        |
+
+Using the wrong variant (e.g., `values` for a `boolean` field) will not cause a compile error but will result in
+unexpected runtime behavior.
+
 ### @RequestAttribute -- read parameters from HTL
 
 When HTL passes parameters to the model:
@@ -277,6 +294,7 @@ public class HybridModel {
 ```
 
 `@Via("resource")` tells the injector to resolve the value from the request's resource rather than the request itself.
+It applies **per field** -- other fields in the same model still inject from the request unless they also use `@Via`.
 This is useful when you need both request-level features (selectors, request attributes) and resource-level property
 injection in the same model.
 

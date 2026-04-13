@@ -92,7 +92,7 @@ list of social media links.
 
 #### Hints
 
-- For the avatar, use `cq/gui/components/authoring/dialog/fileupload` with `fileReferenceParameter="./fileReference"`.
+- For the avatar, use `granite/ui/components/coral/foundation/form/fileupload` with `fileReferenceParameter="./fileReference"`.
   In the Sling Model, inject the `fileReference` property with `@ValueMapValue`.
 - Social links work like the multifield in chapter 6 -- each item has `platform` (select: LinkedIn, GitHub, Twitter)
   and `url` (textfield).
@@ -170,15 +170,25 @@ Build a headless content structure for events and consume it from a standalone f
 - The standalone frontend can be as simple as a single HTML file with a `fetch()` call:
 
 ```javascript
+// Local SDK only -- never hardcode credentials in production code.
+// On Publish, persisted queries are public GETs and need no auth header.
 const response = await fetch(
     'http://localhost:4502/graphql/execute.json/mysite/events-list',
-    { headers: { 'Authorization': 'Basic ' + btoa('admin:admin') } }
+    {
+        headers: {
+            'Authorization': 'Basic ' + btoa('admin:admin') // dev-only!
+        }
+    }
 );
 const { data } = await response.json();
 ```
 
+> **Security:** The basic-auth header above is acceptable for a **local SDK** exercise only. In production, persisted
+> queries on Publish are public GET requests that do not require authentication. Never ship hardcoded credentials in
+> client-side code.
+
 - Remember that on Publish, persisted queries use GET and are cacheable. On Author for local dev, you will need basic
-  auth headers.
+  auth headers. Content Fragments must be **published** before they are visible on the Publish instance.
 
 ---
 

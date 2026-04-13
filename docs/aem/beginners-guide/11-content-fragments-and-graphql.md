@@ -156,6 +156,12 @@ and AEM version, so verify in your GraphQL/endpoint UI before integrating client
 
 Use GraphiQL from the AEM GraphQL tooling UI for development and schema exploration.
 
+### Field name mapping
+
+GraphQL field names are derived from the Content Fragment Model field names. AEM converts them to **camelCase** --
+for example, a model field labeled "Publish Date" becomes `publishDate` in GraphQL. Field names are **case-sensitive**
+in queries. Use the GraphiQL IDE's schema explorer to verify exact field names if queries return `null` unexpectedly.
+
 ### Basic queries
 
 **List all articles:**
@@ -289,7 +295,11 @@ executed via the persisted query endpoint.
 ### Execute a persisted query
 
 ```bash
-curl http://localhost:4502/graphql/execute.json/mysite/article-list
+# On Author (local SDK) -- authentication required
+curl -u admin:admin http://localhost:4502/graphql/execute.json/mysite/article-list
+
+# On Publish -- no authentication needed for public persisted queries
+curl http://localhost:4503/graphql/execute.json/mysite/article-list
 ```
 
 ### Benefits of persisted queries

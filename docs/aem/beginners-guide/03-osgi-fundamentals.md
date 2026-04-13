@@ -195,8 +195,25 @@ public class CustomGreetingServiceImpl implements GreetingService {
 }
 ```
 
-Higher ranking wins. This is how you override AEM's default services -- register your implementation with a higher
+Higher ranking wins when a single service is selected (the default `@Reference` cardinality is **mandatory/unary** --
+exactly one service). This is how you override AEM's default services -- register your implementation with a higher
 ranking.
+
+You can also control cardinality and target filtering on `@Reference`:
+
+```java
+// Optional: component activates even if no implementation is available
+@Reference(cardinality = ReferenceCardinality.OPTIONAL)
+private GreetingService greetingService;
+
+// Multiple: inject all implementations (List)
+@Reference(cardinality = ReferenceCardinality.MULTIPLE)
+private List<GreetingService> greetingServices;
+
+// Target filter: select a specific implementation by property
+@Reference(target = "(service.pid=com.mysite.core.services.impl.CustomGreetingServiceImpl)")
+private GreetingService greetingService;
+```
 
 ## The Web Console
 

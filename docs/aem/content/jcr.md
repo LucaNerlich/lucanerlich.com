@@ -27,9 +27,9 @@ final HashMap<String, String> properties = new HashMap<>();
 // predicates
 properties.put("path", "/content/mysite");
 properties.put("group.1_property", "some-property-name1");
-properties.put("group.1_property.value", "some-property-value1);
+properties.put("group.1_property.value", "some-property-value1");
 properties.put("group.2_property", "some-property-name2");
-properties.put("group.2_property.value", "some-property-value2);
+properties.put("group.2_property.value", "some-property-value2");
 
 // config
 properties.put("p.offset", "0");
@@ -115,7 +115,7 @@ Avoid hardcoding credentials in production code; use service users and configura
 
 ## Groovy Console
 
-[Groovy Console Github](https://github.com/icfnext/aem-groovy-console)
+[Groovy Console Github](https://github.com/orbinson/aem-groovy-console)
 
 Simple Query Example
 
@@ -140,9 +140,8 @@ final def count = result.getRows().getSize();
 
 println 'No Of pages found = ' + result.nodes.size();
 
-result.nodes.each {
-    node - >
-        println 'nodePath::' + node.path
+result.nodes.each { node ->
+    println 'nodePath::' + node.path
 }
 ```
 
@@ -152,7 +151,7 @@ result.nodes.each {
 //delete all jcr:language props below backoffice
 import javax.jcr.Session
 
-Session session = slingRequest.getResourceResolver().adaptTo(Session.class)
+Session session = resourceResolver.adaptTo(Session.class)
 
 def buildQuery() {
     def queryManager = session.workspace.queryManager

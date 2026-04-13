@@ -68,9 +68,10 @@ HTL automatically picks an escaping context, but you can override it - here are 
 > **Security:** Never use `context='unsafe'` unless you are absolutely sure the content is safe. HTL's automatic
 > escaping is one of its strongest features.
 >
-> **Rich text from the RTE:** Content saved by the Rich Text Editor is already sanitized HTML. The default `html`
-> context handles it correctly -- `${model.richText}` is safe without specifying `context='unsafe'`. If you need to
-> be explicit, use `${model.richText @ context='html'}`.
+> **Rich text from the RTE:** The Rich Text Editor sanitizes content **on save** (stripping dangerous tags/attributes),
+> and HTL's `html` context provides an **additional** escaping layer on render. Together these two layers make
+> `${model.richText}` safe without `context='unsafe'`. If you want to be explicit, use
+> `${model.richText @ context='html'}` -- this is the default and does not change behavior.
 
 ## Block statements
 
@@ -279,7 +280,7 @@ HTL provides several global objects available in every template:
 | `response`                | `SlingHttpServletResponse` | The current response                           |
 | `log`                     | `Logger`                   | SLF4J logger                                   |
 | `wcmmode`                 | `WCMMode`                  | Current WCM mode (edit, preview, disabled)     |
-| `currentDesign`           | `Design`                   | Current page design                            |
+| `currentDesign`           | `Design`                   | Current page design (deprecated in AEMaaCS -- use `currentStyle` instead) |
 | `currentStyle`            | `Style`                    | Current component policy                       |
 
 ### Common usage

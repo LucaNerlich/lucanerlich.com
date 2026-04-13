@@ -226,7 +226,7 @@ Repository node structure example:
 <!-- Translate a string -->
 <span>${'Read More' @ i18n}</span>
 
-<!-- With locale override -->
+<!-- With explicit locale override (requires Sling i18n support for the locale option) -->
 <span>${'Read More' @ i18n, locale='de'}</span>
 
 <!-- In attributes -->

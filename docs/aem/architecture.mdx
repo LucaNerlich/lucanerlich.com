@@ -623,8 +623,9 @@ A practical reference of issues that regularly trip up AEM developers:
 
 ### Resource resolvers and sessions
 
+- **Closing a request-scoped resolver** -- resolvers injected via `@SlingObject` or `request.getResourceResolver()` are managed by Sling and closed automatically at the end of the request. Do **not** close them yourself -- doing so breaks other components that still need the resolver during the same request
 - **Using a request-scoped resolver in async threads** -- the resolver is closed when the request ends, so background threads will get `IllegalStateException`. Open a dedicated service resolver for async work
-- **Not closing manually opened resolvers** -- always use try-with-resources. A leaked resolver means a leaked JCR session
+- **Not closing manually opened resolvers** -- service resolvers obtained via `getServiceResourceResolver()` are **your** responsibility. Always use try-with-resources. A leaked resolver means a leaked JCR session
 
 ```java
 // WRONG -- resolver leaks if an exception occurs

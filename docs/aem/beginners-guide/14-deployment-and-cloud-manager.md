@@ -285,17 +285,32 @@ AEMaaCS supports environment-specific variables in Cloud Manager:
 | `ANALYTICS_ID` | Standard | `UA-12345-1`   |
 | `FEATURE_FLAG` | Standard | `true`         |
 
-Access in OSGi configs:
+Access in OSGi configs (must be `.cfg.json` format -- `.properties` files do not support these placeholders):
 
 ```json
+// com.mysite.core.services.impl.AnalyticsServiceImpl.cfg.json
 {
     "api.key": "$[secret:API_KEY]",
     "analytics.id": "$[env:ANALYTICS_ID]"
 }
 ```
 
-The `$[env:...]` and `$[secret:...]` placeholders are resolved by AEM at config loading time. To use these values in
-Java, read them through the OSGi configuration -- not directly from the environment:
+> **AEMaaCS only:** The `$[env:...]` and `$[secret:...]` placeholders are an AEMaaCS feature and are **not** available
+> in AEM 6.5. They are resolved by AEM at config loading time (not at build time).
+
+To use these values in Java, read them through the OSGi configuration -- not directly from the environment:
+
+```java
+// The config annotation (see chapter 3 for details)
+@ObjectClassDefinition(name = "Analytics Configuration")
+public @interface AnalyticsConfig {
+    @AttributeDefinition(name = "Analytics ID")
+    String analytics_id();
+
+    @AttributeDefinition(name = "API Key")
+    String api_key();
+}
+```
 
 ```java
 @Component(service = AnalyticsService.class)

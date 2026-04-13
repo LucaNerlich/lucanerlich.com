@@ -179,6 +179,12 @@ page component to add your own includes:
 </sly>
 ```
 
+The Core Components page component uses `data-sly-include` to look for these files in your page component's resource
+type path (e.g., `apps/mysite/components/page/`). Because your proxy component sets
+`sling:resourceSuperType="core/wcm/components/page/v3/page"`, Sling's script resolution checks your component first,
+then falls back to the Core Component. This means placing `customheaderlibs.html` in your page component folder is all
+you need -- the Core Component includes it automatically if it exists.
+
 This approach is preferred because you only override the extension points, while the Core Components page component
 handles the full HTML structure, SEO meta tags, and other boilerplate.
 
@@ -266,7 +272,9 @@ Authors use the layout mode (ruler icon) to resize component columns per breakpo
 | Tablet     | 768px -- 1024px |
 | Desktop    | > 1024px        |
 
-Breakpoints are configured in the responsive grid's policy.
+Breakpoints are configured in the responsive grid's **policy** (in the template editor, select the layout container,
+open its policy, and edit the breakpoint widths). You can also define custom breakpoints in the
+`wcm/foundation/components/responsivegrid` policy node in your `/conf` configuration.
 
 ## Proxy components
 

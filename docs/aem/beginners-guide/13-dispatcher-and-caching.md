@@ -126,10 +126,14 @@ Cache rules define which responses the Dispatcher stores:
 The Dispatcher only caches responses that:
 
 1. Return **HTTP 200**
-2. Are **GET requests** (never POST)
+2. Are **GET requests** (POST, PUT, DELETE are never cached)
 3. Do **not** have `Set-Cookie` headers
 4. Do **not** have `Authorization` headers
 5. Match the **cache rules** (`/cache` section)
+
+> **Query strings:** By default, the Dispatcher ignores query parameters for caching -- `/page.html?v=1` and
+> `/page.html?v=2` serve the same cached file. This is configurable via the `/ignoreUrlParams` setting in the farm
+> config. Only add parameters to the allow list if you genuinely need parameter-specific caching.
 
 ## Filters
 
@@ -164,11 +168,15 @@ Filters control which requests reach AEM:
 
 ### Filter order matters
 
-Filters are evaluated **top to bottom**. The last matching filter wins. A common pattern:
+Filters are evaluated **top to bottom** and the **last matching rule wins** (not the first). This means later rules
+override earlier ones. A common pattern:
 
-1. **Deny all** baseline
-2. **Allow** only explicit delivery paths
-3. **Deny** sensitive selectors/paths explicitly
+1. **Deny all** baseline (`/0000`)
+2. **Allow** only explicit delivery paths (`/0001`, `/0002`, ...)
+3. **Deny** sensitive selectors/paths explicitly (`/0100+`) -- these override the allows above because they come later
+
+Because of last-match semantics, the position of your deny rules relative to allow rules is critical. A deny rule placed
+before an allow will be overridden by that allow.
 
 > **Security:** Always deny access to `/crx/*`, `/system/console/*`, and other admin paths on Publish.
 
@@ -219,12 +227,15 @@ sequenceDiagram
 
 ### Stat file invalidation
 
-The Dispatcher uses a `.stat` file mechanism:
+The Dispatcher uses a `.stat` file mechanism for age-based invalidation:
 
-1. When a page is invalidated, the Dispatcher touches the `.stat` file in the cache directory
-2. On the next request, the Dispatcher checks if the cached file is **older** than `.stat`
-3. If older, the file is re-fetched from Publish
-4. If newer, the cached file is served
+1. When a page is published, AEM's **flush agent** on the Publish instance sends an HTTP invalidation request to the
+   Dispatcher (the flush agent is configured in AEM's replication settings -- in AEMaaCS, Adobe manages this
+   automatically)
+2. The Dispatcher **touches** (updates the timestamp of) the `.stat` file in the relevant cache directory
+3. On the next request, the Dispatcher compares the cached file's timestamp against the `.stat` file
+4. If the cached file is **older** than `.stat`, it is considered stale and re-fetched from Publish
+5. If the cached file is **newer** than `.stat`, it is served directly from cache
 
 ### Stat file level
 

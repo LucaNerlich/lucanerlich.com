@@ -234,6 +234,17 @@ The `sling:resourceType` on the node points to a component definition. Sling loo
 
 This is the **overlay mechanism** -- you can override any AEM component by placing your version in `/apps`.
 
+A component can also declare a **`sling:resourceSuperType`** property, pointing to a parent component. When Sling cannot
+find a script in the current component, it walks up the super-type chain and uses the parent's script instead. This is
+how **proxy components** work -- your project component inherits all rendering from a Core Component and only overrides
+what it needs:
+
+```
+/apps/mysite/components/text
+    sling:resourceSuperType = "core/wcm/components/text/v2/text"
+    → Sling uses scripts from the Core Component unless you provide your own
+```
+
 - [Sling Resource Merger](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/sling-resource-merger)
 
 ### Script selection rules

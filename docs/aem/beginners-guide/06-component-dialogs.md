@@ -251,7 +251,11 @@ Multifields let authors add multiple items of the same structure:
 </links>
 ```
 
-Setting `composite="{Boolean}true"` stores each item as a child node with sub-properties:
+Setting `composite="{Boolean}true"` stores each item as a **child node** with sub-properties. Without `composite`
+(or with `composite="{Boolean}false"`), each item is stored as a **single property value** -- this only works for
+simple, single-field multifields (e.g., a list of strings), not for multi-property items like the example above.
+
+With `composite=true`:
 
 ```
 component-node/
@@ -267,6 +271,25 @@ component-node/
 ```
 
 In your Sling Model, use `@ChildResource` to read multifield items (covered in the next chapter).
+
+### Reading file upload values in a Sling Model
+
+When using `fileupload` with `fileReferenceParameter="./fileReference"`, the author-selected DAM asset path is stored as
+a String property. Read it with `@ValueMapValue`:
+
+```java
+@Model(adaptables = Resource.class,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+public class ImageComponentModel {
+
+    @ValueMapValue
+    private String fileReference; // DAM asset path, e.g. "/content/dam/mysite/hero.jpg"
+
+    public String getFileReference() {
+        return fileReference;
+    }
+}
+```
 
 ## The name attribute
 
