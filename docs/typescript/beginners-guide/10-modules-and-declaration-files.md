@@ -10,7 +10,7 @@ keywords:
   - declaration files
   - d.ts files
   - DefinitelyTyped
-  - @types packages
+  - "@types packages"
 sidebar_position: 10
 ---
 

@@ -6,7 +6,7 @@ slug: /testing/beginners-guide/mocking-java
 tags: [testing, beginners, java, mockito, mocking]
 keywords:
   - mockito setup
-  - @Mock @InjectMocks
+  - "@Mock @InjectMocks"
   - when thenReturn
   - verify mockito
   - ArgumentCaptor

@@ -8,8 +8,8 @@ keywords:
   - junit 5 setup
   - junit 5 maven
   - junit 5 gradle
-  - @Test @BeforeEach
-  - @Nested
+  - "@Test @BeforeEach"
+  - "@Nested"
   - parameterized tests java
 sidebar_position: 3
 ---
