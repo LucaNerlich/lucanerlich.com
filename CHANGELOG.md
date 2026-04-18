@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2026-04-18
+
+### Fixed
+- Removed `sitemap.lastmod: 'date'` which caused Docker production builds to fail because the build container has no git worktree
+
 ## [1.2.0] - 2026-04-18
 
 ### Added
