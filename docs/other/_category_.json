@@ -1,7 +1,7 @@
 {
     "label": "Other",
-    "className": "archive",
     "link": {
-        "type": "generated-index"
+        "type": "generated-index",
+        "slug": "/other"
     }
 }

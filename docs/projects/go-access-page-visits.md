@@ -1,8 +1,21 @@
+---
+title: "GoAccess Page Statistics Dashboard"
+description: How to set up self-hosted page visit statistics on an nginx server using the Visitors tool or GoAccess, including a scheduled Node.js script for automated HTML report generation.
+tags: [nginx, analytics, self-hosted, linux, nodejs]
+keywords:
+  - goaccess
+  - nginx statistics
+  - self-hosted analytics
+  - page visit tracking
+  - nginx access log
+sidebar_position: 2
+---
+
 # Go Access - Easy Page Statistics Dashboard
 
 Example GoAccess Widget
 
-![unique-visitors](/images/tech/goaccess-visitor.png)
+![GoAccess visitor statistics widget](/images/tech/goaccess-visitor.png)
 
 ## Option 1 - Visitors
 
@@ -63,7 +76,7 @@ apt-get install lynx
 
 Feeding Lynx our `report.html`, gives you the opportunity to step through the report, using your keyboard.
 
-The page will look similar to this: ![lynx example](/images/tech/lynx.png)
+The page will look similar to this: ![Lynx terminal browser displaying nginx access log HTML report](/images/tech/lynx.png)
 
 Text written in Green, represent links.
 
@@ -110,9 +123,9 @@ server {
 }
 ```
 
-![unique-visitors](/images/tech/goaccess-time.png)
+![GoAccess time-based traffic chart](/images/tech/goaccess-time.png)
 
-![unique-visitors](/images/tech/goaccess-browser.png)
+![GoAccess browser breakdown chart](/images/tech/goaccess-browser.png)
 
 ```javascript
 const dotenvParseOutput = require('dotenv').config()

@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2026-04-18
+
+### Added
+- GitHub Actions CI workflow — builds on every PR and push to `main`, catching broken links before deployment
+- Projects and Other sections added to the top navbar for direct discoverability
+- Preconnect hints for Algolia DocSearch domains to reduce search latency
+- Frontmatter (title, description, tags, keywords, sidebar position) added to all four project pages
+- Description added to the Projects category generated-index page
+- Content column added to the footer with links to Projects and Other
+
+### Changed
+- Twitter card type upgraded to `summary_large_image` for full-width social share previews
+- OG image (`avatar-ai.jpg`) compressed from 404 KB to 120 KB at 1200×1200
+- Navbar logo alt text corrected from the Docusaurus placeholder to "Luca Nerlich logo"
+- Purple accent colour in light mode adjusted to `#2d2aa8` to pass WCAG AA contrast
+- `future.experimental_faster` config key renamed to `future.faster` for Docusaurus 3.10.0
+- `/projects/` and `/other/` category slugs made explicit so navbar links resolve correctly
+- Node.js version in `.nvmrc` corrected from `v16.15.0` to `v22`
+- `engines.npm` in `package.json` corrected to `engines.pnpm`
+- Image alt text on GoAccess and Discord Analyzer pages made descriptive
+
+### Removed
+- Unused `blog/authors.yml` and empty `blog/` directory
+- Dead `.font-green` CSS rule
+- Dead `"className": "archive"` attribute from the Other category config
+
 ## [1.1.1] - 2026-04-13
 
 ### Fixed
@@ -23,7 +49,7 @@ All notable changes to this project will be documented in this file.
 - Added file upload Sling Model reading example in Component Dialogs
 - Documented `customheaderlibs.html` lookup mechanism and breakpoint customization in Templates chapter
 - Added GraphQL field name case sensitivity note and field name mapping explanation
-- Expanded Dispatcher stat file mechanics with flush agent explanation and query string caching behavior
+- Expanded Dispatcher stat file mechanics with flush action explanation and query string caching behavior
 - Added `.cfg.json` format requirement and AEMaaCS-only note for environment variable placeholders
 - Added `@ObjectClassDefinition` config interface example in Deployment chapter
 - Added warning about not closing request-scoped resolvers in Architecture reference

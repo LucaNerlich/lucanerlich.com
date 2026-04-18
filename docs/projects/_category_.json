@@ -1,6 +1,8 @@
 {
     "label": "Projects",
     "link": {
-        "type": "generated-index"
+        "type": "generated-index",
+        "slug": "/projects",
+        "description": "Personal and open-source projects — tools, utilities, and experiments."
     }
 }

@@ -10,7 +10,7 @@
     /* Custom theme tokens – light mode defaults */
     --custom-accent-red: #d40000;
     --custom-accent-green: #148a3c;
-    --custom-accent-purple: #3b38cc;
+    --custom-accent-purple: #2d2aa8;
     --custom-accent-gold: #a67c00;
     --custom-accent-amber: #c08800;
     --custom-muted: #606060;
@@ -39,10 +39,6 @@ html[data-theme='dark'] {
 
 .font-red {
     color: var(--custom-accent-red) !important;
-}
-
-.font-green {
-    color: var(--custom-accent-green);
 }
 
 .font-red > div > a {

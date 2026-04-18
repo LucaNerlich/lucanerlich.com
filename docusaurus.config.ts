@@ -103,6 +103,23 @@ const config: Config = {
     themes: ['@docusaurus/theme-mermaid'],
 
     headTags: [
+        // Preconnect to Algolia DocSearch domains to reduce search latency
+        {
+            tagName: 'link',
+            attributes: {
+                rel: 'preconnect',
+                href: 'https://9BZ1Z8DOXB-dsn.algolia.net',
+                crossorigin: 'anonymous',
+            },
+        },
+        {
+            tagName: 'link',
+            attributes: {
+                rel: 'preconnect',
+                href: 'https://9BZ1Z8DOXB.algolia.net',
+                crossorigin: 'anonymous',
+            },
+        },
         // Default Open Graph metadata for social sharing
         {
             tagName: 'meta',
@@ -122,7 +139,7 @@ const config: Config = {
             tagName: 'meta',
             attributes: {
                 name: 'twitter:card',
-                content: 'summary',
+                content: 'summary_large_image',
             },
         },
         {
@@ -162,7 +179,7 @@ const config: Config = {
     ],
 
     future: {
-        experimental_faster: true,
+        faster: true,
         v4: true,
     },
 
@@ -258,7 +275,7 @@ const config: Config = {
             hideOnScroll: true,
             title: 'Luca Nerlich',
             logo: {
-                alt: 'My Site Logo',
+                alt: 'Luca Nerlich logo',
                 src: 'images/logo.svg',
             },
             items: [
@@ -295,6 +312,16 @@ const config: Config = {
                     position: 'left',
                 },
                 {
+                    to: '/projects',
+                    label: 'Projects',
+                    position: 'left',
+                },
+                {
+                    to: '/other',
+                    label: 'Other',
+                    position: 'left',
+                },
+                {
                     href: 'https://github.com/LucaNerlich/lucanerlich.com',
                     label: 'GitHub',
                     position: 'right',
@@ -304,6 +331,13 @@ const config: Config = {
         footer: {
             style: 'dark',
             links: [
+                {
+                    title: 'Content',
+                    items: [
+                        {label: 'Projects', to: '/projects'},
+                        {label: 'Other', to: '/other'},
+                    ],
+                },
                 {
                     title: 'Legal',
                     items: [
