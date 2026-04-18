@@ -1,0 +1,8 @@
+{
+    "label": "Testing",
+    "link": {
+        "type": "generated-index",
+        "slug": "/testing",
+        "description": "Testing guides — unit testing, integration testing, mocking, TDD, and CI integration for JavaScript/TypeScript and Java projects."
+    }
+}

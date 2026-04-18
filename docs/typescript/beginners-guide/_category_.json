@@ -1,0 +1,8 @@
+{
+    "label": "Beginners Guide",
+    "position": 1,
+    "link": {
+        "type": "generated-index",
+        "description": "A comprehensive TypeScript beginners guide — from basic types to advanced generics and real-world project setup."
+    }
+}

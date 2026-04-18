@@ -1,0 +1,8 @@
+{
+    "label": "Beginners Guide",
+    "position": 1,
+    "link": {
+        "type": "generated-index",
+        "description": "A practical Linux guide for developers — from navigating the filesystem to writing bash scripts and administering a server."
+    }
+}

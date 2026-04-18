@@ -292,24 +292,29 @@ const config: Config = {
                     className: 'font-purple',
                 },
                 {
-                    to: '/javascript',
-                    label: 'JavaScript',
+                    type: 'dropdown',
+                    label: 'Languages',
                     position: 'left',
+                    items: [
+                        {to: '/javascript', label: 'JavaScript'},
+                        {to: '/typescript', label: 'TypeScript'},
+                        {to: '/java', label: 'Java'},
+                        {to: '/css', label: 'CSS'},
+                        {to: '/php', label: 'PHP'},
+                        {to: '/rust', label: 'Rust'},
+                    ],
                 },
                 {
-                    to: '/java',
-                    label: 'Java',
+                    type: 'dropdown',
+                    label: 'Guides',
                     position: 'left',
-                },
-                {
-                    to: '/rust',
-                    label: 'Rust',
-                    position: 'left',
-                },
-                {
-                    to: '/design-patterns',
-                    label: 'Design Patterns',
-                    position: 'left',
+                    items: [
+                        {to: '/docker', label: 'Docker'},
+                        {to: '/linux', label: 'Linux'},
+                        {to: '/git', label: 'Git'},
+                        {to: '/testing', label: 'Testing'},
+                        {to: '/design-patterns', label: 'Design Patterns'},
+                    ],
                 },
                 {
                     to: '/projects',
