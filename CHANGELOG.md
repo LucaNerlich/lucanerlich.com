@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-04-18
+
+### Added
+- TypeScript beginner guide (12 chapters) — basic types through advanced mapped types, utility types, and real-world usage with React and Node.js
+- Docker beginner guide (12 chapters) — first container through multi-stage builds, Docker Compose, secrets, registries, and production hardening
+- Git beginner guide (12 chapters) — first commit through rebasing, collaborative workflows (GitHub Flow, GitFlow, trunk-based), and hooks
+- Testing beginner guide (12 chapters) — Jest/Vitest and JUnit 5, mocking with Mockito, TDD, React Testing Library, Playwright e2e, and coverage
+- Linux beginner guide (12 chapters) — filesystem navigation through bash scripting, networking, package management, and VPS hardening
+- Navbar restructured into Language and Guides dropdowns to accommodate the expanded content
+
+### Fixed
+- Quoted `@`-prefixed YAML keywords in testing and TypeScript frontmatter that caused build failures
+
 ## [1.1.2] - 2026-04-18
 
 ### Added
