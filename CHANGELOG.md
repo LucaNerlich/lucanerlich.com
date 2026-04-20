@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2026-04-20
+
+### Fixed
+- Removed duplicate "Git" entry in the sidebar caused by a standalone `docs/git.md` colliding with the `docs/git/` beginners-guide category (both claimed slug `/git`); standalone reference removed and intro link updated to point at the beginners guide
+
 ## [1.3.0] - 2026-04-20
 
 ### Added
