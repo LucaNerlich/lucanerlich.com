@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-04-20
+
+### Added
+- AEM Dispatcher Configuration guide — AEMaaCS vs AEM 6.5 comparison, two-layer Virtual Host Matching (Apache vhost + Dispatcher `virtualhosts.any` with farm ordering and `localhost` pitfall), Cache Warming (sitemap-driven, post-deploy, targeted), Debugging Toolkit (`DISP_LOG_LEVEL` levels, "why didn't this cache?" 7-step decision tree, inspection commands), Security Headers placement (CDN / Apache / Sling filter decision table), Health Check Endpoints (Dispatcher-only vs end-to-end, Kubernetes liveness/readiness split)
+- AEM Testing guide — expanded from stub into a full reference: test pyramid, tooling choices table, AEM Mocks vs Sling Mocks distinction, `AemContext` API reference, `ResourceResolverType` matrix (RESOURCERESOLVER_MOCK / JCR_MOCK / JCR_OAK / JCR_JACKRABBIT trade-offs), content loading patterns (JSON, Filevault XML, binary), eight concrete test patterns (Sling Model, request-adaptable model, OSGi service, service-user resolver, servlet, JCR-SQL2 query, Context-Aware Config, WireMock external HTTP), UI.tests module with WebdriverIO, Dispatcher validation CI gate, JaCoCo setup, smoke checklist, and common pitfalls
+
+### Changed
+- `/llms.txt` — added the five new beginner guides (TypeScript, Docker, Git, Testing, Linux), added links to Dialog Validation, JCR Queries and API, Context-Aware Configuration, Testing, and Security basics, fixed the broken `/aem/infrastructure/dispatcher/` URL to point at `/aem/infrastructure/dispatcher-configuration/`, removed the stale `/git/` entry now that the Git beginners guide is in the top section
+
 ## [1.4.0] - 2026-04-20
 
 ### Added

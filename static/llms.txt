@@ -1,32 +1,41 @@
 # Luca Nerlich -- Tech Documentation
 
-> Technical documentation and guides for Adobe Experience Manager (AEM), Java, JavaScript, CSS, PHP, Rust, Strapi, and software design patterns. Every page is built around real-world code examples and common pitfalls.
+> Technical documentation and guides for Adobe Experience Manager (AEM), Java, JavaScript, TypeScript, CSS, PHP, Rust, Docker, Git, Testing, Linux, Strapi, and software design patterns. Every page is built around real-world code examples and common pitfalls.
 
-This site provides reference documentation and practical guides aimed at developers. It covers frontend and backend topics, CMS platforms, and language fundamentals through multi-chapter beginners' guides and focused deep-dive articles.
+This site provides reference documentation and practical guides aimed at developers. It covers frontend and backend topics, CMS platforms, tooling, and language fundamentals through multi-chapter beginners' guides and focused deep-dive articles.
 
 ## Beginners' Guides
 
 - [AEM Beginners' Guide](https://lucanerlich.com/aem/beginners-guide/01-introduction/): 15 chapters covering JCR, Sling, OSGi, components, HTL, Sling Models, templates, clientlibs, and deployment
 - [Java Beginners' Guide](https://lucanerlich.com/java/beginners-guide/01-introduction/): 17 chapters from variables and control flow through streams, testing, and build tools
 - [JavaScript Beginners' Guide](https://lucanerlich.com/javascript/beginners-guide/01-introduction/): 15 chapters covering fundamentals, the DOM, events, TypeScript, error handling, and deployment
+- [TypeScript Beginners' Guide](https://lucanerlich.com/typescript/beginners-guide/01-introduction/): 12 chapters from basic types through advanced mapped types, utility types, and real-world usage with React and Node.js
 - [CSS Beginners' Guide](https://lucanerlich.com/css/beginners-guide/01-introduction/): 18 chapters on selectors, box model, flexbox, grid, responsive design, animations, and best practices
 - [PHP Beginners' Guide](https://lucanerlich.com/php/beginners-guide/01-introduction/): 17 chapters from variables through OOP, databases, Composer, and building a web application
 - [Rust Beginners' Guide](https://lucanerlich.com/rust/beginners-guide/01-introduction/): 19 chapters covering ownership, borrowing, lifetimes, traits, concurrency, and deployment
+- [Docker Beginners' Guide](https://lucanerlich.com/docker/beginners-guide/01-introduction/): 12 chapters from first container through multi-stage builds, Docker Compose, secrets, registries, and production hardening
+- [Git Beginners' Guide](https://lucanerlich.com/git/beginners-guide/01-introduction/): 12 chapters from first commit through rebasing, collaborative workflows (GitHub Flow, GitFlow, trunk-based), and hooks
+- [Testing Beginners' Guide](https://lucanerlich.com/testing/beginners-guide/01-introduction/): 12 chapters on Jest/Vitest and JUnit 5, mocking with Mockito, TDD, React Testing Library, Playwright e2e, and coverage
+- [Linux Beginners' Guide](https://lucanerlich.com/linux/beginners-guide/01-introduction/): 12 chapters from filesystem navigation through bash scripting, networking, package management, and VPS hardening
 - [Strapi Beginners' Guide](https://lucanerlich.com/strapi/beginners-guide/01-introduction/): 12 chapters on content modeling, REST API, authentication, lifecycle hooks, and deployment
 
 ## AEM
 
 - [Architecture](https://lucanerlich.com/aem/architecture/): How Sling, JCR, and OSGi fit together in the request processing pipeline
 - [Custom Component Guide](https://lucanerlich.com/aem/custom-component/): End-to-end walkthrough: Sling Model, dialog, HTL template, and clientlib
-- [Component Dialogs](https://lucanerlich.com/aem/component-dialogs/): Copy-paste reference for Granite UI dialog widgets
-- [HTL Templates](https://lucanerlich.com/aem/htl-templates/): HTL syntax, block statements, and template patterns
+- [Component Dialogs](https://lucanerlich.com/aem/component-dialogs/): Copy-paste reference for Granite UI dialog widgets, show/hide patterns, fieldsets, cq:editConfig, and MSM
+- [Dialog Validation](https://lucanerlich.com/aem/components/dialog-validation/): Foundation Validation API, custom validators, async/server-side checks, multifield rules, and debugging
+- [HTL Templates](https://lucanerlich.com/aem/htl-templates/): HTL syntax, block statements, context escaping, and template patterns
 - [Client Libraries](https://lucanerlich.com/aem/client-libraries/): Clientlib categories, dependencies, and embedding
 - [Groovy Console](https://lucanerlich.com/aem/groovy-console/): Scripting recipes for AEM administration
 - [Sling Models](https://lucanerlich.com/aem/backend/sling-models/): Annotations, injectors, exporters, and best practices
 - [Servlets](https://lucanerlich.com/aem/backend/servlets/): Sling servlet registration, resource types, and selectors
-- [Core Components](https://lucanerlich.com/aem/components/core-components/): Extending and customizing AEM Core Components
-- [Dialog Validation](https://lucanerlich.com/aem/components/dialog-validation/): Custom dialog field validation
-- [Dispatcher](https://lucanerlich.com/aem/infrastructure/dispatcher/): Caching rules, filters, and rewrite configuration
+- [Context-Aware Configuration](https://lucanerlich.com/aem/backend/context-aware-configuration/): Context-aware configuration setup, HTL consumption, and XSS defence
+- [Core Components](https://lucanerlich.com/aem/components/core-components/): Extending and customising AEM Core Components
+- [JCR Queries and API](https://lucanerlich.com/aem/content/jcr/): QueryBuilder, JCR-SQL2 with allowlist patterns, service-user session access, and Groovy recipes
+- [Dispatcher Configuration](https://lucanerlich.com/aem/infrastructure/dispatcher-configuration/): Farm files, filters, cache rules, rewrite rules, cache invalidation, TTL, and CDN (`cdn.yaml`) configuration
+- [Testing](https://lucanerlich.com/aem/infrastructure/testing/): AEM Mocks / wcm.io AemContext, Sling Model unit tests, service tests, and content loading
+- [Security basics](https://lucanerlich.com/aem/infrastructure/security/): Service users, sub-service mappings, ACL patterns, and AEMaaCS vs 6.5 delivery
 
 ## Java
 
@@ -44,7 +53,7 @@ This site provides reference documentation and practical guides aimed at develop
 ## Strapi
 
 - [Custom Controllers and Services](https://lucanerlich.com/strapi/custom-controllers-services/): Extending core CRUD, custom actions, and service delegation
-- [Relations and Population](https://lucanerlich.com/strapi/relations-and-population/): Deep population, filtering, and performance optimization
+- [Relations and Population](https://lucanerlich.com/strapi/relations-and-population/): Deep population, filtering, and performance optimisation
 - [Authentication and Permissions](https://lucanerlich.com/strapi/authentication-and-permissions/): JWT flow, RBAC, API tokens, and OAuth providers
 
 ## Design Patterns
@@ -56,6 +65,5 @@ This site provides reference documentation and practical guides aimed at develop
 ## Optional
 
 - [Content Modeling](https://lucanerlich.com/content-modeling/): CMS-agnostic guide to content types, relations, and performance pitfalls
-- [Git](https://lucanerlich.com/git/): Branching strategies, merge vs rebase, interactive rebase, and commit conventions
-- [Web Performance](https://lucanerlich.com/web-performance/): Core Web Vitals, Lighthouse, image optimization, caching, and CDN patterns
+- [Web Performance](https://lucanerlich.com/web-performance/): Core Web Vitals, Lighthouse, image optimisation, caching, and CDN patterns
 - [Semantic HTML](https://lucanerlich.com/semantic-html/): Element reference, accessibility, and common anti-patterns
