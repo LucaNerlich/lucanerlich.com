@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2026-04-20
+
+### Added
+- AEM Dialog Validation guide — `validate()` trigger table with `.checkValidity()` imperative example, "Two ways to declare a validator" subsection (`validation` attribute vs `granite:data/foundation-validation` child node), per-item multifield validation with partner-field revalidation, async/server-side validation with debounced fetch and cached results, expanded built-in validators split into field-level attributes and registered `foundation.*` validators, "Styling the invalid state" CSS section, and a 5-step debugging checklist
+- AEM Touch UI Component Dialogs — Adobe's native `cq-dialog-dropdown-showhide` / `cq-dialog-checkbox-showhide` pattern, FieldSet grouping widget with persistence explanation (Well vs FieldSet vs Multifield comparison), full `cq:editConfig` reference (drop targets, inline editors, refresh listeners, disabling default toolbar actions), link-tuple pattern (label + URL + target) with a security-aware `rel` Sling Model
+
+### Changed
+- AEM Dialog Validation guide — template validator now null-safe (`var value = (raw == null ? "" : String(raw)).trim()`), selectors updated to `~=` space-separated-word match so fields with multiple validators still trigger
+- AEM Touch UI Component Dialogs — `cq-msm-lockable` section expanded from a passing mention to a full explanation (mechanics, pitfalls, composite-multifield example), Tags field extended with `rootPath` scoping and a `TagManager`-based Sling Model reader
+- AEM Touch UI Component Dialogs — Validation section trimmed to a declarative quick-reference that links to the dedicated Dialog Validation page, removing duplicated content
+
 ## [1.3.2] - 2026-04-20
 
 ### Fixed

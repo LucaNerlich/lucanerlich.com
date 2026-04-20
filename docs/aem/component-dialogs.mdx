@@ -26,10 +26,15 @@ The following chapters each present a Coral XML snippet which can be copied into
 - [Empty Dialog / Starting Point](#empty-dialog--starting-point)
 - [Simple Data Fields](#simple-data-fields)
 - [Complex Data Fields](#complex-data-fields)
-- [Validation](#validation)
+  - Native showhide (`cq-dialog-dropdown-showhide`)
+  - FieldSet (grouped fields)
+  - Link tuple (label + URL + target)
+- [Validation](#validation) (see also the deep dive: [Dialog Validation](./components/dialog-validation.mdx))
 - [Dialog Inheritance](#dialog-inheritance)
+- cq editConfig -- inline editing, listeners, drop targets
 - [Design Dialog (Template Policies)](#design-dialog-template-policies)
 - [Layout & Read Only](#layout--read-only)
+- [MSM / Live Copy considerations](#msm--live-copy-considerations)
 - [Full XML Example](#full-xml-example)
 
 ## AEM Component Help Pages
@@ -566,6 +571,107 @@ Use a render condition when you need server-side control (for example, permissio
 
 For client-side toggles (show/hide based on a checkbox or select), prefer dialog JS in a small clientlib scoped to dialog usage.
 
+### Native showhide with cq-dialog-dropdown-showhide
+
+Before writing custom JS, use the script that ships with AEM. Register the clientlib category
+`cq.authoring.dialog` and a select / checkbox with a specific class can toggle any element that
+carries a matching target class and `showhidetargetvalue`.
+
+**Dropdown-controlled target**
+
+```xml
+<linkType
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/select"
+    fieldLabel="Link Type"
+    name="./linkType"
+    granite:class="cq-dialog-dropdown-showhide">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        cq-dialog-dropdown-showhide-target=".cmp-link-type-target"/>
+    <items jcr:primaryType="nt:unstructured">
+        <internal jcr:primaryType="nt:unstructured" text="Internal" value="internal"/>
+        <external jcr:primaryType="nt:unstructured" text="External" value="external"/>
+        <email    jcr:primaryType="nt:unstructured" text="Email"    value="email"/>
+    </items>
+</linkType>
+
+<internalPath
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+    fieldLabel="Internal Path"
+    name="./internalPath"
+    rootPath="/content"
+    granite:class="cmp-link-type-target hide">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        showhidetargetvalue="internal"/>
+</internalPath>
+
+<externalUrl
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="External URL"
+    name="./externalUrl"
+    granite:class="cmp-link-type-target hide">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        showhidetargetvalue="external"/>
+</externalUrl>
+
+<emailAddress
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Email Address"
+    name="./emailAddress"
+    granite:class="cmp-link-type-target hide">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        showhidetargetvalue="email"/>
+</emailAddress>
+```
+
+How Adobe's script resolves it:
+
+1. The select fires a `change` event; the script reads `cq-dialog-dropdown-showhide-target`.
+2. It queries the document for every element matching that selector (e.g. `.cmp-link-type-target`).
+3. For each target, it reads the target's `showhidetargetvalue` and compares to the current select value.
+4. Matching targets get `.hide` removed; all others get it added.
+
+**Checkbox-controlled target** (same idea, different class)
+
+```xml
+<enableAnalytics
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
+    text="Enable analytics tracking"
+    name="./enableAnalytics"
+    value="{Boolean}true"
+    uncheckedValue="false"
+    granite:class="cq-dialog-checkbox-showhide">
+    <granite:data
+        jcr:primaryType="nt:unstructured"
+        cq-dialog-checkbox-showhide-target=".cmp-analytics-settings"/>
+</enableAnalytics>
+
+<trackingId
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Tracking ID"
+    name="./trackingId"
+    granite:class="cmp-analytics-settings hide"/>
+```
+
+With the checkbox variant, the target is simply shown when checked and hidden when unchecked --
+there's no `showhidetargetvalue` needed.
+
+:::tip Scope the selector inside multifields
+Adobe's script queries the **whole document** by default. Inside a composite multifield every item
+has its own controller and target, so a global `.cmp-link-type-target` selector matches rows other
+than the one the author is editing and toggles them all together. For per-row behaviour, use the
+custom JS pattern shown below -- it scopes lookups to `closest("coral-multifield-item")`.
+:::
+
 ### Dynamic show/hide based on a selection
 
 When one widget controls the visibility of another, you can use dialog JS that reacts to the field value and toggles containers.
@@ -902,6 +1008,63 @@ Otherwise all values entered will be stored on the node itself as Array Properti
 
 ![Multifield](/images/aem/dialogfields/multifield.png)
 
+### FieldSet (grouped fields)
+
+[Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
+
+A `fieldset` groups related fields under a single legend, and -- usefully -- prefixes every nested
+field's property name so the values land in a subnode of the component. This is the cleanest way
+to persist "a logical sub-object" (e.g. social links, SEO metadata) without reaching for a
+multifield.
+
+```xml
+<social
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+    jcr:title="Social Links"
+    name="./social">
+    <items jcr:primaryType="nt:unstructured">
+        <twitter
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+            fieldLabel="Twitter / X"
+            name="./twitter"/>
+        <linkedin
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+            fieldLabel="LinkedIn"
+            name="./linkedin"/>
+    </items>
+</social>
+```
+
+The above persists to:
+
+```text
+myComponent
+  └─ social/
+       ├─ twitter = "..."
+       └─ linkedin = "..."
+```
+
+Read it in a Sling Model with `@ChildResource`:
+
+```java
+@ChildResource
+private Resource social;
+
+public String getTwitter() {
+    return social != null ? social.getValueMap().get("twitter", String.class) : null;
+}
+```
+
+:::tip Fieldset vs Well vs Multifield
+- **Well** -- visual grouping only. No name prefix, no subnode.
+- **Fieldset** -- visual grouping *and* persistence into a subnode (`name="./social"`).
+- **Multifield** -- use only when authors can add *n* repeating items. A fieldset is almost always
+  the right choice for a fixed group of fields.
+:::
+
 ### Accordion
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html)
@@ -968,7 +1131,116 @@ Any dialog field can be added to each accordion item `items` block.
     sling:resourceType="cq/gui/components/coral/common/form/tagfield"
     fieldLabel="Tags"
     name="./cq:tags"
-    multiple="{Boolean}true"/>
+    multiple="{Boolean}true"
+    rootPath="/content/cq:tags/myproject"/>
+```
+
+- `name="./cq:tags"` is the conventional property name -- Sling and AEM search already understand
+  it, and `com.day.cq.tagging.TagManager` reads it by default.
+- `rootPath` restricts the picker to a specific taxonomy branch, which keeps authors from tagging
+  with marketing tags intended for other projects. Omit it only when the component is truly
+  cross-project.
+- `multiple="{Boolean}true"` persists a `String[]` -- even for a single tag, this is usually what
+  you want, since it matches the AEM default.
+
+Reading tags in a Sling Model -- never concatenate paths, let `TagManager` resolve them so admin
+UI paths are treated correctly:
+
+```java
+import com.day.cq.tagging.Tag;
+import com.day.cq.tagging.TagManager;
+
+@ValueMapValue(name = "cq:tags")
+private String[] tagIds;
+
+@SelfInjected
+private SlingHttpServletRequest request;
+
+public List<Tag> getTags() {
+    if (tagIds == null || tagIds.length == 0) {
+        return Collections.emptyList();
+    }
+    TagManager tagManager = request.getResourceResolver().adaptTo(TagManager.class);
+    return Arrays.stream(tagIds)
+            .map(tagManager::resolve)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+}
+```
+
+See [Tags and Taxonomies](./content/tags-taxonomies.md) for the full model, including reading
+localized tag titles and filtering by namespace.
+
+### Link tuple (label + URL + target)
+
+A recurring pattern is a "link" made of three related fields. Group them inside a fieldset so
+they persist to a single subnode, and handle the `target="_blank"` security additions in the
+Sling Model -- not in the dialog.
+
+```xml
+<link
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+    jcr:title="Call-to-action link"
+    name="./link">
+    <items jcr:primaryType="nt:unstructured">
+        <label
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+            fieldLabel="Label"
+            name="./label"/>
+        <url
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+            fieldLabel="URL or path"
+            fieldDescription="Internal paths or full URLs (https://...)"
+            name="./url"/>
+        <target
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/form/select"
+            fieldLabel="Open in"
+            name="./target">
+            <items jcr:primaryType="nt:unstructured">
+                <self  jcr:primaryType="nt:unstructured" text="Same tab"  value="_self" selected="{Boolean}true"/>
+                <blank jcr:primaryType="nt:unstructured" text="New tab"   value="_blank"/>
+            </items>
+        </target>
+    </items>
+</link>
+```
+
+Sling Model reading the subnode as a structured object -- and adding `rel` for `_blank` links:
+
+```java
+@Model(adaptables = Resource.class)
+public class LinkModel {
+
+    @ValueMapValue
+    @Default(values = "")
+    private String label;
+
+    @ValueMapValue
+    @Default(values = "")
+    private String url;
+
+    @ValueMapValue
+    @Default(values = "_self")
+    private String target;
+
+    public String getRel() {
+        // Only _blank needs noopener/noreferrer to prevent window.opener hijacking.
+        return "_blank".equals(target) ? "noopener noreferrer" : null;
+    }
+
+    // label, url, target getters...
+}
+```
+
+Adapt in the parent model with `@ChildResource`:
+
+```java
+@ChildResource
+private LinkModel link;
 ```
 
 ### Content Fragment picker
@@ -1001,50 +1273,11 @@ For a picker that restricts to a specific CF model, use a datasource or render c
 
 ## Validation
 
-### Regex validation
+Most dialogs only need the declarative attributes; for anything else, see the dedicated
+[Dialog Validation page](./components/dialog-validation.mdx) for custom validators, async / server
+checks, multifield rules, styling, and debugging.
 
-Add a `validation` node with a regex pattern to enforce input format:
-
-```xml
-<email
-    jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-    fieldLabel="Email Address"
-    name="./email"
-    required="{Boolean}true">
-    <granite:data
-        jcr:primaryType="nt:unstructured"
-        foundation-validation=""/>
-    <validation
-        jcr:primaryType="nt:unstructured"
-        sling:resourceType="granite/ui/components/coral/foundation/form/validation"
-        pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-        patternMessage="Please enter a valid email address"/>
-</email>
-```
-
-### Built-in validators
-
-Granite provides these validation types out of the box, set via the `validation` attribute on a field:
-
-| Validator | Description |
-|-----------|-------------|
-| (none) | No validation, only `required` is checked if set |
-| `foundation.jcr.name` | Valid JCR node name |
-| `foundation.url` | Valid URL format |
-| `foundation.email` | Valid email format |
-| `foundation.number` | Numeric value |
-
-```xml
-<linkUrl
-    jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-    fieldLabel="Link URL"
-    name="./linkUrl"
-    validation="foundation.url"/>
-```
-
-### Max length on textfield
+### Quick reference -- declarative attributes
 
 ```xml
 <title
@@ -1052,8 +1285,36 @@ Granite provides these validation types out of the box, set via the `validation`
     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
     fieldLabel="Title"
     name="./title"
+    required="{Boolean}true"
     maxlength="{Long}80"/>
+
+<price
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/numberfield"
+    fieldLabel="Price"
+    name="./price"
+    min="{Double}0.01"
+    max="{Double}99999.99"
+    step="{Double}0.01"/>
+
+<nodeName
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Node name"
+    name="./name"
+    validation="foundation.jcr.name"/>
 ```
+
+| Attribute | Purpose |
+|-----------|---------|
+| `required="{Boolean}true"` | Field must not be empty |
+| `maxlength="{Long}80"` | Max string length (textfield, textarea) |
+| `min` / `max` / `step` | Numeric bounds (numberfield) |
+| `validation="foundation.jcr.name"` | Pre-registered Granite validator |
+
+For the full list of pre-registered `foundation.*` validators, custom validator registration, the
+Foundation Validation API lifecycle, server-side rules, and multifield patterns, continue to
+[Dialog Validation](./components/dialog-validation.mdx).
 
 ## Dialog Inheritance
 
@@ -1140,6 +1401,113 @@ You can also hide individual fields within a tab using the same mechanism deeper
     jcr:primaryType="nt:unstructured"
     granite:hide="{Boolean}true"/>
 ```
+
+## cq editConfig -- inline editing, listeners, drop targets
+
+`_cq_editConfig.xml` (file system form) or the `cq:editConfig` node sits next to `_cq_dialog` and
+controls how the component behaves in edit mode **before** the dialog opens: which inline editors
+are allowed, what gets dropped onto the component, and which client-side events should re-render
+the component after a save.
+
+```text title="Component structure"
+components/mycomponent/
+  _cq_dialog/.content.xml         # dialog that opens on "configure"
+  _cq_editConfig.xml              # inline editing + drop targets
+  mycomponent.html
+```
+
+### Drop target for assets
+
+Lets authors drag an image from the asset finder straight onto the component.
+
+```xml title="_cq_editConfig.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:EditConfig">
+    <cq:dropTargets jcr:primaryType="nt:unstructured">
+        <image
+            jcr:primaryType="cq:DropTargetConfig"
+            accept="[image/.*]"
+            groups="[media]"
+            propertyName="./fileReference">
+            <parameters
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="myproject/components/mycomponent"/>
+        </image>
+    </cq:dropTargets>
+</jcr:root>
+```
+
+The `propertyName` is where the path of the dragged asset is stored on the component's resource.
+Mark the component HTML with `cq-droptarget` (or the clientlib-generated class) so the drop zone is
+visible in edit mode.
+
+### Inline editor (edit text without opening the dialog)
+
+```xml
+<cq:editConfig jcr:primaryType="cq:EditConfig">
+    <cq:inplaceEditing
+        jcr:primaryType="cq:InplaceEditingConfig"
+        active="{Boolean}true"
+        configPath="/apps/myproject/components/mycomponent/_cq_editConfig/inplaceEditing"
+        editorType="text">
+        <config
+            jcr:primaryType="nt:unstructured"
+            editElementQuery=".cmp-mycomponent__title"
+            propertyName="./title"
+            textPropertyName="./title"/>
+    </cq:inplaceEditing>
+</cq:editConfig>
+```
+
+- `editorType="text"` -- plain textfield inline editor.
+- `editorType="plaintext"` -- same, but strips HTML on save.
+- `editorType="title"` -- classic title editor (single line, pressing Enter saves).
+
+For Rich Text inline editing, set `editorType="text"` and add the full `rtePlugins` config similar
+to the dialog RTE widget.
+
+### Listeners (refresh behaviour after save)
+
+By default, AEM refreshes only the edited component. If a component's HTML depends on siblings
+(e.g. a carousel that re-renders when a slide changes), broaden the refresh:
+
+```xml
+<cq:listeners
+    jcr:primaryType="cq:EditListenersConfig"
+    afteredit="REFRESH_PAGE"
+    afterinsert="REFRESH_PAGE"
+    afterdelete="REFRESH_PAGE"
+    afterchildinsert="REFRESH_SELF"/>
+```
+
+| Value | Effect |
+|-------|--------|
+| `REFRESH_SELF` (default) | Re-render only this component |
+| `REFRESH_PARENT` | Re-render the enclosing container |
+| `REFRESH_PAGE` | Reload the whole page |
+| Custom JS function name | Called with the edit event -- use for targeted DOM updates |
+
+:::warning `REFRESH_PAGE` is a sledgehammer
+Every change forces a full page reload, which is slow and loses any unsaved edits in other
+components. Reach for `REFRESH_SELF` or `REFRESH_PARENT` first; only escalate to `REFRESH_PAGE`
+when siblings genuinely depend on each other.
+:::
+
+### Disabling default actions
+
+Remove the "Copy" or "Delete" buttons from the component toolbar:
+
+```xml
+<cq:editConfig
+    jcr:primaryType="cq:EditConfig"
+    cq:actions="[edit,insert]"/>
+```
+
+Omitting `copymove` and `delete` hides those toolbar buttons. The default list is
+`[edit,copymove,delete,insert]`.
 
 ## Design Dialog (Template Policies)
 
@@ -1425,7 +1793,11 @@ public String getVariant() {
 
 ## MSM / Live Copy considerations
 
-If a field should be lockable in MSM, add `cq-msm-lockable` to the field node.
+Multi-Site Management (MSM) inherits a **blueprint** page into one or more **Live Copy** pages. By
+default any content authored in the blueprint flows down to every Live Copy and overrides whatever
+was there. `cq-msm-lockable` gives the Live Copy author per-field control: the field can be
+*unlocked* to break inheritance on just that property, edited locally, and *re-locked* to resume
+taking updates from the blueprint.
 
 ```xml
 <ctaText
@@ -1434,6 +1806,54 @@ If a field should be lockable in MSM, add `cq-msm-lockable` to the field node.
     fieldLabel="CTA Text"
     name="./ctaText"
     cq-msm-lockable="ctaText"/>
+```
+
+**How the attribute works:**
+
+- The value of `cq-msm-lockable` is the **property name** that should become lockable -- use the
+  same name you used in `./propertyName`, without the `./` prefix.
+- In edit mode, the Live Copy author sees a padlock icon next to the field. Clicking it breaks
+  inheritance for this property only; the UI then shows an "Inherit" button to restore it.
+- Broken inheritance is recorded as a mixin (`cq:LiveSyncCancelled`) on the affected property of
+  the Live Copy resource -- blueprint rollouts skip any property marked as cancelled.
+
+**Common pitfalls:**
+
+- Forgetting the attribute on a nested field in a composite multifield. MSM can only lock what it
+  knows is lockable -- set `cq-msm-lockable` on every field inside the multifield's `items`, not
+  on the multifield node itself.
+- Using a different name than the `./property`. The padlock will render but toggling it won't
+  cancel the right property, so rollouts keep overwriting the "locked" field.
+- Relying on lockable as the only escape hatch for a per-market value. If every market needs its
+  own value, consider a **policy** (Design Dialog) or a different component instead of asking
+  every Live Copy author to manually unlock the same field.
+
+```xml title="Multifield with lockable inner fields"
+<links
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+    composite="{Boolean}true"
+    cq-msm-lockable="links">
+    <field
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/container"
+        name="./links">
+        <items jcr:primaryType="nt:unstructured">
+            <label
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                fieldLabel="Label"
+                name="./label"
+                cq-msm-lockable="label"/>
+            <url
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                fieldLabel="URL"
+                name="./url"
+                cq-msm-lockable="url"/>
+        </items>
+    </field>
+</links>
 ```
 
 <br/>
