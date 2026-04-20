@@ -26,10 +26,10 @@ second tab.
 
 A single blog page with:
 
-- A site **header** and **navigation**.
+- A **responsive site header** that collapses its nav behind a `☰` button on phones.
 - A **main** column with two blog posts, each with a title, date, body, and tag list.
 - An **aside** with a short "About" blurb.
-- A **footer** with a copyright line.
+- A **multi-column footer** that stacks to one column on narrow screens.
 - A **theme toggle** that switches between light and dark mode and remembers your choice.
 - **Relative dates** ("3 days ago") generated at page load.
 - **Tag filtering** -- click a tag to show only posts that include it; click again to clear.
@@ -166,7 +166,11 @@ Why it looks ugly is the point of Step 2.
 
 ## Step 2 -- style it with CSS
 
-Open `styles.css` and paste this in. It is about 60 lines. Read top to bottom.
+Open `styles.css` and paste this in. It is about 60 lines. Read top to bottom. If any selector or property is new to
+you, the [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) has a chapter for each area -- in particular
+the [box model](./css/beginners-guide/03-the-box-model.md),
+[colors and typography](./css/beginners-guide/04-colors-and-typography.md), and
+[Flexbox](./css/beginners-guide/07-flexbox.md) chapters back up what happens in the header and cards below.
 
 ```css
 /* Reset and defaults */
@@ -280,14 +284,20 @@ and footer. Resize the browser window narrow and the aside will jump below the p
 
 - **CSS custom properties** (the `--bg`, `--fg`, ... at the top). These are variables. `:root` sets the light values;
   `html[data-theme="dark"]` overrides them when the attribute is present. The JavaScript in Step 3 just flips that
-  attribute -- no CSS needs to be rewritten at runtime.
+  attribute -- no CSS needs to be rewritten at runtime. See
+  [CSS Custom Properties](./css/beginners-guide/13-css-custom-properties.md) for the full picture (scoping,
+  fallbacks, `calc()` integration).
 - **`repeat(auto-fit, minmax(18rem, 1fr))`**. This is the whole responsive layout. "Fit as many 18rem-wide columns as
   will fit, and let each take an equal share of the remaining space." On a phone you get one column; on a laptop you
-  get two.
+  get two. The [CSS Grid chapter](./css/beginners-guide/08-css-grid.md) covers `auto-fit` vs `auto-fill` and why this
+  pattern avoids a media query; [Responsive Design](./css/beginners-guide/09-responsive-design.md) covers the cases
+  where a media query is still the right tool.
 
 ## Step 3 -- add JavaScript
 
-Open `app.js` and paste this in.
+Open `app.js` and paste this in. Every DOM method here -- `getElementById`, `querySelectorAll`, `addEventListener`,
+`dataset`, `setAttribute` -- is covered in depth in [The DOM](./javascript/beginners-guide/08-the-dom.md)
+and [Events](./javascript/beginners-guide/09-events.md).
 
 ```js
 // 1. Theme toggle ---------------------------------------------------
@@ -353,12 +363,198 @@ Refresh the page. Three things should happen:
 | Block         | Concept it teaches                                                                                   |
 |---------------|------------------------------------------------------------------------------------------------------|
 | Theme toggle  | DOM attributes, event listeners, `localStorage`, CSS custom properties as a single source of truth.  |
-| Relative dates| `Intl.RelativeTimeFormat` -- the browser's built-in human-readable dates. No library needed.         |
+| Relative dates| `Intl.RelativeTimeFormat` -- the browser's built-in human-readable dates. See [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) for the sibling APIs (numbers, currency, full dates). |
 | Tag filter    | `querySelectorAll`, `dataset`, `hidden` attribute, and toggling state with a single top-level var.   |
 
-## Step 4 (optional) -- load posts from a JSON file
+## Step 4 -- a responsive header and footer
+
+The layout already reflows because of the `auto-fit` / `minmax()` trick in Step 2 -- resize the window and the aside
+drops below the main column. But two places still look cramped on a phone:
+
+- The header nav tries to squeeze logo, three links, and the theme button onto one row.
+- The footer is a single line that stays centred even on wide screens.
+
+This step upgrades both -- a proper mobile menu behind a toggle button, and a multi-column footer that stacks on
+narrow screens. If you want the theory behind this section, see
+[Responsive Design](./css/beginners-guide/09-responsive-design.md) for breakpoints and media queries.
+
+### Part A -- mobile menu in the header
+
+Update the header in `index.html` to add a toggle button and an `id` on the nav so the button can describe what it
+controls:
+
+```html
+<header class="site-header">
+    <h1>Ada's Blog</h1>
+    <button id="nav-toggle" class="nav-toggle" type="button"
+            aria-expanded="false" aria-controls="main-nav">
+        <span aria-hidden="true">☰</span>
+        <span class="visually-hidden">Menu</span>
+    </button>
+    <nav id="main-nav" aria-label="Main">
+        <ul>
+            <li><a href="#" aria-current="page">Home</a></li>
+            <li><a href="#">Archive</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+    </nav>
+    <button id="theme-toggle" type="button" aria-label="Toggle colour theme">Dark mode</button>
+</header>
+```
+
+Three accessibility details to notice:
+
+| Attribute                | What it does                                                                        |
+|--------------------------|-------------------------------------------------------------------------------------|
+| `aria-expanded="false"`  | Tells assistive tech whether the menu is currently open -- JS will flip this.       |
+| `aria-controls="main-nav"` | Points to the element the button shows/hides.                                     |
+| `.visually-hidden` span  | The word "Menu" is read by screen readers but not shown on screen.                  |
+
+Append this to the bottom of `styles.css`:
+
+```css
+/* Screen-reader-only text */
+.visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Mobile menu toggle -- hidden on wide screens */
+.nav-toggle {
+    display: none;
+    font: inherit;
+    font-size: 1.25rem;
+    padding: 0.25rem 0.6rem;
+    background: transparent;
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+
+/* On narrow screens: show the toggle, hide the nav until it is expanded */
+@media (max-width: 40rem) {
+    .nav-toggle { display: inline-block; order: 2; }
+    .site-header nav { order: 3; flex-basis: 100%; display: none; }
+    .nav-toggle[aria-expanded="true"] + nav { display: block; }
+    .site-header ul { flex-direction: column; gap: 0.5rem; }
+}
+```
+
+A couple of things to understand here:
+
+- `@media (max-width: 40rem)` applies the rules inside only when the viewport is **at most** 40rem wide (~640px) --
+  roughly phone-sized. Above that, the header keeps its original flex layout.
+- `order` re-arranges flex children visually without changing the HTML source order. On mobile we want the toggle to
+  sit next to the title and the nav to drop below.
+- `.nav-toggle[aria-expanded="true"] + nav` -- the adjacent-sibling combinator. When the button's attribute is `true`,
+  the nav directly after it becomes visible. The CSS reacts to the attribute; no `.open` class needed.
+
+Add the handler to the bottom of `app.js`:
+
+```js
+// 4. Mobile nav toggle ----------------------------------------------
+const navToggle = document.getElementById("nav-toggle");
+
+navToggle.addEventListener("click", () => {
+    const expanded = navToggle.getAttribute("aria-expanded") === "true";
+    navToggle.setAttribute("aria-expanded", expanded ? "false" : "true");
+});
+```
+
+Refresh the page and shrink the window below ~640px (or use your browser's device-emulation mode). The nav disappears
+and a `☰` button appears in its place. Click it and the nav slides in as a stacked list. Widen the window again and
+the button hides itself, the nav reappears inline.
+
+### Part B -- a multi-column footer
+
+Replace the existing `<footer class="site-footer">` block in `index.html` with this richer version:
+
+```html
+<footer class="site-footer">
+    <div class="footer-columns">
+        <section>
+            <h3>About</h3>
+            <p>A tiny blog about the web, built by hand.</p>
+        </section>
+        <section>
+            <h3>Topics</h3>
+            <ul>
+                <li><a href="#">HTML</a></li>
+                <li><a href="#">CSS</a></li>
+                <li><a href="#">JavaScript</a></li>
+            </ul>
+        </section>
+        <section>
+            <h3>Elsewhere</h3>
+            <ul>
+                <li><a href="#">GitHub</a></li>
+                <li><a href="#">RSS feed</a></li>
+            </ul>
+        </section>
+    </div>
+    <p class="site-footer-copy">&copy; 2026 Ada Lovelace. Built by hand.</p>
+</footer>
+```
+
+Replace the old `.site-footer` block at the bottom of `styles.css` with this:
+
+```css
+.site-footer {
+    padding: 2rem 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+}
+
+.footer-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 1.5rem;
+    max-width: 60rem;
+    margin: 0 auto;
+}
+
+.footer-columns h3 { margin: 0 0 0.5rem; font-size: 1rem; color: var(--fg); }
+.footer-columns ul { display: grid; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+.footer-columns a { color: var(--muted); text-decoration: none; }
+.footer-columns a:hover { color: var(--accent); }
+
+.site-footer-copy {
+    max-width: 60rem;
+    margin: 1.5rem auto 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.9rem;
+}
+```
+
+Notice the pattern is exactly the same one from Step 2 -- `repeat(auto-fit, minmax(10rem, 1fr))`. No media query
+needed. On a wide screen you get three columns side by side, on a phone they collapse to one. Same idea, smaller
+`minmax` value because footer columns are narrower than content columns.
+
+### When `auto-fit` vs when a media query?
+
+| Use `auto-fit` / `minmax()` when...                       | Use a `@media` query when...                                      |
+|----------------------------------------------------------|-------------------------------------------------------------------|
+| Items are interchangeable (cards, links, icons).          | You need to hide, re-order, or rewire something (like the nav).   |
+| Stacking in one column on narrow screens is the goal.     | You need to switch between two different **types** of layout.     |
+| The number of items is variable.                          | The change depends on something other than width (e.g. hover).    |
+
+Both tools live side by side here: the footer uses `auto-fit` because it just needs to flow; the header uses a media
+query because the nav morphs into a totally different UI.
+
+## Step 5 (optional) -- load posts from a JSON file
 
 Hard-coded posts are fine for a personal page. If you want the structure to grow, move the posts into a data file.
+This is also the point where you need `fetch()` and a local server -- see
+[Working with Data](./javascript/beginners-guide/10-working-with-data.md) for the fundamentals and
+[Async/Await Patterns](./javascript/async-await-guide.md) for the Promise behaviour behind `await`.
 
 Create `posts.json` next to `app.js`:
 
@@ -499,7 +695,8 @@ npm run build
 ```
 
 You get a `dist/` folder with static HTML, CSS, and JS that can be dropped onto any static host (GitHub Pages, Netlify,
-a plain nginx VPS).
+a plain nginx VPS). For the VPS route in particular, [Deploy to a VPS with
+nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) walks through the full server-side setup.
 
 ### When is Vite worth it?
 
@@ -517,6 +714,8 @@ Stick with plain files as long as the project fits in your head. Reach for Vite 
 - Three files -- `index.html`, `styles.css`, `app.js` -- are enough to build a real blog page.
 - Semantic elements (`<header>`, `<main>`, `<article>`, `<aside>`, `<footer>`, `<time>`) make your markup readable and
   accessible for free. See [Semantic HTML](./semantic-html.mdx) for the full list.
+- Responsive layout falls out of `repeat(auto-fit, minmax())` for the footer and a single `@media` query for the mobile
+  nav -- those two tools cover most cases.
 - CSS custom properties plus a single `data-theme` attribute is all you need for a dark-mode toggle.
 - `Intl.RelativeTimeFormat` and `localStorage` are built into every browser -- no libraries required.
 - Vite is optional. Add it when your single-file setup starts to hurt, not before.
@@ -525,8 +724,18 @@ Stick with plain files as long as the project fits in your head. Reach for Vite 
 
 - [Semantic HTML](./semantic-html.mdx) -- reference for every element you used here.
 - [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) -- go deeper on selectors, the box model, Grid, and
-  Flexbox.
+  Flexbox. The chapters on [CSS Grid](./css/beginners-guide/08-css-grid.md),
+  [Responsive Design](./css/beginners-guide/09-responsive-design.md), and
+  [CSS Custom Properties](./css/beginners-guide/13-css-custom-properties.md) directly extend what you built here.
 - [JavaScript Beginners' Guide](./javascript/beginners-guide/01-introduction.md) -- 15 chapters from `console.log` to
-  deploying a site on a VPS.
+  deploying a site on a VPS. [The DOM](./javascript/beginners-guide/08-the-dom.md),
+  [Events](./javascript/beginners-guide/09-events.md), and
+  [Working with Data](./javascript/beginners-guide/10-working-with-data.md) cover everything `app.js` and `posts.json`
+  touch.
+- [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) -- deeper dive on the `Intl` family we used for
+  relative dates.
 - [Project: Build a Complete Website](./javascript/beginners-guide/11-project-build-a-website.md) -- the multi-page
   portfolio version of this tutorial, with navigation, form validation, and routing.
+- [Deploy to a VPS with nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) -- put the finished blog on the
+  internet.
+- [Web Performance](./web-performance.md) -- once your blog is live, the Core Web Vitals checklist to keep it fast.

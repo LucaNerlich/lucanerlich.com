@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.0] - 2026-04-20
+
+### Added
+- Build a Simple Blog Page — new Step 4 "Responsive header and footer" covering a mobile nav toggle with `aria-expanded` / `aria-controls` + `.visually-hidden` utility, a `@media (max-width: 40rem)` query, the adjacent-sibling combinator pattern (`[aria-expanded="true"] + nav`) for CSS-driven disclosure, and a multi-column footer that stacks via the same `repeat(auto-fit, minmax())` trick — plus a decision table contrasting `auto-fit` / `minmax()` against `@media` queries
+
+### Changed
+- Build a Simple Blog Page — cross-reference links threaded through every step: Step 2 links to the CSS beginners' chapters on box model / colors & typography / Flexbox, plus CSS Grid / Responsive Design / CSS Custom Properties for the "two things worth understanding" notes; Step 3 links to DOM and Events chapters; the relative-dates row links to the Intl API Formatting guide; Step 5 (fetch) links to Working with Data and the Async/Await guide; Vite section links to the VPS deploy chapter; Next steps expanded with targeted chapter links plus Web Performance. Summary and "What you will build" updated to mention the responsive header and multi-column footer; previous "Step 4 -- load posts from a JSON file" renumbered to Step 5 (optional)
+
 ## [1.7.0] - 2026-04-20
 
 ### Added
