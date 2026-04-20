@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.7.0] - 2026-04-20
+
+### Added
+- Build a Simple Blog Page guide — a standalone, super-beginner start-to-finish tutorial for building a working blog page with only HTML, CSS, and vanilla JavaScript (semantic markup, CSS Grid layout with `auto-fit`/`minmax`, CSS custom properties driving a `data-theme` dark-mode toggle, `Intl.RelativeTimeFormat` for human-readable dates, `localStorage` persistence, click-to-filter tags), plus an optional Step 4 that moves posts into `posts.json` via `fetch` with a `type="module"` / top-level-`await` variant, and a bonus section on when and how to adopt Vite (dev server, HMR, production build, "when is Vite worth it?" decision table) — sits at `/build-a-blog`, linked from the sidebar after Semantic HTML and from the home page under More Topics
+
 ## [1.6.0] - 2026-04-20
 
 ### Added

@@ -23,6 +23,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'git',
         'web-performance',
         'semantic-html',
+        'build-a-blog',
         'css',
         'javascript',
         'java',

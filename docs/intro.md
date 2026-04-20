@@ -71,6 +71,7 @@ plus a section on [anti-patterns](./design-patterns/anti-patterns.mdx) and commo
 - [Git](./git/beginners-guide/01-introduction.md) -- Beginners guide covering branching, merging, rebasing, workflows, and commit conventions
 - [Web Performance](./web-performance.md) -- Core Web Vitals, Lighthouse, image optimization, caching, and CDN patterns
 - [Semantic HTML](./semantic-html.mdx) -- Element reference, accessibility, and common anti-patterns
+- [Build a Simple Blog Page](./build-a-blog.md) -- Super-beginner tutorial: a working blog with only HTML, CSS, and vanilla JS, plus how Vite fits in later
 - [Mermaid Diagrams](./other/mermaid-diagrams.mdx) -- Flowcharts, sequence diagrams, class diagrams, and more
 
 ---
