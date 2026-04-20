@@ -335,49 +335,44 @@ const config: Config = {
             style: 'dark',
             links: [
                 {
-                    title: 'Content',
+                    title: 'Docs',
+                    items: [
+                        {label: 'AEM', to: '/aem'},
+                        {label: 'Strapi', to: '/strapi'},
+                        {label: 'JavaScript', to: '/javascript'},
+                        {label: 'Java', to: '/java'},
+                        {label: 'Design Patterns', to: '/design-patterns'},
+                    ],
+                },
+                {
+                    title: 'Guides',
+                    items: [
+                        {label: 'Docker', to: '/docker'},
+                        {label: 'Linux', to: '/linux'},
+                        {label: 'Git', to: '/git'},
+                        {label: 'Testing', to: '/testing'},
+                    ],
+                },
+                {
+                    title: 'More',
                     items: [
                         {label: 'Projects', to: '/projects'},
                         {label: 'Other', to: '/other'},
+                        {label: 'Changelog', to: '/changelog'},
+                        {label: 'Imprint', to: '/imprint'},
                     ],
                 },
                 {
-                    title: 'Legal',
+                    title: 'Connect',
                     items: [
-                        {
-                            label: 'Imprint',
-                            to: '/imprint',
-                        },
-                    ],
-                },
-                {
-                    title: 'Socials',
-                    items: [
-                        {
-                            label: 'Xing',
-                            href: 'https://www.xing.com/profile/Luca_Nerlich',
-                        },
-                        {
-                            label: 'LinkedIn',
-                            href: 'https://www.linkedin.com/in/lucanerlich/',
-                        },
-                    ],
-                },
-                {
-                    title: 'Tech',
-                    items: [
-                        {
-                            label: 'GitHub',
-                            href: 'https://github.com/LucaNerlich/lucanerlich.com',
-                        },
-                        {
-                            label: 'Gitlab',
-                            href: 'https://gitlab.com/lucanerlich',
-                        },
+                        {label: 'LinkedIn', href: 'https://www.linkedin.com/in/lucanerlich/'},
+                        {label: 'Xing', href: 'https://www.xing.com/profile/Luca_Nerlich'},
+                        {label: 'GitHub', href: 'https://github.com/LucaNerlich/lucanerlich.com'},
+                        {label: 'Gitlab', href: 'https://gitlab.com/lucanerlich'},
                     ],
                 },
             ],
-            copyright: `Copyright \u00a9 ${new Date().getFullYear()} Luca Nerlich - Built with Docusaurus v3.`,
+            copyright: `Copyright \u00a9 ${new Date().getFullYear()} Luca Nerlich \u2014 Built with Docusaurus v3.`,
         },
         prism: {
             additionalLanguages: ['groovy', 'java', 'rust', 'python', 'bash', 'yaml', 'csv', 'php'],

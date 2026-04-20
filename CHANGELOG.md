@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.6.0] - 2026-04-20
+
+### Added
+- Changelog page at `/changelog`, rendered directly from the root `CHANGELOG.md` so the release history is browsable on the site
+
+### Changed
+- Footer restructured from four thin columns (Content / Legal / Socials / Tech) into four balanced columns: **Docs** (AEM, Strapi, JavaScript, Java, Design Patterns), **Guides** (Docker, Linux, Git, Testing), **More** (Projects, Other, Changelog, Imprint), and **Connect** (LinkedIn, Xing, GitHub, Gitlab) — surfaces top content hubs, mirrors the navbar, and merges profile + repo links
+- Copyright line hyphen upgraded to an em-dash
+
 ## [1.5.0] - 2026-04-20
 
 ### Added
