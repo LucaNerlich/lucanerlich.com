@@ -278,12 +278,18 @@ public class GreetingModel {
 | Approach | When to use | Trade-offs |
 |----------|-------------|------------|
 | **Sling Model** | Default choice for all components | Testable, fast, full AEM/Sling API access |
-| **WCMUsePojo** | Legacy -- avoid in new code | Slower, harder to test, no DI |
 | **JS Use-API** | Quick prototyping only | Server-side Rhino (ES5), slowest, no unit tests |
 
 :::tip
 Always prefer Sling Models. They are the recommended approach by Adobe and the community. See the
 [Sling Models page](./backend/sling-models.mdx) for detailed annotation reference and patterns.
+:::
+
+:::note Legacy: WCMUsePojo
+Older codebases may still use `WCMUsePojo` (extend the class, override `activate()`, look up
+properties manually). It predates Sling Models, has no dependency injection, is harder to unit
+test, and should not be used in new code. If you inherit a project that uses it, migrate to Sling
+Models as components are touched.
 :::
 
 ## Data Input
@@ -302,7 +308,7 @@ Content enters AEM through several channels:
 - **`SlingPostServlet`** -- AEM's built-in POST handler. A simple form POST to a resource path creates or updates properties:
 
 ```bash
-# Create or update a property on a node
+# Local SDK / dev only -- never use admin:admin credentials outside a local instance.
 curl -u admin:admin -d "title=Updated Title" \
   http://localhost:4502/content/my-site/en/home/jcr:content
 ```

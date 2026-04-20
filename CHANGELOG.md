@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2026-04-20
+
+### Fixed
+- AEM JCR guide — SQL2 example no longer teaches query injection via user-controlled locale concatenation; now shows an allowlist pattern for caller-supplied values
+- AEM JCR guide — Session API example rewritten to use `getServiceResourceResolver` with a sub-service; removed hardcoded `admin:admin` credentials, fixed wrong port (`4503` → `4502` for author), dropped unused `TransientRepository` import, moved credentials warning out of the code fence into a `:::danger` admonition
+- AEM JCR guide — Groovy queries migrated from the deprecated `'sql'` language to `'JCR-SQL2'`; xpath cleanup example rewritten as JCR-SQL2; added dev-only console warning
+- AEM JCR guide — fixed stray footnote marker (`>`) and an orphan comment line that rendered outside its code fence; dropped obsolete `jackrabbit-standalone-2.4.0.jar` version reference
+- AEM Context-Aware Configuration guide — HTL `<script>` interpolation now uses explicit `@ context="scriptString"` to defend against XSS if HTL's auto-context misfires; `HeaderModel` null-checks the config returned from `.as(...)`
+- AEM Security basics — service-user mapping section now distinguishes AEMaaCS (repoinit + `ui.config`) from 6.5 (OSGi Console / Users admin UI) delivery
+
+### Changed
+- AEM Architecture — moved `WCMUsePojo` out of the Sling Models comparison table into a dedicated "legacy" aside to avoid implying it is still a current choice
+- AEM curl examples across Architecture, Groovy Console, Content Fragments, GraphQL, and Servlets guides now carry a consistent "Local SDK / dev only" note above every `admin:admin` block
+
 ## [1.3.1] - 2026-04-20
 
 ### Fixed

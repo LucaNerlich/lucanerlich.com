@@ -657,6 +657,9 @@ Saved scripts can also be triggered via a POST request, which is useful for CI/C
 maintenance windows:
 
 ```bash
+# Local SDK / dev only -- production instances should authenticate with a dedicated service
+# account and rotated credentials pulled from CI secrets, not admin:admin.
+
 # Execute a single script
 curl -d "scriptPath=/conf/groovyconsole/scripts/samples/JcrSearch.groovy" \
      -X POST -u admin:admin \

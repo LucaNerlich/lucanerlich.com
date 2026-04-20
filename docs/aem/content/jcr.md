@@ -52,125 +52,158 @@ private List<Hit> executeQuery(SlingHttpServletRequest request, HashMap<String, 
 
 ### SQL2
 
-When the query does not need to be sanitized,
-`resourceResolver.findResources()` can be used
-to query content in a simpler way which is more similar to a classic SQL query.
+`resourceResolver.findResources()` runs a JCR-SQL2 query directly. Use it when **all query inputs
+are constants under your control** -- the JCR-SQL2 grammar has no parameter binding, so any
+user-controlled string concatenated into the statement is a query injection risk. For any query
+fed by request parameters, use the QueryBuilder above (or pre-validate inputs against a strict
+allowlist before building the statement).
 
-The below query searches for nodes below a given path.
-These nodes need to have the resourceType of the TestModel and the nodes paths needs to include the given locale.
+The example below only references constants (the resource type and a fixed path), so string
+construction is safe:
 
 ```java
 final String myQuery = "SELECT * FROM [nt:base] AS s " +
                 "WHERE ISDESCENDANTNODE([/content/experience-fragments]) " +
-                "AND [sling:resourceType] = '" + TestModel.RESOURCE_TYPE + "'  " +
-                "AND [jcr:path] LIKE '%" + locale.toLowerCase() + "%'";
-final Iterator<Resource> questionResources = request.getResourceResolver().findResources(myQuery, Query.JCR_SQL2);
+                "AND [sling:resourceType] = '" + TestModel.RESOURCE_TYPE + "'";
+final Iterator<Resource> results = request.getResourceResolver().findResources(myQuery, Query.JCR_SQL2);
+```
+
+If you need to narrow by locale or another caller-supplied value, validate it against an
+allowlist first:
+
+```java
+// Only accept known locales -- never concatenate raw request input.
+private static final Set<String> ALLOWED_LOCALES = Set.of("en", "de", "fr");
+
+if (!ALLOWED_LOCALES.contains(locale)) {
+    return Collections.emptyIterator();
+}
+final String myQuery = "SELECT * FROM [nt:base] AS s " +
+                "WHERE ISDESCENDANTNODE([/content/experience-fragments/" + locale + "]) " +
+                "AND [sling:resourceType] = '" + TestModel.RESOURCE_TYPE + "'";
 ```
 
 ## Session API / JCR API
 
-To use the JCR API, add the jackrabbit-standalone-2.4.0.jar file to your Java application’s class path. You can obtain
-this JAR file from the Java JCR API web page at [jackrabbit.apache.org](https://jackrabbit.apache.org/jcr/jcr-api.html).
+Inside an AEM bundle, never open a JCR `Session` directly with credentials. Instead, obtain a
+service `ResourceResolver` and adapt it to a `Session` -- this gives you a session scoped to a
+service user with the minimum privileges it needs. See
+[Security basics](../infrastructure/security.mdx) for setting up the service user mapping.
+
+```java
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.apache.sling.api.resource.LoginException;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
+
+import java.util.Map;
+
+@Reference
+private ResourceResolverFactory resolverFactory;
+
+private static final Map<String, Object> AUTH_INFO = Map.of(
+        ResourceResolverFactory.SUBSERVICE, "my-write-service");
+
+public void writeMessage() {
+    try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(AUTH_INFO)) {
+        Session session = resolver.adaptTo(Session.class);
+        if (session == null) {
+            return;
+        }
+
+        Node root = session.getRootNode();
+        Node adobe = root.hasNode("adobe") ? root.getNode("adobe") : root.addNode("adobe");
+        Node day = adobe.hasNode("day") ? adobe.getNode("day") : adobe.addNode("day");
+        day.setProperty("message", "Hello from a service user");
+
+        session.save();
+    } catch (LoginException | RepositoryException e) {
+        LOG.error("Failed to write message", e);
+    }
+}
+```
+
+:::danger Never use `admin:admin` or `loginAdministrative()`
+Hardcoded `admin` credentials and `loginAdministrative()` both grant unrestricted repository
+access. Always route access through a sub-service scoped to the minimum privileges it needs.
+:::
+
+### Remote access from outside AEM
+
+If you truly need to talk to a running AEM instance from an **external** Java client (migrations,
+tooling, tests), connect over HTTP via `JcrUtils.getRepository()` -- but treat it as dev-only and
+pull credentials from configuration, never source. The default local-SDK author port is `4502`.
 
 ```java
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.Node;
-
 import org.apache.jackrabbit.commons.JcrUtils;
-import org.apache.jackrabbit.core.TransientRepository;
 
-// class XX function yy
-
-try {
-    //Create a connection to the CQ repository running on local host
-    Repository repository = JcrUtils.getRepository("http://localhost:4503/crx/server");
-
-    //Create a Session
-    javax.jcr.Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-
-    //Create a node that represents the root node
-    Node root = session.getRootNode();
-
-    // Store content
-    Node adobe = root.addNode("adobe");
-    Node day = adobe.addNode("day");
-    day.setProperty("message", "Adobe CQ is part of the Adobe Digital Marketing Suite!");
-
-    // Retrieve content
-    Node node = root.getNode("adobe/day");
-    System.out.println(node.getPath());
-    System.out.println(node.getProperty("message").getString());
-
-    // Save the session changes and log out
-    session.save();
-    session.logout();
-} catch (Exception e) {
-  e.printStackTrace();
-}
-
-Avoid hardcoding credentials in production code; use service users and configuration instead.
+// Credentials come from environment / config -- never hardcode in committed code.
+Repository repository = JcrUtils.getRepository("http://localhost:4502/crx/server");
+Session session = repository.login(
+        new SimpleCredentials(System.getenv("AEM_USER"), System.getenv("AEM_PASS").toCharArray()));
 ```
 
 ## Groovy Console
 
 [Groovy Console Github](https://github.com/orbinson/aem-groovy-console)
 
-Simple Query Example
+:::warning Dev / ops only
+The Groovy Console runs arbitrary code as the admin user. Never expose it on Publish, and restrict
+access on Author to trusted operators. These examples are written for ad-hoc debugging and
+maintenance -- don't copy their string-concatenation shape into production servlets.
+:::
+
+### Simple query example
+
+Find all pages below a given path that use a specific `sling:resourceType`. Uses `JCR-SQL2` (the
+legacy `sql` language is deprecated and gone in modern Oak).
 
 ```groovy
-/*
-SQL QUERY with Groovy Script.
-@author Hashim Khan */
-/*This method is used to Query the JCR and find results as per the Query.*/
-def buildQuery(page, term) {
-    def queryManager = session.workspace.queryManager;
-    def statement = 'select * from nt:base where jcr:path like \'' + page.path + '/%\' and sling:resourceType = \'' + term + '\'';
-    /*Here term is the sling:resourceType property value*/
-    queryManager.createQuery(statement, 'sql');
+def findByResourceType(rootPath, resourceType) {
+    def queryManager = session.workspace.queryManager
+    def statement = "SELECT * FROM [nt:base] " +
+            "WHERE ISDESCENDANTNODE([${rootPath}]) " +
+            "AND [sling:resourceType] = '${resourceType}'"
+    queryManager.createQuery(statement, 'JCR-SQL2')
 }
 
-/*Defined Content Hierarchy */
-final def page = getPage('/content/geometrixx/en/')
-/*Template which is searched in the content hierarchy */
-final def query = buildQuery(page, 'geometrixx/components/contentpage');
+final def query = findByResourceType('/content/geometrixx/en', 'geometrixx/components/contentpage')
 final def result = query.execute()
-final def count = result.getRows().getSize();
 
-println 'No Of pages found = ' + result.nodes.size();
+println "No of pages found = ${result.nodes.size()}"
 
 result.nodes.each { node ->
-    println 'nodePath::' + node.path
+    println "nodePath:: ${node.path}"
 }
 ```
 
-// > delete all jcr:language props below backoffice
+### Bulk cleanup example
+
+Remove `jcr:language` properties from every node below `/content/eurowings/backoffice`.
 
 ```groovy
-//delete all jcr:language props below backoffice
 import javax.jcr.Session
 
 Session session = resourceResolver.adaptTo(Session.class)
 
-def buildQuery() {
-    def queryManager = session.workspace.queryManager
-
-    def statement = "/jcr:root/content/eurowings//*[@jcr:language]"
-    queryManager.createQuery(statement, 'xpath')
-}
-
-final def query = buildQuery()
-final def result = query.execute()
+def queryManager = session.workspace.queryManager
+def statement = "SELECT * FROM [nt:base] " +
+        "WHERE ISDESCENDANTNODE([/content/eurowings/backoffice]) " +
+        "AND [jcr:language] IS NOT NULL"
+def result = queryManager.createQuery(statement, 'JCR-SQL2').execute()
 
 result.nodes.each { node ->
-    String nodePath = node.path
-    if (nodePath.contains('backoffice')) {
-        println 'Deleting prop below  :' + nodePath
-        node.getProperty('jcr:language').remove()
-        session.save()
-    }
+    println "Deleting jcr:language on :: ${node.path}"
+    node.getProperty('jcr:language').remove()
 }
+
+session.save()
 ```
 
 [Further Groovy Examples on Github](https://github.com/hashimkhan786/aem-groovy-scripts)
@@ -182,7 +215,7 @@ Locally via CRX/DE and on deployed environments via "empty" Content-Package.
 
 ## References
 
-[^1]  https://experienceleague.adobe.com/docs/experience-manager-65/deploying/practices/best-practices-for-queries-and-indexing.html?lang=en#jcrquerycheatsheet>
+[^1]: <https://experienceleague.adobe.com/docs/experience-manager-65/deploying/practices/best-practices-for-queries-and-indexing.html?lang=en#jcrquerycheatsheet>
 
 ## See also
 

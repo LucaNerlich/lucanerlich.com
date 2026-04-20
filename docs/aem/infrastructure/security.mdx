@@ -51,6 +51,18 @@ Service user mappings are defined as OSGi factory configurations for
 The format is `<bundle-symbolic-name>:<sub-service-name>=<service-user-id>`. Always scope to a
 **sub-service name** so different parts of your code can use different privilege levels.
 
+:::info AEMaaCS vs AEM 6.5
+The factory PID and JSON shape are identical on both runtimes -- only the delivery differs.
+
+- **AEMaaCS:** ship the `.cfg.json` in `ui.config` and create the service users plus their ACLs
+  via `repoinit` statements in `org.apache.sling.jcr.repoinit.RepositoryInitializer` configs.
+  `admin`-level users cannot be created, and filesystem writes outside the repository don't
+  survive restarts.
+- **AEM 6.5 / on-prem:** the same `.cfg.json` works in `ui.config`, or you can create the mapping
+  through the OSGi Console (`/system/console/configMgr`) on a running instance. Service users can
+  also be created manually in the Users admin UI.
+:::
+
 ### Obtaining a service ResourceResolver
 
 Use `ResourceResolverFactory.getServiceResourceResolver()` with **try-with-resources** to guarantee

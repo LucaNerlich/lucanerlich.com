@@ -415,6 +415,9 @@ for production** because they are:
 ### Creating a persisted query
 
 ```bash
+# Local SDK / dev only -- admin:admin is fine against the local author. In real environments
+# authenticate the CI job that publishes persisted queries with a scoped service account.
+
 # PUT a persisted query
 curl -u admin:admin \
   -X PUT \

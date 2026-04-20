@@ -456,6 +456,8 @@ need to provide AEM's login cookie.
 ### Using curl
 
 ```bash
+# Local SDK / dev only -- never ship admin:admin credentials against a real environment.
+
 # 1. Authenticate and capture the cookie
 curl -u admin:admin -c cookies.txt http://localhost:4502/libs/granite/core/content/login.html
 

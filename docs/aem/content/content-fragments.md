@@ -762,6 +762,8 @@ public List<Map<String, Object>> exportFragments(ResourceResolver resolver,
 For external systems that need to create or read fragments without Java:
 
 ```bash
+# Local SDK / dev only -- real environments use a scoped service account, not admin:admin.
+
 # Read a fragment
 curl -u admin:admin \
   "http://localhost:4502/api/assets/myproject/articles/my-article.json"
