@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-04-20
+
+### Added
+- Enabled Umami session replay by default via `recorder.js` with `data-sample-rate="0.25"`, `data-mask-level="moderate"`, and `data-max-duration="300000"` attributes
+
+### Changed
+- Migrated Umami script host to `umami.lucanerlich.com`
+
 ## [1.2.1] - 2026-04-18
 
 ### Fixed
