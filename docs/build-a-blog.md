@@ -37,9 +37,47 @@ A single blog page with:
 ## What you need
 
 1. A modern web browser (Chrome, Firefox, Safari, or Edge).
-2. A text editor. [VS Code](https://code.visualstudio.com/) is free and a safe default.
+2. A text editor. [VS Code](https://code.visualstudio.com/) is free and a safe default. Any editor works, but VS Code
+   colours your code so mistakes stand out (a missing quote turns red, for example) -- a word processor like Word or
+   Pages will **not** work, because they save formatting instead of plain text.
 
 That is it. No Node.js yet, no `npm install`.
+
+## Before you start -- what the pieces are
+
+If you have never built a website before, four words will come up over and over. Here is what each of them is, in the
+plainest terms:
+
+- **A website** is just a folder of files. Text files containing HTML, CSS, and JavaScript; maybe some images. When
+  you visit a URL, your browser downloads those files and displays them. That is it -- there is no magic behind
+  the scenes.
+- **HTML** is the content and structure. "Here is a heading. Here is a paragraph. Here is a list." It does not care
+  what anything looks like -- only what it *is*.
+- **CSS** is how the page looks -- colours, spacing, fonts, where things sit on the screen.
+- **JavaScript** is what happens when you click, type, or scroll -- the behaviour of the page.
+
+You will write one file for each of those three, and that is the whole blog.
+
+### How to actually create the files
+
+1. Decide where the folder should live (your Desktop is fine). Create a new folder called `my-blog`:
+   - **macOS** -- in Finder, right-click -> **New Folder**.
+   - **Windows** -- in File Explorer, right-click -> **New** -> **Folder**.
+   - **Linux** -- in your file manager, right-click -> **New Folder** (or `mkdir my-blog` in a terminal).
+2. Open VS Code, then **File** -> **Open Folder...** and pick the `my-blog` folder.
+3. Inside VS Code, click the **New File** icon in the left-hand panel and create three empty files -- `index.html`,
+   `styles.css`, `app.js`. Spelling and the dots matter: `index.html`, not `index html` or `index.HTML.txt`.
+
+### How to "open a file in a browser"
+
+When the guide says "open `index.html` in your browser", you have two options:
+
+- Double-click the file in Finder / File Explorer. Your default browser will open it.
+- Drag the file from Finder / File Explorer onto an open browser window.
+
+Either way, look at the address bar. It will say something like `file:///Users/you/Desktop/my-blog/index.html`. That
+`file://` prefix means "this page is loading from your own disk, not from the internet" -- which is exactly what we
+want for now. No server, no hosting, no account anywhere.
 
 ## Project layout
 
@@ -56,8 +94,9 @@ All work in this guide happens inside that folder.
 
 ## Step 1 -- the HTML skeleton
 
-Open `index.html` and paste this in. Every element here is a **semantic** one -- look up any of them
-in [Semantic HTML](./semantic-html.mdx) for details on what they mean.
+Open `index.html` and paste this in. Every element here is a **semantic** one -- a fancy way of saying its name
+describes what the content *is*, not how it looks (for example `<article>` for a blog post, not `<div class="post">`).
+Look up any of them in [Semantic HTML](./semantic-html.mdx) for details on what they mean.
 
 ```html
 <!DOCTYPE html>
@@ -282,7 +321,8 @@ and footer. Resize the browser window narrow and the aside will jump below the p
 
 ### Two things worth understanding
 
-- **CSS custom properties** (the `--bg`, `--fg`, ... at the top). These are variables. `:root` sets the light values;
+- **CSS custom properties** (the `--bg`, `--fg`, ... at the top) -- a fancy name for variables in CSS. `:root` sets the
+  light values;
   `html[data-theme="dark"]` overrides them when the attribute is present. The JavaScript in Step 3 just flips that
   attribute -- no CSS needs to be rewritten at runtime. See
   [CSS Custom Properties](./css/beginners-guide/13-css-custom-properties.md) for the full picture (scoping,
@@ -295,9 +335,10 @@ and footer. Resize the browser window narrow and the aside will jump below the p
 
 ## Step 3 -- add JavaScript
 
-Open `app.js` and paste this in. Every DOM method here -- `getElementById`, `querySelectorAll`, `addEventListener`,
-`dataset`, `setAttribute` -- is covered in depth in [The DOM](./javascript/beginners-guide/08-the-dom.md)
-and [Events](./javascript/beginners-guide/09-events.md).
+Open `app.js` and paste this in. The **DOM** is just a JavaScript view of the page -- every HTML element becomes an
+object you can read, change, or attach a click handler to. Every DOM method here -- `getElementById`,
+`querySelectorAll`, `addEventListener`, `dataset`, `setAttribute` -- is covered in depth in
+[The DOM](./javascript/beginners-guide/08-the-dom.md) and [Events](./javascript/beginners-guide/09-events.md).
 
 ```js
 // 1. Theme toggle ---------------------------------------------------
@@ -353,7 +394,8 @@ document.querySelectorAll(".tag").forEach((btn) => {
 
 Refresh the page. Three things should happen:
 
-1. Click **Dark mode** -- the page flips to dark. Reload -- it stays dark. The choice is stored in `localStorage`.
+1. Click **Dark mode** -- the page flips to dark. Reload -- it stays dark. The choice is stored in `localStorage`, a
+   tiny key/value store the browser keeps for each site; the data survives reloads and restarts.
 2. The post dates now read something like "5 days ago" instead of "15 April 2026".
 3. Click any tag (for example `css`). The post without that tag disappears and the clicked tag turns blue. Click the
    same tag again -- everything comes back.
@@ -375,7 +417,8 @@ drops below the main column. But two places still look cramped on a phone:
 - The footer is a single line that stays centred even on wide screens.
 
 This step upgrades both -- a proper mobile menu behind a toggle button, and a multi-column footer that stacks on
-narrow screens. If you want the theory behind this section, see
+narrow screens. A **media query** is a CSS rule that only applies when the screen is a certain size (for example,
+"these styles only on screens narrower than 640px"). If you want the theory behind this section, see
 [Responsive Design](./css/beginners-guide/09-responsive-design.md) for breakpoints and media queries.
 
 ### Part A -- mobile menu in the header
@@ -646,7 +689,9 @@ await loadPosts();
 initPosts();
 ```
 
-Because this uses top-level `await`, change the script tag in `index.html` to a module:
+Because this uses top-level `await`, change the script tag in `index.html` to a module. "Module" just means a
+JavaScript file that can use `import` and top-level `await`; the browser treats modules slightly more strictly than
+regular scripts.
 
 ```html
 <script type="module" src="app.js"></script>
@@ -709,6 +754,157 @@ nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) walks through the fu
 
 Stick with plain files as long as the project fits in your head. Reach for Vite the moment it does not.
 
+## Step 6 -- get this live on the internet
+
+Right now your blog lives on your own computer. Nobody else can open it. **Deploying** means copying your files to a
+computer that is always on and connected to the internet -- a **server** -- so anyone with a URL can visit.
+
+Because your blog is just HTML, CSS, and JavaScript (no database, no backend code), any **static host** will do. Below
+are two paths: the quickest way (drop your files into a cloud bucket) and the more hands-on way (run your own tiny
+server with nginx).
+
+:::tip What do I actually upload?
+
+- If you stayed with plain files, upload `index.html`, `styles.css`, `app.js`, and `posts.json` (if you did Step 5).
+- If you used the Vite bonus, run `npm run build`. It creates a `dist/` folder -- upload the **contents** of that
+  folder, not the folder itself.
+  :::
+
+### Option A -- put it in an AWS S3 bucket
+
+**Amazon S3** is a service for storing files in the cloud. It can also serve those files over HTTP like a little
+website. For a small blog you will pay cents per month.
+
+1. **Make a free AWS account** at [aws.amazon.com/free](https://aws.amazon.com/free/). You need a credit card even
+   for the free tier -- AWS will not charge for this blog's usage, but the card has to be on file.
+2. **Create a bucket.** In the AWS Console, open the **S3** service and click **Create bucket**.
+    - Give it a globally-unique name, for example `my-first-blog-1234` (the number is just to avoid collisions). If you
+      own a domain, the bucket name can match the domain -- e.g. `blog.example.com`.
+    - Pick any region close to you.
+    - **Uncheck "Block all public access"** and tick the confirmation. This bucket is *meant* to be public -- that is
+      the whole point.
+    - Leave the other defaults and click **Create bucket**.
+3. **Upload your files.** Open the bucket, click **Upload**, and drag in `index.html`, `styles.css`, `app.js` (and
+   `posts.json` if you have it). Confirm the upload.
+4. **Turn on static website hosting.** In the bucket, go to **Properties** -> scroll to **Static website hosting** ->
+   click **Edit** -> **Enable**. Set **Index document** to `index.html` and save.
+5. **Make the files publicly readable.** Go to **Permissions** -> **Bucket policy** -> **Edit**, and paste:
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Sid": "PublicReadGetObject",
+         "Effect": "Allow",
+         "Principal": "*",
+         "Action": "s3:GetObject",
+         "Resource": "arn:aws:s3:::YOUR-BUCKET-NAME/*"
+       }
+     ]
+   }
+   ```
+
+   Replace `YOUR-BUCKET-NAME` with the name you chose in step 2. Save.
+6. **Open your site.** Back on the bucket's **Properties** tab, scroll again to **Static website hosting**. Copy the
+   **Bucket website endpoint** URL (something like
+   `http://my-first-blog-1234.s3-website-eu-central-1.amazonaws.com`) and open it in a new tab. That is your blog,
+   live on the internet.
+
+:::caution A few honest caveats
+
+- The S3 website endpoint is **HTTP only**. To get HTTPS (the padlock) and a real domain like `blog.example.com`, you
+  put **CloudFront** in front of the bucket and point your DNS at it. That is a whole separate guide.
+- A tiny blog costs cents per month, but the credit card is on file -- keep an eye on the billing dashboard.
+- If you want free HTTPS + a custom domain with zero fuss, **Netlify**, **Cloudflare Pages**, and **GitHub Pages** all
+  let you drag-and-drop a folder (or point at a git repo) and get a secure URL immediately. S3 is great for learning
+  how the pieces fit; those three are great for *done*.
+  :::
+
+### Option B -- run your own server with nginx
+
+**Nginx** is a web server -- a program that listens for browser requests and hands back the right files. If you want
+to understand what actually happens when someone visits a URL, running your own tiny nginx is the clearest way to see
+it.
+
+This section is the "just-get-it-showing" version. For SSH hardening, firewalls, a real domain, and HTTPS with Let's
+Encrypt, follow the full [Deploy to a VPS with nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) guide after
+you have the basics working.
+
+1. **Get a VPS** (Virtual Private Server -- a Linux computer in a data centre, rented by the month). Hetzner,
+   DigitalOcean, Linode, and Vultr all offer plans for around $4-$6 a month, which is plenty. Create one running
+   **Ubuntu 22.04 LTS** or newer. The provider will give you an **IP address** (like `203.0.113.42`) and a way to log
+   in -- either a password or an SSH key.
+2. **Log into the server** from your own computer's terminal:
+
+   ```bash
+   ssh root@YOUR_SERVER_IP
+   ```
+
+   Replace `YOUR_SERVER_IP` with the actual number. Type `yes` when asked about the server's fingerprint.
+3. **Install nginx** on the server:
+
+   ```bash
+   apt update && apt install nginx -y
+   ```
+
+4. **Copy your blog files up** from your own computer (open a *second* terminal on your machine, not on the server):
+
+   ```bash
+   scp index.html styles.css app.js root@YOUR_SERVER_IP:/tmp/blog/
+   ```
+
+   If you see a "no such file or directory" error, first create the folder on the server:
+   `ssh root@YOUR_SERVER_IP "mkdir -p /tmp/blog"`, then retry `scp`.
+5. **Put the files where nginx expects them** (back on the server):
+
+   ```bash
+   mkdir -p /var/www/blog
+   mv /tmp/blog/* /var/www/blog/
+   ```
+
+6. **Tell nginx about your site.** Create `/etc/nginx/sites-available/blog` with this content:
+
+   ```nginx
+   server {
+       listen 80 default_server;
+       server_name _;
+
+       root /var/www/blog;
+       index index.html;
+
+       location / {
+           try_files $uri $uri/ =404;
+       }
+   }
+   ```
+
+   Quick English: "when a request arrives on port 80, look for files in `/var/www/blog`; if the file exists, serve it;
+   otherwise return 404."
+7. **Turn the site on:**
+
+   ```bash
+   ln -s /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/
+   rm -f /etc/nginx/sites-enabled/default
+   nginx -t
+   systemctl reload nginx
+   ```
+
+   `nginx -t` checks the config for typos before reloading. If it prints `syntax is ok` and `test is successful`, you
+   are good.
+8. **Visit your site.** Open `http://YOUR_SERVER_IP` in a browser (again, the real IP). Your blog should appear.
+
+### Which option should I pick?
+
+| If you want...                                    | Use...                    |
+|---------------------------------------------------|---------------------------|
+| The fastest path to a public URL                  | S3 (or Netlify / Pages)   |
+| Free + custom domain + HTTPS without thinking     | Netlify / Cloudflare Pages |
+| To learn how a real web server actually works     | VPS + nginx               |
+| Full control over the server, its logs and config | VPS + nginx               |
+
+There is no wrong pick -- a static blog will run happily on any of them.
+
 ## Summary
 
 - Three files -- `index.html`, `styles.css`, `app.js` -- are enough to build a real blog page.
@@ -719,6 +915,8 @@ Stick with plain files as long as the project fits in your head. Reach for Vite 
 - CSS custom properties plus a single `data-theme` attribute is all you need for a dark-mode toggle.
 - `Intl.RelativeTimeFormat` and `localStorage` are built into every browser -- no libraries required.
 - Vite is optional. Add it when your single-file setup starts to hurt, not before.
+- You can put a static site on the public internet in under an hour -- either drop the files in an S3 bucket, or run
+  your own nginx server on a $5/month VPS. Both work for something this small.
 
 ## Next steps
 

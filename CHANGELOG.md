@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - 2026-04-21
+
+### Added
+- Build a Simple Blog Page — new "Before you start — what the pieces are" section orienting absolute beginners (what a website actually is, what HTML / CSS / JS each do, per-OS instructions for creating a folder and blank files in Finder / File Explorer / Linux file managers, why a word processor will not work, and what the `file://` URL prefix means), plus a new **Step 6 — Get this live on the internet** with two full deployment walkthroughs: **Option A** AWS S3 static hosting (free-tier account, bucket creation with public-access block unchecked, file upload, static-website-hosting toggle, public-read bucket-policy JSON snippet, bucket-website endpoint) with caveats on HTTPS via CloudFront / billing / Netlify-Pages alternatives; **Option B** VPS + nginx (ssh in, `apt install nginx`, `scp` the files up, move to `/var/www/blog`, minimal `server {}` block at `/etc/nginx/sites-available/blog`, symlink into `sites-enabled`, `nginx -t` and `systemctl reload nginx`) linking to the deeper VPS + nginx chapter for hardening and HTTPS; closes with an "S3 vs VPS vs Netlify" decision table
+
+### Changed
+- Build a Simple Blog Page — plain-English glosses added on first use for **semantic HTML**, the **DOM**, **CSS custom properties**, **localStorage**, **media query**, and `<script type="module">`; VS Code recommendation now explains *why* (syntax highlighting, not a word processor); Summary gained a deployment bullet
+
 ## [1.8.0] - 2026-04-20
 
 ### Added
