@@ -139,7 +139,7 @@ printAll(List.of(1, 2, 3));
 
 ### Upper-bounded wildcard (`? extends T`)
 
-"Anything that is T or a subtype of T" -- **read-only** (producer):
+"Anything that is T or a subtype of T" - **read-only** (producer):
 
 ```java
 // Can read Number from any List of Number subtypes
@@ -158,7 +158,7 @@ sum(List.of(1.5, 2.5));        // List<Double>  -- works
 
 ### Lower-bounded wildcard (`? super T`)
 
-"Anything that is T or a supertype of T" -- **write-only** (consumer):
+"Anything that is T or a supertype of T" - **write-only** (consumer):
 
 ```java
 // Can write Integer into any List that accepts Integer or its supertypes
@@ -185,8 +185,8 @@ The **PECS** principle (coined by Joshua Bloch) determines which wildcard to use
 
 | Role                            | Wildcard         | You can...     | Example                                 |
 |---------------------------------|------------------|----------------|-----------------------------------------|
-| **Producer** (you read from it) | `? extends T`    | Read T values  | `List<? extends Number>` -- read Number |
-| **Consumer** (you write to it)  | `? super T`      | Write T values | `List<? super Integer>` -- add Integer  |
+| **Producer** (you read from it) | `? extends T`    | Read T values  | `List<? extends Number>` - read Number |
+| **Consumer** (you write to it)  | `? super T`      | Write T values | `List<? super Integer>` - add Integer  |
 | **Both** (read and write)       | `T` (exact type) | Read and write | `List<Integer>`                         |
 
 ### Real-world example: `Collections.copy`
@@ -338,7 +338,7 @@ User user = new UserBuilder().name("Alice").age(30).build();
 
 ## See also
 
-- [Collections](./collections.md) -- generic collections in practice
-- [Streams and Collectors](./java-streams.md) -- generic stream operations
-- [Functional Interfaces](./functional-interfaces.md) -- `Function<T,R>`, `Predicate<T>`
-- [Modern Java Features](./modern-java-features.md) -- records, sealed types
+- [Collections](./collections.md) - generic collections in practice
+- [Streams and Collectors](./java-streams.md) - generic stream operations
+- [Functional Interfaces](./functional-interfaces.md) - `Function<T,R>`, `Predicate<T>`
+- [Modern Java Features](./modern-java-features.md) - records, sealed types

@@ -20,7 +20,7 @@ background technique, border rounding, and shadow effect CSS offers.
 
 ## background-color
 
-The simplest background -- a solid colour:
+The simplest background - a solid colour:
 
 ```css
 .card {
@@ -130,7 +130,7 @@ The order: `image` `position` / `size` `repeat` `attachment` `color`. The `/` se
 
 ## Gradients
 
-Gradients are generated images -- you use them with `background-image` (or the `background` shorthand), not
+Gradients are generated images - you use them with `background-image` (or the `background` shorthand), not
 `background-color`.
 
 ### Linear gradients
@@ -224,7 +224,7 @@ Rotate colours around a centre point:
 
 ## Multiple backgrounds
 
-An element can have **multiple backgrounds**, separated by commas. They stack on top of each other -- the first one is
+An element can have **multiple backgrounds**, separated by commas. They stack on top of each other - the first one is
 on top:
 
 ```css
@@ -444,4 +444,4 @@ A polished card component combining everything:
 ## Next step
 
 Static styles are powerful, but movement brings interfaces to life. The next chapter covers **transitions and
-animations** -- how to smoothly change CSS values over time.
+animations** - how to smoothly change CSS values over time.

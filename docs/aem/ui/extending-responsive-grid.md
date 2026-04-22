@@ -10,7 +10,7 @@ AEM's responsive grid (also called **Layout Container** or the modern replacemen
 parsys) is the core drag-and-drop container that powers the AEM page editor. It handles child
 component placement, responsive breakpoints, and column layout out of the box.
 
-Sometimes you need more than a plain container -- you need a container component that **also has its
+Sometimes you need more than a plain container - you need a container component that **also has its
 own dialog properties** (a title, a background image, a layout variant, etc.) while still letting
 authors drag and drop child components into it. This guide shows how to extend the responsive grid
 to build custom container components.
@@ -42,10 +42,10 @@ graph TD
 
 Common real-world examples:
 
-- **Footer quicklinks container** -- title + logo + *n* link column children
-- **Accordion / Tab container** -- variant selector + *n* panel children
-- **Section container** -- background image, colour theme, anchor ID + *n* content children
-- **Carousel** -- autoplay settings, transition effect + *n* slide children
+- **Footer quicklinks container** - title + logo + *n* link column children
+- **Accordion / Tab container** - variant selector + *n* panel children
+- **Section container** - background image, colour theme, anchor ID + *n* content children
+- **Carousel** - autoplay settings, transition effect + *n* slide children
 
 ---
 
@@ -82,7 +82,7 @@ When you create a custom container, you **inherit** all of this by making the re
     componentGroup="My Project - Containers"/>
 ```
 
-The key is `sling:resourceSuperType="wcm/foundation/components/responsivegrid"` -- this gives your
+The key is `sling:resourceSuperType="wcm/foundation/components/responsivegrid"` - this gives your
 component all the responsive grid functionality.
 
 ### 2. Dialog
@@ -364,7 +364,7 @@ public class SectionContainerExporter implements ComponentExporter, ContainerExp
 | `@Delegate(types = ResponsiveGridExporter.class, excludes = ExcludedMethods.class)` | Lombok generates forwarding methods for all `ResponsiveGridExporter` methods except `getExportedType()`            |
 | `@JsonIgnore`                                                                       | Prevents Jackson from serialising the `responsiveGrid` field directly (the delegated methods handle serialisation) |
 
-The `ExcludedMethods` interface is critical -- without it, `getExportedType()` would return
+The `ExcludedMethods` interface is critical - without it, `getExportedType()` would return
 `wcm/foundation/components/responsivegrid` instead of your custom resource type, breaking
 SPA component mapping.
 
@@ -648,7 +648,7 @@ the author sets via the Layout mode in the page editor.
 
 ### Use `sling:resourceSuperType` consistently
 
-Always point to `wcm/foundation/components/responsivegrid`. Don't copy the grid's HTL or JS -- inherit
+Always point to `wcm/foundation/components/responsivegrid`. Don't copy the grid's HTL or JS - inherit
 it via the resource super type chain.
 
 ### Restrict allowed child components
@@ -659,7 +659,7 @@ container leads to chaotic content structures.
 ### Keep container models thin
 
 Container models should only hold the container's own properties. Don't try to iterate over or
-process child components in the container model -- let the grid framework handle child rendering.
+process child components in the container model - let the grid framework handle child rendering.
 
 ### Test with multiple breakpoints
 
@@ -704,14 +704,14 @@ Nested responsive grids (a container inside a container inside a container) work
 
 ## See also
 
-- [Architecture](../architecture.mdx) -- Sling resource resolution and component rendering
-- [Custom Component Guide](../custom-component.mdx) -- step-by-step component creation
-- [Component Dialogs](../component-dialogs.mdx) -- dialog field types
-- [Components Overview](../components/overview.mdx) -- component types and lifecycle
-- [Core Components](../components/core-components.mdx) -- AEM Core Component library
-- [Client Libraries](../client-libraries.mdx) -- including grid CSS
-- [Sling Models](../backend/sling-models.mdx) -- `@Self`, `@Via`, `@Delegate`
-- [HTL Templates](../htl-templates.mdx) -- `data-sly-resource` and `resourceSuperType`
-- [SPA Editor](./spa-editor.md) -- SPA Editor SDK and component mapping
-- [Touch UI](./touch-ui.mdx) -- page editor and authoring experience
+- [Architecture](../architecture.mdx) - Sling resource resolution and component rendering
+- [Custom Component Guide](../custom-component.mdx) - step-by-step component creation
+- [Component Dialogs](../component-dialogs.mdx) - dialog field types
+- [Components Overview](../components/overview.mdx) - component types and lifecycle
+- [Core Components](../components/core-components.mdx) - AEM Core Component library
+- [Client Libraries](../client-libraries.mdx) - including grid CSS
+- [Sling Models](../backend/sling-models.mdx) - `@Self`, `@Via`, `@Delegate`
+- [HTL Templates](../htl-templates.mdx) - `data-sly-resource` and `resourceSuperType`
+- [SPA Editor](./spa-editor.md) - SPA Editor SDK and component mapping
+- [Touch UI](./touch-ui.mdx) - page editor and authoring experience
 - [Multi-Tenancy UI Frontend](./multi-tenancy-support-ui-frontend.mdx)

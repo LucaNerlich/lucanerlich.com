@@ -16,7 +16,7 @@ sidebar_position: 10
 
 # Modules & Declaration Files
 
-TypeScript uses the same module system as modern JavaScript -- ES modules with `import` and `export`. On top of that,
+TypeScript uses the same module system as modern JavaScript - ES modules with `import` and `export`. On top of that,
 TypeScript adds **declaration files** (`.d.ts`): type-only files that describe the shape of JavaScript code without
 carrying any runtime logic. Understanding both is crucial for working with third-party libraries and for publishing
 your own typed packages.
@@ -125,7 +125,7 @@ import { createUser, type UserOptions } from "./user"; // Mixed: value + type
 ```
 
 With `verbatimModuleSyntax: true` in tsconfig (recommended for new projects), TypeScript requires you to use
-`import type` for type-only imports -- it makes the intent explicit.
+`import type` for type-only imports - it makes the intent explicit.
 
 ## Module resolution
 
@@ -133,11 +133,11 @@ TypeScript resolves modules using the `moduleResolution` strategy in `tsconfig.j
 
 | Strategy          | When to use                                                  |
 |-------------------|--------------------------------------------------------------|
-| `node16` / `bundler` | Modern Node.js 16+ or bundlers (Vite, webpack) -- recommended |
+| `node16` / `bundler` | Modern Node.js 16+ or bundlers (Vite, webpack) - recommended |
 | `node`            | Legacy Node.js CommonJS projects                            |
-| `classic`         | Old TypeScript projects -- avoid for new work               |
+| `classic`         | Old TypeScript projects - avoid for new work               |
 
-With `moduleResolution: "bundler"`, TypeScript resolves imports the same way modern bundlers do -- supporting path
+With `moduleResolution: "bundler"`, TypeScript resolves imports the same way modern bundlers do - supporting path
 aliases and package exports.
 
 ### Path aliases with baseUrl and paths
@@ -173,7 +173,7 @@ import type { User } from "@types/user";
 
 ## Declaration files (.d.ts)
 
-A `.d.ts` file is a **declaration file** -- it contains only type information with no executable code. It describes
+A `.d.ts` file is a **declaration file** - it contains only type information with no executable code. It describes
 the public API of a JavaScript module so TypeScript can type-check code that uses it.
 
 Declaration files look like TypeScript but with:
@@ -305,7 +305,7 @@ npm install --save-dev @types/uuid
 npm install --save-dev @types/jest
 ```
 
-After installing, types are automatically picked up by TypeScript -- no configuration needed.
+After installing, types are automatically picked up by TypeScript - no configuration needed.
 
 ```typescript
 import express, { Request, Response } from "express";
@@ -320,7 +320,7 @@ app.get("/health", (req: Request, res: Response) => {
 ### Checking if types are included
 
 1. Many modern libraries ship their own types (check `package.json` for a `types` or `exports` field)
-2. Check [npmjs.com](https://npmjs.com) -- if a package has a `DT` badge, `@types/package-name` exists
+2. Check [npmjs.com](https://npmjs.com) - if a package has a `DT` badge, `@types/package-name` exists
 3. Use the [TypeSearch](https://www.typescriptlang.org/dt/search) tool to find type packages
 
 ```json
@@ -503,5 +503,5 @@ const slug = slugify(title); // string
 - **DefinitelyTyped** (`@types/` packages) provides community-maintained types for thousands of libraries
 - Generate `.d.ts` files automatically with `declaration: true` in tsconfig when publishing a library
 
-Next up: [tsconfig & Tooling](./11-tsconfig-and-tooling.md) -- compiler options in depth, project references, ts-node,
+Next up: [tsconfig & Tooling](./11-tsconfig-and-tooling.md) - compiler options in depth, project references, ts-node,
 useful flags, and integrating TypeScript with ESLint.

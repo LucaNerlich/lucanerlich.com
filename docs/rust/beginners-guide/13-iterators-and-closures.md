@@ -214,9 +214,9 @@ fn main() {
 
 ## Iterator adaptors
 
-Adaptors transform an iterator into another iterator. They are **lazy** -- they do nothing until consumed.
+Adaptors transform an iterator into another iterator. They are **lazy** - they do nothing until consumed.
 
-### map -- transform each element
+### map - transform each element
 
 ```rust
 fn main() {
@@ -228,7 +228,7 @@ fn main() {
 }
 ```
 
-### filter -- keep elements matching a predicate
+### filter - keep elements matching a predicate
 
 ```rust
 fn main() {
@@ -279,7 +279,7 @@ fn main() {
 
 Adaptors are lazy. **Consumers** drive the iteration and produce a final value.
 
-### collect -- gather into a collection
+### collect - gather into a collection
 
 ```rust
 fn main() {
@@ -292,9 +292,9 @@ fn main() {
 }
 ```
 
-`collect` can produce many types -- `Vec`, `String`, `HashMap`, `HashSet`, and more.
+`collect` can produce many types - `Vec`, `String`, `HashMap`, `HashSet`, and more.
 
-### fold -- reduce to a single value
+### fold - reduce to a single value
 
 ```rust
 fn main() {
@@ -355,7 +355,7 @@ fn main() {
 }
 ```
 
-This is efficient -- Rust processes each element through the entire chain before moving to the next, avoiding
+This is efficient - Rust processes each element through the entire chain before moving to the next, avoiding
 intermediate `Vec` allocations.
 
 ## A complete example
@@ -408,9 +408,9 @@ Highest: Alice (92)
 - The `Fn`, `FnMut`, and `FnOnce` traits describe how closures capture and how often they can be called
 - **Iterators** produce sequences via the `next()` method
 - `.iter()` borrows, `.iter_mut()` mutably borrows, `.into_iter()` takes ownership
-- **Adaptors** (`map`, `filter`, `take`, etc.) are lazy -- they build a chain of transformations
+- **Adaptors** (`map`, `filter`, `take`, etc.) are lazy - they build a chain of transformations
 - **Consumers** (`collect`, `fold`, `sum`, `find`, etc.) drive the iteration and produce results
-- Chains of adaptors are zero-cost -- no intermediate collections
+- Chains of adaptors are zero-cost - no intermediate collections
 
-Next up: [Project: CLI Task Manager](./14-project-cli-task-manager.md) -- putting everything together to build a
+Next up: [Project: CLI Task Manager](./14-project-cli-task-manager.md) - putting everything together to build a
 complete command-line application with argument parsing, file storage, and proper error handling.

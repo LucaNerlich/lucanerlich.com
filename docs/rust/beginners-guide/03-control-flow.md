@@ -16,7 +16,7 @@ sidebar_position: 3
 
 # Control Flow
 
-Control flow determines which code runs and how many times. Rust has the usual suspects -- `if`, `while`, `for` -- but
+Control flow determines which code runs and how many times. Rust has the usual suspects - `if`, `while`, `for` - but
 with a twist: most control flow constructs are **expressions** that return values. This is one of the things that makes
 Rust code concise and elegant.
 
@@ -40,7 +40,7 @@ fn main() {
 
 Key differences from other languages:
 
-- **No parentheses** around the condition -- `if temperature > 30`, not `if (temperature > 30)`
+- **No parentheses** around the condition - `if temperature > 30`, not `if (temperature > 30)`
 - The condition **must** be a `bool`. Rust does not treat integers, strings, or other types as truthy/falsy.
 
 This will not compile:
@@ -58,7 +58,7 @@ You must be explicit: `if number != 0 { ... }`.
 
 ### if as an expression
 
-In Rust, `if` is an **expression** -- it returns a value. This means you can use it on the right side of a `let`
+In Rust, `if` is an **expression** - it returns a value. This means you can use it on the right side of a `let`
 binding:
 
 ```rust
@@ -86,14 +86,14 @@ This is like a ternary operator in other languages (`condition ? a : b`), but mo
 > // Error: `if` and `else` have incompatible types
 > ```
 
-Also note that the branches do **not** end with a semicolon -- the last expression in a block is the return value. We
+Also note that the branches do **not** end with a semicolon - the last expression in a block is the return value. We
 will explore this more in the next chapter on functions.
 
 ## Loops
 
 Rust has three kinds of loops: `loop`, `while`, and `for`.
 
-### loop -- infinite loops
+### loop - infinite loops
 
 `loop` runs forever until you explicitly `break`:
 
@@ -131,9 +131,9 @@ fn main() {
 }
 ```
 
-This is a pattern you will see when searching for a value -- loop until you find it, then `break` with the result.
+This is a pattern you will see when searching for a value - loop until you find it, then `break` with the result.
 
-### while -- conditional loops
+### while - conditional loops
 
 `while` loops run as long as a condition is true:
 
@@ -157,7 +157,7 @@ fn main() {
 Liftoff!
 ```
 
-### for -- iterating over collections
+### for - iterating over collections
 
 `for` is the most common loop in Rust. It iterates over anything that implements the `Iterator` trait:
 
@@ -220,13 +220,13 @@ fn main() {
 2: blue
 ```
 
-### for vs while -- which to use
+### for vs while - which to use
 
 Prefer `for` over `while` when iterating over a collection. `for` is:
 
-- **Safer** -- no risk of off-by-one errors or out-of-bounds access
-- **Clearer** -- the intent is obvious
-- **Faster** -- the compiler can eliminate bounds checks
+- **Safer** - no risk of off-by-one errors or out-of-bounds access
+- **Clearer** - the intent is obvious
+- **Faster** - the compiler can eliminate bounds checks
 
 ```rust
 fn main() {
@@ -292,9 +292,9 @@ fn main() {
 
 Labels start with a single quote and a name: `'outer`, `'inner`, `'search`, etc.
 
-## match -- a first look
+## match - a first look
 
-`match` is Rust's version of a switch statement, but much more powerful. We will cover it in depth in chapter 7 --
+`match` is Rust's version of a switch statement, but much more powerful. We will cover it in depth in chapter 7 -
 here is just enough to get started:
 
 ```rust
@@ -313,9 +313,9 @@ fn main() {
 Key points:
 
 - Each arm has a **pattern** (`1`, `2`, `3`) and a **body** (the code after `=>`)
-- `_` is a **wildcard** that matches anything -- like `default` in a switch
-- `match` is **exhaustive** -- you must cover every possible value. The `_` arm typically handles "everything else"
-- `match` is an **expression** -- it returns a value
+- `_` is a **wildcard** that matches anything - like `default` in a switch
+- `match` is **exhaustive** - you must cover every possible value. The `_` arm typically handles "everything else"
+- `match` is an **expression** - it returns a value
 
 ### match as an expression
 
@@ -365,7 +365,7 @@ fn main() {
 }
 ```
 
-`match` becomes incredibly powerful when combined with enums and pattern matching -- we will explore this in chapters 6
+`match` becomes incredibly powerful when combined with enums and pattern matching - we will explore this in chapters 6
 and 7.
 
 ## Blocks as expressions
@@ -434,13 +434,13 @@ fn main() {
 ## Summary
 
 - `if`/`else` does not need parentheses and is an **expression** (returns a value)
-- Conditions must be `bool` -- no truthy/falsy
+- Conditions must be `bool` - no truthy/falsy
 - `loop` runs forever until `break`; can return a value via `break value`
 - `while` loops on a condition
-- `for` iterates over ranges and collections -- prefer it over `while` for iteration
+- `for` iterates over ranges and collections - prefer it over `while` for iteration
 - `break` and `continue` work with loop labels for nested loops
 - `match` is an exhaustive, expression-based pattern matcher (much more in chapter 7)
-- Blocks are expressions -- the last line (without semicolon) is the return value
+- Blocks are expressions - the last line (without semicolon) is the return value
 
-Next up: [Functions](./04-functions.md) -- defining functions, parameters, return types, the difference between
+Next up: [Functions](./04-functions.md) - defining functions, parameters, return types, the difference between
 expressions and statements, and documentation comments.

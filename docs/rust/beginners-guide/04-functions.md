@@ -15,7 +15,7 @@ sidebar_position: 4
 
 # Functions
 
-Functions are the building blocks of any Rust program. You have already used one -- `fn main()` -- in every example so
+Functions are the building blocks of any Rust program. You have already used one - `fn main()` - in every example so
 far. This chapter covers how to define your own functions, pass parameters, return values, and write documentation.
 
 ## Defining a function
@@ -40,8 +40,8 @@ Hello!
 
 Conventions:
 
-- Function names use **snake_case** -- lowercase with underscores: `calculate_area`, `parse_input`, `is_valid`
-- Functions can be defined before or after `main` -- Rust does not care about declaration order
+- Function names use **snake_case** - lowercase with underscores: `calculate_area`, `parse_input`, `is_valid`
+- Functions can be defined before or after `main` - Rust does not care about declaration order
 
 ## Parameters
 
@@ -70,7 +70,7 @@ Hello, Bob!
 ```
 
 Unlike `let` bindings where types can be inferred, function parameters always need explicit type annotations. This is a
-deliberate design choice -- it makes function signatures self-documenting.
+deliberate design choice - it makes function signatures self-documenting.
 
 ## Return values
 
@@ -107,14 +107,14 @@ fn main() {
 ```
 
 > **Tip:** Use `return` for early exits from the middle of a function. For the final expression, omit both `return` and
-> the semicolon -- this is idiomatic Rust.
+> the semicolon - this is idiomatic Rust.
 
 ## Expressions vs statements
 
 This distinction is fundamental in Rust.
 
-- **Expression** -- evaluates to a value. Examples: `5`, `a + b`, `if x > 0 { x } else { -x }`, a function call
-- **Statement** -- performs an action but does **not** produce a value. Examples: `let x = 5;`, a `fn` declaration
+- **Expression** - evaluates to a value. Examples: `5`, `a + b`, `if x > 0 { x } else { -x }`, a function call
+- **Statement** - performs an action but does **not** produce a value. Examples: `let x = 5;`, a `fn` declaration
 
 ```rust
 fn main() {
@@ -169,7 +169,7 @@ fn greet_explicit() -> () {
 }
 ```
 
-`()` is Rust's equivalent of `void` in C or Java. You rarely write it explicitly -- it is the default when there is no
+`()` is Rust's equivalent of `void` in C or Java. You rarely write it explicitly - it is the default when there is no
 `->` return type.
 
 ## Multiple return values with tuples
@@ -241,8 +241,8 @@ fn crash() -> ! {
 
 You will encounter `!` with:
 
-- `panic!()` -- terminates the program
-- `std::process::exit()` -- exits the process
+- `panic!()` - terminates the program
+- `std::process::exit()` - exits the process
 - Infinite loops that never break
 
 You do not need to write diverging functions often, but understanding `!` helps when reading error messages.
@@ -276,7 +276,7 @@ fn main() {
 
 Run `cargo doc --open` to generate and view HTML documentation for your project. Documentation comments support
 Markdown formatting and the code examples inside `/// ```...` blocks are actually compiled and run as tests when
-you run `cargo test` (these are called **doc tests** -- more in chapter 15).
+you run `cargo test` (these are called **doc tests** - more in chapter 15).
 
 ### Module-level documentation
 
@@ -347,13 +347,13 @@ Body temperature: 37.0°C
 
 - Functions are declared with `fn`, use `snake_case`, and require type annotations on parameters
 - Return types are specified with `->` after the parameter list
-- The last expression (without semicolon) is the return value -- this is idiomatic Rust
+- The last expression (without semicolon) is the return value - this is idiomatic Rust
 - `return` is used for early exits, not for the final value
 - Expressions produce values; statements do not
 - Adding a semicolon to the last line of a block turns it into a statement (returns `()`)
 - Tuples can return multiple values
 - `///` documentation comments support Markdown and generate HTML docs with `cargo doc`
 
-Next up: [Ownership & Borrowing](./05-ownership-and-borrowing.md) -- the heart of Rust. This is the chapter that
+Next up: [Ownership & Borrowing](./05-ownership-and-borrowing.md) - the heart of Rust. This is the chapter that
 separates Rust from every other language, and the one most beginners struggle with. We will take it slow with plenty of
 diagrams.

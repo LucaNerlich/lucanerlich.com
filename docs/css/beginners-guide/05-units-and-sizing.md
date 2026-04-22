@@ -20,7 +20,7 @@ scale well across screen sizes and respect user preferences.
 
 ## Absolute units
 
-Absolute units are fixed -- they do not change based on context.
+Absolute units are fixed - they do not change based on context.
 
 ### px (pixels)
 
@@ -37,7 +37,7 @@ Pixels are predictable and easy to reason about. Their downside: they do not sca
 default font size.
 
 > **Note:** On high-DPI (Retina) screens, one CSS pixel may be rendered by two or more physical screen pixels. CSS
-> handles this automatically -- you do not need to worry about it.
+> handles this automatically - you do not need to worry about it.
 
 Other absolute units (`cm`, `mm`, `in`, `pt`) exist but are meant for print stylesheets. Stick with `px` for screens.
 
@@ -65,12 +65,12 @@ The tricky part: `em` **compounds** when elements are nested. If three nested el
 the innermost text is 1.2 &times; 1.2 &times; 1.2 = 1.728 times the base size. This compounding makes `em` unreliable
 for font sizes in deep component trees.
 
-`em` is still useful for **spacing** that should scale with the local font size -- for example, padding and margins
+`em` is still useful for **spacing** that should scale with the local font size - for example, padding and margins
 inside a component.
 
 ### rem (root em)
 
-`1rem` equals the **root element's font size** -- the `<html>` element. The default root font size in all browsers is
+`1rem` equals the **root element's font size** - the `<html>` element. The default root font size in all browsers is
 **16px** (unless the user has changed it).
 
 ```css
@@ -125,7 +125,7 @@ Percentages are relative to the **parent element**. The reference property depen
 ```
 
 For `width`, the percentage refers to the parent's width. For `padding` and `margin`, the percentage also refers to the
-**parent's width** -- even for `padding-top` and `margin-top`. This catches many people off guard.
+**parent's width** - even for `padding-top` and `margin-top`. This catches many people off guard.
 
 ```css
 .box {
@@ -176,7 +176,7 @@ character count:
 }
 ```
 
-This limits the article to roughly 65 characters per line -- the recommended range for comfortable reading (45--75
+This limits the article to roughly 65 characters per line - the recommended range for comfortable reading (45-75
 characters).
 
 ## Which unit to use
@@ -353,10 +353,10 @@ responsive images.
 - **ch** is great for limiting line length to ~65 characters
 - `clamp(min, preferred, max)` creates fluid values that scale smoothly
 - Use `max-width` instead of `width` and `min-height` instead of `height` to avoid overflow
-- The right unit depends on context -- font sizes get `rem`, spacing gets `rem` or `em`, layout gets `%` or viewport
+- The right unit depends on context - font sizes get `rem`, spacing gets `rem` or `em`, layout gets `%` or viewport
   units
 
 ## Next step
 
-You now control how things are sized. In the next chapter, you will learn about **display and positioning** -- how
+You now control how things are sized. In the next chapter, you will learn about **display and positioning** - how
 elements flow on the page and how to move them out of the normal flow.

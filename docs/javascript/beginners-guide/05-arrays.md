@@ -43,7 +43,7 @@ Result:
 
 ## Accessing elements
 
-Arrays are **zero-indexed** -- the first element is at index `0`:
+Arrays are **zero-indexed** - the first element is at index `0`:
 
 ```js
 const colors = ["red", "green", "blue"];
@@ -114,7 +114,7 @@ variable, not mutating the value.
 
 ## Adding and removing elements
 
-### `push` / `pop` -- end of array
+### `push` / `pop` - end of array
 
 ```js
 const stack = [1, 2, 3];
@@ -135,7 +135,7 @@ Result:
 [ 1, 2, 3 ]
 ```
 
-### `unshift` / `shift` -- start of array
+### `unshift` / `shift` - start of array
 
 ```js
 const queue = [2, 3, 4];
@@ -156,7 +156,7 @@ Result:
 [ 2, 3, 4 ]
 ```
 
-### `splice` -- add or remove at any position
+### `splice` - add or remove at any position
 
 ```js
 const letters = ["a", "b", "c", "d", "e"];
@@ -272,7 +272,7 @@ Index 2: 30
 
 ## Transforming arrays
 
-### `map` -- transform every element
+### `map` - transform every element
 
 Creates a **new** array by applying a function to each element:
 
@@ -291,7 +291,7 @@ Result:
 [ 1, 2, 3, 4, 5 ]
 ```
 
-Practical example -- extracting data:
+Practical example - extracting data:
 
 ```js
 const users = [
@@ -310,7 +310,7 @@ Result:
 [ 'Ada', 'Grace', 'Alan' ]
 ```
 
-### `filter` -- keep elements that match
+### `filter` - keep elements that match
 
 Creates a new array with only the elements that pass a test:
 
@@ -347,7 +347,7 @@ Result:
 [ { name: 'Mouse', price: 29 }, { name: 'Keyboard', price: 79 } ]
 ```
 
-### `reduce` -- combine elements into a single value
+### `reduce` - combine elements into a single value
 
 The most powerful (and most confusing) array method:
 
@@ -377,7 +377,7 @@ How it works, step by step:
 | 4    | 6           | 4       | 10     |
 | 5    | 10          | 5       | 15     |
 
-Practical example -- counting occurrences:
+Practical example - counting occurrences:
 
 ```js
 const words = ["apple", "banana", "apple", "cherry", "banana", "apple"];
@@ -396,7 +396,7 @@ Result:
 { apple: 3, banana: 2, cherry: 1 }
 ```
 
-### `find` -- get the first match
+### `find` - get the first match
 
 Returns the **first** element that passes the test, or `undefined`:
 
@@ -417,7 +417,7 @@ Result:
 { name: 'Ada', role: 'admin' }
 ```
 
-### `findIndex` -- get the index of the first match
+### `findIndex` - get the index of the first match
 
 ```js
 const numbers = [10, 20, 30, 40];
@@ -431,7 +431,7 @@ Result:
 2
 ```
 
-### `some` / `every` -- boolean tests
+### `some` / `every` - boolean tests
 
 ```js
 const scores = [85, 92, 78, 95, 88];
@@ -578,7 +578,7 @@ Result:
 
 ## Other useful methods
 
-### `concat` -- merge arrays
+### `concat` - merge arrays
 
 ```js
 const a = [1, 2];
@@ -593,7 +593,7 @@ Result:
 [ 1, 2, 3, 4 ]
 ```
 
-### `flat` -- flatten nested arrays
+### `flat` - flatten nested arrays
 
 ```js
 const nested = [[1, 2], [3, 4], [5, 6]];
@@ -610,7 +610,7 @@ Result:
 [ 1, 2, 3, 4 ]
 ```
 
-### `join` -- convert to string
+### `join` - convert to string
 
 ```js
 const words = ["Hello", "world"];
@@ -643,7 +643,7 @@ Result:
 
 Like `sort`, `reverse` mutates the original. Copy first with `[...array]` if needed.
 
-### `slice` -- extract a portion
+### `slice` - extract a portion
 
 ```js
 const letters = ["a", "b", "c", "d", "e"];
@@ -793,7 +793,7 @@ Result:
 - `map` transforms, `filter` selects, `reduce` accumulates, `find` searches.
 - `some`/`every` check conditions across all elements.
 - Chain methods for expressive data pipelines.
-- `sort()` mutates and does alphabetical sorting by default -- provide a compare function for numbers.
+- `sort()` mutates and does alphabetical sorting by default - provide a compare function for numbers.
 - Destructuring extracts values; spread `...` copies and merges arrays.
 
-Next up: [Objects](./06-objects.md) -- key-value data structures that model real-world entities.
+Next up: [Objects](./06-objects.md) - key-value data structures that model real-world entities.

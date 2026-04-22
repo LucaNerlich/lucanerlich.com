@@ -43,7 +43,7 @@ error[E0106]: missing lifetime specifier
 ```
 
 The compiler cannot figure out whether the returned reference comes from `a` or `b`. If it comes from `a` but `a` is
-dropped while the caller still holds the reference, we get a dangling reference -- exactly what Rust prevents.
+dropped while the caller still holds the reference, we get a dangling reference - exactly what Rust prevents.
 
 Lifetime annotations solve this by telling the compiler: "the returned reference lives as long as both inputs."
 
@@ -56,7 +56,7 @@ Lifetime annotations start with a single quote and a lowercase name:
 &'a mut str   // A mutable reference with lifetime 'a
 ```
 
-The name itself does not matter -- `'a`, `'b`, `'input` are all valid. Convention uses `'a`, `'b`, `'c` for simple
+The name itself does not matter - `'a`, `'b`, `'input` are all valid. Convention uses `'a`, `'b`, `'c` for simple
 cases.
 
 ## Lifetimes in function signatures
@@ -112,7 +112,7 @@ type share `'a`.
 You have written many functions with references and never annotated lifetimes. That is because the compiler applies
 three **elision rules** to infer them automatically:
 
-### Rule 1 -- each reference parameter gets its own lifetime
+### Rule 1 - each reference parameter gets its own lifetime
 
 ```rust
 fn foo(a: &str, b: &str)
@@ -120,7 +120,7 @@ fn foo(a: &str, b: &str)
 fn foo<'a, 'b>(a: &'a str, b: &'b str)
 ```
 
-### Rule 2 -- if there is exactly one input lifetime, it is assigned to all output references
+### Rule 2 - if there is exactly one input lifetime, it is assigned to all output references
 
 ```rust
 fn first_word(s: &str) -> &str
@@ -128,7 +128,7 @@ fn first_word(s: &str) -> &str
 fn first_word<'a>(s: &'a str) -> &'a str
 ```
 
-### Rule 3 -- if one of the parameters is &self or &mut self, the lifetime of self is assigned to all output references
+### Rule 3 - if one of the parameters is &self or &mut self, the lifetime of self is assigned to all output references
 
 ```rust
 impl MyStruct {
@@ -139,7 +139,7 @@ impl MyStruct {
 ```
 
 If the compiler cannot determine all output lifetimes after applying these rules, it asks you to annotate explicitly.
-That is why `longest(a: &str, b: &str) -> &str` fails -- rule 1 gives `a` and `b` different lifetimes, rule 2 does
+That is why `longest(a: &str, b: &str) -> &str` fails - rule 1 gives `a` and `b` different lifetimes, rule 2 does
 not apply (two input lifetimes), and rule 3 does not apply (no `self`).
 
 ## Lifetimes in structs
@@ -223,7 +223,7 @@ where
 ```
 
 `'b: 'a` means "`'b` lives at least as long as `'a`". This is called a **lifetime bound**. In practice, you rarely
-need multiple lifetimes -- one `'a` covers most cases.
+need multiple lifetimes - one `'a` covers most cases.
 
 ## Common lifetime patterns
 
@@ -254,7 +254,7 @@ impl<'a> Parser<'a> {
 }
 ```
 
-### Avoiding lifetimes -- own the data instead
+### Avoiding lifetimes - own the data instead
 
 Often the simplest fix for lifetime complexity is to own the data:
 
@@ -287,14 +287,14 @@ trade-off is a heap allocation, which is negligible in most cases.
 
 ## Summary
 
-- Lifetimes ensure references are **always valid** -- no dangling pointers
+- Lifetimes ensure references are **always valid** - no dangling pointers
 - Lifetime annotations (`'a`) tell the compiler how long references live relative to each other
 - Three **elision rules** infer lifetimes automatically in most functions
 - You only need explicit annotations when the compiler cannot infer lifetimes (multiple input references, ambiguous
   return)
 - Structs holding references need lifetime parameters
-- `'static` means "lives for the entire program" -- used for string literals and thread-safe data
+- `'static` means "lives for the entire program" - used for string literals and thread-safe data
 - When lifetimes get complex, consider **owning** the data instead of borrowing
 
-Next up: [Iterators & Closures](./13-iterators-and-closures.md) -- closures, the `Fn` traits, the `Iterator` trait,
+Next up: [Iterators & Closures](./13-iterators-and-closures.md) - closures, the `Fn` traits, the `Iterator` trait,
 adaptors like `map` and `filter`, and the difference between `iter`, `into_iter`, and `iter_mut`.

@@ -51,7 +51,7 @@ By default, Strapi uses the local file system:
 This works perfectly for development but has limitations in production:
 
 - Files are stored on the server's disk (not persistent on ephemeral hosting)
-- No CDN -- files are served by Strapi itself
+- No CDN - files are served by Strapi itself
 - No advanced image optimization
 
 ## Uploading via the API
@@ -435,7 +435,7 @@ flowchart TD
     Blog --> Content["content-images/"]
 ```
 
-Folders are managed through the admin panel. They do not affect the file URL -- they are purely organizational.
+Folders are managed through the admin panel. They do not affect the file URL - they are purely organizational.
 
 ## Managing media via the API
 
@@ -524,14 +524,14 @@ You learned:
 - How the **Upload plugin** processes files and generates responsive formats
 - The **local provider** for development
 - **S3** and **Cloudinary** providers for production
-- **Upload configuration** -- size limits, responsive breakpoints
+- **Upload configuration** - size limits, responsive breakpoints
 - **Upload validation** with lifecycle hooks
 - How media appears in **API responses** and how to use responsive images
 - **Managing media** via the API and admin panel
-- **Best practices** -- alt text, optimization, CDN, CORS
+- **Best practices** - alt text, optimization, CDN, CORS
 
 Your blog can now handle images for post covers, author avatars, and inline content. The next chapter adds TypeScript to
 the project for better developer experience.
 
-Next up: [TypeScript Integration](./11-typescript-integration.md) -- converting your project to TypeScript, generating
+Next up: [TypeScript Integration](./11-typescript-integration.md) - converting your project to TypeScript, generating
 types from content schemas, and typing controllers and services.

@@ -35,7 +35,7 @@ The mail service is configured via the **Day CQ Mail Service** factory PID.
 ### Local development (with MailHog)
 
 [MailHog](https://github.com/mailhog/MailHog) is a lightweight SMTP test server that
-captures all outgoing mail in a web UI -- no real mail provider needed.
+captures all outgoing mail in a web UI - no real mail provider needed.
 
 Start MailHog with Docker:
 
@@ -43,8 +43,8 @@ Start MailHog with Docker:
 docker run -d --name mailhog -p 1025:1025 -p 8025:8025 mailhog/mailhog
 ```
 
-- **Port 1025** -- SMTP (for AEM to send to)
-- **Port 8025** -- Web UI (open in browser to see captured mails)
+- **Port 1025** - SMTP (for AEM to send to)
+- **Port 8025** - Web UI (open in browser to see captured mails)
 
 ```json title="ui.config/.../config.author/com.day.cq.mailer.DefaultMailService.cfg.json"
 {
@@ -106,7 +106,7 @@ mail server):
 
 ## Sending a Simple Plain-Text E-Mail
 
-The simplest case -- inject `MessageGatewayService`, build a `SimpleEmail`, and send it:
+The simplest case - inject `MessageGatewayService`, build a `SimpleEmail`, and send it:
 
 ```java
 import com.day.cq.mailer.MessageGateway;
@@ -613,7 +613,7 @@ to MailHog (which is no longer maintained):
 docker run -d --name mailpit -p 1025:1025 -p 8025:8025 axllent/mailpit
 ```
 
-Same ports, same OSGi config -- just a different Docker image. Mailpit offers a more modern
+Same ports, same OSGi config - just a different Docker image. Mailpit offers a more modern
 UI, mobile-responsive views, and better performance.
 
 ---
@@ -734,10 +734,10 @@ block the calling thread. Consider:
 
 ## See also
 
-- [OSGi configuration](../backend/osgi-configuration.mdx) -- run-mode configs and secrets
-- [Workflows](../backend/workflows.mdx) -- triggering e-mails from workflow steps
-- [Groovy Console](../groovy-console.mdx) -- quick mail testing
-- [Deployment](./deployment.mdx) -- deploying OSGi configs
-- [AEM as a Cloud Service](./cloud-service.mdx) -- advanced networking
+- [OSGi configuration](../backend/osgi-configuration.mdx) - run-mode configs and secrets
+- [Workflows](../backend/workflows.mdx) - triggering e-mails from workflow steps
+- [Groovy Console](../groovy-console.mdx) - quick mail testing
+- [Deployment](./deployment.mdx) - deploying OSGi configs
+- [AEM as a Cloud Service](./cloud-service.mdx) - advanced networking
 - [Security basics](./security.mdx)
-- [Sling Models and Services](../backend/sling-models.mdx) -- OSGi service patterns
+- [Sling Models and Services](../backend/sling-models.mdx) - OSGi service patterns

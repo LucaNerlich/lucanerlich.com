@@ -15,7 +15,7 @@ sidebar_position: 4
 
 # Your First Component
 
-Components are the building blocks of AEM pages. A button, a text block, an image carousel, a hero banner -- each is a
+Components are the building blocks of AEM pages. A button, a text block, an image carousel, a hero banner - each is a
 component. In this chapter we will create a simple component from scratch and understand every file involved.
 
 ## The component triad
@@ -41,7 +41,7 @@ flowchart TD
 
 | Part             | File type            | Purpose                                                     |
 |------------------|----------------------|-------------------------------------------------------------|
-| **Dialog**       | XML (`.content.xml`) | Defines the authoring UI -- what fields the author fills in |
+| **Dialog**       | XML (`.content.xml`) | Defines the authoring UI - what fields the author fills in |
 | **HTL Template** | `.html`              | Renders the HTML output using content from the model        |
 | **Sling Model**  | `.java`              | Reads content from the JCR and provides it to the template  |
 
@@ -68,7 +68,7 @@ core/src/main/java/com/mysite/core/models/
 └── HelloModel.java
 ```
 
-## Step 1 -- Create the component definition
+## Step 1 - Create the component definition
 
 The `.content.xml` at the component root defines the `cq:Component` node:
 
@@ -89,10 +89,10 @@ The `.content.xml` at the component root defines the `cq:Component` node:
 | `jcr:description` | Tooltip in the component browser              |
 | `componentGroup`  | Groups related components in the authoring UI |
 
-The `componentGroup` is important -- it determines where the component appears when an author inserts it on a page. Use
+The `componentGroup` is important - it determines where the component appears when an author inserts it on a page. Use
 a consistent group name like `"My Site - Content"` for all your content components.
 
-## Step 2 -- Create the HTL template
+## Step 2 - Create the HTL template
 
 The HTL template renders the component's HTML. Create `hello.html`:
 
@@ -110,13 +110,13 @@ This template:
 2. Reads `greeting` and `message` from the model
 3. Outputs them in a structured HTML block
 
-The CSS class naming follows **BEM** (Block Element Modifier) convention with a `cmp-` prefix -- this is the AEM Core
+The CSS class naming follows **BEM** (Block Element Modifier) convention with a `cmp-` prefix - this is the AEM Core
 Components convention.
 
 We will explore HTL in depth in the next chapter. For now, just know that `data-sly-use` loads a Java class and `${}`
 outputs its properties.
 
-## Step 3 -- Create the Sling Model
+## Step 3 - Create the Sling Model
 
 The Sling Model reads content from the JCR node and provides it to the HTL template:
 
@@ -161,13 +161,13 @@ Breaking this down:
 
 > **Important:** Without `defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL`, the default strategy is
 > `REQUIRED`. This means if an author has not configured the component yet (no dialog values saved), `adaptTo()` returns
-> `null` and the component renders nothing -- or worse, throws an error. Always set `OPTIONAL` and provide `@Default`
+> `null` and the component renders nothing - or worse, throws an error. Always set `OPTIONAL` and provide `@Default`
 > values for a safe authoring experience.
 
 When an author has not configured the component yet, the default values are shown. Once the author fills in the dialog,
 the actual values from the JCR replace the defaults.
 
-## Step 4 -- Create the author dialog
+## Step 4 - Create the author dialog
 
 The dialog defines what fields the author sees when editing the component. Create `_cq_dialog/.content.xml`:
 
@@ -224,7 +224,7 @@ The dialog defines what fields the author sees when editing the component. Creat
 </jcr:root>
 ```
 
-This is verbose -- dialog XML is the most tedious part of AEM development. Let's understand the structure:
+This is verbose - dialog XML is the most tedious part of AEM development. Let's understand the structure:
 
 ```mermaid
 flowchart TD
@@ -262,7 +262,7 @@ the value is stored at `./greeting` relative to the component's content node.
 
 We will explore dialogs in much more detail in chapter 6.
 
-## Step 5 -- Deploy and test
+## Step 5 - Deploy and test
 
 Build and deploy to your local instance:
 
@@ -301,14 +301,14 @@ hello
 The dialog values are stored as properties on the component's JCR node, and the Sling Model reads them with
 `@ValueMapValue`.
 
-## Debug recipe -- dialog to HTML in 4 checks
+## Debug recipe - dialog to HTML in 4 checks
 
 When a component does not render as expected, run this sequence:
 
-1. **Dialog save check** -- open the component dialog, save, and confirm values persist after refresh.
-2. **JCR check** -- verify stored properties under the component node in CRXDE Lite.
-3. **Model check** -- confirm model adaptation/injections (logs or debugger in local SDK).
-4. **HTL check** -- verify property names in HTL match model getter names.
+1. **Dialog save check** - open the component dialog, save, and confirm values persist after refresh.
+2. **JCR check** - verify stored properties under the component node in CRXDE Lite.
+3. **Model check** - confirm model adaptation/injections (logs or debugger in local SDK).
+4. **HTL check** - verify property names in HTL match model getter names.
 
 This isolates whether the issue is in authoring, content persistence, model mapping, or template rendering.
 
@@ -347,7 +347,7 @@ sequenceDiagram
 In real projects, you rarely write everything from scratch. AEM Core Components provide ready-made, production-quality
 components (text, image, title, teaser, list, etc.).
 
-Your project uses them through **proxy components** -- lightweight wrappers that point to Core Components:
+Your project uses them through **proxy components** - lightweight wrappers that point to Core Components:
 
 ```xml
 <!-- apps/mysite/components/text/.content.xml -->
@@ -359,7 +359,7 @@ Your project uses them through **proxy components** -- lightweight wrappers that
           sling:resourceSuperType="core/wcm/components/text/v2/text"/>
 ```
 
-The `sling:resourceSuperType` property creates an inheritance chain -- your proxy inherits everything from the Core
+The `sling:resourceSuperType` property creates an inheritance chain - your proxy inherits everything from the Core
 Component. You can then override specific files (HTL, dialog, model) in your proxy to customize behavior.
 
 The Maven archetype generates proxy components for common Core Components automatically.
@@ -388,8 +388,8 @@ You learned:
 - The **rendering flow** from HTTP request to HTML output
 - **Proxy components** for reusing Core Components
 
-This was a quick tour -- we glossed over HTL syntax, dialog field types, and Sling Model annotations. The next three
+This was a quick tour - we glossed over HTL syntax, dialog field types, and Sling Model annotations. The next three
 chapters dive deep into each.
 
-Next up: [HTL Templates](./05-htl-templates.md) -- the HTML Template Language in depth, including expressions, block
+Next up: [HTL Templates](./05-htl-templates.md) - the HTML Template Language in depth, including expressions, block
 statements, global objects, and the Use API.

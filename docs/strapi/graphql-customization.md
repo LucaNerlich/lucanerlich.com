@@ -96,7 +96,7 @@ type Mutation {
 ## Securing the default schema (critical)
 
 This is the **most important section** on this page. By default, the auto-generated schema exposes mutations that allow
-anyone to create, update, and delete your content -- unless you explicitly deny it.
+anyone to create, update, and delete your content - unless you explicitly deny it.
 
 ### The problem
 
@@ -125,7 +125,7 @@ permissions **separately**.
 
 ### Solution 1: disable all mutations for public-facing types (recommended)
 
-The cleanest approach -- remove mutations from the schema entirely for content types that should be read-only:
+The cleanest approach - remove mutations from the schema entirely for content types that should be read-only:
 
 ```js
 // src/index.js
@@ -775,7 +775,7 @@ query ArticleBySlug($slug: String!) {
 
 ## See also
 
-- [Custom Controllers and Services](custom-controllers-services.md) -- REST counterpart of GraphQL resolvers
-- [Relations and Population](relations-and-population.md) -- population patterns that apply to GraphQL too
-- [Authentication and Permissions](authentication-and-permissions.md) -- auth context in resolvers
-- [Performance and Caching](performance-and-caching.md) -- query optimization strategies
+- [Custom Controllers and Services](custom-controllers-services.md) - REST counterpart of GraphQL resolvers
+- [Relations and Population](relations-and-population.md) - population patterns that apply to GraphQL too
+- [Authentication and Permissions](authentication-and-permissions.md) - auth context in resolvers
+- [Performance and Caching](performance-and-caching.md) - query optimization strategies

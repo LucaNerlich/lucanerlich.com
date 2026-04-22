@@ -15,7 +15,7 @@ sidebar_position: 2
 
 # Variables, Types & Operators
 
-Java is a **statically typed** language -- every variable has a declared type, and the compiler enforces it. This
+Java is a **statically typed** language - every variable has a declared type, and the compiler enforces it. This
 chapter covers all the primitive types, strings, type casting, and operators.
 
 ## Declaring variables
@@ -49,7 +49,7 @@ count = 10;         // assignment
 int total = 100;    // declaration with initialization
 ```
 
-### `final` -- constants
+### `final` - constants
 
 `final` prevents reassignment (similar to `const` in JavaScript):
 
@@ -68,7 +68,7 @@ Result:
 
 Convention: constants use `UPPER_SNAKE_CASE`.
 
-### `var` -- type inference (Java 10+)
+### `var` - type inference (Java 10+)
 
 The compiler can infer the type from the right-hand side:
 
@@ -88,7 +88,7 @@ String
 Integer
 ```
 
-`var` is just syntactic sugar -- the variable is still statically typed. You cannot reassign it to a different type:
+`var` is just syntactic sugar - the variable is still statically typed. You cannot reassign it to a different type:
 
 ```java
 var x = 10;
@@ -172,7 +172,7 @@ true
 false
 ```
 
-Unlike JavaScript, Java does **not** coerce other types to booleans. `if (1)` is a compile error -- only `boolean`
+Unlike JavaScript, Java does **not** coerce other types to booleans. `if (1)` is a compile error - only `boolean`
 expressions are allowed in conditions.
 
 ### `char`
@@ -201,7 +201,7 @@ A
 
 ## Strings
 
-`String` is not a primitive -- it is a class. But it is so fundamental that it has special support:
+`String` is not a primitive - it is a class. But it is so fundamental that it has special support:
 
 ```java
 String greeting = "Hello, world!";
@@ -273,7 +273,7 @@ false
 false
 ```
 
-### String comparison -- use `equals`, not `==`
+### String comparison - use `equals`, not `==`
 
 ```java
 String a = "hello";
@@ -468,7 +468,7 @@ Each primitive has a corresponding **wrapper class** that turns it into an objec
 | `byte`    | `Byte`      |
 | `short`   | `Short`     |
 
-Java **autoboxes** -- it automatically converts between primitives and wrappers:
+Java **autoboxes** - it automatically converts between primitives and wrappers:
 
 ```java
 Integer boxed = 42;        // autoboxing: int → Integer
@@ -702,13 +702,13 @@ int result3 = (2 + 3) * 4; // 20 -- different result
 
 ## Summary
 
-- Java has **8 primitive types** -- `int` and `double` are the most common.
+- Java has **8 primitive types** - `int` and `double` are the most common.
 - `String` is a class, not a primitive. It is immutable. Always compare with `.equals()`.
 - `final` makes a variable constant. `var` lets the compiler infer the type.
-- Integer division truncates -- use `double` for decimal results.
+- Integer division truncates - use `double` for decimal results.
 - Widening casts are automatic; narrowing casts require `(type)` and may lose data.
 - Wrapper classes (`Integer`, `Double`, etc.) autobox between primitives and objects.
 - Use `&&` and `||` for short-circuit logic.
 - Use parentheses when operator precedence is unclear.
 
-Next up: [Control Flow](./03-control-flow.md) -- decisions and loops.
+Next up: [Control Flow](./03-control-flow.md) - decisions and loops.

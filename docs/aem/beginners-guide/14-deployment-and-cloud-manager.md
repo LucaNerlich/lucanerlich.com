@@ -50,10 +50,10 @@ flowchart LR
 
 Cloud Manager is Adobe's CI/CD platform for AEMaaCS. It provides:
 
-- **Git repository** -- managed Git for your project
-- **Build pipelines** -- Maven builds, code quality, security scans
-- **Environments** -- dev, stage, production
-- **Monitoring** -- logs, metrics, alerts
+- **Git repository** - managed Git for your project
+- **Build pipelines** - Maven builds, code quality, security scans
+- **Environments** - dev, stage, production
+- **Monitoring** - logs, metrics, alerts
 
 ### Accessing Cloud Manager
 
@@ -140,13 +140,13 @@ flowchart LR
     Functional --> UI
 ```
 
-1. **Maven Build** -- compiles your project (`mvn clean install`)
-2. **Unit Tests** -- runs `core/` tests
-3. **Code Quality** -- static analysis checks (coverage, bugs, maintainability)
-4. **Security Scan** -- checks for known vulnerabilities
-5. **Deploy** -- installs packages on the target environment
-6. **Functional Tests** -- runs integration tests (`it.tests/`)
-7. **UI Tests** -- runs end-to-end browser tests (if configured)
+1. **Maven Build** - compiles your project (`mvn clean install`)
+2. **Unit Tests** - runs `core/` tests
+3. **Code Quality** - static analysis checks (coverage, bugs, maintainability)
+4. **Security Scan** - checks for known vulnerabilities
+5. **Deploy** - installs packages on the target environment
+6. **Functional Tests** - runs integration tests (`it.tests/`)
+7. **UI Tests** - runs end-to-end browser tests (if configured)
 
 ### Pipeline types
 
@@ -155,7 +155,7 @@ Besides the full-stack pipeline, Cloud Manager supports specialized pipelines:
 | Pipeline type      | Deploys                                        | Use when                                      |
 |--------------------|------------------------------------------------|-----------------------------------------------|
 | **Full-stack**     | All modules (`core`, `ui.apps`, `ui.config`, `dispatcher`, etc.) | Java, component, config, or Dispatcher changes |
-| **Frontend-only**  | Only `ui.frontend` (compiled CSS/JS)           | CSS/JS-only changes -- much faster (~10 min)  |
+| **Frontend-only**  | Only `ui.frontend` (compiled CSS/JS)           | CSS/JS-only changes - much faster (~10 min)  |
 | **Config-only**    | OSGi configs and Dispatcher config             | Configuration changes without a full build    |
 
 Frontend-only pipelines skip the Java build entirely, which dramatically shortens the deploy cycle for UI work.
@@ -168,8 +168,8 @@ Config-only pipelines are useful for toggling feature flags or updating Dispatch
 3. Choose **Production** or **Non-Production**
 4. Select the pipeline type (Full-stack, Frontend, or Config)
 5. Configure the trigger:
-    - **On Git Changes** -- auto-trigger on push
-    - **Manual** -- trigger manually
+    - **On Git Changes** - auto-trigger on push
+    - **Manual** - trigger manually
 6. Select the Git branch
 7. Configure quality gates (code coverage thresholds, etc.)
 
@@ -197,7 +197,7 @@ Failing quality gates blocks deployment. You can override non-critical failures,
 
 ## Rapid Development Environments (RDE)
 
-RDEs are **fast-iteration environments** for developers. Unlike the full pipeline (which takes 30--60 minutes), RDE
+RDEs are **fast-iteration environments** for developers. Unlike the full pipeline (which takes 30-60 minutes), RDE
 deployments take **seconds**.
 
 ### Setting up an RDE
@@ -285,7 +285,7 @@ AEMaaCS supports environment-specific variables in Cloud Manager:
 | `ANALYTICS_ID` | Standard | `UA-12345-1`   |
 | `FEATURE_FLAG` | Standard | `true`         |
 
-Access in OSGi configs (must be `.cfg.json` format -- `.properties` files do not support these placeholders):
+Access in OSGi configs (must be `.cfg.json` format - `.properties` files do not support these placeholders):
 
 ```json
 // com.mysite.core.services.impl.AnalyticsServiceImpl.cfg.json
@@ -298,7 +298,7 @@ Access in OSGi configs (must be `.cfg.json` format -- `.properties` files do not
 > **AEMaaCS only:** The `$[env:...]` and `$[secret:...]` placeholders are an AEMaaCS feature and are **not** available
 > in AEM 6.5. They are resolved by AEM at config loading time (not at build time).
 
-To use these values in Java, read them through the OSGi configuration -- not directly from the environment:
+To use these values in Java, read them through the OSGi configuration - not directly from the environment:
 
 ```java
 // The config annotation (see chapter 3 for details)
@@ -353,7 +353,7 @@ Use the CLI to tail logs in real time:
 aio aem:log:tail --environment <env-id> --service author --name aemerror
 ```
 
-## Going to production -- checklist
+## Going to production - checklist
 
 Before your first production deployment:
 
@@ -388,14 +388,14 @@ for details.
 
 You learned:
 
-- The **deployment model** -- Git > Cloud Manager > pipeline > environments
-- **Cloud Manager** -- Git, pipelines, environments, monitoring
-- **Pipeline types** -- full-stack, frontend-only, config-only
-- **Pipeline stages** -- build, test, code quality, security, deploy
-- **Rapid Development Environments** -- fast iteration with the RDE CLI
-- **Environment-specific config** -- run modes, environment variables
-- **Monitoring** -- logs, tailing
-- **Production checklist** -- what to verify before going live
+- The **deployment model** - Git > Cloud Manager > pipeline > environments
+- **Cloud Manager** - Git, pipelines, environments, monitoring
+- **Pipeline types** - full-stack, frontend-only, config-only
+- **Pipeline stages** - build, test, code quality, security, deploy
+- **Rapid Development Environments** - fast iteration with the RDE CLI
+- **Environment-specific config** - run modes, environment variables
+- **Monitoring** - logs, tailing
+- **Production checklist** - what to verify before going live
 - **Content Transfer Tool** for AEM 6.5 to AEMaaCS migration
 
 ## Congratulations
@@ -409,10 +409,10 @@ You have completed the AEM Beginners Guide! You now understand:
 - **Multi-site and multi-language** management (MSM, i18n)
 - **Production operations** (Dispatcher, Cloud Manager, deployment)
 
-Ready to put it all into practice? The next chapter has six hands-on projects -- from building a simple component to
-hardening a Dispatcher config -- designed to reinforce everything you have learned.
+Ready to put it all into practice? The next chapter has six hands-on projects - from building a simple component to
+hardening a Dispatcher config - designed to reinforce everything you have learned.
 
-Next up: [Practice Projects](./15-practice-projects.md) -- six progressively challenging projects to build your AEM
+Next up: [Practice Projects](./15-practice-projects.md) - six progressively challenging projects to build your AEM
 skills through hands-on practice.
 
 For reference material beyond the beginner guide, explore the [AEM documentation section](/aem/architecture).

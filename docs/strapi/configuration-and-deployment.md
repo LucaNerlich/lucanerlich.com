@@ -391,6 +391,6 @@ module.exports = ({ env }) => ({
 
 ## See also
 
-- [Authentication and Permissions](./authentication-and-permissions.md) -- securing the deployed instance
-- [File Uploads and Media](./file-uploads-and-media.md) -- configuring upload providers
-- [Admin Panel Customization](./admin-panel-customization.md) -- admin server configuration
+- [Authentication and Permissions](./authentication-and-permissions.md) - securing the deployed instance
+- [File Uploads and Media](./file-uploads-and-media.md) - configuring upload providers
+- [Admin Panel Customization](./admin-panel-customization.md) - admin server configuration

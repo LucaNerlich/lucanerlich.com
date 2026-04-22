@@ -39,10 +39,10 @@ flowchart TD
     Controller --> Response
 ```
 
-1. **Global middleware** -- runs on every request (CORS, body parser, security headers)
-2. **Route middleware** -- runs on specific routes
-3. **Policies** -- access control checks (pass or fail)
-4. **Controller** -- handles the request and returns a response
+1. **Global middleware** - runs on every request (CORS, body parser, security headers)
+2. **Route middleware** - runs on specific routes
+3. **Policies** - access control checks (pass or fail)
+4. **Controller** - handles the request and returns a response
 
 ## Default routes
 
@@ -174,7 +174,7 @@ Each route accepts a `config` object:
 | `auth`        | `true`  | Require authentication (`false` for public) |
 | `policies`    | `[]`    | Array of policy names to apply              |
 | `middlewares` | `[]`    | Array of middleware names to apply          |
-| `tag`         | --      | Links to admin panel permissions            |
+| `tag`         | -      | Links to admin panel permissions            |
 
 ### URL parameters
 
@@ -482,7 +482,7 @@ export default [
 ];
 ```
 
-## Practical example -- rate limiting middleware
+## Practical example - rate limiting middleware
 
 A simple in-memory rate limiter:
 
@@ -563,7 +563,7 @@ curl http://localhost:1337/api/posts/abc123def456/related
 ```
 
 > **Tip:** Run `npm run strapi routes:list` whenever you change routes. It shows all registered routes, their methods,
-> and handlers -- useful for debugging route conflicts.
+> and handlers - useful for debugging route conflicts.
 
 > For more advanced patterns, see the [Custom Routes and Endpoints](/strapi/custom-routes-and-endpoints)
 > and [Middleware and Policies](/strapi/middleware-and-policies) references.
@@ -584,5 +584,5 @@ You learned:
 Your blog API now has custom endpoints for featured posts and slug-based lookups, access control to ensure users can
 only edit their own posts, and request logging middleware. The next chapter covers event-driven patterns.
 
-Next up: [Lifecycle Hooks & Webhooks](./09-lifecycle-hooks-and-webhooks.md) -- reacting to content events with Document
+Next up: [Lifecycle Hooks & Webhooks](./09-lifecycle-hooks-and-webhooks.md) - reacting to content events with Document
 Service middleware and notifying external services with webhooks.

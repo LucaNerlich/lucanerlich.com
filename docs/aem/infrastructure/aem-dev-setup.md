@@ -275,8 +275,8 @@ IntelliVault commands are invoked by right-clicking any path below a `jcr_root` 
 
 ![IntelliVault usage](/images/aem/components/intellivaultusage.png)
 
-1. **Pull from CRX** -- copies content from the JCR to your local filesystem (**overwrites** local files)
-2. **Push to CRX** -- imports your local filesystem content into the JCR (**overwrites** JCR content)
+1. **Pull from CRX** - copies content from the JCR to your local filesystem (**overwrites** local files)
+2. **Push to CRX** - imports your local filesystem content into the JCR (**overwrites** JCR content)
 
 :::warning
 Both operations are destructive. Always commit or stash local changes before pulling, and verify your

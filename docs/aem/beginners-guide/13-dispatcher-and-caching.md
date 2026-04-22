@@ -38,9 +38,9 @@ flowchart LR
 
 In AEMaaCS, the flow is:
 
-1. **Adobe-managed CDN** -- first cache layer
-2. **Dispatcher** -- Apache + Dispatcher module. Second cache layer
-3. **AEM Publish** -- renders the page if not cached
+1. **Adobe-managed CDN** - first cache layer
+2. **Dispatcher** - Apache + Dispatcher module. Second cache layer
+3. **AEM Publish** - renders the page if not cached
 
 Most requests should be served from CDN or Dispatcher cache, never reaching Publish.
 
@@ -131,7 +131,7 @@ The Dispatcher only caches responses that:
 4. Do **not** have `Authorization` headers
 5. Match the **cache rules** (`/cache` section)
 
-> **Query strings:** By default, the Dispatcher ignores query parameters for caching -- `/page.html?v=1` and
+> **Query strings:** By default, the Dispatcher ignores query parameters for caching - `/page.html?v=1` and
 > `/page.html?v=2` serve the same cached file. This is configurable via the `/ignoreUrlParams` setting in the farm
 > config. Only add parameters to the allow list if you genuinely need parameter-specific caching.
 
@@ -173,7 +173,7 @@ override earlier ones. A common pattern:
 
 1. **Deny all** baseline (`/0000`)
 2. **Allow** only explicit delivery paths (`/0001`, `/0002`, ...)
-3. **Deny** sensitive selectors/paths explicitly (`/0100+`) -- these override the allows above because they come later
+3. **Deny** sensitive selectors/paths explicitly (`/0100+`) - these override the allows above because they come later
 
 Because of last-match semantics, the position of your deny rules relative to allow rules is critical. A deny rule placed
 before an allow will be overridden by that allow.
@@ -230,7 +230,7 @@ sequenceDiagram
 The Dispatcher uses a `.stat` file mechanism for age-based invalidation:
 
 1. When a page is published, AEM's **flush agent** on the Publish instance sends an HTTP invalidation request to the
-   Dispatcher (the flush agent is configured in AEM's replication settings -- in AEMaaCS, Adobe manages this
+   Dispatcher (the flush agent is configured in AEM's replication settings - in AEMaaCS, Adobe manages this
    automatically)
 2. The Dispatcher **touches** (updates the timestamp of) the `.stat` file in the relevant cache directory
 3. On the next request, the Dispatcher compares the cached file's timestamp against the `.stat` file
@@ -243,9 +243,9 @@ The `statfileslevel` setting controls how broadly invalidation spreads:
 
 | Level | Behavior                                                             |
 |-------|----------------------------------------------------------------------|
-| 0     | One `.stat` at the root -- all content invalidated on any publish    |
-| 1     | `.stat` per first-level directory -- `/en/` and `/de/` independent   |
-| 2     | `.stat` per second-level -- `/en/blog/` and `/en/about/` independent |
+| 0     | One `.stat` at the root - all content invalidated on any publish    |
+| 1     | `.stat` per first-level directory - `/en/` and `/de/` independent   |
+| 2     | `.stat` per second-level - `/en/blog/` and `/en/about/` independent |
 
 Higher levels = more granular invalidation = better cache hit ratio.
 
@@ -303,7 +303,7 @@ configuration, and your project can only customize specific areas:
 | Client headers in `conf.dispatcher.d/clientheaders/`     | Directives that conflict with Adobe's base configuration      |
 
 The Dispatcher SDK validator (`./bin/validator full`) enforces these restrictions locally. Always validate before
-pushing to Cloud Manager -- the pipeline will reject invalid configurations.
+pushing to Cloud Manager - the pipeline will reject invalid configurations.
 
 ### Testing checklist
 
@@ -334,13 +334,13 @@ pushing to Cloud Manager -- the pipeline will reject invalid configurations.
 
 You learned:
 
-- **Dispatcher architecture** -- CDN > Dispatcher > Publish
-- **Cache rules** -- what gets cached and what does not
-- **Filters** -- blocking malicious requests, allowing legitimate ones
-- **URL rewrites** -- vanity URLs and redirects
-- **Cache invalidation** -- stat files, auto-invalidation on publish
-- **Stat file level** -- controlling invalidation granularity
+- **Dispatcher architecture** - CDN > Dispatcher > Publish
+- **Cache rules** - what gets cached and what does not
+- **Filters** - blocking malicious requests, allowing legitimate ones
+- **URL rewrites** - vanity URLs and redirects
+- **Cache invalidation** - stat files, auto-invalidation on publish
+- **Stat file level** - controlling invalidation granularity
 - **Local testing** with the Dispatcher SDK
 
-Next up: [Deployment & Cloud Manager](./14-deployment-and-cloud-manager.md) -- Git repo structure, Cloud Manager
+Next up: [Deployment & Cloud Manager](./14-deployment-and-cloud-manager.md) - Git repo structure, Cloud Manager
 pipelines, environments, content transfer, and Rapid Development Environments.

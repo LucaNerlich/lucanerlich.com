@@ -20,7 +20,7 @@ and every method lives inside a class.
 
 ## Defining and calling methods
 
-Until we cover classes and objects (next chapter), all our methods are `static` -- they belong to the class itself
+Until we cover classes and objects (next chapter), all our methods are `static` - they belong to the class itself
 rather than to an instance.
 
 ```java
@@ -45,11 +45,11 @@ Hello, Ada!
 
 Anatomy:
 
-- `static` -- belongs to the class, not to an instance
-- `String` -- the return type
-- `greet` -- the method name
-- `(String name)` -- the parameter list (type + name)
-- `return` -- sends a value back to the caller
+- `static` - belongs to the class, not to an instance
+- `String` - the return type
+- `greet` - the method name
+- `(String name)` - the parameter list (type + name)
+- `return` - sends a value back to the caller
 
 ## `void` methods
 
@@ -191,7 +191,7 @@ Result:
 
 The compiler decides which overload to call based on the argument types. This is called **compile-time polymorphism**.
 
-**Note:** you cannot overload by return type alone -- the parameter list must differ.
+**Note:** you cannot overload by return type alone - the parameter list must differ.
 
 ## Varargs
 
@@ -272,7 +272,7 @@ Inside method: 999
 After method: 42
 ```
 
-The original `value` is unchanged -- the method received a copy.
+The original `value` is unchanged - the method received a copy.
 
 ### Object references are copied
 
@@ -295,7 +295,7 @@ Result:
 [original, added by method]
 ```
 
-The method receives a copy of the **reference** -- it points to the same list object. So modifications to the object are
+The method receives a copy of the **reference** - it points to the same list object. So modifications to the object are
 visible to the caller. But reassigning the reference inside the method does not affect the caller:
 
 ```java
@@ -461,13 +461,13 @@ ababab
 ## Summary
 
 - Methods have a return type, name, and parameter list. Use `void` for no return value.
-- `static` methods belong to the class -- we will see instance methods in the next chapter.
+- `static` methods belong to the class - we will see instance methods in the next chapter.
 - **Guard clauses** (early returns) keep methods flat and readable.
 - **Overloading** lets multiple methods share a name with different parameter lists.
 - **Varargs** (`type... name`) accept a variable number of arguments as an array.
-- Java is **pass-by-value** -- primitives are copied, object references are copied (but the object they point to is
+- Java is **pass-by-value** - primitives are copied, object references are copied (but the object they point to is
   shared).
-- **Scope** is block-level -- variables exist only within their enclosing `{}`.
+- **Scope** is block-level - variables exist only within their enclosing `{}`.
 - **Recursion** requires a base case to avoid `StackOverflowError`.
 
-Next up: [Classes & Objects](./05-classes-and-objects.md) -- the heart of Java's object-oriented programming.
+Next up: [Classes & Objects](./05-classes-and-objects.md) - the heart of Java's object-oriented programming.

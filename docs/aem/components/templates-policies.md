@@ -7,7 +7,7 @@ tags: [aem, templates, policies, editable-templates]
 # Editable Templates and Policies
 
 **Editable Templates** are AEM's modern template system. They let template authors define
-page structure, allowed components, and default content visually -- without developer
+page structure, allowed components, and default content visually - without developer
 intervention. **Policies** attach reusable configuration to components and pages within
 a template context, controlling everything from allowed heading levels to loaded clientlibs.
 
@@ -572,11 +572,11 @@ content repository.
 
 ## See also
 
-- [Component Dialogs](../component-dialogs.mdx) -- design dialogs and policy reading
-- [Components Overview](./overview.mdx) -- component types and anatomy
-- [Custom Component Guide](../custom-component.mdx) -- building components for templates
-- [Client Libraries](../client-libraries.mdx) -- loading clientlibs via page policies
-- [Sling Models and Services](../backend/sling-models.mdx) -- reading template policies
-- [Extending the Responsive Grid](../ui/extending-responsive-grid.md) -- container components
-- [SPA Editor](../ui/spa-editor.md) -- SPA page templates
-- [Experience Fragments](../content/experience-fragments.md) -- XF templates
+- [Component Dialogs](../component-dialogs.mdx) - design dialogs and policy reading
+- [Components Overview](./overview.mdx) - component types and anatomy
+- [Custom Component Guide](../custom-component.mdx) - building components for templates
+- [Client Libraries](../client-libraries.mdx) - loading clientlibs via page policies
+- [Sling Models and Services](../backend/sling-models.mdx) - reading template policies
+- [Extending the Responsive Grid](../ui/extending-responsive-grid.md) - container components
+- [SPA Editor](../ui/spa-editor.md) - SPA page templates
+- [Experience Fragments](../content/experience-fragments.md) - XF templates

@@ -16,7 +16,7 @@ sidebar_position: 6
 
 # Structs & Enums
 
-So far we have used built-in types -- integers, booleans, strings, tuples, arrays. Now it is time to define your own
+So far we have used built-in types - integers, booleans, strings, tuples, arrays. Now it is time to define your own
 types. Rust gives you two tools for this: **structs** (group related data together) and **enums** (define a type that
 can be one of several variants).
 
@@ -48,7 +48,7 @@ Access fields with dot notation: `user.name`, `user.age`.
 
 ### Mutable structs
 
-To modify a struct, the entire binding must be `mut` -- Rust does not allow marking individual fields as mutable:
+To modify a struct, the entire binding must be `mut` - Rust does not allow marking individual fields as mutable:
 
 ```rust
 fn main() {
@@ -136,7 +136,7 @@ fn main() {
 
 ### Tuple structs
 
-Tuple structs have a name but no field names -- they look like named tuples:
+Tuple structs have a name but no field names - they look like named tuples:
 
 ```rust
 struct Color(u8, u8, u8);
@@ -277,10 +277,10 @@ fn main() {
 }
 ```
 
-`Self` (with a capital S) refers to the type the `impl` block is for -- in this case, `Rectangle`.
+`Self` (with a capital S) refers to the type the `impl` block is for - in this case, `Rectangle`.
 
 > **Tip:** Rust has no built-in constructor keyword. The convention is to define a `new` associated function. Unlike
-> constructors in Java or C++, `new` is just a convention -- there is nothing special about the name.
+> constructors in Java or C++, `new` is just a convention - there is nothing special about the name.
 
 ### Multiple impl blocks
 
@@ -433,7 +433,7 @@ fn main() {
 }
 ```
 
-## Option -- Rust's replacement for null
+## Option - Rust's replacement for null
 
 Rust has **no null**. Instead, it uses the `Option<T>` enum from the standard library:
 
@@ -497,10 +497,10 @@ fn main() {
 }
 ```
 
-> **Warning:** Avoid using `.unwrap()` in production code -- it panics on `None`. Use `match`, `if let`, `unwrap_or`,
+> **Warning:** Avoid using `.unwrap()` in production code - it panics on `None`. Use `match`, `if let`, `unwrap_or`,
 > or the `?` operator (chapter 9) instead.
 
-## Result -- Rust's approach to errors
+## Result - Rust's approach to errors
 
 `Result<T, E>` is like `Option`, but the "failure" case carries an error:
 
@@ -616,9 +616,9 @@ Order #1: Rust Book (shipped, tracking: TR-12345)
 - Methods take `&self`, `&mut self`, or `self` to control access
 - Associated functions (like `new`) are called with `::` and act as constructors
 - **Enums** define a type that can be one of several variants, each optionally carrying data
-- **`Option<T>`** replaces null -- it is either `Some(value)` or `None`
-- **`Result<T, E>`** represents success or failure -- `Ok(value)` or `Err(error)`
+- **`Option<T>`** replaces null - it is either `Some(value)` or `None`
+- **`Result<T, E>`** represents success or failure - `Ok(value)` or `Err(error)`
 - `#[derive(Debug)]` lets you print structs and enums with `{:?}`
 
-Next up: [Pattern Matching](./07-pattern-matching.md) -- `match` exhaustiveness, destructuring, `if let`, `while let`,
+Next up: [Pattern Matching](./07-pattern-matching.md) - `match` exhaustiveness, destructuring, `if let`, `while let`,
 guards, and nested patterns.

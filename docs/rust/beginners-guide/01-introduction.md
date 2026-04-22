@@ -17,21 +17,21 @@ sidebar_position: 1
 # Introduction & Environment Setup
 
 Rust is a systems programming language focused on **safety**, **speed**, and **concurrency**. This guide takes you from
-zero Rust knowledge to deploying a REST API on a VPS -- step by step, no prior Rust experience required.
+zero Rust knowledge to deploying a REST API on a VPS - step by step, no prior Rust experience required.
 
 ## How this guide is structured
 
 | Part                              | Chapters | What you will learn                                              |
 |-----------------------------------|----------|------------------------------------------------------------------|
-| **1 -- Getting Started**          | 1--4     | Install Rust, variables, control flow, functions                 |
-| **2 -- The Ownership System**     | 5--7     | Ownership, borrowing, structs, enums, pattern matching           |
-| **3 -- Building Blocks**          | 8--10    | Collections, error handling, modules and crates                  |
-| **4 -- Intermediate Concepts**    | 11--13   | Traits, generics, lifetimes, iterators, closures                 |
-| **5 -- Real-World Rust**          | 14--16   | CLI project, testing, concurrency                                |
-| **6 -- Production**               | 17--18   | REST API with Actix Web, deployment to a VPS with nginx & Docker |
-| **7 -- Practice**                 | 19       | Eight project ideas from beginner to advanced                    |
+| **1 - Getting Started**          | 1-4     | Install Rust, variables, control flow, functions                 |
+| **2 - The Ownership System**     | 5-7     | Ownership, borrowing, structs, enums, pattern matching           |
+| **3 - Building Blocks**          | 8-10    | Collections, error handling, modules and crates                  |
+| **4 - Intermediate Concepts**    | 11-13   | Traits, generics, lifetimes, iterators, closures                 |
+| **5 - Real-World Rust**          | 14-16   | CLI project, testing, concurrency                                |
+| **6 - Production**               | 17-18   | REST API with Actix Web, deployment to a VPS with nginx & Docker |
+| **7 - Practice**                 | 19       | Eight project ideas from beginner to advanced                    |
 
-By the end you will have built a CLI task manager and a REST API -- and you will know how to compile, test, and deploy
+By the end you will have built a CLI task manager and a REST API - and you will know how to compile, test, and deploy
 Rust programs in production. Chapter 19 suggests further projects to solidify your skills.
 
 ## What is Rust?
@@ -41,11 +41,11 @@ you the performance of C and C++ without the memory bugs that plague those langu
 
 Three things define Rust:
 
-1. **Memory safety without garbage collection** -- Rust prevents null pointer dereferences, use-after-free, and data
+1. **Memory safety without garbage collection** - Rust prevents null pointer dereferences, use-after-free, and data
    races at compile time. No garbage collector runs at runtime.
-2. **Zero-cost abstractions** -- high-level features (iterators, generics, pattern matching) compile down to code that
+2. **Zero-cost abstractions** - high-level features (iterators, generics, pattern matching) compile down to code that
    is just as fast as hand-written low-level code.
-3. **Fearless concurrency** -- the type system prevents data races, so you can write multi-threaded code with
+3. **Fearless concurrency** - the type system prevents data races, so you can write multi-threaded code with
    confidence.
 
 Rust has been the **most loved programming language** on the Stack Overflow Developer Survey for multiple years running.
@@ -61,13 +61,13 @@ If you are coming from another language, this table helps set expectations:
 | **Memory mgmt**     | Ownership system (compile-time) | Manual (malloc/free, new/del) | Garbage collector           | Garbage collector             |
 | **Performance**     | Native machine code             | Native machine code           | JVM bytecode (JIT)          | Interpreted (slow)            |
 | **Type system**     | Static, strong, inferred        | Static, weak                  | Static, strong              | Dynamic, strong               |
-| **Null safety**     | No null -- uses `Option<T>`     | Null pointers everywhere      | Null pointers everywhere    | `None` (runtime errors)       |
+| **Null safety**     | No null - uses `Option<T>`     | Null pointers everywhere      | Null pointers everywhere    | `None` (runtime errors)       |
 | **Concurrency**     | Compile-time data race safety   | Manual (easy to get wrong)    | Threads + synchronized      | GIL limits true parallelism   |
 | **Compile speed**   | Slower than C, faster than C++  | Fast (C), slow (C++)          | Fast                        | No compilation step           |
 | **Learning curve**  | Steep (ownership, lifetimes)    | Steep (manual memory)         | Moderate                    | Gentle                        |
 | **Error handling**  | `Result<T, E>` (no exceptions) | Return codes / exceptions     | Exceptions                  | Exceptions                    |
 
-The biggest adjustment for most beginners is the **ownership system** -- Rust's approach to memory management. We cover
+The biggest adjustment for most beginners is the **ownership system** - Rust's approach to memory management. We cover
 it thoroughly in chapter 5. For now, just know that the Rust compiler is strict, and that is a good thing. It catches
 bugs that would be runtime crashes in other languages.
 
@@ -76,9 +76,9 @@ bugs that would be runtime crashes in other languages.
 Before we start, make sure you have:
 
 - **A computer** running macOS, Linux, or Windows (with WSL2 recommended on Windows)
-- **A terminal** -- Terminal.app on macOS, any terminal emulator on Linux, or Windows Terminal with WSL2
-- **A text editor** -- we will set up VS Code with rust-analyzer shortly
-- **Basic command line knowledge** -- navigating directories, running commands
+- **A terminal** - Terminal.app on macOS, any terminal emulator on Linux, or Windows Terminal with WSL2
+- **A text editor** - we will set up VS Code with rust-analyzer shortly
+- **Basic command line knowledge** - navigating directories, running commands
 
 You do **not** need to know C, C++, or any other systems language. This guide assumes no prior Rust experience.
 
@@ -95,7 +95,7 @@ Open your terminal and run:
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-Follow the prompts -- the default installation is fine. When it finishes, restart your terminal (or run
+Follow the prompts - the default installation is fine. When it finishes, restart your terminal (or run
 `source $HOME/.cargo/env`) and verify:
 
 ```bash
@@ -121,8 +121,8 @@ After installation, you have three tools:
 | Tool       | What it does                                                |
 |------------|-------------------------------------------------------------|
 | `rustup`   | Manages Rust versions and components (update, switch, etc.) |
-| `rustc`    | The Rust compiler -- turns `.rs` files into executables      |
-| `cargo`    | Package manager and build tool -- your main interface to Rust |
+| `rustc`    | The Rust compiler - turns `.rs` files into executables      |
+| `cargo`    | Package manager and build tool - your main interface to Rust |
 
 You will almost never call `rustc` directly. Instead, you use `cargo`, which calls `rustc` for you and handles
 dependencies, building, testing, and more.
@@ -137,7 +137,7 @@ rustup update
 
 ## Hello, World
 
-Let's write and run your first Rust program -- without Cargo first, so you can see what happens under the hood.
+Let's write and run your first Rust program - without Cargo first, so you can see what happens under the hood.
 
 ### The manual way (rustc)
 
@@ -165,9 +165,9 @@ Hello, world!
 What just happened:
 
 1. `rustc` compiled `main.rs` into a native binary called `main` (or `main.exe` on Windows).
-2. You ran the binary directly -- no virtual machine, no interpreter, no runtime.
+2. You ran the binary directly - no virtual machine, no interpreter, no runtime.
 3. `fn main()` is the entry point of every Rust program.
-4. `println!` is a **macro** (note the `!`). It prints text to the terminal. We will explain macros later -- for now,
+4. `println!` is a **macro** (note the `!`). It prints text to the terminal. We will explain macros later - for now,
    treat it like a function.
 
 ### The Cargo way (recommended)
@@ -191,9 +191,9 @@ hello-rust/
 | File          | Purpose                                                        |
 |---------------|----------------------------------------------------------------|
 | `Cargo.toml`  | Project metadata and dependencies (like `package.json` or `pom.xml`) |
-| `src/main.rs` | Your source code -- the entry point                            |
+| `src/main.rs` | Your source code - the entry point                            |
 
-Open `src/main.rs` -- Cargo already generated a Hello World program for you:
+Open `src/main.rs` - Cargo already generated a Hello World program for you:
 
 ```rust
 fn main() {
@@ -236,7 +236,7 @@ edition = "2021"
 |----------------|------------------------------------------------------------|
 | `name`         | The project name (also the binary name)                    |
 | `version`      | Your project's version (semantic versioning)               |
-| `edition`      | The Rust edition (2015, 2018, 2021, 2024) -- use the latest |
+| `edition`      | The Rust edition (2015, 2018, 2021, 2024) - use the latest |
 | `[dependencies]` | External libraries (called **crates**) go here           |
 
 > **Tip:** The `edition` field controls which language features are available. It does **not** affect which compiler
@@ -274,17 +274,17 @@ The recommended setup is **Visual Studio Code** with the **rust-analyzer** exten
 
 rust-analyzer gives you:
 
-- **Real-time error checking** -- errors appear as you type, before you compile
-- **Code completion** -- type suggestions, method completions, import suggestions
-- **Inline type hints** -- shows inferred types next to variables
-- **Go to definition** -- click through to any function, type, or crate
-- **Refactoring** -- rename symbols, extract functions
+- **Real-time error checking** - errors appear as you type, before you compile
+- **Code completion** - type suggestions, method completions, import suggestions
+- **Inline type hints** - shows inferred types next to variables
+- **Go to definition** - click through to any function, type, or crate
+- **Refactoring** - rename symbols, extract functions
 
 ### Other editors
 
-- **IntelliJ IDEA / CLion** -- use the official Rust plugin
-- **Neovim / Helix** -- use rust-analyzer as an LSP server
-- **Zed** -- has built-in Rust support
+- **IntelliJ IDEA / CLion** - use the official Rust plugin
+- **Neovim / Helix** - use rust-analyzer as an LSP server
+- **Zed** - has built-in Rust support
 
 Any editor with rust-analyzer support will work. The examples in this guide are editor-agnostic.
 
@@ -306,7 +306,7 @@ hello-rust/
 | Item          | Purpose                                                     |
 |---------------|-------------------------------------------------------------|
 | `Cargo.lock`  | Locks exact dependency versions for reproducible builds     |
-| `target/`     | All build output -- never edit, never commit to git         |
+| `target/`     | All build output - never edit, never commit to git         |
 | `src/`        | All your Rust source files go here                          |
 
 > **Important:** Add `target/` to your `.gitignore`. Cargo generates a `.gitignore` for you when you create a project
@@ -314,7 +314,7 @@ hello-rust/
 
 ## Reading compiler errors
 
-The Rust compiler is famously strict -- and famously helpful. Let's intentionally write broken code to see what happens.
+The Rust compiler is famously strict - and famously helpful. Let's intentionally write broken code to see what happens.
 
 Change `src/main.rs` to:
 
@@ -343,12 +343,12 @@ error[E0384]: cannot assign twice to immutable variable `greeting`
 For more information about this error, try `rustc --explain E0384`.
 ```
 
-Read this error carefully -- it tells you:
+Read this error carefully - it tells you:
 
-1. **What went wrong** -- you tried to reassign an immutable variable
-2. **Where it happened** -- file, line, and column
-3. **How to fix it** -- `consider making this binding mutable: mut greeting`
-4. **How to learn more** -- `rustc --explain E0384` gives a detailed explanation
+1. **What went wrong** - you tried to reassign an immutable variable
+2. **Where it happened** - file, line, and column
+3. **How to fix it** - `consider making this binding mutable: mut greeting`
+4. **How to learn more** - `rustc --explain E0384` gives a detailed explanation
 
 This is one of Rust's greatest strengths: the compiler does not just tell you something is wrong, it tells you **how to
 fix it**. When you are learning, **read the full error message**. Resist the urge to just look at the first line.
@@ -366,7 +366,7 @@ fix it**. When you are learning, **read the full error message**. Resist the urg
 | `E0425`                  | Variable not found in scope                          | Check spelling, check scope          |
 | `E0277`                  | A trait bound is not satisfied                       | Implement the required trait          |
 
-Do not memorize these -- the compiler will guide you. This table is just to show you that errors have patterns, and they
+Do not memorize these - the compiler will guide you. This table is just to show you that errors have patterns, and they
 become familiar quickly.
 
 ## Your first real program
@@ -402,8 +402,8 @@ Things to notice:
 
 - Variables are declared with `let`
 - Rust infers the types (`name` is `&str`, `year` is `i32`)
-- `println!` uses `{variable_name}` for inline formatting -- no need for placeholder indices
-- Variables are **immutable by default** -- you cannot reassign `name` without `mut`
+- `println!` uses `{variable_name}` for inline formatting - no need for placeholder indices
+- Variables are **immutable by default** - you cannot reassign `name` without `mut`
 
 We will explore variables and types in depth in the next chapter.
 
@@ -413,7 +413,7 @@ A few terms you will encounter:
 
 | Term        | Meaning                                                          |
 |-------------|------------------------------------------------------------------|
-| **Crate**   | A Rust package -- either a library or a binary                   |
+| **Crate**   | A Rust package - either a library or a binary                   |
 | **Cargo**   | The build tool and package manager                               |
 | **crates.io** | The public registry of open-source crates (like npm or Maven Central) |
 | **rustup**  | The toolchain manager (install, update, switch Rust versions)    |
@@ -424,11 +424,11 @@ A few terms you will encounter:
 
 ## Useful resources
 
-- [The Rust Programming Language book](https://doc.rust-lang.org/book/) -- the official free book (often called "the book")
-- [Rust by Example](https://doc.rust-lang.org/rust-by-example/) -- learn by reading annotated examples
-- [Rust Playground](https://play.rust-lang.org/) -- run Rust code in your browser without installing anything
-- [crates.io](https://crates.io/) -- search for libraries
-- [docs.rs](https://docs.rs/) -- documentation for any published crate
+- [The Rust Programming Language book](https://doc.rust-lang.org/book/) - the official free book (often called "the book")
+- [Rust by Example](https://doc.rust-lang.org/rust-by-example/) - learn by reading annotated examples
+- [Rust Playground](https://play.rust-lang.org/) - run Rust code in your browser without installing anything
+- [crates.io](https://crates.io/) - search for libraries
+- [docs.rs](https://docs.rs/) - documentation for any published crate
 
 ## Summary
 
@@ -443,5 +443,5 @@ You now have:
 The compiler is your best teacher in Rust. It is strict, but its error messages are some of the best in any programming
 language. Trust it.
 
-Next up: [Variables & Types](./02-variables-and-types.md) -- declaring variables, understanding immutability, scalar and
+Next up: [Variables & Types](./02-variables-and-types.md) - declaring variables, understanding immutability, scalar and
 compound types, type inference, and shadowing.

@@ -16,7 +16,7 @@ sidebar_position: 10
 # Project: CLI Task Manager
 
 Time to put everything together. In this chapter you will build a command-line task manager that supports creating,
-listing, completing, and deleting tasks -- all persisted to a file. Then you will package it as a runnable JAR.
+listing, completing, and deleting tasks - all persisted to a file. Then you will package it as a runnable JAR.
 
 ## What we are building
 
@@ -161,7 +161,7 @@ public class TaskStore {
 }
 ```
 
-This is the same pattern from the File I/O chapter -- one record per line with a simple delimiter.
+This is the same pattern from the File I/O chapter - one record per line with a simple delimiter.
 
 ## Step 3: the `TaskApp` (CLI logic)
 
@@ -452,10 +452,10 @@ jar cfm tasks.jar MANIFEST.MF *.class
 
 Breakdown:
 
-- `c` -- create a new archive
-- `f` -- output to a file (`tasks.jar`)
-- `m` -- include a manifest file (`MANIFEST.MF`)
-- `*.class` -- include all compiled class files
+- `c` - create a new archive
+- `f` - output to a file (`tasks.jar`)
+- `m` - include a manifest file (`MANIFEST.MF`)
+- `*.class` - include all compiled class files
 
 ### Run the JAR
 
@@ -513,8 +513,8 @@ This project ties together everything from chapters 1–9:
 | Variables & types | Task fields, command parsing, ID handling                       |
 | Control flow      | Switch for commands, loop for listing                           |
 | Methods           | `addTask`, `listTasks`, `completeTask`, `deleteTask`, `parseId` |
-| Classes & objects | `TaskApp`, `TaskStore` -- encapsulated responsibilities         |
-| Records           | `Task` -- immutable data with auto-generated methods            |
+| Classes & objects | `TaskApp`, `TaskStore` - encapsulated responsibilities         |
+| Records           | `Task` - immutable data with auto-generated methods            |
 | Collections       | `ArrayList` for in-memory task list, `removeIf`, streams        |
 | Error handling    | `try/catch` for IOException, validation for bad input           |
 | File I/O          | `Files.readAllLines`, `Files.write` for persistence             |
@@ -527,4 +527,4 @@ This project ties together everything from chapters 1–9:
 - Input validation with clear error messages makes the tool user-friendly.
 - `jar cfm` packages `.class` files into a runnable JAR with a manifest.
 
-Next up: [Building a REST API](./11-rest-api.md) -- exposing the task manager over HTTP.
+Next up: [Building a REST API](./11-rest-api.md) - exposing the task manager over HTTP.

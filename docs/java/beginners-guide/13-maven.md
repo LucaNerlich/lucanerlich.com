@@ -462,10 +462,10 @@ public class TaskHandler implements HttpHandler {
 
 Look at what changed:
 
-- **No more `JsonHelper`** -- `gson.toJson(object)` serializes any object to JSON automatically
-- **`gson.fromJson(body, Class)`** parses JSON into a typed object -- no manual string parsing
+- **No more `JsonHelper`** - `gson.toJson(object)` serializes any object to JSON automatically
+- **`gson.fromJson(body, Class)`** parses JSON into a typed object - no manual string parsing
 - **Request/response records** give structure to the API contract
-- **Type safety** -- if the JSON does not match the record, Gson throws `JsonSyntaxException`
+- **Type safety** - if the JSON does not match the record, Gson throws `JsonSyntaxException`
 
 ### Updated `ApiServer.java`
 
@@ -522,7 +522,7 @@ Task API running on http://localhost:8080
 Press Ctrl+C to stop.
 ```
 
-The fat JAR includes Gson inside it -- no separate library files needed.
+The fat JAR includes Gson inside it - no separate library files needed.
 
 ## How dependencies work
 
@@ -610,7 +610,7 @@ curl -sf https://yoursite.com/api/health && echo " -- OK" || echo " -- FAILED"
 ## Summary
 
 - **Maven** handles compilation, dependencies, testing, and packaging with a single `pom.xml`.
-- Add libraries like Gson by declaring a `<dependency>` -- Maven downloads them automatically.
+- Add libraries like Gson by declaring a `<dependency>` - Maven downloads them automatically.
 - The **maven-shade-plugin** builds a fat JAR with all dependencies bundled inside.
 - Standard directory layout: `src/main/java/`, `src/test/java/`, `target/`.
 - `mvn clean package` is the one command to build everything.
@@ -619,4 +619,4 @@ curl -sf https://yoursite.com/api/health && echo " -- OK" || echo " -- FAILED"
 
 For advanced Maven topics (BOMs, multi-module projects, profiles, and plugins), see the [Maven deep dive](../maven.md).
 
-Next up: [Gradle](./14-gradle.md) -- the modern alternative to Maven.
+Next up: [Gradle](./14-gradle.md) - the modern alternative to Maven.

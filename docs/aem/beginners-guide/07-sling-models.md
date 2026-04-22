@@ -58,7 +58,7 @@ Used in HTL:
 </div>
 ```
 
-## Adaptables -- Resource vs SlingHttpServletRequest
+## Adaptables - Resource vs SlingHttpServletRequest
 
 The `adaptables` parameter defines what the model can be adapted from:
 
@@ -82,7 +82,7 @@ public class RequestAwareModel { ... }
 
 ## Injection annotations
 
-### @ValueMapValue -- read properties
+### @ValueMapValue - read properties
 
 Injects a JCR property from the resource's `ValueMap`:
 
@@ -103,7 +103,7 @@ private String pageTitle;    // reads ./jcr:title (specify name when it differs)
 Supported types: `String`, `Boolean`/`boolean`, `Integer`/`int`, `Long`/`long`, `Double`/`double`, `Calendar`,
 `String[]`, and more.
 
-### @ChildResource -- read child nodes
+### @ChildResource - read child nodes
 
 Injects child resources (useful for multifields):
 
@@ -151,7 +151,7 @@ public class NavigationModel {
 }
 ```
 
-### @Self -- inject the adaptable itself
+### @Self - inject the adaptable itself
 
 ```java
 @Model(adaptables = Resource.class)
@@ -184,7 +184,7 @@ public class SearchModel {
 > **Security note:** Request parameters are untrusted input. Validate and normalize values before using them in queries,
 > external calls, redirects, or authorization decisions.
 
-### @OSGiService -- inject OSGi services
+### @OSGiService - inject OSGi services
 
 ```java
 @Model(adaptables = Resource.class)
@@ -204,7 +204,7 @@ public class ArticleListModel {
 }
 ```
 
-### @ScriptVariable -- inject HTL global objects
+### @ScriptVariable - inject HTL global objects
 
 Only available with `SlingHttpServletRequest` adaptable:
 
@@ -224,7 +224,7 @@ public class PageHeaderModel {
 }
 ```
 
-### @Default -- type-specific variants
+### @Default - type-specific variants
 
 The `@Default` annotation has different attributes for each property type:
 
@@ -241,7 +241,7 @@ The `@Default` annotation has different attributes for each property type:
 Using the wrong variant (e.g., `values` for a `boolean` field) will not cause a compile error but will result in
 unexpected runtime behavior.
 
-### @RequestAttribute -- read parameters from HTL
+### @RequestAttribute - read parameters from HTL
 
 When HTL passes parameters to the model:
 
@@ -259,7 +259,7 @@ public class ListModel {
 }
 ```
 
-### @ResourcePath -- inject a resource by path
+### @ResourcePath - inject a resource by path
 
 ```java
 @Model(adaptables = Resource.class)
@@ -275,7 +275,7 @@ public class FooterModel {
 }
 ```
 
-### @Via -- control the injection source
+### @Via - control the injection source
 
 When your model adapts from `SlingHttpServletRequest` but you want a specific injector to read from the underlying
 resource instead, use `@Via`:
@@ -294,11 +294,11 @@ public class HybridModel {
 ```
 
 `@Via("resource")` tells the injector to resolve the value from the request's resource rather than the request itself.
-It applies **per field** -- other fields in the same model still inject from the request unless they also use `@Via`.
+It applies **per field** - other fields in the same model still inject from the request unless they also use `@Via`.
 This is useful when you need both request-level features (selectors, request attributes) and resource-level property
 injection in the same model.
 
-## @PostConstruct -- initialization logic
+## @PostConstruct - initialization logic
 
 Run logic after all injections are complete:
 
@@ -336,7 +336,7 @@ public class ArticleModel {
 
 ## Optional injection
 
-By default, Sling Model injection is **required** -- if a property does not exist, the model fails to adapt (
+By default, Sling Model injection is **required** - if a property does not exist, the model fails to adapt (
 `adaptTo()` returns `null`). To make injection optional:
 
 ```java
@@ -432,9 +432,9 @@ In HTL, reference the interface:
 
 Benefits:
 
-- **Testability** -- mock the interface in unit tests
-- **Encapsulation** -- hide implementation details
-- **Swappability** -- replace the implementation without changing HTL
+- **Testability** - mock the interface in unit tests
+- **Encapsulation** - hide implementation details
+- **Swappability** - replace the implementation without changing HTL
 
 ## Sling Model Exporters
 
@@ -491,7 +491,7 @@ class HeroImplTest {
 }
 ```
 
-## Troubleshooting -- when models do not adapt
+## Troubleshooting - when models do not adapt
 
 | Symptom                                     | What to inspect                               | Typical fix                                                        |
 |---------------------------------------------|-----------------------------------------------|--------------------------------------------------------------------|
@@ -504,13 +504,13 @@ class HeroImplTest {
 ## Service users and repoinit
 
 When your code runs outside a request context (schedulers, event handlers, workflows) or needs elevated permissions, you
-cannot rely on the request-scoped resource resolver. Instead, you use a **service user** -- a dedicated system account
+cannot rely on the request-scoped resource resolver. Instead, you use a **service user** - a dedicated system account
 with minimal permissions.
 
 ### Why service users?
 
-- **Never use admin sessions** in application code -- this grants full access and is a security risk.
-- Service users follow the **principle of least privilege** -- only grant the permissions your service actually needs.
+- **Never use admin sessions** in application code - this grants full access and is a security risk.
+- Service users follow the **principle of least privilege** - only grant the permissions your service actually needs.
 - In AEMaaCS, CRXDE-based user creation is not available in production environments. Service users must be created via
   **repoinit** (Repository Initializer) scripts committed in your codebase.
 
@@ -592,8 +592,8 @@ public class ContentReaderServiceImpl implements ContentReaderService {
 
 You learned:
 
-- **Sling Model basics** -- `@Model`, `@ValueMapValue`, `@Default`
-- **Adaptables** -- `Resource.class` vs `SlingHttpServletRequest.class`
+- **Sling Model basics** - `@Model`, `@ValueMapValue`, `@Default`
+- **Adaptables** - `Resource.class` vs `SlingHttpServletRequest.class`
 - **Injection annotations**: `@ValueMapValue`, `@ChildResource`, `@Self`, `@OSGiService`, `@ScriptVariable`,
   `@RequestAttribute`, `@ResourcePath`
 - **`@PostConstruct`** for initialization logic
@@ -604,7 +604,7 @@ You learned:
 - **Service users** and repoinit scripts for background/elevated access
 
 With components (HTL + dialogs + Sling Models) covered, we are ready to build a complete site. The next chapter covers
-templates and policies -- how pages are structured and which components are allowed.
+templates and policies - how pages are structured and which components are allowed.
 
-Next up: [Templates & Policies](./08-templates-and-policies.md) -- editable templates, template types, structure vs
+Next up: [Templates & Policies](./08-templates-and-policies.md) - editable templates, template types, structure vs
 initial content, component policies, and page structure.

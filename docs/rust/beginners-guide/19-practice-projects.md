@@ -17,32 +17,32 @@ sidebar_position: 19
 
 You have finished the guide. The best way to make the knowledge stick is to build something on your own. This chapter
 proposes eight projects of increasing difficulty. Each one tells you what to build, which chapters it draws from, and
-enough hints to get started -- but the implementation is up to you. Figuring out the details is where the real learning
+enough hints to get started - but the implementation is up to you. Figuring out the details is where the real learning
 happens.
 
 Pick one that interests you and start building.
 
 | Difficulty       | Project                         | Key chapters | Time estimate |
 |------------------|---------------------------------|-------------|---------------|
-| **Beginner**     | Guess the Number                | 1--4        | 1--2 hours    |
-| **Beginner**     | Unit Converter                  | 2--4, 6     | 2--3 hours    |
-| **Intermediate** | Markdown to HTML Converter      | 5, 8, 9, 10 | 4--8 hours    |
-| **Intermediate** | Personal Expense Tracker (CLI)  | 6--9, 14    | 4--8 hours    |
-| **Intermediate** | File Duplicate Finder           | 8, 9, 13, 16 | 4--6 hours   |
-| **Advanced**     | Chat Server                     | 9, 11, 16   | 8--12 hours   |
-| **Advanced**     | Static Site Generator           | 8--11, 13   | 10--16 hours  |
-| **Advanced**     | HTTP Load Tester                | 11, 13, 16, 17 | 8--12 hours |
+| **Beginner**     | Guess the Number                | 1-4        | 1-2 hours    |
+| **Beginner**     | Unit Converter                  | 2-4, 6     | 2-3 hours    |
+| **Intermediate** | Markdown to HTML Converter      | 5, 8, 9, 10 | 4-8 hours    |
+| **Intermediate** | Personal Expense Tracker (CLI)  | 6-9, 14    | 4-8 hours    |
+| **Intermediate** | File Duplicate Finder           | 8, 9, 13, 16 | 4-6 hours   |
+| **Advanced**     | Chat Server                     | 9, 11, 16   | 8-12 hours   |
+| **Advanced**     | Static Site Generator           | 8-11, 13   | 10-16 hours  |
+| **Advanced**     | HTTP Load Tester                | 11, 13, 16, 17 | 8-12 hours |
 
 ---
 
 ## Beginner projects
 
 These projects reinforce the fundamentals: variables, control flow, functions, and basic I/O. You should be comfortable
-with chapters 1--6 before starting.
+with chapters 1-6 before starting.
 
-### Project 1 -- Guess the Number
+### Project 1 - Guess the Number
 
-**Difficulty:** Beginner | **Chapters:** 1--4 | **Time:** 1--2 hours
+**Difficulty:** Beginner | **Chapters:** 1-4 | **Time:** 1-2 hours
 
 Build a terminal game where the computer picks a random number and the player guesses until they find it. This is the
 classic first Rust project.
@@ -65,21 +65,21 @@ classic first Rust project.
 
 - Add `rand` as a dependency: `cargo add rand`
 - Generate the number with `rand::random_range(1..=100)`
-- `read_line` appends a newline -- use `.trim()` before parsing
+- `read_line` appends a newline - use `.trim()` before parsing
 - Handle the `Err` case from `.parse()` gracefully (print "please enter a number" and `continue`)
 - Track attempts with a `mut` counter
 
 #### Stretch goals
 
-- Add difficulty levels (easy: 1--50, medium: 1--100, hard: 1--1000)
+- Add difficulty levels (easy: 1-50, medium: 1-100, hard: 1-1000)
 - Let the player choose the range
 - Store high scores (fewest guesses) in a file with `serde_json`
 
 ---
 
-### Project 2 -- Unit Converter
+### Project 2 - Unit Converter
 
-**Difficulty:** Beginner | **Chapters:** 2--4, 6 | **Time:** 2--3 hours
+**Difficulty:** Beginner | **Chapters:** 2-4, 6 | **Time:** 2-3 hours
 
 Build a CLI tool that converts between units: temperature, distance, weight, and more. Focus on clean code with enums,
 structs, and well-named functions.
@@ -117,11 +117,11 @@ structs, and well-named functions.
 ## Intermediate projects
 
 These projects require ownership thinking, error handling, file I/O, and collections. You should be comfortable with
-chapters 1--13 before starting.
+chapters 1-13 before starting.
 
-### Project 3 -- Markdown to HTML Converter
+### Project 3 - Markdown to HTML Converter
 
-**Difficulty:** Intermediate | **Chapters:** 5, 8, 9, 10 | **Time:** 4--8 hours
+**Difficulty:** Intermediate | **Chapters:** 5, 8, 9, 10 | **Time:** 4-8 hours
 
 Build a tool that reads a subset of Markdown and produces HTML. This is a parsing exercise that forces you to work with
 strings, ownership, and pattern matching.
@@ -136,10 +136,10 @@ strings, ownership, and pattern matching.
 #### Skills practiced
 
 - String processing with `.lines()`, `.chars()`, `.starts_with()` (chapter 8)
-- Ownership and borrowing -- building a new `String` from a `&str` (chapter 5)
+- Ownership and borrowing - building a new `String` from a `&str` (chapter 5)
 - Pattern matching on string content (chapter 7)
 - File I/O with `std::fs` (chapter 9)
-- Module organization -- parser, renderer, CLI in separate modules (chapter 10)
+- Module organization - parser, renderer, CLI in separate modules (chapter 10)
 
 #### Hints
 
@@ -149,7 +149,7 @@ strings, ownership, and pattern matching.
   `enum State { Normal, CodeBlock, List }`
 - For inline formatting (bold, italic, code, links), write a separate function that processes a single line
 - Use a `Vec<String>` to accumulate output lines, then `.join("\n")` at the end
-- Do not try to handle every Markdown edge case -- focus on the common patterns
+- Do not try to handle every Markdown edge case - focus on the common patterns
 
 #### Stretch goals
 
@@ -159,9 +159,9 @@ strings, ownership, and pattern matching.
 
 ---
 
-### Project 4 -- Personal Expense Tracker (CLI)
+### Project 4 - Personal Expense Tracker (CLI)
 
-**Difficulty:** Intermediate | **Chapters:** 6--9, 14 | **Time:** 4--8 hours
+**Difficulty:** Intermediate | **Chapters:** 6-9, 14 | **Time:** 4-8 hours
 
 Build a CLI application for tracking personal expenses. This is similar to the task manager in chapter 14 but with
 richer data, filtering, and reporting.
@@ -221,9 +221,9 @@ struct Expense {
 
 ---
 
-### Project 5 -- File Duplicate Finder
+### Project 5 - File Duplicate Finder
 
-**Difficulty:** Intermediate | **Chapters:** 8, 9, 13, 16 | **Time:** 4--6 hours
+**Difficulty:** Intermediate | **Chapters:** 8, 9, 13, 16 | **Time:** 4-6 hours
 
 Build a tool that scans a directory tree and finds files with identical content. This project exercises file I/O,
 hashing, collections, and optionally parallelism.
@@ -267,9 +267,9 @@ hashing, collections, and optionally parallelism.
 These projects combine multiple systems: networking, concurrency, traits, generics, and async. They are substantial and
 may take multiple sessions to complete.
 
-### Project 6 -- Chat Server
+### Project 6 - Chat Server
 
-**Difficulty:** Advanced | **Chapters:** 9, 11, 16 | **Time:** 8--12 hours
+**Difficulty:** Advanced | **Chapters:** 9, 11, 16 | **Time:** 8-12 hours
 
 Build a simple TCP chat server where multiple clients connect, send messages, and see messages from other users in real
 time.
@@ -310,9 +310,9 @@ time.
 
 ---
 
-### Project 7 -- Static Site Generator
+### Project 7 - Static Site Generator
 
-**Difficulty:** Advanced | **Chapters:** 8--11, 13 | **Time:** 10--16 hours
+**Difficulty:** Advanced | **Chapters:** 8-11, 13 | **Time:** 10-16 hours
 
 Build a minimal static site generator that turns Markdown files into a website. This is a real-world tool that exercises
 file I/O, string processing, templating, traits, and project organization.
@@ -354,9 +354,9 @@ file I/O, string processing, templating, traits, and project organization.
 
 ---
 
-### Project 8 -- HTTP Load Tester
+### Project 8 - HTTP Load Tester
 
-**Difficulty:** Advanced | **Chapters:** 11, 13, 16, 17 | **Time:** 8--12 hours
+**Difficulty:** Advanced | **Chapters:** 11, 13, 16, 17 | **Time:** 8-12 hours
 
 Build a command-line tool that sends concurrent HTTP requests to a URL and reports performance statistics. This is a
 practical tool for benchmarking APIs and exercises async, concurrency, and statistics.
@@ -384,7 +384,7 @@ practical tool for benchmarking APIs and exercises async, concurrency, and stati
 - Collect results in a `Vec<RequestResult>` where `RequestResult` holds `duration`, `status_code`, and
   `error: Option<String>`
 - For percentiles, sort the durations and index: P95 is at `sorted[len * 95 / 100]`
-- Start without async -- send requests sequentially first. Then add concurrency.
+- Start without async - send requests sequentially first. Then add concurrency.
 - Use `tokio::time::Instant` to measure request duration
 
 #### Stretch goals
@@ -401,14 +401,14 @@ practical tool for benchmarking APIs and exercises async, concurrency, and stati
 
 - **Start small.** Get the simplest version working before adding features. A "guess the number" that works is better
   than a half-finished chat server.
-- **Fight the compiler, then trust it.** When the borrow checker rejects your code, read the error message carefully --
+- **Fight the compiler, then trust it.** When the borrow checker rejects your code, read the error message carefully -
   it almost always tells you the fix. Once it compiles, you can be confident there are no data races or dangling
   references.
 - **Use `cargo clippy` constantly.** Clippy catches common mistakes and suggests idiomatic improvements. Run it after
   every feature addition.
 - **Write tests as you go.** Even a few `#[test]` functions for core logic save time debugging later (chapter 15).
 - **Read the docs.** Every crate has documentation on [docs.rs](https://docs.rs). The Rust standard library docs are
-  excellent -- search for the type or method you need.
+  excellent - search for the type or method you need.
 - **Commit often.** Use git to save working states. When an experiment goes wrong, `git stash` or `git checkout` gets
   you back on track.
 - **Do not clone everything.** If the compiler says a value was moved, think about whether you need a reference (`&`)

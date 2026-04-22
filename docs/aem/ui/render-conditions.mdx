@@ -97,7 +97,7 @@ Evaluate a simple EL-like expression:
 
 Combine multiple render conditions with boolean logic:
 
-**AND** -- all conditions must be true:
+**AND** - all conditions must be true:
 
 ```xml
 <granite:rendercondition
@@ -115,7 +115,7 @@ Combine multiple render conditions with boolean logic:
 </granite:rendercondition>
 ```
 
-**OR** -- at least one condition must be true:
+**OR** - at least one condition must be true:
 
 ```xml
 <granite:rendercondition
@@ -154,7 +154,7 @@ When the built-in conditions don't cover your requirements, write a custom rende
 
 ### Approach 1: Sling Servlet (recommended)
 
-The cleanest approach -- a proper OSGi servlet with access to all services:
+The cleanest approach - a proper OSGi servlet with access to all services:
 
 ```java title="core/.../servlets/GroupRenderConditionServlet.java"
 package com.myproject.core.servlets;
@@ -554,9 +554,9 @@ Boolean enabled = config.get("enabled", Boolean.class);     // true
 ```
 
 Type hints in XML:
-- `{Long}3` -- Long integer
-- `{Boolean}true` -- Boolean
-- `[value1,value2]` -- String array
+- `{Long}3` - Long integer
+- `{Boolean}true` - Boolean
+- `[value1,value2]` - String array
 - Plain string values need no hint
 
 ---
@@ -565,10 +565,10 @@ Type hints in XML:
 
 | Mechanism | When evaluated | Scope | Security |
 |-----------|---------------|-------|----------|
-| **Render Condition** | Server-side, before dialog renders | Granite UI (dialogs, admin consoles) | Secure -- hidden elements never reach the browser |
-| **`data-sly-test`** | Server-side, during HTL rendering | HTL templates (component rendering) | Secure -- hidden markup never reaches the browser |
-| **`granite:hide`** | Build-time, during overlay resolution | Dialog inheritance and overlays | Secure -- permanently removes fields from inherited dialogs |
-| **Client-side JS (`showhide`)** | Browser, after dialog loads | Coral UI `show`/`hide` listeners | Not secure -- DOM elements exist but are hidden |
+| **Render Condition** | Server-side, before dialog renders | Granite UI (dialogs, admin consoles) | Secure - hidden elements never reach the browser |
+| **`data-sly-test`** | Server-side, during HTL rendering | HTL templates (component rendering) | Secure - hidden markup never reaches the browser |
+| **`granite:hide`** | Build-time, during overlay resolution | Dialog inheritance and overlays | Secure - permanently removes fields from inherited dialogs |
+| **Client-side JS (`showhide`)** | Browser, after dialog loads | Coral UI `show`/`hide` listeners | Not secure - DOM elements exist but are hidden |
 
 :::warning
 **Never use client-side show/hide for security-sensitive fields.** DOM elements hidden via JavaScript
@@ -628,7 +628,7 @@ class GroupRenderConditionServletTest {
 
 ### Document your render conditions
 
-Render conditions are invisible in the UI -- if a field doesn't appear, authors may not know why.
+Render conditions are invisible in the UI - if a field doesn't appear, authors may not know why.
 Add `fieldDescription` hints or documentation explaining which conditions control visibility.
 
 ---
@@ -638,20 +638,20 @@ Add `fieldDescription` hints or documentation explaining which conditions contro
 | Pitfall | Solution |
 |---------|----------|
 | Field disappears and nobody knows why | Add documentation or `fieldDescription` explaining the render condition |
-| Condition works in edit mode but not in template editor | Check `requestPathInfo.suffix` -- template paths differ from content paths |
+| Condition works in edit mode but not in template editor | Check `requestPathInfo.suffix` - template paths differ from content paths |
 | Condition not evaluated (field always shows) | Verify `sling:resourceType` matches the servlet's registered resource type exactly |
 | Condition blocks entire tab when only one field should hide | Place the render condition on the field, not the tab container |
 | Servlet has no access to OSGi services | Use `@Reference` on the servlet class (servlets are OSGi components); don't put `@Reference` inside inner classes |
-| Render condition evaluated multiple times per dialog | Normal -- Granite UI evaluates conditions for each element individually; keep conditions lightweight |
+| Render condition evaluated multiple times per dialog | Normal - Granite UI evaluates conditions for each element individually; keep conditions lightweight |
 | Client-side showhide conflicts | Render conditions and `showhide` listeners can conflict; pick one approach per field |
 
 ## See also
 
-- [Overlays](./overlays.mdx) -- customising existing Granite UI components
-- [Touch UI (Author UI)](./touch-ui.mdx) -- Touch UI architecture
-- [Coral UI](./coral-ui.mdx) -- UI component library
-- [Component Dialogs](../component-dialogs.mdx) -- dialog field types and structure
-- [Servlets](../backend/servlets.mdx) -- servlet registration patterns
+- [Overlays](./overlays.mdx) - customising existing Granite UI components
+- [Touch UI (Author UI)](./touch-ui.mdx) - Touch UI architecture
+- [Coral UI](./coral-ui.mdx) - UI component library
+- [Component Dialogs](../component-dialogs.mdx) - dialog field types and structure
+- [Servlets](../backend/servlets.mdx) - servlet registration patterns
 - [Sling Models](../backend/sling-models.mdx)
-- [Security](../infrastructure/security.mdx) -- access control and permissions
-- [HTL Templates](../htl-templates.mdx) -- `data-sly-test` for component-level conditions
+- [Security](../infrastructure/security.mdx) - access control and permissions
+- [HTL Templates](../htl-templates.mdx) - `data-sly-test` for component-level conditions

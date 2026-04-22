@@ -16,7 +16,7 @@ sidebar_position: 1
 # Introduction & Setup
 
 Adobe Experience Manager (AEM) is an enterprise content management platform for building websites, mobile apps, and
-forms. This guide takes you from a blank project to a deployed site on AEM as a Cloud Service -- step by step.
+forms. This guide takes you from a blank project to a deployed site on AEM as a Cloud Service - step by step.
 
 We assume you already know Java. If not, work through the [Java Beginners Guide](/java/beginners-guide/introduction)
 first.
@@ -25,11 +25,11 @@ first.
 
 | Part                     | Chapters | What you will learn                                               |
 |--------------------------|----------|-------------------------------------------------------------------|
-| **1 -- Foundation**      | 1--3     | AEM architecture, JCR & Sling, OSGi fundamentals                  |
-| **2 -- Components**      | 4--7     | Build components with HTL, dialogs, and Sling Models              |
-| **3 -- Building a Site** | 8--10    | Templates, policies, client libraries, pages with Core Components |
-| **4 -- Content & Data**  | 11--12   | Content Fragments, GraphQL, Multi-Site Manager, i18n              |
-| **5 -- Production**      | 13--14   | Dispatcher & caching, Cloud Manager deployment                    |
+| **1 - Foundation**      | 1-3     | AEM architecture, JCR & Sling, OSGi fundamentals                  |
+| **2 - Components**      | 4-7     | Build components with HTL, dialogs, and Sling Models              |
+| **3 - Building a Site** | 8-10    | Templates, policies, client libraries, pages with Core Components |
+| **4 - Content & Data**  | 11-12   | Content Fragments, GraphQL, Multi-Site Manager, i18n              |
+| **5 - Production**      | 13-14   | Dispatcher & caching, Cloud Manager deployment                    |
 
 By the end you will have a corporate website with custom components, editable templates, headless content, and a
 production deployment pipeline.
@@ -58,11 +58,11 @@ flowchart TD
 
 | Layer                             | What it does                                                        |
 |-----------------------------------|---------------------------------------------------------------------|
-| **AEM**                           | CMS features -- authoring UI, templates, workflows, assets, sites   |
-| **Apache Sling**                  | Web framework -- maps URLs to content, handles HTTP requests        |
-| **JCR (Java Content Repository)** | Content storage -- a hierarchical, versioned content database       |
-| **OSGi (Apache Felix)**           | Module system -- manages Java bundles, services, and configurations |
-| **JVM**                           | Runtime -- everything runs on the Java Virtual Machine              |
+| **AEM**                           | CMS features - authoring UI, templates, workflows, assets, sites   |
+| **Apache Sling**                  | Web framework - maps URLs to content, handles HTTP requests        |
+| **JCR (Java Content Repository)** | Content storage - a hierarchical, versioned content database       |
+| **OSGi (Apache Felix)**           | Module system - manages Java bundles, services, and configurations |
+| **JVM**                           | Runtime - everything runs on the Java Virtual Machine              |
 
 You do not need to master all of these before writing your first component. We will explore each layer as we progress
 through the guide.
@@ -80,11 +80,11 @@ AEM comes in several flavors:
 This guide targets **AEM as a Cloud Service** (AEMaaCS). It is the current standard for new projects. Key differences
 from older versions:
 
-- **No CRXDE Lite in production** -- content changes go through Git and Cloud Manager
-- **Immutable infrastructure** -- you cannot modify the runtime at deploy time
-- **Auto-updates** -- Adobe pushes updates continuously
-- **Cloud Manager** -- CI/CD pipeline for deployment
-- **Rapid Development Environments (RDE)** -- fast iteration during development
+- **No CRXDE Lite in production** - content changes go through Git and Cloud Manager
+- **Immutable infrastructure** - you cannot modify the runtime at deploy time
+- **Auto-updates** - Adobe pushes updates continuously
+- **Cloud Manager** - CI/CD pipeline for deployment
+- **Rapid Development Environments (RDE)** - fast iteration during development
 
 Many concepts transfer to AEM 6.5, but deployment and some APIs differ.
 
@@ -92,15 +92,15 @@ Many concepts transfer to AEM 6.5, but deployment and some APIs differ.
 
 Before we start:
 
-- **Java 11 or later** (the JDK, not just the JRE) -- check with `java -version`. Java 21 is recommended for new
+- **Java 11 or later** (the JDK, not just the JRE) - check with `java -version`. Java 21 is recommended for new
   projects; Cloud Manager supports building with Java 17 and 21, and deploys the Java 21 runtime. Older projects may
   still use Java 11.
-- **Maven 3.9+** -- check with `mvn -version`
-- **An AEMaaCS SDK** -- download from
+- **Maven 3.9+** - check with `mvn -version`
+- **An AEMaaCS SDK** - download from
   the [Software Distribution portal](https://experience.adobe.com/#/downloads/content/software-distribution/en/aemcloud.html) (
   requires an Adobe ID)
-- **A code editor** -- IntelliJ IDEA (recommended for Java) or VS Code
-- **Git** -- for version control
+- **A code editor** - IntelliJ IDEA (recommended for Java) or VS Code
+- **Git** - for version control
 
 > **Note:** The AEMaaCS SDK is free to download for development. You need an Adobe ID but not a paid license to get
 > started locally.
@@ -109,14 +109,14 @@ Before we start:
 
 The SDK contains a local AEM instance (author and publish) that mirrors the cloud environment.
 
-### Step 1 -- Download the SDK
+### Step 1 - Download the SDK
 
 1. Log in to
    the [Software Distribution portal](https://experience.adobe.com/#/downloads/content/software-distribution/en/aemcloud.html)
 2. Download the latest **AEM SDK** (`aem-sdk-<version>.zip`)
-3. Extract the ZIP -- you will find a Quickstart JAR file (`aem-sdk-quickstart-<version>.jar`)
+3. Extract the ZIP - you will find a Quickstart JAR file (`aem-sdk-quickstart-<version>.jar`)
 
-### Step 2 -- Start the Author instance
+### Step 2 - Start the Author instance
 
 Create a directory for your local AEM instance and place the JAR there:
 
@@ -127,8 +127,8 @@ cp aem-sdk-quickstart-*.jar ~/aem/author/aem-author-p4502.jar
 
 The filename convention tells AEM how to start:
 
-- `aem-author` -- run in **author** mode (content editing)
-- `p4502` -- use port **4502**
+- `aem-author` - run in **author** mode (content editing)
+- `p4502` - use port **4502**
 
 Start it:
 
@@ -146,7 +146,7 @@ On first start, AEM:
 
 Default credentials: **admin / admin**.
 
-> **Tip:** First startup can take 5--10 minutes. You can verify the instance is ready by checking the system console
+> **Tip:** First startup can take 5-10 minutes. You can verify the instance is ready by checking the system console
 > bundles endpoint:
 >
 > ```bash
@@ -156,15 +156,15 @@ Default credentials: **admin / admin**.
 > s = data['s']
 > print(f'Bundles: {s[0]} total, {s[1]} active, {s[2]} fragment, {s[3]} resolved, {s[4]} installed')
 > if s[4] == 0:
->     print('All bundles resolved -- instance is ready.')
+>     print('All bundles resolved - instance is ready.')
 > else:
->     print(f'{s[4]} bundles still installing -- wait and retry.')
+>     print(f'{s[4]} bundles still installing - wait and retry.')
 > "
 > ```
 >
 > When the installed count reaches 0, all bundles are resolved or active and the instance is ready.
 
-### Step 3 -- Start the Publish instance (optional for now)
+### Step 3 - Start the Publish instance (optional for now)
 
 For a publish instance, use a different port:
 
@@ -312,11 +312,11 @@ flowchart TD
 
 | Module          | Contains                                                     | Deployed as           |
 |-----------------|--------------------------------------------------------------|-----------------------|
-| **core**        | Java code -- Sling Models, OSGi services, servlets           | OSGi bundle (JAR)     |
+| **core**        | Java code - Sling Models, OSGi services, servlets           | OSGi bundle (JAR)     |
 | **ui.apps**     | AEM components, HTL templates, clientlibs, configs           | Content package       |
 | **ui.content**  | Sample pages, DAM assets, content structures                 | Content package       |
 | **ui.config**   | OSGi configurations per run mode                             | Content package       |
-| **ui.frontend** | Frontend source (SCSS, JS) -- compiled and copied to ui.apps | Not deployed directly |
+| **ui.frontend** | Frontend source (SCSS, JS) - compiled and copied to ui.apps | Not deployed directly |
 | **all**         | Aggregates all packages into one deployable unit             | Container package     |
 | **dispatcher**  | Apache/Dispatcher configuration                              | Deployed separately   |
 | **it.tests**    | Integration tests                                            | Run during build      |
@@ -338,7 +338,7 @@ ui.apps/src/main/content/META-INF/vault/filter.xml
 ```
 
 The filter controls what is deployed (and what is removed on install). Misconfigured filters are a common source of
-deployment issues -- if a path is missing from `filter.xml`, it will not be packaged and deployed. If a filter uses
+deployment issues - if a path is missing from `filter.xml`, it will not be packaged and deployed. If a filter uses
 `mode="replace"`, existing content at that path is deleted and replaced on install.
 
 The archetype generates correct filters for you. You will need to update them when adding new top-level paths (e.g., a
@@ -370,7 +370,7 @@ After deployment, log in to `http://localhost:4502` and you will see sample page
 | `autoInstallSinglePackagePublish` | `-PautoInstallSinglePackagePublish` | Deploy to publish (port 4503)                         |
 | `autoInstallBundle`               | `-PautoInstallBundle`               | Deploy only the `core` bundle (fast for Java changes) |
 
-During development, you will use `autoInstallBundle` most often -- it recompiles and deploys only your Java code, which
+During development, you will use `autoInstallBundle` most often - it recompiles and deploys only your Java code, which
 is much faster than rebuilding everything.
 
 ## Navigating the author instance
@@ -379,11 +379,11 @@ Once logged in at `http://localhost:4502`, explore:
 
 ### Sites Console
 
-**Tools** > **Sites** -- manage pages, create content, publish. This is where content authors spend their time.
+**Tools** > **Sites** - manage pages, create content, publish. This is where content authors spend their time.
 
 ### CRXDE Lite
 
-`http://localhost:4502/crx/de` -- a lightweight IDE for browsing and editing the JCR repository directly. Invaluable for
+`http://localhost:4502/crx/de` - a lightweight IDE for browsing and editing the JCR repository directly. Invaluable for
 debugging.
 
 > **Note:** Treat CRXDE Lite as a **local SDK troubleshooting tool**. On AEM as a Cloud Service, direct repository
@@ -403,17 +403,17 @@ and infrastructure ownership) differs.
 
 ### OSGi Web Console
 
-`http://localhost:4502/system/console` -- manage OSGi bundles, services, configurations. We will explore this in chapter 3.
+`http://localhost:4502/system/console` - manage OSGi bundles, services, configurations. We will explore this in chapter 3.
 
 ### Package Manager
 
-`http://localhost:4502/crx/packmgr` -- install, build, and download content packages.
+`http://localhost:4502/crx/packmgr` - install, build, and download content packages.
 
 ## Key concepts to remember
 
 | Concept                       | What it means in AEM                                                                                    |
 |-------------------------------|---------------------------------------------------------------------------------------------------------|
-| **Everything is content**     | Pages, components, templates, configs -- all stored as nodes in the JCR                                 |
+| **Everything is content**     | Pages, components, templates, configs - all stored as nodes in the JCR                                 |
 | **Content vs code**           | Content lives in `/content/`, code lives in `/apps/` and `/libs/`                                       |
 | **Sling resource resolution** | URLs map to JCR nodes, not files on disk                                                                |
 | **Author + Publish**          | Content is edited on Author, delivered from Publish                                                     |
@@ -431,7 +431,7 @@ You now have:
 - A deployed **sample site** you can browse in the Sites console
 - An understanding of the **technology stack** (Sling, JCR, OSGi) and the **author/publish** model
 
-In the next chapter we will dive into the JCR and Sling -- the foundation everything in AEM is built on.
+In the next chapter we will dive into the JCR and Sling - the foundation everything in AEM is built on.
 
-Next up: [The JCR & Sling](./02-jcr-and-sling.md) -- the content repository, node types, resource resolution, and how
+Next up: [The JCR & Sling](./02-jcr-and-sling.md) - the content repository, node types, resource resolution, and how
 Sling maps URLs to content.

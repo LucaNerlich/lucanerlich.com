@@ -30,7 +30,7 @@ to set up the same REST API project with Gradle using the **Kotlin DSL** (`build
 | Ecosystem      | Largest, most enterprise projects   | Growing, default for Android/Kotlin        |
 | IDE support    | Excellent in all IDEs               | Excellent in IntelliJ, good in others      |
 
-Neither is "better" -- pick whichever your team or project uses. Both solve the same problems.
+Neither is "better" - pick whichever your team or project uses. Both solve the same problems.
 
 ## Installing Gradle
 
@@ -44,7 +44,7 @@ brew install gradle
 
 Download from [gradle.org](https://gradle.org/install/), extract, and add the `bin/` directory to your `PATH`.
 
-### Linux (SDKMAN -- recommended)
+### Linux (SDKMAN - recommended)
 
 ```bash
 curl -s "https://get.sdkman.io" | bash
@@ -152,12 +152,12 @@ tasks.register<Jar>("fatJar") {
 
 Compare this to the Maven `pom.xml`:
 
-- **Shorter** -- Kotlin DSL is more concise than XML
-- **`plugins { java; application }`** -- declares this is a Java application
-- **`repositories { mavenCentral() }`** -- where to download dependencies (same Maven Central)
-- **`dependencies { implementation(...) }`** -- equivalent to Maven's `<dependency>` block
-- **`application { mainClass = ... }`** -- enables `gradle run` to start the app
-- **`fatJar` task** -- custom task that creates a fat JAR (equivalent to Maven's shade plugin)
+- **Shorter** - Kotlin DSL is more concise than XML
+- **`plugins { java; application }`** - declares this is a Java application
+- **`repositories { mavenCentral() }`** - where to download dependencies (same Maven Central)
+- **`dependencies { implementation(...) }`** - equivalent to Maven's `<dependency>` block
+- **`application { mainClass = ... }`** - enables `gradle run` to start the app
+- **`fatJar` task** - custom task that creates a fat JAR (equivalent to Maven's shade plugin)
 
 ### Gradle vs Maven dependency notation
 
@@ -185,7 +185,7 @@ The compact `group:artifact:version` string is much easier to read.
 
 ## Improving the REST API with Jackson
 
-In the Maven chapter we used Gson. Here we use **Jackson** -- the other popular JSON library -- to show both options.
+In the Maven chapter we used Gson. Here we use **Jackson** - the other popular JSON library - to show both options.
 Jackson is the industry default for most Java projects.
 
 ### Updated `TaskHandler.java` with Jackson
@@ -442,9 +442,9 @@ The wrapper downloads the correct Gradle version automatically. **Always use the
 
 Gradle is faster than Maven mainly because of:
 
-1. **Incremental compilation** -- only recompiles changed files
-2. **Build cache** -- reuses outputs from previous builds
-3. **Gradle daemon** -- keeps a JVM running in the background
+1. **Incremental compilation** - only recompiles changed files
+2. **Build cache** - reuses outputs from previous builds
+3. **Gradle daemon** - keeps a JVM running in the background
 
 In practice, `gradle build` on an unchanged project takes milliseconds. A full `mvn package` rescans everything.
 
@@ -485,7 +485,7 @@ curl -sf https://yoursite.com/api/health && echo " -- OK" || echo " -- FAILED"
 
 | Situation                   | Recommendation                |
 |-----------------------------|-------------------------------|
-| New project, small team     | Either -- personal preference |
+| New project, small team     | Either - personal preference |
 | Joining an existing project | Use what the project uses     |
 | Enterprise / Spring Boot    | Maven is more common          |
 | Android / Kotlin            | Gradle is required            |
@@ -504,14 +504,14 @@ The choice rarely matters for the end result. Pick one, learn it well, and switc
 
 ## Summary
 
-- **Gradle** uses Kotlin DSL (`build.gradle.kts`) instead of XML -- more concise and programmable.
+- **Gradle** uses Kotlin DSL (`build.gradle.kts`) instead of XML - more concise and programmable.
 - `implementation("group:artifact:version")` declares dependencies (same Maven Central repository).
 - `gradle run` starts the app directly; `gradle fatJar` creates a deployable JAR.
 - The **Gradle wrapper** (`gradlew`) ensures reproducible builds without a global installation.
-- **Jackson** (`ObjectMapper`) is the industry-standard JSON library -- `writeValueAsString` and `readValue`.
+- **Jackson** (`ObjectMapper`) is the industry-standard JSON library - `writeValueAsString` and `readValue`.
 - Gradle's **incremental builds and build cache** make rebuilds significantly faster than Maven.
-- **Neither tool is universally better** -- choose based on your team, project, and ecosystem.
+- **Neither tool is universally better** - choose based on your team, project, and ecosystem.
 
 For advanced Maven topics (BOMs, multi-module projects, profiles), see the [Maven deep dive](../maven.md).
 
-Next up: [Streams & Lambdas](./15-streams-and-lambdas.md) -- functional programming in Java with the Stream API.
+Next up: [Streams & Lambdas](./15-streams-and-lambdas.md) - functional programming in Java with the Stream API.

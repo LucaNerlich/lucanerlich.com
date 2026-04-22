@@ -19,7 +19,7 @@ Most web applications need to store data persistently. Files work for simple cas
 
 ## What Is a Relational Database?
 
-A **relational database** organizes data into **tables** -- think of them as spreadsheets. Each table has **columns** (fields) and **rows** (records). Tables can reference each other through **relationships**, which keeps data organized and avoids duplication.
+A **relational database** organizes data into **tables** - think of them as spreadsheets. Each table has **columns** (fields) and **rows** (records). Tables can reference each other through **relationships**, which keeps data organized and avoids duplication.
 
 ### Tables, Rows, and Columns
 
@@ -31,7 +31,7 @@ A **relational database** organizes data into **tables** -- think of them as spr
 
 ### Primary Keys
 
-Every table should have a **primary key** -- a column (or combination of columns) that uniquely identifies each row. Usually this is an auto-incrementing integer called `id`:
+Every table should have a **primary key** - a column (or combination of columns) that uniquely identifies each row. Usually this is an auto-incrementing integer called `id`:
 
 ```sql
 id | name   | email
@@ -59,7 +59,7 @@ id | user_id | title      | done
 3  | 2       | Fix bug    | 0
 ```
 
-This lets you query "all tasks for user Alice" by joining the tables. Foreign keys also enforce **referential integrity** -- you cannot insert a task with `user_id = 99` if no user with `id = 99` exists (when constraints are enabled).
+This lets you query "all tasks for user Alice" by joining the tables. Foreign keys also enforce **referential integrity** - you cannot insert a task with `user_id = 99` if no user with `id = 99` exists (when constraints are enabled).
 
 ## MySQL vs MariaDB vs SQLite
 
@@ -71,7 +71,7 @@ PHP can work with several database engines. Here is a quick comparison:
 | **MariaDB** | Server | Production web apps | MySQL fork, drop-in replacement, community-driven |
 | **SQLite** | File-based | Prototypes, small apps, embedded | Single file, no server, zero config |
 
-For this guide we use **MySQL** or **MariaDB**. The PHP code is identical for both -- they speak the same protocol. SQLite is simpler to set up but behaves differently for connections and concurrency; we focus on the server-based approach you will use in most production environments.
+For this guide we use **MySQL** or **MariaDB**. The PHP code is identical for both - they speak the same protocol. SQLite is simpler to set up but behaves differently for connections and concurrency; we focus on the server-based approach you will use in most production environments.
 
 > **Note:** MariaDB is a community fork of MySQL. If you have MariaDB installed, everything in this chapter works the same way.
 
@@ -91,7 +91,7 @@ brew install mariadb
 brew services start mariadb
 ```
 
-After installation, run the security script (MySQL) or set the root password. By default, the root user has no password -- you should set one for local development.
+After installation, run the security script (MySQL) or set the root password. By default, the root user has no password - you should set one for local development.
 
 ### Linux (Debian/Ubuntu)
 
@@ -126,7 +126,7 @@ PHP offers two main extensions for MySQL/MariaDB: **mysqli** and **PDO**. We use
 
 ### PDO and the DSN
 
-To connect, you create a `PDO` instance with a **DSN** (Data Source Name) -- a string that describes the database type, host, database name, and options:
+To connect, you create a `PDO` instance with a **DSN** (Data Source Name) - a string that describes the database type, host, database name, and options:
 
 ```php
 <?php
@@ -209,7 +209,7 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS tasks (
 
 ## CRUD Operations with PDO
 
-**CRUD** stands for Create, Read, Update, Delete -- the four basic operations on data. You will use these constantly.
+**CRUD** stands for Create, Read, Update, Delete - the four basic operations on data. You will use these constantly.
 
 ### CREATE: INSERT
 
@@ -432,7 +432,7 @@ try {
 
 ## Transactions
 
-A **transaction** groups multiple database operations into a single unit. Either all succeed, or all are rolled back. This is essential when you need consistency -- for example, transferring money between two accounts.
+A **transaction** groups multiple database operations into a single unit. Either all succeed, or all are rolled back. This is essential when you need consistency - for example, transferring money between two accounts.
 
 ```php
 <?php
@@ -574,7 +574,7 @@ This script:
 4. Fetches all tasks and displays them
 5. Escapes output with `htmlspecialchars()` to prevent XSS
 
-You can extend it with an edit form, validation, or pagination. The core pattern -- connect, prepare, execute, fetch -- stays the same.
+You can extend it with an edit form, validation, or pagination. The core pattern - connect, prepare, execute, fetch - stays the same.
 
 ## Summary
 
@@ -588,4 +588,4 @@ You can extend it with an edit form, validation, or pagination. The core pattern
 - **Error handling**: Wrap database calls in try/catch. Log errors; show generic messages to users.
 - **Transactions** group operations with `beginTransaction()`, `commit()`, and `rollBack()`. Use them when multiple related changes must succeed or fail together.
 
-**Next up:** [Sessions & Cookies](./13-sessions-and-cookies.md) -- HTTP state management, cookies, sessions, building login/logout, and session security.
+**Next up:** [Sessions & Cookies](./13-sessions-and-cookies.md) - HTTP state management, cookies, sessions, building login/logout, and session security.

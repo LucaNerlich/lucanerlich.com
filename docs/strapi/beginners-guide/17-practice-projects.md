@@ -17,20 +17,20 @@ sidebar_position: 17
 
 You have finished the guide. The best way to make the knowledge stick is to build something. This chapter proposes six
 projects of increasing complexity. Each one tells you which chapters it draws from, what to build, and enough detail to
-get started -- but the implementation is up to you. No step-by-step hand-holding; that is the point.
+get started - but the implementation is up to you. No step-by-step hand-holding; that is the point.
 
 Pick one that interests you and start building.
 
 ## 1. Recipe Book API
 
-**Difficulty:** Beginner | **Chapters:** 1--6
+**Difficulty:** Beginner | **Chapters:** 1-6
 
 Build a recipe API that a cooking website or mobile app could consume. Focus on clean content modeling, proper
 relations, and a well-structured REST API.
 
 ### What you will practice
 
-- Content type design (chapters 2--3)
+- Content type design (chapters 2-3)
 - Components for reusable field groups (chapter 2)
 - Relations: recipes belong to categories, recipes have many ingredients (chapter 3)
 - Draft/publish workflow (chapter 4)
@@ -60,14 +60,14 @@ Nutrition as a single component.
 
 ## 2. Event Calendar with Registration
 
-**Difficulty:** Intermediate | **Chapters:** 1--8
+**Difficulty:** Intermediate | **Chapters:** 1-8
 
 Build an event management API where users can browse events and register for them. This project forces you beyond
 basic CRUD into custom business logic.
 
 ### What you will practice
 
-- All beginner skills (chapters 1--6)
+- All beginner skills (chapters 1-6)
 - Custom controllers and services with business logic (chapter 7)
 - Custom routes and policies (chapter 8)
 - Input validation in services
@@ -85,12 +85,12 @@ basic CRUD into custom business logic.
 
 ### Key features to implement
 
-1. **Custom `POST /api/events/:documentId/register` endpoint** -- checks if the event is in the future, if capacity
+1. **Custom `POST /api/events/:documentId/register` endpoint** - checks if the event is in the future, if capacity
    has not been reached, and if the user is not already registered. Returns 400 with a clear message if any check fails.
-2. **Custom `DELETE /api/events/:documentId/register` endpoint** -- cancels the current user's registration and
+2. **Custom `DELETE /api/events/:documentId/register` endpoint** - cancels the current user's registration and
    promotes the first waitlisted registration to confirmed.
-3. **`is-not-full` policy** -- reusable policy that checks event capacity before allowing registration.
-4. **`registrations-count` virtual field** -- override the Event `findOne` controller to include a count of confirmed
+3. **`is-not-full` policy** - reusable policy that checks event capacity before allowing registration.
+4. **`registrations-count` virtual field** - override the Event `findOne` controller to include a count of confirmed
    registrations in the response.
 
 ### Stretch goals
@@ -103,7 +103,7 @@ basic CRUD into custom business logic.
 
 ## 3. Link Shortener
 
-**Difficulty:** Intermediate | **Chapters:** 7--9
+**Difficulty:** Intermediate | **Chapters:** 7-9
 
 A URL shortener with a tiny data model but heavy emphasis on custom routes, lifecycle hooks, and non-CRUD behavior.
 This teaches you that Strapi can power more than just content APIs.
@@ -121,16 +121,16 @@ This teaches you that Strapi can power more than just content APIs.
 |--------------|------------|-----------------------------------------------------------------------------------------------|
 | **Link**     | Collection | `originalUrl` (string, required), `shortCode` (uid, required, unique), `clicks` (integer, default 0), `expiresAt` (datetime, nullable) |
 
-That is it -- one content type.
+That is it - one content type.
 
 ### Key features to implement
 
-1. **Auto-generate `shortCode`** -- register a Document Service middleware that generates a random 6-character
+1. **Auto-generate `shortCode`** - register a Document Service middleware that generates a random 6-character
    alphanumeric code on `beforeCreate` if no `shortCode` is provided.
-2. **`GET /s/:shortCode` redirect endpoint** -- a custom route that looks up the link, increments the click counter,
+2. **`GET /s/:shortCode` redirect endpoint** - a custom route that looks up the link, increments the click counter,
    and returns a 302 redirect to `originalUrl`. Return 404 if not found, 410 if expired.
-3. **`GET /api/links/:documentId/stats` endpoint** -- returns the link's click count and creation date.
-4. **Rate limiting** -- add the rate-limiting middleware from chapter 8 to the redirect endpoint to prevent abuse.
+3. **`GET /api/links/:documentId/stats` endpoint** - returns the link's click count and creation date.
+4. **Rate limiting** - add the rate-limiting middleware from chapter 8 to the redirect endpoint to prevent abuse.
 
 ### Stretch goals
 
@@ -142,14 +142,14 @@ That is it -- one content type.
 
 ## 4. Multi-author Blog with Editorial Workflow
 
-**Difficulty:** Intermediate--Advanced | **Chapters:** 1--11
+**Difficulty:** Intermediate-Advanced | **Chapters:** 1-11
 
 Take the blog you built throughout the guide and level it up with a real editorial workflow, role-based access control,
 and TypeScript. This is the closest project to a production system.
 
 ### What you will practice
 
-- Everything from the guide (chapters 1--11)
+- Everything from the guide (chapters 1-11)
 - Custom roles and granular permissions (chapter 6)
 - Custom policies for role-based access (chapter 8)
 - Lifecycle hooks for notifications (chapter 9)
@@ -157,17 +157,17 @@ and TypeScript. This is the closest project to a production system.
 
 ### Key features to implement
 
-1. **Editorial status field** -- add a `reviewStatus` enum to Post: `draft`, `in_review`, `approved`, `rejected`.
+1. **Editorial status field** - add a `reviewStatus` enum to Post: `draft`, `in_review`, `approved`, `rejected`.
    This is separate from Strapi's built-in draft/publish system and tracks the editorial process.
-2. **Custom roles** -- create `Writer`, `Editor`, and `Admin` roles. Writers can create and submit posts for review.
+2. **Custom roles** - create `Writer`, `Editor`, and `Admin` roles. Writers can create and submit posts for review.
    Editors can approve or reject. Admins can do everything.
-3. **`submit-for-review` endpoint** -- `POST /api/posts/:documentId/submit` changes `reviewStatus` from `draft` to
+3. **`submit-for-review` endpoint** - `POST /api/posts/:documentId/submit` changes `reviewStatus` from `draft` to
    `in_review`. Only the post's author can submit.
-4. **`approve` and `reject` endpoints** -- only users with the Editor role can call these. Approving also publishes
+4. **`approve` and `reject` endpoints** - only users with the Editor role can call these. Approving also publishes
    the post.
-5. **Lifecycle notification** -- send a log message (or webhook) when a post's `reviewStatus` changes, including who
+5. **Lifecycle notification** - send a log message (or webhook) when a post's `reviewStatus` changes, including who
    changed it and the old/new status.
-6. **Type everything** -- controllers, services, policies, routes, and the register/bootstrap functions should all be
+6. **Type everything** - controllers, services, policies, routes, and the register/bootstrap functions should all be
    in TypeScript with proper type annotations.
 
 ### Stretch goals
@@ -183,7 +183,7 @@ and TypeScript. This is the closest project to a production system.
 **Difficulty:** Advanced | **Chapters:** 2, 3, 5, 10
 
 Build a portfolio CMS where every page is assembled from dynamic zone blocks. This project is heavy on content
-modeling and light on custom backend logic -- the challenge is designing a flexible, editor-friendly schema.
+modeling and light on custom backend logic - the challenge is designing a flexible, editor-friendly schema.
 
 ### What you will practice
 
@@ -215,11 +215,11 @@ modeling and light on custom backend logic -- the challenge is designing a flexi
 
 ### Key features to implement
 
-1. **Flexible page builder** -- editors should be able to compose any page from any combination of blocks.
-2. **Deep population endpoint** -- `GET /api/pages?populate=deep` or a custom controller that fully populates all
+1. **Flexible page builder** - editors should be able to compose any page from any combination of blocks.
+2. **Deep population endpoint** - `GET /api/pages?populate=deep` or a custom controller that fully populates all
    dynamic zone blocks including nested relations (projects, skills) and media.
-3. **Configure an external upload provider** -- set up S3 or Cloudinary so portfolio images are served from a CDN.
-4. **Optimized list endpoint** -- a custom `GET /api/projects` controller that returns only the fields needed for a
+3. **Configure an external upload provider** - set up S3 or Cloudinary so portfolio images are served from a CDN.
+4. **Optimized list endpoint** - a custom `GET /api/projects` controller that returns only the fields needed for a
    grid card (title, slug, coverImage thumbnail, year, tags).
 
 ### Stretch goals
@@ -232,9 +232,9 @@ modeling and light on custom backend logic -- the challenge is designing a flexi
 
 ## 6. Reading List API for a Mobile App
 
-**Difficulty:** Advanced | **Chapters:** 5--8, 11--12
+**Difficulty:** Advanced | **Chapters:** 5-8, 11-12
 
-Build a backend for a personal reading list app. Every user manages their own books -- scoped by authentication. This
+Build a backend for a personal reading list app. Every user manages their own books - scoped by authentication. This
 project brings together API design, user-scoped data, middleware, TypeScript, and deployment.
 
 ### What you will practice
@@ -250,22 +250,22 @@ project brings together API design, user-scoped data, middleware, TypeScript, an
 | Content type | Kind       | Key fields                                                                                    |
 |--------------|------------|-----------------------------------------------------------------------------------------------|
 | **Book**     | Collection | `title`, `author` (string), `isbn` (string, unique), `coverUrl` (string), `pageCount` (integer), `genre` (enum), `addedBy` (relation to User) |
-| **Reading**  | Collection | `book` (relation to Book), `user` (relation to User), `status` (enum: to_read/reading/finished/abandoned), `startDate` (date), `finishDate` (date), `rating` (integer, 1--5), `notes` (text) |
+| **Reading**  | Collection | `book` (relation to Book), `user` (relation to User), `status` (enum: to_read/reading/finished/abandoned), `startDate` (date), `finishDate` (date), `rating` (integer, 1-5), `notes` (text) |
 
 **Relations:** Book is shared (many users can have the same book). Reading links a User to a Book with personal status
 and notes. Each user only sees their own readings.
 
 ### Key features to implement
 
-1. **User-scoped queries** -- override the Reading controller so `GET /api/readings` automatically filters by the
+1. **User-scoped queries** - override the Reading controller so `GET /api/readings` automatically filters by the
    authenticated user. Users must never see each other's reading lists.
-2. **`is-owner` policy** -- only the reading's owner can update or delete it.
-3. **`POST /api/readings` auto-links user** -- the create action should automatically set `user` to the authenticated
+2. **`is-owner` policy** - only the reading's owner can update or delete it.
+3. **`POST /api/readings` auto-links user** - the create action should automatically set `user` to the authenticated
    user, ignoring any `user` value in the request body.
-4. **Stats endpoint** -- `GET /api/readings/stats` returns the current user's totals: books by status, average rating,
+4. **Stats endpoint** - `GET /api/readings/stats` returns the current user's totals: books by status, average rating,
    total pages read (sum of `pageCount` for finished books).
-5. **Rate limiting middleware** -- protect the API from abuse since it is designed for mobile clients.
-6. **Production config** -- configure PostgreSQL, environment-based settings, and API tokens for mobile auth.
+5. **Rate limiting middleware** - protect the API from abuse since it is designed for mobile clients.
+6. **Production config** - configure PostgreSQL, environment-based settings, and API tokens for mobile auth.
 
 ### Stretch goals
 
@@ -286,6 +286,6 @@ and notes. Each user only sees their own readings.
   message. Do not ignore them.
 - **Commit often.** Use git to checkpoint working states so you can always roll back a bad experiment.
 - **Consult the reference docs.** The [Strapi reference pages](/strapi/) in this guide cover advanced patterns for
-  every topic -- controllers, relations, middleware, plugins, and more.
+  every topic - controllers, relations, middleware, plugins, and more.
 
 You have the knowledge. Now go build something.

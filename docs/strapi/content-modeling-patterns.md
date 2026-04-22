@@ -55,7 +55,7 @@ later is painful.
 ## Components
 
 Components are reusable groups of fields that can be embedded in any content type. They do **not** have their own API
-endpoint -- they only exist as part of a parent document.
+endpoint - they only exist as part of a parent document.
 
 ### When to use components
 
@@ -146,7 +146,7 @@ src/components/
 
 ## Dynamic zones
 
-Dynamic zones let editors choose from a set of components in any order -- the classic "page builder" pattern.
+Dynamic zones let editors choose from a set of components in any order - the classic "page builder" pattern.
 
 ### Defining a dynamic zone
 
@@ -389,6 +389,6 @@ NavigationItem (component: layout.nav-item)
 
 ## See also
 
-- [Relations and Population](relations-and-population.md) -- querying and populating relations efficiently
-- [i18n and Multi-Locale Content](i18n-multi-locale.md) -- localization affects modeling decisions
-- [Custom Controllers and Services](custom-controllers-services.md) -- consuming your content model in code
+- [Relations and Population](relations-and-population.md) - querying and populating relations efficiently
+- [i18n and Multi-Locale Content](i18n-multi-locale.md) - localization affects modeling decisions
+- [Custom Controllers and Services](custom-controllers-services.md) - consuming your content model in code

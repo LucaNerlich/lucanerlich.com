@@ -15,30 +15,30 @@ sidebar_position: 1
 
 # Introduction & First Styles
 
-CSS -- **Cascading Style Sheets** -- is the language that controls how web pages look. Every colour, font, spacing
+CSS - **Cascading Style Sheets** - is the language that controls how web pages look. Every colour, font, spacing
 decision, and layout you see on the web is defined with CSS.
 
-This guide takes you from zero CSS knowledge to writing professional, modern stylesheets -- step by step. We assume you
+This guide takes you from zero CSS knowledge to writing professional, modern stylesheets - step by step. We assume you
 know basic HTML (tags, attributes, nesting). If not, work through the
-[JavaScript Beginners Guide](/javascript/beginners-guide/introduction) first -- it covers HTML fundamentals in chapter 7.
+[JavaScript Beginners Guide](/javascript/beginners-guide/introduction) first - it covers HTML fundamentals in chapter 7.
 
 ## How this guide is structured
 
 | Part                            | Chapters | What you will learn                                                          |
 |---------------------------------|----------|------------------------------------------------------------------------------|
-| **1 -- Foundations**            | 1--5     | How CSS works, selectors, the box model, colours, fonts, units               |
-| **2 -- Layout**                 | 6--9     | Display, positioning, Flexbox, CSS Grid, responsive design                   |
-| **3 -- Visual Design**         | 10--12   | Backgrounds, shadows, transitions, animations, pseudo-classes/elements       |
-| **4 -- Intermediate Concepts** | 13--15   | Custom properties, specificity & cascade, modern CSS features                |
-| **5 -- Professional CSS**      | 16--17   | Architecture, best practices, debugging, common pitfalls                     |
-| **6 -- Practice**              | 18       | Six hands-on projects from beginner to advanced                              |
+| **1 - Foundations**            | 1-5     | How CSS works, selectors, the box model, colours, fonts, units               |
+| **2 - Layout**                 | 6-9     | Display, positioning, Flexbox, CSS Grid, responsive design                   |
+| **3 - Visual Design**         | 10-12   | Backgrounds, shadows, transitions, animations, pseudo-classes/elements       |
+| **4 - Intermediate Concepts** | 13-15   | Custom properties, specificity & cascade, modern CSS features                |
+| **5 - Professional CSS**      | 16-17   | Architecture, best practices, debugging, common pitfalls                     |
+| **6 - Practice**              | 18       | Six hands-on projects from beginner to advanced                              |
 
 By the end you will be able to style any web page from scratch, build responsive layouts, add animations, and organise
 your CSS like a professional.
 
 ## What is CSS?
 
-HTML defines the **structure** of a web page -- headings, paragraphs, images, links. But HTML alone looks plain and
+HTML defines the **structure** of a web page - headings, paragraphs, images, links. But HTML alone looks plain and
 unstyled. CSS is a separate language that tells the browser **how** to display that structure.
 
 Think of it this way:
@@ -55,11 +55,11 @@ flowchart LR
 
 CSS handles everything visual:
 
-- **Colours** -- text colour, background colour, borders
-- **Typography** -- font family, size, weight, line spacing
-- **Spacing** -- margins, padding, gaps between elements
-- **Layout** -- how elements are arranged on the page (side by side, stacked, in a grid)
-- **Effects** -- shadows, rounded corners, animations, transitions
+- **Colours** - text colour, background colour, borders
+- **Typography** - font family, size, weight, line spacing
+- **Spacing** - margins, padding, gaps between elements
+- **Layout** - how elements are arranged on the page (side by side, stacked, in a grid)
+- **Effects** - shadows, rounded corners, animations, transitions
 
 Without CSS, every website would look like a plain white page with black text and blue links. CSS is what makes the web
 beautiful.
@@ -68,11 +68,11 @@ beautiful.
 
 When a browser loads a web page, it follows these steps:
 
-1. **Download the HTML** -- the browser reads the HTML file
-2. **Build the DOM** -- it creates a tree structure of all the HTML elements (the Document Object Model)
-3. **Download the CSS** -- it fetches any linked stylesheets
-4. **Apply styles** -- it matches CSS rules to HTML elements
-5. **Paint the page** -- it renders the final, styled result on screen
+1. **Download the HTML** - the browser reads the HTML file
+2. **Build the DOM** - it creates a tree structure of all the HTML elements (the Document Object Model)
+3. **Download the CSS** - it fetches any linked stylesheets
+4. **Apply styles** - it matches CSS rules to HTML elements
+5. **Paint the page** - it renders the final, styled result on screen
 
 ```mermaid
 flowchart TD
@@ -87,8 +87,8 @@ of the time) and the browser combines them.
 
 ## Three ways to add CSS
 
-There are three ways to attach CSS to an HTML page. We will cover all three, but the third one -- **external
-stylesheets** -- is the one you should use in real projects.
+There are three ways to attach CSS to an HTML page. We will cover all three, but the third one - **external
+stylesheets** - is the one you should use in real projects.
 
 ### 1. Inline styles
 
@@ -166,10 +166,10 @@ p {
 
 This is the standard approach for real projects because:
 
-- **Separation of concerns** -- HTML handles structure, CSS handles presentation
-- **Reusability** -- one stylesheet can be linked from multiple HTML pages
-- **Caching** -- the browser downloads the CSS file once and reuses it across pages
-- **Maintainability** -- all your styles live in one place
+- **Separation of concerns** - HTML handles structure, CSS handles presentation
+- **Reusability** - one stylesheet can be linked from multiple HTML pages
+- **Caching** - the browser downloads the CSS file once and reuses it across pages
+- **Maintainability** - all your styles live in one place
 
 > **Tip:** For the rest of this guide, we use external stylesheets. Create an `index.html` and a `styles.css` file in
 > the same folder and link them with the `<link>` tag shown above.
@@ -195,7 +195,7 @@ This CSS rule has four parts:
 | **Property**     | `color`          | The visual aspect you want to change                     |
 | **Value**        | `navy`           | The setting you want for that property                   |
 
-A single **declaration** is a property--value pair separated by a colon and ended with a semicolon:
+A single **declaration** is a property-value pair separated by a colon and ended with a semicolon:
 
 ```
 property: value;
@@ -284,7 +284,7 @@ li {
 }
 ```
 
-Open `index.html` in your browser. You should see a page with a light grey background, dark text, and Georgia font --
+Open `index.html` in your browser. You should see a page with a light grey background, dark text, and Georgia font -
 a huge improvement over the default browser styles.
 
 Try changing some values:
@@ -310,7 +310,7 @@ p {
 }
 ```
 
-In this example, paragraphs will be **red** because the second rule comes later. This is part of the **cascade** -- one
+In this example, paragraphs will be **red** because the second rule comes later. This is part of the **cascade** - one
 of the most important concepts in CSS. We cover it in depth in chapter 14.
 
 ## Comments
@@ -344,11 +344,11 @@ of the most important tools you will use as a web developer.
 
 ### What you can do
 
-1. **Inspect elements** -- click any element on the page to see which CSS rules apply to it
-2. **Edit styles live** -- change property values in the Styles panel and see results instantly
-3. **See the box model** -- a visual diagram shows the element's content, padding, border, and margin
-4. **Toggle declarations** -- click the checkbox next to any declaration to turn it on or off
-5. **Add new declarations** -- click inside a rule to type new property--value pairs
+1. **Inspect elements** - click any element on the page to see which CSS rules apply to it
+2. **Edit styles live** - change property values in the Styles panel and see results instantly
+3. **See the box model** - a visual diagram shows the element's content, padding, border, and margin
+4. **Toggle declarations** - click the checkbox next to any declaration to turn it on or off
+5. **Add new declarations** - click inside a rule to type new property-value pairs
 
 > **Tip:** Get comfortable with DevTools early. Professional developers spend a lot of time there. It is the fastest way
 > to experiment with CSS without saving and refreshing.
@@ -359,7 +359,7 @@ of the most important tools you will use as a web developer.
 2. Right-click the `<h1>` element and select "Inspect"
 3. In the Styles panel on the right, find the `color` property
 4. Click on the colour value and change it to `tomato`
-5. The heading changes colour instantly -- but only in the browser. Your file is unchanged.
+5. The heading changes colour instantly - but only in the browser. Your file is unchanged.
 
 This live editing is perfect for experimenting. Once you find values you like, copy them back into your `.css` file.
 
@@ -368,10 +368,10 @@ This live editing is perfect for experimenting. Once you find values you like, c
 - CSS controls the **visual presentation** of HTML
 - There are three ways to add CSS: inline, internal, and **external stylesheets** (the recommended approach)
 - A CSS rule has a **selector**, **properties**, and **values**
-- The browser reads CSS top to bottom -- later rules can override earlier ones
+- The browser reads CSS top to bottom - later rules can override earlier ones
 - **Browser DevTools** let you inspect and edit CSS in real time
 
 ## Next step
 
-In the next chapter, you will learn about **selectors** -- the part of a CSS rule that targets which HTML elements to
+In the next chapter, you will learn about **selectors** - the part of a CSS rule that targets which HTML elements to
 style. Selectors are the foundation of everything else in CSS.

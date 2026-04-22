@@ -17,7 +17,7 @@ sidebar_position: 6
 
 This is a start-to-finish tutorial for building a tiny blog page using **only** HTML, CSS, and vanilla JavaScript. No
 framework, no build step, no account on any platform. By the end you will have a single working page with two posts, a
-sidebar, a dark-mode toggle, human-readable post dates, and a tag filter -- all in three files.
+sidebar, a dark-mode toggle, human-readable post dates, and a tag filter - all in three files.
 
 If you want a deeper element-by-element reference while you work, keep [Semantic HTML](./semantic-html.mdx) open in a
 second tab.
@@ -32,40 +32,40 @@ A single blog page with:
 - A **multi-column footer** that stacks to one column on narrow screens.
 - A **theme toggle** that switches between light and dark mode and remembers your choice.
 - **Relative dates** ("3 days ago") generated at page load.
-- **Tag filtering** -- click a tag to show only posts that include it; click again to clear.
+- **Tag filtering** - click a tag to show only posts that include it; click again to clear.
 
 ## What you need
 
 1. A modern web browser (Chrome, Firefox, Safari, or Edge).
 2. A text editor. [VS Code](https://code.visualstudio.com/) is free and a safe default. Any editor works, but VS Code
-   colours your code so mistakes stand out (a missing quote turns red, for example) -- a word processor like Word or
+   colours your code so mistakes stand out (a missing quote turns red, for example) - a word processor like Word or
    Pages will **not** work, because they save formatting instead of plain text.
 
 That is it. No Node.js yet, no `npm install`.
 
-## Before you start -- what the pieces are
+## Before you start - what the pieces are
 
 If you have never built a website before, four words will come up over and over. Here is what each of them is, in the
 plainest terms:
 
 - **A website** is just a folder of files. Text files containing HTML, CSS, and JavaScript; maybe some images. When
-  you visit a URL, your browser downloads those files and displays them. That is it -- there is no magic behind
+  you visit a URL, your browser downloads those files and displays them. That is it - there is no magic behind
   the scenes.
 - **HTML** is the content and structure. "Here is a heading. Here is a paragraph. Here is a list." It does not care
-  what anything looks like -- only what it *is*.
-- **CSS** is how the page looks -- colours, spacing, fonts, where things sit on the screen.
-- **JavaScript** is what happens when you click, type, or scroll -- the behaviour of the page.
+  what anything looks like - only what it *is*.
+- **CSS** is how the page looks - colours, spacing, fonts, where things sit on the screen.
+- **JavaScript** is what happens when you click, type, or scroll - the behaviour of the page.
 
 You will write one file for each of those three, and that is the whole blog.
 
 ### How to actually create the files
 
 1. Decide where the folder should live (your Desktop is fine). Create a new folder called `my-blog`:
-   - **macOS** -- in Finder, right-click -> **New Folder**.
-   - **Windows** -- in File Explorer, right-click -> **New** -> **Folder**.
-   - **Linux** -- in your file manager, right-click -> **New Folder** (or `mkdir my-blog` in a terminal).
+   - **macOS** - in Finder, right-click -> **New Folder**.
+   - **Windows** - in File Explorer, right-click -> **New** -> **Folder**.
+   - **Linux** - in your file manager, right-click -> **New Folder** (or `mkdir my-blog` in a terminal).
 2. Open VS Code, then **File** -> **Open Folder...** and pick the `my-blog` folder.
-3. Inside VS Code, click the **New File** icon in the left-hand panel and create three empty files -- `index.html`,
+3. Inside VS Code, click the **New File** icon in the left-hand panel and create three empty files - `index.html`,
    `styles.css`, `app.js`. Spelling and the dots matter: `index.html`, not `index html` or `index.HTML.txt`.
 
 ### How to "open a file in a browser"
@@ -76,7 +76,7 @@ When the guide says "open `index.html` in your browser", you have two options:
 - Drag the file from Finder / File Explorer onto an open browser window.
 
 Either way, look at the address bar. It will say something like `file:///Users/you/Desktop/my-blog/index.html`. That
-`file://` prefix means "this page is loading from your own disk, not from the internet" -- which is exactly what we
+`file://` prefix means "this page is loading from your own disk, not from the internet" - which is exactly what we
 want for now. No server, no hosting, no account anywhere.
 
 ## Project layout
@@ -92,9 +92,9 @@ my-blog/
 
 All work in this guide happens inside that folder.
 
-## Step 1 -- the HTML skeleton
+## Step 1 - the HTML skeleton
 
-Open `index.html` and paste this in. Every element here is a **semantic** one -- a fancy way of saying its name
+Open `index.html` and paste this in. Every element here is a **semantic** one - a fancy way of saying its name
 describes what the content *is*, not how it looks (for example `<article>` for a blog post, not `<div class="post">`).
 Look up any of them in [Semantic HTML](./semantic-html.mdx) for details on what they mean.
 
@@ -184,7 +184,7 @@ Look up any of them in [Semantic HTML](./semantic-html.mdx) for details on what 
 ```
 
 Open `index.html` in your browser (double-click it, or drag it onto a browser window). You should see an unstyled page
-with headings, paragraphs, and a list of links. Ugly, but correct -- every piece of content is marked up with the right
+with headings, paragraphs, and a list of links. Ugly, but correct - every piece of content is marked up with the right
 element.
 
 Why it looks ugly is the point of Step 2.
@@ -193,20 +193,20 @@ Why it looks ugly is the point of Step 2.
 
 | Element               | Why it is here                                                                                        |
 |-----------------------|-------------------------------------------------------------------------------------------------------|
-| `<header>` (site)     | The top banner of the page -- title, nav, theme button.                                               |
+| `<header>` (site)     | The top banner of the page - title, nav, theme button.                                               |
 | `<nav>`               | Grouped navigation links. `aria-label="Main"` distinguishes it from other navs.                       |
 | `<main>`              | The dominant content of the page. There must be exactly one `<main>`.                                 |
-| `<article>`           | Each blog post stands on its own -- it would still make sense in an RSS reader. That is an article.   |
-| `<header>` (per post) | Intro content for the post -- title and date.                                                         |
+| `<article>`           | Each blog post stands on its own - it would still make sense in an RSS reader. That is an article.   |
+| `<header>` (per post) | Intro content for the post - title and date.                                                         |
 | `<time datetime>`     | Machine-readable date. JavaScript will read `datetime` to produce "3 days ago".                       |
-| `<aside>`             | Content tangentially related to the main content -- here, the "About" box.                           |
-| `<footer>` (per post) | Closing content for the post -- here, its tag list.                                                   |
-| `<footer>` (site)     | Closing content for the whole page -- copyright.                                                      |
+| `<aside>`             | Content tangentially related to the main content - here, the "About" box.                           |
+| `<footer>` (per post) | Closing content for the post - here, its tag list.                                                   |
+| `<footer>` (site)     | Closing content for the whole page - copyright.                                                      |
 
-## Step 2 -- style it with CSS
+## Step 2 - style it with CSS
 
 Open `styles.css` and paste this in. It is about 60 lines. Read top to bottom. If any selector or property is new to
-you, the [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) has a chapter for each area -- in particular
+you, the [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) has a chapter for each area - in particular
 the [box model](./css/beginners-guide/03-the-box-model.md),
 [colors and typography](./css/beginners-guide/04-colors-and-typography.md), and
 [Flexbox](./css/beginners-guide/07-flexbox.md) chapters back up what happens in the header and cards below.
@@ -316,15 +316,15 @@ aside { align-self: start; padding: 1rem; background: var(--card); border-radius
 }
 ```
 
-Refresh the page. Now it looks like a blog -- two cards in a column, an "About" panel next to them, and a proper header
+Refresh the page. Now it looks like a blog - two cards in a column, an "About" panel next to them, and a proper header
 and footer. Resize the browser window narrow and the aside will jump below the posts.
 
 ### Two things worth understanding
 
-- **CSS custom properties** (the `--bg`, `--fg`, ... at the top) -- a fancy name for variables in CSS. `:root` sets the
+- **CSS custom properties** (the `--bg`, `--fg`, ... at the top) - a fancy name for variables in CSS. `:root` sets the
   light values;
   `html[data-theme="dark"]` overrides them when the attribute is present. The JavaScript in Step 3 just flips that
-  attribute -- no CSS needs to be rewritten at runtime. See
+  attribute - no CSS needs to be rewritten at runtime. See
   [CSS Custom Properties](./css/beginners-guide/13-css-custom-properties.md) for the full picture (scoping,
   fallbacks, `calc()` integration).
 - **`repeat(auto-fit, minmax(18rem, 1fr))`**. This is the whole responsive layout. "Fit as many 18rem-wide columns as
@@ -333,11 +333,11 @@ and footer. Resize the browser window narrow and the aside will jump below the p
   pattern avoids a media query; [Responsive Design](./css/beginners-guide/09-responsive-design.md) covers the cases
   where a media query is still the right tool.
 
-## Step 3 -- add JavaScript
+## Step 3 - add JavaScript
 
-Open `app.js` and paste this in. The **DOM** is just a JavaScript view of the page -- every HTML element becomes an
-object you can read, change, or attach a click handler to. Every DOM method here -- `getElementById`,
-`querySelectorAll`, `addEventListener`, `dataset`, `setAttribute` -- is covered in depth in
+Open `app.js` and paste this in. The **DOM** is just a JavaScript view of the page - every HTML element becomes an
+object you can read, change, or attach a click handler to. Every DOM method here - `getElementById`,
+`querySelectorAll`, `addEventListener`, `dataset`, `setAttribute` - is covered in depth in
 [The DOM](./javascript/beginners-guide/08-the-dom.md) and [Events](./javascript/beginners-guide/09-events.md).
 
 ```js
@@ -394,34 +394,34 @@ document.querySelectorAll(".tag").forEach((btn) => {
 
 Refresh the page. Three things should happen:
 
-1. Click **Dark mode** -- the page flips to dark. Reload -- it stays dark. The choice is stored in `localStorage`, a
+1. Click **Dark mode** - the page flips to dark. Reload - it stays dark. The choice is stored in `localStorage`, a
    tiny key/value store the browser keeps for each site; the data survives reloads and restarts.
 2. The post dates now read something like "5 days ago" instead of "15 April 2026".
 3. Click any tag (for example `css`). The post without that tag disappears and the clicked tag turns blue. Click the
-   same tag again -- everything comes back.
+   same tag again - everything comes back.
 
 ### What each block does
 
 | Block         | Concept it teaches                                                                                   |
 |---------------|------------------------------------------------------------------------------------------------------|
 | Theme toggle  | DOM attributes, event listeners, `localStorage`, CSS custom properties as a single source of truth.  |
-| Relative dates| `Intl.RelativeTimeFormat` -- the browser's built-in human-readable dates. See [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) for the sibling APIs (numbers, currency, full dates). |
+| Relative dates| `Intl.RelativeTimeFormat` - the browser's built-in human-readable dates. See [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) for the sibling APIs (numbers, currency, full dates). |
 | Tag filter    | `querySelectorAll`, `dataset`, `hidden` attribute, and toggling state with a single top-level var.   |
 
-## Step 4 -- a responsive header and footer
+## Step 4 - a responsive header and footer
 
-The layout already reflows because of the `auto-fit` / `minmax()` trick in Step 2 -- resize the window and the aside
+The layout already reflows because of the `auto-fit` / `minmax()` trick in Step 2 - resize the window and the aside
 drops below the main column. But two places still look cramped on a phone:
 
 - The header nav tries to squeeze logo, three links, and the theme button onto one row.
 - The footer is a single line that stays centred even on wide screens.
 
-This step upgrades both -- a proper mobile menu behind a toggle button, and a multi-column footer that stacks on
+This step upgrades both - a proper mobile menu behind a toggle button, and a multi-column footer that stacks on
 narrow screens. A **media query** is a CSS rule that only applies when the screen is a certain size (for example,
 "these styles only on screens narrower than 640px"). If you want the theory behind this section, see
 [Responsive Design](./css/beginners-guide/09-responsive-design.md) for breakpoints and media queries.
 
-### Part A -- mobile menu in the header
+### Part A - mobile menu in the header
 
 Update the header in `index.html` to add a toggle button and an `id` on the nav so the button can describe what it
 controls:
@@ -449,7 +449,7 @@ Three accessibility details to notice:
 
 | Attribute                | What it does                                                                        |
 |--------------------------|-------------------------------------------------------------------------------------|
-| `aria-expanded="false"`  | Tells assistive tech whether the menu is currently open -- JS will flip this.       |
+| `aria-expanded="false"`  | Tells assistive tech whether the menu is currently open - JS will flip this.       |
 | `aria-controls="main-nav"` | Points to the element the button shows/hides.                                     |
 | `.visually-hidden` span  | The word "Menu" is read by screen readers but not shown on screen.                  |
 
@@ -491,11 +491,11 @@ Append this to the bottom of `styles.css`:
 
 A couple of things to understand here:
 
-- `@media (max-width: 40rem)` applies the rules inside only when the viewport is **at most** 40rem wide (~640px) --
+- `@media (max-width: 40rem)` applies the rules inside only when the viewport is **at most** 40rem wide (~640px) -
   roughly phone-sized. Above that, the header keeps its original flex layout.
 - `order` re-arranges flex children visually without changing the HTML source order. On mobile we want the toggle to
   sit next to the title and the nav to drop below.
-- `.nav-toggle[aria-expanded="true"] + nav` -- the adjacent-sibling combinator. When the button's attribute is `true`,
+- `.nav-toggle[aria-expanded="true"] + nav` - the adjacent-sibling combinator. When the button's attribute is `true`,
   the nav directly after it becomes visible. The CSS reacts to the attribute; no `.open` class needed.
 
 Add the handler to the bottom of `app.js`:
@@ -514,7 +514,7 @@ Refresh the page and shrink the window below ~640px (or use your browser's devic
 and a `☰` button appears in its place. Click it and the nav slides in as a stacked list. Widen the window again and
 the button hides itself, the nav reappears inline.
 
-### Part B -- a multi-column footer
+### Part B - a multi-column footer
 
 Replace the existing `<footer class="site-footer">` block in `index.html` with this richer version:
 
@@ -577,7 +577,7 @@ Replace the old `.site-footer` block at the bottom of `styles.css` with this:
 }
 ```
 
-Notice the pattern is exactly the same one from Step 2 -- `repeat(auto-fit, minmax(10rem, 1fr))`. No media query
+Notice the pattern is exactly the same one from Step 2 - `repeat(auto-fit, minmax(10rem, 1fr))`. No media query
 needed. On a wide screen you get three columns side by side, on a phone they collapse to one. Same idea, smaller
 `minmax` value because footer columns are narrower than content columns.
 
@@ -592,10 +592,10 @@ needed. On a wide screen you get three columns side by side, on a phone they col
 Both tools live side by side here: the footer uses `auto-fit` because it just needs to flow; the header uses a media
 query because the nav morphs into a totally different UI.
 
-## Step 5 (optional) -- load posts from a JSON file
+## Step 5 (optional) - load posts from a JSON file
 
 Hard-coded posts are fine for a personal page. If you want the structure to grow, move the posts into a data file.
-This is also the point where you need `fetch()` and a local server -- see
+This is also the point where you need `fetch()` and a local server - see
 [Working with Data](./javascript/beginners-guide/10-working-with-data.md) for the fundamentals and
 [Async/Await Patterns](./javascript/async-await-guide.md) for the Promise behaviour behind `await`.
 
@@ -628,7 +628,7 @@ Delete the two `<article>` elements from `index.html` (leave `<main>` empty). Th
 instead, so the date and tag-filter logic has to wait until the posts have been rendered.
 
 Replace the date and tag-filter blocks in `app.js` with a single `initPosts()` function, and call it once posts are on
-the page. The theme toggle stays exactly as it was -- it does not depend on posts.
+the page. The theme toggle stays exactly as it was - it does not depend on posts.
 
 ```js
 // Theme toggle -- keep as-is from Step 3.
@@ -699,16 +699,16 @@ regular scripts.
 
 ### The one gotcha
 
-`fetch("posts.json")` does **not** work when you open `index.html` by double-clicking it -- the URL is `file://` and
+`fetch("posts.json")` does **not** work when you open `index.html` by double-clicking it - the URL is `file://` and
 browsers block `fetch` from local files for security. You now need a tiny local server. That is a good excuse to
 introduce Vite.
 
-## Bonus -- use Vite when the single-file setup is not enough
+## Bonus - use Vite when the single-file setup is not enough
 
 [Vite](https://vite.dev) is a **dev server** and **bundler**. You do not need it to build a blog, but it gives you:
 
 - A local server (so `fetch` works).
-- **Hot module replacement** -- save a file, the page updates without a full reload.
+- **Hot module replacement** - save a file, the page updates without a full reload.
 - A production build command that minifies and fingerprints your assets.
 
 To try it, install [Node.js LTS](https://nodejs.org/) first, then from a terminal:
@@ -722,7 +722,7 @@ npm run dev
 
 Open the URL it prints (usually `http://localhost:5173`).
 
-Vite's vanilla template ships with a sample `main.js` that prints a counter -- delete its contents and drop in your own
+Vite's vanilla template ships with a sample `main.js` that prints a counter - delete its contents and drop in your own
 `index.html`, `styles.css`, `app.js`, `posts.json`. One change is needed: in a Vite project the CSS is imported from
 JavaScript, not from a `<link>` tag. Add this at the top of `app.js`:
 
@@ -730,8 +730,8 @@ JavaScript, not from a `<link>` tag. Add this at the top of `app.js`:
 import "./styles.css";
 ```
 
-and remove the `<link rel="stylesheet" href="styles.css">` line from `index.html`. Everything else -- the semantic
-markup, the CSS, the JS logic -- stays the same.
+and remove the `<link rel="stylesheet" href="styles.css">` line from `index.html`. Everything else - the semantic
+markup, the CSS, the JS logic - stays the same.
 
 When you are ready to publish:
 
@@ -754,10 +754,10 @@ nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) walks through the fu
 
 Stick with plain files as long as the project fits in your head. Reach for Vite the moment it does not.
 
-## Step 6 -- get this live on the internet
+## Step 6 - get this live on the internet
 
 Right now your blog lives on your own computer. Nobody else can open it. **Deploying** means copying your files to a
-computer that is always on and connected to the internet -- a **server** -- so anyone with a URL can visit.
+computer that is always on and connected to the internet - a **server** - so anyone with a URL can visit.
 
 Because your blog is just HTML, CSS, and JavaScript (no database, no backend code), any **static host** will do. Below
 are two paths: the quickest way (drop your files into a cloud bucket) and the more hands-on way (run your own tiny
@@ -766,22 +766,22 @@ server with nginx).
 :::tip What do I actually upload?
 
 - If you stayed with plain files, upload `index.html`, `styles.css`, `app.js`, and `posts.json` (if you did Step 5).
-- If you used the Vite bonus, run `npm run build`. It creates a `dist/` folder -- upload the **contents** of that
+- If you used the Vite bonus, run `npm run build`. It creates a `dist/` folder - upload the **contents** of that
   folder, not the folder itself.
   :::
 
-### Option A -- put it in an AWS S3 bucket
+### Option A - put it in an AWS S3 bucket
 
 **Amazon S3** is a service for storing files in the cloud. It can also serve those files over HTTP like a little
 website. For a small blog you will pay cents per month.
 
 1. **Make a free AWS account** at [aws.amazon.com/free](https://aws.amazon.com/free/). You need a credit card even
-   for the free tier -- AWS will not charge for this blog's usage, but the card has to be on file.
+   for the free tier - AWS will not charge for this blog's usage, but the card has to be on file.
 2. **Create a bucket.** In the AWS Console, open the **S3** service and click **Create bucket**.
     - Give it a globally-unique name, for example `my-first-blog-1234` (the number is just to avoid collisions). If you
-      own a domain, the bucket name can match the domain -- e.g. `blog.example.com`.
+      own a domain, the bucket name can match the domain - e.g. `blog.example.com`.
     - Pick any region close to you.
-    - **Uncheck "Block all public access"** and tick the confirmation. This bucket is *meant* to be public -- that is
+    - **Uncheck "Block all public access"** and tick the confirmation. This bucket is *meant* to be public - that is
       the whole point.
     - Leave the other defaults and click **Create bucket**.
 3. **Upload your files.** Open the bucket, click **Upload**, and drag in `index.html`, `styles.css`, `app.js` (and
@@ -815,15 +815,15 @@ website. For a small blog you will pay cents per month.
 
 - The S3 website endpoint is **HTTP only**. To get HTTPS (the padlock) and a real domain like `blog.example.com`, you
   put **CloudFront** in front of the bucket and point your DNS at it. That is a whole separate guide.
-- A tiny blog costs cents per month, but the credit card is on file -- keep an eye on the billing dashboard.
+- A tiny blog costs cents per month, but the credit card is on file - keep an eye on the billing dashboard.
 - If you want free HTTPS + a custom domain with zero fuss, **Netlify**, **Cloudflare Pages**, and **GitHub Pages** all
   let you drag-and-drop a folder (or point at a git repo) and get a secure URL immediately. S3 is great for learning
   how the pieces fit; those three are great for *done*.
   :::
 
-### Option B -- run your own server with nginx
+### Option B - run your own server with nginx
 
-**Nginx** is a web server -- a program that listens for browser requests and hands back the right files. If you want
+**Nginx** is a web server - a program that listens for browser requests and hands back the right files. If you want
 to understand what actually happens when someone visits a URL, running your own tiny nginx is the clearest way to see
 it.
 
@@ -831,10 +831,10 @@ This section is the "just-get-it-showing" version. For SSH hardening, firewalls,
 Encrypt, follow the full [Deploy to a VPS with nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) guide after
 you have the basics working.
 
-1. **Get a VPS** (Virtual Private Server -- a Linux computer in a data centre, rented by the month). Hetzner,
+1. **Get a VPS** (Virtual Private Server - a Linux computer in a data centre, rented by the month). Hetzner,
    DigitalOcean, Linode, and Vultr all offer plans for around $4-$6 a month, which is plenty. Create one running
    **Ubuntu 22.04 LTS** or newer. The provider will give you an **IP address** (like `203.0.113.42`) and a way to log
-   in -- either a password or an SSH key.
+   in - either a password or an SSH key.
 2. **Log into the server** from your own computer's terminal:
 
    ```bash
@@ -903,37 +903,37 @@ you have the basics working.
 | To learn how a real web server actually works     | VPS + nginx               |
 | Full control over the server, its logs and config | VPS + nginx               |
 
-There is no wrong pick -- a static blog will run happily on any of them.
+There is no wrong pick - a static blog will run happily on any of them.
 
 ## Summary
 
-- Three files -- `index.html`, `styles.css`, `app.js` -- are enough to build a real blog page.
+- Three files - `index.html`, `styles.css`, `app.js` - are enough to build a real blog page.
 - Semantic elements (`<header>`, `<main>`, `<article>`, `<aside>`, `<footer>`, `<time>`) make your markup readable and
   accessible for free. See [Semantic HTML](./semantic-html.mdx) for the full list.
 - Responsive layout falls out of `repeat(auto-fit, minmax())` for the footer and a single `@media` query for the mobile
-  nav -- those two tools cover most cases.
+  nav - those two tools cover most cases.
 - CSS custom properties plus a single `data-theme` attribute is all you need for a dark-mode toggle.
-- `Intl.RelativeTimeFormat` and `localStorage` are built into every browser -- no libraries required.
+- `Intl.RelativeTimeFormat` and `localStorage` are built into every browser - no libraries required.
 - Vite is optional. Add it when your single-file setup starts to hurt, not before.
-- You can put a static site on the public internet in under an hour -- either drop the files in an S3 bucket, or run
+- You can put a static site on the public internet in under an hour - either drop the files in an S3 bucket, or run
   your own nginx server on a $5/month VPS. Both work for something this small.
 
 ## Next steps
 
-- [Semantic HTML](./semantic-html.mdx) -- reference for every element you used here.
-- [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) -- go deeper on selectors, the box model, Grid, and
+- [Semantic HTML](./semantic-html.mdx) - reference for every element you used here.
+- [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) - go deeper on selectors, the box model, Grid, and
   Flexbox. The chapters on [CSS Grid](./css/beginners-guide/08-css-grid.md),
   [Responsive Design](./css/beginners-guide/09-responsive-design.md), and
   [CSS Custom Properties](./css/beginners-guide/13-css-custom-properties.md) directly extend what you built here.
-- [JavaScript Beginners' Guide](./javascript/beginners-guide/01-introduction.md) -- 15 chapters from `console.log` to
+- [JavaScript Beginners' Guide](./javascript/beginners-guide/01-introduction.md) - 15 chapters from `console.log` to
   deploying a site on a VPS. [The DOM](./javascript/beginners-guide/08-the-dom.md),
   [Events](./javascript/beginners-guide/09-events.md), and
   [Working with Data](./javascript/beginners-guide/10-working-with-data.md) cover everything `app.js` and `posts.json`
   touch.
-- [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) -- deeper dive on the `Intl` family we used for
+- [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) - deeper dive on the `Intl` family we used for
   relative dates.
-- [Project: Build a Complete Website](./javascript/beginners-guide/11-project-build-a-website.md) -- the multi-page
+- [Project: Build a Complete Website](./javascript/beginners-guide/11-project-build-a-website.md) - the multi-page
   portfolio version of this tutorial, with navigation, form validation, and routing.
-- [Deploy to a VPS with nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) -- put the finished blog on the
+- [Deploy to a VPS with nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) - put the finished blog on the
   internet.
-- [Web Performance](./web-performance.md) -- once your blog is live, the Core Web Vitals checklist to keep it fast.
+- [Web Performance](./web-performance.md) - once your blog is live, the Core Web Vitals checklist to keep it fast.

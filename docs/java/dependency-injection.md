@@ -10,7 +10,7 @@ tags: [java, dependency-injection, design-patterns, testing]
 
 Dependency Injection (DI) is a design principle where a class **receives** its
 dependencies from the outside rather than **creating** them internally. You do not need
-Spring, Guice, or any framework to apply DI -- it works with plain Java.
+Spring, Guice, or any framework to apply DI - it works with plain Java.
 
 ## The problem: hard-coded dependencies
 
@@ -66,7 +66,7 @@ class UserService {
 | **Testability**           | Swap real implementations for test doubles                         |
 | **Loose coupling**        | `UserService` depends on interfaces, not concrete classes          |
 | **Explicit dependencies** | The constructor signature documents what the class needs           |
-| **Immutability**          | Fields can be `final` -- set once, never changed                   |
+| **Immutability**          | Fields can be `final` - set once, never changed                   |
 | **Flexibility**           | Different configurations (dev, staging, prod) without code changes |
 
 ### Wiring it together
@@ -337,7 +337,7 @@ class UserService {
 }
 ```
 
-Spring does exactly what manual DI does -- it just automates the wiring. The constructor
+Spring does exactly what manual DI does - it just automates the wiring. The constructor
 still receives its dependencies, and the class is still testable without Spring.
 
 ---
@@ -356,6 +356,6 @@ still receives its dependencies, and the class is still testable without Spring.
 
 ## See also
 
-- [Testing](./testing.md) -- testable code through dependency injection
-- [Error Handling](./error-handling.md) -- clean error propagation in layered architectures
-- [Logging](./logging.md) -- injecting loggers
+- [Testing](./testing.md) - testable code through dependency injection
+- [Error Handling](./error-handling.md) - clean error propagation in layered architectures
+- [Logging](./logging.md) - injecting loggers

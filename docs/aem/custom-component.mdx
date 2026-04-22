@@ -691,12 +691,12 @@ The HTL template renders the Sling Model's data into HTML. It follows
 
 **Key techniques used:**
 
-- `data-sly-element="${model.headingLevel}"` -- dynamic heading level from design dialog
-- `@ context='uri'` -- XSS-safe URL rendering
-- `@ context='attribute'` -- XSS-safe attribute rendering
-- `data-sly-test` -- conditional rendering (image, date, link)
-- `wcmmode.edit` -- author-mode placeholder for empty components
-- `clientlib.css` -- loads the component's runtime CSS
+- `data-sly-element="${model.headingLevel}"` - dynamic heading level from design dialog
+- `@ context='uri'` - XSS-safe URL rendering
+- `@ context='attribute'` - XSS-safe attribute rendering
+- `data-sly-test` - conditional rendering (image, date, link)
+- `wcmmode.edit` - author-mode placeholder for empty components
+- `clientlib.css` - loads the component's runtime CSS
 
 ## Step 7: The Dialog Clientlib
 
@@ -754,7 +754,7 @@ This means your JS runs for **all** dialogs on the instance. Use specific select
 `granite:class` values set in the dialog XML) to scope your logic to this component only.
 :::
 
-For more show/hide patterns, see [Component Dialogs -- Dynamic show/hide](./component-dialogs.mdx#dynamic-showhide-based-on-a-selection).
+For more show/hide patterns, see [Component Dialogs - Dynamic show/hide](./component-dialogs.mdx#dynamic-showhide-based-on-a-selection).
 
 ## Step 8: The Component Clientlib (Runtime CSS/JS)
 
@@ -1006,7 +1006,7 @@ mvn clean install -PautoInstallPackage
 | **Shared variables** | Not possible (plain CSS) | SCSS variables, mixins, design tokens |
 | **Team** | Full-stack developer | Dedicated frontend developer(s) |
 | **Hot reload** | No (manual deploy) | Yes (with `npm run dev`) |
-| **Can coexist?** | Yes -- dialog clientlibs are always inline | Yes -- runtime clientlibs can come from either |
+| **Can coexist?** | Yes - dialog clientlibs are always inline | Yes - runtime clientlibs can come from either |
 
 :::tip
 For most projects, use `ui.frontend` for the main site bundle (compiled SCSS + JS shared across all

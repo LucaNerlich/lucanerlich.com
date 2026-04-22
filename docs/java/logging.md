@@ -13,8 +13,8 @@ setup helps you debug issues, monitor production health, and audit system behavi
 
 The modern Java logging stack has two layers:
 
-1. **Facade** -- SLF4J (Simple Logging Facade for Java) -- your code depends on this
-2. **Implementation** -- Logback or Log4j2 -- the actual engine that writes logs
+1. **Facade** - SLF4J (Simple Logging Facade for Java) - your code depends on this
+2. **Implementation** - Logback or Log4j2 - the actual engine that writes logs
 
 ```mermaid
 graph LR
@@ -420,7 +420,7 @@ graph LR
 | Logging sensitive data               | Passwords, tokens, PII in logs                               | Mask or exclude sensitive fields; review log output      |
 | Multiple SLF4J bindings on classpath | `SLF4J: Class path contains multiple SLF4J bindings`         | Exclude duplicate bindings (check `mvn dependency:tree`) |
 | Not clearing MDC                     | MDC leaks between requests in thread pools                   | Always `MDC.clear()` in a `finally` block                |
-| Logging and rethrowing               | Same error appears multiple times in logs                    | Either log OR rethrow -- not both                        |
+| Logging and rethrowing               | Same error appears multiple times in logs                    | Either log OR rethrow - not both                        |
 | `e.printStackTrace()`                | Prints to stderr, not the logging framework                  | Use `log.error("message", e)`                            |
 | Catching `Exception` just to log it  | Swallows the exception silently                              | Log and rethrow, or handle appropriately                 |
 | Missing logback.xml / log4j2.xml     | SLF4J falls back to NOP logger (no output)                   | Include the config file in `src/main/resources/`         |
@@ -429,7 +429,7 @@ graph LR
 
 ## See also
 
-- [Error Handling](./error-handling.md) -- exception logging patterns
-- [Maven](./maven.md) -- managing logging dependencies
-- [Testing](./testing.md) -- testing log output
-- [Concurrency](./concurrency.md) -- MDC with async and virtual threads
+- [Error Handling](./error-handling.md) - exception logging patterns
+- [Maven](./maven.md) - managing logging dependencies
+- [Testing](./testing.md) - testing log output
+- [Concurrency](./concurrency.md) - MDC with async and virtual threads

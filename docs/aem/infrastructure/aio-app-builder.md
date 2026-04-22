@@ -13,7 +13,7 @@ first-class integration with AEM as a Cloud Service, Adobe Commerce, Workfront, 
 Adobe products.
 
 App Builder is the recommended way to extend AEMaaCS when you need logic that runs
-**outside the JVM** -- event processing, third-party API integrations, asset pipelines,
+**outside the JVM** - event processing, third-party API integrations, asset pipelines,
 custom webhooks, or backend-for-frontend services.
 
 ```mermaid
@@ -62,10 +62,10 @@ graph LR
 
 ### When NOT to use App Builder
 
-- **Server-side rendering** that needs access to the JCR -- use Sling Models/Servlets instead
-- **Author-time logic** (dialog validation, render conditions) -- use Granite UI / Coral UI
-- **Simple OSGi configuration changes** -- deploy via Cloud Manager
-- **Low-latency, high-frequency operations** -- serverless cold starts may add latency
+- **Server-side rendering** that needs access to the JCR - use Sling Models/Servlets instead
+- **Author-time logic** (dialog validation, render conditions) - use Granite UI / Coral UI
+- **Simple OSGi configuration changes** - deploy via Cloud Manager
+- **Low-latency, high-frequency operations** - serverless cold starts may add latency
 
 ---
 
@@ -112,7 +112,7 @@ graph TD
 | **Web Assets**      | Optional React SPA served from Adobe's CDN, embedded in AEM Shell             |
 | **Files SDK**       | Cloud file storage (Azure Blob under the hood) for temporary/persistent files |
 | **State SDK**       | Key-value store (Azure Cosmos DB) for caching, state, and configuration       |
-| **I/O Events**      | Pub/sub event system -- AEM publishes events, actions consume them            |
+| **I/O Events**      | Pub/sub event system - AEM publishes events, actions consume them            |
 | **Adobe IMS**       | OAuth 2.0 authentication and service-to-service tokens                        |
 
 ### Execution Model
@@ -421,9 +421,9 @@ sequenceDiagram
 
 The three API steps:
 
-1. **Initiate Upload** -- AEM returns presigned blob storage URLs (one per part) and an upload token
-2. **Upload Binary** -- upload each part directly to the blob store (no auth needed, URLs are presigned)
-3. **Complete Upload** -- tell AEM the upload is done; AEM creates the `dam:Asset` node
+1. **Initiate Upload** - AEM returns presigned blob storage URLs (one per part) and an upload token
+2. **Upload Binary** - upload each part directly to the blob store (no auth needed, URLs are presigned)
+3. **Complete Upload** - tell AEM the upload is done; AEM creates the `dam:Asset` node
 
 ### Full implementation
 
@@ -971,7 +971,7 @@ jobs:
 
 ### Input validation
 
-Always validate incoming parameters -- Runtime Actions are exposed as HTTP endpoints:
+Always validate incoming parameters - Runtime Actions are exposed as HTTP endpoints:
 
 ```js
 function validateParams(params) {
@@ -1099,23 +1099,23 @@ logger.info({ assetPath, fileSize, duration }, 'Asset upload complete');
 
 ## External Resources
 
-- [App Builder documentation](https://developer.adobe.com/app-builder/docs/overview/) -- official docs
-- [Adobe I/O Runtime](https://developer.adobe.com/runtime/docs/) -- serverless platform reference
-- [I/O Events documentation](https://developer.adobe.com/events/docs/) -- event-driven architecture
-- [Asset Compute SDK](https://experienceleague.adobe.com/docs/asset-compute/using/extend/develop-custom-application.html) --
+- [App Builder documentation](https://developer.adobe.com/app-builder/docs/overview/) - official docs
+- [Adobe I/O Runtime](https://developer.adobe.com/runtime/docs/) - serverless platform reference
+- [I/O Events documentation](https://developer.adobe.com/events/docs/) - event-driven architecture
+- [Asset Compute SDK](https://experienceleague.adobe.com/docs/asset-compute/using/extend/develop-custom-application.html) -
   custom asset workers
-- [AEM Assets HTTP API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/admin/developer-reference-material-apis) --
+- [AEM Assets HTTP API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/admin/developer-reference-material-apis) -
   direct binary upload
-- [Adobe Developer Console](https://developer.adobe.com/console/) -- project and credential management
-- [AIO CLI reference](https://developer.adobe.com/app-builder/docs/getting_started/) -- CLI commands
+- [Adobe Developer Console](https://developer.adobe.com/console/) - project and credential management
+- [AIO CLI reference](https://developer.adobe.com/app-builder/docs/getting_started/) - CLI commands
 
 ## See also
 
-- [Architecture](../architecture.mdx) -- how App Builder fits into the AEM landscape
-- [AEM as a Cloud Service](./cloud-service.mdx) -- the platform App Builder extends
-- [Edge Delivery Services](./helix.mdx) -- alternative delivery model
-- [Deployment](./deployment.mdx) -- Cloud Manager pipelines (contrast with App Builder deploy)
-- [Content Fragments](../content/content-fragments.md) -- content that I/O Events can react to
-- [GraphQL](../content/graphql.mdx) -- headless content delivery from AEM
-- [Security basics](./security.mdx) -- AEM security patterns
+- [Architecture](../architecture.mdx) - how App Builder fits into the AEM landscape
+- [AEM as a Cloud Service](./cloud-service.mdx) - the platform App Builder extends
+- [Edge Delivery Services](./helix.mdx) - alternative delivery model
+- [Deployment](./deployment.mdx) - Cloud Manager pipelines (contrast with App Builder deploy)
+- [Content Fragments](../content/content-fragments.md) - content that I/O Events can react to
+- [GraphQL](../content/graphql.mdx) - headless content delivery from AEM
+- [Security basics](./security.mdx) - AEM security patterns
 - [Dispatcher configuration](./dispatcher-configuration.mdx)

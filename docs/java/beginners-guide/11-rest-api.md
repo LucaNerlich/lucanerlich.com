@@ -15,8 +15,8 @@ sidebar_position: 11
 
 # Building a REST API
 
-In the previous chapter, the task manager ran from the command line. Now we will expose it over HTTP so any client -- a
-browser, a mobile app, or `curl` -- can interact with it. We will use Java's built-in
+In the previous chapter, the task manager ran from the command line. Now we will expose it over HTTP so any client - a
+browser, a mobile app, or `curl` - can interact with it. We will use Java's built-in
 `com.sun.net.httpserver.HttpServer`, requiring zero external dependencies.
 
 ## HTTP and REST basics
@@ -174,7 +174,7 @@ public class JsonHelper {
 }
 ```
 
-This is intentionally minimal -- it handles our specific data format. For production APIs, use a library like Jackson or
+This is intentionally minimal - it handles our specific data format. For production APIs, use a library like Jackson or
 Gson. See the [JSON Processing guide](../json-processing.md) for library-based approaches.
 
 ## Step 2: the request handler
@@ -366,8 +366,8 @@ public class TaskHandler implements HttpHandler {
 
 Key points:
 
-- `HttpHandler` is the interface from `com.sun.net.httpserver` -- implement `handle(HttpExchange)`
-- Routing is manual -- check the path and method to determine the action
+- `HttpHandler` is the interface from `com.sun.net.httpserver` - implement `handle(HttpExchange)`
+- Routing is manual - check the path and method to determine the action
 - Responses are always JSON with the appropriate status code
 - Errors are caught and returned as JSON error responses
 
@@ -571,7 +571,7 @@ Run:
 java -jar task-api.jar
 ```
 
-The JAR is self-contained -- it uses only built-in Java libraries, so it runs anywhere Java is installed.
+The JAR is self-contained - it uses only built-in Java libraries, so it runs anywhere Java is installed.
 
 ## What you have built
 
@@ -596,10 +596,10 @@ for how to consume HTTP APIs from Java.
 ## Summary
 
 - Java's built-in `HttpServer` provides a zero-dependency HTTP server.
-- A `HttpHandler` processes each request -- check the method and path to route.
+- A `HttpHandler` processes each request - check the method and path to route.
 - Send JSON responses with `Content-Type: application/json` and appropriate status codes.
-- Manual JSON works for simple models -- use Jackson or Gson for complex data.
+- Manual JSON works for simple models - use Jackson or Gson for complex data.
 - The same `Task` and `TaskStore` classes from the CLI project power the API.
 - Package as a JAR for easy distribution.
 
-Next up: [Deploying to a VPS with Nginx](./12-deploy-vps-nginx.md) -- putting your API on the internet.
+Next up: [Deploying to a VPS with Nginx](./12-deploy-vps-nginx.md) - putting your API on the internet.

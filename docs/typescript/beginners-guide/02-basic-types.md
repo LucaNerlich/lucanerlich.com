@@ -16,7 +16,7 @@ sidebar_position: 2
 
 # Basic Types
 
-TypeScript's type system starts with the same primitives JavaScript has -- `string`, `number`, `boolean` -- and adds
+TypeScript's type system starts with the same primitives JavaScript has - `string`, `number`, `boolean` - and adds
 structure, safety, and several new types that help you express intent clearly. This chapter covers every primitive type
 you will encounter daily, plus arrays, tuples, and the special types `any`, `unknown`, `never`, and `void`.
 
@@ -40,7 +40,7 @@ const c = `backtick template literal`;
 
 ### number
 
-TypeScript (like JavaScript) has a single `number` type for all numeric values -- integers and floats alike:
+TypeScript (like JavaScript) has a single `number` type for all numeric values - integers and floats alike:
 
 ```typescript
 const age: number = 30;
@@ -62,7 +62,7 @@ const hasPermission: boolean = false;
 const isAdult: boolean = age >= 18;
 ```
 
-### Type inference -- let TypeScript do the work
+### Type inference - let TypeScript do the work
 
 You do **not** need to annotate every variable. TypeScript infers types from the assigned value:
 
@@ -256,7 +256,7 @@ const result: void = logMessage("hello"); // result is void
 | `null`      | `null` only                  | Yes (it is just null)     | Explicit "no value"                                |
 | `undefined` | `undefined` only             | Yes (it is just undefined)| Missing or uninitialized                           |
 | `any`       | Anything                     | Yes (unsafe)              | Migration, extreme dynamism (avoid)                |
-| `unknown`   | Anything                     | No -- must narrow first   | External data, JSON parsing                        |
+| `unknown`   | Anything                     | No - must narrow first   | External data, JSON parsing                        |
 | `never`     | Nothing (unreachable)        | N/A                       | Exhaustive checks, functions that never return     |
 | `void`      | No meaningful return value   | N/A                       | Function return types                              |
 
@@ -345,7 +345,7 @@ function distanceTo([x1, y1]: Coordinate, [x2, y2]: Coordinate): number {
 
 ### Tuples as return values
 
-Tuples are commonly used to return multiple values from a function -- similar to how React hooks work:
+Tuples are commonly used to return multiple values from a function - similar to how React hooks work:
 
 ```typescript
 function useState<T>(initial: T): [T, (newValue: T) => void] {
@@ -456,14 +456,14 @@ function buildConfig(raw: unknown): AppConfig {
 
 ## Summary
 
-- **Primitive types**: `string`, `number`, `boolean` -- annotate function parameters, let TypeScript infer the rest
-- **`null` and `undefined`** are their own types with `strictNullChecks` -- require explicit union types to allow them
-- **`any`** disables type checking -- avoid it; use `unknown` instead for truly dynamic values
-- **`unknown`** forces you to narrow the type before using a value -- safe for external data
+- **Primitive types**: `string`, `number`, `boolean` - annotate function parameters, let TypeScript infer the rest
+- **`null` and `undefined`** are their own types with `strictNullChecks` - require explicit union types to allow them
+- **`any`** disables type checking - avoid it; use `unknown` instead for truly dynamic values
+- **`unknown`** forces you to narrow the type before using a value - safe for external data
 - **`never`** marks unreachable code and enables exhaustive switch checking
 - **`void`** is the return type for functions that return nothing
 - **Arrays** (`T[]` or `Array<T>`) are typed collections; mark them `readonly` to prevent mutation
-- **Tuples** are fixed-length, positionally typed arrays -- great for returning multiple values
+- **Tuples** are fixed-length, positionally typed arrays - great for returning multiple values
 
-Next up: [Interfaces & Type Aliases](./03-interfaces-and-type-aliases.md) -- defining object shapes, optional and
+Next up: [Interfaces & Type Aliases](./03-interfaces-and-type-aliases.md) - defining object shapes, optional and
 readonly properties, extending interfaces, intersection types, and the difference between `interface` and `type`.

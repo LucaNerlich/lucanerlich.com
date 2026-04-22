@@ -71,7 +71,7 @@ apps/mysite/clientlibs/
 
 | Property       | Description                                                     |
 |----------------|-----------------------------------------------------------------|
-| `categories`   | The category name(s) -- used to include this clientlib in pages |
+| `categories`   | The category name(s) - used to include this clientlib in pages |
 | `allowProxy`   | Serve via `/etc.clientlibs/` proxy (required for AEMaaCS)       |
 | `dependencies` | Other categories that must load **before** this one             |
 | `embed`        | Other categories to inline **into** this one                    |
@@ -124,7 +124,7 @@ Use the clientlib HTL template in your page component:
 
 ### Dependencies
 
-Dependencies ensure load order -- the dependency loads **first** as a separate request:
+Dependencies ensure load order - the dependency loads **first** as a separate request:
 
 ```xml
 <!-- clientlib-components depends on clientlib-base -->
@@ -137,7 +137,7 @@ Result: two HTTP requests (`mysite.base.css`, then `mysite.components.css`).
 
 ### Embedding
 
-Embedding inlines another clientlib **into** this one -- a single HTTP request:
+Embedding inlines another clientlib **into** this one - a single HTTP request:
 
 ```xml
 <!-- clientlib-site embeds both base and components -->
@@ -298,7 +298,7 @@ You learned:
 - **Proxy serving** via `/etc.clientlibs/` (required for AEMaaCS)
 - **Component-specific** clientlibs for modular CSS/JS
 - The **ui.frontend** module for modern build tooling
-- **Debugging** -- `debugClientLibs`, dump/rebuild tools
+- **Debugging** - `debugClientLibs`, dump/rebuild tools
 
-Next up: [Building Pages](./10-building-pages.md) -- using Core Components, responsive grid, navigation, header/footer,
+Next up: [Building Pages](./10-building-pages.md) - using Core Components, responsive grid, navigation, header/footer,
 and assembling a homepage and article page.

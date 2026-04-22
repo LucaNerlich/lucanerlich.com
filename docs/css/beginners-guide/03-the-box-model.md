@@ -16,7 +16,7 @@ sidebar_position: 3
 # The Box Model
 
 Every HTML element the browser renders is a **rectangular box**. The box model describes how the browser calculates the
-size of that box. Understanding it is essential -- almost every layout problem you will encounter comes down to the box
+size of that box. Understanding it is essential - almost every layout problem you will encounter comes down to the box
 model.
 
 ## The four layers
@@ -88,7 +88,7 @@ padding: 20px 16px 24px;
 padding: 20px 16px 24px 16px;
 ```
 
-> **Tip:** The clockwise order -- top, right, bottom, left -- applies to all box model shorthands. Think of a clock
+> **Tip:** The clockwise order - top, right, bottom, left - applies to all box model shorthands. Think of a clock
 > starting at 12 o'clock.
 
 ## Setting borders
@@ -103,9 +103,9 @@ Borders draw a visible line around the padding area:
 
 The `border` shorthand takes three values:
 
-1. **Width** -- `1px`, `2px`, `thin`, `medium`, `thick`
-2. **Style** -- `solid`, `dashed`, `dotted`, `double`, `none`
-3. **Colour** -- any valid colour value
+1. **Width** - `1px`, `2px`, `thin`, `medium`, `thick`
+2. **Style** - `solid`, `dashed`, `dotted`, `double`, `none`
+3. **Colour** - any valid colour value
 
 You can set individual sides:
 
@@ -130,7 +130,7 @@ Or target individual properties:
 
 ## Setting margins
 
-Margins create space **outside** the element, pushing other elements away. Margins are always transparent -- the
+Margins create space **outside** the element, pushing other elements away. Margins are always transparent - the
 background does not extend into them.
 
 ```css
@@ -190,7 +190,7 @@ Total width  = content width  + padding-left + padding-right  + border-left + bo
 Total height = content height + padding-top  + padding-bottom + border-top  + border-bottom
 ```
 
-This is called `box-sizing: content-box` -- the default.
+This is called `box-sizing: content-box` - the default.
 
 Example:
 
@@ -271,7 +271,7 @@ p {
 }
 ```
 
-You might expect 40px of space between the heading and paragraph (24 + 16). But the actual space is **24px** -- the
+You might expect 40px of space between the heading and paragraph (24 + 16). But the actual space is **24px** - the
 larger of the two margins wins.
 
 Rules of margin collapsing:
@@ -358,11 +358,11 @@ The card is exactly 300px wide (thanks to `border-box`). It has 24px of breathin
 - **Padding** adds space inside the element; the background extends into it
 - **Border** draws a visible edge around the padding
 - **Margin** adds space outside the element; it is always transparent
-- The default `content-box` model makes width calculations unintuitive -- use `box-sizing: border-box` everywhere
-- **Margin collapsing** merges vertical margins -- the larger one wins
+- The default `content-box` model makes width calculations unintuitive - use `box-sizing: border-box` everywhere
+- **Margin collapsing** merges vertical margins - the larger one wins
 - **DevTools** show a visual box model diagram for any element
 
 ## Next step
 
-In the next chapter you will learn about **colours and typography** -- how to control the visual appearance of text and
+In the next chapter you will learn about **colours and typography** - how to control the visual appearance of text and
 backgrounds with colour values and font properties.

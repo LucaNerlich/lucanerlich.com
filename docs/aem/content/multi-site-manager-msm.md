@@ -75,7 +75,7 @@ the JCR.
 | **Rollout**     | Blueprint -> Live Copy | Blueprint page or system event | Push source changes to one or more Live Copies    |
 | **Synchronize** | Blueprint -> Live Copy | Live Copy page                 | Pull latest Blueprint changes into this Live Copy |
 
-Both operations execute the same rollout configuration actions -- the difference is where the
+Both operations execute the same rollout configuration actions - the difference is where the
 operation is initiated.
 
 ### Inheritance
@@ -373,7 +373,7 @@ Register the action in your custom rollout configuration:
 
 Since `LiveAction` instances are created by the factory, inject services into the **factory** and
 pass them to the action via the constructor (as shown above). Do not use `@Reference` inside the
-`LiveAction` class -- it is not an OSGi component.
+`LiveAction` class - it is not an OSGi component.
 
 ---
 
@@ -678,7 +678,7 @@ Tools > Operations > Web Console > Day CQ WCM Rollout Conflict Handler
 
 ### Keep Blueprints clean
 
-- Blueprint content should be **generic and reusable** -- avoid region-specific content in the Blueprint
+- Blueprint content should be **generic and reusable** - avoid region-specific content in the Blueprint
 - Use **content policies** and the **Style System** for visual differences rather than Live Copy overrides
 - Structure the Blueprint as the **superset** of all Live Copy pages; Live Copies can hide pages they
   don't need
@@ -732,14 +732,14 @@ Tools > Operations > Web Console > Day CQ WCM Rollout Conflict Handler
 
 ## See also
 
-- [Architecture](../architecture.mdx) -- content model and request pipeline
+- [Architecture](../architecture.mdx) - content model and request pipeline
 - [Modify and Query the JCR](./jcr.md)
 - [JCR Node Operations](./node-operations.mdx)
 - [Content Fragments](./content-fragments.md)
-- [Replication and Activation](./replication-activation.mdx) -- publishing Live Copies
-- [Workflows](../backend/workflows.mdx) -- translation and approval workflows
-- [Groovy Console](../groovy-console.mdx) -- bulk MSM operations
-- [i18n and Translation](./i18n-translation.md) -- language copies, translation framework
-- [Experience Fragments](./experience-fragments.md) -- multi-site XFs
+- [Replication and Activation](./replication-activation.mdx) - publishing Live Copies
+- [Workflows](../backend/workflows.mdx) - translation and approval workflows
+- [Groovy Console](../groovy-console.mdx) - bulk MSM operations
+- [i18n and Translation](./i18n-translation.md) - language copies, translation framework
+- [Experience Fragments](./experience-fragments.md) - multi-site XFs
 - [Dispatcher Configuration](../infrastructure/dispatcher-configuration.mdx)
 - [Deployment](../infrastructure/deployment.mdx)

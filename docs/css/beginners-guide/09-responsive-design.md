@@ -15,7 +15,7 @@ sidebar_position: 9
 
 # Responsive Design
 
-Responsive design means your web page looks good on **every screen size** -- from a small phone to a wide desktop
+Responsive design means your web page looks good on **every screen size** - from a small phone to a wide desktop
 monitor. Instead of building separate mobile and desktop sites, you write one set of HTML and CSS that adapts.
 
 ## The viewport meta tag
@@ -87,8 +87,8 @@ You can combine conditions:
 
 There are two approaches to responsive CSS:
 
-1. **Desktop-first** -- write styles for large screens, then use `max-width` queries to override for smaller screens
-2. **Mobile-first** -- write styles for small screens, then use `min-width` queries to enhance for larger screens
+1. **Desktop-first** - write styles for large screens, then use `max-width` queries to override for smaller screens
+2. **Mobile-first** - write styles for small screens, then use `min-width` queries to enhance for larger screens
 
 **Mobile-first is the recommended approach.** Here is why:
 
@@ -136,7 +136,7 @@ There is no universally "correct" set of breakpoints, but these are widely used:
 | Wide      | 1280px    | Large desktops                   |
 | Ultra-wide| 1536px    | Ultra-wide monitors              |
 
-> **Tip:** Do not obsess over exact breakpoint values. The best breakpoints are where **your design breaks** -- resize
+> **Tip:** Do not obsess over exact breakpoint values. The best breakpoints are where **your design breaks** - resize
 > the browser and add a breakpoint wherever the layout starts to look bad.
 
 ### Defining breakpoints in CSS
@@ -341,9 +341,9 @@ Prevent content from stretching too wide on large screens:
 
 ## Testing responsive designs
 
-1. **Browser DevTools** -- toggle the device toolbar (Ctrl+Shift+M / Cmd+Shift+M) to simulate different screen sizes
-2. **Resize the browser window** -- drag the edge of the window and watch your layout adapt
-3. **Test on real devices** -- simulators are good but real devices reveal issues with touch, scrolling, and viewport
+1. **Browser DevTools** - toggle the device toolbar (Ctrl+Shift+M / Cmd+Shift+M) to simulate different screen sizes
+2. **Resize the browser window** - drag the edge of the window and watch your layout adapt
+3. **Test on real devices** - simulators are good but real devices reveal issues with touch, scrolling, and viewport
    quirks
 
 > **Tip:** Always test at sizes **between** your breakpoints, not just at the breakpoints themselves. The design should
@@ -433,5 +433,5 @@ body {
 
 ## Next step
 
-Your layouts are now responsive. The next chapter covers **backgrounds, borders, and shadows** -- the visual effects
+Your layouts are now responsive. The next chapter covers **backgrounds, borders, and shadows** - the visual effects
 that add depth and polish to your designs.

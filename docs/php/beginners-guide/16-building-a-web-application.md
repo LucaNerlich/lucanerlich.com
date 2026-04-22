@@ -21,11 +21,11 @@ You have learned variables, functions, OOP, forms, sessions, databases, and Comp
 
 The Notes app is a small but complete web application. It demonstrates:
 
-- **User authentication** -- registration and login with password hashing and sessions
-- **CRUD operations** -- create, read, update, and delete notes
-- **Routing** -- mapping URLs to controller actions
-- **Templates** -- reusable layout with header and footer
-- **Database** -- MySQL/MariaDB with PDO and prepared statements
+- **User authentication** - registration and login with password hashing and sessions
+- **CRUD operations** - create, read, update, and delete notes
+- **Routing** - mapping URLs to controller actions
+- **Templates** - reusable layout with header and footer
+- **Database** - MySQL/MariaDB with PDO and prepared statements
 
 ### Application Architecture
 
@@ -788,7 +788,7 @@ You have built a working web application from scratch. As your projects grow, co
 | **Twig** / **Blade** | Templating engines with auto-escaping and template inheritance |
 | **Eloquent** / **Doctrine** | ORMs that map rows to objects and handle relationships |
 
-Next steps: add CSRF protection to forms, implement password reset, add pagination, and write tests. The concepts in this chapter -- routing, controllers, views, authentication, CRUD -- are the same in frameworks.
+Next steps: add CSRF protection to forms, implement password reset, add pagination, and write tests. The concepts in this chapter - routing, controllers, views, authentication, CRUD - are the same in frameworks.
 
 ## Summary
 
@@ -804,4 +804,4 @@ Next steps: add CSRF protection to forms, implement password reset, add paginati
 
 ## Next up
 
-[Practice Projects](./17-practice-projects.md) -- six project ideas from beginner to advanced to reinforce everything you learned.
+[Practice Projects](./17-practice-projects.md) - six project ideas from beginner to advanced to reinforce everything you learned.

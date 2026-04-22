@@ -16,7 +16,7 @@ sidebar_position: 7
 
 # Pattern Matching
 
-Pattern matching is one of Rust's most powerful features. You got a taste of `match` in chapters 3 and 6 -- now we go
+Pattern matching is one of Rust's most powerful features. You got a taste of `match` in chapters 3 and 6 - now we go
 deep. By the end of this chapter, you will use pattern matching fluently to destructure data, handle variants, and write
 expressive conditional logic.
 
@@ -51,7 +51,7 @@ If you remove one arm, the compiler rejects it:
 error[E0004]: non-exhaustive patterns: `TrafficLight::Green` not covered
 ```
 
-This is a safety feature -- you can never forget to handle a case. If you add a new variant to an enum, the compiler
+This is a safety feature - you can never forget to handle a case. If you add a new variant to an enum, the compiler
 tells you every `match` that needs updating.
 
 ## The wildcard pattern _
@@ -271,7 +271,7 @@ fn main() {
 
 Without `@`, you would have to use a guard: `18..=64 if true => ...` and then you would not have the value bound.
 
-## if let -- matching a single pattern
+## if let - matching a single pattern
 
 When you only care about **one** variant and want to ignore the rest, `if let` is more concise than `match`:
 
@@ -315,7 +315,7 @@ Use `match` when:
 - You need to handle multiple variants
 - You want the compiler to enforce exhaustiveness
 
-## while let -- looping on a pattern
+## while let - looping on a pattern
 
 `while let` loops as long as a pattern matches:
 
@@ -330,10 +330,10 @@ fn main() {
 }
 ```
 
-`Vec::pop()` returns `Option<T>` -- `Some(value)` when there are elements, `None` when empty. The `while let` keeps
+`Vec::pop()` returns `Option<T>` - `Some(value)` when there are elements, `None` when empty. The `while let` keeps
 going until `pop()` returns `None`.
 
-## let else -- early exit on pattern failure
+## let else - early exit on pattern failure
 
 `let else` (stabilized in Rust 1.65) lets you bind a pattern or diverge:
 
@@ -353,7 +353,7 @@ fn main() {
 }
 ```
 
-The `else` branch must diverge -- it must `return`, `break`, `continue`, or `panic!`. This is great for reducing
+The `else` branch must diverge - it must `return`, `break`, `continue`, or `panic!`. This is great for reducing
 nesting when you want to "unwrap or bail out early".
 
 ## The matches! macro
@@ -495,7 +495,7 @@ fn main() {
 
 ## Summary
 
-- `match` is **exhaustive** -- you must cover every possible value
+- `match` is **exhaustive** - you must cover every possible value
 - `_` is the wildcard that matches anything
 - Destructure tuples, structs, enums, and nested types in patterns
 - `|` matches multiple patterns; match guards add `if` conditions
@@ -506,5 +506,5 @@ fn main() {
 - `matches!` returns a boolean for quick pattern checks
 - Patterns work in `match`, `if let`, `while let`, `let`, function parameters, and `for` loops
 
-Next up: [Collections](./08-collections.md) -- `Vec<T>`, `String`, and `HashMap<K, V>` -- the standard library's
+Next up: [Collections](./08-collections.md) - `Vec<T>`, `String`, and `HashMap<K, V>` - the standard library's
 most-used data structures.

@@ -10,7 +10,7 @@ This post describes how to setup a Cloud Sandbox development environment.
 It is required, that your company or organization has assigned you a Cloud Sandbox environment.
 In most cases, these are not _self-service_ and need to be payed for.
 
-<div class="alert alert--warning" role="alert">
+<div class="alert alert-warning" role="alert">
 This guide assumes you have access to a Cloud Sandbox environment and are familiar with AEM development.
 This guide additionally assumes, that you have Maven 3 and Java JDK 21 installed.
 </div>

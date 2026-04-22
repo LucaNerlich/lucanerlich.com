@@ -36,7 +36,7 @@ This scaffolds the project with `.ts` files and a proper `tsconfig.json` from th
 
 If you followed this guide with JavaScript, here is how to convert:
 
-### Step 1 -- Rename files
+### Step 1 - Rename files
 
 Rename your JavaScript files to TypeScript:
 
@@ -64,7 +64,7 @@ mv src/api/post/middlewares/log-request.js src/api/post/middlewares/log-request.
 mv src/middlewares/request-timer.js src/middlewares/request-timer.ts
 ```
 
-### Step 2 -- Verify tsconfig.json
+### Step 2 - Verify tsconfig.json
 
 Strapi projects include a `tsconfig.json` by default. Verify it has reasonable settings:
 
@@ -83,7 +83,7 @@ Strapi projects include a `tsconfig.json` by default. Verify it has reasonable s
 }
 ```
 
-### Step 3 -- Restart the server
+### Step 3 - Restart the server
 
 ```bash
 npm run develop
@@ -94,7 +94,7 @@ Strapi compiles TypeScript automatically on startup. If there are type errors, t
 ## Generating types from content schemas
 
 Strapi can auto-generate TypeScript types from your content type schemas. This is the most powerful TypeScript
-feature -- your types stay in sync with your data model.
+feature - your types stay in sync with your data model.
 
 ### Generate types
 
@@ -608,10 +608,10 @@ You learned:
 - Typing **controllers**, **services**, **routes**, **policies**, and **middleware**
 - Typing the **register** and **bootstrap** functions
 - Creating **custom type utilities** for common data shapes
-- TypeScript **tips** -- separate type checking, regenerating types, strict mode
+- TypeScript **tips** - separate type checking, regenerating types, strict mode
 
 Your Strapi project now has full TypeScript support. The type system catches errors at compile time and provides
 excellent editor autocompletion. In the final chapter we will deploy everything to production.
 
-Next up: [Configuration & Deployment](./12-configuration-and-deployment.md) -- environment config, PostgreSQL, PM2 or
+Next up: [Configuration & Deployment](./12-configuration-and-deployment.md) - environment config, PostgreSQL, PM2 or
 systemd, nginx reverse proxy, HTTPS, and security hardening.

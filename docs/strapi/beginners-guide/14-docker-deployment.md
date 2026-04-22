@@ -771,11 +771,11 @@ For larger deployments, consider Kubernetes.
 
 > **Important:** Strapi has limitations with horizontal scaling. Before running multiple replicas, ensure:
 >
-> - **Media storage** uses an external provider (S3, Cloudinary) -- the local upload provider stores files on disk and
+> - **Media storage** uses an external provider (S3, Cloudinary) - the local upload provider stores files on disk and
 >   will not sync across instances
-> - **Admin panel sessions** are sticky or backed by shared storage -- admin login state is not shared by default
-> - **Caching** uses Redis or another shared store -- in-memory caches are per-instance
-> - **Database connections** are properly pooled -- multiple replicas multiply connection usage
+> - **Admin panel sessions** are sticky or backed by shared storage - admin login state is not shared by default
+> - **Caching** uses Redis or another shared store - in-memory caches are per-instance
+> - **Database connections** are properly pooled - multiple replicas multiply connection usage
 >
 > Running a single replica with vertical scaling (more CPU/RAM) is simpler and avoids these issues for most workloads.
 
@@ -845,4 +845,4 @@ You learned:
 
 With Docker and CI/CD automation, you have a professional deployment pipeline that ensures consistent, reliable deployments from development to production.
 
-Next up: [Performance Optimization](./15-performance-optimization.md) -- database indexing, query optimization, caching strategies, CDN setup, and monitoring for high-performance Strapi applications.
+Next up: [Performance Optimization](./15-performance-optimization.md) - database indexing, query optimization, caching strategies, CDN setup, and monitoring for high-performance Strapi applications.

@@ -42,7 +42,7 @@ It's warm
 
 Rules:
 
-- The condition must be a `boolean` expression. Java does not coerce integers or objects -- `if (1)` is a compile error.
+- The condition must be a `boolean` expression. Java does not coerce integers or objects - `if (1)` is a compile error.
 - Only the first matching branch executes.
 - Always use braces `{}`, even for single-line bodies.
 
@@ -93,9 +93,9 @@ Result:
 adult
 ```
 
-Use it for simple assignments. Do not nest ternaries -- they become unreadable.
+Use it for simple assignments. Do not nest ternaries - they become unreadable.
 
-## `switch` -- classic
+## `switch` - classic
 
 Compare a value against multiple options:
 
@@ -125,7 +125,7 @@ Result:
 Weekday
 ```
 
-**Always include `break`** -- without it, execution falls through to the next case.
+**Always include `break`** - without it, execution falls through to the next case.
 
 Supported types: `byte`, `short`, `int`, `char`, `String`, and enums.
 
@@ -154,7 +154,7 @@ Weekend
 Key differences:
 
 - Arrow `->` instead of colon `:`
-- No fall-through -- no `break` needed
+- No fall-through - no `break` needed
 - Can return a value (switch **expression**)
 - Multiple values per case with commas
 
@@ -207,9 +207,9 @@ Iteration 4
 
 The three parts:
 
-1. **Initialization:** `int i = 0` -- runs once
-2. **Condition:** `i < 5` -- checked before each iteration
-3. **Update:** `i++` -- runs after each iteration
+1. **Initialization:** `int i = 0` - runs once
+2. **Condition:** `i < 5` - checked before each iteration
+3. **Update:** `i++` - runs after each iteration
 
 ### Counting backwards
 
@@ -332,7 +332,7 @@ Attempt 3
 
 ## `break` and `continue`
 
-### `break` -- exit the loop early
+### `break` - exit the loop early
 
 ```java
 for (int i = 0; i < 10; i++) {
@@ -353,7 +353,7 @@ Result:
 4
 ```
 
-### `continue` -- skip to the next iteration
+### `continue` - skip to the next iteration
 
 ```java
 for (int i = 0; i < 6; i++) {
@@ -525,12 +525,12 @@ Result:
 
 ## Summary
 
-- `if`/`else if`/`else` for branching decisions -- conditions must be `boolean`.
+- `if`/`else if`/`else` for branching decisions - conditions must be `boolean`.
 - Ternary `? :` for simple one-line conditionals.
 - **Classic `switch`** requires `break`; **enhanced `switch`** (Java 14+) uses arrows and eliminates fall-through.
 - `for` loop when you know the iteration count.
-- Enhanced `for-each` for arrays and collections -- cleaner than indexed `for`.
+- Enhanced `for-each` for arrays and collections - cleaner than indexed `for`.
 - `while` when the iteration count is unknown; `do-while` when the body must run at least once.
 - `break` exits a loop; `continue` skips to the next iteration; labels target outer loops.
 
-Next up: [Methods](./04-methods.md) -- reusable blocks of code.
+Next up: [Methods](./04-methods.md) - reusable blocks of code.

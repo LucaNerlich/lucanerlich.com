@@ -46,7 +46,7 @@ Rules:
 - The condition inside `()` is converted to a boolean.
 - Only the **first** matching branch runs.
 - `else if` and `else` are optional.
-- Always use curly braces `{}`, even for single-line bodies -- it prevents bugs when you add lines later.
+- Always use curly braces `{}`, even for single-line bodies - it prevents bugs when you add lines later.
 
 ### Combining conditions
 
@@ -107,7 +107,7 @@ Result:
 adult
 ```
 
-The syntax is `condition ? valueIfTrue : valueIfFalse`. Use it for simple assignments. Do not nest ternaries -- they
+The syntax is `condition ? valueIfTrue : valueIfFalse`. Use it for simple assignments. Do not nest ternaries - they
 become unreadable:
 
 ```js
@@ -205,9 +205,9 @@ Iteration 4
 
 The three parts:
 
-1. **Initialization:** `let i = 0` -- runs once before the loop starts
-2. **Condition:** `i < 5` -- checked before each iteration; loop stops when `false`
-3. **Update:** `i++` -- runs after each iteration
+1. **Initialization:** `let i = 0` - runs once before the loop starts
+2. **Condition:** `i < 5` - checked before each iteration; loop stops when `false`
+3. **Update:** `i++` - runs after each iteration
 
 ### Counting backwards
 
@@ -312,7 +312,7 @@ Attempt 3
 Done
 ```
 
-Be careful -- if you forget the `break`, the program hangs.
+Be careful - if you forget the `break`, the program hangs.
 
 ## `do...while` loop
 
@@ -337,7 +337,7 @@ Attempt 1: got "valid"
 
 The body ran once even though the condition was immediately satisfied.
 
-## `for...of` -- iterating over values
+## `for...of` - iterating over values
 
 Iterates over **values** in an iterable (arrays, strings, maps, sets):
 
@@ -375,7 +375,7 @@ l
 o
 ```
 
-## `for...in` -- iterating over keys
+## `for...in` - iterating over keys
 
 Iterates over **keys** (property names) of an object:
 
@@ -404,7 +404,7 @@ city: London
 
 ## `break` and `continue`
 
-### `break` -- exit the loop early
+### `break` - exit the loop early
 
 ```js
 for (let i = 0; i < 10; i++) {
@@ -425,7 +425,7 @@ Result:
 4
 ```
 
-### `continue` -- skip to the next iteration
+### `continue` - skip to the next iteration
 
 ```js
 for (let i = 0; i < 6; i++) {
@@ -610,4 +610,4 @@ Buzz
 - `for...in` for iterating over object keys (not arrays).
 - `break` exits a loop early; `continue` skips to the next iteration.
 
-Next up: [Functions](./04-functions.md) -- reusable blocks of code.
+Next up: [Functions](./04-functions.md) - reusable blocks of code.

@@ -15,10 +15,10 @@ keywords:
 # SQL: A Complete Guide
 
 SQL (Structured Query Language) is the standard language for working with relational databases. Whether you use
-PostgreSQL, MySQL, SQLite, MariaDB, or SQL Server -- the core SQL syntax is the same. This guide covers everything from
+PostgreSQL, MySQL, SQLite, MariaDB, or SQL Server - the core SQL syntax is the same. This guide covers everything from
 basic queries to database design.
 
-## Before you start -- the very basics
+## Before you start - the very basics
 
 This section covers the foundational concepts behind databases and SQL. If you already know what tables, rows, and
 queries are, skip ahead to [What is a relational database?](#what-is-a-relational-database).
@@ -26,7 +26,7 @@ queries are, skip ahead to [What is a relational database?](#what-is-a-relationa
 ### What is a database?
 
 A **database** is an organized collection of data stored electronically and managed by software called a **database
-management system** (DBMS). You interact with the DBMS -- not with the raw files on disk.
+management system** (DBMS). You interact with the DBMS - not with the raw files on disk.
 
 Without a database, you might store data in text files or spreadsheets. That works for small amounts of data, but it
 breaks down quickly:
@@ -54,15 +54,15 @@ flowchart LR
 
 | Concern              | Spreadsheet                          | Relational database                             |
 |----------------------|--------------------------------------|-------------------------------------------------|
-| **Data integrity**   | No enforcement -- any cell can hold anything | Strict types, constraints, and foreign keys     |
+| **Data integrity**   | No enforcement - any cell can hold anything | Strict types, constraints, and foreign keys     |
 | **Relationships**    | Manual cross-referencing between sheets | Built-in joins across tables                    |
 | **Concurrent access** | Conflicts when multiple users edit   | Transactions guarantee consistency              |
-| **Querying**         | Filters and formulas, limited        | Full SQL -- aggregation, joins, subqueries      |
+| **Querying**         | Filters and formulas, limited        | Full SQL - aggregation, joins, subqueries      |
 | **Scalability**      | Slows at thousands of rows           | Handles millions to billions of rows            |
 
 ### What is SQL?
 
-SQL stands for **Structured Query Language**. It is pronounced either "S-Q-L" (letter by letter) or "sequel" -- both
+SQL stands for **Structured Query Language**. It is pronounced either "S-Q-L" (letter by letter) or "sequel" - both
 are common.
 
 SQL is a **declarative** language. You describe **what** data you want, not **how** to get it. The database engine
@@ -87,7 +87,7 @@ flowchart TD
 | **DDL**  | Define or change database structure | `CREATE`, `ALTER`, `DROP`  |
 | **DCL**  | Control access permissions       | `GRANT`, `REVOKE`          |
 
-### How a SQL query works -- a mental model
+### How a SQL query works - a mental model
 
 When you send a SQL query to the database, several things happen before you get results back:
 
@@ -100,7 +100,7 @@ flowchart LR
 ```
 
 The **query optimizer** is the reason SQL is powerful. You write `SELECT name FROM users WHERE age > 30` and the
-database decides whether to scan the whole table, use an index, or combine multiple strategies -- whichever is fastest.
+database decides whether to scan the whole table, use an index, or combine multiple strategies - whichever is fastest.
 
 ### Anatomy of a table
 
@@ -114,11 +114,11 @@ A table is the fundamental structure in a relational database. Here is a `users`
 
 Each horizontal entry is a row (record), and each vertical field is a column with a defined type.
 
-- **Table** -- a named collection of data about one type of thing (users, orders, products).
-- **Column** -- a single attribute. Every column has a **name** and a **data type** (integer, text, date). The database
+- **Table** - a named collection of data about one type of thing (users, orders, products).
+- **Column** - a single attribute. Every column has a **name** and a **data type** (integer, text, date). The database
   rejects data that does not match the type.
-- **Row** -- one record. Each row contains one value per column.
-- **Primary key (PK)** -- a column (or set of columns) that uniquely identifies each row. No two rows can share the
+- **Row** - one record. Each row contains one value per column.
+- **Primary key (PK)** - a column (or set of columns) that uniquely identifies each row. No two rows can share the
   same primary key value.
 
 ### Reading your first query
@@ -132,10 +132,10 @@ WHERE active = TRUE
 ORDER BY name;
 ```
 
-1. **`SELECT name, email`** -- pick the columns you want in the result. You do not have to retrieve every column.
-2. **`FROM users`** -- specify which table to read from.
-3. **`WHERE active = TRUE`** -- filter: only include rows where the `active` column is `TRUE`.
-4. **`ORDER BY name`** -- sort the results alphabetically by the `name` column.
+1. **`SELECT name, email`** - pick the columns you want in the result. You do not have to retrieve every column.
+2. **`FROM users`** - specify which table to read from.
+3. **`WHERE active = TRUE`** - filter: only include rows where the `active` column is `TRUE`.
+4. **`ORDER BY name`** - sort the results alphabetically by the `name` column.
 
 The result is a new table containing only the `name` and `email` columns of active users, sorted by name. You described
 *what* you wanted. The database figured out *how* to get it.
@@ -183,16 +183,16 @@ Key concepts:
 | **Column** (field)   | One attribute of a record                                                      |
 | **Primary key (PK)** | A column (or set of columns) that uniquely identifies each row                 |
 | **Foreign key (FK)** | A column that references a primary key in another table                        |
-| **Schema**           | The structure of the database -- all tables, columns, types, and relationships |
+| **Schema**           | The structure of the database - all tables, columns, types, and relationships |
 
 ## Setting up a practice database
 
 Any of these work for following along:
 
-- **SQLite** -- zero installation, file-based: `sqlite3 practice.db`
-- **PostgreSQL** -- production-grade, most feature-rich
-- **MySQL / MariaDB** -- widely used in web applications
-- **DB Fiddle** ([db-fiddle.com](https://www.db-fiddle.com/)) -- browser-based, nothing to install
+- **SQLite** - zero installation, file-based: `sqlite3 practice.db`
+- **PostgreSQL** - production-grade, most feature-rich
+- **MySQL / MariaDB** - widely used in web applications
+- **DB Fiddle** ([db-fiddle.com](https://www.db-fiddle.com/)) - browser-based, nothing to install
 
 This guide uses standard SQL that works across all databases. Where syntax differs, it is noted.
 
@@ -266,10 +266,10 @@ CREATE TABLE post_tags (
 );
 ```
 
-### Foreign key actions -- `ON DELETE` and `ON UPDATE`
+### Foreign key actions - `ON DELETE` and `ON UPDATE`
 
 When you define a foreign key, you can specify what happens when the referenced row is deleted or updated. Without an
-explicit action, most databases default to `RESTRICT` -- the operation fails if dependent rows exist.
+explicit action, most databases default to `RESTRICT` - the operation fails if dependent rows exist.
 
 ```mermaid
 flowchart TD
@@ -307,7 +307,7 @@ CREATE TABLE comments (
 );
 ```
 
-Choose the action that matches your business logic. `CASCADE` is convenient but dangerous -- deleting one user could
+Choose the action that matches your business logic. `CASCADE` is convenient but dangerous - deleting one user could
 remove thousands of related rows. `RESTRICT` is the safest default.
 
 ## Inserting data
@@ -338,7 +338,7 @@ INSERT INTO posts (user_id, title, body, published) VALUES
     (4, 'Linux Kernel Design', 'How the kernel handles...', TRUE);
 ```
 
-### `INSERT INTO ... SELECT` -- inserting from a query
+### `INSERT INTO ... SELECT` - inserting from a query
 
 You can insert rows by selecting from another table or query. This is useful for archiving, copying, or transforming
 data:
@@ -382,7 +382,7 @@ Result:
 | Linus Torvalds    | linus@example.com     |
 | Margaret Hamilton | margaret@example.com  |
 
-### `WHERE` -- filtering rows
+### `WHERE` - filtering rows
 
 ```sql
 -- Equality
@@ -444,7 +444,7 @@ Result:
 SELECT * FROM users WHERE name IN ('Ada Lovelace', 'Alan Turing', 'Grace Hopper');
 ```
 
-### `ORDER BY` -- sorting
+### `ORDER BY` - sorting
 
 ```sql
 -- Ascending (default)
@@ -467,7 +467,7 @@ Result of `ORDER BY age DESC`:
 | 3  | Alan Turing       | alan@example.com     | 41  | TRUE   |
 | 1  | Ada Lovelace      | ada@example.com      | 36  | TRUE   |
 
-### `LIMIT` and `OFFSET` -- pagination
+### `LIMIT` and `OFFSET` - pagination
 
 ```sql
 -- First 3 rows
@@ -495,7 +495,7 @@ Result of `LIMIT 3 OFFSET 2`:
 
 **Note:** In SQL Server, use `TOP` or `FETCH FIRST` instead of `LIMIT`.
 
-### `DISTINCT` -- unique values
+### `DISTINCT` - unique values
 
 ```sql
 SELECT DISTINCT active FROM users;
@@ -539,7 +539,7 @@ DELETE FROM users;
 
 **Always use `WHERE`** with `DELETE`. Without it, every row is deleted.
 
-### `TRUNCATE` -- faster bulk delete
+### `TRUNCATE` - faster bulk delete
 
 ```sql
 -- Removes all rows, resets auto-increment (not available in SQLite)
@@ -549,7 +549,7 @@ TRUNCATE TABLE users;
 `TRUNCATE` is **DDL** (Data Definition Language), not DML. This has important consequences:
 
 - In most databases (MySQL, Oracle, SQL Server), `TRUNCATE` **cannot be rolled back** inside a transaction.
-- PostgreSQL is the exception -- it supports transactional `TRUNCATE`.
+- PostgreSQL is the exception - it supports transactional `TRUNCATE`.
 - `TRUNCATE` resets auto-increment counters; `DELETE` does not.
 - `TRUNCATE` does not fire row-level `DELETE` triggers.
 
@@ -576,7 +576,7 @@ Result:
 | youngest     | 36    |
 | oldest       | 88    |
 
-## `GROUP BY` -- aggregating groups
+## `GROUP BY` - aggregating groups
 
 Group rows and compute aggregates per group:
 
@@ -593,7 +593,7 @@ Result:
 | FALSE  | 1     |
 | TRUE   | 4     |
 
-### `HAVING` -- filtering groups
+### `HAVING` - filtering groups
 
 `HAVING` filters groups after aggregation (like `WHERE` for groups):
 
@@ -629,7 +629,7 @@ flowchart TD
     G --> H["LIMIT / OFFSET"]
 ```
 
-This is why you cannot use a column alias from `SELECT` in `WHERE` -- `WHERE` runs before `SELECT`.
+This is why you cannot use a column alias from `SELECT` in `WHERE` - `WHERE` runs before `SELECT`.
 
 ## Joins
 
@@ -642,7 +642,7 @@ Joins combine rows from two or more tables based on a related column. This is th
 -- Posts: Ada has 2 posts, Grace has 1, Alan has 1, Linus has 1, Margaret has 0
 ```
 
-### `INNER JOIN` -- matching rows only
+### `INNER JOIN` - matching rows only
 
 Returns rows where the join condition matches in **both** tables:
 
@@ -688,9 +688,9 @@ Result:
 | Alan Turing    | Turing Machines      |
 | Linus Torvalds | Linux Kernel Design  |
 
-Margaret does not appear -- she has no posts. `INNER JOIN` only returns rows with matches in both tables.
+Margaret does not appear - she has no posts. `INNER JOIN` only returns rows with matches in both tables.
 
-### `LEFT JOIN` -- all rows from the left table
+### `LEFT JOIN` - all rows from the left table
 
 Returns all rows from the left table, with matching rows from the right table (or `NULL` if no match):
 
@@ -711,9 +711,9 @@ Result:
 | Linus Torvalds    | Linux Kernel Design  |
 | Margaret Hamilton | NULL                 |
 
-Margaret appears with `NULL` for the post title -- she has no posts, but `LEFT JOIN` includes her.
+Margaret appears with `NULL` for the post title - she has no posts, but `LEFT JOIN` includes her.
 
-### `RIGHT JOIN` -- all rows from the right table
+### `RIGHT JOIN` - all rows from the right table
 
 The mirror of `LEFT JOIN`. Returns all rows from the right table, with `NULL` where the left has no match:
 
@@ -736,7 +736,7 @@ Result (identical to `INNER JOIN` here because every post has a valid `user_id`)
 Not all databases support `RIGHT JOIN` (e.g., SQLite does not). You can always rewrite it as a `LEFT JOIN` by swapping
 the table order.
 
-### `FULL OUTER JOIN` -- all rows from both tables
+### `FULL OUTER JOIN` - all rows from both tables
 
 Returns all rows from both tables, with `NULL` where there is no match:
 
@@ -778,9 +778,9 @@ flowchart TB
     end
 ```
 
-### `CROSS JOIN` -- every combination
+### `CROSS JOIN` - every combination
 
-Returns the Cartesian product -- every row from the left table paired with every row from the right:
+Returns the Cartesian product - every row from the left table paired with every row from the right:
 
 ```sql
 SELECT users.name, tags.name AS tag
@@ -802,7 +802,7 @@ If `users` has 5 rows and `tags` has 3 rows, the result has 15 rows. Example (as
 
 Rarely useful, but good to understand.
 
-### Self join -- joining a table to itself
+### Self join - joining a table to itself
 
 Useful when rows in the same table have a parent-child relationship:
 
@@ -996,7 +996,7 @@ Result:
 | Grace Hopper   |
 | Linus Torvalds |
 
-### `NOT EXISTS` -- anti-join
+### `NOT EXISTS` - anti-join
 
 The inverse of `EXISTS`. Finds rows that have **no** matching rows in the subquery. This is often called an anti-join:
 
@@ -1053,7 +1053,7 @@ CTEs are essentially named subqueries. They make long queries significantly easi
 
 Window functions compute values across a set of rows related to the current row, without collapsing them into groups:
 
-### `ROW_NUMBER` -- sequential numbering
+### `ROW_NUMBER` - sequential numbering
 
 ```sql
 SELECT
@@ -1097,7 +1097,7 @@ Result (all ages are unique here, so `RANK` and `DENSE_RANK` are identical):
 `RANK` skips numbers after ties; `DENSE_RANK` does not. For example, if two users shared age 85, `RANK` would assign
 both rank 1, then skip to 3. `DENSE_RANK` would assign both rank 1, then continue with 2.
 
-### `PARTITION BY` -- windowing within groups
+### `PARTITION BY` - windowing within groups
 
 ```sql
 SELECT
@@ -1162,7 +1162,7 @@ Result:
 | Linus Torvalds    | 54  | 216           |
 | Margaret Hamilton | 88  | 304           |
 
-### `LAG` and `LEAD` -- accessing adjacent rows
+### `LAG` and `LEAD` - accessing adjacent rows
 
 `LAG` looks at the **previous** row and `LEAD` looks at the **next** row in the window order. These are essential for
 comparing a row to its neighbors:
@@ -1284,8 +1284,8 @@ CREATE INDEX idx_posts_user ON posts(user_id) INCLUDE (title, created_at);
 
 | Index on              | When                             |
 |-----------------------|----------------------------------|
-| Primary keys          | Automatic -- every PK is indexed |
-| Foreign keys          | Always -- speeds up joins        |
+| Primary keys          | Automatic - every PK is indexed |
+| Foreign keys          | Always - speeds up joins        |
 | Columns in `WHERE`    | If queried frequently            |
 | Columns in `ORDER BY` | If sorted frequently             |
 | Columns in `JOIN ON`  | If joined frequently             |
@@ -1297,18 +1297,18 @@ CREATE INDEX idx_posts_user ON posts(user_id) INCLUDE (title, created_at);
 - Columns with very low cardinality (e.g., a boolean with 50/50 distribution)
 - Tables with heavy write loads (indexes slow down inserts/updates)
 
-### `EXPLAIN` -- understanding query plans
+### `EXPLAIN` - understanding query plans
 
 ```sql
 EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'ada@example.com';
 ```
 
-This shows how the database executes the query -- whether it uses an index, a full table scan, and how long each step
+This shows how the database executes the query - whether it uses an index, a full table scan, and how long each step
 takes. Use it to diagnose slow queries.
 
 ## Transactions
 
-A **transaction** groups multiple SQL statements into a single atomic operation -- either all succeed, or none do.
+A **transaction** groups multiple SQL statements into a single atomic operation - either all succeed, or none do.
 
 ### ACID properties
 
@@ -1342,7 +1342,7 @@ stateDiagram-v2
 ```
 
 A transaction starts with `BEGIN` and ends with either `COMMIT` (save all changes) or `ROLLBACK` (discard all changes).
-**Savepoints** allow partial rollbacks within a transaction -- useful for complex operations where you want to undo one
+**Savepoints** allow partial rollbacks within a transaction - useful for complex operations where you want to undo one
 step without losing everything.
 
 ### Using transactions
@@ -1363,7 +1363,7 @@ COMMIT;
 Without a transaction, if the first `UPDATE` succeeds but the second fails, money disappears. With a transaction, both
 updates are rolled back on failure.
 
-### Transaction example -- transferring money
+### Transaction example - transferring money
 
 ```sql
 BEGIN;
@@ -1640,7 +1640,7 @@ INSERT OR REPLACE INTO users (email, name) VALUES ('ada@example.com', 'Ada L.');
 `NULL` represents missing or unknown data. It is not the same as zero or an empty string. Two functions make working
 with `NULL` much easier:
 
-### `COALESCE` -- first non-NULL value
+### `COALESCE` - first non-NULL value
 
 `COALESCE` returns the first argument that is not `NULL`. Use it to provide fallback values:
 
@@ -1649,7 +1649,7 @@ with `NULL` much easier:
 SELECT name, COALESCE(age, 0) AS age FROM users;
 ```
 
-Result (all users here have an age, so `COALESCE` has no effect -- but if any had `NULL`, it would show `0`):
+Result (all users here have an age, so `COALESCE` has no effect - but if any had `NULL`, it would show `0`):
 
 | name              | age |
 |-------------------|-----|
@@ -1674,7 +1674,7 @@ Result (assuming Ada has no `nickname` column set):
 | Linus Torvalds    |
 | Margaret Hamilton |
 
-### `NULLIF` -- conditional NULL
+### `NULLIF` - conditional NULL
 
 `NULLIF(a, b)` returns `NULL` if `a` equals `b`, otherwise returns `a`. Useful for avoiding division by zero or
 treating sentinel values as unknown:
@@ -1769,7 +1769,7 @@ Result:
 | Linus Torvalds    | 54  | Experienced |
 | Margaret Hamilton | 88  | Senior      |
 
-### `CASE` in `UPDATE` -- conditional bulk updates
+### `CASE` in `UPDATE` - conditional bulk updates
 
 `CASE` is not limited to `SELECT`. Use it in `UPDATE` to set values based on conditions in a single statement:
 
@@ -1792,7 +1792,7 @@ SET price = CASE
 END;
 ```
 
-## `UNION` -- combining result sets
+## `UNION` - combining result sets
 
 ```sql
 -- UNION removes duplicates
@@ -1818,7 +1818,7 @@ UNION ALL
 SELECT name FROM users WHERE active = TRUE;
 ```
 
-Result (duplicates preserved -- 8 rows instead of 5):
+Result (duplicates preserved - 8 rows instead of 5):
 
 | name              |
 |-------------------|
@@ -1923,14 +1923,14 @@ LIMIT count OFFSET skip;
 
 ## Summary
 
-- SQL is the standard language for relational databases -- learn it once, use it everywhere.
+- SQL is the standard language for relational databases - learn it once, use it everywhere.
 - **Tables** store data in rows and columns; **keys** link tables together.
 - `SELECT`, `INSERT`, `UPDATE`, `DELETE` are the four core operations.
-- **Joins** combine data from multiple tables -- `INNER JOIN` for matches, `LEFT JOIN` to include unmatched rows.
+- **Joins** combine data from multiple tables - `INNER JOIN` for matches, `LEFT JOIN` to include unmatched rows.
 - **Aggregate functions** (`COUNT`, `SUM`, `AVG`) summarize data; `GROUP BY` groups rows before aggregating.
 - **CTEs** (`WITH`) break complex queries into readable named steps.
 - **Window functions** (`ROW_NUMBER`, `RANK`) compute values across rows without collapsing groups.
-- **Indexes** speed up reads but slow down writes -- index foreign keys and frequently queried columns.
-- **Transactions** guarantee atomicity -- all changes commit or all roll back.
+- **Indexes** speed up reads but slow down writes - index foreign keys and frequently queried columns.
+- **Transactions** guarantee atomicity - all changes commit or all roll back.
 - **Normalization** reduces duplication by splitting data into related tables.
 - **Always use parameterized queries** to prevent SQL injection.

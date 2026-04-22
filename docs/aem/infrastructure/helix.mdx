@@ -7,7 +7,7 @@ slug: /aem/edge-delivery-services
 
 # Adobe Edge Delivery Services
 
-Adobe **Edge Delivery Services (EDS)** -- formerly known as Project Helix / Franklin -- is far
+Adobe **Edge Delivery Services (EDS)** - formerly known as Project Helix / Franklin - is far
 more than a rebrand. It is Adobe's modern content delivery platform that pushes rendering
 to the CDN edge, enabling near-instant page loads and a radically simpler development
 workflow. EDS is now a core pillar of the AEM product family, sitting alongside AEM Sites,
@@ -20,7 +20,7 @@ workflow, blocks, and how EDS relates to traditional AEM.
 
 ## Product Landscape and Offerings
 
-EDS is not a single product -- it is a **delivery layer** that integrates with multiple
+EDS is not a single product - it is a **delivery layer** that integrates with multiple
 Adobe products. Understanding the variations helps you choose the right approach.
 
 ```mermaid
@@ -72,7 +72,7 @@ at the edge while the commerce API handles transactions.
 
 EDS integrates with **AEM Assets as a Cloud Service** via the Dynamic Media Open API.
 Assets are delivered with automatic format negotiation (WebP, AVIF), responsive sizing,
-and smart crop -- all at the CDN edge, without a traditional Dispatcher.
+and smart crop - all at the CDN edge, without a traditional Dispatcher.
 
 ### Comparison: EDS vs Traditional AEM Publish
 
@@ -138,10 +138,10 @@ representation and stored in the Content Bus. This decouples authoring from deli
 The delivery pipeline combines the content from the Content Bus with the frontend code
 from GitHub:
 
-1. **Content fetch** -- HTML fragments from the Content Bus
-2. **Block decoration** -- each block's JavaScript/CSS is loaded on demand
-3. **Optimisation** -- HTML is minified, images are lazy-loaded, CSS/JS is inlined where needed
-4. **Caching** -- aggressive CDN caching with instant purge on publish
+1. **Content fetch** - HTML fragments from the Content Bus
+2. **Block decoration** - each block's JavaScript/CSS is loaded on demand
+3. **Optimisation** - HTML is minified, images are lazy-loaded, CSS/JS is inlined where needed
+4. **Caching** - aggressive CDN caching with instant purge on publish
 
 ### CDN Layer
 
@@ -196,7 +196,7 @@ preview and publish actions.
 
 ### AEM Authoring + Universal Editor
 
-Authors use the AEM content repository and the **Universal Editor** -- a modern,
+Authors use the AEM content repository and the **Universal Editor** - a modern,
 framework-agnostic visual editor that replaces the classic Page Editor for EDS.
 
 **Strengths:**
@@ -468,9 +468,9 @@ Define experiments in a spreadsheet (the "experiments" sheet):
 |------------|------|---------|-------|
 | hero-test | /home | /experiments/hero-v2 | 50 |
 
-- **Page** -- the URL being tested
-- **Variant** -- an alternative page that replaces the original for the test group
-- **Split** -- percentage of traffic that sees the variant
+- **Page** - the URL being tested
+- **Variant** - an alternative page that replaces the original for the test group
+- **Split** - percentage of traffic that sees the variant
 
 ### Audiences
 
@@ -504,20 +504,20 @@ graph TD
     Lazy --> Delayed
 ```
 
-1. **LCP (Largest Contentful Paint)** -- critical CSS is inlined, hero images use
+1. **LCP (Largest Contentful Paint)** - critical CSS is inlined, hero images use
 `fetchpriority="high"` and `loading="eager"`
-2. **Eager blocks** -- blocks visible in the first viewport are loaded immediately
-3. **Lazy blocks** -- below-the-fold blocks are loaded via `IntersectionObserver`
-4. **Delayed scripts** -- analytics, chat widgets, and other non-essential scripts
+2. **Eager blocks** - blocks visible in the first viewport are loaded immediately
+3. **Lazy blocks** - below-the-fold blocks are loaded via `IntersectionObserver`
+4. **Delayed scripts** - analytics, chat widgets, and other non-essential scripts
 load only after user interaction (click, scroll, keydown) or after 3 seconds
 
 ### What EDS does automatically
 
-- **Image optimisation** -- format negotiation (WebP/AVIF), responsive `srcset`, lazy loading
-- **CSS/JS code splitting** -- each block's styles and scripts load independently
-- **No render-blocking resources** -- everything is async or deferred
-- **Minimal DOM** -- clean, semantic HTML with no framework overhead
-- **Aggressive caching** -- long cache TTLs with instant purge on publish
+- **Image optimisation** - format negotiation (WebP/AVIF), responsive `srcset`, lazy loading
+- **CSS/JS code splitting** - each block's styles and scripts load independently
+- **No render-blocking resources** - everything is async or deferred
+- **Minimal DOM** - clean, semantic HTML with no framework overhead
+- **Aggressive caching** - long cache TTLs with instant purge on publish
 
 ---
 
@@ -584,7 +584,7 @@ configure it to accept push-invalidation webhooks so pages update within seconds
 ## AEMaaCS + EDS Licensing
 
 EDS is included in **AEM Sites as a Cloud Service** licenses. There is no separate SKU
-for EDS -- it is an integrated capability of the platform.
+for EDS - it is an integrated capability of the platform.
 
 Key licensing aspects:
 
@@ -604,7 +604,7 @@ Key licensing aspects:
 ### Keep blocks small and focused
 
 Each block should do one thing. Avoid creating a "super block" that handles multiple
-layouts -- use block variations or separate blocks instead.
+layouts - use block variations or separate blocks instead.
 
 ### Validate content structure early
 
@@ -651,22 +651,22 @@ their impact on Core Web Vitals.
 
 ## External Resources
 
-- [Edge Delivery Services overview](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/edge-delivery/overview.html) -- Adobe documentation
-- [aem.live](https://www.aem.live/) -- developer docs, tutorials, and block library
-- [EDS Block Collection](https://www.aem.live/developer/block-collection) -- pre-built blocks
-- [AEM Sidekick](https://chromewebstore.google.com/detail/aem-sidekick/igkmdomcgoebiipaifhmpfjhbjccggml) -- Chrome extension
-- [Experimentation documentation](https://www.aem.live/docs/experimentation) -- A/B testing guide
-- [EDS for Forms](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview.html) -- Forms integration
-- [Universal Editor](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/introduction.html) -- visual authoring for EDS
+- [Edge Delivery Services overview](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/edge-delivery/overview.html) - Adobe documentation
+- [aem.live](https://www.aem.live/) - developer docs, tutorials, and block library
+- [EDS Block Collection](https://www.aem.live/developer/block-collection) - pre-built blocks
+- [AEM Sidekick](https://chromewebstore.google.com/detail/aem-sidekick/igkmdomcgoebiipaifhmpfjhbjccggml) - Chrome extension
+- [Experimentation documentation](https://www.aem.live/docs/experimentation) - A/B testing guide
+- [EDS for Forms](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview.html) - Forms integration
+- [Universal Editor](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/introduction.html) - visual authoring for EDS
 
 ## See also
 
-- [Architecture](../architecture.mdx) -- traditional AEM architecture for comparison
+- [Architecture](../architecture.mdx) - traditional AEM architecture for comparison
 - [AEM as a Cloud Service](./cloud-service.mdx)
 - [Deployment](./deployment.mdx)
-- [GraphQL](../content/graphql.mdx) -- headless content delivery
-- [Content Fragments](../content/content-fragments.md) -- shared content between AEM and EDS
-- [Client Libraries](../client-libraries.mdx) -- traditional AEM frontend (contrast with EDS blocks)
-- [Performance](./performance.mdx) -- traditional AEM performance tuning
+- [GraphQL](../content/graphql.mdx) - headless content delivery
+- [Content Fragments](../content/content-fragments.md) - shared content between AEM and EDS
+- [Client Libraries](../client-libraries.mdx) - traditional AEM frontend (contrast with EDS blocks)
+- [Performance](./performance.mdx) - traditional AEM performance tuning
 - [Security basics](./security.mdx)
-- [Dispatcher Configuration](./dispatcher-configuration.mdx) -- traditional delivery layer (replaced by EDS CDN)
+- [Dispatcher Configuration](./dispatcher-configuration.mdx) - traditional delivery layer (replaced by EDS CDN)

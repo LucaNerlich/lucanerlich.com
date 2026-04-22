@@ -8,11 +8,11 @@ tags: [aem, architecture, sling, jcr]
 
 Adobe Experience Manager is built on three open-source foundations:
 
-- **Apache Sling** -- a REST-based web framework that maps URLs to content resources and resolves rendering scripts
-- **Apache Jackrabbit Oak** -- the JCR (Java Content Repository) implementation that stores all content as a tree of nodes and properties
-- **OSGi (Apache Felix)** -- a modular runtime where every piece of functionality is deployed as a bundle with explicit dependencies
+- **Apache Sling** - a REST-based web framework that maps URLs to content resources and resolves rendering scripts
+- **Apache Jackrabbit Oak** - the JCR (Java Content Repository) implementation that stores all content as a tree of nodes and properties
+- **OSGi (Apache Felix)** - a modular runtime where every piece of functionality is deployed as a bundle with explicit dependencies
 
-The core philosophy is **everything is content**. Pages, components, templates, configurations, code-resolved scripts --
+The core philosophy is **everything is content**. Pages, components, templates, configurations, code-resolved scripts -
 they all live as nodes in the JCR. This single content tree drives URL resolution, rendering, and access control.
 
 ## High-Level Architecture
@@ -51,7 +51,7 @@ graph LR
 
 ## The Sling Request Processing Pipeline
 
-This is the heart of AEM. Every HTTP request -- whether it renders a page, returns JSON, or serves an asset -- follows
+This is the heart of AEM. Every HTTP request - whether it renders a page, returns JSON, or serves an asset - follows
 the same pipeline.
 
 ```mermaid
@@ -96,10 +96,10 @@ Sling breaks every URL into structured parts:
 
 The `ResourceResolver` maps the URL path to a JCR node. Resolution respects several mapping layers:
 
-1. **`/etc/map` mappings** -- rewrite rules stored in the repository (e.g. strip `/content/my-site` from external URLs)
-2. **`sling:alias`** -- a property on a node that provides an alternative URL segment (e.g. `sling:alias=home` on a node named `home-page`)
-3. **Vanity URLs** -- a `sling:vanityPath` property that creates a shortcut (e.g. `/promo` maps to `/content/my-site/en/campaigns/summer`)
-4. **Direct path** -- if no mapping matches, the path is resolved directly against the JCR tree
+1. **`/etc/map` mappings** - rewrite rules stored in the repository (e.g. strip `/content/my-site` from external URLs)
+2. **`sling:alias`** - a property on a node that provides an alternative URL segment (e.g. `sling:alias=home` on a node named `home-page`)
+3. **Vanity URLs** - a `sling:vanityPath` property that creates a shortcut (e.g. `/promo` maps to `/content/my-site/en/campaigns/summer`)
+4. **Direct path** - if no mapping matches, the path is resolved directly against the JCR tree
 
 The result is a `Resource` object that wraps the JCR node and exposes its properties.
 
@@ -127,9 +127,9 @@ Search order (first match wins):
 ```
 
 Key rules:
-- `/apps` is always searched before `/libs` -- this is how overlays and customisations work
+- `/apps` is always searched before `/libs` - this is how overlays and customisations work
 - Selectors narrow the script selection: `nav.html` is preferred over `page.html` when the `.nav` selector is present
-- The `sling:resourceSuperType` chain enables component inheritance -- if no script is found on the current resource type, Sling walks up the super-type chain
+- The `sling:resourceSuperType` chain enables component inheritance - if no script is found on the current resource type, Sling walks up the super-type chain
 
 ### Step 4: Rendering
 
@@ -149,7 +149,7 @@ All content in AEM is stored as a tree of **nodes** and **properties** in the JC
 
 | Node type | Used for |
 |-----------|----------|
-| `cq:Page` | Content pages -- has a mandatory `jcr:content` child |
+| `cq:Page` | Content pages - has a mandatory `jcr:content` child |
 | `nt:unstructured` | Generic node type for component data, dialog values, configurations |
 | `dam:Asset` | DAM assets (images, PDFs, videos) |
 | `cq:Component` | Component definitions (under `/apps`) |
@@ -174,7 +174,7 @@ Every `cq:Page` node has the same structure:
                           └── fileReference = "/content/dam/my-site/hero.jpg"
 ```
 
-- The `cq:Page` node itself holds very little data -- just the page structure
+- The `cq:Page` node itself holds very little data - just the page structure
 - All authored content lives on the `jcr:content` child and its descendants
 - Each component instance is a child node under the layout container, with its own `sling:resourceType` and authored properties
 
@@ -199,7 +199,7 @@ The JCR tree directly maps to URLs:
 ```
 
 This means content architecture decisions (site structure, language copies, page hierarchy) directly impact your URL
-scheme. Plan your content tree carefully -- restructuring later requires redirects and can break SEO.
+scheme. Plan your content tree carefully - restructuring later requires redirects and can break SEO.
 
 ## Component Architecture
 
@@ -223,7 +223,7 @@ graph TD
 | **Dialog** | Defines the authoring UI (form fields, tabs, validation) | `_cq_dialog/.content.xml` |
 | **JCR content** | Stores the authored data as node properties | `/content/.../jcr:content/component-node` |
 | **Sling Model** | Business logic, data transformation, service calls | `core/src/main/java/.../MyModel.java` |
-| **HTL template** | Presentation -- renders the model data into HTML | `components/mycomponent/mycomponent.html` |
+| **HTL template** | Presentation - renders the model data into HTML | `components/mycomponent/mycomponent.html` |
 
 ### A minimal component example
 
@@ -298,14 +298,14 @@ Content enters AEM through several channels:
 
 ### Author UI (primary)
 
-- **Page Editor** -- drag-and-drop components, inline editing, Touch UI dialogs
-- **Content Fragment Editor** -- structured content authoring with predefined models
-- **Experience Fragment Editor** -- reusable experience building blocks (header, footer, promo)
-- **DAM** -- asset upload, metadata editing, processing profiles, Smart Tags
+- **Page Editor** - drag-and-drop components, inline editing, Touch UI dialogs
+- **Content Fragment Editor** - structured content authoring with predefined models
+- **Experience Fragment Editor** - reusable experience building blocks (header, footer, promo)
+- **DAM** - asset upload, metadata editing, processing profiles, Smart Tags
 
 ### Programmatic input
 
-- **`SlingPostServlet`** -- AEM's built-in POST handler. A simple form POST to a resource path creates or updates properties:
+- **`SlingPostServlet`** - AEM's built-in POST handler. A simple form POST to a resource path creates or updates properties:
 
 ```bash
 # Local SDK / dev only -- never use admin:admin credentials outside a local instance.
@@ -313,10 +313,10 @@ curl -u admin:admin -d "title=Updated Title" \
   http://localhost:4502/content/my-site/en/home/jcr:content
 ```
 
-- **Assets HTTP API** -- REST API for CRUD operations on DAM assets
-- **Content Fragment API** -- create, update, and manage Content Fragments programmatically
-- **Package Manager** -- import `.zip` content packages (useful for migrations)
-- **Groovy Console** -- run scripts for bulk content operations (see [Groovy Console](./groovy-console.mdx))
+- **Assets HTTP API** - REST API for CRUD operations on DAM assets
+- **Content Fragment API** - create, update, and manage Content Fragments programmatically
+- **Package Manager** - import `.zip` content packages (useful for migrations)
+- **Groovy Console** - run scripts for bulk content operations (see [Groovy Console](./groovy-console.mdx))
 
 :::warning
 The `SlingPostServlet` is powerful but dangerous if exposed on Publish. Ensure it is
@@ -623,15 +623,15 @@ A practical reference of issues that regularly trip up AEM developers:
 
 ### Dialog and authoring
 
-- **Missing `./` prefix in field names** -- properties won't be persisted to the JCR. Always use `name="./myProperty"`
-- **Mixing Coral 2 and Coral 3** -- components from `/components/foundation` (Coral 2) and `/components/coral/foundation` (Coral 3) can cause visual and functional inconsistencies
-- **Not handling `null` in Sling Models** -- always use `defaultInjectionStrategy = OPTIONAL` or null-safe getters. Missing dialog fields return `null`, not empty strings
+- **Missing `./` prefix in field names** - properties won't be persisted to the JCR. Always use `name="./myProperty"`
+- **Mixing Coral 2 and Coral 3** - components from `/components/foundation` (Coral 2) and `/components/coral/foundation` (Coral 3) can cause visual and functional inconsistencies
+- **Not handling `null` in Sling Models** - always use `defaultInjectionStrategy = OPTIONAL` or null-safe getters. Missing dialog fields return `null`, not empty strings
 
 ### Resource resolvers and sessions
 
-- **Closing a request-scoped resolver** -- resolvers injected via `@SlingObject` or `request.getResourceResolver()` are managed by Sling and closed automatically at the end of the request. Do **not** close them yourself -- doing so breaks other components that still need the resolver during the same request
-- **Using a request-scoped resolver in async threads** -- the resolver is closed when the request ends, so background threads will get `IllegalStateException`. Open a dedicated service resolver for async work
-- **Not closing manually opened resolvers** -- service resolvers obtained via `getServiceResourceResolver()` are **your** responsibility. Always use try-with-resources. A leaked resolver means a leaked JCR session
+- **Closing a request-scoped resolver** - resolvers injected via `@SlingObject` or `request.getResourceResolver()` are managed by Sling and closed automatically at the end of the request. Do **not** close them yourself - doing so breaks other components that still need the resolver during the same request
+- **Using a request-scoped resolver in async threads** - the resolver is closed when the request ends, so background threads will get `IllegalStateException`. Open a dedicated service resolver for async work
+- **Not closing manually opened resolvers** - service resolvers obtained via `getServiceResourceResolver()` are **your** responsibility. Always use try-with-resources. A leaked resolver means a leaked JCR session
 
 ```java
 // WRONG -- resolver leaks if an exception occurs
@@ -647,21 +647,21 @@ try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(para
 
 ### Queries and performance
 
-- **Queries without Oak indexes** -- triggers traversal (full scan). Always check with `EXPLAIN SELECT ...` and create indexes for production queries
-- **Using deprecated `xpath` queries** -- use JCR-SQL2 or QueryBuilder instead
-- **`p.limit=-1` in QueryBuilder** -- returns all results without pagination. Fine for small datasets, dangerous for large ones. Always paginate in production code
+- **Queries without Oak indexes** - triggers traversal (full scan). Always check with `EXPLAIN SELECT ...` and create indexes for production queries
+- **Using deprecated `xpath` queries** - use JCR-SQL2 or QueryBuilder instead
+- **`p.limit=-1` in QueryBuilder** - returns all results without pagination. Fine for small datasets, dangerous for large ones. Always paginate in production code
 
 ### Content and URLs
 
-- **Hardcoding `/content/dam/...` paths** -- use authored references (pathfield dialogs) instead. Hardcoded paths break when content is moved
-- **Relying on JCR node ordering** -- not all Oak persistence stores guarantee child node order. Use explicit sort properties if order matters
-- **Ignoring `/etc/map` on publish** -- URLs that work on author (with `/content/my-site/en/...`) will 404 on publish if URL mappings are not configured
+- **Hardcoding `/content/dam/...` paths** - use authored references (pathfield dialogs) instead. Hardcoded paths break when content is moved
+- **Relying on JCR node ordering** - not all Oak persistence stores guarantee child node order. Use explicit sort properties if order matters
+- **Ignoring `/etc/map` on publish** - URLs that work on author (with `/content/my-site/en/...`) will 404 on publish if URL mappings are not configured
 
 ### Dispatcher and caching
 
-- **"Works on author, broken on publish"** -- the Dispatcher strips query parameters, blocks certain paths, and caches aggressively. Always test with Dispatcher enabled during development
-- **Not invalidating on publish** -- ensure flush agents are correctly configured for every Publish instance
-- **Caching personalised content** -- if the page varies by user, either use SDI for the dynamic fragments or set `Dispatcher: no-cache` headers on that path
+- **"Works on author, broken on publish"** - the Dispatcher strips query parameters, blocks certain paths, and caches aggressively. Always test with Dispatcher enabled during development
+- **Not invalidating on publish** - ensure flush agents are correctly configured for every Publish instance
+- **Caching personalised content** - if the page varies by user, either use SDI for the dynamic fragments or set `Dispatcher: no-cache` headers on that path
 
 ## See also
 

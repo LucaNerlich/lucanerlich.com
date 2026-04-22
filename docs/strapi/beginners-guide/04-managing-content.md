@@ -111,7 +111,7 @@ Key points:
 
 - **Creating** an entry starts it as a draft
 - **Publishing** makes the current version available via the API
-- **Editing** a published entry creates a new draft version -- the published version remains live until you publish
+- **Editing** a published entry creates a new draft version - the published version remains live until you publish
   again
 - **Unpublishing** removes the entry from the API but keeps it in the database as a draft
 - **Deleting** removes both draft and published versions permanently
@@ -137,14 +137,14 @@ We will explore API queries in detail in [chapter 5](./05-rest-api.md).
 
 ## The Media Library
 
-The media library manages all uploaded files -- images, videos, documents, and more.
+The media library manages all uploaded files - images, videos, documents, and more.
 
 ### Uploading files
 
 You can upload files in two ways:
 
-1. **Via the Media Library** -- go to Media Library in the sidebar and click **Upload assets**
-2. **Via a content entry** -- click the media field when editing an entry and upload directly
+1. **Via the Media Library** - go to Media Library in the sidebar and click **Upload assets**
+2. **Via a content entry** - click the media field when editing an entry and upload directly
 
 ### Organizing media
 
@@ -158,11 +158,11 @@ The media library supports **folders** for organization:
 
 Click any file to see its details:
 
-- **Preview** -- image/video preview
-- **Alternative text** -- important for accessibility (set this for all images)
-- **Caption** -- optional description
-- **File info** -- size, dimensions, format, URL
-- **Crops and formats** -- Strapi auto-generates responsive formats (thumbnail, small, medium, large)
+- **Preview** - image/video preview
+- **Alternative text** - important for accessibility (set this for all images)
+- **Caption** - optional description
+- **File info** - size, dimensions, format, URL
+- **Crops and formats** - Strapi auto-generates responsive formats (thumbnail, small, medium, large)
 
 ### Responsive image formats
 
@@ -200,21 +200,21 @@ We will cover advanced upload configuration (S3, Cloudinary) in [chapter 10](./1
 
 ### Inline editing
 
-Click any entry in the list view to open the editor. Fields are editable inline -- just click and type.
+Click any entry in the list view to open the editor. Fields are editable inline - just click and type.
 
 ### The right sidebar
 
 The right sidebar shows:
 
-- **Relations** -- manage linked entries (author, category, tags)
-- **Internationalization** -- switch between locales (if i18n is enabled)
-- **Information** -- created/updated timestamps, created by
+- **Relations** - manage linked entries (author, category, tags)
+- **Internationalization** - switch between locales (if i18n is enabled)
+- **Information** - created/updated timestamps, created by
 
 ### Rich text editor
 
 The **Blocks** editor (Strapi 5's default rich text field) supports:
 
-- Headings (H1--H6)
+- Headings (H1-H6)
 - Bold, italic, underline, strikethrough, code
 - Ordered and unordered lists
 - Block quotes
@@ -222,7 +222,7 @@ The **Blocks** editor (Strapi 5's default rich text field) supports:
 - Images (inline from the media library)
 - Links
 
-The editor stores content as a structured JSON format, not HTML. This makes it frontend-agnostic -- you render the
+The editor stores content as a structured JSON format, not HTML. This makes it frontend-agnostic - you render the
 blocks however you want on the client.
 
 ## Bulk operations
@@ -231,11 +231,11 @@ The Content Manager supports bulk operations on collection types:
 
 1. In the list view, check the boxes next to entries
 2. A toolbar appears at the top with actions:
-    - **Publish** -- publish all selected drafts
-    - **Unpublish** -- unpublish all selected entries
-    - **Delete** -- delete all selected entries
+    - **Publish** - publish all selected drafts
+    - **Unpublish** - unpublish all selected entries
+    - **Delete** - delete all selected entries
 
-This is useful when you need to manage many entries at once -- for example, publishing a batch of posts or cleaning up
+This is useful when you need to manage many entries at once - for example, publishing a batch of posts or cleaning up
 test data.
 
 ## Filtering and sorting in the admin panel
@@ -246,9 +246,9 @@ The list view supports filtering and sorting:
 
 Click **Filters** and add conditions:
 
-- `title contains "strapi"` -- find posts with "strapi" in the title
-- `featured is true` -- find only featured posts
-- `author is Ada Lovelace` -- find posts by a specific author
+- `title contains "strapi"` - find posts with "strapi" in the title
+- `featured is true` - find only featured posts
+- `author is Ada Lovelace` - find posts by a specific author
 
 You can combine multiple filters.
 
@@ -273,8 +273,8 @@ This configuration is per-content-type and per-user.
 
 Each content type has configurable views:
 
-- **List view** -- which fields show as columns, default sort
-- **Edit view** -- field layout, which fields appear, field ordering
+- **List view** - which fields show as columns, default sort
+- **Edit view** - field layout, which fields appear, field ordering
 
 To configure the edit view:
 
@@ -288,20 +288,20 @@ To configure the edit view:
 
 In the edit view configuration, each field has settings:
 
-- **Label** -- custom display name
-- **Description** -- helper text shown below the field
-- **Placeholder** -- placeholder text for input fields
-- **Editable** -- whether the field can be edited (useful for computed fields)
-- **Size** -- column width (4, 6, 8, or 12 out of 12)
+- **Label** - custom display name
+- **Description** - helper text shown below the field
+- **Placeholder** - placeholder text for input fields
+- **Editable** - whether the field can be edited (useful for computed fields)
+- **Size** - column width (4, 6, 8, or 12 out of 12)
 
 ## Single type editing
 
 Single types work slightly differently:
 
 1. Go to **Content Manager** and find your single type (e.g., Site Settings)
-2. There is no list view -- you go directly to the edit view
+2. There is no list view - you go directly to the edit view
 3. Fill in the fields and click **Save** / **Publish**
-4. There is only ever one entry -- you edit the same document every time
+4. There is only ever one entry - you edit the same document every time
 
 Fill in your Site Settings now:
 
@@ -316,7 +316,7 @@ You learned:
 
 - How to create entries for all your content types (authors, categories, tags, posts)
 - The **draft/publish workflow** and how documents transition between states
-- How the **media library** works -- uploading, organizing, responsive formats
+- How the **media library** works - uploading, organizing, responsive formats
 - **Bulk operations** for managing multiple entries at once
 - **Filtering and sorting** in the Content Manager
 - Configuring **list and edit views** for a better editing experience
@@ -324,5 +324,5 @@ You learned:
 
 Your blog now has real content. In the next chapter we will learn how to access it programmatically via the REST API.
 
-Next up: [REST API](./05-rest-api.md) -- understanding Strapi's auto-generated REST endpoints, filtering, sorting,
+Next up: [REST API](./05-rest-api.md) - understanding Strapi's auto-generated REST endpoints, filtering, sorting,
 pagination, population, and testing with curl.

@@ -8,9 +8,9 @@ tags: [aem, i18n, translation, language]
 
 AEM distinguishes between two types of multilingual content:
 
-1. **UI string translation (i18n)** -- translating labels, buttons, and fixed text in
+1. **UI string translation (i18n)** - translating labels, buttons, and fixed text in
    components using dictionaries
-2. **Content translation** -- translating authored page content, Content Fragments, and
+2. **Content translation** - translating authored page content, Content Fragments, and
    Experience Fragments via the Translation Integration Framework
 
 Both are essential for multi-language sites. This page covers dictionaries, the HTL and
@@ -604,10 +604,10 @@ content, not just placeholder text.
 
 ## See also
 
-- [HTL Templates](../htl-templates.mdx) -- `@i18n` expression syntax
-- [Multi-Site Manager](./multi-site-manager-msm.md) -- language copies and MSM
-- [Content Fragments](./content-fragments.md) -- translating Content Fragments
-- [Experience Fragments](./experience-fragments.md) -- translating Experience Fragments
-- [Tags and Taxonomies](./tags-taxonomies.md) -- localising tag titles
-- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) -- translation cloud configs on AEMaaCS
-- [Architecture](../architecture.mdx) -- multi-language site architecture
+- [HTL Templates](../htl-templates.mdx) - `@i18n` expression syntax
+- [Multi-Site Manager](./multi-site-manager-msm.md) - language copies and MSM
+- [Content Fragments](./content-fragments.md) - translating Content Fragments
+- [Experience Fragments](./experience-fragments.md) - translating Experience Fragments
+- [Tags and Taxonomies](./tags-taxonomies.md) - localising tag titles
+- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) - translation cloud configs on AEMaaCS
+- [Architecture](../architecture.mdx) - multi-language site architecture

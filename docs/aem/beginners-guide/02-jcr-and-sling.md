@@ -15,7 +15,7 @@ sidebar_position: 2
 
 # The JCR & Sling
 
-Everything in AEM is stored in the **JCR** (Java Content Repository) -- pages, components, templates, images,
+Everything in AEM is stored in the **JCR** (Java Content Repository) - pages, components, templates, images,
 configurations, even your code definitions. Understanding the JCR and how **Sling** resolves URLs to content is
 essential for working with AEM.
 
@@ -47,11 +47,11 @@ flowchart TD
 
 | Path       | Contents                                                          |
 |------------|-------------------------------------------------------------------|
-| `/apps`    | Your project's code -- components, templates, clientlibs, configs |
-| `/libs`    | AEM's built-in code -- Core Components, platform features         |
-| `/content` | Authored content -- pages, assets                                 |
-| `/conf`    | Configuration -- editable templates, Cloud Configurations         |
-| `/var`     | Runtime data -- workflow instances, audit logs                    |
+| `/apps`    | Your project's code - components, templates, clientlibs, configs |
+| `/libs`    | AEM's built-in code - Core Components, platform features         |
+| `/content` | Authored content - pages, assets                                 |
+| `/conf`    | Configuration - editable templates, Cloud Configurations         |
+| `/var`     | Runtime data - workflow instances, audit logs                    |
 | `/etc`     | Legacy config area (some items still here)                        |
 | `/home`    | Users and groups                                                  |
 
@@ -63,7 +63,7 @@ The JCR is made of **nodes** and **properties**:
 - A **property** is a key-value pair attached to a node. Values can be strings, numbers, dates, booleans, or binary
   data.
 
-Example -- a page node:
+Example - a page node:
 
 ```
 /content/mysite/en/about
@@ -85,7 +85,7 @@ Example -- a page node:
 Key observations:
 
 - **Pages** are `cq:Page` nodes with a `jcr:content` child
-- **Page content** lives under `jcr:content` -- this is where properties like `jcr:title` are stored
+- **Page content** lives under `jcr:content` - this is where properties like `jcr:title` are stored
 - **Components on a page** are child nodes under the `jcr:content` tree
 - **`sling:resourceType`** tells Sling which component renders this node
 
@@ -97,7 +97,7 @@ Every node has a **primary type** that defines its structure:
 |-----------------------|------------------------------------------------------------------|
 | `cq:Page`             | A page in the Sites console                                      |
 | `cq:PageContent`      | The content node of a page (`jcr:content`)                       |
-| `nt:unstructured`     | Generic node -- no schema constraints. Most component data nodes |
+| `nt:unstructured`     | Generic node - no schema constraints. Most component data nodes |
 | `nt:folder`           | A basic folder                                                   |
 | `sling:Folder`        | A Sling-aware folder                                             |
 | `sling:OrderedFolder` | Folder with ordered children                                     |
@@ -126,7 +126,7 @@ http://localhost:4502/crx/de
 
 | Area             | What it shows                                  |
 |------------------|------------------------------------------------|
-| **Left panel**   | Node tree browser -- navigate the hierarchy    |
+| **Left panel**   | Node tree browser - navigate the hierarchy    |
 | **Center panel** | Node properties (key-value pairs)              |
 | **Bottom panel** | Query tool, access control, replication status |
 
@@ -134,10 +134,10 @@ http://localhost:4502/crx/de
 
 Try navigating to:
 
-- `/content/mysite/en` -- your site's English root page
-- `/apps/mysite/components` -- your project's component definitions
-- `/libs/core/wcm/components` -- AEM Core Components source
-- `/conf/mysite/settings/wcm/templates` -- your editable templates
+- `/content/mysite/en` - your site's English root page
+- `/apps/mysite/components` - your project's component definitions
+- `/libs/core/wcm/components` - AEM Core Components source
+- `/conf/mysite/settings/wcm/templates` - your editable templates
 
 ### Editing content
 
@@ -151,7 +151,7 @@ You can modify properties directly in CRXDE Lite:
 > **Warning:** Direct JCR edits in CRXDE Lite are for **debugging and exploration only**. In AEMaaCS, production content
 > is managed through the authoring UI and code through Git + Cloud Manager.
 
-## Apache Sling -- the web framework
+## Apache Sling - the web framework
 
 Sling is the web framework that sits between HTTP and the JCR. Its core job: **resolve a URL to a JCR resource, then
 render it**.
@@ -174,11 +174,11 @@ flowchart LR
 
 When a request like `GET /content/mysite/en/about.html` arrives:
 
-1. **Resource resolution** -- Sling decomposes the URL and finds the JCR node at `/content/mysite/en/about`
-2. **Script selection** -- Sling reads the `sling:resourceType` property (e.g., `mysite/components/page`) and finds the
+1. **Resource resolution** - Sling decomposes the URL and finds the JCR node at `/content/mysite/en/about`
+2. **Script selection** - Sling reads the `sling:resourceType` property (e.g., `mysite/components/page`) and finds the
    corresponding rendering script
-3. **Rendering** -- the HTL template (or servlet) renders the content
-4. **Response** -- the rendered HTML is returned
+3. **Rendering** - the HTL template (or servlet) renders the content
+4. **Response** - the rendered HTML is returned
 
 ### URL decomposition
 
@@ -198,12 +198,12 @@ Sling breaks down URLs into parts:
 | **Suffix**        | `/suffix`                  | Additional path info                             |
 | **Query string**  | `key=value`                | Parameters                                       |
 
-Selectors are powerful -- they let you render the same content in different ways without creating new endpoints:
+Selectors are powerful - they let you render the same content in different ways without creating new endpoints:
 
-- `/about.html` -- default rendering
-- `/about.article.html` -- article rendering
-- `/about.json` -- JSON export
-- `/about.xml` -- XML rendering
+- `/about.html` - default rendering
+- `/about.article.html` - article rendering
+- `/about.json` - JSON export
+- `/about.xml` - XML rendering
 
 ### Resource resolution in detail
 
@@ -229,14 +229,14 @@ flowchart TD
 
 The `sling:resourceType` on the node points to a component definition. Sling looks for a rendering script in this order:
 
-1. `/apps/<resourceType>/<scriptName>.html` -- your project's override
-2. `/libs/<resourceType>/<scriptName>.html` -- AEM's default
+1. `/apps/<resourceType>/<scriptName>.html` - your project's override
+2. `/libs/<resourceType>/<scriptName>.html` - AEM's default
 
-This is the **overlay mechanism** -- you can override any AEM component by placing your version in `/apps`.
+This is the **overlay mechanism** - you can override any AEM component by placing your version in `/apps`.
 
 A component can also declare a **`sling:resourceSuperType`** property, pointing to a parent component. When Sling cannot
 find a script in the current component, it walks up the super-type chain and uses the parent's script instead. This is
-how **proxy components** work -- your project component inherits all rendering from a Core Component and only overrides
+how **proxy components** work - your project component inherits all rendering from a Core Component and only overrides
 what it needs:
 
 ```
@@ -294,7 +294,7 @@ Key interfaces:
 
 ### Adaptable pattern
 
-Sling uses the **Adaptable** pattern extensively -- you convert (adapt) one object to another:
+Sling uses the **Adaptable** pattern extensively - you convert (adapt) one object to another:
 
 ```java
 // Adapt a Resource to a Page
@@ -338,7 +338,7 @@ AEM has strong conventions for where content lives:
 
 | Path            | Contents                                |
 |-----------------|-----------------------------------------|
-| `/libs/`        | AEM's built-in code -- **never modify** |
+| `/libs/`        | AEM's built-in code - **never modify** |
 | `/var/`         | Runtime data (workflow, audit)          |
 | `/home/users/`  | User accounts                           |
 | `/home/groups/` | Groups                                  |
@@ -351,7 +351,7 @@ Besides navigating the tree, you can query it. AEM supports two query languages:
 
 ### QueryBuilder
 
-AEM's query API -- used in Java code and HTTP:
+AEM's query API - used in Java code and HTTP:
 
 ```
 http://localhost:4502/bin/querybuilder.json?
@@ -426,18 +426,18 @@ You can run queries in CRXDE Lite's query tool (bottom panel) or the QueryBuilde
 
 You learned:
 
-- The **JCR** is a hierarchical content repository -- everything in AEM is a node with properties
+- The **JCR** is a hierarchical content repository - everything in AEM is a node with properties
 - **Node types** define structure (`cq:Page`, `nt:unstructured`, `cq:Component`)
 - **CRXDE Lite** lets you browse and edit the JCR directly
 - **Apache Sling** maps URLs to JCR resources and renders them
-- **URL decomposition** -- resource path, selectors, extension, suffix
-- **Resource resolution** -- how Sling finds the right node and rendering script
+- **URL decomposition** - resource path, selectors, extension, suffix
+- **Resource resolution** - how Sling finds the right node and rendering script
 - The **Resource API** and the **Adaptable** pattern
-- **Content path conventions** -- `/apps` for code, `/content` for content, `/libs` is read-only
+- **Content path conventions** - `/apps` for code, `/content` for content, `/libs` is read-only
 - **Querying** with QueryBuilder and JCR-SQL2
 
-The JCR stores everything, and Sling connects it to the web. The third foundational layer is OSGi -- the module system
+The JCR stores everything, and Sling connects it to the web. The third foundational layer is OSGi - the module system
 that manages your Java code.
 
-Next up: [OSGi Fundamentals](./03-osgi-fundamentals.md) -- bundles, services, the OSGi container, the Web Console, and
+Next up: [OSGi Fundamentals](./03-osgi-fundamentals.md) - bundles, services, the OSGi container, the Web Console, and
 configuration management.

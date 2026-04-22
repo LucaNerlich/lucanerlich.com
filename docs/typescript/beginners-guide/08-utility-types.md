@@ -17,7 +17,7 @@ sidebar_position: 8
 # Utility Types
 
 TypeScript ships with a library of built-in generic types called **utility types**. They transform existing types into
-new ones -- making properties optional, picking a subset of fields, making an object readonly, extracting function
+new ones - making properties optional, picking a subset of fields, making an object readonly, extracting function
 return types, and more. Mastering utility types dramatically reduces boilerplate and keeps your types DRY.
 
 ## Partial\<T\>
@@ -65,7 +65,7 @@ const errors: FormErrors<RegistrationForm> = {
 
 ## Required\<T\>
 
-The opposite of `Partial` -- makes all properties of `T` required (removes all `?` markers):
+The opposite of `Partial` - makes all properties of `T` required (removes all `?` markers):
 
 ```typescript
 interface Config {
@@ -91,7 +91,7 @@ const config = resolveConfig({ port: 8080 });
 
 ## Readonly\<T\>
 
-Makes all properties of `T` readonly -- they cannot be reassigned after creation:
+Makes all properties of `T` readonly - they cannot be reassigned after creation:
 
 ```typescript
 interface AppState {
@@ -120,7 +120,7 @@ const API_CONFIG: Readonly<{ baseUrl: string; version: string; timeout: number }
 };
 ```
 
-> **Note:** `Readonly<T>` is shallow -- nested objects are still mutable. For deep immutability, use `as const` or
+> **Note:** `Readonly<T>` is shallow - nested objects are still mutable. For deep immutability, use `as const` or
 > a library like `immer`.
 
 ## Pick\<T, K\>
@@ -158,7 +158,7 @@ type UserRegistration = Pick<User, "name" | "email" | "password">;
 
 ## Omit\<T, K\>
 
-The inverse of `Pick` -- creates a new type with all keys of `T` **except** the specified ones:
+The inverse of `Pick` - creates a new type with all keys of `T` **except** the specified ones:
 
 ```typescript
 // Omit is often cleaner than Pick when excluding a small number of properties
@@ -253,7 +253,7 @@ type VisibleRole = Exclude<"admin" | "user" | "guest" | "system", "system">;
 
 ## Extract\<T, U\>
 
-The opposite of `Exclude` -- keeps only the members of `T` that are assignable to `U`:
+The opposite of `Exclude` - keeps only the members of `T` that are assignable to `U`:
 
 ```typescript
 type AllRoles = "admin" | "user" | "guest" | "service" | "bot";
@@ -407,7 +407,7 @@ function createWithDefaults<T extends new (...args: unknown[]) => unknown>(
 
 ## Combining utility types
 
-Utility types compose naturally -- this is where they become truly powerful:
+Utility types compose naturally - this is where they become truly powerful:
 
 ```typescript
 interface BlogPost {
@@ -468,5 +468,5 @@ function createEmptyForm(): PostFormState {
 | `InstanceType<T>`   | Extract the instance type of a constructor                 |
 | `Awaited<T>`        | Recursively unwrap `Promise<T>` (TypeScript 4.5+)          |
 
-Next up: [Advanced Types](./09-advanced-types.md) -- conditional types, mapped types, template literal types, the
+Next up: [Advanced Types](./09-advanced-types.md) - conditional types, mapped types, template literal types, the
 `infer` keyword, and recursive types.

@@ -17,7 +17,7 @@ sidebar_position: 3
 # Interfaces & Type Aliases
 
 TypeScript gives you two ways to describe the shape of an object: `interface` and `type`. Both are widely used, both
-are powerful, and they overlap significantly. Understanding when to use each -- and how they differ -- is essential for
+are powerful, and they overlap significantly. Understanding when to use each - and how they differ - is essential for
 writing idiomatic TypeScript.
 
 ## Interfaces
@@ -48,11 +48,11 @@ displayUser(alice);
 ```
 
 TypeScript uses **structural typing** (more on this below), so any object with the right shape satisfies an interface
--- there is no need to explicitly declare `implements User`.
+- there is no need to explicitly declare `implements User`.
 
 ## Type aliases
 
-A `type` alias gives a name to any type expression -- not just object shapes:
+A `type` alias gives a name to any type expression - not just object shapes:
 
 ```typescript
 // Object shape (same as an interface)
@@ -75,7 +75,7 @@ type Coordinate = [number, number];
 type Formatter = (value: number) => string;
 ```
 
-## interface vs type -- when to use which
+## interface vs type - when to use which
 
 This is one of the most-asked TypeScript questions. Here is the practical breakdown:
 
@@ -92,7 +92,7 @@ This is one of the most-asked TypeScript questions. Here is the practical breakd
 
 **General recommendation:**
 
-- Use `interface` for object shapes that represent domain entities (User, Product, ApiResponse) -- especially if other
+- Use `interface` for object shapes that represent domain entities (User, Product, ApiResponse) - especially if other
   interfaces might extend them.
 - Use `type` for unions, primitives, tuples, function types, and when you need to compose types with `|` or `&`.
 
@@ -150,7 +150,7 @@ config.timeout = 10000;      // OK
 // config.apiKey = "other";  // Error: Cannot assign to 'apiKey' because it is a read-only property
 ```
 
-`readonly` is a compile-time check only -- the compiled JavaScript has no concept of it. For truly immutable data at
+`readonly` is a compile-time check only - the compiled JavaScript has no concept of it. For truly immutable data at
 runtime, use `Object.freeze()`.
 
 ### Readonly objects from the outside
@@ -234,7 +234,7 @@ interface Event extends Serializable, Loggable {
 
 ## Declaration merging
 
-Interfaces support **declaration merging** -- if you declare the same interface name twice, TypeScript merges the
+Interfaces support **declaration merging** - if you declare the same interface name twice, TypeScript merges the
 declarations:
 
 ```typescript
@@ -251,7 +251,7 @@ interface Window {
 ```
 
 This is useful for augmenting existing type definitions, especially in library code or when extending browser globals.
-`type` aliases do **not** support merging -- redeclaring a type alias is an error.
+`type` aliases do **not** support merging - redeclaring a type alias is an error.
 
 ## Intersection types
 
@@ -469,14 +469,14 @@ function calculateTotal(cart: Cart): CartSummary {
 ## Summary
 
 - **Interfaces** define object shapes and support `extends`, declaration merging, and `implements`
-- **Type aliases** are more flexible -- they can name unions, intersections, tuples, and primitives
+- **Type aliases** are more flexible - they can name unions, intersections, tuples, and primitives
 - Use `interface` for domain objects; use `type` for unions, functions, and compositions
 - **Optional properties** (`?`) allow a property to be omitted or `undefined`
 - **Readonly properties** prevent reassignment after object creation
 - **Intersection types** (`&`) combine multiple types into one
-- TypeScript uses **structural typing** -- compatibility is based on shape, not name
+- TypeScript uses **structural typing** - compatibility is based on shape, not name
 - **Excess property checks** apply only to object literals passed directly to typed variables
 - **Index signatures** allow arbitrary string keys when property names are not known in advance
 
-Next up: [Functions](./04-functions.md) -- typed parameters, return types, optional and default parameters, rest
+Next up: [Functions](./04-functions.md) - typed parameters, return types, optional and default parameters, rest
 parameters, function overloads, and arrow functions.

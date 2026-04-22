@@ -201,7 +201,7 @@ docker run -d \
   my-app
 ```
 
-### docker run with --env-file
+### docker run with -env-file
 
 Load multiple variables from a file:
 

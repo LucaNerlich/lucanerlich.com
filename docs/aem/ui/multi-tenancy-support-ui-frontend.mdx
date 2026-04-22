@@ -7,7 +7,7 @@ tags: [aem, ui, clientlibs, ui-frontend, multi-tenancy]
 # Multi-Tenancy Theme Support for the UI Frontend Module
 
 When an AEM project serves multiple brands, sites, or tenants from a single codebase, each tenant typically
-needs its own visual identity -- colours, typography, spacing, component variants, and sometimes even
+needs its own visual identity - colours, typography, spacing, component variants, and sometimes even
 different JavaScript behaviour. This guide explains how to configure the `ui.frontend` module to generate
 **separate Client Libraries per tenant** while sharing a common component codebase.
 
@@ -482,12 +482,12 @@ variations via BEM classes, and tenant-specific stylesheets provide the visual i
 
 The Style System classes (e.g. `cmp-teaser--featured`) are shared across tenants, but each
 tenant's stylesheet provides its own visual interpretation. Authors don't need to know which
-tenant they're on -- they just pick "Featured" in the Style System dropdown.
+tenant they're on - they just pick "Featured" in the Style System dropdown.
 
 ## Using Vite Instead of Webpack
 
 For new projects, [Vite](https://vitejs.dev/) is a faster alternative to webpack. The same
-multi-tenancy concept applies -- you just configure it differently:
+multi-tenancy concept applies - you just configure it differently:
 
 ```javascript title="ui.frontend/vite.config.js"
 import { defineConfig } from 'vite';
@@ -528,7 +528,7 @@ export default defineConfig({
 ```
 
 The `aem-clientlib-generator` configuration remains the same regardless of whether you use
-webpack or Vite -- it only cares about the `/dist` output structure.
+webpack or Vite - it only cares about the `/dist` output structure.
 
 ## Common Shared Dependencies
 
@@ -635,7 +635,7 @@ multi-tenancy configuration works without changes. Ensure that:
 
 - [Architecture](../architecture.mdx)
 - [Custom Component Guide](../custom-component.mdx)
-- [Client Libraries](../client-libraries.mdx) -- full clientlib reference
+- [Client Libraries](../client-libraries.mdx) - full clientlib reference
 - [Components Overview](../components/overview.mdx)
 - [Core Components](../components/core-components.mdx)
 - [Touch UI](./touch-ui.mdx)

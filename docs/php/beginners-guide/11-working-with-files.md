@@ -26,7 +26,7 @@ Files are everywhere in web applications. You use them for:
 | **Configuration** | Loading `.env`, `config.json`, or `.ini` files |
 | **Logs** | Appending error or access logs for debugging |
 | **Uploads** | Storing user-uploaded images, documents, or media |
-| **Data storage** | Saving data without a database -- CSV, JSON, or plain text |
+| **Data storage** | Saving data without a database - CSV, JSON, or plain text |
 | **CSV/JSON** | Importing or exporting tabular or structured data |
 
 Even when you use a database, you often read config files, write logs, and handle uploads. File operations are a fundamental skill.
@@ -35,7 +35,7 @@ Even when you use a database, you often read config files, write logs, and handl
 
 PHP offers several ways to read files. Choose based on file size and how you need the data.
 
-### file_get_contents() -- Simplest
+### file_get_contents() - Simplest
 
 For small files, `file_get_contents()` reads the entire file into a string:
 
@@ -54,7 +54,7 @@ if ($content === false) {
 
 > **Tip:** Use strict comparison (`=== false`) because an empty file returns an empty string, which is falsy but not `false`.
 
-### file() -- Into an Array of Lines
+### file() - Into an Array of Lines
 
 `file()` reads the file and returns an array of lines. Useful when you process line by line:
 
@@ -70,7 +70,7 @@ foreach ($lines as $line) {
 $lines = file('data.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 ```
 
-### fopen, fgets, fclose -- Line by Line for Large Files
+### fopen, fgets, fclose - Line by Line for Large Files
 
 For large files, loading everything into memory is wasteful. Use a file handle and read line by line:
 
@@ -102,7 +102,7 @@ Always close the handle with `fclose()` when you are done. For very large files,
 
 Writing follows a similar pattern: simple one-shot writes vs. controlled streaming.
 
-### file_put_contents() -- Simplest
+### file_put_contents() - Simplest
 
 `file_put_contents()` writes a string to a file in one call:
 
@@ -127,7 +127,7 @@ By default it **overwrites** the file. To append instead, use the `FILE_APPEND` 
 file_put_contents('log.txt', date('Y-m-d H:i:s') . " - User logged in\n", FILE_APPEND);
 ```
 
-### fopen, fwrite, fclose -- More Control
+### fopen, fwrite, fclose - More Control
 
 When you need to write in chunks or control the mode explicitly:
 
@@ -275,7 +275,7 @@ file_put_contents('config.json', $json);
 
 You often need to list, create, or remove directories.
 
-### scandir() -- List Contents
+### scandir() - List Contents
 
 ```php
 <?php
@@ -305,7 +305,7 @@ if (is_dir('temp')) {
 }
 ```
 
-### glob() -- Pattern Matching
+### glob() - Pattern Matching
 
 ```php
 <?php
@@ -403,10 +403,10 @@ if (move_uploaded_file($_FILES['document']['tmp_name'], $target)) {
 
 ### Security Considerations
 
-- **Validate file type** -- Do not trust `$_FILES['type']`. Check extension and optionally use `finfo_file()` for MIME detection
-- **Limit size** -- Enforce `upload_max_filesize` and `post_max_size` in `php.ini`, and check `$_FILES['size']` in code
-- **Restrict upload directory** -- Store uploads outside the web root or in a directory that cannot execute PHP
-- **Use unique filenames** -- Avoid overwriting; e.g. `uniqid() . '_' . $originalName`
+- **Validate file type** - Do not trust `$_FILES['type']`. Check extension and optionally use `finfo_file()` for MIME detection
+- **Limit size** - Enforce `upload_max_filesize` and `post_max_size` in `php.ini`, and check `$_FILES['size']` in code
+- **Restrict upload directory** - Store uploads outside the web root or in a directory that cannot execute PHP
+- **Use unique filenames** - Avoid overwriting; e.g. `uniqid() . '_' . $originalName`
 
 ## Path Functions
 
@@ -565,4 +565,4 @@ This example:
 - Use `basename()`, `dirname()`, `pathinfo()`, and `realpath()` for safe path handling
 - Never trust user-supplied filenames; prevent path traversal and validate file types
 
-Next up: [Working with Databases](./12-working-with-databases.md) -- PDO, MySQL, CRUD operations, prepared statements, and transactions.
+Next up: [Working with Databases](./12-working-with-databases.md) - PDO, MySQL, CRUD operations, prepared statements, and transactions.

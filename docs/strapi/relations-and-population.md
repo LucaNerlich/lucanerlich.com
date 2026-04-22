@@ -7,7 +7,7 @@ tags: [strapi, relations, population, database, queries]
 
 # Relations and Population
 
-Relations are one of the most powerful -- and most confusing -- aspects of Strapi. Understanding how to define, query,
+Relations are one of the most powerful - and most confusing - aspects of Strapi. Understanding how to define, query,
 and populate them efficiently is essential for any non-trivial project.
 
 ## Relation types
@@ -381,6 +381,6 @@ const query = qs.stringify({
 
 ## See also
 
-- [Custom Controllers and Services](custom-controllers-services.md) -- controllers that query relations
-- [Lifecycle Hooks](lifecycle-hooks.md) -- hooks that auto-populate or validate relations
-- [Custom Routes and Endpoints](custom-routes-and-endpoints.md) -- custom endpoints that return related data
+- [Custom Controllers and Services](custom-controllers-services.md) - controllers that query relations
+- [Lifecycle Hooks](lifecycle-hooks.md) - hooks that auto-populate or validate relations
+- [Custom Routes and Endpoints](custom-routes-and-endpoints.md) - custom endpoints that return related data

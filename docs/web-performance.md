@@ -15,7 +15,7 @@ sidebar_position: 4
 
 # Web Performance
 
-A fast website is not optional -- it affects user experience, conversion rates, SEO rankings, and accessibility. This guide covers the metrics, techniques, and strategies that matter most.
+A fast website is not optional - it affects user experience, conversion rates, SEO rankings, and accessibility. This guide covers the metrics, techniques, and strategies that matter most.
 
 ## Core Web Vitals
 
@@ -32,14 +32,14 @@ flowchart LR
     CLS -->|"Visual stability"| Good3["Good: ≤ 0.1"]
 ```
 
-### LCP -- Largest Contentful Paint
+### LCP - Largest Contentful Paint
 
 Measures **loading performance**: how long until the largest visible element (hero image, heading block, video poster) is rendered.
 
 | Rating | Threshold |
 |--------|-----------|
 | Good | ≤ 2.5 seconds |
-| Needs improvement | 2.5 -- 4.0 seconds |
+| Needs improvement | 2.5 - 4.0 seconds |
 | Poor | > 4.0 seconds |
 
 **Common LCP elements:** hero images, `<h1>` text blocks, video poster frames, large SVGs.
@@ -58,14 +58,14 @@ Measures **loading performance**: how long until the largest visible element (he
 - Inline critical CSS
 - Set `fetchpriority="high"` on the LCP image
 
-### INP -- Interaction to Next Paint
+### INP - Interaction to Next Paint
 
 Measures **interactivity**: how long between a user action (click, tap, keypress) and the next visual update.
 
 | Rating | Threshold |
 |--------|-----------|
 | Good | ≤ 200 ms |
-| Needs improvement | 200 -- 500 ms |
+| Needs improvement | 200 - 500 ms |
 | Poor | > 500 ms |
 
 **What hurts INP:**
@@ -82,14 +82,14 @@ Measures **interactivity**: how long between a user action (click, tap, keypress
 - Use `requestAnimationFrame` for visual updates
 - Move heavy work to Web Workers
 
-### CLS -- Cumulative Layout Shift
+### CLS - Cumulative Layout Shift
 
 Measures **visual stability**: how much visible content moves unexpectedly during loading.
 
 | Rating | Threshold |
 |--------|-----------|
 | Good | ≤ 0.1 |
-| Needs improvement | 0.1 -- 0.25 |
+| Needs improvement | 0.1 - 0.25 |
 | Poor | > 0.25 |
 
 **What causes CLS:**
@@ -130,8 +130,8 @@ Measures **visual stability**: how much visible content moves unexpectedly durin
 | | Lab | Field |
 |--|-----|-------|
 | **Consistency** | Reproducible, controlled | Varies by device, network, location |
-| **Debugging** | Easy -- you control the environment | Hard -- aggregate data only |
-| **Reflects real users** | No -- tests one device/network | Yes -- actual user experiences |
+| **Debugging** | Easy - you control the environment | Hard - aggregate data only |
+| **Reflects real users** | No - tests one device/network | Yes - actual user experiences |
 | **Use for** | Development, debugging, CI gates | Monitoring, trending, SEO impact |
 
 Always look at both. Lab catches regressions during development; field confirms the impact on real users.
@@ -144,8 +144,8 @@ Images are typically the heaviest assets on a page. Optimizing them has the bigg
 
 | Format | Use for | Savings vs JPEG |
 |--------|---------|----------------|
-| **WebP** | Photos, illustrations | ~25--35% smaller |
-| **AVIF** | Photos (best compression) | ~40--50% smaller |
+| **WebP** | Photos, illustrations | ~25-35% smaller |
+| **AVIF** | Photos (best compression) | ~40-50% smaller |
 | **SVG** | Icons, logos, illustrations | Scalable, tiny for simple shapes |
 | **PNG** | Screenshots, images with transparency | Lossless but large |
 
@@ -184,12 +184,12 @@ Serve different sizes for different viewports:
 
 ### Image best practices
 
-- **Always set dimensions** -- `width` and `height` attributes prevent CLS
-- **Lazy-load below-the-fold images** -- `loading="lazy"` on `<img>`
-- **Do NOT lazy-load the LCP image** -- it must load immediately
+- **Always set dimensions** - `width` and `height` attributes prevent CLS
+- **Lazy-load below-the-fold images** - `loading="lazy"` on `<img>`
+- **Do NOT lazy-load the LCP image** - it must load immediately
 - **Use `fetchpriority="high"`** on the LCP image
 - **Use `decoding="async"`** on non-critical images
-- **Compress images** -- aim for 80--85% quality, rarely noticeable below that
+- **Compress images** - aim for 80-85% quality, rarely noticeable below that
 - **Use an image CDN** (Cloudinary, imgix, Vercel Image Optimization) for automatic resizing and format conversion
 
 ## Fonts
@@ -200,8 +200,8 @@ Web fonts can cause both layout shifts (CLS) and render delays (LCP).
 
 | Value | Behavior | CLS risk |
 |-------|----------|----------|
-| `swap` | Show fallback immediately, swap when loaded | Medium -- text reflows on swap |
-| `optional` | Show fallback, use web font only if already cached | None -- no swap |
+| `swap` | Show fallback immediately, swap when loaded | Medium - text reflows on swap |
+| `optional` | Show fallback, use web font only if already cached | None - no swap |
 | `fallback` | Brief invisible period (100ms), then fallback, then swap | Low |
 | `block` | Invisible text for up to 3 seconds | None, but FOIT (flash of invisible text) |
 
@@ -215,10 +215,10 @@ Web fonts can cause both layout shifts (CLS) and render delays (LCP).
       href="/fonts/inter-v13-latin-400.woff2" crossorigin>
 ```
 
-- **Self-host fonts** instead of loading from Google Fonts -- avoids a DNS lookup, connection, and the Google Fonts CSS file
-- **Use WOFF2** -- best compression, supported by all modern browsers
-- **Subset fonts** -- include only the character sets you need (latin, latin-ext)
-- **Limit font weights** -- every weight is a separate file; use 2--3 weights maximum
+- **Self-host fonts** instead of loading from Google Fonts - avoids a DNS lookup, connection, and the Google Fonts CSS file
+- **Use WOFF2** - best compression, supported by all modern browsers
+- **Subset fonts** - include only the character sets you need (latin, latin-ext)
+- **Limit font weights** - every weight is a separate file; use 2-3 weights maximum
 
 ### Preventing layout shift from fonts
 
@@ -291,7 +291,7 @@ A **long task** is any JavaScript execution that takes longer than 50ms, blockin
 - Break large loops with `requestIdleCallback` or `scheduler.yield()`
 - Defer non-critical work to after the page loads
 - Use Web Workers for CPU-intensive computation (parsing, sorting, image processing)
-- Profile with Chrome DevTools Performance panel -- look for long yellow bars
+- Profile with Chrome DevTools Performance panel - look for long yellow bars
 
 ## CSS
 
@@ -316,9 +316,9 @@ Tools like `critical` (npm) extract critical CSS automatically.
 
 ### Reducing CSS
 
-- **Remove unused CSS** -- tools: PurgeCSS, Tailwind's built-in purge, Coverage tab in Chrome DevTools
-- **Avoid `@import`** in CSS files -- it creates sequential requests; use bundler imports instead
-- **Use `content-visibility: auto`** on below-the-fold sections -- skips rendering until the element is near the viewport
+- **Remove unused CSS** - tools: PurgeCSS, Tailwind's built-in purge, Coverage tab in Chrome DevTools
+- **Avoid `@import`** in CSS files - it creates sequential requests; use bundler imports instead
+- **Use `content-visibility: auto`** on below-the-fold sections - skips rendering until the element is near the viewport
 
 ### Avoiding render-blocking CSS
 
@@ -396,9 +396,9 @@ flowchart LR
 
 CDNs cache content at edge locations close to users. Benefits:
 
-- **Lower latency** -- content served from a nearby server
-- **Reduced origin load** -- the origin handles fewer requests
-- **DDoS protection** -- CDN absorbs traffic spikes
+- **Lower latency** - content served from a nearby server
+- **Reduced origin load** - the origin handles fewer requests
+- **DDoS protection** - CDN absorbs traffic spikes
 
 Set appropriate `Cache-Control` headers so the CDN knows what to cache and for how long.
 
@@ -423,8 +423,8 @@ Users always get an instant response; freshness is maintained in the background.
 | Protocol | Key improvement |
 |----------|----------------|
 | **HTTP/1.1** | One request per connection (or limited pipelining) |
-| **HTTP/2** | Multiplexing -- many requests over one connection |
-| **HTTP/3** | QUIC (UDP-based) -- faster connection setup, better on lossy networks |
+| **HTTP/2** | Multiplexing - many requests over one connection |
+| **HTTP/3** | QUIC (UDP-based) - faster connection setup, better on lossy networks |
 
 With HTTP/2+, techniques like domain sharding and CSS sprites are **no longer needed** (they can actually hurt). Focus on reducing the total number of bytes instead.
 
@@ -432,7 +432,7 @@ With HTTP/2+, techniques like domain sharding and CSS sprites are **no longer ne
 
 | Algorithm | Compression ratio | Browser support |
 |-----------|------------------|-----------------|
-| **Brotli** | Best (~15--25% smaller than gzip) | All modern browsers |
+| **Brotli** | Best (~15-25% smaller than gzip) | All modern browsers |
 | **gzip** | Good | Universal |
 
 Most servers and CDNs support both. Brotli is the default choice for static assets.
@@ -523,22 +523,22 @@ These guides cover performance in the context of specific platforms used in this
 
 **AEM:**
 
-- [Dispatcher Configuration](/aem/infrastructure/dispatcher-configuration) -- caching at the Dispatcher layer
-- [Performance](/aem/infrastructure/performance) -- AEM-specific performance optimization
+- [Dispatcher Configuration](/aem/infrastructure/dispatcher-configuration) - caching at the Dispatcher layer
+- [Performance](/aem/infrastructure/performance) - AEM-specific performance optimization
 
 **Strapi:**
 
-- [Performance and Caching](/strapi/performance-and-caching) -- API response caching, database optimization
+- [Performance and Caching](/strapi/performance-and-caching) - API response caching, database optimization
 
 **JavaScript:**
 
-- [Performance Basics](/javascript/performance-basics) -- client-side JavaScript performance patterns
+- [Performance Basics](/javascript/performance-basics) - client-side JavaScript performance patterns
 
 ## Summary
 
 | Area | Key takeaway |
 |------|-------------|
-| **Core Web Vitals** | LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1 -- measure both lab and field |
+| **Core Web Vitals** | LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1 - measure both lab and field |
 | **Images** | Use WebP/AVIF, responsive srcset, lazy-load (except LCP), always set dimensions |
 | **Fonts** | Self-host WOFF2, preload critical font, `font-display: optional` for zero CLS |
 | **JavaScript** | Code-split, `defer` scripts, break long tasks, tree-shake unused code |

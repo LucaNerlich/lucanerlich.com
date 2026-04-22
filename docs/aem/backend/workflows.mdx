@@ -75,7 +75,7 @@ This section bridges the business view and the technical implementation.
 
 ### Workflow models
 
-A workflow **model** is the blueprint -- the reusable definition of steps, routes, and logic. Models are
+A workflow **model** is the blueprint - the reusable definition of steps, routes, and logic. Models are
 stored in the JCR under:
 
 ```text
@@ -88,7 +88,7 @@ When you edit a model in the Workflow Editor, AEM creates a new version and sync
 
 ### Workflow instances
 
-When a workflow model is **started** against a payload, AEM creates a workflow **instance** -- a running
+When a workflow model is **started** against a payload, AEM creates a workflow **instance** - a running
 copy that tracks the current step, participant assignments, and metadata.
 
 ```text
@@ -187,7 +187,7 @@ Steps to create a new model:
 7. Click **Sync** to publish the model to `/var/workflow/models/`
 
 :::tip
-Always click **Sync** after editing. The workflow editor works on a draft version -- changes are not
+Always click **Sync** after editing. The workflow editor works on a draft version - changes are not
 active until you sync.
 :::
 
@@ -607,11 +607,11 @@ The **DAM Update Asset** workflow is AEM's built-in pipeline for processing uplo
 automatically when a new asset is added or an existing asset is replaced.
 
 Default steps include:
-1. **Metadata extraction** -- reads EXIF, IPTC, XMP data from the file
-2. **Rendition generation** -- creates thumbnails and web-optimized renditions
-3. **Sub-asset extraction** -- extracts pages from PDFs, slides from presentations
-4. **XMP writeback** -- writes AEM metadata changes back into the binary
-5. **Full-text extraction** -- indexes text content for search
+1. **Metadata extraction** - reads EXIF, IPTC, XMP data from the file
+2. **Rendition generation** - creates thumbnails and web-optimized renditions
+3. **Sub-asset extraction** - extracts pages from PDFs, slides from presentations
+4. **XMP writeback** - writes AEM metadata changes back into the binary
+5. **Full-text extraction** - indexes text content for search
 
 ### Customising DAM workflows
 
@@ -723,12 +723,12 @@ over time. Configure regular purging:
 If your workflow modifies the payload (e.g. sets a property), the modification can re-trigger the launcher,
 creating an infinite loop. Prevent this by:
 
-1. **`excludeList`** -- list properties that should not re-trigger the launcher:
+1. **`excludeList`** - list properties that should not re-trigger the launcher:
 ```text
 jcr:lastModified,cq:lastModified,jcr:lastModifiedBy,cq:lastRolledout
    ```
-2. **Conditions** -- add a condition to the launcher that checks for a "processed" flag
-3. **Workflow logic** -- have your process step set a flag property, and check for it before re-processing
+2. **Conditions** - add a condition to the launcher that checks for a "processed" flag
+3. **Workflow logic** - have your process step set a flag property, and check for it before re-processing
 
 ### Avoid long-running process steps
 
@@ -813,7 +813,7 @@ class AutoTagProcessStepTest {
 
 | Feature | AEM 6.5 (on-prem/AMS) | AEM as a Cloud Service |
 |---------|----------------------|------------------------|
-| Custom DAM processing steps | Supported | Not supported -- use Asset Compute |
+| Custom DAM processing steps | Supported | Not supported - use Asset Compute |
 | Workflow model editor | Available | Available |
 | Custom process steps | Supported | Supported (for non-DAM workflows) |
 | Workflow launchers | File-based and UI | Same |

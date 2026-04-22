@@ -60,7 +60,7 @@ You can extend the core controller by passing a function that receives the paren
 
 > **How `super` works here:** The code below uses `super.find(ctx)` inside an object literal, which normally would not
 > work in JavaScript. Strapi's `createCoreController` factory wires `super` to the default core controller methods
-> behind the scenes. This is **not** standard JS prototypal inheritance -- it is a Strapi-specific mechanism. Just know
+> behind the scenes. This is **not** standard JS prototypal inheritance - it is a Strapi-specific mechanism. Just know
 > that `super.find()`, `super.findOne()`, `super.create()`, etc. call the original built-in CRUD actions.
 
 ```javascript
@@ -194,10 +194,10 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
 }));
 ```
 
-Custom actions need custom routes to be accessible -- we will add those in the next chapter.
+Custom actions need custom routes to be accessible - we will add those in the next chapter.
 
 > **Tip:** Strapi 5 also provides a `findFirst()` method on the Document Service. It returns the first document matching
-> your filters -- ideal for slug-based lookups:
+> your filters - ideal for slug-based lookups:
 >
 > ```javascript
 > const post = await strapi.documents("api::post.post").findFirst({
@@ -417,7 +417,7 @@ The `this.sanitizeOutput()` method:
 
 Always sanitize when returning data from custom actions.
 
-## Practical example -- complete Post controller
+## Practical example - complete Post controller
 
 Here is a full example combining everything:
 
@@ -519,8 +519,8 @@ You learned:
 - **Output sanitization** to respect privacy and permissions
 - The principle of **thin controllers, fat services**
 
-The custom actions we created (featured posts, find by slug, related posts) are not accessible yet -- they need routes.
+The custom actions we created (featured posts, find by slug, related posts) are not accessible yet - they need routes.
 That is what the next chapter covers.
 
-Next up: [Routes, Policies & Middleware](./08-routes-policies-middleware.md) -- mapping custom URLs to controller
+Next up: [Routes, Policies & Middleware](./08-routes-policies-middleware.md) - mapping custom URLs to controller
 actions, access control policies, and request/response middleware.

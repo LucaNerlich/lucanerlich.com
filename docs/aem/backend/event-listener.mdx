@@ -296,7 +296,7 @@ Combine multiple types using bitwise OR: `Event.NODE_ADDED | Event.PROPERTY_CHAN
 
 :::warning
 JCR observation requires an **open JCR session** for the lifetime of the listener. You must manage
-this session carefully -- open it in `@Activate` and close it in `@Deactivate`. Use a **service user**
+this session carefully - open it in `@Activate` and close it in `@Deactivate`. Use a **service user**
 for this session, never an admin session.
 :::
 
@@ -743,13 +743,13 @@ events originating from other cluster nodes. Without it, you only see local chan
 
 ## EventHandler vs Sling Jobs
 
-OSGi events are **fire-and-forget** -- if the instance crashes or the handler throws an exception,
+OSGi events are **fire-and-forget** - if the instance crashes or the handler throws an exception,
 the event is lost. For operations that **must** complete (sending an email, updating an external
 system, writing to the JCR), use **Sling Jobs** instead.
 
 | Feature | OSGi EventHandler | Sling Job |
 |---------|------------------|-----------|
-| Delivery guarantee | **None** -- events can be lost | **At least once** -- jobs are persisted and retried |
+| Delivery guarantee | **None** - events can be lost | **At least once** - jobs are persisted and retried |
 | Retry on failure | No | Yes (configurable retries, backoff) |
 | Cluster awareness | Fires on every node | Executes on **one** node only |
 | Persistence | In-memory only | Persisted to JCR |
@@ -858,8 +858,8 @@ sequenceDiagram
 Key points about the lifecycle:
 - `@Activate` is called when the component is registered
 - `@Modified` fires when OSGi configuration changes (no restart needed)
-- `@Deactivate` is called when the component is unregistered -- clean up resources here
-- `handleEvent()` runs on the **Event Admin thread pool** -- avoid blocking operations
+- `@Deactivate` is called when the component is unregistered - clean up resources here
+- `handleEvent()` runs on the **Event Admin thread pool** - avoid blocking operations
 
 ---
 
@@ -906,8 +906,8 @@ The `EventAdmin` service provides two methods:
 
 | Method | Behaviour |
 |--------|-----------|
-| `eventAdmin.sendEvent(event)` | **Synchronous** -- blocks until all handlers finish |
-| `eventAdmin.postEvent(event)` | **Asynchronous** -- returns immediately, handlers run in background |
+| `eventAdmin.sendEvent(event)` | **Synchronous** - blocks until all handlers finish |
+| `eventAdmin.postEvent(event)` | **Asynchronous** - returns immediately, handlers run in background |
 
 Prefer `postEvent()` unless you specifically need synchronous processing.
 
@@ -975,7 +975,7 @@ instance.
 | Pitfall | Solution |
 |---------|----------|
 | Handler fires too often (event storm) | Add path filtering, debounce, or move to Sling Jobs |
-| Missing events after restart | OSGi events are not persisted -- use Sling Jobs for guaranteed delivery |
+| Missing events after restart | OSGi events are not persisted - use Sling Jobs for guaranteed delivery |
 | Handler modifies content and triggers itself | Check `event.getProperty(PROPERTY_USERID)` or use a flag path to prevent recursion |
 | Slow handler blocks all event processing | Keep `handleEvent()` fast; delegate heavy work to Sling Jobs |
 | JCR session leak in observation listener | Always close the session in `@Deactivate` |
@@ -1032,13 +1032,13 @@ println "Event posted"
 
 ## See also
 
-- [Replication and Activation](../content/replication-activation.mdx) -- replication events
-- [Workflows](./workflows.mdx) -- process-driven automation
-- [Servlets](./servlets.mdx) -- handling HTTP requests
-- [Filters](./filter.mdx) -- request/response interceptors
+- [Replication and Activation](../content/replication-activation.mdx) - replication events
+- [Workflows](./workflows.mdx) - process-driven automation
+- [Servlets](./servlets.mdx) - handling HTTP requests
+- [Filters](./filter.mdx) - request/response interceptors
 - [Sling Models](./sling-models.mdx)
-- [OSGi Configuration](./osgi-configuration.mdx) -- configuring handlers via run modes
+- [OSGi Configuration](./osgi-configuration.mdx) - configuring handlers via run modes
 - [Java Best Practices](./java-best-practices.mdx)
-- [Sling Jobs and Schedulers](./sling-jobs.md) -- guaranteed background processing
+- [Sling Jobs and Schedulers](./sling-jobs.md) - guaranteed background processing
 - [Security](../infrastructure/security.mdx)
-- [Groovy Console](../groovy-console.mdx) -- testing event handlers
+- [Groovy Console](../groovy-console.mdx) - testing event handlers

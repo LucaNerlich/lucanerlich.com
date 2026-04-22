@@ -27,7 +27,7 @@ uses them through proxy components (chapter 8).
 
 | Component               | What it does                                                 |
 |-------------------------|--------------------------------------------------------------|
-| **Title**               | Heading (H1--H6) with link option                            |
+| **Title**               | Heading (H1-H6) with link option                            |
 | **Text**                | Rich text content                                            |
 | **Image**               | Responsive images with lazy loading                          |
 | **Button**              | Link button with label and icon                              |
@@ -79,10 +79,10 @@ flowchart TD
 
 The header typically contains:
 
-- **Logo** -- linked to the homepage
-- **Navigation** -- the Navigation Core Component
-- **Language switcher** -- the Language Navigation component
-- **Search** -- optional search component
+- **Logo** - linked to the homepage
+- **Navigation** - the Navigation Core Component
+- **Language switcher** - the Language Navigation component
+- **Search** - optional search component
 
 The header is defined as a **locked component** in the template structure. It reads content from a dedicated header
 Experience Fragment or from page properties.
@@ -124,10 +124,10 @@ Let's build a homepage step by step:
 
 Add a **Container** component to create a content section. Inside it:
 
-1. **Title** component -- "Latest Articles"
-2. **List** component -- configured to show child pages from `/content/mysite/en/blog`, sorted by date, limited to 3
+1. **Title** component - "Latest Articles"
+2. **List** component - configured to show child pages from `/content/mysite/en/blog`, sorted by date, limited to 3
    items
-3. **Button** component -- "View All Articles" linking to the blog listing page
+3. **Button** component - "View All Articles" linking to the blog listing page
 
 ### 4. Use layout mode for responsive design
 
@@ -163,11 +163,11 @@ Click the **Page Information** button (top left) > **Open Properties**:
 
 In the page editor:
 
-1. **Title** -- Article title (auto-populated from page title)
-2. **Image** -- Featured image
-3. **Text** -- Article body with rich text formatting
-4. **Accordion** -- FAQ section at the bottom
-5. **Teaser** -- Related articles at the bottom
+1. **Title** - Article title (auto-populated from page title)
+2. **Image** - Featured image
+3. **Text** - Article body with rich text formatting
+4. **Accordion** - FAQ section at the bottom
+5. **Teaser** - Related articles at the bottom
 
 ### 4. Preview and publish
 
@@ -222,7 +222,7 @@ public class ArticlePageModel {
 > }
 > ```
 
-## Troubleshooting -- page assembly issues
+## Troubleshooting - page assembly issues
 
 | Symptom                                 | First check                                        | Typical fix                                           |
 |-----------------------------------------|----------------------------------------------------|-------------------------------------------------------|
@@ -288,8 +288,8 @@ When you update the fragment, all pages automatically reflect the change.
 
 ### Quick edit vs dialog
 
-- **Quick edit** -- click the component once to edit text inline
-- **Dialog** -- click the wrench icon or double-click for the full configuration dialog
+- **Quick edit** - click the component once to edit text inline
+- **Dialog** - click the wrench icon or double-click for the full configuration dialog
 
 ### Preview vs Edit mode
 
@@ -311,8 +311,8 @@ Toggle between modes in the page toolbar:
 
 You learned:
 
-- **Core Components** -- the standard library of production-ready components
-- **Page anatomy** -- header, main content area, footer
+- **Core Components** - the standard library of production-ready components
+- **Page anatomy** - header, main content area, footer
 - Building a **homepage** with Hero, Lists, and responsive layout
 - Building an **article page** with content components and page properties
 - Accessing **page properties** in Sling Models
@@ -320,8 +320,8 @@ You learned:
 - **Experience Fragments** for reusable content blocks
 - **Authoring tips** for content editors
 
-Your site now has pages with content. The next chapter moves to headless -- delivering content as structured data via
+Your site now has pages with content. The next chapter moves to headless - delivering content as structured data via
 Content Fragments and GraphQL.
 
-Next up: [Content Fragments & GraphQL](./11-content-fragments-and-graphql.md) -- Content Fragment Models, creating
+Next up: [Content Fragments & GraphQL](./11-content-fragments-and-graphql.md) - Content Fragment Models, creating
 fragments, the AEM GraphQL API, persisted queries, and headless content delivery.

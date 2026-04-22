@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.1] - 2026-04-22
+
+### Changed
+- Docs-wide typography cleanup — replaced the `--` em-dash substitute with a single `-` across 217 docs files, while preserving frontmatter delimiters, fenced code blocks (including mermaid arrows and CLI flags), inline code spans, table separators, and HTML comment delimiters
+
 ## [1.9.0] - 2026-04-21
 
 ### Added

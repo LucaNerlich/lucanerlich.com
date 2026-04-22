@@ -9,7 +9,7 @@ tags: [aem, caconfig, osgi, configuration]
 **Sling Context-Aware Configuration** (CA Config) lets you store configuration values
 in the content tree so they resolve differently depending on the content context. Unlike
 OSGi configurations (which are global or per-run-mode), CA Config values are
-**site-specific, tenant-specific, or even page-specific** -- without any code branching.
+**site-specific, tenant-specific, or even page-specific** - without any code branching.
 
 Use cases:
 
@@ -210,7 +210,7 @@ Expose the config values through your Sling Model and use them in HTL:
 
 :::tip Always set `@ context` inside `<script>`
 HTL's auto-context detection usually picks `scriptString` inside `<script>` tags, but set it
-explicitly to be safe -- a value that slips through unescaped can break out of the string literal
+explicitly to be safe - a value that slips through unescaped can break out of the string literal
 and execute arbitrary JavaScript. For JSON payloads use `@ context="scriptToken"` or render the
 value via a `<meta>` tag instead.
 :::
@@ -323,10 +323,10 @@ site or tenant, use CA Config.
 Most enterprise AEM projects use the [wcm.io CA Config extensions](https://wcm.io/caconfig/),
 which add:
 
-- **Context path strategies** -- more flexible lookup (absolute parent level, root template)
-- **Persistence strategies** -- storing configs in `/conf` with AEM-compatible structure
-- **Editor UI** -- a page-level configuration editor for authors
-- **Override support** -- system-wide overrides via OSGi
+- **Context path strategies** - more flexible lookup (absolute parent level, root template)
+- **Persistence strategies** - storing configs in `/conf` with AEM-compatible structure
+- **Editor UI** - a page-level configuration editor for authors
+- **Override support** - system-wide overrides via OSGi
 
 ### Installation
 
@@ -464,8 +464,8 @@ belong in OSGi configurations.
 
 ## See also
 
-- [OSGi Configuration](./osgi-configuration.mdx) -- global/run-mode configuration
-- [Sling Models and Services](./sling-models.mdx) -- injecting CA Config into models
-- [Multi-Tenancy UI Frontend](../ui/multi-tenancy-support-ui-frontend.mdx) -- multi-tenant patterns
-- [Architecture](../architecture.mdx) -- how configuration fits into AEM's layers
-- [Templates and Policies](../components/templates-policies.md) -- template-level configuration
+- [OSGi Configuration](./osgi-configuration.mdx) - global/run-mode configuration
+- [Sling Models and Services](./sling-models.mdx) - injecting CA Config into models
+- [Multi-Tenancy UI Frontend](../ui/multi-tenancy-support-ui-frontend.mdx) - multi-tenant patterns
+- [Architecture](../architecture.mdx) - how configuration fits into AEM's layers
+- [Templates and Policies](../components/templates-policies.md) - template-level configuration

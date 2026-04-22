@@ -83,7 +83,7 @@ You can also reference a stage by its zero-indexed position number, but naming s
 
 ---
 
-## COPY --from
+## COPY -from
 
 `COPY --from` is the mechanism that transfers artefacts between stages.
 

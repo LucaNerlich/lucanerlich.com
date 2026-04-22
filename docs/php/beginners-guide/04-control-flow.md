@@ -17,7 +17,7 @@ sidebar_position: 4
 
 So far you have learned how to store data in variables and how to combine values with operators. But programs would be
 useless if they always did the same thing. You need your code to **make decisions** and **repeat actions**. That is what
-**control flow** is about -- directing the path your program takes based on conditions, and running blocks of code
+**control flow** is about - directing the path your program takes based on conditions, and running blocks of code
 multiple times.
 
 ## What is control flow?
@@ -25,9 +25,9 @@ multiple times.
 Control flow is the order in which statements are executed. By default, PHP runs your code from top to bottom, one line
 at a time. Control flow structures let you:
 
-- **Branch** -- choose between different paths (e.g., "if the user is logged in, show the dashboard; otherwise show the
+- **Branch** - choose between different paths (e.g., "if the user is logged in, show the dashboard; otherwise show the
   login form")
-- **Loop** -- repeat a block of code (e.g., "display each item in the shopping cart")
+- **Loop** - repeat a block of code (e.g., "display each item in the shopping cart")
 
 Without control flow, every program would execute the same sequence of statements every time. With it, you can build
 applications that respond to user input, process lists of data, and handle different situations.
@@ -59,9 +59,9 @@ If the condition is true, PHP executes the block. If it is false, PHP skips the 
 
 ### Indentation and braces
 
-Always indent the code inside the braces. Use four spaces consistently. The braces `{` and `}` define the **block** --
+Always indent the code inside the braces. Use four spaces consistently. The braces `{` and `}` define the **block** -
 everything between them runs only when the condition is true. For a single statement, PHP allows you to omit braces,
-but you should **always use them** -- it prevents bugs when you add more lines later:
+but you should **always use them** - it prevents bugs when you add more lines later:
 
 ```php
 <?php
@@ -120,7 +120,7 @@ PHP evaluates the conditions from top to bottom. As soon as one is true, that bl
 `else` block (if present) runs only when **all** previous conditions are false.
 
 > **Tip:** Order your conditions from most specific to least specific. If you put `$grade >= 60` first, it would match
-> 90, 80, and 70 too -- and the later conditions would never run.
+> 90, 80, and 70 too - and the later conditions would never run.
 
 ## Truthy and falsy recap
 
@@ -138,7 +138,7 @@ PHP treats certain values as falsy:
 | `null`             | falsy              |
 | Everything else    | truthy             |
 
-So you can write `if ($name)` -- an empty string is falsy, so the `else` block runs. For explicit checks, many
+So you can write `if ($name)` - an empty string is falsy, so the `else` block runs. For explicit checks, many
 developers prefer `if ($name !== '')` or `if ($name !== null)` to make the intent clearer.
 
 ## switch statement
@@ -177,7 +177,7 @@ switch ($day) {
 
 ### The break keyword
 
-**You must use `break`** to stop execution and exit the switch. Without it, PHP **falls through** to the next case --
+**You must use `break`** to stop execution and exit the switch. Without it, PHP **falls through** to the next case -
 execution continues into the following cases until it hits a `break`. Fall-through is rarely what you want. Forgetting
 `break` is a common bug. Sometimes developers intentionally omit it when multiple cases should run the same code (like
 `Saturday` and `Sunday` in the earlier example).
@@ -208,10 +208,10 @@ switch ($command) {
 
 PHP 8 introduced the `match` expression as a modern alternative to `switch`. It has important differences:
 
-1. **Strict comparison** -- `match` uses `===`, so `'1'` and `1` are not the same
-2. **Returns a value** -- you can assign the result to a variable
-3. **No fall-through** -- each arm runs independently; no `break` needed
-4. **Exhaustive** -- if no case matches and there is no default, PHP throws an error
+1. **Strict comparison** - `match` uses `===`, so `'1'` and `1` are not the same
+2. **Returns a value** - you can assign the result to a variable
+3. **No fall-through** - each arm runs independently; no `break` needed
+4. **Exhaustive** - if no case matches and there is no default, PHP throws an error
 
 ```php
 <?php
@@ -298,7 +298,7 @@ do {
 echo 'You entered yes.';
 ```
 
-Use `do-while` when you need to execute the block at least once before checking -- for example, when prompting for
+Use `do-while` when you need to execute the block at least once before checking - for example, when prompting for
 input until the user provides a valid value.
 
 ## for loop
@@ -321,11 +321,11 @@ for (initialization; condition; increment) {
 }
 ```
 
-1. **Initialization** (`$i = 0`) -- runs once before the loop starts
-2. **Condition** (`$i < 5`) -- checked before each iteration; if false, the loop stops
-3. **Increment** (`$i++`) -- runs after each iteration
+1. **Initialization** (`$i = 0`) - runs once before the loop starts
+2. **Condition** (`$i < 5`) - checked before each iteration; if false, the loop stops
+3. **Increment** (`$i++`) - runs after each iteration
 
-The `for` loop is ideal when you know how many times you want to repeat -- for example, iterating a fixed number of
+The `for` loop is ideal when you know how many times you want to repeat - for example, iterating a fixed number of
 times or over a range of indices.
 
 ## foreach loop
@@ -374,7 +374,7 @@ The syntax is `foreach ($array as $key => $value)`. For indexed arrays, the key 
 
 Sometimes you want to exit a loop early or skip an iteration. Use `break` and `continue`:
 
-### break -- exit the loop
+### break - exit the loop
 
 `break` immediately stops the loop and continues execution after it:
 
@@ -394,7 +394,7 @@ foreach ($numbers as $n) {
 echo $found ? 'Found 9' : '9 not found';
 ```
 
-### continue -- skip to the next iteration
+### continue - skip to the next iteration
 
 `continue` skips the rest of the current iteration and jumps to the next one:
 
@@ -521,17 +521,17 @@ This example shows:
 ## Summary
 
 - **Control flow** lets your program branch (make decisions) and loop (repeat actions)
-- **if/else/elseif** -- use for conditional execution; always use braces and order conditions from most to least specific
-- **switch** -- use for many values of one variable; remember `break` to avoid fall-through; include `default` for
+- **if/else/elseif** - use for conditional execution; always use braces and order conditions from most to least specific
+- **switch** - use for many values of one variable; remember `break` to avoid fall-through; include `default` for
   safety
-- **match** (PHP 8) -- strict comparison, returns a value, no fall-through; use when you need to assign a result
-- **while** -- repeats while a condition is true; ensure the condition can become false to avoid infinite loops
-- **do-while** -- like while but runs at least once; useful for input validation
-- **for** -- classic counting loop with initialization, condition, and increment
-- **foreach** -- the most common loop in PHP; iterates over arrays with `as $value` or `as $key => $value`
-- **break** -- exit a loop (or switch) immediately
-- **continue** -- skip to the next iteration of a loop
-- **Nesting** -- you can nest control structures; refactor into functions when nesting gets deep
+- **match** (PHP 8) - strict comparison, returns a value, no fall-through; use when you need to assign a result
+- **while** - repeats while a condition is true; ensure the condition can become false to avoid infinite loops
+- **do-while** - like while but runs at least once; useful for input validation
+- **for** - classic counting loop with initialization, condition, and increment
+- **foreach** - the most common loop in PHP; iterates over arrays with `as $value` or `as $key => $value`
+- **break** - exit a loop (or switch) immediately
+- **continue** - skip to the next iteration of a loop
+- **Nesting** - you can nest control structures; refactor into functions when nesting gets deep
 
-Next up: [Functions](./05-functions.md) -- defining reusable blocks of code, parameters, return values, type
+Next up: [Functions](./05-functions.md) - defining reusable blocks of code, parameters, return values, type
 declarations, and anonymous functions.

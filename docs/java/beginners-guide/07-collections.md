@@ -16,9 +16,9 @@ sidebar_position: 7
 # Collections
 
 Arrays have a fixed size. Collections are dynamic data structures that grow and shrink as needed. The Java Collections
-Framework provides `List`, `Set`, and `Map` -- the three data structures you will use in almost every program.
+Framework provides `List`, `Set`, and `Map` - the three data structures you will use in almost every program.
 
-## Arrays -- a quick recap
+## Arrays - a quick recap
 
 Arrays are fixed-size, typed containers:
 
@@ -44,7 +44,7 @@ Result:
 
 Arrays are fine for fixed-size data. When you need to add, remove, or search dynamically, use collections.
 
-## Generics -- type parameters
+## Generics - type parameters
 
 Collections use **generics** to specify what type they hold:
 
@@ -70,7 +70,7 @@ Ada
 The `<String>` part is the **type parameter**. It tells the compiler what the list contains, catching errors at compile
 time instead of runtime.
 
-**Note:** generics work with objects only -- you cannot use primitives (`int`, `double`, etc.). Use wrapper classes (
+**Note:** generics work with objects only - you cannot use primitives (`int`, `double`, etc.). Use wrapper classes (
 `Integer`, `Double`) instead:
 
 ```java
@@ -79,7 +79,7 @@ numbers.add(42);     // autoboxing: int → Integer
 int value = numbers.get(0); // unboxing: Integer → int
 ```
 
-## `ArrayList` -- dynamic arrays
+## `ArrayList` - dynamic arrays
 
 The most commonly used collection. An ordered, resizable list:
 
@@ -240,7 +240,7 @@ Result:
 [Person[name=Ada, age=36], Person[name=Bob, age=17], Person[name=Charlie, age=25]]
 ```
 
-## `HashMap` -- key-value pairs
+## `HashMap` - key-value pairs
 
 A map stores key-value pairs. Keys are unique; values can repeat:
 
@@ -365,7 +365,7 @@ for (String word : words) {
 }
 ```
 
-## `HashSet` -- unique elements
+## `HashSet` - unique elements
 
 A set stores unique values with no duplicates and no guaranteed order:
 
@@ -445,7 +445,7 @@ Result:
 
 ## Immutable collections
 
-Collections created with `List.of`, `Set.of`, and `Map.of` are **immutable** -- they cannot be modified:
+Collections created with `List.of`, `Set.of`, and `Map.of` are **immutable** - they cannot be modified:
 
 ```java
 List<String> immutable = List.of("a", "b", "c");
@@ -529,12 +529,12 @@ the [Collections deep dive](../collections.md).
 
 ## Summary
 
-- **`ArrayList`** -- the go-to ordered, resizable list. Use it unless you need something else.
-- **`HashMap`** -- key-value lookup in O(1). Use `getOrDefault` and `merge` for clean code.
-- **`HashSet`** -- stores unique elements. Good for membership tests and deduplication.
+- **`ArrayList`** - the go-to ordered, resizable list. Use it unless you need something else.
+- **`HashMap`** - key-value lookup in O(1). Use `getOrDefault` and `merge` for clean code.
+- **`HashSet`** - stores unique elements. Good for membership tests and deduplication.
 - **Generics** (`<String>`, `<Integer>`) enforce type safety at compile time.
 - **Immutable collections** (`List.of`, `Map.of`, `Set.of`) prevent accidental modification.
 - **`Collections`** utility class provides sort, shuffle, min, max, and more.
 - Use `for-each` or `forEach` with lambdas to iterate.
 
-Next up: [Error Handling](./08-error-handling.md) -- dealing with things that go wrong.
+Next up: [Error Handling](./08-error-handling.md) - dealing with things that go wrong.

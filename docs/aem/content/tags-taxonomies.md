@@ -45,7 +45,7 @@ graph TD
 
 ### Namespaces
 
-Every tag belongs to a **namespace** -- a top-level container that groups related tags.
+Every tag belongs to a **namespace** - a top-level container that groups related tags.
 Namespaces are the direct children of `/content/cq:tags/`:
 
 ```
@@ -611,12 +611,12 @@ handles locale resolution automatically.
 
 ## See also
 
-- [Component Dialogs](../component-dialogs.mdx) -- tag field configuration
-- [Sling Models and Services](../backend/sling-models.mdx) -- TagManager usage
-- [Content Fragments](./content-fragments.md) -- tagging Content Fragments
-- [JCR Queries](./jcr.md) -- QueryBuilder and JCR-SQL2
-- [Custom Dialog Widgets](../ui/custom-dialog-widgets.md) -- dynamic tag DataSources
-- [Groovy Console](../groovy-console.mdx) -- scripted tag management
-- [i18n and Translation](./i18n-translation.md) -- localising tag titles
-- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) -- tag replication via Content Distribution
-- [Multi-Site Manager](./multi-site-manager-msm.md) -- multi-site tag governance
+- [Component Dialogs](../component-dialogs.mdx) - tag field configuration
+- [Sling Models and Services](../backend/sling-models.mdx) - TagManager usage
+- [Content Fragments](./content-fragments.md) - tagging Content Fragments
+- [JCR Queries](./jcr.md) - QueryBuilder and JCR-SQL2
+- [Custom Dialog Widgets](../ui/custom-dialog-widgets.md) - dynamic tag DataSources
+- [Groovy Console](../groovy-console.mdx) - scripted tag management
+- [i18n and Translation](./i18n-translation.md) - localising tag titles
+- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) - tag replication via Content Distribution
+- [Multi-Site Manager](./multi-site-manager-msm.md) - multi-site tag governance

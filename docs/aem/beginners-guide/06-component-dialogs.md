@@ -46,7 +46,7 @@ The dialog lives in `_cq_dialog/.content.xml` inside the component folder.
 
 ## Common field types
 
-### Textfield -- single-line text
+### Textfield - single-line text
 
 ```xml
 <title jcr:primaryType="nt:unstructured"
@@ -58,7 +58,7 @@ The dialog lives in `_cq_dialog/.content.xml` inside the component folder.
        maxlength="100"/>
 ```
 
-### Textarea -- multi-line text
+### Textarea - multi-line text
 
 ```xml
 <description jcr:primaryType="nt:unstructured"
@@ -120,7 +120,7 @@ The dialog lives in `_cq_dialog/.content.xml` inside the component folder.
 </alignment>
 ```
 
-### Path browser -- select a page or asset
+### Path browser - select a page or asset
 
 ```xml
 <link jcr:primaryType="nt:unstructured"
@@ -214,11 +214,11 @@ A common tab pattern:
 
 | Tab          | Fields                                             |
 |--------------|----------------------------------------------------|
-| **Content**  | Title, text, image -- the main content             |
-| **Style**    | Alignment, color, size -- visual configuration     |
-| **Advanced** | ID, CSS class, accessibility -- technical settings |
+| **Content**  | Title, text, image - the main content             |
+| **Style**    | Alignment, color, size - visual configuration     |
+| **Advanced** | ID, CSS class, accessibility - technical settings |
 
-## Multifield -- repeatable field groups
+## Multifield - repeatable field groups
 
 Multifields let authors add multiple items of the same structure:
 
@@ -252,7 +252,7 @@ Multifields let authors add multiple items of the same structure:
 ```
 
 Setting `composite="{Boolean}true"` stores each item as a **child node** with sub-properties. Without `composite`
-(or with `composite="{Boolean}false"`), each item is stored as a **single property value** -- this only works for
+(or with `composite="{Boolean}false"`), each item is stored as a **single property value** - this only works for
 simple, single-field multifields (e.g., a list of strings), not for multi-property items like the example above.
 
 With `composite=true`:
@@ -303,7 +303,7 @@ The `name` attribute on each field controls where the value is stored in the JCR
 
 The `./` prefix means "relative to the current resource" (the component's content node).
 
-## Practical example -- Hero component dialog
+## Practical example - Hero component dialog
 
 A complete dialog for a Hero banner component:
 
@@ -489,7 +489,7 @@ node name used in the parent dialog.
 
 You learned:
 
-- Dialog **structure** -- the nested XML hierarchy of containers, tabs, and fields
+- Dialog **structure** - the nested XML hierarchy of containers, tabs, and fields
 - Common **field types**: textfield, textarea, RTE, numberfield, checkbox, select, pathfield, file upload, datepicker,
   colorfield, hidden
 - **Tabs** for organizing fields into logical groups
@@ -499,5 +499,5 @@ You learned:
 - **Conditional visibility** with the dropdown show/hide pattern
 - **`granite:hide`** for removing inherited dialog fields in proxy components
 
-Next up: [Sling Models](./07-sling-models.md) -- injecting content into Java models, common annotations, adapters,
+Next up: [Sling Models](./07-sling-models.md) - injecting content into Java models, common annotations, adapters,
 exporters, and best practices.

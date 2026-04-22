@@ -49,7 +49,7 @@ Before starting, you need:
 5. Optionally, a **domain name** pointed to your server's IP
 
 If you have not set up a VPS before, the initial server setup (creating a user, SSH keys, firewall) is covered in
-the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx). The steps are identical --
+the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx). The steps are identical -
 follow that guide through Step 2, then return here.
 
 ## Step 1: install Java on the server
@@ -67,7 +67,7 @@ sudo apt update
 sudo apt install openjdk-21-jre-headless -y
 ```
 
-We install `openjdk-21-jre-headless` (not the full JDK) -- the server only needs to **run** Java, not compile it. This
+We install `openjdk-21-jre-headless` (not the full JDK) - the server only needs to **run** Java, not compile it. This
 is a smaller installation.
 
 Verify:
@@ -139,7 +139,7 @@ Result:
 {"status":"ok"}
 ```
 
-Stop the server with `Ctrl+C`. It works -- now let us run it properly as a service.
+Stop the server with `Ctrl+C`. It works - now let us run it properly as a service.
 
 ## Step 3: create a systemd service
 
@@ -184,11 +184,11 @@ WantedBy=multi-user.target
 
 Key settings:
 
-- `User=deploy` -- runs as the deploy user, not root
-- `Restart=on-failure` -- automatically restarts on crashes
-- `WorkingDirectory` -- sets the working directory so `tasks.dat` is stored in `/opt/task-api/`
-- `ReadWritePaths` -- allows writing only to the app directory (systemd security)
-- `JAVA_OPTS` -- JVM memory settings (64MB initial, 256MB max -- more than enough for this app)
+- `User=deploy` - runs as the deploy user, not root
+- `Restart=on-failure` - automatically restarts on crashes
+- `WorkingDirectory` - sets the working directory so `tasks.dat` is stored in `/opt/task-api/`
+- `ReadWritePaths` - allows writing only to the app directory (systemd security)
+- `JAVA_OPTS` - JVM memory settings (64MB initial, 256MB max - more than enough for this app)
 
 ### Enable and start the service
 
@@ -392,7 +392,7 @@ rsync -avz task-api.jar deploy@YOUR_SERVER_IP:/opt/task-api/
 sudo systemctl restart task-api
 ```
 
-Now port 8080 is not accessible from the outside -- only nginx can reach it.
+Now port 8080 is not accessible from the outside - only nginx can reach it.
 
 ## Deploying updates
 
@@ -482,7 +482,7 @@ Healthchecks.io can hit this endpoint periodically and alert you if it goes down
 ## Security checklist
 
 Review the full server hardening steps from
-the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx) -- the same steps apply here:
+the [JavaScript guide's deployment chapter](/javascript/beginners-guide/deploy-vps-nginx) - the same steps apply here:
 
 - [ ] Non-root user with sudo
 - [ ] SSH key authentication (password auth disabled)
@@ -515,24 +515,24 @@ Local machine                          VPS
 You now have a Java REST API running in production. The next two chapters cover **build tools** that make managing
 dependencies, compiling, and packaging much easier:
 
-- [Maven](./13-maven.md) -- the most widely used Java build tool, with Gson for JSON
-- [Gradle](./14-gradle.md) -- the modern alternative, with Jackson for JSON
+- [Maven](./13-maven.md) - the most widely used Java build tool, with Gson for JSON
+- [Gradle](./14-gradle.md) - the modern alternative, with Jackson for JSON
 
 Beyond that, you could:
 
-- **Add a database** -- SQLite for simple apps, PostgreSQL for production
-- **Use a framework** -- Spring Boot, Quarkus, or Micronaut for more features
-- **Add authentication** -- JWT tokens or session-based auth
-- **Containerize with Docker** -- consistent deployments across environments
-- **Set up CI/CD** -- automatic builds and deploys on git push
-- **Add logging** -- structured logging with SLF4J and Logback
-- **Write tests** -- JUnit for unit tests, integration tests for API endpoints
+- **Add a database** - SQLite for simple apps, PostgreSQL for production
+- **Use a framework** - Spring Boot, Quarkus, or Micronaut for more features
+- **Add authentication** - JWT tokens or session-based auth
+- **Containerize with Docker** - consistent deployments across environments
+- **Set up CI/CD** - automatic builds and deploys on git push
+- **Add logging** - structured logging with SLF4J and Logback
+- **Write tests** - JUnit for unit tests, integration tests for API endpoints
 
 ## Summary
 
 - Install `openjdk-21-jre-headless` on the server (runtime only, no compiler needed).
-- **systemd** manages the Java process -- start on boot, restart on crash, centralized logging.
-- **nginx** acts as a reverse proxy -- handles HTTPS, forwards requests to `localhost:8080`.
+- **systemd** manages the Java process - start on boot, restart on crash, centralized logging.
+- **nginx** acts as a reverse proxy - handles HTTPS, forwards requests to `localhost:8080`.
 - **Let's Encrypt** provides free HTTPS certificates with automatic renewal.
 - Bind the Java server to `127.0.0.1` so it is only reachable through nginx.
 - Deploy with a simple `rsync` + `systemctl restart` workflow.

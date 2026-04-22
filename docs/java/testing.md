@@ -381,7 +381,7 @@ void shouldSendWelcomeEmail() {
 
 ### Spies
 
-A spy wraps a real object -- calls go to the real implementation unless stubbed:
+A spy wraps a real object - calls go to the real implementation unless stubbed:
 
 ```java
 @Spy
@@ -549,7 +549,7 @@ void shouldWriteToFile(@TempDir Path tempDir) throws IOException {
 
 ## See also
 
-- [Error Handling](./error-handling.md) -- testing exception scenarios
-- [Dependency Injection](./dependency-injection.md) -- testable code through DI
-- [HTTP Clients](./http-clients.md) -- mocking HTTP calls in tests
-- [JSON Processing](./json-processing.md) -- testing serialisation/deserialisation
+- [Error Handling](./error-handling.md) - testing exception scenarios
+- [Dependency Injection](./dependency-injection.md) - testable code through DI
+- [HTTP Clients](./http-clients.md) - mocking HTTP calls in tests
+- [JSON Processing](./json-processing.md) - testing serialisation/deserialisation

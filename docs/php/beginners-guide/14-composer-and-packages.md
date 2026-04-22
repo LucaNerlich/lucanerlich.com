@@ -27,7 +27,7 @@ Composer is the de facto **dependency manager** for PHP. It downloads packages f
 |---------|---------------|
 | **Don't reinvent the wheel** | Use battle-tested libraries for logging, HTTP, dates, and more instead of writing your own |
 | **Version management** | Specify which versions you need; Composer resolves conflicts and installs compatible versions |
-| **Community packages** | Thousands of packages are maintained by the PHP community -- you get fixes and features without writing code |
+| **Community packages** | Thousands of packages are maintained by the PHP community - you get fixes and features without writing code |
 | **Reproducible builds** | `composer.lock` ensures everyone gets the exact same dependency versions |
 
 Without Composer, you would manually download libraries, place them in your project, and manage `require` paths yourself. Composer automates all of that.
@@ -135,7 +135,7 @@ To add a dev-only dependency (e.g. for testing), use `--dev`:
 composer require --dev phpunit/phpunit
 ```
 
-## composer.lock -- Lock Your Versions
+## composer.lock - Lock Your Versions
 
 After running `composer require` or `composer update`, Composer creates or updates `composer.lock`. This file records the **exact** versions of every installed package.
 
@@ -147,7 +147,7 @@ After running `composer require` or `composer update`, Composer creates or updat
 | **Stability** | No surprise breakages when a maintainer releases a new patch |
 | **Auditability** | You know exactly what is running in production |
 
-> **Tip:** Always commit `composer.lock` to version control for applications. For libraries, some teams omit it -- but for apps, commit it.
+> **Tip:** Always commit `composer.lock` to version control for applications. For libraries, some teams omit it - but for apps, commit it.
 
 ### composer install vs composer update
 
@@ -396,8 +396,8 @@ Packages follow **semantic versioning** (semver): `MAJOR.MINOR.PATCH`. Composer 
 
 ### What ^ and ~ Mean in Practice
 
-- `^1.0` -- "1.0 or higher, but less than 2.0" -- allows minor and patch updates
-- `~1.2` -- "1.2.x" -- allows only patch updates (1.2.0, 1.2.1, etc.)
+- `^1.0` - "1.0 or higher, but less than 2.0" - allows minor and patch updates
+- `~1.2` - "1.2.x" - allows only patch updates (1.2.0, 1.2.1, etc.)
 
 When you run `composer update`, Composer picks the newest version that satisfies your constraints.
 
@@ -427,7 +427,7 @@ It checks your installed packages against a database of known vulnerabilities an
 
 ## Summary
 
-- Composer is the standard PHP dependency manager -- it downloads packages, manages versions, and generates an autoloader
+- Composer is the standard PHP dependency manager - it downloads packages, manages versions, and generates an autoloader
 - Install Composer via Homebrew (macOS), the curl installer (Linux), or the Windows installer; verify with `composer --version`
 - Use `composer init` to create a project; `composer.json` defines metadata, dependencies, and autoloading
 - Use `composer require vendor/package` to add packages; Composer updates `composer.json`, creates `composer.lock`, and installs into `vendor/`
@@ -438,4 +438,4 @@ It checks your installed packages against a database of known vulnerabilities an
 - Use `composer run script-name` for custom scripts; understand `^` and `~` for version constraints
 - Run `composer audit` and keep dependencies updated for security
 
-Next up: [Modern PHP Features](./15-modern-php.md) -- PHP 8.0 through 8.4 highlights including named arguments, enums, readonly properties, and more.
+Next up: [Modern PHP Features](./15-modern-php.md) - PHP 8.0 through 8.4 highlights including named arguments, enums, readonly properties, and more.

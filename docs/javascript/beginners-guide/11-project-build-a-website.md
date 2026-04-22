@@ -22,9 +22,9 @@ vanilla JavaScript. This is the site we will deploy to a VPS in the next chapter
 
 A personal portfolio site with:
 
-- **Home page** -- introduction and featured projects
-- **Projects page** -- filterable project cards loaded from data
-- **Contact page** -- form with client-side validation
+- **Home page** - introduction and featured projects
+- **Projects page** - filterable project cards loaded from data
+- **Contact page** - form with client-side validation
 - **Shared navigation** with active page highlighting
 - **Dark/light theme toggle** with localStorage persistence
 - **Responsive design** that works on all screen sizes
@@ -1018,7 +1018,7 @@ Walk through this checklist:
 - [ ] Theme toggle switches between light and dark mode
 - [ ] Theme preference persists across page reloads
 - [ ] Projects page loads project data and displays cards
-- [ ] Filter buttons work -- clicking a technology shows only matching projects
+- [ ] Filter buttons work - clicking a technology shows only matching projects
 - [ ] Contact form validates on blur and on submit
 - [ ] Invalid fields show error messages and highlight red
 - [ ] Submitting a valid form shows the success message
@@ -1113,7 +1113,7 @@ For consistent navigation across pages, always use the same HTML structure:
 ```
 
 The `initActiveNav()` function in `main.js` automatically highlights the current page. This pattern works for any number
-of pages -- just add more `<li>` entries.
+of pages - just add more `<li>` entries.
 
 #### External links
 
@@ -1123,14 +1123,14 @@ Always use the full URL and open in a new tab:
 <a href="https://github.com/username" target="_blank" rel="noopener noreferrer">GitHub</a>
 ```
 
-`rel="noopener noreferrer"` is a security best practice -- it prevents the linked page from accessing your
+`rel="noopener noreferrer"` is a security best practice - it prevents the linked page from accessing your
 `window.opener` object.
 
 ### Structuring a larger site
 
 The three-page portfolio is simple, but real sites grow. Here is how to organize a site with more pages:
 
-#### Flat structure (small sites -- up to ~10 pages)
+#### Flat structure (small sites - up to ~10 pages)
 
 ```text
 my-website/
@@ -1188,11 +1188,11 @@ my-website/
 
 Key principles:
 
-1. **Group pages by section** -- blog posts in `blog/`, project pages in `projects/`
-2. **Each section gets an `index.html`** -- this is the listing or landing page for that section
-3. **Split CSS by concern** -- base styles, layout, and components in separate files
-4. **Mirror the folder structure in images and JS** -- keeps things predictable
-5. **Keep shared assets at the top level** -- `css/`, `js/`, and `images/shared/`
+1. **Group pages by section** - blog posts in `blog/`, project pages in `projects/`
+2. **Each section gets an `index.html`** - this is the listing or landing page for that section
+3. **Split CSS by concern** - base styles, layout, and components in separate files
+4. **Mirror the folder structure in images and JS** - keeps things predictable
+5. **Keep shared assets at the top level** - `css/`, `js/`, and `images/shared/`
 
 #### Loading multiple CSS files
 
@@ -1207,7 +1207,7 @@ Split styles across files and load them in order:
 ```
 
 `base.css` defines variables and resets, `layout.css` uses them for page structure, and `components.css` styles
-individual elements. This order matters -- later files can override earlier ones.
+individual elements. This order matters - later files can override earlier ones.
 
 ### Reusing code across pages
 
@@ -1481,7 +1481,7 @@ Now one `project.html` template serves every project. Link to individual project
 ```
 
 This avoids creating dozens of nearly identical HTML files. The same pattern works for blog posts, team members, product
-pages -- any content that shares a structure.
+pages - any content that shares a structure.
 
 ### When to reach for a framework
 
@@ -1497,7 +1497,7 @@ limitations of vanilla HTML:
 | Managing state across pages    | Global state management (Redux, Zustand, Pinia)           |
 
 If you find yourself spending more time managing repetition than building features, it is time to consider a framework.
-But understanding vanilla HTML/CSS/JS first makes learning any framework much easier -- you know what the framework is
+But understanding vanilla HTML/CSS/JS first makes learning any framework much easier - you know what the framework is
 abstracting away.
 
 Before jumping to a framework though, there is a built-in browser feature that solves the component problem without any
@@ -1506,7 +1506,7 @@ library: **Web Components**.
 ### Web Components
 
 Web Components are a set of browser-native APIs that let you create **custom, reusable HTML elements** with their own
-encapsulated markup, styles, and behavior. No framework, no build step, no npm install -- they work in every modern
+encapsulated markup, styles, and behavior. No framework, no build step, no npm install - they work in every modern
 browser.
 
 #### The three core APIs
@@ -1519,7 +1519,7 @@ browser.
 
 #### Your first custom element
 
-Let us solve our portfolio's biggest problem -- the duplicated nav -- with a Web Component:
+Let us solve our portfolio's biggest problem - the duplicated nav - with a Web Component:
 
 ```js
 // js/components/site-nav.js
@@ -1579,9 +1579,9 @@ content.
 
 **How it works:**
 
-1. `class SiteNav extends HTMLElement` -- create a class that extends the base HTML element
-2. `connectedCallback()` -- runs automatically when the element is inserted into the page
-3. `customElements.define("site-nav", SiteNav)` -- register the tag name (must contain a hyphen)
+1. `class SiteNav extends HTMLElement` - create a class that extends the base HTML element
+2. `connectedCallback()` - runs automatically when the element is inserted into the page
+3. `customElements.define("site-nav", SiteNav)` - register the tag name (must contain a hyphen)
 
 #### Adding the Shadow DOM for style encapsulation
 
@@ -1639,7 +1639,7 @@ Use it anywhere:
 ```
 
 The `.banner` styles inside the Shadow DOM will **never** conflict with `.banner` classes elsewhere on the page. This is
-true encapsulation -- no CSS naming conventions or BEM needed.
+true encapsulation - no CSS naming conventions or BEM needed.
 
 #### Using attributes and properties
 
@@ -1862,10 +1862,10 @@ without framework lock-in.
 
 You now have a complete, working multi-page website built entirely with vanilla HTML, CSS, and JavaScript. The site is:
 
-- **Responsive** -- works on phones, tablets, and desktops
-- **Accessible** -- semantic HTML, proper labels, keyboard-navigable forms
-- **Interactive** -- theme toggle, filterable projects, form validation
-- **Persistent** -- theme preference saved in localStorage
+- **Responsive** - works on phones, tablets, and desktops
+- **Accessible** - semantic HTML, proper labels, keyboard-navigable forms
+- **Interactive** - theme toggle, filterable projects, form validation
+- **Persistent** - theme preference saved in localStorage
 
-Next up: [Deploying to a VPS with Nginx](./12-deploy-vps-nginx.md) -- putting your site on the internet for the world to
+Next up: [Deploying to a VPS with Nginx](./12-deploy-vps-nginx.md) - putting your site on the internet for the world to
 see.

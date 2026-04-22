@@ -102,7 +102,7 @@ Git reset has three modes, controlling what happens to the staging area and work
 | `--mixed`  | Moved          | Reset to target  | Unchanged        | Keep changes in working tree (default mode)    |
 | `--hard`   | Moved          | Reset to target  | Reset to target  | Permanently discard all changes                |
 
-### --soft: undo commit, keep changes staged
+### -soft: undo commit, keep changes staged
 
 ```bash
 git reset --soft HEAD~1
@@ -120,7 +120,7 @@ git add additional-file.js
 git commit -m "feat(auth): complete login flow with remember-me"
 ```
 
-### --mixed: undo commit, keep changes unstaged (default)
+### -mixed: undo commit, keep changes unstaged (default)
 
 ```bash
 git reset HEAD~1
@@ -141,7 +141,7 @@ git add src/session.js
 git commit -m "feat(session): add session management"
 ```
 
-### --hard: undo commit, discard changes permanently
+### -hard: undo commit, discard changes permanently
 
 ```bash
 git reset --hard HEAD~1
@@ -337,7 +337,7 @@ git reflog
 git reset --hard HEAD@{3}
 ```
 
-### Scenario 3: Accidental --hard reset
+### Scenario 3: Accidental -hard reset
 
 ```bash
 # You ran git reset --hard and lost uncommitted work

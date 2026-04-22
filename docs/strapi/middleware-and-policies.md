@@ -40,7 +40,7 @@ module.exports = (policyContext, config, { strapi }) => {
 
 ### Is-owner policy
 
-One of the most common requirements -- only allow the creator to edit/delete their content:
+One of the most common requirements - only allow the creator to edit/delete their content:
 
 ```js
 // src/policies/is-owner.js
@@ -299,7 +299,7 @@ module.exports = {
 
 ## See also
 
-- [Custom Controllers and Services](custom-controllers-services.md) -- what runs after middleware/policies
-- [Custom Routes and Endpoints](custom-routes-and-endpoints.md) -- where policies and middleware are attached
-- [Authentication and Permissions](authentication-and-permissions.md) -- JWT, roles, and access control
-- [Lifecycle Hooks](lifecycle-hooks.md) -- database-level hooks (different from middleware)
+- [Custom Controllers and Services](custom-controllers-services.md) - what runs after middleware/policies
+- [Custom Routes and Endpoints](custom-routes-and-endpoints.md) - where policies and middleware are attached
+- [Authentication and Permissions](authentication-and-permissions.md) - JWT, roles, and access control
+- [Lifecycle Hooks](lifecycle-hooks.md) - database-level hooks (different from middleware)

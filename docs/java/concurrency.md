@@ -28,7 +28,7 @@ Callable<Integer> computation = () -> {
 };
 ```
 
-> Never call `thread.run()` -- that executes on the current thread. Always use
+> Never call `thread.run()` - that executes on the current thread. Always use
 > `thread.start()`.
 
 ---
@@ -70,7 +70,7 @@ executor.awaitTermination(10, TimeUnit.SECONDS);
 
 ## CompletableFuture
 
-`CompletableFuture` is Java's equivalent of JavaScript's `Promise` -- it supports
+`CompletableFuture` is Java's equivalent of JavaScript's `Promise` - it supports
 chaining, combining, and error handling:
 
 ### Basic chaining
@@ -336,7 +336,7 @@ List<UrlResult> fetchAll(List<String> urls) {
 
 ## See also
 
-- [Collections](./collections.md) -- ConcurrentHashMap, BlockingQueue, thread-safe collections
-- [HTTP Clients](./http-clients.md) -- async HTTP with CompletableFuture
-- [Error Handling](./error-handling.md) -- exception handling in concurrent code
-- [Modern Java Features](./modern-java-features.md) -- virtual threads, structured concurrency
+- [Collections](./collections.md) - ConcurrentHashMap, BlockingQueue, thread-safe collections
+- [HTTP Clients](./http-clients.md) - async HTTP with CompletableFuture
+- [Error Handling](./error-handling.md) - exception handling in concurrent code
+- [Modern Java Features](./modern-java-features.md) - virtual threads, structured concurrency

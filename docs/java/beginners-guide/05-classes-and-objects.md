@@ -177,7 +177,7 @@ Control who can see and use your fields, methods, and classes:
 |---------------------------|-------|---------|----------|-------|
 | `public`                  | Yes   | Yes     | Yes      | Yes   |
 | `protected`               | Yes   | Yes     | Yes      | No    |
-| (none -- package-private) | Yes   | Yes     | No       | No    |
+| (none - package-private) | Yes   | Yes     | No       | No    |
 | `private`                 | Yes   | No      | No       | No    |
 
 ```java
@@ -513,7 +513,7 @@ Area: 15.0
 Perimeter: 16.0
 ```
 
-**When to use records:** whenever you need a simple data carrier -- DTOs, value objects, configuration, return multiple
+**When to use records:** whenever you need a simple data carrier - DTOs, value objects, configuration, return multiple
 values from a method.
 
 ## Builder pattern (brief introduction)
@@ -612,9 +612,9 @@ src/
 - **Access modifiers** control visibility: `private` → package-private → `protected` → `public`.
 - **Encapsulation**: private fields + public methods. Control access, enforce invariants.
 - Override **`toString`** for readable output, **`equals`/`hashCode`** for content comparison.
-- **`static`** members belong to the class, not instances -- used for shared state and utility methods.
+- **`static`** members belong to the class, not instances - used for shared state and utility methods.
 - **Records** (Java 16+) auto-generate constructors, accessors, `toString`, `equals`, `hashCode`.
 - The **builder pattern** handles objects with many optional parameters.
 
-Next up: [Inheritance & Interfaces](./06-inheritance-and-interfaces.md) -- extending classes, implementing contracts,
+Next up: [Inheritance & Interfaces](./06-inheritance-and-interfaces.md) - extending classes, implementing contracts,
 and polymorphism.

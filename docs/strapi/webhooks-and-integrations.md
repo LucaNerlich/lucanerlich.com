@@ -7,7 +7,7 @@ tags: [strapi, webhooks, integrations, algolia, search, notifications]
 
 # Webhooks and External Integrations
 
-Almost every Strapi project needs to talk to external systems -- search indexes, notification services, payment
+Almost every Strapi project needs to talk to external systems - search indexes, notification services, payment
 gateways, or static site rebuilds. This page covers Strapi's built-in webhook system, custom event-driven integrations,
 and patterns for common third-party services.
 
@@ -453,7 +453,7 @@ module.exports = ({ strapi }) => ({
 
 ## See also
 
-- [Lifecycle Hooks](lifecycle-hooks.md) -- the underlying mechanism for event-driven integrations
-- [Custom Routes and Endpoints](custom-routes-and-endpoints.md) -- creating inbound webhook endpoints
-- [Configuration and Deployment](configuration-and-deployment.md) -- environment variables for API keys
-- [Scheduled Publishing](scheduled-publishing.md) -- cron-based automation patterns
+- [Lifecycle Hooks](lifecycle-hooks.md) - the underlying mechanism for event-driven integrations
+- [Custom Routes and Endpoints](custom-routes-and-endpoints.md) - creating inbound webhook endpoints
+- [Configuration and Deployment](configuration-and-deployment.md) - environment variables for API keys
+- [Scheduled Publishing](scheduled-publishing.md) - cron-based automation patterns

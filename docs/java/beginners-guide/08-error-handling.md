@@ -75,7 +75,7 @@ code.
 
 ## `finally`
 
-The `finally` block always runs -- whether an exception occurred or not:
+The `finally` block always runs - whether an exception occurred or not:
 
 ```java
 try {
@@ -121,7 +121,7 @@ Result:
 Null pointer: Cannot invoke "String.length()" because "text" is null
 ```
 
-Order matters -- catch the most specific exception first. `Exception` catches everything, so it must come last.
+Order matters - catch the most specific exception first. `Exception` catches everything, so it must come last.
 
 ### Multi-catch (Java 7+)
 
@@ -203,7 +203,7 @@ Result (when file does not exist):
 File error: data.txt
 ```
 
-The `throws IOException` tells callers: "this method might throw an `IOException` -- you must handle it."
+The `throws IOException` tells callers: "this method might throw an `IOException` - you must handle it."
 
 ## Custom exceptions
 
@@ -269,9 +269,9 @@ Tried to withdraw: 80.0
 
 ### When to use checked vs unchecked
 
-- **Unchecked (`RuntimeException`):** programming errors, invalid arguments, illegal state -- the caller cannot
+- **Unchecked (`RuntimeException`):** programming errors, invalid arguments, illegal state - the caller cannot
   reasonably recover.
-- **Checked (`Exception`):** recoverable situations like file not found, network timeout -- the caller should be forced
+- **Checked (`Exception`):** recoverable situations like file not found, network timeout - the caller should be forced
   to handle it.
 
 In practice, most modern Java code favors unchecked exceptions.
@@ -451,7 +451,7 @@ the [Error Handling deep dive](../error-handling.md).
 - **Checked exceptions** (`IOException`) must be caught or declared; **unchecked** (`RuntimeException`) do not.
 - **`throw`** signals an error; **`throws`** declares what a method might throw.
 - **Custom exceptions** add domain-specific context to errors.
-- **Try-with-resources** automatically closes files and connections -- always use it.
+- **Try-with-resources** automatically closes files and connections - always use it.
 - Catch specific exceptions, never swallow them, and include context in messages.
 
-Next up: [File I/O](./09-file-io.md) -- reading and writing files.
+Next up: [File I/O](./09-file-io.md) - reading and writing files.

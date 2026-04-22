@@ -17,7 +17,7 @@ sidebar_position: 6
 # Generics
 
 Generics are the feature that makes TypeScript's type system truly powerful. They allow you to write functions,
-interfaces, and classes that work with any type while still preserving type safety -- no `any` required. Think of
+interfaces, and classes that work with any type while still preserving type safety - no `any` required. Think of
 generics as type-level parameters: instead of hardcoding `string` or `number`, you use a placeholder that gets filled
 in by the caller.
 
@@ -470,13 +470,13 @@ if (result.success) {
 ## Summary
 
 - Generics are type parameters (`<T>`) that allow writing reusable, type-safe code for any type
-- TypeScript infers type parameters from function arguments -- you rarely need to specify them explicitly
+- TypeScript infers type parameters from function arguments - you rarely need to specify them explicitly
 - **Generic interfaces** describe reusable shapes like `Repository<T>`, `ApiResponse<T>`, `Result<T, E>`
 - **Generic classes** like `Stack<T>` or `Cache<V>` carry state typed to a specific type parameter
 - **Constraints** (`T extends SomeType`) restrict what types a generic can accept
-- **`keyof`** produces the union of an object's property keys -- enables safe property lookup
-- **`typeof`** in a type position extracts the TypeScript type of a value -- derives types from data
+- **`keyof`** produces the union of an object's property keys - enables safe property lookup
+- **`typeof`** in a type position extracts the TypeScript type of a value - derives types from data
 - **Default type parameters** (`T = Error`) provide fallbacks when a type argument is not given
 
-Next up: [Enums & Literal Types](./07-enums-and-literals.md) -- numeric enums, string enums, const enums, literal
+Next up: [Enums & Literal Types](./07-enums-and-literals.md) - numeric enums, string enums, const enums, literal
 types, discriminated unions, and exhaustive checks.

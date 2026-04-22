@@ -20,23 +20,23 @@ TypeScript is a **statically typed superset of JavaScript** built by Microsoft a
 to plain JavaScript, runs anywhere JavaScript runs, and adds a powerful type system on top of everything JavaScript
 already provides.
 
-This guide takes you from zero TypeScript knowledge to writing typed Node.js servers and React applications -- step by
+This guide takes you from zero TypeScript knowledge to writing typed Node.js servers and React applications - step by
 step, with realistic examples throughout.
 
 ## How this guide is structured
 
 | Part                            | Chapters | What you will learn                                              |
 |---------------------------------|----------|------------------------------------------------------------------|
-| **1 -- Foundations**            | 1--4     | Install TypeScript, basic types, interfaces, functions           |
-| **2 -- Object-Oriented TS**     | 5--6     | Classes, generics                                                |
-| **3 -- Type System Deep Dive**  | 7--9     | Enums, utility types, advanced types                             |
-| **4 -- Ecosystem & Tooling**    | 10--11   | Modules, declaration files, tsconfig, ESLint                     |
-| **5 -- Real-World TypeScript**  | 12       | Node.js, React, project migration                                |
+| **1 - Foundations**            | 1-4     | Install TypeScript, basic types, interfaces, functions           |
+| **2 - Object-Oriented TS**     | 5-6     | Classes, generics                                                |
+| **3 - Type System Deep Dive**  | 7-9     | Enums, utility types, advanced types                             |
+| **4 - Ecosystem & Tooling**    | 10-11   | Modules, declaration files, tsconfig, ESLint                     |
+| **5 - Real-World TypeScript**  | 12       | Node.js, React, project migration                                |
 
 ## What is TypeScript?
 
 JavaScript was designed in 1995 to add small interactive behaviours to web pages. It was never meant to build
-100,000-line applications. Over time, the language grew -- but its dynamic, loosely typed nature makes large codebases
+100,000-line applications. Over time, the language grew - but its dynamic, loosely typed nature makes large codebases
 difficult to maintain. A typo in a property name causes a runtime crash rather than a compile-time error. Refactoring
 becomes dangerous when you cannot know at a glance what type a variable holds.
 
@@ -69,9 +69,9 @@ between a two-second fix and a two-hour debugging session.
 |--------------------------------|------------------------------------------------------------------------|
 | **Catches bugs at compile time** | Type mismatches, undefined property accesses, and wrong function arguments are errors, not surprises |
 | **Better editor support**      | Your editor knows the shape of every object and can autocomplete, warn, and refactor with confidence |
-| **Self-documenting code**      | Type annotations make it clear what a function expects and returns -- no need to read the implementation |
+| **Self-documenting code**      | Type annotations make it clear what a function expects and returns - no need to read the implementation |
 | **Safer refactoring**          | Rename a field and the compiler shows you every place that breaks instantly |
-| **Gradual adoption**           | TypeScript is a superset of JavaScript -- you can add types file by file, at your own pace |
+| **Gradual adoption**           | TypeScript is a superset of JavaScript - you can add types file by file, at your own pace |
 
 TypeScript is the default choice for large JavaScript projects. Angular is written entirely in TypeScript. React's type
 definitions are maintained by thousands of contributors on DefinitelyTyped. Node.js, Deno, and Bun all have first-class
@@ -79,7 +79,7 @@ TypeScript support.
 
 ## How TypeScript compares to JavaScript
 
-TypeScript does **not** replace JavaScript -- it compiles to it. The browser and Node.js only understand JavaScript.
+TypeScript does **not** replace JavaScript - it compiles to it. The browser and Node.js only understand JavaScript.
 TypeScript is a development-time tool that disappears at runtime.
 
 ```text
@@ -119,9 +119,9 @@ All types are erased. At runtime, you get exactly what you would have written in
 
 Before we start:
 
-- **Node.js** -- TypeScript is distributed as an npm package and runs on Node.js. Download from [nodejs.org](https://nodejs.org) (LTS version recommended)
-- **A terminal** -- any terminal works
-- **A code editor** -- VS Code has the best TypeScript support out of the box
+- **Node.js** - TypeScript is distributed as an npm package and runs on Node.js. Download from [nodejs.org](https://nodejs.org) (LTS version recommended)
+- **A terminal** - any terminal works
+- **A code editor** - VS Code has the best TypeScript support out of the box
 
 Verify Node.js is installed:
 
@@ -150,7 +150,7 @@ npm install --save-dev typescript
 ```
 
 This installs:
-- `tsc` -- the TypeScript compiler
+- `tsc` - the TypeScript compiler
 - The TypeScript language server (used by editors)
 
 Verify the installation:
@@ -269,7 +269,7 @@ node dist/index.js
 ### What just happened
 
 1. `tsc` read `tsconfig.json`, found `src/index.ts`, type-checked it, and emitted `dist/index.js`
-2. The `interface Product` and all type annotations were erased -- pure JavaScript remained
+2. The `interface Product` and all type annotations were erased - pure JavaScript remained
 3. No runtime errors because the compiler caught any type problems first
 
 ## Compile in watch mode
@@ -284,7 +284,7 @@ Now `tsc` recompiles automatically whenever you save a file. You will see errors
 
 ## Add ts-node for direct execution
 
-`ts-node` lets you run TypeScript files directly without a separate compile step -- useful for scripts and development:
+`ts-node` lets you run TypeScript files directly without a separate compile step - useful for scripts and development:
 
 ```bash
 npm install --save-dev ts-node
@@ -327,23 +327,23 @@ Add these to your `package.json` to standardise your workflow:
 | `npm run dev`         | Run TypeScript directly with live reload            |
 | `npm run typecheck`   | Check types without emitting any files              |
 
-> **Tip:** `npm run typecheck` is useful in CI pipelines -- it verifies types without overwriting your build output.
+> **Tip:** `npm run typecheck` is useful in CI pipelines - it verifies types without overwriting your build output.
 
 ## Set up VS Code
 
-VS Code has TypeScript support built in -- it ships with its own TypeScript language server. You get:
+VS Code has TypeScript support built in - it ships with its own TypeScript language server. You get:
 
 - **Red underlines** on type errors as you type, before compilation
 - **Autocomplete** for every property and method on every typed object
-- **Hover for types** -- hover any variable to see its inferred type
-- **Go to definition** -- `Ctrl+Click` / `Cmd+Click` to jump to any type or function
-- **Rename symbol** -- rename a function and every call site updates automatically
+- **Hover for types** - hover any variable to see its inferred type
+- **Go to definition** - `Ctrl+Click` / `Cmd+Click` to jump to any type or function
+- **Rename symbol** - rename a function and every call site updates automatically
 
 No extensions required for basic TypeScript. For a better experience, install:
 
-- **ESLint** -- linting with TypeScript-aware rules
-- **Prettier** -- automatic code formatting
-- **Error Lens** -- shows error messages inline next to the code
+- **ESLint** - linting with TypeScript-aware rules
+- **Prettier** - automatic code formatting
+- **Error Lens** - shows error messages inline next to the code
 
 ### Useful VS Code settings for TypeScript
 
@@ -432,8 +432,8 @@ You now have:
 - Watch mode (`npx tsc --watch`) for continuous compilation
 - VS Code set up to show errors in real time
 
-The TypeScript compiler is your pair programmer. It catches mistakes before they reach your users. Trust it -- and read
+The TypeScript compiler is your pair programmer. It catches mistakes before they reach your users. Trust it - and read
 its error messages carefully.
 
-Next up: [Basic Types](./02-basic-types.md) -- `string`, `number`, `boolean`, `null`, `undefined`, `any`, `unknown`,
+Next up: [Basic Types](./02-basic-types.md) - `string`, `number`, `boolean`, `null`, `undefined`, `any`, `unknown`,
 `never`, type inference, type annotations, arrays, and tuples.

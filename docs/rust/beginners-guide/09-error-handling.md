@@ -38,7 +38,7 @@ You also get panics from:
 - Integer overflow in debug mode
 - Calling `.unwrap()` on a `None` or `Err`
 
-`panic!` is for bugs -- situations that should never happen if the code is correct. It is **not** for expected
+`panic!` is for bugs - situations that should never happen if the code is correct. It is **not** for expected
 failures like "file not found" or "invalid user input".
 
 ### Backtraces
@@ -110,7 +110,7 @@ fn main() {
 | `expect(m)` | Returns T | Panics with custom message `m` |
 
 > **Warning:** Do not use `unwrap()` in production code unless you have proven the `Err` case is impossible. Use
-> `expect()` at minimum -- the custom message helps with debugging.
+> `expect()` at minimum - the custom message helps with debugging.
 
 ## The ? operator
 
@@ -227,7 +227,7 @@ fn main() {
 
 For libraries and larger applications, define your own error types:
 
-### Simple approach -- enum
+### Simple approach - enum
 
 ```rust
 use std::fmt;
@@ -410,12 +410,12 @@ fn main() {
 
 - **`panic!`** is for unrecoverable errors (bugs). It crashes the program.
 - **`Result<T, E>`** is for recoverable errors. Functions return `Ok(value)` or `Err(error)`.
-- **`?`** propagates errors concisely -- it returns `Err` early or extracts the `Ok` value.
-- **`unwrap()`** and **`expect()`** extract values but panic on errors -- avoid in production.
+- **`?`** propagates errors concisely - it returns `Err` early or extracts the `Ok` value.
+- **`unwrap()`** and **`expect()`** extract values but panic on errors - avoid in production.
 - Custom error enums with `Display` and `From` give structured, typed error handling.
 - **`thiserror`** automates custom error boilerplate (best for libraries).
 - **`anyhow`** provides a universal error type with context (best for applications).
 - Panic for bugs; return `Result` for expected failures.
 
-Next up: [Modules & Crates](./10-modules-and-crates.md) -- organizing code into modules, using external crates, and
+Next up: [Modules & Crates](./10-modules-and-crates.md) - organizing code into modules, using external crates, and
 understanding Cargo's dependency system.

@@ -28,12 +28,12 @@ fn main() {
 }
 ```
 
-`let x = 5;` creates a variable named `x` and binds the value `5` to it. Rust **infers** the type -- it figures out
+`let x = 5;` creates a variable named `x` and binds the value `5` to it. Rust **infers** the type - it figures out
 that `5` is an integer (`i32` by default) without you telling it.
 
 ## Immutability by default
 
-In most languages, variables are mutable -- you can change their value whenever you want. Rust flips this: variables are
+In most languages, variables are mutable - you can change their value whenever you want. Rust flips this: variables are
 **immutable by default**. You have to explicitly opt in to mutability.
 
 Try this:
@@ -87,7 +87,7 @@ x is now 10
 
 ## Shadowing
 
-Rust lets you declare a new variable with the same name as a previous one. This is called **shadowing** -- the new
+Rust lets you declare a new variable with the same name as a previous one. This is called **shadowing** - the new
 variable "shadows" the old one:
 
 ```rust
@@ -110,7 +110,7 @@ fn main() {
 }
 ```
 
-With `mut`, you cannot change the type -- the compiler expects the same type throughout. With shadowing, you create an
+With `mut`, you cannot change the type - the compiler expects the same type throughout. With shadowing, you create an
 entirely new binding.
 
 When to use shadowing vs `mut`:
@@ -139,8 +139,8 @@ Integers are whole numbers. Rust provides signed and unsigned variants in severa
 | 128-bit | `i128`  | `u128`   | Extremely large range                     |
 | arch    | `isize` | `usize`  | Depends on platform (32-bit or 64-bit)    |
 
-- **Signed** (`i`) -- can be negative or positive
-- **Unsigned** (`u`) -- only zero or positive
+- **Signed** (`i`) - can be negative or positive
+- **Unsigned** (`u`) - only zero or positive
 - **`i32`** is the default when Rust infers an integer type
 - **`usize`** is used for indexing collections (it matches the pointer size of your platform)
 
@@ -194,7 +194,7 @@ Booleans are one byte in size and have exactly two values: `true` and `false`.
 
 ### Characters
 
-The `char` type represents a single Unicode scalar value -- not just ASCII:
+The `char` type represents a single Unicode scalar value - not just ASCII:
 
 ```rust
 fn main() {
@@ -233,7 +233,7 @@ fn main() {
 }
 ```
 
-Tuples have a fixed length -- once declared, they cannot grow or shrink.
+Tuples have a fixed length - once declared, they cannot grow or shrink.
 
 The **unit tuple** `()` is a special case. It represents "no value" and is the default return type of functions that do
 not return anything (similar to `void` in Java or C).
@@ -270,7 +270,7 @@ fn main() {
 
 ## Type inference
 
-Rust's type inference is powerful. In most cases, you do not need to write type annotations -- the compiler figures it
+Rust's type inference is powerful. In most cases, you do not need to write type annotations - the compiler figures it
 out:
 
 ```rust
@@ -382,8 +382,8 @@ fn main() {
 
 What happens when a `u8` (max value 255) is set to 256?
 
-- In **debug mode** (`cargo run`), Rust panics at runtime -- catching the bug immediately.
-- In **release mode** (`cargo run --release`), Rust wraps around (256 becomes 0) -- for performance.
+- In **debug mode** (`cargo run`), Rust panics at runtime - catching the bug immediately.
+- In **release mode** (`cargo run --release`), Rust wraps around (256 becomes 0) - for performance.
 
 If you need specific overflow behavior, use the explicit methods:
 
@@ -416,5 +416,5 @@ You now know:
 - Rust does not implicitly convert between numeric types
 - Integer overflow is caught in debug mode and wraps in release mode
 
-Next up: [Control Flow](./03-control-flow.md) -- `if`/`else` as expressions, loops, `for` with ranges, and an early
+Next up: [Control Flow](./03-control-flow.md) - `if`/`else` as expressions, loops, `for` with ranges, and an early
 look at `match`.

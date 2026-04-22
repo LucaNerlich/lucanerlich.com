@@ -16,7 +16,7 @@ sidebar_position: 14
 # Error Handling
 
 Errors happen. Network requests fail, users enter unexpected data, and code has bugs. Good error handling means your
-program fails **gracefully** -- it tells the user what went wrong instead of silently breaking or crashing the entire
+program fails **gracefully** - it tells the user what went wrong instead of silently breaking or crashing the entire
 page.
 
 ## The `Error` object
@@ -37,7 +37,7 @@ console.log(error.stack);   // Stack trace showing where the error was created
 | `name`    | The error type (e.g., `"TypeError"`, `"RangeError"`) |
 | `stack`   | A trace showing the call chain that led to the error |
 
-The `stack` property is invaluable for debugging -- it tells you exactly which function, file, and line number created
+The `stack` property is invaluable for debugging - it tells you exactly which function, file, and line number created
 the error.
 
 ## `try` / `catch` / `finally`
@@ -69,7 +69,7 @@ Done.
 1. JavaScript executes the `try` block line by line.
 2. If no error occurs, the `catch` block is skipped entirely.
 3. If an error is thrown, execution jumps immediately to `catch`. The remaining lines in `try` do not run.
-4. The `finally` block always runs -- whether there was an error or not. Use it for cleanup (closing files, hiding
+4. The `finally` block always runs - whether there was an error or not. Use it for cleanup (closing files, hiding
    loaders, resetting state).
 
 ### `catch` without `finally`
@@ -85,7 +85,7 @@ try {
 
 ### `finally` without `catch`
 
-Rare, but valid -- useful when you want cleanup but want the error to propagate:
+Rare, but valid - useful when you want cleanup but want the error to propagate:
 
 ```js
 try {
@@ -146,7 +146,7 @@ try {
 }
 ```
 
-You can throw any value, but always throw `Error` objects (or subclasses) -- they include the stack trace:
+You can throw any value, but always throw `Error` objects (or subclasses) - they include the stack trace:
 
 ```js
 // Good -- includes stack trace
@@ -424,7 +424,7 @@ form.addEventListener("submit", (event) => {
 
 ## Patterns
 
-### Guard clauses -- fail fast
+### Guard clauses - fail fast
 
 Check for invalid conditions at the top of a function and return or throw early:
 
@@ -498,7 +498,7 @@ async function fetchWithRetry(url, maxRetries = 3) {
 }
 ```
 
-### Result pattern -- errors as values
+### Result pattern - errors as values
 
 Instead of throwing, return an object that indicates success or failure:
 
@@ -522,7 +522,7 @@ if (result.ok) {
 }
 ```
 
-This pattern avoids exceptions for expected failures (invalid user input is not exceptional -- it is normal). Reserve
+This pattern avoids exceptions for expected failures (invalid user input is not exceptional - it is normal). Reserve
 `throw` for truly unexpected situations.
 
 ## Anti-patterns
@@ -607,8 +607,8 @@ try {
 
 ## Summary
 
-- **`try`/`catch`/`finally`** is the core error handling mechanism -- `finally` always runs.
-- JavaScript has built-in error types (`TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`) -- use `instanceof`
+- **`try`/`catch`/`finally`** is the core error handling mechanism - `finally` always runs.
+- JavaScript has built-in error types (`TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`) - use `instanceof`
   to distinguish them.
 - **Always throw `Error` objects** (not strings) to get stack traces.
 - **Custom error classes** let you add properties and handle errors by category.
@@ -616,10 +616,10 @@ try {
 - Use **`try`/`catch` with `async`/`await`** for async errors; use `Promise.allSettled` when you need partial results.
 - **Guard clauses** keep functions flat and readable by failing fast.
 - **The result pattern** (returning `{ ok, value, error }`) avoids exceptions for expected failures.
-- Never swallow errors with empty `catch` blocks -- at minimum, log them.
+- Never swallow errors with empty `catch` blocks - at minimum, log them.
 
 For advanced patterns including TypeScript error types, error boundaries, and structured logging, see
 the [Error Handling reference](/javascript/error-handling).
 
-Next up: [Regular Expressions](./15-regular-expressions.md) -- pattern matching for validation, parsing, and
+Next up: [Regular Expressions](./15-regular-expressions.md) - pattern matching for validation, parsing, and
 search-and-replace.

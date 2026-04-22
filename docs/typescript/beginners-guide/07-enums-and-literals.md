@@ -17,7 +17,7 @@ sidebar_position: 7
 # Enums & Literal Types
 
 TypeScript provides several ways to express "a value that can only be one of a fixed set of options." The two main
-approaches -- enums and literal union types -- overlap in capability but have different trade-offs. Understanding both,
+approaches - enums and literal union types - overlap in capability but have different trade-offs. Understanding both,
 and knowing when to use each, is an important step toward idiomatic TypeScript.
 
 ## Numeric enums
@@ -133,7 +133,7 @@ function isValidStatus(value: string): value is Status {
 
 ## const enums
 
-`const enum` is an optimization -- the compiler replaces enum references with their literal values during compilation,
+`const enum` is an optimization - the compiler replaces enum references with their literal values during compilation,
 eliminating the enum object entirely:
 
 ```typescript
@@ -175,13 +175,13 @@ type StatusCode = 200 | 201 | 204 | 400 | 401 | 404 | 500;
 type AlwaysTrue = true;
 ```
 
-Literal types are most commonly used in union types -- they express "exactly one of these values."
+Literal types are most commonly used in union types - they express "exactly one of these values."
 
 ### Literal types vs enums
 
 | Feature                        | `enum`                     | Literal union (`type`)          |
 |--------------------------------|----------------------------|---------------------------------|
-| Runtime object                 | Yes (numeric/string enum)  | No -- compile time only          |
+| Runtime object                 | Yes (numeric/string enum)  | No - compile time only          |
 | Reverse lookup                 | Yes (numeric only)         | No                               |
 | Structural compatibility       | No                         | Yes (`"GET"` satisfies `string`) |
 | Iteration at runtime           | Yes (`Object.values`)      | No                               |
@@ -231,7 +231,7 @@ type Route = typeof ROUTES[keyof typeof ROUTES]; // "/" | "/users" | "/settings"
 type RouteName = keyof typeof ROUTES;             // "home" | "users" | "settings"
 ```
 
-`as const` is the idiomatic TypeScript alternative to `const enum` for string unions -- no runtime overhead, no enum
+`as const` is the idiomatic TypeScript alternative to `const enum` for string unions - no runtime overhead, no enum
 object, full type safety.
 
 ## Discriminated unions
@@ -269,7 +269,7 @@ const shapes: Shape[] = [
 shapes.forEach(s => console.log(`Area: ${area(s).toFixed(2)}`));
 ```
 
-The discriminant (`kind` in this example) can be any literal type -- string literals are most common.
+The discriminant (`kind` in this example) can be any literal type - string literals are most common.
 
 ### Discriminated unions for application state
 
@@ -332,7 +332,7 @@ function reducer(state: number, action: Action): number {
 ```
 
 If you add `| { type: "MULTIPLY"; factor: number }` to `Action` without adding a case for it, the compiler will
-immediately error on `const exhaustiveCheck: never = action`, because `action` can no longer be `never` -- it can be
+immediately error on `const exhaustiveCheck: never = action`, because `action` can no longer be `never` - it can be
 `{ type: "MULTIPLY"; factor: number }`.
 
 ### A helper function for exhaustive checks
@@ -406,13 +406,13 @@ for (let i = 0; i < 6; i++) {
 
 ## Summary
 
-- **Numeric enums** auto-assign numbers but allow any number to be assigned -- use with caution
+- **Numeric enums** auto-assign numbers but allow any number to be assigned - use with caution
 - **String enums** are safer and more readable; string values appear in logs and debuggers
-- **`const enum`** is a compile-time-only optimization that inlines values -- avoid in library code
+- **`const enum`** is a compile-time-only optimization that inlines values - avoid in library code
 - **Literal types** (`"north" | "south"`, `1 | 2 | 3`) are the modern, lightweight alternative to enums
 - **`as const`** freezes values to their literal types, enabling type derivation from data
 - **Discriminated unions** use a shared literal property to narrow types in switch statements
-- **Exhaustive checks** with `never` ensure you handle every variant of a union -- adding a new variant breaks the build if you forget to update the switch
+- **Exhaustive checks** with `never` ensure you handle every variant of a union - adding a new variant breaks the build if you forget to update the switch
 
-Next up: [Utility Types](./08-utility-types.md) -- `Partial`, `Required`, `Readonly`, `Pick`, `Omit`, `Record`,
+Next up: [Utility Types](./08-utility-types.md) - `Partial`, `Required`, `Readonly`, `Pick`, `Omit`, `Record`,
 `Exclude`, `Extract`, `NonNullable`, `ReturnType`, and `Parameters`.

@@ -83,7 +83,7 @@ DATABASE_FILENAME=.tmp/data.db
 
 ### Strapi environment helpers
 
-In configuration files, the `env` function is not just `process.env` -- Strapi provides typed helpers:
+In configuration files, the `env` function is not just `process.env` - Strapi provides typed helpers:
 
 | Helper        | Returns  | Example                                    |
 |---------------|----------|--------------------------------------------|
@@ -107,7 +107,7 @@ mkdir -p config/env/production
 You can create directories for any environment: `development`, `staging`, `production`, `test`, etc. The directory
 name must match the `NODE_ENV` value.
 
-### Production database -- PostgreSQL
+### Production database - PostgreSQL
 
 SQLite is great for development but not suitable for production. Switch to PostgreSQL:
 
@@ -158,7 +158,7 @@ export default ({ env }) => ({
 });
 ```
 
-The `url` setting is critical -- it tells Strapi its public URL, which is used for generating absolute URLs in API
+The `url` setting is critical - it tells Strapi its public URL, which is used for generating absolute URLs in API
 responses and the admin panel.
 
 ### Production admin config
@@ -369,7 +369,7 @@ pm2 startup systemd
 | `pm2 delete strapi`  | Remove from PM2                |
 | `pm2 monit`          | Real-time monitoring dashboard |
 
-## Alternative -- systemd
+## Alternative - systemd
 
 If you prefer systemd over PM2:
 
@@ -522,7 +522,7 @@ sudo ufw allow 443/tcp    # HTTPS
 sudo ufw enable
 ```
 
-Do **not** open port 1337 -- nginx proxies traffic to Strapi, so Strapi only needs to be accessible from localhost.
+Do **not** open port 1337 - nginx proxies traffic to Strapi, so Strapi only needs to be accessible from localhost.
 
 ### Strapi security configuration
 
@@ -794,28 +794,28 @@ For zero-downtime deployments, consider using a blue-green deployment strategy o
 
 You learned:
 
-- **Environment-based configuration** -- separate settings for development and production
+- **Environment-based configuration** - separate settings for development and production
 - Switching to **PostgreSQL** for production
-- **Deploying to a VPS** -- transferring files, installing dependencies, building
+- **Deploying to a VPS** - transferring files, installing dependencies, building
 - **PM2** and **systemd** for process management
 - **nginx** as a reverse proxy with caching
 - **HTTPS** with Let's Encrypt and automatic renewal
-- **Security hardening** -- firewall, CORS, CSP, SSH, Fail2Ban, automatic updates
+- **Security hardening** - firewall, CORS, CSP, SSH, Fail2Ban, automatic updates
 - **Database backups** and update procedures
 
-Congratulations -- your Strapi 5 blog CMS is now running in production! You have gone from a blank project to a fully
+Congratulations - your Strapi 5 blog CMS is now running in production! You have gone from a blank project to a fully
 configured, secured, and deployed content management system.
 
 ## Where to go from here
 
 Now that you have completed the beginners guide, explore the reference docs for deeper topics:
 
-- [Content Modeling Patterns](/strapi/content-modeling-patterns) -- advanced schema design
-- [GraphQL Customization](/strapi/graphql-customization) -- if you need GraphQL
-- [Plugin Development](/strapi/plugin-development) -- build your own plugins
-- [i18n and Multi-Locale](/strapi/i18n-multi-locale) -- internationalization
-- [Performance and Caching](/strapi/performance-and-caching) -- Redis, query optimization
-- [Admin Panel Customization](/strapi/admin-panel-customization) -- branding, custom fields
-- [Data Import, Export, and Migration](/strapi/data-import-export-migration) -- content migration strategies
-- [Scheduled Publishing](/strapi/scheduled-publishing) -- editorial workflows
-- [Testing Strapi Applications](/strapi/testing-strapi-applications) -- unit and integration tests
+- [Content Modeling Patterns](/strapi/content-modeling-patterns) - advanced schema design
+- [GraphQL Customization](/strapi/graphql-customization) - if you need GraphQL
+- [Plugin Development](/strapi/plugin-development) - build your own plugins
+- [i18n and Multi-Locale](/strapi/i18n-multi-locale) - internationalization
+- [Performance and Caching](/strapi/performance-and-caching) - Redis, query optimization
+- [Admin Panel Customization](/strapi/admin-panel-customization) - branding, custom fields
+- [Data Import, Export, and Migration](/strapi/data-import-export-migration) - content migration strategies
+- [Scheduled Publishing](/strapi/scheduled-publishing) - editorial workflows
+- [Testing Strapi Applications](/strapi/testing-strapi-applications) - unit and integration tests

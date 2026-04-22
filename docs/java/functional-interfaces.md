@@ -10,7 +10,7 @@ tags: [java, functional, lambdas]
 
 A **functional interface** is an interface with exactly one abstract method. Lambdas and
 method references are shorthand for implementing these interfaces. Together, they are the
-foundation of Java's functional programming style -- streams, Optional, and
+foundation of Java's functional programming style - streams, Optional, and
 CompletableFuture all depend on them.
 
 ## Quick start
@@ -296,7 +296,7 @@ double finalPrice = strategy.apply(new Order(100.0));
 | Pitfall                        | Problem                                                                 | Fix                                                                                      |
 |--------------------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
 | Checked exceptions in lambdas  | `Function<T,R>` does not allow checked exceptions                       | Wrap in try/catch inside the lambda, or create a custom functional interface that throws |
-| Capturing mutable variables    | `for (int i...)` -- lambda captures effectively final variables only    | Use a final copy or IntStream                                                            |
+| Capturing mutable variables    | `for (int i...)` - lambda captures effectively final variables only    | Use a final copy or IntStream                                                            |
 | `this` in lambdas              | `this` refers to the enclosing class, not the lambda                    | Expected behavior, but can be surprising                                                 |
 | Overusing lambdas              | Complex multi-line lambdas are hard to read                             | Extract to a named method and use a method reference                                     |
 | Missing `@FunctionalInterface` | Non-annotated interfaces can accidentally gain a second abstract method | Always annotate custom functional interfaces                                             |
@@ -305,7 +305,7 @@ double finalPrice = strategy.apply(new Order(100.0));
 
 ## See also
 
-- [Streams and Collectors](./java-streams.md) -- streams consume functional interfaces
-- [Optionals](./optionals.md) -- Optional uses Function, Predicate, Supplier
-- [Generics and Type Erasure](./generics.md) -- generic functional interfaces
-- [Modern Java Features](./modern-java-features.md) -- lambdas + records + sealed types
+- [Streams and Collectors](./java-streams.md) - streams consume functional interfaces
+- [Optionals](./optionals.md) - Optional uses Function, Predicate, Supplier
+- [Generics and Type Erasure](./generics.md) - generic functional interfaces
+- [Modern Java Features](./modern-java-features.md) - lambdas + records + sealed types

@@ -568,7 +568,7 @@ function ThemeToggle() {
 
 ## Migrating a JavaScript project to TypeScript
 
-Migrating incrementally is the recommended approach -- you do not have to convert everything at once.
+Migrating incrementally is the recommended approach - you do not have to convert everything at once.
 
 ### Step 1: Add TypeScript to the project
 
@@ -784,7 +784,7 @@ This final chapter demonstrated:
 
 ---
 
-Congratulations -- you have worked through the full TypeScript beginners guide. You now have a solid foundation in:
+Congratulations - you have worked through the full TypeScript beginners guide. You now have a solid foundation in:
 
 1. The TypeScript type system: primitives, interfaces, type aliases, generics, enums, and utility types
 2. Classes, inheritance, abstract classes, and interface implementation
@@ -794,13 +794,13 @@ Congratulations -- you have worked through the full TypeScript beginners guide. 
 6. Real-world TypeScript in Node.js and React projects
 7. Migrating an existing JavaScript codebase
 
-The best way to continue improving is to write TypeScript every day. Read the error messages -- they are excellent
+The best way to continue improving is to write TypeScript every day. Read the error messages - they are excellent
 teachers. When you hit a type problem you cannot solve, the [TypeScript Playground](https://www.typescriptlang.org/play)
 is an invaluable tool for experimenting without setting up a project.
 
 **Useful resources:**
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html) -- the official documentation
-- [TypeScript Playground](https://www.typescriptlang.org/play) -- experiment in your browser
-- [Total TypeScript](https://www.totaltypescript.com) -- free and paid courses by Matt Pocock
-- [Type Challenges](https://github.com/type-challenges/type-challenges) -- practice type-level programming
-- [ts-reset](https://github.com/total-typescript/ts-reset) -- improves TypeScript's built-in types
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html) - the official documentation
+- [TypeScript Playground](https://www.typescriptlang.org/play) - experiment in your browser
+- [Total TypeScript](https://www.totaltypescript.com) - free and paid courses by Matt Pocock
+- [Type Challenges](https://github.com/type-challenges/type-challenges) - practice type-level programming
+- [ts-reset](https://github.com/total-typescript/ts-reset) - improves TypeScript's built-in types

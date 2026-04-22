@@ -53,7 +53,7 @@ private List<Hit> executeQuery(SlingHttpServletRequest request, HashMap<String, 
 ### SQL2
 
 `resourceResolver.findResources()` runs a JCR-SQL2 query directly. Use it when **all query inputs
-are constants under your control** -- the JCR-SQL2 grammar has no parameter binding, so any
+are constants under your control** - the JCR-SQL2 grammar has no parameter binding, so any
 user-controlled string concatenated into the statement is a query injection risk. For any query
 fed by request parameters, use the QueryBuilder above (or pre-validate inputs against a strict
 allowlist before building the statement).
@@ -86,7 +86,7 @@ final String myQuery = "SELECT * FROM [nt:base] AS s " +
 ## Session API / JCR API
 
 Inside an AEM bundle, never open a JCR `Session` directly with credentials. Instead, obtain a
-service `ResourceResolver` and adapt it to a `Session` -- this gives you a session scoped to a
+service `ResourceResolver` and adapt it to a `Session` - this gives you a session scoped to a
 service user with the minimum privileges it needs. See
 [Security basics](../infrastructure/security.mdx) for setting up the service user mapping.
 
@@ -134,7 +134,7 @@ access. Always route access through a sub-service scoped to the minimum privileg
 ### Remote access from outside AEM
 
 If you truly need to talk to a running AEM instance from an **external** Java client (migrations,
-tooling, tests), connect over HTTP via `JcrUtils.getRepository()` -- but treat it as dev-only and
+tooling, tests), connect over HTTP via `JcrUtils.getRepository()` - but treat it as dev-only and
 pull credentials from configuration, never source. The default local-SDK author port is `4502`.
 
 ```java
@@ -156,7 +156,7 @@ Session session = repository.login(
 :::warning Dev / ops only
 The Groovy Console runs arbitrary code as the admin user. Never expose it on Publish, and restrict
 access on Author to trusted operators. These examples are written for ad-hoc debugging and
-maintenance -- don't copy their string-concatenation shape into production servlets.
+maintenance - don't copy their string-concatenation shape into production servlets.
 :::
 
 ### Simple query example

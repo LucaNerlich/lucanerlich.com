@@ -84,11 +84,11 @@ You can enable individual strict flags separately if you need to adopt them grad
 
 | Target        | Use when                                                              |
 |---------------|-----------------------------------------------------------------------|
-| `ES5`         | Supporting very old browsers (IE11) -- rare in 2026                  |
+| `ES5`         | Supporting very old browsers (IE11) - rare in 2026                  |
 | `ES2017`      | Broad browser support, includes `async`/`await` natively             |
 | `ES2020`      | Modern browsers and Node.js 14+, includes optional chaining, nullish coalescing |
-| `ES2022`      | Node.js 18+, modern browsers -- recommended default                  |
-| `ESNext`      | Always the latest features -- good for bundler projects               |
+| `ES2022`      | Node.js 18+, modern browsers - recommended default                  |
+| `ESNext`      | Always the latest features - good for bundler projects               |
 
 If your bundler (Vite, esbuild, webpack) handles downcompilation, set `target: "ESNext"` and let the bundler control
 the output.
@@ -214,7 +214,7 @@ Path aliases reduce relative import hell. The `baseUrl` is the base directory fo
 
 | Option                           | What it does                                                                |
 |----------------------------------|-----------------------------------------------------------------------------|
-| `skipLibCheck`                   | Skip type-checking `.d.ts` files -- much faster builds, avoids conflicts     |
+| `skipLibCheck`                   | Skip type-checking `.d.ts` files - much faster builds, avoids conflicts     |
 | `esModuleInterop`                | Enables `import React from 'react'` (default import) instead of `import * as React` |
 | `forceConsistentCasingInFileNames` | Prevents case-sensitivity bugs on case-insensitive file systems (macOS, Windows) |
 
@@ -274,10 +274,10 @@ Path aliases reduce relative import hell. The `baseUrl` is the base directory fo
 }
 ```
 
-When using a bundler, set `noEmit: true` -- the bundler compiles the code, and TypeScript is used only for type
+When using a bundler, set `noEmit: true` - the bundler compiles the code, and TypeScript is used only for type
 checking.
 
-## extends -- sharing tsconfig
+## extends - sharing tsconfig
 
 Large monorepos often have a base tsconfig that projects extend:
 
@@ -398,7 +398,7 @@ Configure ts-node in `tsconfig.json` or a separate `tsconfig.node.json`:
 
 ### tsx (faster alternative)
 
-`tsx` uses esbuild to transpile TypeScript at near-native speed -- much faster than `ts-node`:
+`tsx` uses esbuild to transpile TypeScript at near-native speed - much faster than `ts-node`:
 
 ```bash
 npm install --save-dev tsx
@@ -489,7 +489,7 @@ export default tseslint.config(
 
 | Rule                                       | What it catches                                    |
 |--------------------------------------------|----------------------------------------------------|
-| `@typescript-eslint/no-explicit-any`       | Bans `any` -- forces better types                  |
+| `@typescript-eslint/no-explicit-any`       | Bans `any` - forces better types                  |
 | `@typescript-eslint/no-floating-promises`  | Promises not awaited or handled                    |
 | `@typescript-eslint/no-misused-promises`   | Promises used where void is expected               |
 | `@typescript-eslint/await-thenable`        | Awaiting non-promise values                        |
@@ -514,14 +514,14 @@ export default tseslint.config(
 
 ## Summary
 
-- `strict: true` is the most important tsconfig option -- enable it in every new project
+- `strict: true` is the most important tsconfig option - enable it in every new project
 - `target` controls the JavaScript version emitted; `module`/`moduleResolution` control the module system
 - `lib` controls which built-in type definitions are available
-- `baseUrl` and `paths` enable clean path aliases -- configure both tsconfig and your bundler
+- `baseUrl` and `paths` enable clean path aliases - configure both tsconfig and your bundler
 - `extends` lets you share a base tsconfig across a monorepo or use community presets like `@tsconfig/node22`
 - **Project references** with `composite: true` enable incremental, distributed compilation for large codebases
 - **ts-node** runs TypeScript directly; **tsx** is faster but skips type checking
 - **ESLint with `typescript-eslint`** catches runtime problems that the type checker cannot: floating promises, misused nullability, redundant casts
 
-Next up: [TypeScript in Practice](./12-typescript-in-practice.md) -- TypeScript with Node.js, TypeScript with React,
+Next up: [TypeScript in Practice](./12-typescript-in-practice.md) - TypeScript with Node.js, TypeScript with React,
 common real-world patterns, and migrating an existing JavaScript project to TypeScript.

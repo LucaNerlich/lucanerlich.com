@@ -15,7 +15,7 @@ sidebar_position: 11
 
 # Content Fragments & GraphQL
 
-Content Fragments are **channel-neutral, structured content** -- text, images, data -- stored independently of any page
+Content Fragments are **channel-neutral, structured content** - text, images, data - stored independently of any page
 layout. Combined with GraphQL, they enable **headless** content delivery to any frontend: websites, mobile apps, digital
 signage, or anything that speaks HTTP.
 
@@ -46,7 +46,7 @@ flowchart TD
 
 | Feature      | Pages                              | Content Fragments             |
 |--------------|------------------------------------|-------------------------------|
-| **Layout**   | Tied to AEM templates              | No layout -- pure data        |
+| **Layout**   | Tied to AEM templates              | No layout - pure data        |
 | **Delivery** | AEM renders HTML                   | Client renders (any format)   |
 | **Reuse**    | One page = one URL                 | One fragment = many consumers |
 | **Editing**  | Page editor with components        | Content Fragment editor       |
@@ -54,7 +54,7 @@ flowchart TD
 
 ## Content Fragment Models
 
-A Content Fragment Model defines the **structure** of a fragment -- like a database schema. Models are created in the
+A Content Fragment Model defines the **structure** of a fragment - like a database schema. Models are created in the
 configuration:
 
 ### Create a model
@@ -96,7 +96,7 @@ Create these fields for an Article model:
 | Featured       | Boolean            | Default: false            |
 | Author         | Fragment Reference | References Author model   |
 | Category       | Enumeration        | tech, business, design    |
-| Tags           | Tags               | --                        |
+| Tags           | Tags               | -                        |
 
 ### Author model example
 
@@ -131,16 +131,16 @@ The Content Fragment editor shows your model's fields in a structured form:
 
 ### Variations
 
-Content Fragments support **variations** -- alternate versions of the same content:
+Content Fragments support **variations** - alternate versions of the same content:
 
-- **Master** -- the default version
-- Named variations -- e.g., "Summary", "Mobile", "Newsletter"
+- **Master** - the default version
+- Named variations - e.g., "Summary", "Mobile", "Newsletter"
 
 Each variation can override specific fields while inheriting others from the master.
 
 ## The GraphQL API
 
-AEM automatically generates a GraphQL API from your Content Fragment Models. No code needed -- install the model, and
+AEM automatically generates a GraphQL API from your Content Fragment Models. No code needed - install the model, and
 the API is ready.
 
 ### GraphQL endpoint
@@ -158,7 +158,7 @@ Use GraphiQL from the AEM GraphQL tooling UI for development and schema explorat
 
 ### Field name mapping
 
-GraphQL field names are derived from the Content Fragment Model field names. AEM converts them to **camelCase** --
+GraphQL field names are derived from the Content Fragment Model field names. AEM converts them to **camelCase** -
 for example, a model field labeled "Publish Date" becomes `publishDate` in GraphQL. Field names are **case-sensitive**
 in queries. Use the GraphiQL IDE's schema explorer to verify exact field names if queries return `null` unexpectedly.
 
@@ -377,10 +377,10 @@ You learned:
 - **Content Fragment Models** define the schema (field types, validation)
 - How to **create and edit** fragments in the Assets console
 - The **GraphQL API** auto-generated from your models
-- **Querying** -- filtering, sorting, pagination, rich text formats, fragment references
+- **Querying** - filtering, sorting, pagination, rich text formats, fragment references
 - **Persisted queries** for production performance and caching
 - The **headless delivery flow** from author to frontend
 - Using Content Fragments **on pages** with the Content Fragment component
 
-Next up: [Multi-Site Manager & i18n](./12-multi-site-manager-and-i18n.md) -- Blueprints, Live Copies, rollout configs,
+Next up: [Multi-Site Manager & i18n](./12-multi-site-manager-and-i18n.md) - Blueprints, Live Copies, rollout configs,
 language copies, and the translation framework.

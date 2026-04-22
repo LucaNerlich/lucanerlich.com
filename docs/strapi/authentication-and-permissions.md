@@ -315,6 +315,6 @@ module.exports = ({ env }) => ({
 
 ## See also
 
-- [Middleware and Policies](./middleware-and-policies.md) -- implementing access control middleware
-- [Custom Controllers and Services](./custom-controllers-services.md) -- using auth context in controllers
-- [Configuration and Deployment](./configuration-and-deployment.md) -- env-based secrets management
+- [Middleware and Policies](./middleware-and-policies.md) - implementing access control middleware
+- [Custom Controllers and Services](./custom-controllers-services.md) - using auth context in controllers
+- [Configuration and Deployment](./configuration-and-deployment.md) - env-based secrets management

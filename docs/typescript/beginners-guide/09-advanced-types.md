@@ -440,12 +440,12 @@ emitter.emit("user:login", { userId: 1, timestamp: new Date() }); // OK
 ## Summary
 
 - **Conditional types** (`T extends U ? X : Y`) choose between types based on a condition, and distribute over unions
-- **`infer`** extracts type variables from within a conditional type -- used to build `ReturnType`, `Parameters`, etc.
-- **Mapped types** iterate over object keys and transform each property -- the basis of all utility types
-- **Key remapping** (`as`) in mapped types filters or renames keys -- enables `PickByType` and similar helpers
+- **`infer`** extracts type variables from within a conditional type - used to build `ReturnType`, `Parameters`, etc.
+- **Mapped types** iterate over object keys and transform each property - the basis of all utility types
+- **Key remapping** (`as`) in mapped types filters or renames keys - enables `PickByType` and similar helpers
 - **Template literal types** combine string unions with template syntax to generate new string union types
 - **Recursive types** reference themselves to describe trees, nested objects, and deeply structured data
 - Combining these features lets you write type-level logic that enforces complex invariants at compile time
 
-Next up: [Modules & Declaration Files](./10-modules-and-declaration-files.md) -- ES modules in TypeScript,
+Next up: [Modules & Declaration Files](./10-modules-and-declaration-files.md) - ES modules in TypeScript,
 import/export, `.d.ts` declaration files, DefinitelyTyped, and writing your own declarations.

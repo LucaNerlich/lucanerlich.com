@@ -24,10 +24,10 @@ projects.
 CSS has no built-in scoping mechanism. Every rule is global. On a small project, this is fine. On a large project, it
 leads to:
 
-- **Naming conflicts** -- two developers independently create a `.title` class with different styles
-- **Specificity wars** -- selectors grow longer to override other rules
-- **Dead CSS** -- nobody removes old rules because they are afraid of breaking something
-- **Unpredictable side effects** -- changing one rule breaks something on a different page
+- **Naming conflicts** - two developers independently create a `.title` class with different styles
+- **Specificity wars** - selectors grow longer to override other rules
+- **Dead CSS** - nobody removes old rules because they are afraid of breaking something
+- **Unpredictable side effects** - changing one rule breaks something on a different page
 
 Architecture conventions solve these problems.
 
@@ -107,17 +107,17 @@ Architecture conventions solve these problems.
 
 ### Why BEM works
 
-- **No nesting required** -- every class is a single class selector (low, flat specificity)
-- **Self-documenting** -- `.card__title` clearly belongs to the `.card` block
-- **No naming conflicts** -- the block name acts as a namespace
-- **Easy to find** -- search for `.card` to find all card-related CSS
+- **No nesting required** - every class is a single class selector (low, flat specificity)
+- **Self-documenting** - `.card__title` clearly belongs to the `.card` block
+- **No naming conflicts** - the block name acts as a namespace
+- **Easy to find** - search for `.card` to find all card-related CSS
 
 ### BEM rules
 
-1. **Never style bare elements inside a block** -- use `.card__title` instead of `.card h3`
-2. **Keep blocks independent** -- a block should not depend on being inside another block
-3. **Do not nest elements** -- `.card__body__title` is wrong; use `.card__title`
-4. **Modifiers extend, not replace** -- use both classes: `class="card card--featured"`
+1. **Never style bare elements inside a block** - use `.card__title` instead of `.card h3`
+2. **Keep blocks independent** - a block should not depend on being inside another block
+3. **Do not nest elements** - `.card__body__title` is wrong; use `.card__title`
+4. **Modifiers extend, not replace** - use both classes: `class="card card--featured"`
 
 ## File organisation
 
@@ -186,12 +186,12 @@ Import them in order in a main file or HTML:
 
 The order matters. Load files from **least specific to most specific**:
 
-1. **Reset / normalise** -- remove browser defaults
-2. **Tokens** -- custom properties (colours, fonts, spacing)
-3. **Base** -- default styles for bare HTML elements
-4. **Layout** -- page structure (grid, sidebar, container)
-5. **Components** -- reusable UI components (card, button, nav)
-6. **Utilities** -- single-purpose overrides (`.hidden`, `.text-center`)
+1. **Reset / normalise** - remove browser defaults
+2. **Tokens** - custom properties (colours, fonts, spacing)
+3. **Base** - default styles for bare HTML elements
+4. **Layout** - page structure (grid, sidebar, container)
+5. **Components** - reusable UI components (card, button, nav)
+6. **Utilities** - single-purpose overrides (`.hidden`, `.text-center`)
 
 Utilities come last because they must be able to override component styles.
 
@@ -293,7 +293,7 @@ Use utilities for one-off adjustments instead of creating new component classes:
 <p class="card__text mt-4 text-center">Centred text with extra top margin.</p>
 ```
 
-The `.sr-only` class is especially important -- it hides content visually but keeps it available to screen readers.
+The `.sr-only` class is especially important - it hides content visually but keeps it available to screen readers.
 
 ### Utility-first CSS (Tailwind approach)
 
@@ -309,17 +309,17 @@ The utility-first approach (popularised by Tailwind CSS) composes entire designs
 </div>
 ```
 
-Utility-first CSS avoids naming problems entirely -- you never write class names at all. The trade-off is longer HTML
+Utility-first CSS avoids naming problems entirely - you never write class names at all. The trade-off is longer HTML
 and a different mental model.
 
 ## Component-scoped styles
 
 In modern frameworks (React, Vue, Svelte), CSS can be scoped to a component automatically:
 
-- **CSS Modules** -- class names are made unique at build time (`.card_abc123`)
-- **Vue `<style scoped>`** -- adds a data attribute to scope selectors
-- **Svelte** -- scopes styles by default
-- **Shadow DOM** -- fully encapsulated styles (Web Components)
+- **CSS Modules** - class names are made unique at build time (`.card_abc123`)
+- **Vue `<style scoped>`** - adds a data attribute to scope selectors
+- **Svelte** - scopes styles by default
+- **Shadow DOM** - fully encapsulated styles (Web Components)
 
 These approaches solve the global scope problem at the framework level. If you are using a framework, consider them.
 
@@ -346,19 +346,19 @@ preprocessors and plain CSS has narrowed significantly. Consider whether you sti
 ## General best practices
 
 1. **Use a consistent naming convention** (BEM or similar)
-2. **Keep selectors short and flat** -- prefer `.card-title` over `div.card > h3.title`
-3. **Avoid IDs for styling** -- use classes exclusively
+2. **Keep selectors short and flat** - prefer `.card-title` over `div.card > h3.title`
+3. **Avoid IDs for styling** - use classes exclusively
 4. **Avoid `!important`** unless there is no other way
 5. **Use custom properties for values that repeat** (colours, spacing, fonts)
-6. **Write mobile-first** -- base styles for small screens, `min-width` media queries for larger
-7. **Delete unused CSS** -- dead code grows silently and increases file size
-8. **Use `box-sizing: border-box` globally** -- add the reset to every project
+6. **Write mobile-first** - base styles for small screens, `min-width` media queries for larger
+7. **Delete unused CSS** - dead code grows silently and increases file size
+8. **Use `box-sizing: border-box` globally** - add the reset to every project
 9. **Comment section boundaries**, not individual properties
 10. **Run your styles through a linter** (Stylelint) to catch errors and enforce conventions
 
 ## What you learned
 
-- **BEM** (Block__Element--Modifier) keeps naming predictable and specificity flat
+- **BEM** (Block__Element-Modifier) keeps naming predictable and specificity flat
 - Organise CSS files from least specific (reset) to most specific (utilities)
 - Use a **CSS reset** to remove inconsistent browser defaults
 - **Utility classes** handle one-off adjustments; utility-first frameworks take this to the extreme
@@ -368,5 +368,5 @@ preprocessors and plain CSS has narrowed significantly. Consider whether you sti
 
 ## Next step
 
-With good architecture in place, the final technical chapter covers **debugging and common pitfalls** -- how to use
+With good architecture in place, the final technical chapter covers **debugging and common pitfalls** - how to use
 DevTools effectively and avoid the most frequent CSS mistakes.

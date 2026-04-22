@@ -16,7 +16,7 @@ sidebar_position: 5
 # HTL Templates
 
 HTL (HTML Template Language, formerly Sightly) is AEM's server-side templating language. It replaces JSP and is the
-standard for all component rendering. HTL is designed to be **secure by default** -- it automatically escapes output to
+standard for all component rendering. HTL is designed to be **secure by default** - it automatically escapes output to
 prevent XSS attacks.
 
 ## Expressions
@@ -63,7 +63,7 @@ HTL automatically picks an escaping context, but you can override it - here are 
 | `attribute`      | HTML attributes | `<div class="${cssClass @ context='attribute'}">`            |
 | `uri`            | URLs            | `<a href="${url @ context='uri'}">`                          |
 | `scriptString`   | JS strings      | `var x = "${val @ context='scriptString'}"`                  |
-| `unsafe`         | No escaping     | `${richText @ context='unsafe'}` -- use with extreme caution |
+| `unsafe`         | No escaping     | `${richText @ context='unsafe'}` - use with extreme caution |
 
 > **Security:** Never use `context='unsafe'` unless you are absolutely sure the content is safe. HTL's automatic
 > escaping is one of its strongest features.
@@ -71,13 +71,13 @@ HTL automatically picks an escaping context, but you can override it - here are 
 > **Rich text from the RTE:** The Rich Text Editor sanitizes content **on save** (stripping dangerous tags/attributes),
 > and HTL's `html` context provides an **additional** escaping layer on render. Together these two layers make
 > `${model.richText}` safe without `context='unsafe'`. If you want to be explicit, use
-> `${model.richText @ context='html'}` -- this is the default and does not change behavior.
+> `${model.richText @ context='html'}` - this is the default and does not change behavior.
 
 ## Block statements
 
 Block statements are HTML attributes prefixed with `data-sly-`. They control rendering logic.
 
-### data-sly-use -- load a model or object
+### data-sly-use - load a model or object
 
 ```html
 <!-- Load a Sling Model -->
@@ -98,7 +98,7 @@ Block statements are HTML attributes prefixed with `data-sly-`. They control ren
 
 The variable name after the dot (e.g., `.model`) is the identifier you use in expressions.
 
-### data-sly-test -- conditional rendering
+### data-sly-test - conditional rendering
 
 ```html
 <!-- Show only if title exists -->
@@ -118,7 +118,7 @@ The variable name after the dot (e.g., `.model`) is the identifier you use in ex
 
 The `data-sly-test` attribute doubles as a variable assignment when you add an identifier (`.hasItems`).
 
-### data-sly-list -- iterate over collections
+### data-sly-list - iterate over collections
 
 ```html
 <ul data-sly-list.item="${model.articles}">
@@ -142,7 +142,7 @@ List helper variables:
 | `itemList.odd`    | True if index is odd      |
 | `itemList.even`   | True if index is even     |
 
-### data-sly-repeat -- iterate and keep the host element
+### data-sly-repeat - iterate and keep the host element
 
 Unlike `data-sly-list` (which removes the host element), `data-sly-repeat` keeps it:
 
@@ -159,7 +159,7 @@ Unlike `data-sly-list` (which removes the host element), `data-sly-repeat` keeps
 <!-- Outputs multiple <div class="card"> elements -->
 ```
 
-### data-sly-resource -- include another component
+### data-sly-resource - include another component
 
 ```html
 <!-- Include a child component -->
@@ -174,9 +174,9 @@ Unlike `data-sly-list` (which removes the host element), `data-sly-repeat` keeps
                           decorationTagName='article'}"></div>
 ```
 
-This is how components include other components -- it triggers a full Sling resource resolution for the child.
+This is how components include other components - it triggers a full Sling resource resolution for the child.
 
-### data-sly-include -- include an HTL file
+### data-sly-include - include an HTL file
 
 ```html
 <!-- Include a static HTL fragment -->
@@ -186,9 +186,9 @@ This is how components include other components -- it triggers a full Sling reso
 <div data-sly-include="/apps/mysite/components/shared/utils.html"></div>
 ```
 
-Unlike `data-sly-resource`, `data-sly-include` does **not** trigger resource resolution -- it just inlines the HTL file.
+Unlike `data-sly-resource`, `data-sly-include` does **not** trigger resource resolution - it just inlines the HTL file.
 
-### data-sly-template / data-sly-call -- reusable templates
+### data-sly-template / data-sly-call - reusable templates
 
 Define a reusable template block and call it:
 
@@ -212,7 +212,7 @@ Define a reusable template block and call it:
 
 This is how you create reusable UI fragments within HTL.
 
-### data-sly-element -- change the HTML tag
+### data-sly-element - change the HTML tag
 
 ```html
 <!-- Dynamically set the heading level -->
@@ -220,7 +220,7 @@ This is how you create reusable UI fragments within HTL.
 <!-- Could render as <h1>, <h2>, <h3>, etc. -->
 ```
 
-### data-sly-attribute -- set HTML attributes
+### data-sly-attribute - set HTML attributes
 
 ```html
 <!-- Single attribute -->
@@ -233,7 +233,7 @@ This is how you create reusable UI fragments within HTL.
 <input data-sly-attribute.disabled="${model.isDisabled ? 'disabled' : ''}"/>
 ```
 
-### data-sly-text -- set text content
+### data-sly-text - set text content
 
 ```html
 <!-- Replace inner text (auto-escaped) -->
@@ -242,7 +242,7 @@ This is how you create reusable UI fragments within HTL.
 
 The placeholder text is shown at design time and replaced at render time.
 
-### data-sly-unwrap -- remove the host element
+### data-sly-unwrap - remove the host element
 
 ```html
 <!-- Remove the <div> wrapper, keep the content -->
@@ -253,7 +253,7 @@ The placeholder text is shown at design time and replaced at render time.
 
 Useful when you need a container for HTL logic but do not want it in the output.
 
-### data-sly-set -- assign a variable
+### data-sly-set - assign a variable
 
 ```html
 <!-- Assign a computed value without generating any DOM element -->
@@ -280,7 +280,7 @@ HTL provides several global objects available in every template:
 | `response`                | `SlingHttpServletResponse` | The current response                           |
 | `log`                     | `Logger`                   | SLF4J logger                                   |
 | `wcmmode`                 | `WCMMode`                  | Current WCM mode (edit, preview, disabled)     |
-| `currentDesign`           | `Design`                   | Current page design (deprecated in AEMaaCS -- use `currentStyle` instead) |
+| `currentDesign`           | `Design`                   | Current page design (deprecated in AEMaaCS - use `currentStyle` instead) |
 | `currentStyle`            | `Style`                    | Current component policy                       |
 
 ### Common usage
@@ -340,11 +340,11 @@ public class PaginationModel {
 </div>
 ```
 
-### 3. HTL Use objects (JavaScript -- deprecated)
+### 3. HTL Use objects (JavaScript - deprecated)
 
 Server-side JavaScript Use objects are deprecated in AEMaaCS. Use Sling Models instead.
 
-## Practical example -- Article Card component
+## Practical example - Article Card component
 
 Let's build a realistic component that combines what we have learned:
 
@@ -395,9 +395,9 @@ This template:
 
 ## HTL best practices
 
-1. **Always use Sling Models** -- put logic in Java, not HTL
-2. **Never use `context='unsafe'`** -- unless you truly understand the risks
-3. **Keep templates simple** -- if the HTL logic is complex, move it to the model
+1. **Always use Sling Models** - put logic in Java, not HTL
+2. **Never use `context='unsafe'`** - unless you truly understand the risks
+3. **Keep templates simple** - if the HTL logic is complex, move it to the model
 4. **Use `data-sly-template`/`data-sly-call`** for reusable fragments
 5. **Follow BEM naming** with `cmp-` prefix for CSS classes
 6. **Provide edit placeholders** using `wcmmode.edit` checks
@@ -421,5 +421,5 @@ You learned:
 - A practical **Article Card** example combining multiple features
 - HTL **best practices**
 
-Next up: [Component Dialogs](./06-component-dialogs.md) -- Touch UI dialogs with Granite/Coral, field types, tabs,
+Next up: [Component Dialogs](./06-component-dialogs.md) - Touch UI dialogs with Granite/Coral, field types, tabs,
 multifields, validation, and conditional fields.

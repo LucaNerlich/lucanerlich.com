@@ -16,12 +16,12 @@ sidebar_position: 15
 # Streams & Lambdas
 
 Java 8 introduced **lambdas** and the **Stream API**, bringing functional programming to Java. Instead of writing loops
-that describe *how* to process data step by step, you build pipelines that describe *what* you want -- filter this,
+that describe *how* to process data step by step, you build pipelines that describe *what* you want - filter this,
 transform that, collect the result.
 
 ## Lambda expressions
 
-A **lambda** is an anonymous function -- a function without a name that you can pass around like a value:
+A **lambda** is an anonymous function - a function without a name that you can pass around like a value:
 
 ```java
 // Before lambdas: anonymous class
@@ -63,16 +63,16 @@ name -> name.toUpperCase()
 
 ## Functional interfaces
 
-A lambda can only be used where a **functional interface** is expected -- an interface with exactly one abstract method.
+A lambda can only be used where a **functional interface** is expected - an interface with exactly one abstract method.
 Java provides many built-in ones:
 
 | Interface             | Method                  | Use case                         |
 |-----------------------|-------------------------|----------------------------------|
-| `Predicate<T>`        | `boolean test(T t)`     | Filtering -- is this item valid? |
-| `Function<T, R>`      | `R apply(T t)`          | Transforming -- convert T to R   |
-| `Consumer<T>`         | `void accept(T t)`      | Side effects -- print, log, save |
-| `Supplier<T>`         | `T get()`               | Producing -- create a value      |
-| `Comparator<T>`       | `int compare(T a, T b)` | Ordering -- sort items           |
+| `Predicate<T>`        | `boolean test(T t)`     | Filtering - is this item valid? |
+| `Function<T, R>`      | `R apply(T t)`          | Transforming - convert T to R   |
+| `Consumer<T>`         | `void accept(T t)`      | Side effects - print, log, save |
+| `Supplier<T>`         | `T get()`               | Producing - create a value      |
+| `Comparator<T>`       | `int compare(T a, T b)` | Ordering - sort items           |
 | `UnaryOperator<T>`    | `T apply(T t)`          | Transform T to T (same type)     |
 | `BiFunction<T, U, R>` | `R apply(T t, U u)`     | Two inputs, one output           |
 
@@ -163,16 +163,16 @@ System.out.println(result); // [ALICE, CHARLIE, DIANA]
 
 Every pipeline has three parts:
 
-1. **Source** -- where the data comes from (`list.stream()`, `Stream.of(...)`, `Arrays.stream(...)`)
-2. **Intermediate operations** -- transform the stream (lazy -- nothing happens until a terminal operation)
-3. **Terminal operation** -- triggers processing and produces a result
+1. **Source** - where the data comes from (`list.stream()`, `Stream.of(...)`, `Arrays.stream(...)`)
+2. **Intermediate operations** - transform the stream (lazy - nothing happens until a terminal operation)
+3. **Terminal operation** - triggers processing and produces a result
 
 ### Streams are lazy
 
 Intermediate operations are not executed until a terminal operation is called. This means:
 
 - No unnecessary work is done
-- Operations are fused -- the stream processes each element through the entire pipeline before moving to the next
+- Operations are fused - the stream processes each element through the entire pipeline before moving to the next
 
 ### Streams are single-use
 
@@ -184,7 +184,7 @@ stream.forEach(System.out::println); // IllegalStateException -- stream already 
 
 ## Intermediate operations
 
-### `filter()` -- keep matching elements
+### `filter()` - keep matching elements
 
 ```java
 List<Integer> numbers = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -195,7 +195,7 @@ List<Integer> evens = numbers.stream()
 // [2, 4, 6, 8, 10]
 ```
 
-### `map()` -- transform each element
+### `map()` - transform each element
 
 ```java
 List<String> names = List.of("alice", "bob", "charlie");
@@ -206,7 +206,7 @@ List<Integer> lengths = names.stream()
 // [5, 3, 7]
 ```
 
-### `flatMap()` -- flatten nested collections
+### `flatMap()` - flatten nested collections
 
 ```java
 List<List<String>> nested = List.of(
@@ -221,7 +221,7 @@ List<String> flat = nested.stream()
 // [a, b, c, d, e]
 ```
 
-### `sorted()` -- sort elements
+### `sorted()` - sort elements
 
 ```java
 List<String> names = List.of("Charlie", "Alice", "Bob");
@@ -239,7 +239,7 @@ names.stream().sorted(Comparator.reverseOrder()).toList();
 // [Charlie, Bob, Alice]
 ```
 
-### `distinct()` -- remove duplicates
+### `distinct()` - remove duplicates
 
 ```java
 List<Integer> numbers = List.of(1, 2, 2, 3, 3, 3);
@@ -248,7 +248,7 @@ numbers.stream().distinct().toList();
 // [1, 2, 3]
 ```
 
-### `peek()` -- debug without changing the stream
+### `peek()` - debug without changing the stream
 
 ```java
 List<String> result = names.stream()
@@ -273,7 +273,7 @@ numbers.stream().skip(2).limit(3).toList(); // [3, 4, 5]
 
 ## Terminal operations
 
-### `toList()` -- collect into a list
+### `toList()` - collect into a list
 
 ```java
 List<String> result = names.stream()
@@ -281,7 +281,7 @@ List<String> result = names.stream()
     .toList(); // Immutable list (Java 16+)
 ```
 
-### `forEach()` -- perform an action on each element
+### `forEach()` - perform an action on each element
 
 ```java
 names.stream().forEach(System.out::println);
@@ -295,7 +295,7 @@ long count = names.stream()
     .count();
 ```
 
-### `reduce()` -- combine all elements into one
+### `reduce()` - combine all elements into one
 
 ```java
 List<Integer> numbers = List.of(1, 2, 3, 4, 5);
@@ -610,7 +610,7 @@ If every lambda needs a try/catch, a loop is usually cleaner.
 - **Functional interfaces** (`Predicate`, `Function`, `Consumer`, `Supplier`) define the shape of a lambda.
 - **Method references** (`String::toUpperCase`) are shorthand for simple lambdas.
 - **Streams** process collections declaratively through pipelines of filter/map/collect.
-- **Intermediate operations** (`filter`, `map`, `sorted`, `distinct`) are lazy -- they do not run until a terminal
+- **Intermediate operations** (`filter`, `map`, `sorted`, `distinct`) are lazy - they do not run until a terminal
   operation.
 - **Terminal operations** (`toList`, `forEach`, `reduce`, `count`) trigger the pipeline and produce a result.
 - **Collectors** (`groupingBy`, `joining`, `toMap`) provide powerful aggregation.
@@ -620,4 +620,4 @@ For advanced patterns including custom collectors, parallel streams, and functio
 the [Streams and Collectors reference](/java/java-streams)
 and [Functional Interfaces reference](/java/functional-interfaces).
 
-Next up: [Optionals](./16-optionals.md) -- eliminating `NullPointerException` with Java's `Optional<T>`.
+Next up: [Optionals](./16-optionals.md) - eliminating `NullPointerException` with Java's `Optional<T>`.

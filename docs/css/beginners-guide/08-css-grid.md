@@ -150,7 +150,7 @@ Grid lines are numbered starting at 1. Use `grid-column` and `grid-row` to place
 }
 ```
 
-This means: start at column line 1, end at column line 4 -- spanning all three columns in a 3-column grid.
+This means: start at column line 1, end at column line 4 - spanning all three columns in a 3-column grid.
 
 ```css
 .sidebar {
@@ -400,7 +400,7 @@ The classic header/sidebar/main/footer layout:
 
 ## What you learned
 
-- CSS Grid is two-dimensional -- it handles rows **and** columns
+- CSS Grid is two-dimensional - it handles rows **and** columns
 - `grid-template-columns` and `grid-template-rows` define the grid structure
 - The `fr` unit distributes space proportionally; `repeat()` avoids repetition
 - `gap` adds space between tracks
@@ -410,5 +410,5 @@ The classic header/sidebar/main/footer layout:
 
 ## Next step
 
-Grid and Flexbox handle layout. The next chapter covers **responsive design** -- media queries, breakpoints, and
+Grid and Flexbox handle layout. The next chapter covers **responsive design** - media queries, breakpoints, and
 mobile-first development to make your layouts work on every screen size.

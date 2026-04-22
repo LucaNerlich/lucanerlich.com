@@ -23,14 +23,14 @@ Before diving into forms, you need a clear picture of the request-response cycle
 
 ### HTTP Request and Response
 
-When you visit a URL or submit a form, your browser sends an **HTTP request** to the server. The server runs your PHP script, and the script sends back an **HTTP response** -- usually HTML. The browser then renders that HTML.
+When you visit a URL or submit a form, your browser sends an **HTTP request** to the server. The server runs your PHP script, and the script sends back an **HTTP response** - usually HTML. The browser then renders that HTML.
 
 Every HTTP request includes:
 
-- **Method** -- typically `GET` or `POST`
-- **URL** -- the resource being requested
-- **Headers** -- metadata (content type, cookies, etc.)
-- **Body** (optional) -- data sent with the request
+- **Method** - typically `GET` or `POST`
+- **URL** - the resource being requested
+- **Headers** - metadata (content type, cookies, etc.)
+- **Body** (optional) - data sent with the request
 
 The response includes a status code (e.g. 200 OK, 404 Not Found), headers, and a body (often HTML).
 
@@ -65,8 +65,8 @@ HTML forms collect user input and send it to the server. You need to know the ba
 
 A form is defined with the `<form>` element. Two attributes matter most:
 
-- **`action`** -- the URL that receives the submitted data (often the same page)
-- **`method`** -- `get` or `post`
+- **`action`** - the URL that receives the submitted data (often the same page)
+- **`method`** - `get` or `post`
 
 ```html
 <form action="process.php" method="post">
@@ -110,7 +110,7 @@ Every input that should be sent must have a **`name`** attribute. That name beco
 
 ## Superglobals
 
-PHP provides **superglobals** -- built-in arrays available in every scope. They hold request data and server information.
+PHP provides **superglobals** - built-in arrays available in every scope. They hold request data and server information.
 
 ### $_GET
 
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ### $_REQUEST
 
-`$_REQUEST` merges `$_GET`, `$_POST`, and `$_COOKIE`. It is convenient but ambiguous -- you cannot tell where a value came from. Prefer `$_GET` or `$_POST` explicitly for clarity and security.
+`$_REQUEST` merges `$_GET`, `$_POST`, and `$_COOKIE`. It is convenient but ambiguous - you cannot tell where a value came from. Prefer `$_GET` or `$_POST` explicitly for clarity and security.
 
 > **Note:** The order of values in `$_REQUEST` depends on `request_order` in `php.ini`. Do not rely on it for sensitive data.
 
@@ -312,7 +312,7 @@ if (strlen($password) < 8) {
 }
 ```
 
-### Sanitizing Output -- Preventing XSS
+### Sanitizing Output - Preventing XSS
 
 When you output user-supplied data into HTML, escape it with `htmlspecialchars()` to prevent **Cross-Site Scripting (XSS)**:
 
@@ -560,7 +560,7 @@ Escape all user-supplied data when outputting to HTML with `htmlspecialchars($va
 
 **Cross-Site Request Forgery (CSRF)** occurs when a malicious site tricks a user's browser into submitting a form to your site while the user is logged in. The request carries the user's cookies, so your server may treat it as legitimate.
 
-Mitigation involves **CSRF tokens** -- a random value stored in the session and included in the form. On submit, the server verifies the token matches. We will not implement tokens here, but you should use them for any form that changes state (login, registration, profile updates). Frameworks like Laravel and Symfony provide built-in CSRF protection.
+Mitigation involves **CSRF tokens** - a random value stored in the session and included in the form. On submit, the server verifies the token matches. We will not implement tokens here, but you should use them for any form that changes state (login, registration, profile updates). Frameworks like Laravel and Symfony provide built-in CSRF protection.
 
 > **Warning:** For production forms that modify data, implement CSRF protection. This chapter introduces the concept; you will use framework helpers or session-based tokens in real projects.
 
@@ -575,4 +575,4 @@ Mitigation involves **CSRF tokens** -- a random value stored in the session and 
 - **Display errors** next to fields and keep submitted values (sticky forms) so users can correct mistakes easily.
 - **Security**: Never trust input, always validate server-side, escape output, and plan for CSRF protection in production.
 
-**Next up:** [Object-Oriented Programming Basics](./08-oop-basics.md) -- classes, objects, properties, methods, constructors, and visibility modifiers.
+**Next up:** [Object-Oriented Programming Basics](./08-oop-basics.md) - classes, objects, properties, methods, constructors, and visibility modifiers.

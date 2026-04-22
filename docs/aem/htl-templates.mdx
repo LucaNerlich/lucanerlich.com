@@ -453,7 +453,7 @@ at the corresponding `/apps` path:
 
 :::warning
 You must overlay the **entire** `config.xml` file. Partial overlays (e.g. only the `<iframe>` section) are not
-supported by the AntiSamy loader -- the whole policy file is read as one unit.
+supported by the AntiSamy loader - the whole policy file is read as one unit.
 :::
 
 A typical reason to customise the policy is to allow specific tags or attributes that AntiSamy strips by default.
@@ -577,11 +577,11 @@ public class SafeTextModel {
 
 :::tip
 **Double protection**: Even when your Sling Model sanitises values via XSSAPI, still apply the correct
-`@ context` in HTL. This gives you defense in depth -- if one layer fails or is bypassed, the other still protects
+`@ context` in HTL. This gives you defense in depth - if one layer fails or is bypassed, the other still protects
 against XSS.
 :::
 
-#### Avoiding context='unsafe' -- real-world patterns
+#### Avoiding context='unsafe' - real-world patterns
 
 A common trap is reaching for `context='unsafe'` when AntiSamy strips something you need. For example,
 `tel:` links are blocked by the default URI context because `tel:` is not in the allowed scheme list.
@@ -594,7 +594,7 @@ A naive (and dangerous) workaround looks like this:
 </a>
 ```
 
-This opens the door to XSS because **any** string -- including `javascript:alert(1)` -- will pass through
+This opens the door to XSS because **any** string - including `javascript:alert(1)` - will pass through
 unfiltered. Instead, use one of these safer approaches:
 
 **Approach 1 (recommended): Feature flags with hardcoded scheme in HTL**
@@ -1208,10 +1208,10 @@ When HTL evaluates expressions, Java objects are converted according to these ru
 - [Components](./components/overview.mdx)
 - [Core Components](./components/core-components.mdx)
 - [Client Libraries](./client-libraries.mdx)
-- [i18n and Translation](./content/i18n-translation.md) -- dictionaries, translation framework
+- [i18n and Translation](./content/i18n-translation.md) - dictionaries, translation framework
 - [Official HTL Specification](https://github.com/adobe/htl-spec/blob/master/SPECIFICATION.md)
 - [Sling HTL Scripting Engine Documentation](https://sling.apache.org/documentation/bundles/scripting/scripting-htl.html)
-- [AEM Security -- XSS Protection](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/introduction/security)
+- [AEM Security - XSS Protection](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/introduction/security)
 - [XSSAPI Javadoc](https://developer.adobe.com/experience-manager/reference-materials/6-5/javadoc/com/adobe/granite/xss/XSSAPI.html)
 - [OWASP AntiSamy Project](https://owasp.org/www-project-antisamy/)
-- [How good is your AEM security? -- XSS (Perficient)](https://blogs.perficient.com/2022/10/04/how-good-is-your-aem-security-xss/)
+- [How good is your AEM security? - XSS (Perficient)](https://blogs.perficient.com/2022/10/04/how-good-is-your-aem-security-xss/)

@@ -20,13 +20,13 @@ serve as living documentation of how your code is supposed to behave.
 
 ## Why test?
 
-Without tests, every change is risky. You edit one function, and something unrelated breaks -- but you do not find out
+Without tests, every change is risky. You edit one function, and something unrelated breaks - but you do not find out
 until a user reports it. With tests:
 
-- **Catch bugs early** -- a failing test tells you immediately that something broke.
-- **Refactor with confidence** -- change the implementation, run the tests, know it still works.
-- **Document behavior** -- tests show exactly what the code is supposed to do.
-- **Prevent regressions** -- once a bug is fixed and a test is added, that bug can never come back silently.
+- **Catch bugs early** - a failing test tells you immediately that something broke.
+- **Refactor with confidence** - change the implementation, run the tests, know it still works.
+- **Document behavior** - tests show exactly what the code is supposed to do.
+- **Prevent regressions** - once a bug is fixed and a test is added, that bug can never come back silently.
 
 ## Setting up JUnit 5
 
@@ -167,7 +167,7 @@ assertEquals(100, account.getBalance(),
     "Balance should be 100 after deposit");
 ```
 
-### `assertThrows` -- verify exceptions
+### `assertThrows` - verify exceptions
 
 ```java
 @Test
@@ -180,7 +180,7 @@ void throwsOnInvalidInput() {
 }
 ```
 
-### `assertAll` -- check multiple conditions at once
+### `assertAll` - check multiple conditions at once
 
 ```java
 @Test
@@ -197,7 +197,7 @@ void userHasCorrectProperties() {
 
 `assertAll` runs every assertion even if one fails, so you see all failures at once.
 
-### `assertTimeout` -- verify performance
+### `assertTimeout` - verify performance
 
 ```java
 @Test
@@ -230,13 +230,13 @@ void completingATaskMarksItDone() {
 
 This pattern keeps tests focused and readable:
 
-1. **Arrange** -- create objects, prepare data
-2. **Act** -- call the method you are testing
-3. **Assert** -- check the result
+1. **Arrange** - create objects, prepare data
+2. **Act** - call the method you are testing
+3. **Assert** - check the result
 
 ## Setup and teardown
 
-### `@BeforeEach` -- runs before every test
+### `@BeforeEach` - runs before every test
 
 ```java
 class TaskStoreTest {
@@ -263,9 +263,9 @@ class TaskStoreTest {
 }
 ```
 
-Each test gets a fresh `TaskStore` -- tests do not affect each other.
+Each test gets a fresh `TaskStore` - tests do not affect each other.
 
-### `@AfterEach` -- runs after every test
+### `@AfterEach` - runs after every test
 
 ```java
 @AfterEach
@@ -275,7 +275,7 @@ void tearDown() {
 }
 ```
 
-### `@BeforeAll` / `@AfterAll` -- run once for the entire class
+### `@BeforeAll` / `@AfterAll` - run once for the entire class
 
 ```java
 @BeforeAll
@@ -522,7 +522,7 @@ class ValidationTest {
 }
 ```
 
-### `@CsvSource` -- multiple parameters per test case
+### `@CsvSource` - multiple parameters per test case
 
 ```java
 @ParameterizedTest
@@ -543,7 +543,7 @@ void checksCompletionStatus(int id, boolean expectedDone) {
 }
 ```
 
-### `@MethodSource` -- complex test data from a method
+### `@MethodSource` - complex test data from a method
 
 ```java
 @ParameterizedTest
@@ -688,11 +688,11 @@ class ApiServerTest {
 
 **Key patterns:**
 
-- Use port `0` to let the OS assign a random free port -- avoids conflicts when running tests in parallel.
+- Use port `0` to let the OS assign a random free port - avoids conflicts when running tests in parallel.
 - Start a fresh server in `@BeforeEach` so tests are isolated.
 - Stop the server in `@AfterEach` to free the port.
 
-## AssertJ -- fluent assertions
+## AssertJ - fluent assertions
 
 JUnit's built-in assertions work, but [AssertJ](https://assertj.github.io/doc/) provides a more readable, fluent style:
 
@@ -787,9 +787,9 @@ Follow the **FIRST** principles:
 | Principle           | Meaning                                                                  |
 |---------------------|--------------------------------------------------------------------------|
 | **Fast**            | Tests should run in milliseconds, not seconds                            |
-| **Isolated**        | Each test is independent -- no shared state, no required execution order |
+| **Isolated**        | Each test is independent - no shared state, no required execution order |
 | **Repeatable**      | Same result every time, on any machine                                   |
-| **Self-validating** | Passes or fails automatically -- no manual inspection                    |
+| **Self-validating** | Passes or fails automatically - no manual inspection                    |
 | **Timely**          | Written alongside the code, not months later                             |
 
 ### Dos and Don'ts
@@ -840,11 +840,11 @@ Most IDEs (IntelliJ IDEA, VS Code with Java extensions) let you:
 
 ## Summary
 
-- **Tests verify behavior** -- they catch bugs early and give you confidence to change code.
-- **JUnit 5** is the standard Java testing framework -- add it as a `test` dependency.
+- **Tests verify behavior** - they catch bugs early and give you confidence to change code.
+- **JUnit 5** is the standard Java testing framework - add it as a `test` dependency.
 - Use the **Arrange-Act-Assert** pattern: set up, perform the action, check the result.
 - **`@BeforeEach`** / **`@AfterEach`** ensure each test starts with a clean state.
-- **`@ParameterizedTest`** tests the same logic with multiple inputs -- less duplication.
+- **`@ParameterizedTest`** tests the same logic with multiple inputs - less duplication.
 - **Test edge cases**: empty input, null values, boundary conditions, error paths.
 - **AssertJ** provides fluent, readable assertions with better error messages.
 - Good tests are **fast, isolated, repeatable, and self-validating**.

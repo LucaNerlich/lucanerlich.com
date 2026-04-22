@@ -16,7 +16,7 @@ sidebar_position: 2
 
 # Content Modeling
 
-Content modeling is the most important decision you make in a CMS project. A good model makes everything else easier --
+Content modeling is the most important decision you make in a CMS project. A good model makes everything else easier -
 a bad one haunts you forever. In this chapter we create the content types for our blog.
 
 ## Collection types vs single types
@@ -43,7 +43,7 @@ flowchart TD
     One --> Settings["Site Settings (1 config)"]
 ```
 
-## Creating your first collection type -- Post
+## Creating your first collection type - Post
 
 Let's create the core of our blog: a **Post** collection type.
 
@@ -62,7 +62,7 @@ Now add fields one by one:
 |-----------------|--------------------|-------------------------------|
 | `title`         | Text (Short text)  | Required                      |
 | `slug`          | UID                | Attached to `title`, required |
-| `content`       | Rich text (Blocks) | --                            |
+| `content`       | Rich text (Blocks) | -                            |
 | `excerpt`       | Text (Long text)   | Max 300 characters            |
 | `publishedDate` | Date               | Date only                     |
 | `featured`      | Boolean            | Default: `false`              |
@@ -198,7 +198,7 @@ Most fields support these common options:
 | `private`                 | Field is excluded from API responses               |
 | `configurable`            | Whether the field can be edited in the admin panel |
 
-## Creating a single type -- Site Settings
+## Creating a single type - Site Settings
 
 Not everything is a collection. A blog typically has one set of global settings.
 
@@ -209,16 +209,16 @@ Not everything is a collection. A blog typically has one set of global settings.
 | Field name     | Type              | Configuration                 |
 |----------------|-------------------|-------------------------------|
 | `siteName`     | Text (Short text) | Required, default: "My Blog"  |
-| `tagline`      | Text (Short text) | --                            |
+| `tagline`      | Text (Short text) | -                            |
 | `postsPerPage` | Number (Integer)  | Default: 10, min: 1, max: 100 |
-| `footerText`   | Text (Long text)  | --                            |
+| `footerText`   | Text (Long text)  | -                            |
 
 4. Click **Save**
 
 The generated schema lives in `src/api/site-setting/content-types/site-setting/schema.json` and has
 `"kind": "singleType"` instead of `"collectionType"`.
 
-## Components -- reusable field groups
+## Components - reusable field groups
 
 Components let you define a group of fields once and reuse it across multiple content types.
 
@@ -236,7 +236,7 @@ Let's create an **SEO** component that any content type can use:
 |-------------------|-------------------|--------------------|
 | `metaTitle`       | Text (Short text) | Max 60 characters  |
 | `metaDescription` | Text (Long text)  | Max 160 characters |
-| `canonicalUrl`    | Text (Short text) | --                 |
+| `canonicalUrl`    | Text (Short text) | -                 |
 | `noIndex`         | Boolean           | Default: `false`   |
 
 6. Save the component
@@ -298,16 +298,16 @@ Some components make sense as lists. Create a **Social Link** component:
 When adding it to Site Settings, choose **Repeatable component**. This lets you add multiple social links as an ordered
 list.
 
-## Dynamic zones -- flexible content blocks
+## Dynamic zones - flexible content blocks
 
 Dynamic zones are the most powerful modeling feature. They let content editors choose from a set of components to build
 flexible page layouts.
 
 ### When to use dynamic zones
 
-- **Page builders** -- editors compose pages from blocks (hero, text, image gallery, CTA)
-- **Flexible layouts** -- different posts can have different content structures
-- **Landing pages** -- marketing teams need freedom without developer intervention
+- **Page builders** - editors compose pages from blocks (hero, text, image gallery, CTA)
+- **Flexible layouts** - different posts can have different content structures
+- **Landing pages** - marketing teams need freedom without developer intervention
 
 ### Creating a dynamic zone
 
@@ -366,9 +366,9 @@ Choosing the right modeling primitive is crucial:
 
 Rules of thumb:
 
-- If the data **belongs to** the parent and has no meaning on its own -- use a **component**
-- If the data **exists independently** and is shared across entries -- use a **relation** (next chapter)
-- If editors need to **compose flexible layouts** from multiple block types -- use a **dynamic zone**
+- If the data **belongs to** the parent and has no meaning on its own - use a **component**
+- If the data **exists independently** and is shared across entries - use a **relation** (next chapter)
+- If editors need to **compose flexible layouts** from multiple block types - use a **dynamic zone**
 
 > For advanced modeling patterns, see the [Content Modeling Patterns](/strapi/content-modeling-patterns) reference.
 
@@ -390,7 +390,7 @@ set of options:
 
 In the admin panel, this renders as a dropdown.
 
-## Schema editing -- admin panel vs JSON
+## Schema editing - admin panel vs JSON
 
 You have two ways to define content types:
 
@@ -409,10 +409,10 @@ restart.
 
 At this point your project has:
 
-- **Post** (collection type) -- title, slug, content, excerpt, publishedDate, featured, seo
-- **Site Settings** (single type) -- siteName, tagline, postsPerPage, footerText
-- **SEO** (component) -- metaTitle, metaDescription, canonicalUrl, noIndex
-- **Social Link** (component) -- platform, url
+- **Post** (collection type) - title, slug, content, excerpt, publishedDate, featured, seo
+- **Site Settings** (single type) - siteName, tagline, postsPerPage, footerText
+- **SEO** (component) - metaTitle, metaDescription, canonicalUrl, noIndex
+- **Social Link** (component) - platform, url
 
 The content types are defined but unrelated. A blog post does not yet know who wrote it or what category it belongs to.
 That is what relations are for.
@@ -428,5 +428,5 @@ You learned:
 - When to choose components vs relations vs dynamic zones
 - That you can model via the admin panel or by editing JSON schema files directly
 
-Next up: [Relations](./03-relations.md) -- connecting your content types with one-to-one, one-to-many, and many-to-many
+Next up: [Relations](./03-relations.md) - connecting your content types with one-to-one, one-to-many, and many-to-many
 relations to build a proper blog data model.

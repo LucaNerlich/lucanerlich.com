@@ -58,12 +58,12 @@ a {
 }
 ```
 
-When you decide to change your primary colour, you update it in **one place** -- the `:root` definition -- and every
+When you decide to change your primary colour, you update it in **one place** - the `:root` definition - and every
 element using `var(--color-primary)` updates automatically.
 
 ## Fallback values
 
-`var()` accepts a second argument -- a fallback used when the variable is not defined:
+`var()` accepts a second argument - a fallback used when the variable is not defined:
 
 ```css
 .card {
@@ -136,7 +136,7 @@ Each button gets different colours without separate class rules for `background-
 
 ## Building a design token system
 
-Custom properties are perfect for design tokens -- the foundational values of your design system:
+Custom properties are perfect for design tokens - the foundational values of your design system:
 
 ```css
 :root {
@@ -290,7 +290,7 @@ JavaScript:
 document.documentElement.style.setProperty('--color-primary', '#e74c3c');
 ```
 
-This immediately updates every element using `--color-primary` -- no page reload needed.
+This immediately updates every element using `--color-primary` - no page reload needed.
 
 A simple theme toggle:
 
@@ -331,8 +331,8 @@ h1 {
 
 - Custom properties cannot be used in **media query conditions**: `@media (min-width: var(--bp))` does not work
 - They cannot define **property names**: `var(--my-prop): red` is invalid
-- They are inherited by default -- child elements see parent values unless overridden
-- No built-in type checking -- any value is accepted
+- They are inherited by default - child elements see parent values unless overridden
+- No built-in type checking - any value is accepted
 
 ## What you learned
 
@@ -345,5 +345,5 @@ h1 {
 
 ## Next step
 
-With variables in place, the next chapter explains **specificity and the cascade** -- the rules that determine which
+With variables in place, the next chapter explains **specificity and the cascade** - the rules that determine which
 CSS declaration wins when multiple rules target the same element.

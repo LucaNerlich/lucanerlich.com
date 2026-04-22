@@ -853,7 +853,7 @@ module.exports = postFactory;
 
 ### 4. Sequential test execution
 
-Strapi is stateful -- it uses a single database connection and global state. Running tests in parallel causes race
+Strapi is stateful - it uses a single database connection and global state. Running tests in parallel causes race
 conditions. Always use a single worker:
 
 ```javascript
@@ -887,4 +887,4 @@ You learned:
 
 Testing gives you confidence that your CMS works correctly and continues to work as you make changes. With good test coverage, you can refactor and add features without fear of breaking existing functionality.
 
-Next up: [Docker & Deployment Automation](./14-docker-deployment.md) -- containerizing Strapi, docker-compose for development, and automated deployments.
+Next up: [Docker & Deployment Automation](./14-docker-deployment.md) - containerizing Strapi, docker-compose for development, and automated deployments.

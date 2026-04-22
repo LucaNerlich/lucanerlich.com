@@ -55,7 +55,7 @@ created in the AEM configuration space (`/conf`) and must be enabled per site co
 | Content Reference  | `String`          | `String`          | Path to a page or asset                   |
 | Fragment Reference | `String[]`        | `String[]`        | References to other Content Fragments     |
 | JSON Object        | `String` (JSON)   | `String`          | Arbitrary structured data                 |
-| Tab Placeholder    | --                | --                | Visual grouping in the editor (no data)   |
+| Tab Placeholder    | -                | -                | Visual grouping in the editor (no data)   |
 
 ### Model JCR structure
 
@@ -119,7 +119,7 @@ defined in the model. Fragment references are stored as **String arrays of paths
 
 ### Variations
 
-Content Fragments support **variations** -- alternative versions of the same content (e.g., a short
+Content Fragments support **variations** - alternative versions of the same content (e.g., a short
 summary, a social media version). Each variation stores its own set of field values:
 
 ```text
@@ -790,13 +790,13 @@ curl -u admin:admin \
 
 ### Model design
 
-- **Keep models focused** -- one model per content type (Article, Author, FAQ). Avoid catch-all models
+- **Keep models focused** - one model per content type (Article, Author, FAQ). Avoid catch-all models
   with dozens of fields
 - **Use fragment references** to link related content rather than duplicating data
-- **Name fields consistently** -- use camelCase, match your API contract (GraphQL field names derive
+- **Name fields consistently** - use camelCase, match your API contract (GraphQL field names derive
   from model field names)
-- **Add descriptions** to fields -- they appear as help text in the author UI
-- **Version your models carefully** -- adding fields is safe; renaming or removing fields breaks
+- **Add descriptions** to fields - they appear as help text in the author UI
+- **Version your models carefully** - adding fields is safe; renaming or removing fields breaks
   existing fragments
 
 ### Authoring workflow
@@ -813,7 +813,7 @@ curl -u admin:admin \
 - **Create Oak indexes** for frequently queried fragment properties
 - **Cache fragment data** in Sling Models with `@PostConstruct` rather than reading on every getter
   call
-- **Use persisted GraphQL queries** on Publish -- they are cacheable by Dispatcher and CDN
+- **Use persisted GraphQL queries** on Publish - they are cacheable by Dispatcher and CDN
 
 ### Common pitfalls
 
@@ -829,16 +829,16 @@ curl -u admin:admin \
 
 ## See also
 
-- [Headless GraphQL](./graphql.mdx) -- GraphQL endpoint setup, queries, CORS
-- [Modify and Query the JCR](./jcr.md) -- QueryBuilder and JCR-SQL2
-- [JCR Node Operations](./node-operations.mdx) -- low-level JCR CRUD
-- [Replication and Activation](./replication-activation.mdx) -- publishing fragments
-- [Multi-Site Manager](./multi-site-manager-msm.md) -- language copies and live copies
-- [Sling Models](../backend/sling-models.mdx) -- reading fragment data in components
-- [HTL Templates](../htl-templates.mdx) -- rendering fragment data
-- [Architecture](../architecture.mdx) -- content model and resource resolution
-- [Component Dialogs](../component-dialogs.mdx) -- Content Fragment picker field
-- [Experience Fragments](./experience-fragments.md) -- XF vs CF comparison
-- [Tags and Taxonomies](./tags-taxonomies.md) -- tagging fragments
-- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) -- Content Distribution and migration
-- [Groovy Console](../groovy-console.mdx) -- bulk fragment operations
+- [Headless GraphQL](./graphql.mdx) - GraphQL endpoint setup, queries, CORS
+- [Modify and Query the JCR](./jcr.md) - QueryBuilder and JCR-SQL2
+- [JCR Node Operations](./node-operations.mdx) - low-level JCR CRUD
+- [Replication and Activation](./replication-activation.mdx) - publishing fragments
+- [Multi-Site Manager](./multi-site-manager-msm.md) - language copies and live copies
+- [Sling Models](../backend/sling-models.mdx) - reading fragment data in components
+- [HTL Templates](../htl-templates.mdx) - rendering fragment data
+- [Architecture](../architecture.mdx) - content model and resource resolution
+- [Component Dialogs](../component-dialogs.mdx) - Content Fragment picker field
+- [Experience Fragments](./experience-fragments.md) - XF vs CF comparison
+- [Tags and Taxonomies](./tags-taxonomies.md) - tagging fragments
+- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) - Content Distribution and migration
+- [Groovy Console](../groovy-console.mdx) - bulk fragment operations

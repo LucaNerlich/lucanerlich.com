@@ -102,7 +102,7 @@ GraphiQL provides:
 
 ### Basic queries
 
-**List query** -- fetch multiple fragments of a type:
+**List query** - fetch multiple fragments of a type:
 
 ```graphql
 {
@@ -298,7 +298,7 @@ Use the `filter` argument on list queries. Each field supports type-specific ope
 }
 ```
 
-**Combining filters** (AND logic -- all conditions must match):
+**Combining filters** (AND logic - all conditions must match):
 
 ```graphql
 {
@@ -849,7 +849,7 @@ Deeply nested fragment references can cause expensive JCR traversals:
 
 ### Request only needed fields
 
-GraphQL lets you select exactly what you need. Avoid fetching unused fields -- especially large
+GraphQL lets you select exactly what you need. Avoid fetching unused fields - especially large
 `html` bodies when you only need titles:
 
 ```graphql
@@ -913,13 +913,13 @@ For frequently filtered fields, ensure Oak indexes exist for the underlying JCR 
 
 ## See also
 
-- [Content Fragments](./content-fragments.md) -- CF models, Java API, JCR structure
-- [Modify and Query the JCR](./jcr.md) -- QueryBuilder and JCR-SQL2
+- [Content Fragments](./content-fragments.md) - CF models, Java API, JCR structure
+- [Modify and Query the JCR](./jcr.md) - QueryBuilder and JCR-SQL2
 - [JCR Node Operations](./node-operations.mdx)
-- [Architecture](../architecture.mdx) -- Sling request pipeline
+- [Architecture](../architecture.mdx) - Sling request pipeline
 - [Dispatcher Configuration](../infrastructure/dispatcher-configuration.mdx)
-- [Security](../infrastructure/security.mdx) -- CSRF, referrer filter
+- [Security](../infrastructure/security.mdx) - CSRF, referrer filter
 - [Edge Delivery Services](../infrastructure/helix.mdx)
 - [AEM as a Cloud Service](../infrastructure/cloud-service.mdx)
-- [Performance](../infrastructure/performance.mdx) -- Oak indexes, caching
-- [Sling Models](../backend/sling-models.mdx) -- server-side CF rendering
+- [Performance](../infrastructure/performance.mdx) - Oak indexes, caching
+- [Sling Models](../backend/sling-models.mdx) - server-side CF rendering

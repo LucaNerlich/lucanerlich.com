@@ -15,30 +15,30 @@ sidebar_position: 17
 
 # Practice Projects
 
-You have finished the guide. The best way to make the knowledge stick is to build something on your own. This chapter proposes six projects of increasing difficulty. Each one tells you what to build, which chapters it draws from, and enough hints to get started -- but the implementation is up to you. Figuring out the details is where the real learning happens.
+You have finished the guide. The best way to make the knowledge stick is to build something on your own. This chapter proposes six projects of increasing difficulty. Each one tells you what to build, which chapters it draws from, and enough hints to get started - but the implementation is up to you. Figuring out the details is where the real learning happens.
 
 Pick one that interests you and start building.
 
 | Difficulty            | Project                    | Key chapters | Time estimate |
 |-----------------------|----------------------------|--------------|---------------|
-| **Beginner**          | CLI Quiz Game              | 1--6, 11     | 2--4 hours    |
-| **Beginner**          | Contact Form with Email    | 1--7, 14     | 2--4 hours    |
-| **Intermediate**      | URL Shortener              | 1--12        | 4--8 hours    |
-| **Intermediate--Advanced** | Blog with Authentication | 1--14, 16    | 8--16 hours   |
-| **Advanced**          | REST API                   | 1--14        | 8--12 hours   |
-| **Advanced**          | Task Manager with Full CRUD| All          | 12--20 hours  |
+| **Beginner**          | CLI Quiz Game              | 1-6, 11     | 2-4 hours    |
+| **Beginner**          | Contact Form with Email    | 1-7, 14     | 2-4 hours    |
+| **Intermediate**      | URL Shortener              | 1-12        | 4-8 hours    |
+| **Intermediate-Advanced** | Blog with Authentication | 1-14, 16    | 8-16 hours   |
+| **Advanced**          | REST API                   | 1-14        | 8-12 hours   |
+| **Advanced**          | Task Manager with Full CRUD| All          | 12-20 hours  |
 
 ---
 
 ## 1. CLI Quiz Game
 
-**Difficulty:** Beginner | **Chapters:** 1--6, 11
+**Difficulty:** Beginner | **Chapters:** 1-6, 11
 
 Build a terminal-based quiz game that reads questions from a JSON file, presents multiple-choice options, and tracks the player's score. This project reinforces fundamentals without touching the web.
 
 ### What you will practice
 
-- Variables, types, and operators (chapters 1--3)
+- Variables, types, and operators (chapters 1-3)
 - Control flow: loops and conditionals (chapter 4)
 - Functions for reusable logic (chapter 5)
 - Arrays for questions and answers (chapter 6)
@@ -81,7 +81,7 @@ Store questions in a JSON file. Each question has a structure like:
 
 ## 2. Contact Form with Email
 
-**Difficulty:** Beginner | **Chapters:** 1--7, 14
+**Difficulty:** Beginner | **Chapters:** 1-7, 14
 
 Build a web contact form that validates user input and sends emails using PHPMailer. This project introduces form handling, validation, and Composer packages.
 
@@ -98,10 +98,10 @@ No database required. The form collects:
 
 | Field      | Type   | Validation                    |
 |------------|--------|-------------------------------|
-| `name`     | string | Required, 2--100 chars        |
+| `name`     | string | Required, 2-100 chars        |
 | `email`    | string | Required, valid email format  |
-| `subject`  | string | Required, 5--200 chars        |
-| `message`  | text   | Required, 10--5000 chars      |
+| `subject`  | string | Required, 5-200 chars        |
+| `message`  | text   | Required, 10-5000 chars      |
 
 ### Key features
 
@@ -122,7 +122,7 @@ No database required. The form collects:
 
 ## 3. URL Shortener
 
-**Difficulty:** Intermediate | **Chapters:** 1--12
+**Difficulty:** Intermediate | **Chapters:** 1-12
 
 Build a URL shortener that stores links in a database, generates short codes, and redirects visitors while tracking click counts. This project combines routing, database CRUD, and HTTP redirects.
 
@@ -142,7 +142,7 @@ Build a URL shortener that stores links in a database, generates short codes, an
 
 ### Key features
 
-- Form or API to create a short link: input URL, generate unique 6--8 character code
+- Form or API to create a short link: input URL, generate unique 6-8 character code
 - `GET /s/{shortCode}`: look up the link, increment `clicks`, redirect to `original_url`
 - Return 404 if the short code does not exist
 - Admin or CLI view to list links with click counts
@@ -159,13 +159,13 @@ Build a URL shortener that stores links in a database, generates short codes, an
 
 ## 4. Blog with Authentication
 
-**Difficulty:** Intermediate--Advanced | **Chapters:** 1--14, 16
+**Difficulty:** Intermediate-Advanced | **Chapters:** 1-14, 16
 
 Build a full blog with user registration, login, posts with categories and tags, comments, and an admin panel. This project ties together OOP, sessions, database relations, and file uploads.
 
 ### What you will practice
 
-- OOP basics and advanced (chapters 8--9): models, repositories, services
+- OOP basics and advanced (chapters 8-9): models, repositories, services
 - Sessions and cookies (chapter 13): login state, CSRF tokens
 - Database relations (chapter 12): posts belong to users and categories; comments belong to posts and users
 - Forms and file uploads (chapters 7, 11): image upload for post thumbnails
@@ -204,9 +204,9 @@ Build a full blog with user registration, login, posts with categories and tags,
 
 ## 5. REST API
 
-**Difficulty:** Advanced | **Chapters:** 1--14
+**Difficulty:** Advanced | **Chapters:** 1-14
 
-Build a JSON REST API for a task management system. Focus on proper HTTP semantics, token-based authentication, input validation, and clean API design. No frontend -- test with Postman or curl.
+Build a JSON REST API for a task management system. Focus on proper HTTP semantics, token-based authentication, input validation, and clean API design. No frontend - test with Postman or curl.
 
 ### What you will practice
 
@@ -226,12 +226,12 @@ Build a JSON REST API for a task management system. Focus on proper HTTP semanti
 
 ### Key features
 
-- `POST /api/auth/login` -- returns API token
-- `GET /api/tasks` -- list tasks for authenticated user (filter, paginate)
-- `POST /api/tasks` -- create task (validate `title`, optional `description`, `due_date`)
-- `GET /api/tasks/:id` -- get single task (404 if not found or not owner)
-- `PUT /api/tasks/:id` -- update task
-- `DELETE /api/tasks/:id` -- delete task
+- `POST /api/auth/login` - returns API token
+- `GET /api/tasks` - list tasks for authenticated user (filter, paginate)
+- `POST /api/tasks` - create task (validate `title`, optional `description`, `due_date`)
+- `GET /api/tasks/:id` - get single task (404 if not found or not owner)
+- `PUT /api/tasks/:id` - update task
+- `DELETE /api/tasks/:id` - delete task
 - Consistent error format: `{"error": "message", "code": "ERROR_CODE"}`
 - Validate `Authorization: Bearer {token}` header; return 401 if missing or invalid
 
@@ -296,7 +296,7 @@ Build a full-featured task manager using the MVC pattern from chapter 16. Includ
 - **Start small.** Get the simplest version working before adding features. A quiz that reads one question from JSON is better than a half-finished blog.
 - **Use Git from the beginning.** Commit often. When an experiment goes wrong, you can always roll back.
 - **Write clean, organized code.** Follow PSR-12 for formatting. Use meaningful variable and function names. Keep files focused.
-- **Read the PHP documentation when stuck.** The [official PHP manual](https://www.php.net/manual/en/) is comprehensive -- search for the function or topic you need.
+- **Read the PHP documentation when stuck.** The [official PHP manual](https://www.php.net/manual/en/) is comprehensive - search for the function or topic you need.
 - **Consider using a framework after completing these.** Once you understand the patterns, Laravel or Symfony will feel familiar and will save you time on larger projects.
 
 > **Tip:** If you get stuck, revisit the relevant chapter. The guide is designed so you can jump back to any section for a refresher.

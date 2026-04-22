@@ -15,7 +15,7 @@ sidebar_position: 9
 
 # OOP Advanced
 
-In chapter 8 you learned the basics of classes, objects, properties, and methods. Now you take the next step -- inheritance, abstract classes, interfaces, traits, and namespaces. These features let you build flexible, reusable systems that scale as your projects grow.
+In chapter 8 you learned the basics of classes, objects, properties, and methods. Now you take the next step - inheritance, abstract classes, interfaces, traits, and namespaces. These features let you build flexible, reusable systems that scale as your projects grow.
 
 ## Inheritance
 
@@ -79,7 +79,7 @@ $dog = new Dog();
 echo $dog->speak();  // Output: Some sound But I say: Woof!
 ```
 
-> **Tip:** Use `parent::` when you want to extend the parent's behavior rather than replace it entirely -- for example, calling `parent::__construct()` at the start of a child constructor to initialize inherited properties.
+> **Tip:** Use `parent::` when you want to extend the parent's behavior rather than replace it entirely - for example, calling `parent::__construct()` at the start of a child constructor to initialize inherited properties.
 
 ### When to use inheritance
 
@@ -91,9 +91,9 @@ Use inheritance when:
 
 Avoid inheritance when:
 
-- You only need to share a few utility methods -- consider traits instead
-- The relationship is **has-a** rather than **is-a** -- use composition (an object containing another object)
-- You are tempted to create deep hierarchies -- shallow hierarchies are easier to maintain
+- You only need to share a few utility methods - consider traits instead
+- The relationship is **has-a** rather than **is-a** - use composition (an object containing another object)
+- You are tempted to create deep hierarchies - shallow hierarchies are easier to maintain
 
 ## Inheritance hierarchy example
 
@@ -196,7 +196,7 @@ $dog = new Dog('Rex');  // OK
 $animal = new Animal('X');  // Fatal error: Cannot instantiate abstract class
 ```
 
-An abstract method has no body -- it ends with a semicolon. Every non-abstract child class must implement all abstract methods.
+An abstract method has no body - it ends with a semicolon. Every non-abstract child class must implement all abstract methods.
 
 ### When to use abstract vs regular classes
 
@@ -211,7 +211,7 @@ An abstract method has no body -- it ends with a semicolon. Every non-abstract c
 
 ## Interfaces
 
-An **interface** defines a contract -- a set of method signatures that implementing classes must provide. Unlike abstract classes, interfaces cannot contain property definitions or method bodies.
+An **interface** defines a contract - a set of method signatures that implementing classes must provide. Unlike abstract classes, interfaces cannot contain property definitions or method bodies.
 
 ### Declaring and implementing interfaces
 
@@ -394,7 +394,7 @@ class Dog extends Animal {
 }
 ```
 
-> **Note:** Use `final` when you want to lock down behavior -- for example, to prevent accidental overrides of critical methods or to keep a utility class from being extended.
+> **Note:** Use `final` when you want to lock down behavior - for example, to prevent accidental overrides of critical methods or to keep a utility class from being extended.
 
 ## Namespaces
 
@@ -505,7 +505,7 @@ After that, any class in your `composer.json` autoload configuration is loaded a
 
 ## Type hinting with interfaces and classes
 
-You can type-hint parameters and return types with class names or interfaces. This makes your code more predictable and enables **dependency injection** -- passing dependencies into a class instead of creating them inside it.
+You can type-hint parameters and return types with class names or interfaces. This makes your code more predictable and enables **dependency injection** - passing dependencies into a class instead of creating them inside it.
 
 ### Accepting objects by interface type
 
@@ -527,7 +527,7 @@ class NotificationService {
 }
 ```
 
-`NotificationService` does not care whether it receives an `EmailNotifier`, `SmsNotifier`, or any other implementation. It only requires something that implements `NotifierInterface`. You can swap implementations without changing `NotificationService` -- that is the power of programming to interfaces.
+`NotificationService` does not care whether it receives an `EmailNotifier`, `SmsNotifier`, or any other implementation. It only requires something that implements `NotifierInterface`. You can swap implementations without changing `NotificationService` - that is the power of programming to interfaces.
 
 > **Tip:** Type-hint against interfaces when you want flexibility. Type-hint against concrete classes only when you truly need that specific implementation.
 
@@ -635,7 +635,7 @@ $smsService = new NotificationService($smsNotifier);
 $smsService->sendAlert('Your verification code is 12345.');
 ```
 
-Both notifiers implement `NotifierInterface`, so `NotificationService` works with either. The `LoggableTrait` adds logging to both without duplicating code. This pattern -- interface plus implementations plus optional traits -- is common in well-structured PHP applications.
+Both notifiers implement `NotifierInterface`, so `NotificationService` works with either. The `LoggableTrait` adds logging to both without duplicating code. This pattern - interface plus implementations plus optional traits - is common in well-structured PHP applications.
 
 ## Summary
 
@@ -650,4 +650,4 @@ Both notifiers implement `NotifierInterface`, so `NotificationService` works wit
 
 ## Next up
 
-[Error Handling & Debugging](./10-error-handling.md) -- exceptions, error levels, try/catch, custom exceptions, and debugging tools.
+[Error Handling & Debugging](./10-error-handling.md) - exceptions, error levels, try/catch, custom exceptions, and debugging tools.

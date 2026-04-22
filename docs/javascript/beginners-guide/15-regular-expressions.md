@@ -41,7 +41,7 @@ const dynamic = new RegExp(searchTerm, "i"); // case-insensitive
 
 ## Core methods
 
-### `test()` -- does the pattern match?
+### `test()` - does the pattern match?
 
 Returns `true` or `false`:
 
@@ -52,7 +52,7 @@ console.log(pattern.test("hello world")); // true
 console.log(pattern.test("goodbye"));     // false
 ```
 
-### `match()` -- find matches in a string
+### `match()` - find matches in a string
 
 Returns an array of matches, or `null`:
 
@@ -64,7 +64,7 @@ console.log(text.match(/\d+/g)); // ["2025", "2026"] -- all matches (g flag)
 console.log(text.match(/xyz/));  // null -- no match
 ```
 
-### `replace()` -- find and replace
+### `replace()` - find and replace
 
 ```js
 const text = "Hello World";
@@ -73,7 +73,7 @@ console.log(text.replace(/world/i, "JavaScript")); // "Hello JavaScript"
 console.log("aaa bbb ccc".replace(/\s+/g, "-"));   // "aaa-bbb-ccc"
 ```
 
-### `search()` -- find the index of the first match
+### `search()` - find the index of the first match
 
 ```js
 const text = "Learn JavaScript today";
@@ -82,7 +82,7 @@ console.log(text.search(/javascript/i)); // 6
 console.log(text.search(/python/i));     // -1 (not found)
 ```
 
-### `split()` -- split a string by a pattern
+### `split()` - split a string by a pattern
 
 ```js
 const csv = "one, two,  three,four";
@@ -90,7 +90,7 @@ const csv = "one, two,  three,four";
 console.log(csv.split(/\s*,\s*/)); // ["one", "two", "three", "four"]
 ```
 
-### `matchAll()` -- iterate over all matches with details
+### `matchAll()` - iterate over all matches with details
 
 ```js
 const text = "price: $42.99, tax: $3.50";
@@ -114,9 +114,9 @@ Character classes match **one character** from a set:
 
 | Pattern | Matches                              | Example                        |
 |---------|--------------------------------------|--------------------------------|
-| `\d`    | Any digit (0--9)                     | `\d\d` matches `"42"`          |
+| `\d`    | Any digit (0-9)                     | `\d\d` matches `"42"`          |
 | `\D`    | Any non-digit                        | `\D` matches `"a"`             |
-| `\w`    | Word character (a--z, A--Z, 0--9, _) | `\w+` matches `"hello_42"`     |
+| `\w`    | Word character (a-z, A-Z, 0-9, _) | `\w+` matches `"hello_42"`     |
 | `\W`    | Non-word character                   | `\W` matches `" "`, `"!"`      |
 | `\s`    | Whitespace (space, tab, newline)     | `\s+` matches `"  "`           |
 | `\S`    | Non-whitespace                       | `\S+` matches `"hello"`        |
@@ -153,7 +153,7 @@ Quantifiers specify **how many times** a pattern should match:
 
 ### Greedy vs lazy
 
-By default, quantifiers are **greedy** -- they match as much as possible:
+By default, quantifiers are **greedy** - they match as much as possible:
 
 ```js
 const html = '<b>bold</b> and <i>italic</i>';
@@ -595,5 +595,5 @@ possessive quantifiers (available in some engines, not in JavaScript).
 - **Groups** capture parts of a match; **named groups** (`(?<name>...)`) make patterns readable.
 - **Lookahead/lookbehind** assert context without consuming characters.
 - Always escape special characters (`\.`, `\$`, `\\`) when matching them literally.
-- Use regex for validation, extraction, and replacement -- but keep patterns readable. If a regex becomes unreadable,
+- Use regex for validation, extraction, and replacement - but keep patterns readable. If a regex becomes unreadable,
   break it into smaller pieces or use string methods instead.

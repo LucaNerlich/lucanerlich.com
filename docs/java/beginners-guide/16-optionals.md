@@ -49,7 +49,7 @@ forget, and the crash happens somewhere far from the actual cause.
 
 ## Creating Optionals
 
-### `Optional.of()` -- value must not be null
+### `Optional.of()` - value must not be null
 
 ```java
 Optional<String> name = Optional.of("Ada");
@@ -61,7 +61,7 @@ Optional<String> bad = Optional.of(null); // NullPointerException
 
 Use `of()` when you are certain the value is not null. It fails fast if you are wrong.
 
-### `Optional.ofNullable()` -- value might be null
+### `Optional.ofNullable()` - value might be null
 
 ```java
 String input = getUserInput(); // might return null
@@ -74,7 +74,7 @@ Optional<String> name = Optional.ofNullable(input);
 Use `ofNullable()` when the value comes from code you do not control (database lookups, map gets, method calls that
 might return null).
 
-### `Optional.empty()` -- no value
+### `Optional.empty()` - no value
 
 ```java
 Optional<String> empty = Optional.empty();
@@ -98,7 +98,7 @@ if (empty.isEmpty()) {
 }
 ```
 
-### `get()` -- avoid this
+### `get()` - avoid this
 
 `get()` throws `NoSuchElementException` if the Optional is empty. It defeats the purpose of Optional:
 
@@ -110,7 +110,7 @@ empty.get(); // NoSuchElementException -- just as bad as NullPointerException
 **Never call `get()` without checking `isPresent()` first.** And if you are checking `isPresent()` before `get()`, there
 is always a better alternative below.
 
-### `orElse()` -- provide a default value
+### `orElse()` - provide a default value
 
 ```java
 String name = Optional.ofNullable(input).orElse("Anonymous");
@@ -118,7 +118,7 @@ String name = Optional.ofNullable(input).orElse("Anonymous");
 
 If the Optional has a value, `orElse()` returns it. If empty, it returns the default.
 
-### `orElseGet()` -- compute the default lazily
+### `orElseGet()` - compute the default lazily
 
 ```java
 String name = Optional.ofNullable(input)
@@ -137,7 +137,7 @@ String name = optionalName.orElse(expensiveComputation()); // computed every tim
 String name = optionalName.orElseGet(() -> expensiveComputation()); // computed only if empty
 ```
 
-### `orElseThrow()` -- throw if empty
+### `orElseThrow()` - throw if empty
 
 ```java
 String name = Optional.ofNullable(input)
@@ -146,7 +146,7 @@ String name = Optional.ofNullable(input)
 
 Use this when a missing value is a genuine error condition.
 
-### `ifPresent()` -- do something with the value
+### `ifPresent()` - do something with the value
 
 ```java
 Optional.ofNullable(input).ifPresent(name -> {
@@ -154,7 +154,7 @@ Optional.ofNullable(input).ifPresent(name -> {
 });
 ```
 
-### `ifPresentOrElse()` -- handle both cases
+### `ifPresentOrElse()` - handle both cases
 
 ```java
 Optional.ofNullable(input).ifPresentOrElse(
@@ -165,7 +165,7 @@ Optional.ofNullable(input).ifPresentOrElse(
 
 ## Transforming Optionals
 
-### `map()` -- transform the value if present
+### `map()` - transform the value if present
 
 ```java
 Optional<String> name = Optional.of("  Ada Lovelace  ");
@@ -200,7 +200,7 @@ String city = Optional.ofNullable(user)
     .orElse("Unknown");
 ```
 
-### `flatMap()` -- when the transformation itself returns Optional
+### `flatMap()` - when the transformation itself returns Optional
 
 ```java
 // getAddress() returns Optional<Address>
@@ -212,7 +212,7 @@ Optional<String> city = Optional.ofNullable(user)
 
 Use `map()` when the function returns a plain value. Use `flatMap()` when the function returns an `Optional`.
 
-### `filter()` -- keep the value only if it matches
+### `filter()` - keep the value only if it matches
 
 ```java
 Optional<String> name = Optional.of("Ada");
@@ -241,7 +241,7 @@ This reads like a sentence: "Take the input, trim it, keep it if non-empty, uppe
 In the CLI Task Manager from chapter 10, finding a task by ID returns null if not found. Let us refactor it to use
 Optional:
 
-### Before -- returning null
+### Before - returning null
 
 ```java
 public Task findById(int id) {
@@ -260,7 +260,7 @@ if (task != null) {
 }
 ```
 
-### After -- returning Optional
+### After - returning Optional
 
 ```java
 public Optional<Task> findById(int id) {
@@ -364,7 +364,7 @@ class User {
 }
 ```
 
-`Optional` is designed for **return types** -- it signals that a method might not return a value. Using it for fields,
+`Optional` is designed for **return types** - it signals that a method might not return a value. Using it for fields,
 parameters, or collections adds overhead and complexity.
 
 ### Using Optional as a method parameter
@@ -423,7 +423,7 @@ return optional.map(String::toUpperCase).orElse("N/A");
 
 ## Summary
 
-- **`NullPointerException`** is Java's most common error -- `Optional` helps prevent it.
+- **`NullPointerException`** is Java's most common error - `Optional` helps prevent it.
 - **`Optional.of()`** for non-null values, **`Optional.ofNullable()`** for possibly-null values, **`Optional.empty()`**
   for no value.
 - **`orElse()`** and **`orElseGet()`** provide defaults; **`orElseThrow()`** fails with a clear error.
@@ -431,9 +431,9 @@ return optional.map(String::toUpperCase).orElse("N/A");
   value.
 - **Chain operations** to build readable pipelines: `optional.map(...).filter(...).orElse(...)`.
 - Use Optional for **return types**, not for fields, parameters, or collections.
-- **Never call `get()`** without knowing the Optional is non-empty -- use `orElse` or `orElseThrow` instead.
+- **Never call `get()`** without knowing the Optional is non-empty - use `orElse` or `orElseThrow` instead.
 
 For advanced patterns including Optional with CompletableFuture and custom utility methods, see
 the [Optionals reference](/java/optionals).
 
-Next up: [Testing](./17-testing.md) -- writing tests for the Task Manager with JUnit 5.
+Next up: [Testing](./17-testing.md) - writing tests for the Task Manager with JUnit 5.

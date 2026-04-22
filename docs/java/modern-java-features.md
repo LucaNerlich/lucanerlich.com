@@ -9,7 +9,7 @@ tags: [java, records, sealed-classes, pattern-matching]
 # Records, Sealed Classes, and Modern Java
 
 Java has evolved dramatically since Java 8. This page covers the most impactful features
-introduced in Java 11 through 21 -- the features that change how you write everyday code.
+introduced in Java 11 through 21 - the features that change how you write everyday code.
 
 ## Feature table by version
 
@@ -32,7 +32,7 @@ introduced in Java 11 through 21 -- the features that change how you write every
 
 ## Records
 
-Records are **immutable data carriers** -- classes that hold data and nothing else.
+Records are **immutable data carriers** - classes that hold data and nothing else.
 They eliminate the boilerplate of constructors, getters, `equals()`, `hashCode()`,
 and `toString()`.
 
@@ -114,7 +114,7 @@ record Money(BigDecimal amount, String currency) implements Comparable<Money> {
 ## Sealed classes
 
 Sealed classes **restrict which classes can extend them**. This enables exhaustive
-pattern matching -- the compiler knows all possible subtypes.
+pattern matching - the compiler knows all possible subtypes.
 
 ```java
 // Only Circle, Rectangle, and Triangle can extend Shape
@@ -395,7 +395,7 @@ use it when the type name provides important documentation.
 
 ## See also
 
-- [Streams and Collectors](./java-streams.md) -- streams use records heavily
-- [Generics and Type Erasure](./generics.md) -- generic types and wildcards
-- [Functional Interfaces](./functional-interfaces.md) -- lambdas and method references
-- [Collections](./collections.md) -- sequenced collections
+- [Streams and Collectors](./java-streams.md) - streams use records heavily
+- [Generics and Type Erasure](./generics.md) - generic types and wildcards
+- [Functional Interfaces](./functional-interfaces.md) - lambdas and method references
+- [Collections](./collections.md) - sequenced collections

@@ -769,7 +769,7 @@ Keep the liveness probe Dispatcher-only and the readiness probe end-to-end. That
 In AEMaaCS, an **Adobe-managed CDN** (Fastly) sits in front of the Dispatcher. You can
 configure its behaviour declaratively using a `cdn.yaml` file deployed via the
 **Cloud Manager config pipeline**. This gives you control over request/response
-transformations, server-side redirects, origin selection, and traffic filter rules --
+transformations, server-side redirects, origin selection, and traffic filter rules -
 all at the CDN edge, before traffic even reaches the Dispatcher.
 
 ```mermaid
@@ -977,7 +977,7 @@ data:
 
 ### Server-Side Redirects
 
-Declare 301/302 redirects that are handled entirely at the CDN edge -- no request
+Declare 301/302 redirects that are handled entirely at the CDN edge - no request
 reaches the Dispatcher or AEM:
 
 ```yaml
@@ -1343,6 +1343,6 @@ Always run `./bin/validator full` before committing. Cloud Manager will reject d
 - [Local development setup](./aem-dev-setup.md)
 - [Performance](./performance.mdx)
 - [Security basics](./security.mdx)
-- [Edge Delivery Services](./helix.mdx) -- CDN origin selectors for EDS integration
+- [Edge Delivery Services](./helix.mdx) - CDN origin selectors for EDS integration
 - [Testing](./testing.mdx)
 - [Adobe CDN Traffic Configuration docs](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/cdn-configuring-traffic)

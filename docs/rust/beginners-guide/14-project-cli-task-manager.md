@@ -81,7 +81,7 @@ task-cli/
     └── error.rs       # Custom error type
 ```
 
-## Step 1 -- Define the error type
+## Step 1 - Define the error type
 
 `src/error.rs`:
 
@@ -106,7 +106,7 @@ pub type Result<T> = std::result::Result<T, TaskError>;
 The `type Result<T>` alias means we can write `Result<Vec<Task>>` instead of `std::result::Result<Vec<Task>, TaskError>`
 throughout the project.
 
-## Step 2 -- Define the Task model and store
+## Step 2 - Define the Task model and store
 
 `src/task.rs`:
 
@@ -214,7 +214,7 @@ Key patterns used:
 - Iterator methods: `.map()`, `.max()`, `.find()`, `.position()`
 - `ok_or()` to convert `Option` to `Result`
 
-## Step 3 -- Define the CLI with clap
+## Step 3 - Define the CLI with clap
 
 `src/main.rs`:
 
@@ -360,11 +360,11 @@ cargo build --release
 
 Once the basics work, try adding:
 
-- **Priority levels** -- `High`, `Medium`, `Low` as an enum field
-- **Due dates** -- add a `due: Option<String>` field and filter by date
-- **Search** -- `task search "groceries"` to filter by description
-- **Tags** -- `task add "Buy groceries" --tag shopping`
-- **Multiple lists** -- support different task files
+- **Priority levels** - `High`, `Medium`, `Low` as an enum field
+- **Due dates** - add a `due: Option<String>` field and filter by date
+- **Search** - `task search "groceries"` to filter by description
+- **Tags** - `task add "Buy groceries" --tag shopping`
+- **Multiple lists** - support different task files
 
 ## Summary
 
@@ -376,6 +376,6 @@ You have built a real command-line application that:
 - Handles errors with `thiserror` and the `?` operator
 - Uses a clean module structure
 
-This is the kind of tool Rust excels at -- fast, reliable, single-binary deployment with no runtime dependencies.
+This is the kind of tool Rust excels at - fast, reliable, single-binary deployment with no runtime dependencies.
 
-Next up: [Testing](./15-testing.md) -- unit tests, integration tests, doc tests, and `cargo test`.
+Next up: [Testing](./15-testing.md) - unit tests, integration tests, doc tests, and `cargo test`.

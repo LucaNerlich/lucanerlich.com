@@ -15,7 +15,7 @@ sidebar_position: 5
 
 # REST API
 
-Every content type in Strapi automatically gets a full REST API. No code required -- Strapi generates endpoints for CRUD
+Every content type in Strapi automatically gets a full REST API. No code required - Strapi generates endpoints for CRUD
 operations, filtering, sorting, pagination, and more.
 
 In this chapter we will explore every aspect of the REST API using curl. Make sure your Strapi server is running (
@@ -58,9 +58,9 @@ Now unauthenticated requests can read (but not create, update, or delete) your c
 
 > **Common beginner mistakes:**
 >
-> 1. **Forgetting to enable permissions** -- by default, nothing is public. You must explicitly grant access in Settings > Roles > Public.
-> 2. **Not populating relations** -- the REST API returns only scalar fields by default. You must use `?populate=` to include related data.
-> 3. **Querying unpublished content** -- the public REST API only returns **published** documents. If your entries are still drafts, the API returns an empty array.
+> 1. **Forgetting to enable permissions** - by default, nothing is public. You must explicitly grant access in Settings > Roles > Public.
+> 2. **Not populating relations** - the REST API returns only scalar fields by default. You must use `?populate=` to include related data.
+> 3. **Querying unpublished content** - the public REST API only returns **published** documents. If your entries are still drafts, the API returns an empty array.
 
 ## Your first API call
 
@@ -466,7 +466,7 @@ async discardDraft(ctx) {
 ```
 
 > **Note:** The Document Service provides `publish()`, `unpublish()`, and `discardDraft()` methods. The REST API does
-> not expose dedicated publish/unpublish endpoints out of the box -- you need custom routes and controllers for that.
+> not expose dedicated publish/unpublish endpoints out of the box - you need custom routes and controllers for that.
 
 ## Updating entries
 
@@ -482,7 +482,7 @@ curl -X PUT http://localhost:1337/api/posts/abc123def456 \
 ```
 
 - Use the `documentId` in the URL (not the numeric `id`)
-- Only send the fields you want to change -- other fields are preserved
+- Only send the fields you want to change - other fields are preserved
 - Updating a published entry creates a draft version with the changes
 - The published version remains unchanged until you explicitly publish the draft
 
@@ -644,7 +644,7 @@ query {
 }
 ```
 
-GraphQL handles population automatically -- you get exactly the fields you ask for in the query. This guide focuses on
+GraphQL handles population automatically - you get exactly the fields you ask for in the query. This guide focuses on
 REST, but GraphQL is a great alternative if your frontend uses Apollo, urql, or another GraphQL client.
 
 ## Rendering Blocks content
@@ -676,16 +676,16 @@ The renderer handles all built-in block types out of the box. You can customize 
 You learned:
 
 - How Strapi auto-generates **REST endpoints** for every content type
-- **Population** -- how to include related data in responses (single, multiple, deep, selective)
-- **Filtering** -- all operators, relation filters, AND/OR/NOT logic
-- **Sorting** -- single and multi-field sorting
-- **Pagination** -- page-based and offset-based
-- **Field selection** -- reducing payload size
+- **Population** - how to include related data in responses (single, multiple, deep, selective)
+- **Filtering** - all operators, relation filters, AND/OR/NOT logic
+- **Sorting** - single and multi-field sorting
+- **Pagination** - page-based and offset-based
+- **Field selection** - reducing payload size
 - **CRUD operations** via the API (create, read, update, delete)
 - The consistent **response format** and error handling
 
 The API is powerful but currently wide open for reads. In the next chapter we will lock it down with authentication and
 role-based permissions.
 
-Next up: [Authentication & Permissions](./06-authentication-and-permissions.md) -- JWT auth, user registration, roles,
+Next up: [Authentication & Permissions](./06-authentication-and-permissions.md) - JWT auth, user registration, roles,
 API tokens, and controlling who can access what.

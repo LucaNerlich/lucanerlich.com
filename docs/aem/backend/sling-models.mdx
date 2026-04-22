@@ -174,7 +174,7 @@ public class ArticleModel implements ComponentExporter {
 
 | Adaptable | When to use | Available injections |
 |-----------|------------|---------------------|
-| `SlingHttpServletRequest.class` | **Default for components** -- HTL rendering, servlets | Everything: resource, request, session, script variables, WCM mode |
+| `SlingHttpServletRequest.class` | **Default for components** - HTL rendering, servlets | Everything: resource, request, session, script variables, WCM mode |
 | `Resource.class` | Utility models, child models for `@ChildResource`, unit tests | Resource properties, child resources, OSGi services |
 | Both (`{Request.class, Resource.class}`) | Models used from both contexts | Use `@Via("resource")` when adapting from request to access resource properties |
 
@@ -559,8 +559,8 @@ lifecycle is critical to avoiding resource leaks and session issues.
 
 | Type | Source | Who closes it? |
 |------|--------|---------------|
-| **Implicit** | `request.getResourceResolver()`, `@SlingObject` | The framework -- **never close it yourself** |
-| **Explicit** | `resourceResolverFactory.getServiceResourceResolver(...)` | **You** -- always close it |
+| **Implicit** | `request.getResourceResolver()`, `@SlingObject` | The framework - **never close it yourself** |
+| **Explicit** | `resourceResolverFactory.getServiceResourceResolver(...)` | **You** - always close it |
 
 ### Using service resource resolvers
 
@@ -901,7 +901,7 @@ annotations are self-documenting and avoid ambiguity.
 
 ### Don't store state between requests
 
-Sling Models are **request-scoped** -- a new instance is created for each request. Never store
+Sling Models are **request-scoped** - a new instance is created for each request. Never store
 cross-request state in a model. Use OSGi services with thread-safe patterns for shared state.
 
 ## See also
@@ -917,9 +917,9 @@ cross-request state in a model. Use OSGi services with thread-safe patterns for 
 - [OSGi Configuration](./osgi-configuration.mdx)
 - [Java Best Practices](./java-best-practices.mdx)
 - [Filters](./filter.mdx)
-- [Context-Aware Configuration](./context-aware-configuration.md) -- site-specific config in Sling Models
-- [Sling Jobs and Schedulers](./sling-jobs.md) -- background processing
-- [Tags and Taxonomies](../content/tags-taxonomies.md) -- TagManager usage
-- [Templates and Policies](../components/templates-policies.md) -- reading template policies
+- [Context-Aware Configuration](./context-aware-configuration.md) - site-specific config in Sling Models
+- [Sling Jobs and Schedulers](./sling-jobs.md) - background processing
+- [Tags and Taxonomies](../content/tags-taxonomies.md) - TagManager usage
+- [Templates and Policies](../components/templates-policies.md) - reading template policies
 - [Performance](../infrastructure/performance.mdx)
 - [Apache Sling Models Documentation](https://sling.apache.org/documentation/bundles/models.html)

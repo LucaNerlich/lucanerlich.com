@@ -23,7 +23,7 @@ for [@ChildResource](./child-resource.mdx) and [@ExternalizedValueMapValue](./ex
 | [`@ScriptVariable`](#scriptvariable) | `o.a.s.models.annotations.injectorspecific` | Injects HTL scripting bindings (currentPage, etc.) |
 | [`@RequestAttribute`](#requestattribute) | `o.a.s.models.annotations.injectorspecific` | Reads request attributes (e.g. from `data-sly-use` parameters) |
 | [`@ResourcePath`](#resourcepath) | `o.a.s.models.annotations.injectorspecific` | Injects a Resource resolved by a JCR path |
-| [`@Inject`](#inject) | `javax.inject` | Generic injection (legacy -- prefer specific annotations) |
+| [`@Inject`](#inject) | `javax.inject` | Generic injection (legacy - prefer specific annotations) |
 | [`@Named`](#named) | `javax.inject` | Overrides the property name for `@Inject` |
 | [`@Source`](#source) | `o.a.s.models.annotations` | Selects a specific injector for `@Inject` |
 | [`@Via`](#via) | `o.a.s.models.annotations` | Changes the adaptable source for injection |
@@ -58,7 +58,7 @@ public class MyModel implements ComponentExporter { ... }
 | `adaptables` | `Class<?>[]` | What the model can be adapted from (`SlingHttpServletRequest.class`, `Resource.class`, or both) |
 | `adapters` | `Class<?>[]` | What interfaces/classes the model can be adapted **to** (used for `adaptTo()` lookups) |
 | `resourceType` | `String` | Binds the model to a specific `sling:resourceType` (enables automatic resolution) |
-| `defaultInjectionStrategy` | `DefaultInjectionStrategy` | `OPTIONAL` or `REQUIRED` -- controls what happens when fields can't be injected |
+| `defaultInjectionStrategy` | `DefaultInjectionStrategy` | `OPTIONAL` or `REQUIRED` - controls what happens when fields can't be injected |
 
 ### `adaptables`: Request vs Resource
 
@@ -66,7 +66,7 @@ The choice of adaptable affects which injectors work and what data is available:
 
 | Adaptable | Available injections | When to use |
 |-----------|---------------------|-------------|
-| `SlingHttpServletRequest.class` | Everything -- request, resource, session, WCM mode, script variables | **Default choice** for components rendered via HTL |
+| `SlingHttpServletRequest.class` | Everything - request, resource, session, WCM mode, script variables | **Default choice** for components rendered via HTL |
 | `Resource.class` | Resource properties, child resources, OSGi services | Utility models, child models for `@ChildResource`, unit tests |
 
 :::info
@@ -186,7 +186,7 @@ dialog configuration, JCR structure, and patterns.
 ## @Self
 
 Injects the adaptable itself or delegates to another Sling Model adapted from the same adaptable. This is
-one of the most powerful -- and most misunderstood -- annotations.
+one of the most powerful - and most misunderstood - annotations.
 
 ### Inject the adaptable directly
 
@@ -222,7 +222,7 @@ public class ProductPageModel {
 }
 ```
 
-This is useful for **composition** -- building a page-level model from multiple component models without
+This is useful for **composition** - building a page-level model from multiple component models without
 duplicating logic.
 
 ### `@Self` with `@Via`
@@ -286,7 +286,7 @@ public class MyModel {
 | `SlingHttpServletResponse` | Yes | No |
 
 :::tip
-Use `@SlingObject` for Sling framework objects. Don't use `@Inject` for these -- `@SlingObject` is explicit
+Use `@SlingObject` for Sling framework objects. Don't use `@Inject` for these - `@SlingObject` is explicit
 and avoids ambiguity.
 :::
 
@@ -519,7 +519,7 @@ private String title; // Could come from ValueMap, request attribute, or other i
 ```
 
 :::warning
-`@Inject` is **ambiguous** -- you can't tell which injector will handle it by reading the code. Always prefer
+`@Inject` is **ambiguous** - you can't tell which injector will handle it by reading the code. Always prefer
 the specific annotations (`@ValueMapValue`, `@OSGiService`, `@SlingObject`, etc.) instead. They are
 self-documenting and avoid unexpected injection sources.
 :::
@@ -760,9 +760,9 @@ public class ArticleModel {
 ### Rules
 
 - The method must be `void`, take no arguments, and be `protected` (convention, not enforced)
-- Only **one** `@PostConstruct` method per class -- if the superclass has one, both run (super first)
+- Only **one** `@PostConstruct` method per class - if the superclass has one, both run (super first)
 - If the method throws an exception, `adaptTo()` returns `null`
-- Keep it lightweight -- avoid expensive operations (see [Performance](../../infrastructure/performance.mdx))
+- Keep it lightweight - avoid expensive operations (see [Performance](../../infrastructure/performance.mdx))
 
 ---
 

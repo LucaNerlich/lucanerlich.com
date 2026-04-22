@@ -107,7 +107,7 @@ com.fasterxml.jackson.core:jackson-databind:2.17.0
 | `provided`          | Yes     | Yes  | No      | No       | Servlet API, Lombok (provided by container) |
 | `runtime`           | No      | Yes  | Yes     | Yes      | JDBC drivers, SLF4J backends                |
 | `system`            | Yes     | Yes  | No      | No       | Local JARs (avoid)                          |
-| `import`            | --      | --   | --      | --       | BOM imports (in `<dependencyManagement>`)   |
+| `import`            | -      | -   | -      | -       | BOM imports (in `<dependencyManagement>`)   |
 
 ---
 
@@ -492,7 +492,7 @@ mvn help:active-profiles    # see which profiles are active
 
 ## See also
 
-- [Testing](./testing.md) -- Surefire/Failsafe integration
-- [Logging](./logging.md) -- logging dependencies and exclusions
-- [Dependency Injection](./dependency-injection.md) -- modular project structure
-- [JSON Processing](./json-processing.md) -- Jackson dependency management
+- [Testing](./testing.md) - Surefire/Failsafe integration
+- [Logging](./logging.md) - logging dependencies and exclusions
+- [Dependency Injection](./dependency-injection.md) - modular project structure
+- [JSON Processing](./json-processing.md) - Jackson dependency management

@@ -17,7 +17,7 @@ sidebar_position: 5
 
 # Ownership & Borrowing
 
-This is the most important chapter in this guide. Ownership is what makes Rust unique -- it is how Rust guarantees
+This is the most important chapter in this guide. Ownership is what makes Rust unique - it is how Rust guarantees
 memory safety without a garbage collector. Every Rust programmer needs to understand this system.
 
 We will go slow. There are diagrams. There are examples of code that does not compile, followed by explanations of why.
@@ -73,8 +73,8 @@ flowchart LR
 - Examples: `String`, `Vec<T>`, `Box<T>`, anything that can grow
 - You get a **pointer** (stored on the stack) that points to the data on the heap
 
-> **Mental model:** Think of the stack as a pile of plates -- you can only add or remove from the top, and each plate
-> has a fixed size. The heap is a warehouse -- you can store anything, but you need to keep track of where you put it.
+> **Mental model:** Think of the stack as a pile of plates - you can only add or remove from the top, and each plate
+> has a fixed size. The heap is a warehouse - you can store anything, but you need to keep track of where you put it.
 
 ## The three ownership rules
 
@@ -86,7 +86,7 @@ Memorize these. Everything else follows from them:
 
 Let's see each rule in action.
 
-### Rule 1 & 3 -- one owner, dropped at end of scope
+### Rule 1 & 3 - one owner, dropped at end of scope
 
 ```rust
 fn main() {
@@ -98,7 +98,7 @@ fn main() {
 `String::from("hello")` allocates a string on the heap. The variable `s` is its owner. When `s` goes out of scope at
 the closing brace, Rust automatically frees the heap memory. No garbage collector needed, no manual free.
 
-### Rule 2 -- one owner at a time (moves)
+### Rule 2 - one owner at a time (moves)
 
 This is where it gets interesting. What happens when you assign one variable to another?
 
@@ -141,7 +141,7 @@ flowchart TD
 ```
 
 Rust moves the pointer, length, and capacity from `s1` to `s2`, then invalidates `s1`. This prevents a **double free**
--- if both `s1` and `s2` were valid and both went out of scope, Rust would try to free the same memory twice.
+- if both `s1` and `s2` were valid and both went out of scope, Rust would try to free the same memory twice.
 
 > **Mental model:** Ownership is like handing someone a physical book. When you give the book to someone else, you no
 > longer have it. You cannot read it or write in it until they give it back.
@@ -179,7 +179,7 @@ fn main() {
 }
 ```
 
-## Copy types -- when moves do not happen
+## Copy types - when moves do not happen
 
 Not all types are moved. Simple, stack-only types implement the **`Copy` trait** and are copied instead of moved:
 
@@ -206,9 +206,9 @@ Types that implement `Copy`:
 | `Vec<T>`          | No    | Owns heap data                     |
 
 The rule is simple: if a type is entirely on the stack and has no heap resources, it can be `Copy`. If it manages heap
-memory, it cannot -- moving is the only option (unless you explicitly `Clone`).
+memory, it cannot - moving is the only option (unless you explicitly `Clone`).
 
-## Clone -- explicit deep copies
+## Clone - explicit deep copies
 
 When you need a real copy of heap data, use `.clone()`:
 
@@ -221,7 +221,7 @@ fn main() {
 }
 ```
 
-`.clone()` allocates new heap memory and copies the data. It is explicit and potentially expensive -- Rust wants you to
+`.clone()` allocates new heap memory and copies the data. It is explicit and potentially expensive - Rust wants you to
 know when you are doing a deep copy.
 
 > **Tip:** Do not sprinkle `.clone()` everywhere to silence the compiler. It works, but you lose performance. Learn to
@@ -230,7 +230,7 @@ know when you are doing a deep copy.
 ## References and borrowing
 
 Moving ownership into every function and getting it back is awkward. References let you use a value **without taking
-ownership** -- this is called **borrowing**.
+ownership** - this is called **borrowing**.
 
 ### Immutable references (&)
 
@@ -248,7 +248,7 @@ fn main() {
 ```
 
 `&greeting` creates a **reference** to `greeting` without taking ownership. The function parameter `s: &String` accepts
-a reference. When the function returns, only the reference goes out of scope -- the original `String` is untouched.
+a reference. When the function returns, only the reference goes out of scope - the original `String` is untouched.
 
 ```mermaid
 flowchart LR
@@ -394,7 +394,7 @@ fn main() {
 }
 ```
 
-String literals (`"hello"`) are `&str` -- they are baked into the compiled binary and live for the entire duration of
+String literals (`"hello"`) are `&str` - they are baked into the compiled binary and live for the entire duration of
 the program.
 
 ### When to use which
@@ -547,17 +547,17 @@ fn main() {
 ## Summary
 
 - Every value has exactly **one owner**. When the owner goes out of scope, the value is dropped.
-- Assigning a non-Copy value to another variable **moves** it -- the original is invalid.
+- Assigning a non-Copy value to another variable **moves** it - the original is invalid.
 - Simple stack types (`i32`, `bool`, `f64`, etc.) implement **Copy** and are copied, not moved.
 - Use `.clone()` for explicit deep copies of heap data.
 - **References** (`&T`) borrow without taking ownership.
-- **Mutable references** (`&mut T`) allow modification but are exclusive -- only one at a time.
+- **Mutable references** (`&mut T`) allow modification but are exclusive - only one at a time.
 - You can have multiple `&T` **or** one `&mut T`, never both simultaneously.
 - `String` is owned heap data; `&str` is a borrowed view into string data.
 - **Slices** (`&[T]`, `&str`) reference a portion of a collection without owning it.
 
-This was a lot. Do not worry if it does not all click immediately -- ownership becomes intuitive with practice. The
+This was a lot. Do not worry if it does not all click immediately - ownership becomes intuitive with practice. The
 compiler will remind you of the rules every time you break them, and its error messages will guide you to the fix.
 
-Next up: [Structs & Enums](./06-structs-and-enums.md) -- defining your own data types, adding methods, and introducing
+Next up: [Structs & Enums](./06-structs-and-enums.md) - defining your own data types, adding methods, and introducing
 `Option` and `Result`.

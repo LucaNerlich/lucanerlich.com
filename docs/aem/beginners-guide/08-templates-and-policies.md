@@ -16,11 +16,11 @@ sidebar_position: 8
 # Templates & Policies
 
 Templates define the structure and behavior of pages. Policies control which components authors can use and how they
-behave. Together, they create a governed authoring experience -- authors have freedom within boundaries.
+behave. Together, they create a governed authoring experience - authors have freedom within boundaries.
 
 ## Editable templates
 
-AEM uses **editable templates** -- templates that can be created and configured in the authoring UI (not just in code).
+AEM uses **editable templates** - templates that can be created and configured in the authoring UI (not just in code).
 They live in `/conf/mysite/settings/wcm/templates/`.
 
 ```mermaid
@@ -78,7 +78,7 @@ The template editor has three modes:
 |---------------------|-----------------------------------------------------------------------------|
 | **Structure**       | Define locked layout containers and components. Authors cannot change these |
 | **Initial Content** | Set default content for new pages. Authors can modify this                  |
-| **Policies**        | Configure component policies -- allowed components, styles, behavior        |
+| **Policies**        | Configure component policies - allowed components, styles, behavior        |
 
 ### Structure mode
 
@@ -88,7 +88,7 @@ In Structure mode, you define the **skeleton** of the page:
 - Lock components that must appear on every page (e.g., header, footer)
 - Define which areas are editable
 
-Locked components have a **lock icon** -- authors cannot move, delete, or configure them.
+Locked components have a **lock icon** - authors cannot move, delete, or configure them.
 
 ### Initial content mode
 
@@ -133,10 +133,10 @@ Every page in AEM is rendered by a **page component**. This is the top-level com
 
 Key elements:
 
-- **Head** -- meta tags, CSS includes
-- **Header/Footer** -- included as fixed components (using `data-sly-resource`)
-- **Main content area** -- a responsive grid where authors place components
-- **Client libraries** -- CSS loaded in head, JS before closing body
+- **Head** - meta tags, CSS includes
+- **Header/Footer** - included as fixed components (using `data-sly-resource`)
+- **Main content area** - a responsive grid where authors place components
+- **Client libraries** - CSS loaded in head, JS before closing body
 
 ### Proxy page component
 
@@ -183,12 +183,12 @@ The Core Components page component uses `data-sly-include` to look for these fil
 type path (e.g., `apps/mysite/components/page/`). Because your proxy component sets
 `sling:resourceSuperType="core/wcm/components/page/v3/page"`, Sling's script resolution checks your component first,
 then falls back to the Core Component. This means placing `customheaderlibs.html` in your page component folder is all
-you need -- the Core Component includes it automatically if it exists.
+you need - the Core Component includes it automatically if it exists.
 
 This approach is preferred because you only override the extension points, while the Core Components page component
 handles the full HTML structure, SEO meta tags, and other boilerplate.
 
-## AEMaaCS note -- template persistence
+## AEMaaCS note - template persistence
 
 In cloud projects, template and policy changes made in the UI should be exported and committed so they are reproducible in
 other environments. Treat template setup as configuration-as-code, not environment-local state.
@@ -196,19 +196,19 @@ other environments. Treat template setup as configuration-as-code, not environme
 ## Component policies
 
 Policies control how components behave within a template. They are configured per template, per container. Policies are
-stored in the JCR under `/conf/mysite/settings/wcm/policies/` -- this is useful to know when debugging or exporting
+stored in the JCR under `/conf/mysite/settings/wcm/policies/` - this is useful to know when debugging or exporting
 template configurations.
 
 ### Setting allowed components
 
-The most common policy setting -- which components can authors add to a container:
+The most common policy setting - which components can authors add to a container:
 
 1. In the template editor, switch to **Structure** mode
 2. Click a layout container
 3. Click the **policy icon** (wrench)
 4. Under **Allowed Components**, select which component groups and individual components are permitted
 
-This prevents authors from placing inappropriate components -- for example, blocking the Hero component from appearing
+This prevents authors from placing inappropriate components - for example, blocking the Hero component from appearing
 inside a sidebar container.
 
 ### Design dialog policies
@@ -216,9 +216,9 @@ inside a sidebar container.
 Some components have a **design dialog** (also called a policy dialog) that configures component-level defaults for a
 specific template context:
 
-- **Text component** -- default rich text formatting options
-- **Image component** -- allowed image widths, lazy loading default
-- **Container** -- layout options, background colors
+- **Text component** - default rich text formatting options
+- **Image component** - allowed image widths, lazy loading default
+- **Container** - layout options, background colors
 
 These values are accessible in the component via the `currentStyle` object:
 
@@ -269,7 +269,7 @@ Authors use the layout mode (ruler icon) to resize component columns per breakpo
 | Breakpoint | Default width   |
 |------------|-----------------|
 | Phone      | < 768px         |
-| Tablet     | 768px -- 1024px |
+| Tablet     | 768px - 1024px |
 | Desktop    | > 1024px        |
 
 Breakpoints are configured in the responsive grid's **policy** (in the template editor, select the layout container,
@@ -293,9 +293,9 @@ In your project, most components are **proxy components** that inherit from Core
 
 The Maven archetype generates these automatically. Benefits:
 
-- **Reuse** -- get all Core Component functionality for free
-- **Customization** -- override any part (dialog, HTL, model) in your proxy
-- **Versioning** -- update Core Components without breaking your overrides
+- **Reuse** - get all Core Component functionality for free
+- **Customization** - override any part (dialog, HTL, model) in your proxy
+- **Versioning** - update Core Components without breaking your overrides
 
 ## Enabling templates for a site
 
@@ -349,5 +349,5 @@ You learned:
 - **Proxy components** inherit from Core Components for easy customization
 - Templates are linked to sites via the `cq:conf` property
 
-Next up: [Client Libraries](./09-client-libraries.md) -- CSS and JS management, clientlib categories, dependencies,
+Next up: [Client Libraries](./09-client-libraries.md) - CSS and JS management, clientlib categories, dependencies,
 embedding, proxy serving, and integration with the page component.

@@ -15,7 +15,7 @@ sidebar_position: 6
 
 # Strings & Arrays
 
-Strings and arrays are two of the most used data types in PHP. You will work with them constantly -- building messages,
+Strings and arrays are two of the most used data types in PHP. You will work with them constantly - building messages,
 processing user input, storing lists of data, and transforming collections. This chapter gives you a solid foundation in
 both.
 
@@ -24,7 +24,7 @@ both.
 You already met strings in chapter 2. Here we go deeper: concatenation, heredoc and nowdoc, and the most useful
 string functions.
 
-### String recap -- single vs double quotes
+### String recap - single vs double quotes
 
 Recall from chapter 2:
 
@@ -93,7 +93,7 @@ echo $output;
 
 When you have long blocks of text with many variables, heredoc and nowdoc keep your code readable.
 
-**Heredoc** behaves like double-quoted strings -- variables are interpolated:
+**Heredoc** behaves like double-quoted strings - variables are interpolated:
 
 ```php
 <?php
@@ -115,10 +115,10 @@ echo $text;
 ```
 
 The closing identifier (`EOT` in this example) must be on its own line, at the start of the line, with no spaces
-before it, and followed by a semicolon. You can use any identifier -- `EOT`, `END`, `HTML`, etc. -- as long as it
+before it, and followed by a semicolon. You can use any identifier - `EOT`, `END`, `HTML`, etc. - as long as it
 matches at the start and end.
 
-**Nowdoc** behaves like single-quoted strings -- no variable interpolation:
+**Nowdoc** behaves like single-quoted strings - no variable interpolation:
 
 ```php
 <?php
@@ -187,7 +187,7 @@ Common `sprintf` placeholders: `%s` (string), `%d` (integer), `%f` (float), `%.2
 > **Warning:** `strpos()` returns `0` when the needle is at the start of the string. Since `0` is falsy in PHP, always
 > use strict comparison: `if (strpos($haystack, $needle) !== false)`.
 
-### Multibyte strings -- a note on Unicode
+### Multibyte strings - a note on Unicode
 
 `strlen()` counts **bytes**, not characters. For ASCII text that is fine. For Unicode (e.g. emoji, accented characters,
 Chinese), one character can use multiple bytes:
@@ -235,7 +235,7 @@ $colors = array('red', 'green', 'blue');
 // Both are equivalent. The short syntax [] is preferred in modern PHP.
 ```
 
-You access elements by their **index** (position). Indexing is **zero-based** -- the first element is at index 0:
+You access elements by their **index** (position). Indexing is **zero-based** - the first element is at index 0:
 
 ```php
 <?php
@@ -316,12 +316,12 @@ echo $user['name'];   // Alice
 echo $user['email'];  // alice@example.com
 ```
 
-Use associative arrays when each value has a clear label -- user data, configuration, key-value pairs. Use indexed
+Use associative arrays when each value has a clear label - user data, configuration, key-value pairs. Use indexed
 arrays when order matters and you do not need named keys.
 
 ### Multidimensional arrays
 
-Arrays can contain other arrays. That gives you **multidimensional arrays** -- arrays of arrays:
+Arrays can contain other arrays. That gives you **multidimensional arrays** - arrays of arrays:
 
 ```php
 <?php
@@ -467,7 +467,7 @@ $all = [0, ...$middle, 9];  // [0, 'x', 'y', 9]
 
 This is cleaner than `array_merge()` when you want to combine arrays or inject elements at specific positions.
 
-### Practical example -- shopping list and gradebook
+### Practical example - shopping list and gradebook
 
 Here is a complete example that uses strings and arrays together. It builds a shopping list, manipulates it, and then
 processes a simple gradebook:
@@ -517,7 +517,7 @@ Carol: 92.3 average
 ```
 
 This example uses indexed and associative arrays, `foreach`, `array_search`, `array_values`, `implode`, `array_reduce`,
-`count`, `round`, and `sprintf` -- all concepts from this chapter.
+`count`, `round`, and `sprintf` - all concepts from this chapter.
 
 ## Summary
 
@@ -532,5 +532,5 @@ This example uses indexed and associative arrays, `foreach`, `array_search`, `ar
 - Destructure with `[$a, $b] = $arr` or `['key' => $var] = $arr`
 - Spread operator: `[...$arr1, ...$arr2]` merges arrays
 
-Next up: [Working with Forms & HTTP](./07-forms-and-http.md) -- HTML forms, GET and POST requests, superglobals, input
+Next up: [Working with Forms & HTTP](./07-forms-and-http.md) - HTML forms, GET and POST requests, superglobals, input
 validation, and building a contact form.

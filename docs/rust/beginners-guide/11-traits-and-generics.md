@@ -269,7 +269,7 @@ where
 
 These traits come up constantly. Understanding them is essential.
 
-### Debug -- debug printing
+### Debug - debug printing
 
 ```rust
 #[derive(Debug)]
@@ -288,7 +288,7 @@ fn main() {
 }
 ```
 
-### Display -- user-facing printing
+### Display - user-facing printing
 
 ```rust
 use std::fmt;
@@ -337,8 +337,8 @@ fn main() {
 }
 ```
 
-- `Clone` -- explicit deep copy via `.clone()`
-- `Copy` -- implicit bitwise copy for stack-only types (requires `Clone`)
+- `Clone` - explicit deep copy via `.clone()`
+- `Copy` - implicit bitwise copy for stack-only types (requires `Clone`)
 
 ### PartialEq and Eq
 
@@ -450,7 +450,7 @@ fn main() {
 }
 ```
 
-`Box<dyn Animal>` is a **trait object** -- a pointer to any type that implements `Animal`. The actual type is determined
+`Box<dyn Animal>` is a **trait object** - a pointer to any type that implements `Animal`. The actual type is determined
 at runtime (dynamic dispatch) rather than compile time (static dispatch).
 
 | Approach           | Syntax              | Dispatch   | Flexibility           |
@@ -469,8 +469,8 @@ collections.
 - **Trait bounds** (`T: Display + Debug`) constrain what generics accept
 - **`where` clauses** make complex bounds readable
 - Derive macros auto-generate common traits: `Debug`, `Clone`, `PartialEq`, `Default`, etc.
-- `impl Trait` returns a specific (unnamed) type -- static dispatch
-- `dyn Trait` enables heterogeneous collections -- dynamic dispatch via trait objects
+- `impl Trait` returns a specific (unnamed) type - static dispatch
+- `dyn Trait` enables heterogeneous collections - dynamic dispatch via trait objects
 
-Next up: [Lifetimes](./12-lifetimes.md) -- why Rust needs lifetime annotations, the three elision rules, and how to
+Next up: [Lifetimes](./12-lifetimes.md) - why Rust needs lifetime annotations, the three elision rules, and how to
 use lifetimes in function signatures and structs.

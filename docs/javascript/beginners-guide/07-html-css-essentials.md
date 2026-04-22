@@ -16,7 +16,7 @@ sidebar_position: 7
 # HTML & CSS Essentials
 
 Before we can manipulate web pages with JavaScript, we need to understand how they are built. This chapter covers enough
-HTML and CSS to build real pages. It is not a comprehensive reference -- it is the working knowledge you need for the
+HTML and CSS to build real pages. It is not a comprehensive reference - it is the working knowledge you need for the
 rest of this guide.
 
 ## HTML: the structure
@@ -44,7 +44,7 @@ rest of this guide.
 |------------------------------|--------------------------------------------------------------|
 | `<!DOCTYPE html>`            | Tells the browser this is an HTML5 document                  |
 | `<html lang="en">`           | Root element; `lang` helps screen readers and search engines |
-| `<head>`                     | Metadata -- not displayed on the page                        |
+| `<head>`                     | Metadata - not displayed on the page                        |
 | `<meta charset="UTF-8">`     | Character encoding (supports all languages)                  |
 | `<meta name="viewport" ...>` | Makes the page responsive on mobile devices                  |
 | `<title>`                    | Browser tab title                                            |
@@ -58,10 +58,10 @@ An HTML element has an **opening tag**, optional **content**, and a **closing ta
 <p class="intro">This is a paragraph.</p>
 ```
 
-- `<p>` -- opening tag
-- `class="intro"` -- attribute (key-value pair on the tag)
-- `This is a paragraph.` -- content
-- `</p>` -- closing tag
+- `<p>` - opening tag
+- `class="intro"` - attribute (key-value pair on the tag)
+- `This is a paragraph.` - content
+- `</p>` - closing tag
 
 Some elements are **self-closing** (no content):
 
@@ -84,7 +84,7 @@ Six levels, `<h1>` (most important) through `<h6>` (least):
 <h3>Subsection</h3>
 ```
 
-Use headings in order -- do not skip levels. A page should have exactly one `<h1>`.
+Use headings in order - do not skip levels. A page should have exactly one `<h1>`.
 
 ### Paragraphs and text
 
@@ -106,7 +106,7 @@ Use headings in order -- do not skip levels. A page should have exactly one `<h1
 <a href="https://example.com" target="_blank" rel="noopener noreferrer">Opens in new tab</a>
 ```
 
-Always include `rel="noopener noreferrer"` when using `target="_blank"` -- it prevents the linked page from accessing
+Always include `rel="noopener noreferrer"` when using `target="_blank"` - it prevents the linked page from accessing
 your page's `window.opener`.
 
 ### Images
@@ -115,7 +115,7 @@ your page's `window.opener`.
 <img src="photo.jpg" alt="Description of the photo" width="400" height="300">
 ```
 
-The `alt` attribute is required for accessibility -- it describes the image to screen readers and displays if the image
+The `alt` attribute is required for accessibility - it describes the image to screen readers and displays if the image
 fails to load.
 
 ### Lists
@@ -271,7 +271,7 @@ Forms collect user input. They are essential for interactive web pages:
 
 Key points:
 
-- `<label for="id">` links a label to an input -- clicking the label focuses the input.
+- `<label for="id">` links a label to an input - clicking the label focuses the input.
 - `required`, `minlength`, `type="email"` provide **built-in validation**.
 - `name` attributes identify form data when submitted.
 - We will handle form submission with JavaScript in the Events chapter.
@@ -646,7 +646,7 @@ Apply CSS rules based on screen size:
 | `vw` / `vh` | Percentage of viewport width / height  |
 | `fr`        | Fraction of available space (CSS Grid) |
 
-Prefer `rem` for font sizes and spacing -- it respects user zoom preferences.
+Prefer `rem` for font sizes and spacing - it respects user zoom preferences.
 
 ### Responsive images
 
@@ -860,9 +860,9 @@ behavior.
 - **HTML** defines page structure with semantic elements.
 - Use `<header>`, `<nav>`, `<main>`, `<article>`, `<footer>` instead of generic `<div>` elements.
 - **Forms** collect user input with built-in validation attributes.
-- **CSS** controls appearance -- use external stylesheets.
+- **CSS** controls appearance - use external stylesheets.
 - **Box model:** content + padding + border + margin. Always set `box-sizing: border-box`.
 - **Flexbox** handles layout: `display: flex`, `justify-content`, `align-items`, `gap`.
-- **Media queries** make pages responsive -- design mobile-first, then add breakpoints.
+- **Media queries** make pages responsive - design mobile-first, then add breakpoints.
 
-Next up: [The DOM](./08-the-dom.md) -- using JavaScript to read and change the page.
+Next up: [The DOM](./08-the-dom.md) - using JavaScript to read and change the page.

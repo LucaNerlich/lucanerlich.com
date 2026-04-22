@@ -281,13 +281,13 @@ enum Priority: string
 
 ### Fibers
 
-Fibers provide cooperative multitasking -- lightweight, user-space threads that you can pause and resume. They are used internally by async frameworks like ReactPHP and Amp. For most application code you will not use fibers directly; libraries built on top of them handle the complexity.
+Fibers provide cooperative multitasking - lightweight, user-space threads that you can pause and resume. They are used internally by async frameworks like ReactPHP and Amp. For most application code you will not use fibers directly; libraries built on top of them handle the complexity.
 
 > **Note:** Fibers are an advanced feature. You typically interact with them through async libraries rather than writing fiber code yourself.
 
 ### Readonly Properties
 
-A `readonly` property can be assigned only once -- in the constructor or at declaration:
+A `readonly` property can be assigned only once - in the constructor or at declaration:
 
 ```php
 <?php
@@ -588,10 +588,10 @@ echo PHP_VERSION;  // e.g. "8.3.2"
 
 ### Upgrading
 
-1. **Check your dependencies** -- run `composer update` and fix any incompatibilities. Many packages require PHP 8.1+ or 8.2+.
-2. **Run your test suite** -- if you have tests, run them on the new version.
-3. **Review deprecation notices** -- PHP often deprecates features before removing them. Fix deprecations before upgrading.
-4. **Use static analysis** -- tools like PHPStan or Psalm can catch type and compatibility issues.
+1. **Check your dependencies** - run `composer update` and fix any incompatibilities. Many packages require PHP 8.1+ or 8.2+.
+2. **Run your test suite** - if you have tests, run them on the new version.
+3. **Review deprecation notices** - PHP often deprecates features before removing them. Fix deprecations before upgrading.
+4. **Use static analysis** - tools like PHPStan or Psalm can catch type and compatibility issues.
 
 ### Docker as an Option
 
@@ -626,4 +626,4 @@ This ensures your project runs on PHP 8.3 or higher. Use the same constraint in 
 - **PHP 8.4:** Property hooks, asymmetric visibility, `new` without parentheses, and lazy objects
 - Choose a PHP version that receives security updates; check dependencies and run tests before upgrading; use Docker to standardize your environment
 
-Next up: [Building a Web Application](./16-building-a-web-application.md) -- putting everything together into a complete Notes app with MVC, routing, database, and authentication.
+Next up: [Building a Web Application](./16-building-a-web-application.md) - putting everything together into a complete Notes app with MVC, routing, database, and authentication.

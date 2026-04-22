@@ -18,7 +18,7 @@ sidebar_position: 18
 The best way to solidify everything you have learned is to build real things. Below are six projects, ordered from
 beginner to advanced. Each one lists what you will build, which skills it practises, and a few hints to get you started.
 
-No step-by-step hand-holding; that is the point. Apply the knowledge from chapters 1--17, use DevTools to debug, and
+No step-by-step hand-holding; that is the point. Apply the knowledge from chapters 1-17, use DevTools to debug, and
 figure things out.
 
 ## Project 1: Personal Profile Card
@@ -28,7 +28,7 @@ figure things out.
 ### What you will build
 
 A centred card showing a profile photo (or placeholder), name, a short bio, and links to social profiles. Think of it as
-a mini "about me" page -- a single card floating in the centre of the screen.
+a mini "about me" page - a single card floating in the centre of the screen.
 
 ### Skills practised
 
@@ -95,7 +95,7 @@ small screens, the links stack vertically or hide behind a toggle.
 ### What you will build
 
 A responsive photo gallery that displays images in a grid. On hover, each image shows a caption overlay. The grid adapts
-to the screen size -- four columns on desktop, two on tablet, one on mobile.
+to the screen size - four columns on desktop, two on tablet, one on mobile.
 
 ### Skills practised
 
@@ -141,7 +141,7 @@ table, and a footer. Use a custom colour scheme with CSS custom properties and m
 
 ### Hints
 
-- Start by defining your design tokens in `:root` -- primary colour, text colour, background, spacing scale, fonts
+- Start by defining your design tokens in `:root` - primary colour, text colour, background, spacing scale, fonts
 - The hero section uses `min-height: 100vh`, a background image with a dark gradient overlay, and centred white text
 - The features section uses CSS Grid: `repeat(auto-fit, minmax(280px, 1fr))`
 - Use `clamp()` for all heading font sizes so they scale smoothly
@@ -202,7 +202,7 @@ Properties), 14 (Specificity & Cascade)
 
 ### What you will build
 
-A purely decorative illustration made entirely with CSS -- no images, no SVGs, no JavaScript. Ideas: a landscape scene
+A purely decorative illustration made entirely with CSS - no images, no SVGs, no JavaScript. Ideas: a landscape scene
 (mountains, sun, clouds), an animal face, a retro game character, or a geometric pattern.
 
 ### Skills practised
@@ -217,7 +217,7 @@ A purely decorative illustration made entirely with CSS -- no images, no SVGs, n
 
 ### Hints
 
-- Start with a single `div` as your canvas. Use its `::before` and `::after` for additional shapes -- that gives you
+- Start with a single `div` as your canvas. Use its `::before` and `::after` for additional shapes - that gives you
   three elements from one HTML tag
 - `clip-path: polygon(...)` creates triangles, pentagons, and custom shapes
 - `box-shadow` can be used without blur or spread to duplicate shapes (multiple comma-separated values)
@@ -234,13 +234,13 @@ A purely decorative illustration made entirely with CSS -- no images, no SVGs, n
 
 ## Tips for all projects
 
-1. **Start with HTML** -- get the structure right before writing CSS
+1. **Start with HTML** - get the structure right before writing CSS
 2. **Add the CSS reset** from chapter 3 to every project
-3. **Define custom properties first** -- colours, fonts, spacing, radii
-4. **Work mobile-first** -- base styles for small screens, enhance for larger
-5. **Use DevTools constantly** -- inspect, edit live, then copy values back
-6. **Commit often** -- save working states so you can revert mistakes
-7. **Do not copy solutions** -- the struggle is where the learning happens
+3. **Define custom properties first** - colours, fonts, spacing, radii
+4. **Work mobile-first** - base styles for small screens, enhance for larger
+5. **Use DevTools constantly** - inspect, edit live, then copy values back
+6. **Commit often** - save working states so you can revert mistakes
+7. **Do not copy solutions** - the struggle is where the learning happens
 
 Pick one that interests you and start building. When you finish it, move to the next difficulty level.
 
@@ -253,7 +253,7 @@ you want extra practice. Each one focuses on a specific slice of CSS and can be 
 
 ### Recreate a favourite website's header
 
-Pick any website you visit daily -- a news site, a streaming service, a social platform -- and recreate **just the
+Pick any website you visit daily - a news site, a streaming service, a social platform - and recreate **just the
 header and navigation** from scratch. Do not look at their source code; work from a screenshot. You will be surprised
 how many layout details you only notice when you try to reproduce them.
 
@@ -262,7 +262,7 @@ how many layout details you only notice when you try to reproduce them.
 ### Build a "style this page" challenge
 
 Write a single plain HTML file with a heading, a few paragraphs, a list, a table, a blockquote, a form, and some
-images. Save it. Then create **three completely different stylesheets** for the same HTML -- one minimal and modern, one
+images. Save it. Then create **three completely different stylesheets** for the same HTML - one minimal and modern, one
 bold and colourful, one dark and moody. Switch between them by swapping the `<link>` tag. The constraint of not changing
 the HTML forces you to think creatively about what CSS alone can achieve.
 
@@ -271,7 +271,7 @@ presentation.
 
 ### Animated loading screen
 
-Build a full-screen loading animation using only CSS -- no JavaScript, no images. Ideas: spinning rings, bouncing dots,
+Build a full-screen loading animation using only CSS - no JavaScript, no images. Ideas: spinning rings, bouncing dots,
 a progress bar that fills, morphing shapes, a pulsing logo. The goal is to push `@keyframes`, transforms, and timing
 functions as far as you can.
 
@@ -280,7 +280,7 @@ staggered effects.
 
 ### Responsive email template
 
-Email clients have notoriously limited CSS support -- no Grid, limited Flexbox, no custom properties. Build a simple
+Email clients have notoriously limited CSS support - no Grid, limited Flexbox, no custom properties. Build a simple
 newsletter layout (header, hero image, two-column content block, footer) using only `<table>` for layout and inline
 styles. Then test it by sending it to yourself. It is a humbling exercise that deepens your appreciation for modern CSS.
 
@@ -288,7 +288,7 @@ styles. Then test it by sending it to yourself. It is a humbling exercise that d
 
 ### CSS-only toggle components
 
-Build a set of interactive UI elements using **no JavaScript** -- only the `:checked` pseudo-class and hidden checkbox
+Build a set of interactive UI elements using **no JavaScript** - only the `:checked` pseudo-class and hidden checkbox
 inputs. Ideas: an accordion (expandable sections), a tab component, a star rating widget, a dropdown menu, or a light/dark
 mode switch. The checkbox hack teaches you a lot about selector combinators and creative state management.
 
@@ -301,13 +301,13 @@ Find a free design mockup on Dribbble, Figma Community, or a CSS challenge site 
 compare. This is the closest exercise to real-world front-end work, where designers hand you a Figma file and expect
 an exact match.
 
-**You will practise:** Every chapter -- spacing, typography, colours, layout, responsive breakpoints, shadows,
+**You will practise:** Every chapter - spacing, typography, colours, layout, responsive breakpoints, shadows,
 transitions.
 
 ### Personal blog theme
 
 Design and build a simple blog layout: a homepage listing post titles and dates, and a single-post page with a readable
-article layout. Focus on typography -- pick a font pairing (one for headings, one for body), set a comfortable
+article layout. Focus on typography - pick a font pairing (one for headings, one for body), set a comfortable
 `max-width` with `ch` units, tune `line-height`, and add a dark mode toggle with custom properties. Keep it minimal but
 polished.
 
@@ -330,4 +330,4 @@ unique design using only CSS. Download the HTML from the site and build your own
 CSS creativity under constraints.
 
 **You will practise:** Everything. Selectors, the cascade, backgrounds, positioning, transforms, animations, pseudo-
-elements -- all without touching the HTML.
+elements - all without touching the HTML.

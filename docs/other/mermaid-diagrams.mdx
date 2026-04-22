@@ -151,8 +151,8 @@ graph LR
     C ---|No arrow| D
     E -.->|Dotted| F
     G ==>|Thick| H
-    I --o|Circle end| J
-    K --x|Cross end| L
+    I -o|Circle end| J
+    K -x|Cross end| L
 ```
 ````
 
@@ -532,8 +532,8 @@ classDiagram
         +makeSound() void
     }
 
-    Animal <|-- Dog : extends
-    Animal <|-- Cat : extends
+    Animal <|- Dog : extends
+    Animal <|- Cat : extends
 ```
 ````
 
@@ -563,9 +563,9 @@ Source:
 ````markdown
 ```mermaid
 classDiagram
-    classA --|> classB : Inheritance
-    classC --* classD : Composition
-    classE --o classF : Aggregation
+    classA -|> classB : Inheritance
+    classC -* classD : Composition
+    classE -o classF : Aggregation
     classG --> classH : Association
     classI ..> classJ : Dependency
     classK ..|> classL : Realization
@@ -836,9 +836,9 @@ Source:
 ````markdown
 ```mermaid
 erDiagram
-    USER ||--o{ ORDER : places
-    ORDER ||--|{ ORDER_LINE : contains
-    PRODUCT ||--o{ ORDER_LINE : "is in"
+    USER ||-o{ ORDER : places
+    ORDER ||-|{ ORDER_LINE : contains
+    PRODUCT ||-o{ ORDER_LINE : "is in"
     USER {
         string id PK
         string email
@@ -1296,7 +1296,7 @@ journey
 ```
 ````
 
-The number (1--5) represents satisfaction: 1 = frustrated, 5 = delighted. This helps identify
+The number (1-5) represents satisfaction: 1 = frustrated, 5 = delighted. This helps identify
 pain points in the user experience.
 
 ---

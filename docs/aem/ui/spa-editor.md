@@ -7,7 +7,7 @@ tags: [aem, spa, react, angular, frontend]
 # AEM SPA Editor
 
 The **AEM SPA Editor** enables authors to visually edit Single Page Applications (React or
-Angular) directly in the AEM author environment -- drag-and-drop, inline editing, layout
+Angular) directly in the AEM author environment - drag-and-drop, inline editing, layout
 mode, and all the authoring features they know from traditional AEM pages. The SPA
 renders from a **JSON model** served by AEM, and the SPA Editor SDK bridges the gap
 between the SPA framework and AEM's authoring layer.
@@ -456,7 +456,7 @@ Authors can resize components within the responsive grid, just like traditional 
 
 ### Preview mode
 
-Renders the SPA without editor overlays -- exactly as visitors would see it.
+Renders the SPA without editor overlays - exactly as visitors would see it.
 
 ### Placeholder handling
 
@@ -550,7 +550,7 @@ editable content must flow through the JSON model.
 | Pitfall                                                           | Solution                                                                                              |
 |-------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
 | Component renders on publish but not in editor                    | Ensure `MapTo` is imported and executed before the page renders                                       |
-| Empty placeholder never disappears                                | Check the `isEmpty()` function -- it may not be checking the right props                              |
+| Empty placeholder never disappears                                | Check the `isEmpty()` function - it may not be checking the right props                              |
 | Drag-and-drop doesn't work                                        | Verify the container component is correctly mapped (e.g., `ResponsiveGrid`)                           |
 | JSON model is empty or missing components                         | Check that Sling Models implement `ComponentExporter` and have `@Exporter`                            |
 | SPA loads but shows blank page in editor                          | Verify the SPA page component in AEM has `sling:resourceSuperType = core/wcm/components/page/v3/page` |
@@ -570,11 +570,11 @@ editable content must flow through the JSON model.
 
 ## See also
 
-- [Extending the Responsive Grid](./extending-responsive-grid.md) -- container components and `@Delegate` pattern
-- [Sling Models and Services](../backend/sling-models.mdx) -- JSON export and `ComponentExporter`
-- [Architecture](../architecture.mdx) -- overall AEM architecture
-- [Client Libraries](../client-libraries.mdx) -- frontend bundling
-- [Multi-Tenancy UI Frontend](./multi-tenancy-support-ui-frontend.mdx) -- webpack / Vite setup
-- [Edge Delivery Services](../infrastructure/helix.mdx) -- alternative delivery model
-- [Headless GraphQL](../content/graphql.mdx) -- decoupled content delivery
-- [Templates and Policies](../components/templates-policies.md) -- SPA page templates
+- [Extending the Responsive Grid](./extending-responsive-grid.md) - container components and `@Delegate` pattern
+- [Sling Models and Services](../backend/sling-models.mdx) - JSON export and `ComponentExporter`
+- [Architecture](../architecture.mdx) - overall AEM architecture
+- [Client Libraries](../client-libraries.mdx) - frontend bundling
+- [Multi-Tenancy UI Frontend](./multi-tenancy-support-ui-frontend.mdx) - webpack / Vite setup
+- [Edge Delivery Services](../infrastructure/helix.mdx) - alternative delivery model
+- [Headless GraphQL](../content/graphql.mdx) - decoupled content delivery
+- [Templates and Policies](../components/templates-policies.md) - SPA page templates

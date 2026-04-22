@@ -16,7 +16,7 @@ sidebar_position: 6
 # Authentication & Permissions
 
 A public-read API is fine for a blog, but most applications need to control who can create, update, and delete content.
-Strapi ships with the **Users & Permissions** plugin -- a complete auth system built in.
+Strapi ships with the **Users & Permissions** plugin - a complete auth system built in.
 
 ## How authentication works in Strapi
 
@@ -66,10 +66,10 @@ This chapter focuses on **API users**.
 By default, user registration is enabled. You can configure it in **Settings** > **Users & Permissions** > **Advanced
 settings**:
 
-- **Enable sign-ups** -- toggle registration on/off
-- **Default role for new users** -- which role new users get (default: `Authenticated`)
-- **One account per email** -- prevent duplicate accounts
-- **Enable email confirmation** -- require email verification before login
+- **Enable sign-ups** - toggle registration on/off
+- **Default role for new users** - which role new users get (default: `Authenticated`)
+- **One account per email** - prevent duplicate accounts
+- **Enable email confirmation** - require email verification before login
 
 ### Register a user
 
@@ -102,7 +102,7 @@ Response:
 }
 ```
 
-The response includes the JWT immediately -- the user is logged in upon registration.
+The response includes the JWT immediately - the user is logged in upon registration.
 
 ## Login
 
@@ -163,7 +163,7 @@ module.exports = ({ env }) => ({
 });
 ```
 
-> **Security note:** Use a strong, random JWT secret in production. Never commit it to version control -- use
+> **Security note:** Use a strong, random JWT secret in production. Never commit it to version control - use
 > environment variables.
 
 ## Roles and permissions
@@ -200,7 +200,7 @@ Strapi ships with two default roles:
 | **Category**      | find, findOne | find, findOne         |
 | **Tag**           | find, findOne | find, findOne         |
 | **Site Settings** | find          | find                  |
-| **User**          | --            | find (me)             |
+| **User**          | -            | find (me)             |
 
 This setup allows:
 
@@ -254,7 +254,7 @@ require user authentication.
 | **Token type**     | Read-only, Full access, or Custom                    |
 
 4. For **Custom** type, configure permissions per content type (like roles)
-5. Click **Save** -- the token is displayed **once**. Copy it immediately.
+5. Click **Save** - the token is displayed **once**. Copy it immediately.
 
 ### Using API tokens
 
@@ -404,14 +404,14 @@ flowchart TD
 
 ## Security best practices
 
-1. **Use strong JWT secrets** -- generate a random 256-bit key
-2. **Set token expiration** -- do not use unlimited duration in production
-3. **Use HTTPS** -- JWTs are base64-encoded, not encrypted. Without HTTPS they can be intercepted
-4. **Limit the Public role** -- only grant read access to content that should genuinely be public
-5. **Use custom API token types** -- avoid full-access tokens when read-only will do
-6. **Block inactive users** -- rather than deleting them
-7. **Rotate API tokens** -- set expiration dates and rotate regularly
-8. **Do not store JWTs in localStorage** -- if building a frontend, prefer HTTP-only cookies or in-memory storage
+1. **Use strong JWT secrets** - generate a random 256-bit key
+2. **Set token expiration** - do not use unlimited duration in production
+3. **Use HTTPS** - JWTs are base64-encoded, not encrypted. Without HTTPS they can be intercepted
+4. **Limit the Public role** - only grant read access to content that should genuinely be public
+5. **Use custom API token types** - avoid full-access tokens when read-only will do
+6. **Block inactive users** - rather than deleting them
+7. **Rotate API tokens** - set expiration dates and rotate regularly
+8. **Do not store JWTs in localStorage** - if building a frontend, prefer HTTP-only cookies or in-memory storage
 
 > For advanced authentication patterns (SSO, social providers, custom providers), see
 > the [Authentication and Permissions](/strapi/authentication-and-permissions) reference.
@@ -429,7 +429,7 @@ You learned:
 - Security **best practices** for production
 
 Your API is now secured. Public users can read content, authenticated users can create posts, and admins manage
-everything. In the next chapter we will go deeper -- customizing Strapi's built-in controllers and services.
+everything. In the next chapter we will go deeper - customizing Strapi's built-in controllers and services.
 
-Next up: [Custom Controllers & Services](./07-custom-controllers-and-services.md) -- extending Strapi's default CRUD,
+Next up: [Custom Controllers & Services](./07-custom-controllers-and-services.md) - extending Strapi's default CRUD,
 adding business logic in services, and building custom actions.

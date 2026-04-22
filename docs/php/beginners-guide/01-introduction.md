@@ -17,24 +17,24 @@ sidebar_position: 1
 
 PHP is one of the most widely used programming languages on the web. It powers everything from small personal blogs to
 massive platforms like WordPress, Wikipedia, and Facebook's early stack. This guide takes you from zero to building a
-complete web application -- step by step, assuming no prior PHP experience.
+complete web application - step by step, assuming no prior PHP experience.
 
 ## How this guide is structured
 
 | Part                               | Chapters | What you will learn                                                          |
 |------------------------------------|----------|------------------------------------------------------------------------------|
-| **1 -- Language Basics**           | 1--6     | Install PHP, variables, types, operators, control flow, functions, arrays    |
-| **2 -- Web Fundamentals**          | 7        | HTML forms, GET/POST, input validation, superglobals                         |
-| **3 -- Object-Oriented PHP**       | 8--9     | Classes, inheritance, interfaces, traits, namespaces                         |
-| **4 -- Practical Skills**          | 10--14   | Error handling, files, databases, sessions, Composer                         |
-| **5 -- Modern PHP & Full Project** | 15--17   | PHP 8 features, building a web app, practice projects                        |
+| **1 - Language Basics**           | 1-6     | Install PHP, variables, types, operators, control flow, functions, arrays    |
+| **2 - Web Fundamentals**          | 7        | HTML forms, GET/POST, input validation, superglobals                         |
+| **3 - Object-Oriented PHP**       | 8-9     | Classes, inheritance, interfaces, traits, namespaces                         |
+| **4 - Practical Skills**          | 10-14   | Error handling, files, databases, sessions, Composer                         |
+| **5 - Modern PHP & Full Project** | 15-17   | PHP 8 features, building a web app, practice projects                        |
 
 By the end you will understand how PHP works, how to build dynamic web pages, and how to structure a real application.
 
 ## What is PHP?
 
 PHP stands for **PHP: Hypertext Preprocessor** (a recursive acronym). It is a **server-side** scripting language, which
-means it runs on a server and produces output -- usually HTML -- that gets sent to the browser.
+means it runs on a server and produces output - usually HTML - that gets sent to the browser.
 
 Here is the key idea: when you visit a website, your browser does not run PHP. The **server** runs PHP, generates HTML,
 and sends that HTML to your browser.
@@ -55,13 +55,13 @@ browser.
 
 ### Why learn PHP?
 
-- **Huge ecosystem** -- PHP powers roughly 75% of all websites with a known server-side language (mostly through
+- **Huge ecosystem** - PHP powers roughly 75% of all websites with a known server-side language (mostly through
   WordPress, but also Laravel, Symfony, Drupal, and many others)
-- **Easy to start** -- you can write a PHP file, run one command, and see results in your browser
-- **Mature and stable** -- PHP has been around since 1995 and has evolved significantly, especially with PHP 8
-- **Great documentation** -- [php.net](https://www.php.net/manual/en/) has one of the best language references on the
+- **Easy to start** - you can write a PHP file, run one command, and see results in your browser
+- **Mature and stable** - PHP has been around since 1995 and has evolved significantly, especially with PHP 8
+- **Great documentation** - [php.net](https://www.php.net/manual/en/) has one of the best language references on the
   web
-- **Jobs** -- there is strong demand for PHP developers, particularly in the Laravel and WordPress ecosystems
+- **Jobs** - there is strong demand for PHP developers, particularly in the Laravel and WordPress ecosystems
 
 ### A brief history
 
@@ -76,7 +76,7 @@ browser.
 
 PHP 6 was planned but never released. The jump from 5 to 7 reflected a clean break with major performance gains.
 
-## How the web works -- a quick primer
+## How the web works - a quick primer
 
 Before we install PHP, let's make sure you understand the basics of how the web works. If you already know this, skip
 ahead to [Prerequisites](#prerequisites).
@@ -85,8 +85,8 @@ ahead to [Prerequisites](#prerequisites).
 
 The web is a conversation between **clients** and **servers**:
 
-- A **client** is usually your web browser (Chrome, Firefox, Safari). It sends **requests** -- "give me this page."
-- A **server** is a computer running software that listens for those requests and sends back **responses** -- usually
+- A **client** is usually your web browser (Chrome, Firefox, Safari). It sends **requests** - "give me this page."
+- A **server** is a computer running software that listens for those requests and sends back **responses** - usually
   HTML, CSS, JavaScript, images, or JSON.
 
 ```mermaid
@@ -111,10 +111,10 @@ PHP is how you make websites **dynamic**. For example, a PHP page can:
 1. You type `http://example.com/profile.php` in your browser
 2. Your browser sends an HTTP request to the server at `example.com`
 3. The server sees the `.php` extension and passes the file to the PHP interpreter
-4. PHP executes the code in `profile.php` -- maybe it queries a database, checks a session, etc.
+4. PHP executes the code in `profile.php` - maybe it queries a database, checks a session, etc.
 5. PHP produces HTML output
 6. The server sends that HTML back to your browser
-7. Your browser renders the page -- it has no idea PHP was involved
+7. Your browser renders the page - it has no idea PHP was involved
 
 The browser never sees your PHP code. It only sees the HTML that PHP produced.
 
@@ -123,9 +123,9 @@ The browser never sees your PHP code. It only sees the HTML that PHP produced.
 Before we start, make sure you have:
 
 - **A computer** running macOS, Linux, or Windows
-- **A text editor** -- VS Code is recommended (free, great PHP support with extensions)
-- **A terminal** -- Terminal on macOS, any terminal emulator on Linux, or Windows Terminal / PowerShell on Windows
-- **Basic HTML knowledge** -- you should know what `<h1>`, `<p>`, `<form>`, and `<a>` tags do
+- **A text editor** - VS Code is recommended (free, great PHP support with extensions)
+- **A terminal** - Terminal on macOS, any terminal emulator on Linux, or Windows Terminal / PowerShell on Windows
+- **Basic HTML knowledge** - you should know what `<h1>`, `<p>`, `<form>`, and `<a>` tags do
 
 You do **not** need:
 
@@ -178,7 +178,7 @@ The simplest option is to download PHP from [windows.php.net](https://windows.ph
 3. Add `C:\php` to your system PATH environment variable
 4. Open a new terminal and run `php --version`
 
-Alternatively, install [XAMPP](https://www.apachefriends.org/) which bundles PHP, Apache, and MySQL -- but for this
+Alternatively, install [XAMPP](https://www.apachefriends.org/) which bundles PHP, Apache, and MySQL - but for this
 guide, standalone PHP is enough.
 
 > **Tip:** On Windows, you can also use WSL (Windows Subsystem for Linux) and follow the Linux instructions. This is
@@ -196,11 +196,11 @@ echo 'Hello, World!';
 
 Let's break this down:
 
-- `<?php` -- this is the **opening tag**. It tells the server "everything after this is PHP code." Every PHP file starts
+- `<?php` - this is the **opening tag**. It tells the server "everything after this is PHP code." Every PHP file starts
   with this tag.
-- `echo` -- this is a PHP command that outputs text. Think of it as "print to the screen."
-- `'Hello, World!'` -- this is a **string** (a piece of text). Single quotes wrap the text.
-- `;` -- every PHP statement ends with a semicolon. This is not optional -- forgetting it is the most common beginner
+- `echo` - this is a PHP command that outputs text. Think of it as "print to the screen."
+- `'Hello, World!'` - this is a **string** (a piece of text). Single quotes wrap the text.
+- `;` - every PHP statement ends with a semicolon. This is not optional - forgetting it is the most common beginner
   mistake.
 
 ### Running it from the terminal
@@ -217,7 +217,7 @@ You should see:
 Hello, World!
 ```
 
-Congratulations -- you just ran your first PHP script.
+Congratulations - you just ran your first PHP script.
 
 ### Running it in the browser
 
@@ -320,7 +320,7 @@ flowchart TD
 The last step is important: **PHP starts fresh on every request.** Unlike Node.js or Java, PHP does not keep a
 long-running process in memory. Each request is independent. Variables, objects, and connections are created, used, and
 then destroyed. This "shared-nothing" architecture makes PHP simple to reason about but means you need sessions or
-databases to persist data between requests (chapters 12--13).
+databases to persist data between requests (chapters 12-13).
 
 ## Setting up your project folder
 
@@ -351,13 +351,13 @@ You do not need any of these to follow the guide, but they make writing PHP much
 
 ## Summary
 
-- PHP is a server-side language -- it runs on the server and sends HTML to the browser
+- PHP is a server-side language - it runs on the server and sends HTML to the browser
 - The browser never sees your PHP code, only the output
 - You installed PHP and verified it with `php --version`
 - You wrote your first script with `echo` and ran it from the terminal
 - You started PHP's built-in development server with `php -S localhost:8000`
 - You can mix PHP and HTML in the same file using `<?php ... ?>` tags
-- PHP starts fresh on every request -- nothing persists in memory between requests
+- PHP starts fresh on every request - nothing persists in memory between requests
 
-Next up: [Variables & Data Types](./02-variables-and-types.md) -- declaring variables, working with strings and numbers,
+Next up: [Variables & Data Types](./02-variables-and-types.md) - declaring variables, working with strings and numbers,
 understanding PHP's type system, and inspecting values with `var_dump()`.

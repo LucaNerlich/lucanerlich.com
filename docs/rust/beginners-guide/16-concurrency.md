@@ -16,7 +16,7 @@ sidebar_position: 16
 
 # Concurrency
 
-Rust's ownership system prevents data races at compile time -- a feature called **fearless concurrency**. This chapter
+Rust's ownership system prevents data races at compile time - a feature called **fearless concurrency**. This chapter
 covers threads, message passing, shared state, and a brief introduction to async programming.
 
 ## Spawning threads
@@ -67,7 +67,7 @@ fn main() {
 }
 ```
 
-Without `move`, the compiler would reject this -- the spawned thread might outlive `message`. `move` ensures the thread
+Without `move`, the compiler would reject this - the spawned thread might outlive `message`. `move` ensures the thread
 owns everything it needs.
 
 ## Message passing with channels
@@ -137,8 +137,8 @@ fn main() {
 
 When multiple threads need to access the same data, use `Arc<Mutex<T>>`:
 
-- **`Mutex<T>`** -- mutual exclusion, ensures only one thread accesses the data at a time
-- **`Arc<T>`** -- atomically reference-counted smart pointer, enables shared ownership across threads
+- **`Mutex<T>`** - mutual exclusion, ensures only one thread accesses the data at a time
+- **`Arc<T>`** - atomically reference-counted smart pointer, enables shared ownership across threads
 
 ```rust
 use std::sync::{Arc, Mutex};
@@ -168,7 +168,7 @@ fn main() {
 How it works:
 
 1. `Arc::new(Mutex::new(0))` creates a shared, thread-safe counter
-2. `Arc::clone(&counter)` creates a new reference (not a deep copy -- just increments a reference count)
+2. `Arc::clone(&counter)` creates a new reference (not a deep copy - just increments a reference count)
 3. `counter.lock().unwrap()` acquires the lock, returning a `MutexGuard` that auto-unlocks when dropped
 4. Each thread increments the counter while holding the lock
 
@@ -259,7 +259,7 @@ Key concepts:
 > **Note:** Async Rust has a steeper learning curve. It is covered briefly here so you know it exists. For a full
 > treatment, see the [Async Book](https://rust-lang.github.io/async-book/).
 
-## A complete example -- parallel word counter
+## A complete example - parallel word counter
 
 Count words in multiple files concurrently:
 
@@ -324,12 +324,12 @@ fn main() {
 
 - `thread::spawn` creates OS threads; use `move` to transfer data ownership
 - `.join()` waits for a thread to finish
-- **Channels** (`mpsc`) pass messages between threads -- sender moves data, receiver gets it
+- **Channels** (`mpsc`) pass messages between threads - sender moves data, receiver gets it
 - **`Arc<Mutex<T>>`** enables shared mutable state across threads
 - `Mutex` provides mutual exclusion; `Arc` provides shared ownership
 - **`Send`** means a type can be moved to another thread; **`Sync`** means it can be shared by reference
 - **async/await** with tokio is efficient for I/O-heavy work
-- Rust prevents data races at compile time -- the type system enforces thread safety
+- Rust prevents data races at compile time - the type system enforces thread safety
 
-Next up: [REST API](./17-rest-api.md) -- building a web API with Actix Web, routes, handlers, JSON, and a SQLite
+Next up: [REST API](./17-rest-api.md) - building a web API with Actix Web, routes, handlers, JSON, and a SQLite
 database.

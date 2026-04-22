@@ -23,8 +23,8 @@ columns required awkward workarounds. Flexbox makes these trivial.
 
 Flexbox has two roles:
 
-1. **Flex container** -- the parent element with `display: flex`
-2. **Flex items** -- the direct children of the container
+1. **Flex container** - the parent element with `display: flex`
+2. **Flex items** - the direct children of the container
 
 ```css
 .container {
@@ -58,7 +58,7 @@ flowchart LR
 
 ## flex-direction
 
-Controls the **main axis** -- the direction items flow:
+Controls the **main axis** - the direction items flow:
 
 | Value              | Direction                          |
 |--------------------|------------------------------------|
@@ -309,7 +309,7 @@ By default, flex items appear in their HTML source order. The `order` property o
 }
 ```
 
-Lower values appear first. The default is `0`. Use `order` sparingly -- it can make the visual order inconsistent with
+Lower values appear first. The default is `0`. Use `order` sparingly - it can make the visual order inconsistent with
 the DOM order, which hurts accessibility.
 
 ## Common Flexbox patterns
@@ -444,5 +444,5 @@ footer {
 
 ## Next step
 
-Flexbox handles one-dimensional layouts. The next chapter introduces **CSS Grid** -- a two-dimensional layout system for
+Flexbox handles one-dimensional layouts. The next chapter introduces **CSS Grid** - a two-dimensional layout system for
 rows and columns simultaneously.

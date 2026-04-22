@@ -29,9 +29,9 @@ flowchart TD
     B --> C["3. Source order"]
 ```
 
-1. **Origin and importance** -- where the style comes from and whether it uses `!important`
-2. **Specificity** -- how specific the selector is
-3. **Source order** -- which rule comes last in the code
+1. **Origin and importance** - where the style comes from and whether it uses `!important`
+2. **Specificity** - how specific the selector is
+3. **Source order** - which rule comes last in the code
 
 If step 1 does not resolve the conflict, the browser moves to step 2. If step 2 is a tie, step 3 decides.
 
@@ -115,7 +115,7 @@ This also applies across stylesheets. If you load two CSS files, rules in the se
 
 ## Inheritance
 
-Some CSS properties are **inherited** by default -- child elements receive the parent's value without you writing a
+Some CSS properties are **inherited** by default - child elements receive the parent's value without you writing a
 rule.
 
 ### Inherited properties (partial list)
@@ -147,7 +147,7 @@ body {
 ```
 
 Every element inside `<body>` inherits `color` and `font-family` without you writing additional rules. But
-`background-color` is **not** inherited -- children get a transparent background by default.
+`background-color` is **not** inherited - children get a transparent background by default.
 
 ### Forcing inheritance
 
@@ -186,7 +186,7 @@ The text is red. Even though `#header .text` has higher specificity, `!important
 
 ### Why to avoid !important
 
-- It makes the cascade unpredictable -- other developers cannot override without their own `!important`
+- It makes the cascade unpredictable - other developers cannot override without their own `!important`
 - It creates an escalation war: `!important` vs `!important` is resolved by specificity again
 - It is a signal of a structural problem in your CSS
 
@@ -251,7 +251,7 @@ You just put your override in a higher layer.
 When a style does not apply as expected:
 
 1. **Open DevTools** and inspect the element
-2. Look at the **Styles panel** -- it shows all matching rules, most specific at the top
+2. Look at the **Styles panel** - it shows all matching rules, most specific at the top
 3. **Crossed-out declarations** are being overridden by higher-specificity rules
 4. Hover over a crossed-out rule to see what is overriding it
 5. If `!important` is involved, it will be visible in the Styles panel
@@ -270,9 +270,9 @@ When a style does not apply as expected:
 
 Follow these guidelines to keep specificity manageable:
 
-1. **Use classes for everything** -- avoid IDs and element selectors for styling
-2. **Keep selectors short** -- `.card-title` instead of `.main .content .card .card-title`
-3. **Avoid nesting deeper than two levels** -- `.card .title` is fine, `.page .section .card .title` is not
+1. **Use classes for everything** - avoid IDs and element selectors for styling
+2. **Keep selectors short** - `.card-title` instead of `.main .content .card .card-title`
+3. **Avoid nesting deeper than two levels** - `.card .title` is fine, `.page .section .card .title` is not
 4. **Never use !important** for layout or cosmetic styles
 5. **Use BEM or a similar naming convention** to avoid selector conflicts (covered in chapter 16)
 6. **Use cascade layers** for large projects with multiple stylesheet sources
@@ -280,13 +280,13 @@ Follow these guidelines to keep specificity manageable:
 ## What you learned
 
 - The cascade resolves conflicts in three steps: origin/importance, specificity, source order
-- Specificity is scored as (inline, IDs, classes, elements) -- compared left to right
+- Specificity is scored as (inline, IDs, classes, elements) - compared left to right
 - Some properties **inherit** from parents (colour, font); others do not (margin, border)
-- `!important` wins within its origin but causes maintenance problems -- avoid it
+- `!important` wins within its origin but causes maintenance problems - avoid it
 - **Cascade layers** (`@layer`) give explicit ordering that overrides specificity
 - DevTools show which rules win and which are overridden
 
 ## Next step
 
-Now that you understand how CSS resolves conflicts, the next chapter covers **modern CSS features** -- nesting, `:has()`,
+Now that you understand how CSS resolves conflicts, the next chapter covers **modern CSS features** - nesting, `:has()`,
 container queries, and other recent additions to the language.

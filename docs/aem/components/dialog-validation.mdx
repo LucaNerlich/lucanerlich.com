@@ -55,7 +55,7 @@ Understanding the trigger points keeps the UX predictable:
 |---|---|
 | Author clicks **Done** / submits | Every registered validator runs against every matching field. First failure blocks the save. |
 | Field adapts to `foundation-field` and calls `.checkValidity()` | Only that field's validators run. Used to trigger validation imperatively from custom JS. |
-| Author leaves a field (blur on most inputs) | Coral triggers revalidation on fields that have already been validated once -- so the error state clears as soon as the author corrects the value. |
+| Author leaves a field (blur on most inputs) | Coral triggers revalidation on fields that have already been validated once - so the error state clears as soon as the author corrects the value. |
 | Author changes a field | Coral re-runs `validate()` if the field is currently marked invalid. |
 
 Trigger validation manually on a single field:
@@ -239,7 +239,7 @@ There are two ways to attach a validator to a dialog field:
 
 :::info Two selectors, two declaration paths
 A common misconception is that `data-validation` and `data-foundation-validation` are
-AEMaaCS-vs-6.5. They are not -- **both attributes work on both platforms**, and they map to the
+AEMaaCS-vs-6.5. They are not - **both attributes work on both platforms**, and they map to the
 two different ways you can declare a validator on a field:
 
 | Declaration in the dialog | Attribute that ends up on the rendered HTML |
@@ -253,7 +253,7 @@ Match both so your validator triggers regardless of how a team member declared i
 selector: "[data-validation~='my-rule'], [data-foundation-validation~='my-rule']",
 ```
 
-Note the `~=` match -- Granite concatenates multiple `validation` values with spaces, so exact
+Note the `~=` match - Granite concatenates multiple `validation` values with spaces, so exact
 `=` match can miss fields that have several validators.
 :::
 
@@ -857,7 +857,7 @@ $(document).on("change blur", "[data-link-role]", function () {
 
 ### Async / Server-side Validation
 
-Some rules can only be checked on the server -- "is this slug already taken?", "does this product
+Some rules can only be checked on the server - "is this slug already taken?", "does this product
 SKU exist?", "is this URL reachable?". The Foundation API is synchronous, so the pattern is:
 **cache the last server result on the element, debounce fetches, and return synchronously from
 `validate()`**.
@@ -943,7 +943,7 @@ SKU exist?", "is this URL reachable?". The Foundation API is synchronous, so the
 
 :::warning Server-side validation is still required
 Client-side async checks are a UX optimisation, not a security boundary. The servlet that handles
-the save (or a `@PostConstruct` hook in the Sling Model) must re-validate uniqueness -- a malicious
+the save (or a `@PostConstruct` hook in the Sling Model) must re-validate uniqueness - a malicious
 or stale client can submit whatever it wants. See [Server-Side Validation](#server-side-validation)
 below.
 :::
@@ -969,7 +969,7 @@ Set these directly on the field node:
 
 ### Registered `foundation.*` validators
 
-Use these as the value of the `validation` attribute -- they are pre-registered by Granite UI:
+Use these as the value of the `validation` attribute - they are pre-registered by Granite UI:
 
 | Validator key | Purpose |
 |---------------|---------|
@@ -1132,8 +1132,8 @@ protected void init() {
 
 | Layer | Purpose | Enforcement |
 |-------|---------|------------|
-| **Client-side (dialog)** | Immediate feedback, guides authors | Soft -- can be bypassed |
-| **Server-side (Sling Model)** | Business rule enforcement | Hard -- always runs |
+| **Client-side (dialog)** | Immediate feedback, guides authors | Soft - can be bypassed |
+| **Server-side (Sling Model)** | Business rule enforcement | Hard - always runs |
 | **Content policy** | Template-level constraints | Configurable by template authors |
 
 ---
@@ -1154,7 +1154,7 @@ Include both selector variants so your validator fires regardless of whether the
 "[data-validation~='my-rule'], [data-foundation-validation~='my-rule']",
 ```
 
-Use the `~=` space-separated-word selector -- Granite renders multiple validators as a
+Use the `~=` space-separated-word selector - Granite renders multiple validators as a
 space-delimited list, and `=` would miss fields with more than one validator attached.
 
 ### Don't block on empty optional fields
@@ -1175,12 +1175,12 @@ validate: function (el) {
 ### Test with multifield items
 
 Validators on fields inside multifields run for every item. Make sure your validator logic handles
-the DOM structure correctly -- the `el` parameter is the specific field instance, not the multifield
+the DOM structure correctly - the `el` parameter is the specific field instance, not the multifield
 container.
 
 ### Keep error messages helpful
 
-Bad: `"Invalid input"` --
+Bad: `"Invalid input"` -
 Good: `"Please enter a valid URL (e.g. https://www.example.com)"`
 
 Include the expected format, current value count, or a concrete example in the error message.
@@ -1238,7 +1238,7 @@ Add a `css.txt` next to `js.txt` in the clientlib folder and list `css/validatio
 dialogs, so it can't leak onto published pages.
 
 :::tip Show which validator is failing
-When debugging dialogs with many overlapping validators, surface the rule name on the wrapper --
+When debugging dialogs with many overlapping validators, surface the rule name on the wrapper -
 it survives re-renders and is easy to spot in the inspector:
 
 ```javascript
@@ -1274,7 +1274,7 @@ If your validator isn't in the list, the clientlib never loaded. Check:
 - `categories="[cq.authoring.dialog]"` in the clientlib `.content.xml`
 - `allowProxy="{Boolean}true"` (dialogs load via `/etc.clientlibs/`)
 - `js.txt` actually lists your JS file
-- Proxy cache -- hit `/etc.clientlibs/.../clientlib.min.js` directly to confirm the JS is served
+- Proxy cache - hit `/etc.clientlibs/.../clientlib.min.js` directly to confirm the JS is served
 
 ### 2. Confirm the selector matches
 
@@ -1284,7 +1284,7 @@ In the devtools console, with the dialog open:
 document.querySelectorAll("[data-validation~='my-rule'], [data-foundation-validation~='my-rule']");
 ```
 
-Zero matches = your field attribute isn't what you think it is. Inspect the rendered HTML -- the
+Zero matches = your field attribute isn't what you think it is. Inspect the rendered HTML - the
 `validation` property in the dialog XML becomes the `data-validation` attribute on the rendered
 input, but `granite:data/foundation-validation` becomes `data-foundation-validation`.
 
@@ -1323,11 +1323,11 @@ During development, either:
 ## See also
 
 - [Custom Component Guide](../custom-component.mdx)
-- [Component Dialogs](../component-dialogs.mdx) -- full dialog field reference
+- [Component Dialogs](../component-dialogs.mdx) - full dialog field reference
 - [Components Overview](./overview.mdx)
 - [Core Components](./core-components.mdx)
 - [Touch UI](../ui/touch-ui.mdx)
 - [Coral UI](../ui/coral-ui.mdx)
 - [Client Libraries](../client-libraries.mdx)
 - [HTL Templates](../htl-templates.mdx)
-- [Security](../infrastructure/security.mdx) -- XSS prevention
+- [Security](../infrastructure/security.mdx) - XSS prevention

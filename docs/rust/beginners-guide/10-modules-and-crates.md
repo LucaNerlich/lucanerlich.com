@@ -23,7 +23,7 @@ within a project and **crates** to package and share code between projects.
 
 | Term             | Meaning                                                          |
 |------------------|------------------------------------------------------------------|
-| **Crate**        | A compilation unit -- either a binary (runs) or a library (imported) |
+| **Crate**        | A compilation unit - either a binary (runs) or a library (imported) |
 | **Module**       | A namespace within a crate that groups related items             |
 | **Package**      | A `Cargo.toml` + one or more crates                             |
 | **Workspace**    | Multiple packages managed together                               |
@@ -86,7 +86,7 @@ fn main() {
 | Keyword         | Visibility                                    |
 |----------------|-----------------------------------------------|
 | (nothing)      | Private to the current module                 |
-| `pub`          | Public -- accessible from anywhere            |
+| `pub`          | Public - accessible from anywhere            |
 | `pub(crate)`   | Public within the current crate only          |
 | `pub(super)`   | Public to the parent module                   |
 
@@ -151,7 +151,7 @@ use std::io::{self, Read, Write};
 
 For real projects, you put modules in separate files. Rust maps the module tree to the file system.
 
-### Method 1 -- a file per module
+### Method 1 - a file per module
 
 ```text
 src/
@@ -190,7 +190,7 @@ pub fn connect(addr: &str) -> String {
 
 `mod math;` tells Rust to look for `src/math.rs` (or `src/math/mod.rs`).
 
-### Method 2 -- a directory with mod.rs
+### Method 2 - a directory with mod.rs
 
 For modules with sub-modules, use a directory:
 
@@ -218,7 +218,7 @@ pub fn get(url: &str) -> String {
 }
 ```
 
-### Method 3 -- directory with named file (modern style)
+### Method 3 - directory with named file (modern style)
 
 Instead of `mod.rs`, you can use a file named after the module:
 
@@ -238,7 +238,7 @@ pub mod http;
 pub mod tcp;
 ```
 
-This is the modern convention -- it avoids having many files all named `mod.rs`.
+This is the modern convention - it avoids having many files all named `mod.rs`.
 
 ## Re-exports with pub use
 
@@ -260,7 +260,7 @@ fn main() {
 }
 ```
 
-This is how library crates create a clean public API -- internal structure can be deeply nested while the public
+This is how library crates create a clean public API - internal structure can be deeply nested while the public
 interface stays flat.
 
 ## Binary vs library crates
@@ -288,7 +288,7 @@ pub fn greet(name: &str) -> String {
 
 Other crates can depend on this library.
 
-## Cargo.toml -- managing dependencies
+## Cargo.toml - managing dependencies
 
 ### Adding dependencies
 
@@ -427,7 +427,7 @@ Check [docs.rs](https://docs.rs/) for auto-generated documentation of any crate.
 ## Summary
 
 - **Modules** (`mod`) organize code into namespaces within a crate
-- Everything is **private by default** -- use `pub` to expose items
+- Everything is **private by default** - use `pub` to expose items
 - **`use`** brings items into scope to avoid long paths
 - File-based modules map `mod foo;` to `src/foo.rs` or `src/foo/mod.rs`
 - **Re-exports** (`pub use`) create clean public APIs
@@ -437,5 +437,5 @@ Check [docs.rs](https://docs.rs/) for auto-generated documentation of any crate.
 - **Workspaces** manage multi-crate projects
 - **crates.io** is the public registry; **docs.rs** hosts documentation
 
-Next up: [Traits & Generics](./11-traits-and-generics.md) -- defining shared behavior with traits, writing generic
+Next up: [Traits & Generics](./11-traits-and-generics.md) - defining shared behavior with traits, writing generic
 code, and understanding the standard library's most important traits.

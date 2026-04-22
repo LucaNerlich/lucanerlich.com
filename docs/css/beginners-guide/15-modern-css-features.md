@@ -55,9 +55,9 @@ You can now nest selectors inside other selectors, reducing repetition and impro
 ### Nesting rules
 
 - Nested selectors that start with a **letter** (like `h3`, `p`) are automatically interpreted as descendants
-- Use `&` to reference the parent selector explicitly -- required for pseudo-classes (`:hover`), pseudo-elements
+- Use `&` to reference the parent selector explicitly - required for pseudo-classes (`:hover`), pseudo-elements
   (`::before`), and class selectors (`.badge`)
-- Do not nest deeper than two or three levels -- it hurts readability and increases specificity
+- Do not nest deeper than two or three levels - it hurts readability and increases specificity
 
 ### Before vs after nesting
 
@@ -114,7 +114,7 @@ This keeps the responsive behaviour close to the component it affects.
 
 ## The :has() selector
 
-`:has()` is a **relational pseudo-class** -- it lets you style a parent based on what it contains. This was impossible
+`:has()` is a **relational pseudo-class** - it lets you style a parent based on what it contains. This was impossible
 in CSS until `:has()` arrived.
 
 ```css
@@ -174,7 +174,7 @@ Reduce the margin under an `<h2>` when it is immediately followed by a `.subtitl
 ## Container queries
 
 Media queries respond to the **viewport** size. Container queries respond to the size of a **specific container
-element**. This makes components truly self-contained -- they adapt to wherever they are placed.
+element**. This makes components truly self-contained - they adapt to wherever they are placed.
 
 ### Defining a container
 
@@ -297,7 +297,7 @@ Blend two colours together in CSS without a preprocessor:
 }
 ```
 
-This mixes 80% of the primary colour with 20% black -- creating a darker hover shade dynamically.
+This mixes 80% of the primary colour with 20% black - creating a darker hover shade dynamically.
 
 ```css
 .muted {
@@ -368,7 +368,7 @@ Not all browsers support every modern feature. Follow this approach:
 ## What you learned
 
 - **CSS nesting** groups related rules and reduces repetition
-- **:has()** styles parents based on their children -- one of the most powerful modern selectors
+- **:has()** styles parents based on their children - one of the most powerful modern selectors
 - **Container queries** make components respond to their container's size, not the viewport
 - **Logical properties** replace left/right/top/bottom with flow-relative directions
 - **accent-color** styles native form controls in one line
@@ -378,5 +378,5 @@ Not all browsers support every modern feature. Follow this approach:
 
 ## Next step
 
-You now know all the CSS tools available. The next chapter covers **architecture and best practices** -- how to organise
+You now know all the CSS tools available. The next chapter covers **architecture and best practices** - how to organise
 your CSS files, name your classes, and structure your code for long-term maintainability.

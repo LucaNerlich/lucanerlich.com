@@ -7,7 +7,7 @@ tags: [strapi, i18n, internationalization, locale, translation]
 
 # i18n and Multi-Locale Content
 
-Strapi's Internationalization (i18n) plugin lets you manage content in multiple languages. It sounds simple in theory --
+Strapi's Internationalization (i18n) plugin lets you manage content in multiple languages. It sounds simple in theory -
 in practice, locale-aware querying, relation population, and fallback strategies are where most developers get stuck.
 
 ## Enabling i18n
@@ -128,7 +128,7 @@ await strapi.documents('api::article.article').create({
 ## The locale fallback problem
 
 Strapi does **not** provide automatic locale fallback out of the box. If you request `locale=de` and the German version
-doesn't exist, you get `null` -- not the English fallback.
+doesn't exist, you get `null` - not the English fallback.
 
 ### Implementing fallback in a service
 
@@ -451,6 +451,6 @@ async function getAvailableLocales(documentId) {
 
 ## See also
 
-- [Relations and Population](relations-and-population.md) -- general population patterns that apply to localized queries
-- [Custom Controllers and Services](custom-controllers-services.md) -- implementing fallback services
-- [Content Modeling Patterns](content-modeling-patterns.md) -- deciding which fields to localize
+- [Relations and Population](relations-and-population.md) - general population patterns that apply to localized queries
+- [Custom Controllers and Services](custom-controllers-services.md) - implementing fallback services
+- [Content Modeling Patterns](content-modeling-patterns.md) - deciding which fields to localize

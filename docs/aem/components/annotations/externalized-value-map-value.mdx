@@ -7,7 +7,7 @@ tags: [aem, annotations, sling-models, externalizer]
 # @ExternalizedValueMapValue
 
 `@ExternalizedValueMapValue` is a **custom Sling Models injector annotation** that reads a JCR property (like
-`@ValueMapValue`) and automatically **externalizes** the value -- converting internal content paths into
+`@ValueMapValue`) and automatically **externalizes** the value - converting internal content paths into
 proper external URLs. This is essential for SPA-based AEM projects, headless JSON exports, and any scenario
 where internal JCR paths must be transformed to public-facing URLs.
 
@@ -43,7 +43,7 @@ graph LR
 | Feature | `@ValueMapValue` | `@ExternalizedValueMapValue` |
 |---------|-------------------|------------------------------|
 | Reads JCR property | Yes | Yes |
-| Returns raw value | Yes | No -- externalizes it |
+| Returns raw value | Yes | No - externalizes it |
 | Works with paths | Yes, but returns raw path | Yes, returns mapped URL |
 | Use case | Simple values (text, numbers, booleans) | Path/link properties that need URL mapping |
 | Built-in | Yes (Apache Sling) | No (custom annotation + injector) |
@@ -476,6 +476,6 @@ negligible performance impact. There is no need to cache externalized values.
 - [Component Dialogs](../../component-dialogs.mdx)
 - [Components Overview](../overview.mdx)
 - [Java Best Practices](../../backend/java-best-practices.mdx)
-- [OSGi Configuration](../../backend/osgi-configuration.mdx) -- configuring the Externalizer
-- [Architecture](../../architecture.mdx) -- Sling request processing and URL mapping
+- [OSGi Configuration](../../backend/osgi-configuration.mdx) - configuring the Externalizer
+- [Architecture](../../architecture.mdx) - Sling request processing and URL mapping
 - [Security](../../infrastructure/security.mdx)

@@ -16,7 +16,7 @@ sidebar_position: 3
 # Relations
 
 A blog post has an author. A post belongs to a category. A post can have many tags, and a tag can appear on many posts.
-These are **relations** -- links between content types.
+These are **relations** - links between content types.
 
 In this chapter we create four content types and connect them to build a complete blog data model.
 
@@ -26,10 +26,10 @@ Strapi supports four relation types:
 
 | Relation         | Description                                | Example               |
 |------------------|--------------------------------------------|-----------------------|
-| **One-to-one**   | Each A has exactly one B, and vice versa   | User -- Profile       |
-| **One-to-many**  | One A has many Bs, each B belongs to one A | Author -- Posts       |
-| **Many-to-many** | Many As can relate to many Bs              | Posts -- Tags         |
-| **Many-way**     | One-sided many, no inverse                 | Post -- Related Posts |
+| **One-to-one**   | Each A has exactly one B, and vice versa   | User - Profile       |
+| **One-to-many**  | One A has many Bs, each B belongs to one A | Author - Posts       |
+| **Many-to-many** | Many As can relate to many Bs              | Posts - Tags         |
+| **Many-way**     | One-sided many, no inverse                 | Post - Related Posts |
 
 ```mermaid
 erDiagram
@@ -48,7 +48,7 @@ erDiagram
 | Field name | Type                 | Configuration    |
 |------------|----------------------|------------------|
 | `name`     | Text (Short text)    | Required         |
-| `bio`      | Text (Long text)     | --               |
+| `bio`      | Text (Long text)     | -               |
 | `avatar`   | Media (Single media) | Images only      |
 | `email`    | Email                | Required, unique |
 
@@ -63,7 +63,7 @@ erDiagram
 |---------------|-------------------|------------------------------|
 | `name`        | Text (Short text) | Required, unique             |
 | `slug`        | UID               | Attached to `name`, required |
-| `description` | Text (Long text)  | --                           |
+| `description` | Text (Long text)  | -                           |
 
 3. Click **Save**
 
@@ -89,7 +89,7 @@ Now let's connect everything. Go back to the **Post** content type and add relat
 2. On the left: **Post**, on the right: **Author**
 3. Select the relation type: **Many-to-one** (many posts belong to one author)
 4. Field name on Post side: `author`
-5. Field name on Author side: `posts` (the inverse -- an author has many posts)
+5. Field name on Author side: `posts` (the inverse - an author has many posts)
 6. Click **Finish**
 
 ### Post belongs to Category (many-to-one)
@@ -102,7 +102,7 @@ Now let's connect everything. Go back to the **Post** content type and add relat
 ### Post has many Tags (many-to-many)
 
 1. Add another relation field to Post
-2. **Post** to **Tag** -- select **Many-to-many**
+2. **Post** to **Tag** - select **Many-to-many**
 3. Field name on Post: `tags`
 4. Field name on Tag: `posts`
 
@@ -266,7 +266,7 @@ Strapi also supports **polymorphic relations** where a field can relate to multi
 }
 ```
 
-Polymorphic relations are advanced -- we mention them here for completeness. For most blog use cases, standard relations
+Polymorphic relations are advanced - we mention them here for completeness. For most blog use cases, standard relations
 are sufficient.
 
 ## Relation best practices
@@ -284,8 +284,8 @@ Avoid: Post → Author → Company → Country → Region (4 levels)
 
 If data always belongs to its parent and has no meaning on its own, use a component instead of a relation:
 
-- **SEO metadata** -- always part of a post, never queried independently → **component**
-- **Author** -- shared across posts, queried on its own (author page) → **relation**
+- **SEO metadata** - always part of a post, never queried independently → **component**
+- **Author** - shared across posts, queried on its own (author page) → **relation**
 
 ### Name fields clearly
 
@@ -317,5 +317,5 @@ You learned:
 Our blog data model is now complete with Authors, Posts, Categories, and Tags all properly connected. In the next
 chapter we will learn how to manage content through the admin panel.
 
-Next up: [Managing Content](./04-managing-content.md) -- creating entries, drafts & publishing, the media library, and
+Next up: [Managing Content](./04-managing-content.md) - creating entries, drafts & publishing, the media library, and
 bulk operations in the admin panel.

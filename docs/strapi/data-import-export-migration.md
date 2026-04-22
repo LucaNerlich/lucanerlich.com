@@ -7,7 +7,7 @@ tags: [strapi, import, export, migration, data, backup]
 
 # Data Import, Export, and Migration
 
-Moving data between Strapi environments -- dev to staging, staging to production, exporting for backups -- is a
+Moving data between Strapi environments - dev to staging, staging to production, exporting for backups - is a
 recurring need. This page covers Strapi's built-in tools, custom import/export scripts, database migrations, and content
 seeding.
 
@@ -517,6 +517,6 @@ find "$BACKUP_DIR" -type f -mtime +7 -delete
 
 ## See also
 
-- [Configuration and Deployment](./configuration-and-deployment.md) -- database and environment setup
-- [Lifecycle Hooks](./lifecycle-hooks.md) -- triggering logic after import operations
-- [Custom Controllers and Services](./custom-controllers-services.md) -- building import/export endpoints
+- [Configuration and Deployment](./configuration-and-deployment.md) - database and environment setup
+- [Lifecycle Hooks](./lifecycle-hooks.md) - triggering logic after import operations
+- [Custom Controllers and Services](./custom-controllers-services.md) - building import/export endpoints

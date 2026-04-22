@@ -16,22 +16,22 @@ sidebar_position: 1
 # Introduction & Environment Setup
 
 Java is one of the most widely used programming languages in the world. It powers Android apps, enterprise backends,
-cloud services, and everything in between. This guide takes you from zero to deploying a REST API on a VPS -- no prior
+cloud services, and everything in between. This guide takes you from zero to deploying a REST API on a VPS - no prior
 Java experience required.
 
 ## What is Java?
 
 Java is a **statically typed, compiled, object-oriented** programming language. That means:
 
-1. **Statically typed** -- you declare the type of every variable. The compiler catches type errors before the program
+1. **Statically typed** - you declare the type of every variable. The compiler catches type errors before the program
    runs.
-2. **Compiled** -- you turn source code (`.java` files) into bytecode (`.class` files) before running it.
-3. **Object-oriented** -- code is organized into classes and objects (covered in chapter 5).
+2. **Compiled** - you turn source code (`.java` files) into bytecode (`.class` files) before running it.
+3. **Object-oriented** - code is organized into classes and objects (covered in chapter 5).
 
 Java was created in 1995 by James Gosling at Sun Microsystems. Its design philosophy is **"write once, run anywhere"
-** -- compiled Java code runs on any platform that has a Java Virtual Machine.
+** - compiled Java code runs on any platform that has a Java Virtual Machine.
 
-## JDK, JRE, JVM -- what is what?
+## JDK, JRE, JVM - what is what?
 
 These three terms come up constantly. Here is what they mean:
 
@@ -63,7 +63,7 @@ These three terms come up constantly. Here is what they mean:
 | **JRE**   | JVM + standard libraries                        | Users running Java programs |
 | **JDK**   | JRE + development tools (`javac`, `jar`, etc.)  | Developers writing Java     |
 
-You need the **JDK** -- it includes everything.
+You need the **JDK** - it includes everything.
 
 ## How Java code runs
 
@@ -75,10 +75,10 @@ Hello.java  →  javac  →  Hello.class  →  java  →  Output
 ```
 
 1. You write source code in a `.java` file.
-2. `javac` (the Java compiler) compiles it into **bytecode** -- a `.class` file.
+2. `javac` (the Java compiler) compiles it into **bytecode** - a `.class` file.
 3. `java` (the JVM launcher) runs the bytecode.
 
-The bytecode is platform-independent. The same `.class` file runs on Windows, macOS, and Linux -- as long as a JVM is
+The bytecode is platform-independent. The same `.class` file runs on Windows, macOS, and Linux - as long as a JVM is
 installed.
 
 ## Installing the JDK
@@ -125,7 +125,7 @@ OpenJDK Runtime Environment (build 21.0.2+13)
 OpenJDK 64-Bit Server VM (build 21.0.2+13, mixed mode)
 ```
 
-The exact version may differ -- anything Java 17 or higher is fine for this guide.
+The exact version may differ - anything Java 17 or higher is fine for this guide.
 
 Also check the compiler:
 
@@ -150,7 +150,7 @@ Java is verbose enough that a good IDE makes a big difference. Popular choices:
 | **VS Code**                 | Free, lightweight, needs the Java extension pack         |
 | **Eclipse**                 | Free, traditional, large plugin ecosystem                |
 
-If you have no preference, start with [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download/) -- it
+If you have no preference, start with [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download/) - it
 is free and has the best Java tooling.
 
 For this guide, all examples are compiled and run from the terminal so you can use any editor.
@@ -197,18 +197,18 @@ public class Hello {                    // 1. Class declaration
 }
 ```
 
-1. **`public class Hello`** -- every Java file contains a class. The class name must match the filename (`Hello.java` →
+1. **`public class Hello`** - every Java file contains a class. The class name must match the filename (`Hello.java` →
    `class Hello`). `public` means other classes can access it.
 
-2. **`public static void main(String[] args)`** -- the entry point. The JVM looks for this exact signature when you run
+2. **`public static void main(String[] args)`** - the entry point. The JVM looks for this exact signature when you run
    the program.
-    - `public` -- accessible from outside the class
-    - `static` -- belongs to the class itself, not to an instance (more on this in chapter 5)
-    - `void` -- returns nothing
-    - `main` -- the method name the JVM looks for
-    - `String[] args` -- command-line arguments as an array of strings
+    - `public` - accessible from outside the class
+    - `static` - belongs to the class itself, not to an instance (more on this in chapter 5)
+    - `void` - returns nothing
+    - `main` - the method name the JVM looks for
+    - `String[] args` - command-line arguments as an array of strings
 
-3. **`System.out.println("Hello, world!")`** -- prints text to the terminal followed by a newline.
+3. **`System.out.println("Hello, world!")`** - prints text to the terminal followed by a newline.
 
 ### `println` vs `print`
 
@@ -338,7 +338,7 @@ public class Example {
 public class Example{public static void main(String[] args){if(true){System.out.println("Don't do this");}}}
 ```
 
-## `jshell` -- interactive Java
+## `jshell` - interactive Java
 
 Java includes `jshell`, an interactive REPL (Read-Eval-Print Loop) for quick experiments:
 
@@ -363,17 +363,17 @@ jshell> /exit
 |  Goodbye
 ```
 
-`jshell` is useful for trying things out. You do not need a class or `main` method -- just type expressions.
+`jshell` is useful for trying things out. You do not need a class or `main` method - just type expressions.
 
 ## How this guide is structured
 
 | Part                       | Chapters | What you will learn                                                             |
 |----------------------------|----------|---------------------------------------------------------------------------------|
-| **1 -- Fundamentals**      | 1–6      | Variables, types, control flow, methods, OOP (classes, inheritance, interfaces) |
-| **2 -- Working with Data** | 7–9      | Collections, error handling, file I/O                                           |
-| **3 -- Build & Deploy**    | 10–12    | CLI task manager, REST API, deploy to a VPS with nginx                          |
-| **4 -- Build Tools**       | 13--14   | Maven and Gradle -- dependency management, fat JARs, JSON libraries             |
-| **5 -- Going Deeper**      | 15--17   | Streams & lambdas, Optionals, testing with JUnit 5                              |
+| **1 - Fundamentals**      | 1–6      | Variables, types, control flow, methods, OOP (classes, inheritance, interfaces) |
+| **2 - Working with Data** | 7–9      | Collections, error handling, file I/O                                           |
+| **3 - Build & Deploy**    | 10–12    | CLI task manager, REST API, deploy to a VPS with nginx                          |
+| **4 - Build Tools**       | 13-14   | Maven and Gradle - dependency management, fat JARs, JSON libraries             |
+| **5 - Going Deeper**      | 15-17   | Streams & lambdas, Optionals, testing with JUnit 5                              |
 
 Each chapter builds on the previous one. Code examples include expected output so you can verify your work. By chapter
 12, you will have a running REST API on the internet.
@@ -382,10 +382,10 @@ Each chapter builds on the previous one. Code examples include expected output s
 
 - Java is a statically typed, compiled, object-oriented language.
 - The **JDK** includes the compiler (`javac`), the JVM (`java`), and standard libraries.
-- Install the latest LTS version (Java 21+) and use any IDE -- IntelliJ IDEA Community is recommended.
+- Install the latest LTS version (Java 21+) and use any IDE - IntelliJ IDEA Community is recommended.
 - Java source (`.java`) is compiled to bytecode (`.class`), then run by the JVM.
 - Every program needs a `public static void main(String[] args)` method.
 - The filename must match the public class name.
 - Use `jshell` for quick experiments.
 
-Next up: [Variables, Types & Operators](./02-variables-and-types.md) -- how Java handles data.
+Next up: [Variables, Types & Operators](./02-variables-and-types.md) - how Java handles data.

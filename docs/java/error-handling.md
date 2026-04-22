@@ -69,7 +69,7 @@ public void process() throws IOException {
 
 ### Unchecked exceptions
 
-No compiler enforcement -- they indicate programming errors or precondition violations:
+No compiler enforcement - they indicate programming errors or precondition violations:
 
 ```java
 public void setAge(int age) {
@@ -418,7 +418,7 @@ ParseResult parseNumbers(List<String> inputs) {
 
 ## See also
 
-- [Logging](./logging.md) -- SLF4J, Logback, and structured logging
-- [Optionals](./optionals.md) -- functional alternative for "no value" cases
-- [Functional Interfaces](./functional-interfaces.md) -- checked exceptions in lambdas
-- [Testing](./testing.md) -- testing exception scenarios
+- [Logging](./logging.md) - SLF4J, Logback, and structured logging
+- [Optionals](./optionals.md) - functional alternative for "no value" cases
+- [Functional Interfaces](./functional-interfaces.md) - checked exceptions in lambdas
+- [Testing](./testing.md) - testing exception scenarios

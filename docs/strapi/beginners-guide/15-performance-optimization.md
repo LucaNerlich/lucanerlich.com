@@ -774,4 +774,4 @@ You learned:
 
 With these optimizations, your Strapi application can handle significant traffic while maintaining fast response times.
 
-Next up: [Troubleshooting & Migration Guide](./16-troubleshooting.md) -- common issues, debugging techniques, and migrating from Strapi 4.
+Next up: [Troubleshooting & Migration Guide](./16-troubleshooting.md) - common issues, debugging techniques, and migrating from Strapi 4.

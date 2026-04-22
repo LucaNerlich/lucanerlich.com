@@ -8,8 +8,8 @@ tags: [aem, sling, jobs, scheduler, osgi]
 
 AEM's background processing is built on two complementary mechanisms:
 
-- **Sling Jobs** -- guaranteed, persistent, cluster-aware task execution with automatic retries
-- **Schedulers** -- time-based triggers (cron, periodic) that execute code on a schedule
+- **Sling Jobs** - guaranteed, persistent, cluster-aware task execution with automatic retries
+- **Schedulers** - time-based triggers (cron, periodic) that execute code on a schedule
 
 Together they handle everything from cache warming and report generation to integration
 syncs and content cleanup.
@@ -45,7 +45,7 @@ graph LR
 | **Async**                | Always                 | Depends          | Async but fire-and-forget |
 
 Use Sling Jobs whenever failure of the operation would mean **data loss** or an
-**inconsistent state** -- e.g., sending emails, replication, third-party API calls,
+**inconsistent state** - e.g., sending emails, replication, third-party API calls,
 report generation.
 
 ### Architecture
@@ -656,10 +656,10 @@ with a dedicated service user.
 
 ## See also
 
-- [Event Listeners and Handlers](./event-listener.mdx) -- EventHandler vs Sling Jobs comparison
-- [Workflows](./workflows.mdx) -- multi-step business processes
-- [OSGi Configuration](./osgi-configuration.mdx) -- configuring schedulers per run mode
-- [Sling Models and Services](./sling-models.mdx) -- OSGi service patterns
-- [Java Best Practices](./java-best-practices.mdx) -- threading and concurrency
-- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) -- AEMaaCS constraints and RDEs
-- [Adobe I/O App Builder](../infrastructure/aio-app-builder.md) -- serverless alternative for heavy processing
+- [Event Listeners and Handlers](./event-listener.mdx) - EventHandler vs Sling Jobs comparison
+- [Workflows](./workflows.mdx) - multi-step business processes
+- [OSGi Configuration](./osgi-configuration.mdx) - configuring schedulers per run mode
+- [Sling Models and Services](./sling-models.mdx) - OSGi service patterns
+- [Java Best Practices](./java-best-practices.mdx) - threading and concurrency
+- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) - AEMaaCS constraints and RDEs
+- [Adobe I/O App Builder](../infrastructure/aio-app-builder.md) - serverless alternative for heavy processing

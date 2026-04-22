@@ -7,7 +7,7 @@ tags: [strapi, typescript, types, development]
 
 # TypeScript Integration
 
-Strapi 5 supports TypeScript natively. However, the type story is still evolving -- auto-generated types from content
+Strapi 5 supports TypeScript natively. However, the type story is still evolving - auto-generated types from content
 schemas, typing custom controllers and services, and getting full IntelliSense requires some setup.
 
 ## Starting a TypeScript project
@@ -454,6 +454,6 @@ Strapi generates a `tsconfig.json`, but here's a recommended configuration:
 
 ## See also
 
-- [Custom Controllers and Services](custom-controllers-services.md) -- JS examples to convert to TS
-- [Plugin Development](plugin-development.md) -- TypeScript plugin structure
-- [Testing Strapi Applications](testing-strapi-applications.md) -- typing test helpers
+- [Custom Controllers and Services](custom-controllers-services.md) - JS examples to convert to TS
+- [Plugin Development](plugin-development.md) - TypeScript plugin structure
+- [Testing Strapi Applications](testing-strapi-applications.md) - typing test helpers

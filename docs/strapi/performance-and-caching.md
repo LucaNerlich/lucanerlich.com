@@ -7,7 +7,7 @@ tags: [strapi, performance, caching, redis, optimization]
 
 # Performance and Caching
 
-Strapi is fast out of the box for small datasets. At scale -- thousands of entries, deep relations, high traffic -- you
+Strapi is fast out of the box for small datasets. At scale - thousands of entries, deep relations, high traffic - you
 need explicit caching, query optimization, and infrastructure tuning.
 
 ## Performance bottleneck overview
@@ -28,9 +28,9 @@ flowchart LR
 
 The three most common bottlenecks:
 
-1. **Deep population** -- every `populate` adds joins
-2. **N+1 queries** -- fetching relations one-by-one instead of batched
-3. **No response caching** -- identical requests hit the database every time
+1. **Deep population** - every `populate` adds joins
+2. **N+1 queries** - fetching relations one-by-one instead of batched
+3. **No response caching** - identical requests hit the database every time
 
 ---
 
@@ -439,14 +439,14 @@ Enable temporarily with `DATABASE_DEBUG=true` to find slow queries.
 
 | Action                                   | Impact                                   | Effort |
 |------------------------------------------|------------------------------------------|--------|
-| Add `fields` to every query              | High -- reduces payload 50-80%           | Low    |
-| Add database indexes on filtered columns | High -- 10x faster lookups               | Low    |
-| Implement response caching (Redis)       | Very high -- eliminates DB hits          | Medium |
-| Set `Cache-Control` headers              | High -- enables CDN caching              | Low    |
-| Paginate all list endpoints              | High -- prevents memory spikes           | Low    |
-| Limit population depth                   | Medium -- fewer joins                    | Low    |
-| Use connection pooling                   | Medium -- prevents connection exhaustion | Low    |
-| Profile slow requests                    | Varies -- identifies the real bottleneck | Medium |
+| Add `fields` to every query              | High - reduces payload 50-80%           | Low    |
+| Add database indexes on filtered columns | High - 10x faster lookups               | Low    |
+| Implement response caching (Redis)       | Very high - eliminates DB hits          | Medium |
+| Set `Cache-Control` headers              | High - enables CDN caching              | Low    |
+| Paginate all list endpoints              | High - prevents memory spikes           | Low    |
+| Limit population depth                   | Medium - fewer joins                    | Low    |
+| Use connection pooling                   | Medium - prevents connection exhaustion | Low    |
+| Profile slow requests                    | Varies - identifies the real bottleneck | Medium |
 
 ---
 
@@ -465,7 +465,7 @@ Enable temporarily with `DATABASE_DEBUG=true` to find slow queries.
 
 ## See also
 
-- [Relations and Population](relations-and-population.md) -- population strategies that directly impact performance
-- [Configuration and Deployment](configuration-and-deployment.md) -- database and server configuration
-- [GraphQL Customization](graphql-customization.md) -- GraphQL-specific performance patterns (DataLoader)
-- [Middleware and Policies](middleware-and-policies.md) -- applying cache middleware to routes
+- [Relations and Population](relations-and-population.md) - population strategies that directly impact performance
+- [Configuration and Deployment](configuration-and-deployment.md) - database and server configuration
+- [GraphQL Customization](graphql-customization.md) - GraphQL-specific performance patterns (DataLoader)
+- [Middleware and Policies](middleware-and-policies.md) - applying cache middleware to routes

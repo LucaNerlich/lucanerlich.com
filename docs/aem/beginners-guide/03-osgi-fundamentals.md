@@ -15,8 +15,8 @@ sidebar_position: 3
 
 # OSGi Fundamentals
 
-OSGi is the module system that manages all Java code in AEM. Every piece of Java -- your code, AEM's code, third-party
-libraries -- runs inside an **OSGi bundle**. Understanding OSGi is essential for writing services, managing
+OSGi is the module system that manages all Java code in AEM. Every piece of Java - your code, AEM's code, third-party
+libraries - runs inside an **OSGi bundle**. Understanding OSGi is essential for writing services, managing
 configurations, and debugging.
 
 ## What is OSGi?
@@ -84,7 +84,7 @@ stateDiagram-v2
 |---------------|--------------------------------------------------------------|
 | **Installed** | Bundle is in the container but dependencies are not resolved |
 | **Resolved**  | All imports are satisfied; ready to start                    |
-| **Active**    | Running -- services are registered                           |
+| **Active**    | Running - services are registered                           |
 | **Stopping**  | Shutting down                                                |
 
 If a bundle stays in **Installed** instead of **Active**, it has unresolved dependencies. The Web Console shows which
@@ -195,8 +195,8 @@ public class CustomGreetingServiceImpl implements GreetingService {
 }
 ```
 
-Higher ranking wins when a single service is selected (the default `@Reference` cardinality is **mandatory/unary** --
-exactly one service). This is how you override AEM's default services -- register your implementation with a higher
+Higher ranking wins when a single service is selected (the default `@Reference` cardinality is **mandatory/unary** -
+exactly one service). This is how you override AEM's default services - register your implementation with a higher
 ranking.
 
 You can also control cardinality and target filtering on `@Reference`:
@@ -370,7 +370,7 @@ example, author vs publish plus environment tier), so think of these folders as 
 | `stage`   | Stage environment       |
 | `prod`    | Production environment  |
 
-Configurations are **cumulative** -- `config/` applies everywhere, and more specific folders add/override values when
+Configurations are **cumulative** - `config/` applies everywhere, and more specific folders add/override values when
 their run modes are active.
 
 > **Tip:** Keep defaults in `config/`, then add only environment-specific overrides where needed (`config.author/`,
@@ -384,7 +384,7 @@ During development, you can edit configurations live:
 2. Search for your service name
 3. Edit values and click **Save**
 
-> **Important:** Changes made in the Web Console are temporary -- they are lost when the instance restarts. For
+> **Important:** Changes made in the Web Console are temporary - they are lost when the instance restarts. For
 > persistent configurations, use `.cfg.json` files in the `ui.config` module.
 
 ## Component lifecycle annotations
@@ -436,7 +436,7 @@ public class MyModelImpl implements MyModel {
 In practice, your `core/` bundle still needs correct metadata and dependencies, because model discovery and adaptation run
 inside the OSGi runtime.
 
-## Troubleshooting checklist -- bundle/service issues
+## Troubleshooting checklist - bundle/service issues
 
 | Symptom                                      | First check                                | Typical fix                                                 |
 |----------------------------------------------|--------------------------------------------|-------------------------------------------------------------|
@@ -522,7 +522,7 @@ public class ResourceChangeHandler implements EventHandler {
 You learned:
 
 - **OSGi** is the module system managing all Java code in AEM
-- **Bundles** are JARs with metadata -- they have a lifecycle (installed, resolved, active)
+- **Bundles** are JARs with metadata - they have a lifecycle (installed, resolved, active)
 - **Services** are registered in a service registry and injected with `@Reference`
 - **Declarative Services** annotations (`@Component`, `@Reference`, `@Activate`) are the modern way to write OSGi code
 - The **Web Console** at `/system/console` is essential for debugging
@@ -532,5 +532,5 @@ You learned:
 
 With the foundation covered (JCR, Sling, OSGi), we are ready to build our first AEM component.
 
-Next up: [Your First Component](./04-your-first-component.md) -- component anatomy, creating a simple component, placing
+Next up: [Your First Component](./04-your-first-component.md) - component anatomy, creating a simple component, placing
 it on a page, and understanding the component-dialog-model triad.

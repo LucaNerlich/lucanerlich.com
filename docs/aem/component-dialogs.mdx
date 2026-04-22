@@ -23,7 +23,7 @@ The following chapters each present a Coral XML snippet which can be copied into
 
 - [AEM Component Help Pages](#aem-component-help-pages)
 - [Best Practices](#best-practices)
-- [Empty Dialog / Starting Point](#empty-dialog--starting-point)
+- [Empty Dialog / Starting Point](#empty-dialog-starting-point)
 - [Simple Data Fields](#simple-data-fields)
 - [Complex Data Fields](#complex-data-fields)
   - Native showhide (`cq-dialog-dropdown-showhide`)
@@ -31,10 +31,10 @@ The following chapters each present a Coral XML snippet which can be copied into
   - Link tuple (label + URL + target)
 - [Validation](#validation) (see also the deep dive: [Dialog Validation](./components/dialog-validation.mdx))
 - [Dialog Inheritance](#dialog-inheritance)
-- cq editConfig -- inline editing, listeners, drop targets
+- cq editConfig - inline editing, listeners, drop targets
 - [Design Dialog (Template Policies)](#design-dialog-template-policies)
-- [Layout & Read Only](#layout--read-only)
-- [MSM / Live Copy considerations](#msm--live-copy-considerations)
+- [Layout & Read Only](#layout-read-only)
+- [MSM / Live Copy considerations](#msm-live-copy-considerations)
 - [Full XML Example](#full-xml-example)
 
 ## AEM Component Help Pages
@@ -210,10 +210,10 @@ This is an empty dialog structure and components can be placed in tabs (you can 
 - [Touch UI](./ui/touch-ui.mdx)
 - [Coral UI](./ui/coral-ui.mdx)
 - [Overlays](./ui/overlays.mdx)
-- [Sling Models -- reading policy values](./backend/sling-models.mdx#accessing-template-policies)
+- [Sling Models - reading policy values](./backend/sling-models.mdx#accessing-template-policies)
 - [Custom dialog widgets (dynamic rootpath, asset finder)](./ui/custom-dialog-widgets.md)
-- [Templates and Policies](./components/templates-policies.md) -- design dialogs, component policies
-- [Tags and Taxonomies](./content/tags-taxonomies.md) -- tag field deep dive
+- [Templates and Policies](./components/templates-policies.md) - design dialogs, component policies
+- [Tags and Taxonomies](./content/tags-taxonomies.md) - tag field deep dive
 - [Granite UI Server-side API](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
 - [Coral UI Icon List](https://developer.adobe.com/experience-manager/reference-materials/6-5/coral-ui/coralui3/Coral.Icon.html#availableIcons)
 
@@ -222,7 +222,7 @@ This is an empty dialog structure and components can be placed in tabs (you can 
 You can write a class or id to your dialog fragment by adding `granite:class="some-css-class"` or `granite:id="some-id"`. Add `
 required="{Boolean}true"` to any component field to mark it as required.
 
-<div class="alert alert--info" role="alert">
+<div class="alert alert-info" role="alert">
     Note, that the actual xml item element tag name, can be anything, as long as its unique for this component.
     For example, the Alert field xml does not need to be named `alert`.
 </div>
@@ -316,13 +316,13 @@ You can define the min, max value and the increments, in which the input can be 
    name="./assetPath"/>
 ```
 
-For an implementation of a dynamic rootPath, see [Custom Dialog Widgets -- Dynamic PathField](./ui/custom-dialog-widgets.md#dynamic-pathfield-root-path).
+For an implementation of a dynamic rootPath, see [Custom Dialog Widgets - Dynamic PathField](./ui/custom-dialog-widgets.md#dynamic-pathfield-root-path).
 
 #### Pathbrowser
 
 In some cases you might want to use the older `coral2` pathbrowser component https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/when-to-choice-pathbrowser-as-well-as-pathfield/m-p/312540/highlight/true#M32451.
 
-<div class="alert alert--warning" role="alert">
+<div class="alert alert-warning" role="alert">
     You can recognize the Coral 3 components by the path `/components/coral/foundation`. The older Coral 2 variants live
     in `/components/foundation`.
 </div>
@@ -662,14 +662,14 @@ How Adobe's script resolves it:
     granite:class="cmp-analytics-settings hide"/>
 ```
 
-With the checkbox variant, the target is simply shown when checked and hidden when unchecked --
+With the checkbox variant, the target is simply shown when checked and hidden when unchecked -
 there's no `showhidetargetvalue` needed.
 
 :::tip Scope the selector inside multifields
 Adobe's script queries the **whole document** by default. Inside a composite multifield every item
 has its own controller and target, so a global `.cmp-link-type-target` selector matches rows other
 than the one the author is editing and toggles them all together. For per-row behaviour, use the
-custom JS pattern shown below -- it scopes lookups to `closest("coral-multifield-item")`.
+custom JS pattern shown below - it scopes lookups to `closest("coral-multifield-item")`.
 :::
 
 ### Dynamic show/hide based on a selection
@@ -1012,7 +1012,7 @@ Otherwise all values entered will be stored on the node itself as Array Properti
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
 
-A `fieldset` groups related fields under a single legend, and -- usefully -- prefixes every nested
+A `fieldset` groups related fields under a single legend, and - usefully - prefixes every nested
 field's property name so the values land in a subnode of the component. This is the cleanest way
 to persist "a logical sub-object" (e.g. social links, SEO metadata) without reaching for a
 multifield.
@@ -1059,9 +1059,9 @@ public String getTwitter() {
 ```
 
 :::tip Fieldset vs Well vs Multifield
-- **Well** -- visual grouping only. No name prefix, no subnode.
-- **Fieldset** -- visual grouping *and* persistence into a subnode (`name="./social"`).
-- **Multifield** -- use only when authors can add *n* repeating items. A fieldset is almost always
+- **Well** - visual grouping only. No name prefix, no subnode.
+- **Fieldset** - visual grouping *and* persistence into a subnode (`name="./social"`).
+- **Multifield** - use only when authors can add *n* repeating items. A fieldset is almost always
   the right choice for a fixed group of fields.
 :::
 
@@ -1135,15 +1135,15 @@ Any dialog field can be added to each accordion item `items` block.
     rootPath="/content/cq:tags/myproject"/>
 ```
 
-- `name="./cq:tags"` is the conventional property name -- Sling and AEM search already understand
+- `name="./cq:tags"` is the conventional property name - Sling and AEM search already understand
   it, and `com.day.cq.tagging.TagManager` reads it by default.
 - `rootPath` restricts the picker to a specific taxonomy branch, which keeps authors from tagging
   with marketing tags intended for other projects. Omit it only when the component is truly
   cross-project.
-- `multiple="{Boolean}true"` persists a `String[]` -- even for a single tag, this is usually what
+- `multiple="{Boolean}true"` persists a `String[]` - even for a single tag, this is usually what
   you want, since it matches the AEM default.
 
-Reading tags in a Sling Model -- never concatenate paths, let `TagManager` resolve them so admin
+Reading tags in a Sling Model - never concatenate paths, let `TagManager` resolve them so admin
 UI paths are treated correctly:
 
 ```java
@@ -1175,7 +1175,7 @@ localized tag titles and filtering by namespace.
 
 A recurring pattern is a "link" made of three related fields. Group them inside a fieldset so
 they persist to a single subnode, and handle the `target="_blank"` security additions in the
-Sling Model -- not in the dialog.
+Sling Model - not in the dialog.
 
 ```xml
 <link
@@ -1209,7 +1209,7 @@ Sling Model -- not in the dialog.
 </link>
 ```
 
-Sling Model reading the subnode as a structured object -- and adding `rel` for `_blank` links:
+Sling Model reading the subnode as a structured object - and adding `rel` for `_blank` links:
 
 ```java
 @Model(adaptables = Resource.class)
@@ -1277,7 +1277,7 @@ Most dialogs only need the declarative attributes; for anything else, see the de
 [Dialog Validation page](./components/dialog-validation.mdx) for custom validators, async / server
 checks, multifield rules, styling, and debugging.
 
-### Quick reference -- declarative attributes
+### Quick reference - declarative attributes
 
 ```xml
 <title
@@ -1402,7 +1402,7 @@ You can also hide individual fields within a tab using the same mechanism deeper
     granite:hide="{Boolean}true"/>
 ```
 
-## cq editConfig -- inline editing, listeners, drop targets
+## cq editConfig - inline editing, listeners, drop targets
 
 `_cq_editConfig.xml` (file system form) or the `cq:editConfig` node sits next to `_cq_dialog` and
 controls how the component behaves in edit mode **before** the dialog opens: which inline editors
@@ -1462,9 +1462,9 @@ visible in edit mode.
 </cq:editConfig>
 ```
 
-- `editorType="text"` -- plain textfield inline editor.
-- `editorType="plaintext"` -- same, but strips HTML on save.
-- `editorType="title"` -- classic title editor (single line, pressing Enter saves).
+- `editorType="text"` - plain textfield inline editor.
+- `editorType="plaintext"` - same, but strips HTML on save.
+- `editorType="title"` - classic title editor (single line, pressing Enter saves).
 
 For Rich Text inline editing, set `editorType="text"` and add the full `rtePlugins` config similar
 to the dialog RTE widget.
@@ -1488,7 +1488,7 @@ By default, AEM refreshes only the edited component. If a component's HTML depen
 | `REFRESH_SELF` (default) | Re-render only this component |
 | `REFRESH_PARENT` | Re-render the enclosing container |
 | `REFRESH_PAGE` | Reload the whole page |
-| Custom JS function name | Called with the edit event -- use for targeted DOM updates |
+| Custom JS function name | Called with the edit event - use for targeted DOM updates |
 
 :::warning `REFRESH_PAGE` is a sledgehammer
 Every change forces a full page reload, which is slow and loses any unsaved edits in other
@@ -1810,17 +1810,17 @@ taking updates from the blueprint.
 
 **How the attribute works:**
 
-- The value of `cq-msm-lockable` is the **property name** that should become lockable -- use the
+- The value of `cq-msm-lockable` is the **property name** that should become lockable - use the
   same name you used in `./propertyName`, without the `./` prefix.
 - In edit mode, the Live Copy author sees a padlock icon next to the field. Clicking it breaks
   inheritance for this property only; the UI then shows an "Inherit" button to restore it.
 - Broken inheritance is recorded as a mixin (`cq:LiveSyncCancelled`) on the affected property of
-  the Live Copy resource -- blueprint rollouts skip any property marked as cancelled.
+  the Live Copy resource - blueprint rollouts skip any property marked as cancelled.
 
 **Common pitfalls:**
 
 - Forgetting the attribute on a nested field in a composite multifield. MSM can only lock what it
-  knows is lockable -- set `cq-msm-lockable` on every field inside the multifield's `items`, not
+  knows is lockable - set `cq-msm-lockable` on every field inside the multifield's `items`, not
   on the multifield node itself.
 - Using a different name than the `./property`. The padlock will render but toggling it won't
   cancel the right property, so rollouts keep overwriting the "locked" field.

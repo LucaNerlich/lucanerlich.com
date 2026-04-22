@@ -16,7 +16,7 @@ sidebar_position: 15
 
 # Testing
 
-Rust has a built-in test framework -- no external test runner needed. You write tests right next to your code, run them
+Rust has a built-in test framework - no external test runner needed. You write tests right next to your code, run them
 with `cargo test`, and get fast, reliable feedback.
 
 ## Writing your first test
@@ -58,11 +58,11 @@ test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 
 Key elements:
 
-- `#[cfg(test)]` -- this module is only compiled when running tests
-- `mod tests` -- a conventional name for the test module
-- `use super::*` -- import everything from the parent module
-- `#[test]` -- marks a function as a test
-- `assert_eq!` -- asserts two values are equal
+- `#[cfg(test)]` - this module is only compiled when running tests
+- `mod tests` - a conventional name for the test module
+- `use super::*` - import everything from the parent module
+- `#[test]` - marks a function as a test
+- `assert_eq!` - asserts two values are equal
 
 ## Assert macros
 
@@ -161,7 +161,7 @@ cargo test -- --include-ignored # Run all tests including ignored
 
 ## Test organization
 
-### Unit tests -- same file as the code
+### Unit tests - same file as the code
 
 Unit tests live in a `#[cfg(test)]` module inside the source file they test:
 
@@ -174,7 +174,7 @@ src/
 
 This is the standard pattern. Unit tests can access private functions because they are inside the same module.
 
-### Integration tests -- separate tests/ directory
+### Integration tests - separate tests/ directory
 
 Integration tests live in a top-level `tests/` directory and test your crate as an external consumer:
 
@@ -369,5 +369,5 @@ mod tests {
 - **Doc tests** run code examples from documentation comments
 - `cargo test` runs everything; use filters and flags to run subsets
 
-Next up: [Concurrency](./16-concurrency.md) -- threads, message passing, shared state with `Arc<Mutex<T>>`, the
+Next up: [Concurrency](./16-concurrency.md) - threads, message passing, shared state with `Arc<Mutex<T>>`, the
 `Send` and `Sync` traits, and a brief introduction to `async`/`await`.

@@ -28,9 +28,9 @@ List<String> result = names.stream()
 
 Every stream pipeline has three parts:
 
-1. **Source** -- a collection, array, generator, or I/O channel
-2. **Intermediate operations** -- lazy transformations (filter, map, sorted, distinct, ...)
-3. **Terminal operation** -- triggers execution and produces a result (collect, forEach, reduce, count, ...)
+1. **Source** - a collection, array, generator, or I/O channel
+2. **Intermediate operations** - lazy transformations (filter, map, sorted, distinct, ...)
+3. **Terminal operation** - triggers execution and produces a result (collect, forEach, reduce, count, ...)
 
 ---
 
@@ -68,7 +68,7 @@ DoubleStream doubles = DoubleStream.of(1.0, 2.5, 3.7);
 
 ## Intermediate operations
 
-All intermediate operations are **lazy** -- they do not execute until a terminal
+All intermediate operations are **lazy** - they do not execute until a terminal
 operation is called.
 
 ### filter
@@ -112,7 +112,7 @@ List<String> flat = nested.stream()
 // [a, b, c, d, e]
 ```
 
-Practical example -- splitting sentences into words:
+Practical example - splitting sentences into words:
 
 ```java
 List<String> sentences = List.of("Hello world", "Java streams are powerful");
@@ -464,7 +464,7 @@ Map<String, List<String>> itemsByCustomer = orders.stream()
 
 ## See also
 
-- [Functional Interfaces and Lambdas](./functional-interfaces.md) -- the building blocks streams use
-- [Optionals](./optionals.md) -- handling empty results from stream operations
-- [Collections](./collections.md) -- choosing the right source collection
-- [Modern Java Features](./modern-java-features.md) -- records, pattern matching
+- [Functional Interfaces and Lambdas](./functional-interfaces.md) - the building blocks streams use
+- [Optionals](./optionals.md) - handling empty results from stream operations
+- [Collections](./collections.md) - choosing the right source collection
+- [Modern Java Features](./modern-java-features.md) - records, pattern matching

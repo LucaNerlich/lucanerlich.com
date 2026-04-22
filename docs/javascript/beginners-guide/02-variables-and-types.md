@@ -22,7 +22,7 @@ chapter covers all three.
 
 JavaScript has three keywords for declaring variables: `let`, `const`, and `var`.
 
-### `let` -- a variable that can change
+### `let` - a variable that can change
 
 ```js
 let score = 0;
@@ -39,7 +39,7 @@ Result:
 10
 ```
 
-### `const` -- a variable that cannot be reassigned
+### `const` - a variable that cannot be reassigned
 
 ```js
 const name = "Ada";
@@ -48,10 +48,10 @@ console.log(name);
 name = "Grace"; // TypeError: Assignment to constant variable.
 ```
 
-`const` does not mean the value is immutable -- it means the **binding** cannot change. Objects and arrays declared with
+`const` does not mean the value is immutable - it means the **binding** cannot change. Objects and arrays declared with
 `const` can still have their contents modified (more on this in later chapters).
 
-### `var` -- the old way
+### `var` - the old way
 
 ```js
 var count = 5;
@@ -70,7 +70,7 @@ instead.** You will see `var` in older code, but there is no reason to use it in
 ### When to use `let` vs `const`
 
 Use `const` by default. Switch to `let` only when you need to reassign the variable. This makes your code easier to
-reason about -- if you see `const`, you know the binding never changes.
+reason about - if you see `const`, you know the binding never changes.
 
 ```js
 const API_URL = "https://api.example.com"; // never changes
@@ -104,7 +104,7 @@ hello
 hello
 ```
 
-All three quote styles produce the same string. Backticks (template literals) have extra powers -- covered below.
+All three quote styles produce the same string. Backticks (template literals) have extra powers - covered below.
 
 ### Number
 
@@ -391,7 +391,7 @@ These values are `false` when converted to boolean:
 | `undefined` | undefined      |
 | `NaN`       | number         |
 
-Everything else is **truthy** -- including `"0"`, `"false"`, `[]`, and `{}`.
+Everything else is **truthy** - including `"0"`, `"false"`, `[]`, and `{}`.
 
 ```js
 if ("0") {
@@ -585,7 +585,7 @@ true
 
 ### Short-circuit evaluation
 
-`&&` and `||` do not always return booleans -- they return the value that determined the result:
+`&&` and `||` do not always return booleans - they return the value that determined the result:
 
 ```js
 // || returns the first truthy value (or the last value)
@@ -701,8 +701,8 @@ hello JavaScript
 - JavaScript has seven primitive types: string, number, bigint, boolean, null, undefined, symbol.
 - `typeof` reveals a value's type (with the `null` quirk).
 - Template literals (backticks) support interpolation and multi-line strings.
-- Type coercion is implicit and often surprising -- convert explicitly with `Number()`, `String()`, `Boolean()`.
+- Type coercion is implicit and often surprising - convert explicitly with `Number()`, `String()`, `Boolean()`.
 - Always use `===` and `!==` for comparisons.
 - `??` is safer than `||` for default values when `0`, `""`, or `false` are valid.
 
-Next up: [Control Flow](./03-control-flow.md) -- making decisions and repeating actions.
+Next up: [Control Flow](./03-control-flow.md) - making decisions and repeating actions.

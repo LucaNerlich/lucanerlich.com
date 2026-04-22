@@ -222,7 +222,7 @@ Optional<Integer> sum = List.of(1, 2, 3)
 ### Rule of thumb
 
 - **Return** `Optional` from methods that might not have a result
-- **Accept** `null` (not Optional) in method parameters -- use `@Nullable` annotation
+- **Accept** `null` (not Optional) in method parameters - use `@Nullable` annotation
 - **Never** store Optional as a field (it is not `Serializable` and adds overhead)
 - **Never** use Optional in collections (`List<Optional<String>>` is a code smell)
 
@@ -309,7 +309,7 @@ return optional.map(String::toUpperCase).orElse("DEFAULT");
 
 ## See also
 
-- [Streams and Collectors](./java-streams.md) -- stream operations that return Optional
-- [Error Handling](./error-handling.md) -- Result/Either pattern as an alternative
-- [Modern Java Features](./modern-java-features.md) -- records and pattern matching
-- [Functional Interfaces](./functional-interfaces.md) -- Supplier, Function used with Optional
+- [Streams and Collectors](./java-streams.md) - stream operations that return Optional
+- [Error Handling](./error-handling.md) - Result/Either pattern as an alternative
+- [Modern Java Features](./modern-java-features.md) - records and pattern matching
+- [Functional Interfaces](./functional-interfaces.md) - Supplier, Function used with Optional

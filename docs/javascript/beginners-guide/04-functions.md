@@ -39,11 +39,11 @@ Hello, Ada!
 
 Anatomy:
 
-- `function` -- the keyword
-- `greet` -- the function name
-- `(name)` -- the parameter list
-- `return` -- sends a value back to the caller
-- `greet("Ada")` -- calling the function with the argument `"Ada"`
+- `function` - the keyword
+- `greet` - the function name
+- `(name)` - the parameter list
+- `return` - sends a value back to the caller
+- `greet("Ada")` - calling the function with the argument `"Ada"`
 
 ### Functions without a return value
 
@@ -218,7 +218,7 @@ Result:
 
 ## Return values
 
-A function can return any value -- numbers, strings, booleans, arrays, objects, even other functions:
+A function can return any value - numbers, strings, booleans, arrays, objects, even other functions:
 
 ```js
 function getUser() {
@@ -263,7 +263,7 @@ Result:
 Cannot divide by zero
 ```
 
-This pattern -- handling errors early and returning -- is called a **guard clause**. It keeps your code flat instead of
+This pattern - handling errors early and returning - is called a **guard clause**. It keeps your code flat instead of
 deeply nested.
 
 ## Scope
@@ -311,7 +311,7 @@ Result:
 
 ### Global scope
 
-Variables declared outside any function or block are global -- accessible everywhere:
+Variables declared outside any function or block are global - accessible everywhere:
 
 ```js
 const appName = "MyApp";
@@ -359,7 +359,7 @@ Result:
 
 ## Hoisting
 
-**Function declarations** are hoisted -- you can call them before they appear in the code:
+**Function declarations** are hoisted - you can call them before they appear in the code:
 
 ```js
 console.log(greet("Ada"));
@@ -390,7 +390,7 @@ Result:
 3
 ```
 
-`var` declarations are hoisted too, but only the declaration -- not the assignment. This is another reason to avoid
+`var` declarations are hoisted too, but only the declaration - not the assignment. This is another reason to avoid
 `var`.
 
 ## Closures
@@ -535,8 +535,8 @@ Done processing: Process data
 A **higher-order function** is a function that takes a function as an argument or returns a function. You have already
 seen both:
 
-- `doTask` takes a callback -- higher-order (takes a function)
-- `createCounter` returns a function -- higher-order (returns a function)
+- `doTask` takes a callback - higher-order (takes a function)
+- `createCounter` returns a function - higher-order (returns a function)
 
 ```js
 function repeat(n, action) {
@@ -556,7 +556,7 @@ Step 1
 Step 2
 ```
 
-Higher-order functions are everywhere in JavaScript -- array methods like `map`, `filter`, and `reduce` (covered in the
+Higher-order functions are everywhere in JavaScript - array methods like `map`, `filter`, and `reduce` (covered in the
 next chapter) are all higher-order functions.
 
 ## Pure functions
@@ -592,7 +592,7 @@ Result:
 20
 ```
 
-Prefer pure functions when possible -- they are easier to test, debug, and reason about.
+Prefer pure functions when possible - they are easier to test, debug, and reason about.
 
 ## Immediately Invoked Function Expressions (IIFE)
 
@@ -621,8 +621,8 @@ older code.
 - **Default parameters** provide fallback values; **rest parameters** collect extra arguments into an array.
 - **Guard clauses** (early returns) keep code flat and readable.
 - **Scope** determines variable accessibility: block, function, or global.
-- **Closures** let inner functions remember outer variables -- key for private state and factories.
-- **Callbacks** are functions passed to other functions -- foundational to async JavaScript.
-- **Pure functions** are predictable and testable -- prefer them when possible.
+- **Closures** let inner functions remember outer variables - key for private state and factories.
+- **Callbacks** are functions passed to other functions - foundational to async JavaScript.
+- **Pure functions** are predictable and testable - prefer them when possible.
 
-Next up: [Arrays](./05-arrays.md) -- ordered collections of data and the powerful methods to work with them.
+Next up: [Arrays](./05-arrays.md) - ordered collections of data and the powerful methods to work with them.

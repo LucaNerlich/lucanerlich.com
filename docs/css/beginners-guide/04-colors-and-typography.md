@@ -20,7 +20,7 @@ colours and control how text looks.
 
 ## Colour values
 
-CSS offers several formats for specifying colours. They all produce the same result -- pick the one that fits your
+CSS offers several formats for specifying colours. They all produce the same result - pick the one that fits your
 workflow.
 
 ### Named colours
@@ -47,7 +47,7 @@ Named colours are convenient for quick prototyping but limited for precise desig
 
 ### Hexadecimal (hex)
 
-Hex codes are the most common colour format on the web. They start with `#` followed by six characters (0--9, a--f):
+Hex codes are the most common colour format on the web. They start with `#` followed by six characters (0-9, a-f):
 
 ```css
 h1 {
@@ -102,9 +102,9 @@ To add transparency, use a fourth value (the **alpha channel**) between 0 (fully
 HSL stands for **Hue**, **Saturation**, **Lightness**. Many designers prefer it because it maps to how humans think
 about colour:
 
-- **Hue** -- a degree on the colour wheel (0--360). 0 = red, 120 = green, 240 = blue
-- **Saturation** -- how vivid the colour is (0% = grey, 100% = full colour)
-- **Lightness** -- how light or dark (0% = black, 50% = pure colour, 100% = white)
+- **Hue** - a degree on the colour wheel (0-360). 0 = red, 120 = green, 240 = blue
+- **Saturation** - how vivid the colour is (0% = grey, 100% = full colour)
+- **Lightness** - how light or dark (0% = black, 50% = pure colour, 100% = white)
 
 ```css
 h1 {
@@ -132,7 +132,7 @@ HSL makes it easy to create colour variations by adjusting a single value:
 }
 ```
 
-All three share the same hue and saturation -- only lightness changes.
+All three share the same hue and saturation - only lightness changes.
 
 Alpha transparency works the same way:
 
@@ -212,7 +212,7 @@ body {
 }
 ```
 
-The value is a **font stack** -- an ordered list of fonts. The browser uses the first available font and falls back to
+The value is a **font stack** - an ordered list of fonts. The browser uses the first available font and falls back to
 the next one if it is not installed.
 
 Always end with a **generic family** as the final fallback:
@@ -437,7 +437,7 @@ Fine-tune spacing between characters and words:
 }
 ```
 
-Small amounts of `letter-spacing` (0.5--2px) are common on headings and uppercase text to improve readability.
+Small amounts of `letter-spacing` (0.5-2px) are common on headings and uppercase text to improve readability.
 
 ## Putting it together
 
@@ -518,5 +518,5 @@ This gives you a clean, readable typographic foundation to build on.
 
 ## Next step
 
-Now that you can control colours and fonts, the next chapter covers **units and sizing** -- when to use `px` vs `em` vs
+Now that you can control colours and fonts, the next chapter covers **units and sizing** - when to use `px` vs `em` vs
 `rem` vs `%` and how each one behaves.

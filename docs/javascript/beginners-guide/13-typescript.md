@@ -17,7 +17,7 @@ sidebar_position: 13
 
 TypeScript is JavaScript with **static types**. It catches bugs at compile time instead of at runtime, provides better
 editor autocompletion, and makes large codebases easier to maintain. Every valid JavaScript file is also valid
-TypeScript -- you can adopt it gradually.
+TypeScript - you can adopt it gradually.
 
 ## Why TypeScript?
 
@@ -54,7 +54,7 @@ run the code.
 | **Better autocomplete**   | Your editor knows the shape of every object              |
 | **Self-documenting code** | Types explain what a function expects and returns        |
 | **Safer refactoring**     | Rename a property and see every place that breaks        |
-| **Gradual adoption**      | Add types to one file at a time -- no big rewrite needed |
+| **Gradual adoption**      | Add types to one file at a time - no big rewrite needed |
 
 ## Setting up TypeScript
 
@@ -358,7 +358,7 @@ const admin: Admin = {
 
 ## Type aliases
 
-`type` defines a name for any type -- not just objects:
+`type` defines a name for any type - not just objects:
 
 ```ts
 type ID = string | number;
@@ -478,7 +478,7 @@ first([1, 2, 3]);          // number | undefined
 first(["a", "b", "c"]);    // string | undefined
 ```
 
-`T` is a **type parameter** -- a placeholder that gets filled in when the function is called.
+`T` is a **type parameter** - a placeholder that gets filled in when the function is called.
 
 ### Generic interfaces
 
@@ -539,7 +539,7 @@ pair(true, "yes");   // [boolean, string]
 
 TypeScript includes built-in utility types for common transformations:
 
-### `Partial<T>` -- all properties become optional
+### `Partial<T>` - all properties become optional
 
 ```ts
 interface User {
@@ -556,7 +556,7 @@ const ada: User = { name: "Ada", email: "ada@example.com", age: 36 };
 const updated = updateUser(ada, { age: 37 });
 ```
 
-### `Required<T>` -- all properties become required
+### `Required<T>` - all properties become required
 
 ```ts
 interface Config {
@@ -570,7 +570,7 @@ const fullConfig: Required<Config> = {
 };
 ```
 
-### `Pick<T, Keys>` -- select specific properties
+### `Pick<T, Keys>` - select specific properties
 
 ```ts
 type UserPreview = Pick<User, "name" | "email">;
@@ -581,7 +581,7 @@ const preview: UserPreview = {
 };
 ```
 
-### `Omit<T, Keys>` -- exclude specific properties
+### `Omit<T, Keys>` - exclude specific properties
 
 ```ts
 type UserWithoutEmail = Omit<User, "email">;
@@ -592,7 +592,7 @@ const user: UserWithoutEmail = {
 };
 ```
 
-### `Record<Keys, Value>` -- create an object type from keys and values
+### `Record<Keys, Value>` - create an object type from keys and values
 
 ```ts
 type Role = "admin" | "editor" | "viewer";
@@ -653,7 +653,7 @@ function printStatus(status: Status): void {
 printStatus(Status.Active); // ACTIVE
 ```
 
-### `const enum` -- inlined at compile time
+### `const enum` - inlined at compile time
 
 ```ts
 const enum Color {
@@ -680,7 +680,7 @@ input.value = "Ada";
 Without the assertion, TypeScript only knows `getElementById` returns `HTMLElement | null`. With `as HTMLInputElement`,
 you tell TypeScript it is specifically an input element.
 
-**Use assertions sparingly.** They override the type checker -- if you are wrong, you will get runtime errors.
+**Use assertions sparingly.** They override the type checker - if you are wrong, you will get runtime errors.
 
 ### Non-null assertion
 
@@ -861,7 +861,7 @@ console.log(user.name);       // Ada
 ```
 
 TypeScript's `public`, `private`, `protected`, and `readonly` modifiers in the constructor automatically create and
-assign class properties -- no separate field declarations needed.
+assign class properties - no separate field declarations needed.
 
 ## Migrating JavaScript to TypeScript
 
@@ -900,7 +900,7 @@ constants) and work toward the more complex ones.
 
 ### Step 4: Enable `checkJs` (optional)
 
-Setting `checkJs: true` makes TypeScript check your `.js` files too -- it will infer types and report errors even in
+Setting `checkJs: true` makes TypeScript check your `.js` files too - it will infer types and report errors even in
 plain JavaScript.
 
 ### Step 5: Turn on strict mode
@@ -913,7 +913,7 @@ TypeScript must be compiled to JavaScript before the browser can run it. Common 
 
 | Tool                    | How it works                                            |
 |-------------------------|---------------------------------------------------------|
-| `tsc`                   | TypeScript compiler -- compiles `.ts` to `.js`          |
+| `tsc`                   | TypeScript compiler - compiles `.ts` to `.js`          |
 | **Vite**                | Dev server and bundler with built-in TypeScript support |
 | **esbuild**             | Extremely fast bundler that strips types                |
 | **webpack + ts-loader** | Traditional bundler with TypeScript loader              |
@@ -931,19 +931,19 @@ This gives you a TypeScript project with hot reloading, ready to develop in the 
 
 ## Summary
 
-- TypeScript is JavaScript with **static types** -- every `.js` file is valid `.ts`.
+- TypeScript is JavaScript with **static types** - every `.js` file is valid `.ts`.
 - **Type annotations** (`: string`, `: number`) tell TypeScript what types to expect.
-- **Type inference** means you do not need to annotate everything -- TypeScript is smart.
+- **Type inference** means you do not need to annotate everything - TypeScript is smart.
 - **Interfaces** describe object shapes; **type aliases** name any type.
 - **Union types** (`string | number`) model values that can be one of several types.
 - **Generics** (`<T>`) let you write reusable, type-safe code.
 - **Utility types** (`Partial`, `Pick`, `Omit`, `Record`) transform existing types.
-- **`strict: true`** in `tsconfig.json` catches the most bugs -- always use it.
+- **`strict: true`** in `tsconfig.json` catches the most bugs - always use it.
 - Migrate gradually: add TypeScript to an existing project one file at a time.
 
 TypeScript is used by most modern JavaScript frameworks (Angular, Next.js, SvelteKit) and is the de facto standard for
 professional JavaScript development. The investment in learning it pays off immediately through fewer bugs and better
 tooling.
 
-Next up: [Error Handling](./14-error-handling.md) -- try/catch, custom errors, async error patterns, and best practices
+Next up: [Error Handling](./14-error-handling.md) - try/catch, custom errors, async error patterns, and best practices
 for failing gracefully.

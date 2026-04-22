@@ -15,7 +15,7 @@ sidebar_position: 3
 
 # Operators & Expressions
 
-In the previous chapter, you learned how to store values in variables. Now you need to **combine** them -- add numbers,
+In the previous chapter, you learned how to store values in variables. Now you need to **combine** them - add numbers,
 compare values, join strings, and make decisions. This chapter covers everything you need to know about operators and
 expressions in PHP.
 
@@ -74,7 +74,7 @@ $exp = 8;
 echo $base ** $exp;  // 256 (2 to the power of 8)
 ```
 
-> **Note:** Division of two integers in PHP 8+ always produces a float. If you divide `10 / 3`, you get `3.333...` --
+> **Note:** Division of two integers in PHP 8+ always produces a float. If you divide `10 / 3`, you get `3.333...` -
 > not a truncated integer. Use `intdiv(10, 3)` if you need integer division (result: `3`).
 
 ## Assignment operators
@@ -134,7 +134,7 @@ $greeting = $first . ' ' . $second;   // 'Hello World'
 echo $greeting;
 ```
 
-The dot operator **glues** strings together. It does not add spaces for you -- you must include them explicitly:
+The dot operator **glues** strings together. It does not add spaces for you - you must include them explicitly:
 
 ```php
 <?php
@@ -397,7 +397,7 @@ $options['debug'] ??= true;    // Does nothing -- key already exists
 
 ## Operator precedence
 
-When PHP evaluates an expression with multiple operators, it follows **precedence** rules -- the same way math follows
+When PHP evaluates an expression with multiple operators, it follows **precedence** rules - the same way math follows
 "multiplication before addition." Here is a simplified table of common operators, from highest to lowest precedence:
 
 | Precedence | Operators |
@@ -463,12 +463,12 @@ echo 'Strict check: ' . ($total === 53.97 ? 'exact match' : 'rounded') . "\n";
 - An **expression** produces a value; an **operator** performs an operation on values
 - Arithmetic: `+`, `-`, `*`, `/`, `%`, `**`
 - Assignment: `=`, `+=`, `-=`, `*=`, `/=`, `.=`, `??=`
-- String concatenation uses the **dot (`.`)** operator -- unique to PHP
+- String concatenation uses the **dot (`.`)** operator - unique to PHP
 - Comparison: prefer `===` and `!==` (strict) over `==` and `!=` (loose) to avoid bugs
 - Logical: `&&`, `||`, `!` for conditions; `and`/`or` have lower precedence
 - Ternary: `condition ? a : b` for simple choices
 - Null coalescing: `??` for defaults when a value is null; `??=` for assign-if-null
 - Use parentheses when operator precedence is unclear
 
-Next up: [Control Flow](./04-control-flow.md) -- if/else, switch, match, loops, and how to control the flow of your
+Next up: [Control Flow](./04-control-flow.md) - if/else, switch, match, loops, and how to control the flow of your
 program.

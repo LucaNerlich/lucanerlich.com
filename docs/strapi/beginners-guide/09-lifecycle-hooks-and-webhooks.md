@@ -22,7 +22,7 @@ middleware** (lifecycle hooks) and **webhooks**.
 ## Document Service middleware
 
 In Strapi 5, lifecycle hooks are implemented as **Document Service middleware**. They intercept calls on the Document
-Service -- the layer that handles all content operations.
+Service - the layer that handles all content operations.
 
 ```mermaid
 sequenceDiagram
@@ -95,7 +95,7 @@ The `context` object contains:
 | `context.params.data`       | The data being written (for create/update)                |
 | `context.params.documentId` | The document ID (for findOne/update/delete)               |
 
-### Example -- validate post titles
+### Example - validate post titles
 
 Ensure all post titles are at least 5 characters:
 
@@ -120,7 +120,7 @@ export default {
 };
 ```
 
-### Example -- auto-generate slug
+### Example - auto-generate slug
 
 Automatically generate a slug from the title if one is not provided:
 
@@ -152,7 +152,7 @@ export default {
 };
 ```
 
-### Example -- log content changes
+### Example - log content changes
 
 Track all changes to content:
 
@@ -177,7 +177,7 @@ export default {
 };
 ```
 
-### Example -- send notification after publish
+### Example - send notification after publish
 
 ```javascript
 // src/index.js (or src/index.ts)
@@ -339,7 +339,7 @@ When an event triggers, Strapi sends a POST request with this payload:
 | **Send notifications**   | Slack, Discord, email service     |
 | **Sync to external DB**  | Your own API endpoint             |
 
-### Example -- trigger a Vercel rebuild
+### Example - trigger a Vercel rebuild
 
 1. In Vercel, create a Deploy Hook (Project Settings > Git > Deploy Hooks)
 2. Copy the hook URL
@@ -349,7 +349,7 @@ When an event triggers, Strapi sends a POST request with this payload:
 
 Now every time you publish, unpublish, or delete a post, Vercel rebuilds your frontend.
 
-### Example -- Slack notification
+### Example - Slack notification
 
 ```
 Webhook URL: https://hooks.slack.com/services/T00000/B00000/XXXXX
@@ -461,16 +461,16 @@ Use webhooks when you need to:
 
 You learned:
 
-- **Document Service middleware** -- the Strapi 5 approach to lifecycle hooks
+- **Document Service middleware** - the Strapi 5 approach to lifecycle hooks
 - All available **events** (before/after create, update, delete, publish, etc.)
 - Practical examples: validation, slug generation, logging, notifications
 - How to **organize** middleware across content types
-- **Webhooks** -- configuring HTTP callbacks in the admin panel
+- **Webhooks** - configuring HTTP callbacks in the admin panel
 - Common webhook use cases (rebuild, CDN purge, Slack, search sync)
 - When to use **lifecycle hooks vs webhooks**
 
 Your blog now reacts to content changes: validating titles, auto-generating slugs, and optionally notifying external
 services. The next chapter covers file uploads and media management.
 
-Next up: [Media & File Uploads](./10-media-and-file-uploads.md) -- upload providers, S3 and Cloudinary integration,
+Next up: [Media & File Uploads](./10-media-and-file-uploads.md) - upload providers, S3 and Cloudinary integration,
 image optimization, responsive formats, and upload validation.

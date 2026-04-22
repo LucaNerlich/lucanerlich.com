@@ -16,7 +16,7 @@ sidebar_position: 8
 # The DOM
 
 The **Document Object Model** (DOM) is the browser's representation of an HTML page as a tree of objects. JavaScript
-uses the DOM to read and change anything on the page -- text, styles, attributes, structure, everything.
+uses the DOM to read and change anything on the page - text, styles, attributes, structure, everything.
 
 ## What is the DOM?
 
@@ -55,7 +55,7 @@ Every tag becomes a **node** (an object) in this tree. JavaScript can access and
 
 ## Selecting elements
 
-### `querySelector` -- select one element
+### `querySelector` - select one element
 
 Returns the **first** element that matches a CSS selector:
 
@@ -94,7 +94,7 @@ Result:
 Element not found
 ```
 
-### `querySelectorAll` -- select multiple elements
+### `querySelectorAll` - select multiple elements
 
 Returns a **NodeList** of all matching elements:
 
@@ -190,7 +190,7 @@ console.log(div.innerHTML);
 div.innerHTML = "<h2>New Title</h2><p>New paragraph</p>";
 ```
 
-**Security warning:** Never use `innerHTML` with user input -- it creates a Cross-Site Scripting (XSS) vulnerability:
+**Security warning:** Never use `innerHTML` with user input - it creates a Cross-Site Scripting (XSS) vulnerability:
 
 ```js
 // DANGEROUS -- never do this
@@ -259,7 +259,7 @@ textInput.value = "New value";
 console.log(textInput.value);
 ```
 
-### `dataset` -- custom data attributes
+### `dataset` - custom data attributes
 
 HTML `data-*` attributes are accessible via `dataset`:
 
@@ -324,7 +324,7 @@ console.log(box.className); // "box highlighted"
 box.className = "new-class"; // replaces everything
 ```
 
-Prefer `classList` -- it is safer because it does not overwrite existing classes.
+Prefer `classList` - it is safer because it does not overwrite existing classes.
 
 ## Modifying inline styles
 
@@ -624,4 +624,4 @@ This renders:
 - `parentElement`, `children`, `closest()` navigate the tree.
 - Use `DocumentFragment` for batch DOM updates.
 
-Next up: [Events & Interactivity](./09-events.md) -- making your page respond to user actions.
+Next up: [Events & Interactivity](./09-events.md) - making your page respond to user actions.

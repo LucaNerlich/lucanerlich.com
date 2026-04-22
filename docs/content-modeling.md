@@ -15,7 +15,7 @@ sidebar_position: 2
 
 # Content Modeling
 
-A content model is the **schema** that defines your content types, their fields, and the relationships between them. It is the single most important architectural decision in any CMS project -- it shapes the authoring experience, the API surface, query performance, caching behavior, and how hard future changes will be.
+A content model is the **schema** that defines your content types, their fields, and the relationships between them. It is the single most important architectural decision in any CMS project - it shapes the authoring experience, the API surface, query performance, caching behavior, and how hard future changes will be.
 
 This guide is **CMS-agnostic**. The principles apply whether you use Strapi, AEM, Contentful, Sanity, WordPress, or any other platform. Platform-specific implementations are linked throughout.
 
@@ -57,7 +57,7 @@ Content modeling borrows from relational database design, but adds CMS-specific 
 
 ## Content types
 
-Content types are the nouns in your system -- Article, Author, Product, Category, Page.
+Content types are the nouns in your system - Article, Author, Product, Category, Page.
 
 ### Collection types vs single types
 
@@ -94,9 +94,9 @@ flowchart TD
 
 - If fields diverge by more than ~30%, split
 - If they share the same editorial workflow and API shape, merge
-- If in doubt, start merged -- splitting later is easier than merging
+- If in doubt, start merged - splitting later is easier than merging
 
-**Anti-pattern: the "Universal Content" type** -- a single type with 50+ fields and boolean flags to toggle sections. It looks flexible but is a nightmare to author and impossible to validate.
+**Anti-pattern: the "Universal Content" type** - a single type with 50+ fields and boolean flags to toggle sections. It looks flexible but is a nightmare to author and impossible to validate.
 
 > For platform-specific type definitions, see [Strapi: Content Modeling](/strapi/beginners-guide/content-modeling) (collection vs single types) and [AEM: Content Fragments](/aem/beginners-guide/content-fragments-and-graphql) (Content Fragment Models).
 
@@ -133,10 +133,10 @@ Good: [Short Text: title]
 
 Structured fields are:
 
-- **Queryable** -- find all articles with a specific subtitle
-- **Translatable** -- translators see each field separately
-- **Validatable** -- enforce max lengths, required fields
-- **Reusable** -- display the title in a card, the body on the detail page
+- **Queryable** - find all articles with a specific subtitle
+- **Translatable** - translators see each field separately
+- **Validatable** - enforce max lengths, required fields
+- **Reusable** - display the title in a card, the body on the detail page
 
 Rich text is appropriate for **freeform body content** where the structure is genuinely unpredictable.
 
@@ -144,10 +144,10 @@ Rich text is appropriate for **freeform body content** where the structure is ge
 
 A single JSON or rich-text field that holds an entire page's content. It kills:
 
-- **Querying** -- you cannot filter by fields inside a JSON blob
-- **Caching** -- any change invalidates the entire blob
-- **Translation** -- translators get a wall of unstructured text
-- **Validation** -- no per-field constraints
+- **Querying** - you cannot filter by fields inside a JSON blob
+- **Caching** - any change invalidates the entire blob
+- **Translation** - translators get a wall of unstructured text
+- **Validation** - no per-field constraints
 
 ### Anti-pattern: over-enumeration
 
@@ -203,7 +203,7 @@ The key decision: should the group be **embedded** (travels with the parent) or 
 
 | Criterion | Embed | Reference (relation) |
 |-----------|-------|---------------------|
-| **Ownership** | Parent owns it -- delete parent, delete group | Independent -- survives parent deletion |
+| **Ownership** | Parent owns it - delete parent, delete group | Independent - survives parent deletion |
 | **Reuse** | Cannot be shared across instances | Can be shared (one Author, many Articles) |
 | **Editing** | Edited inline in the parent form | Edited separately, linked |
 | **Queryability** | Hard to query across parents | Easy to query independently |
@@ -224,26 +224,26 @@ The key decision: should the group be **embedded** (travels with the parent) or 
 
 > For Strapi-specific patterns, see [Strapi: Content Modeling](/strapi/beginners-guide/content-modeling) (components vs dynamic zones table).
 
-## Relations -- the good, the bad, and the slow
+## Relations - the good, the bad, and the slow
 
-Relations connect content types. They are powerful and necessary -- but every relation has a cost.
+Relations connect content types. They are powerful and necessary - but every relation has a cost.
 
 ### Relation types
 
 | Type | Example | Storage |
 |------|---------|---------|
-| **One-to-one** | Author -- Profile | Foreign key on one side |
-| **One-to-many** | Author -- Articles | Foreign key on the "many" side |
-| **Many-to-many** | Articles -- Tags | Join table |
+| **One-to-one** | Author - Profile | Foreign key on one side |
+| **One-to-many** | Author - Articles | Foreign key on the "many" side |
+| **Many-to-many** | Articles - Tags | Join table |
 
 ### When relations are good
 
 Relations are the right choice when:
 
-- **True entity references** -- an Article has an Author who exists independently
-- **Lookup tables** -- a Category that many Articles share
-- **Shared assets** -- a Logo used on multiple pages
-- **Navigation structures** -- parent/child page hierarchies
+- **True entity references** - an Article has an Author who exists independently
+- **Lookup tables** - a Category that many Articles share
+- **Shared assets** - a Logo used on multiple pages
+- **Navigation structures** - parent/child page hierarchies
 
 These are **stable, well-bounded relationships** with clear semantics.
 
@@ -268,25 +268,25 @@ flowchart LR
     end
 ```
 
-**Deep nesting** -- every level in Article -> Author -> Company -> Address -> Country is an extra query or join. Most CMS APIs resolve this via "population" or "depth" parameters, but each level:
+**Deep nesting** - every level in Article -> Author -> Company -> Address -> Country is an extra query or join. Most CMS APIs resolve this via "population" or "depth" parameters, but each level:
 
 - Adds latency
 - Increases response size
 - Makes caching harder (one change deep in the chain can invalidate the whole tree)
 
-**Unbounded many-to-many** -- an Article with 500 Tags, or a Tag used by 10,000 Articles:
+**Unbounded many-to-many** - an Article with 500 Tags, or a Tag used by 10,000 Articles:
 
 - The join table grows quadratically
 - Populating "all articles for this tag" becomes a full table scan
 - Bidirectional population (article -> tags AND tag -> articles) doubles the problem
 
-**Circular references** -- A references B, B references A:
+**Circular references** - A references B, B references A:
 
 - Infinite loops in API population
 - Unclear ownership (who is the "parent"?)
 - Cache invalidation cascades
 
-**Bidirectional relations that must stay in sync** -- if Article has `tags` and Tag has `articles`, updating one side must update the other. Some CMS platforms handle this automatically; others require manual sync.
+**Bidirectional relations that must stay in sync** - if Article has `tags` and Tag has `articles`, updating one side must update the other. Some CMS platforms handle this automatically; others require manual sync.
 
 ### Performance implications
 
@@ -328,7 +328,7 @@ Consistent naming prevents confusion as models grow.
 
 | Convention | Example | Recommendation |
 |-----------|---------|----------------|
-| **Singular** | `Article`, `Author`, `Category` | Always singular -- the CMS pluralizes for collections |
+| **Singular** | `Article`, `Author`, `Category` | Always singular - the CMS pluralizes for collections |
 | **PascalCase** | `BlogArticle`, `ProductCategory` | Most CMS platforms use this |
 | **No prefixes** | `Article`, not `CmsArticle` | Avoid redundant prefixes |
 
@@ -369,7 +369,7 @@ Every content type that has a detail page should have a slug:
 
 ## Complexity traps
 
-Content modeling has a Goldilocks problem -- too simple and too complex both fail.
+Content modeling has a Goldilocks problem - too simple and too complex both fail.
 
 ### Over-modeling
 
@@ -388,7 +388,7 @@ If a "type" has one or two fields and never changes, it is an **enum** or a **co
 
 ### Under-modeling
 
-The opposite extreme -- one giant type:
+The opposite extreme - one giant type:
 
 ```
 Bad:
@@ -424,17 +424,17 @@ Bad (too early):
   ]
 ```
 
-Start with 3-5 block types based on real content. Add more when editors actually need them. Every block type is maintenance burden -- dialog fields, rendering templates, preview logic, migration support.
+Start with 3-5 block types based on real content. Add more when editors actually need them. Every block type is maintenance burden - dialog fields, rendering templates, preview logic, migration support.
 
 ### Ignoring the authoring UX
 
 A model can be technically perfect but painful to use:
 
-- **Too many required fields** -- editors abandon half-written entries
-- **Deeply nested forms** -- 4 clicks to reach a field
-- **Unclear field labels** -- "Reference ID" instead of "Related Article"
-- **No defaults** -- every field starts empty even when 80% of entries use the same value
-- **No help text** -- editors guess what each field expects
+- **Too many required fields** - editors abandon half-written entries
+- **Deeply nested forms** - 4 clicks to reach a field
+- **Unclear field labels** - "Reference ID" instead of "Related Article"
+- **No defaults** - every field starts empty even when 80% of entries use the same value
+- **No help text** - editors guess what each field expects
 
 Always test the authoring flow with real editors. Watch them create content. If they struggle, simplify the model.
 
@@ -444,10 +444,10 @@ The earlier you change the model, the cheaper it is:
 
 | Stage | Cost of change |
 |-------|---------------|
-| **Design phase** | Free -- just edit a diagram |
-| **Development** | Low -- update code, re-seed test data |
-| **Staging with test content** | Medium -- write a migration script |
-| **Production with live content** | High -- migration script + data validation + rollback plan + downtime |
+| **Design phase** | Free - just edit a diagram |
+| **Development** | Low - update code, re-seed test data |
+| **Staging with test content** | Medium - write a migration script |
+| **Production with live content** | High - migration script + data validation + rollback plan + downtime |
 
 Get the model reviewed early. Create realistic test content early. Changing a model with 10,000 live entries is an order of magnitude harder than changing one with 10.
 
@@ -459,14 +459,14 @@ Use this checklist when reviewing a content model:
 - [ ] **Many-to-many relations** are bounded (e.g., max 20 tags per article, not unlimited)
 - [ ] **Fields you filter/sort on** are indexed (or indexable on your platform)
 - [ ] **Hot read paths** are denormalized where needed (e.g., author name on article cards)
-- [ ] **API responses** use sparse fieldsets -- do not populate everything by default
-- [ ] **Tested with realistic data volumes** -- not just 5 test entries, but hundreds or thousands
-- [ ] **Query times monitored** -- have alerts for slow queries as content grows
-- [ ] **Caching strategy considered** -- CDN, Dispatcher, API-level cache, and how relations affect invalidation
+- [ ] **API responses** use sparse fieldsets - do not populate everything by default
+- [ ] **Tested with realistic data volumes** - not just 5 test entries, but hundreds or thousands
+- [ ] **Query times monitored** - have alerts for slow queries as content grows
+- [ ] **Caching strategy considered** - CDN, Dispatcher, API-level cache, and how relations affect invalidation
 - [ ] **No circular relations** without explicit depth limits
 - [ ] **No "god fields"** (single JSON/rich-text blobs holding structured data)
 
-## Practical example -- blog platform
+## Practical example - blog platform
 
 Let's model a blog with: articles, authors, categories, and tags.
 
@@ -513,16 +513,16 @@ erDiagram
 | `Tag` is a **relation** (many-to-many) | Tags are shared; an article can have multiple tags. **Cap at 10-15 per article** to keep join tables manageable |
 | `readingTimeMinutes` is a **field**, not computed on read | Computed once on save (word count / 200), stored as a number. Avoids computing on every API call |
 | `excerpt` is a **separate field**, not derived from body | Editors write a custom excerpt; auto-truncating body text rarely produces good summaries |
-| `isFeatured` is a **boolean on Article** | Simple flag -- no need for a separate "Featured" type. If featuring becomes complex (start/end dates, position), upgrade to a relation |
-| **No `Comment` type** | Comments have different scaling characteristics (spam, moderation, real-time) -- better handled by a dedicated service (Disqus, Giscus) than the CMS |
+| `isFeatured` is a **boolean on Article** | Simple flag - no need for a separate "Featured" type. If featuring becomes complex (start/end dates, position), upgrade to a relation |
+| **No `Comment` type** | Comments have different scaling characteristics (spam, moderation, real-time) - better handled by a dedicated service (Disqus, Giscus) than the CMS |
 | **No nested categories** (Category -> SubCategory) | Keep it flat. Hierarchies add complexity; if needed later, add a `parent` self-relation |
 
 ### What this model does well
 
-- **Shallow relations** -- max 1 level deep for most queries
-- **Bounded many-to-many** -- tags are capped
-- **Clean API shape** -- Article card only needs title, slug, excerpt, publishDate, category name, author name
-- **Authorable** -- editors see clear, focused forms
+- **Shallow relations** - max 1 level deep for most queries
+- **Bounded many-to-many** - tags are capped
+- **Clean API shape** - Article card only needs title, slug, excerpt, publishDate, category name, author name
+- **Authorable** - editors see clear, focused forms
 
 ### What to watch
 
@@ -551,17 +551,17 @@ For hands-on implementation of these patterns:
 
 **Strapi:**
 
-- [Content Modeling](/strapi/beginners-guide/content-modeling) -- types, fields, components, dynamic zones
-- [Relations](/strapi/beginners-guide/relations) -- relation types, owning vs inverse side, best practices
-- [Relations and Population](/strapi/relations-and-population) -- population depth, filtering, N+1 prevention
+- [Content Modeling](/strapi/beginners-guide/content-modeling) - types, fields, components, dynamic zones
+- [Relations](/strapi/beginners-guide/relations) - relation types, owning vs inverse side, best practices
+- [Relations and Population](/strapi/relations-and-population) - population depth, filtering, N+1 prevention
 
 **AEM:**
 
-- [Content Fragments & GraphQL](/aem/beginners-guide/content-fragments-and-graphql) -- CF Models, field types, fragment references, persisted queries
-- [Your First Component](/aem/beginners-guide/your-first-component) -- component structure, dialogs, Sling Models
-- [Component Dialogs](/aem/beginners-guide/component-dialogs) -- field types for page-level content modeling
+- [Content Fragments & GraphQL](/aem/beginners-guide/content-fragments-and-graphql) - CF Models, field types, fragment references, persisted queries
+- [Your First Component](/aem/beginners-guide/your-first-component) - component structure, dialogs, Sling Models
+- [Component Dialogs](/aem/beginners-guide/component-dialogs) - field types for page-level content modeling
 
 **General:**
 
-- [SQL Guide](/other/sql-guide) -- relational database fundamentals that underpin CMS storage
-- [Design Patterns](/design-patterns/overview) -- architectural patterns applicable to content model design
+- [SQL Guide](/other/sql-guide) - relational database fundamentals that underpin CMS storage
+- [Design Patterns](/design-patterns/overview) - architectural patterns applicable to content model design

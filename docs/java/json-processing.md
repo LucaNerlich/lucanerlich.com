@@ -28,7 +28,7 @@ Maven dependency:
 
 ## ObjectMapper basics
 
-`ObjectMapper` is the central class. **Reuse a single instance** -- it is thread-safe
+`ObjectMapper` is the central class. **Reuse a single instance** - it is thread-safe
 and expensive to create.
 
 ### Serialisation (Java to JSON)
@@ -340,7 +340,7 @@ List<User> users = gson.fromJson(json, new TypeToken<List<User>>() {}.getType())
 
 ## See also
 
-- [HTTP Clients](./http-clients.md) -- sending/receiving JSON over HTTP
-- [Modern Java Features](./modern-java-features.md) -- records as JSON DTOs
-- [Testing](./testing.md) -- testing JSON serialisation
-- [Error Handling](./error-handling.md) -- handling parse errors
+- [HTTP Clients](./http-clients.md) - sending/receiving JSON over HTTP
+- [Modern Java Features](./modern-java-features.md) - records as JSON DTOs
+- [Testing](./testing.md) - testing JSON serialisation
+- [Error Handling](./error-handling.md) - handling parse errors

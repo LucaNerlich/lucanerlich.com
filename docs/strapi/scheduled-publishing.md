@@ -558,7 +558,7 @@ of the scheduled time.
 
 ## See also
 
-- [Lifecycle Hooks](lifecycle-hooks.md) -- running logic before/after database operations
-- [Custom Controllers and Services](custom-controllers-services.md) -- the service pattern used here
-- [Configuration and Deployment](configuration-and-deployment.md) -- cron job setup and server configuration
-- [Custom Routes and Endpoints](custom-routes-and-endpoints.md) -- exposing the manual trigger endpoint
+- [Lifecycle Hooks](lifecycle-hooks.md) - running logic before/after database operations
+- [Custom Controllers and Services](custom-controllers-services.md) - the service pattern used here
+- [Configuration and Deployment](configuration-and-deployment.md) - cron job setup and server configuration
+- [Custom Routes and Endpoints](custom-routes-and-endpoints.md) - exposing the manual trigger endpoint

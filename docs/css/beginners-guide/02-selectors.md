@@ -36,7 +36,7 @@ li {
 }
 ```
 
-This styles **every** `<h1>`, every `<p>`, and every `<li>` on the page. Element selectors are broad -- they do not
+This styles **every** `<h1>`, every `<p>`, and every `<li>` on the page. Element selectors are broad - they do not
 distinguish between different paragraphs or different list items.
 
 ## Class selectors
@@ -89,9 +89,9 @@ An ID selector targets the element with a specific `id` attribute. IDs start wit
 
 Important rules for IDs:
 
-- An ID must be **unique** on the page -- only one element can have a given ID
+- An ID must be **unique** on the page - only one element can have a given ID
 - IDs have **higher specificity** than classes (we cover specificity in chapter 14)
-- Prefer classes over IDs for styling -- IDs are better reserved for JavaScript hooks and anchor links
+- Prefer classes over IDs for styling - IDs are better reserved for JavaScript hooks and anchor links
 
 > **Note:** Many experienced developers avoid ID selectors in CSS entirely. Classes give you the same targeting power
 > without the specificity issues. We mention IDs so you recognise them in other people's code.
@@ -151,7 +151,7 @@ nav a {
 }
 ```
 
-This targets every `<a>` element that is **inside** a `<nav>` -- at any depth. It does not affect `<a>` elements
+This targets every `<a>` element that is **inside** a `<nav>` - at any depth. It does not affect `<a>` elements
 outside the nav.
 
 ```html
@@ -174,12 +174,12 @@ main article p {
 
 This targets `<p>` elements inside `<article>` elements inside `<main>`.
 
-> **Tip:** Keep descendant selectors short -- two or three levels at most. Long chains like
+> **Tip:** Keep descendant selectors short - two or three levels at most. Long chains like
 > `div ul li a span` are fragile and break when you restructure your HTML.
 
 ## Child selector
 
-The child selector (`>`) targets elements that are **direct children** -- not deeper descendants:
+The child selector (`>`) targets elements that are **direct children** - not deeper descendants:
 
 ```css
 ul > li {
@@ -236,7 +236,7 @@ h2 ~ p {
 }
 ```
 
-This styles every `<p>` that comes after an `<h2>` and shares the same parent -- not just the first one.
+This styles every `<p>` that comes after an `<h2>` and shares the same parent - not just the first one.
 
 ## Attribute selectors
 
@@ -315,7 +315,7 @@ a.nav-link:hover {
 
 - Selectors target HTML elements for styling
 - **Classes** (`.name`) are the most common and flexible selector
-- **IDs** (`#name`) are unique per page and have high specificity -- prefer classes
+- **IDs** (`#name`) are unique per page and have high specificity - prefer classes
 - **Descendant** (`A B`) and **child** (`A > B`) selectors target nested elements
 - **Sibling** selectors target elements at the same level
 - **Attribute** selectors target elements by their HTML attributes
@@ -323,5 +323,5 @@ a.nav-link:hover {
 
 ## Next step
 
-Now that you know how to target elements, the next chapter covers the **box model** -- how the browser calculates the
+Now that you know how to target elements, the next chapter covers the **box model** - how the browser calculates the
 size and spacing of every element on the page.

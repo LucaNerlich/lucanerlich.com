@@ -64,7 +64,7 @@ a:visited {
 
 #### :focus vs :focus-visible
 
-`:focus` applies whenever an element has focus -- including mouse clicks. `:focus-visible` only applies when the focus
+`:focus` applies whenever an element has focus - including mouse clicks. `:focus-visible` only applies when the focus
 was triggered by keyboard navigation (Tab key). This is better for most cases because you avoid showing focus rings on
 mouse-clicked buttons:
 
@@ -460,5 +460,5 @@ A fully CSS-styled checkbox using pseudo-elements:
 
 ## Next step
 
-Now that you know all the selector powers CSS offers, the next chapter covers **CSS Custom Properties** -- variables
+Now that you know all the selector powers CSS offers, the next chapter covers **CSS Custom Properties** - variables
 that make your stylesheets dynamic and maintainable.

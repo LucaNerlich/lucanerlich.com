@@ -15,7 +15,7 @@ sidebar_position: 9
 
 # Events & Interactivity
 
-Events are how JavaScript responds to user actions -- clicks, key presses, form submissions, scrolling, and more. This
+Events are how JavaScript responds to user actions - clicks, key presses, form submissions, scrolling, and more. This
 chapter covers everything you need to make interactive web pages.
 
 ## Adding event listeners
@@ -302,15 +302,15 @@ Result (clicking the button):
 Button clicked -- stopped bubbling
 ```
 
-Use `stopPropagation` sparingly -- it can break other listeners that rely on bubbling.
+Use `stopPropagation` sparingly - it can break other listeners that rely on bubbling.
 
 ### Capture phase
 
 Events actually go through three phases:
 
-1. **Capture** -- from `document` down to the target
-2. **Target** -- the element that was clicked
-3. **Bubble** -- back up from the target to `document`
+1. **Capture** - from `document` down to the target
+2. **Target** - the element that was clicked
+3. **Bubble** - back up from the target to `document`
 
 To listen during the capture phase:
 
@@ -594,7 +594,7 @@ list.addEventListener("click", (event) => {
 
 ### Debounced search
 
-Prevent firing on every keystroke -- wait until the user stops typing:
+Prevent firing on every keystroke - wait until the user stops typing:
 
 ```js
 function debounce(fn, delay) {
@@ -645,7 +645,7 @@ Result:
 Ada logged in as admin
 ```
 
-Custom events are useful for decoupling components -- one part of your code can emit events without knowing who is
+Custom events are useful for decoupling components - one part of your code can emit events without knowing who is
 listening.
 
 ## Summary
@@ -654,10 +654,10 @@ listening.
 - The **event object** provides details: `type`, `target`, `key`, coordinates, etc.
 - `preventDefault()` stops default browser behavior (link navigation, form submission).
 - Events **bubble** from child to parent. Use `stopPropagation()` sparingly.
-- **Event delegation** attaches one listener to a parent -- better performance, works for dynamic elements.
+- **Event delegation** attaches one listener to a parent - better performance, works for dynamic elements.
 - `closest()` helps find the relevant element in delegated handlers.
 - Forms: use `FormData` or `form.elements` to access values, `event.preventDefault()` to handle submission in
   JavaScript.
 - **Debounce** expensive handlers like search to avoid firing on every keystroke.
 
-Next up: [Working with Data](./10-working-with-data.md) -- fetching data from APIs and storing data in the browser.
+Next up: [Working with Data](./10-working-with-data.md) - fetching data from APIs and storing data in the browser.

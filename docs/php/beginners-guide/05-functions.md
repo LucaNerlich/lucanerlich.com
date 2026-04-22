@@ -19,7 +19,7 @@ A function is a reusable block of code that performs a specific task. Instead of
 
 ## What is a function? Why use functions?
 
-A function is a named block of code that you can execute by calling its name. Think of it as a recipe -- you write the steps once, and whenever you need the result, you follow the recipe.
+A function is a named block of code that you can execute by calling its name. Think of it as a recipe - you write the steps once, and whenever you need the result, you follow the recipe.
 
 ### The DRY principle
 
@@ -27,7 +27,7 @@ A function is a named block of code that you can execute by calling its name. Th
 
 ### Readability and reusability
 
-Functions make your code easier to read. A well-named function like `calculateTax($price)` tells you what is happening without forcing you to read every line of the calculation. They also make code reusable -- you can call the same function from different parts of your program, or even from other projects.
+Functions make your code easier to read. A well-named function like `calculateTax($price)` tells you what is happening without forcing you to read every line of the calculation. They also make code reusable - you can call the same function from different parts of your program, or even from other projects.
 
 ## Defining a function
 
@@ -55,7 +55,7 @@ PHP function names follow these rules:
 
 - Must start with a letter or underscore
 - Can contain letters, numbers, and underscores
-- Are **case-insensitive** for the function name itself (unlike variables) -- `greet()`, `Greet()`, and `GREET()` all refer to the same function
+- Are **case-insensitive** for the function name itself (unlike variables) - `greet()`, `Greet()`, and `GREET()` all refer to the same function
 
 > **Note:** PHP developers commonly use **snake_case** for function names (`calculate_total`, `get_user_by_id`). This differs from many other languages that use camelCase. The PSR-12 coding standard recommends camelCase for methods (functions inside classes), but snake_case remains widespread for standalone functions.
 
@@ -84,7 +84,7 @@ The function runs each time you call it. You can call it from anywhere in your s
 
 ## Parameters and arguments
 
-Functions become much more useful when they accept **parameters** -- values you pass in when you call the function. The names you use in the function definition are **parameters**; the values you pass when calling are **arguments**.
+Functions become much more useful when they accept **parameters** - values you pass in when you call the function. The names you use in the function definition are **parameters**; the values you pass when calling are **arguments**.
 
 ### Single parameter
 
@@ -157,7 +157,7 @@ There is an important distinction:
 | **Return** a value | The caller needs to use the result (store it, pass it elsewhere, or decide how to display it) | `$total = calculateTotal($items);` |
 | **Echo** (or print) | The function's job is to output directly to the screen | `displayHeader();` |
 
-> **Tip:** Prefer **returning** values over echoing them. Returning makes functions more flexible -- the caller can echo, log, or process the result. Functions that echo are harder to test and reuse.
+> **Tip:** Prefer **returning** values over echoing them. Returning makes functions more flexible - the caller can echo, log, or process the result. Functions that echo are harder to test and reuse.
 
 ```php
 <?php
@@ -309,7 +309,7 @@ function sayHello(string $name): void {
 
 ## Variable scope
 
-Variables inside a function are **local** -- they exist only inside that function. Variables outside are in the **global** scope.
+Variables inside a function are **local** - they exist only inside that function. Variables outside are in the **global** scope.
 
 ### Local scope
 
@@ -401,7 +401,7 @@ $greet = function (string $name) {
 echo $greet('Alice');  // Output: Hello, Alice!
 ```
 
-Notice the semicolon after the closing brace -- you are assigning the function to a variable, so the statement must end with `;`.
+Notice the semicolon after the closing brace - you are assigning the function to a variable, so the statement must end with `;`.
 
 ### The use keyword
 
@@ -449,9 +449,9 @@ echo $add(3, 4);  // Output: 7
 
 ### Arrow function rules
 
-- Arrow functions have **exactly one expression** -- no curly braces or multiple statements
+- Arrow functions have **exactly one expression** - no curly braces or multiple statements
 - The expression is automatically returned
-- They **automatically capture** variables from the outer scope -- no `use` needed
+- They **automatically capture** variables from the outer scope - no `use` needed
 
 ```php
 <?php
@@ -465,7 +465,7 @@ echo $triple(10);  // Output: 30
 
 ## Built-in functions
 
-PHP ships with hundreds of built-in functions. You do not need to define them -- they are always available:
+PHP ships with hundreds of built-in functions. You do not need to define them - they are always available:
 
 | Category | Examples | Purpose |
 |----------|----------|---------|
@@ -476,7 +476,7 @@ PHP ships with hundreds of built-in functions. You do not need to define them --
 | Output   | `echo`, `print`, `var_dump`, `print_r` | Display values |
 | Files    | `file_exists`, `file_get_contents`, `file_put_contents` | File operations |
 
-You will use these constantly. The official documentation at [php.net/manual/en/funcref.php](https://www.php.net/manual/en/funcref.php) lists every function with examples. When you need to do something, search there first -- chances are PHP already has a function for it.
+You will use these constantly. The official documentation at [php.net/manual/en/funcref.php](https://www.php.net/manual/en/funcref.php) lists every function with examples. When you need to do something, search there first - chances are PHP already has a function for it.
 
 ```php
 <?php
@@ -531,13 +531,13 @@ Each function has a single responsibility: convert one way, convert the other wa
 - Functions let you reuse code and follow the DRY principle
 - Define with `function name(params) { }`; call with `name(args)`
 - Parameters receive data; use `return` to send data back
-- Prefer returning values over echoing -- it makes functions more flexible
+- Prefer returning values over echoing - it makes functions more flexible
 - Use default parameter values for optional arguments
 - Add type declarations for parameters and return types to catch errors and document behavior
 - Use `?type` for nullable, `type1|type2` for unions, and `void` when nothing is returned
 - Variables inside functions are local; avoid `global`
 - Variadic parameters (`...$args`) accept any number of arguments
 - Anonymous functions and arrow functions provide compact syntax for callbacks
-- PHP has many built-in functions -- check [php.net](https://www.php.net/manual/en/) before writing your own
+- PHP has many built-in functions - check [php.net](https://www.php.net/manual/en/) before writing your own
 
-Next up: [Strings & Arrays](./06-strings-and-arrays.md) -- string manipulation functions, indexed and associative arrays, multidimensional arrays, and essential array functions.
+Next up: [Strings & Arrays](./06-strings-and-arrays.md) - string manipulation functions, indexed and associative arrays, multidimensional arrays, and essential array functions.

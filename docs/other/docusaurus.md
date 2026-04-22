@@ -25,14 +25,14 @@ Docusaurus comes with the Infima Styling Library by default. Therefore, we can j
 
 Here is an example alert:
 
-<div class="alert alert--primary" role="alert">
+<div class="alert alert-primary" role="alert">
     <button aria-label="Close" class="clean-btn close" type="button"><span aria-hidden="true">×</span></button>
     This is a <strong>primary</strong> alert. You should probably pay attention to it.
 </div>
 
 And as a `success` variant without a closable `x`:
 
-<div class="alert alert--success" role="alert">
+<div class="alert alert-success" role="alert">
     This is a <strong>primary</strong> alert. You should probably pay attention to it.
 </div>
 

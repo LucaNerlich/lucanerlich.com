@@ -20,7 +20,7 @@ Enterprise websites often span multiple countries, languages, and brands. AEM pr
 
 ## Multi-Site Manager (MSM)
 
-MSM lets you create **Live Copies** -- sites that inherit content from a **Blueprint** (source) site and can be
+MSM lets you create **Live Copies** - sites that inherit content from a **Blueprint** (source) site and can be
 customized locally.
 
 ```mermaid
@@ -48,7 +48,7 @@ flowchart TD
 
 | Concept            | Description                                                |
 |--------------------|------------------------------------------------------------|
-| **Blueprint**      | The source site -- the "master" content                    |
+| **Blueprint**      | The source site - the "master" content                    |
 | **Live Copy**      | A site that inherits from the blueprint                    |
 | **Rollout**        | Push changes from blueprint to live copies                 |
 | **Inheritance**    | Live copy pages/components inherit from blueprint          |
@@ -117,7 +117,7 @@ When both the blueprint and live copy have been modified:
 |-------------------|-------------------|-----------------------------------------------------------------------|
 | Yes               | No                | Live copy updated                                                     |
 | No                | Yes               | Live copy keeps local change                                          |
-| Yes               | Yes               | **Conflict** -- live copy keeps local change (inheritance was broken) |
+| Yes               | Yes               | **Conflict** - live copy keeps local change (inheritance was broken) |
 
 ## Language copies and translation
 
@@ -151,8 +151,8 @@ Each language root (`en`, `de`, `fr`, `ja`) contains a parallel site structure.
 3. Click **Create** > **Language Copy**
 4. Select target languages
 5. Choose:
-    - **Create structure only** -- creates empty pages with the same structure
-    - **Create a new translation project** -- creates pages and a translation project
+    - **Create structure only** - creates empty pages with the same structure
+    - **Create a new translation project** - creates pages and a translation project
 
 ### Translation projects
 
@@ -188,10 +188,10 @@ Configuration**:
 
 ### Translation best practices
 
-1. **Translate structure first** -- create language copies with structure only, then fill in translations
-2. **Use the translation project workflow** -- it tracks what is translated and what is not
-3. **Keep master content stable** -- finalize English content before translating
-4. **Tag translatable content** -- mark which components and properties need translation
+1. **Translate structure first** - create language copies with structure only, then fill in translations
+2. **Use the translation project workflow** - it tracks what is translated and what is not
+3. **Keep master content stable** - finalize English content before translating
+4. **Tag translatable content** - mark which components and properties need translation
 
 ## i18n dictionaries
 
@@ -267,16 +267,16 @@ public class MyModel {
 
 You learned:
 
-- **MSM** -- Blueprints and Live Copies for content reuse across regions/brands
-- **Rollout** -- pushing blueprint changes to live copies
-- **Inheritance** -- how live copies inherit and override content
-- **Language copies** -- parallel site structures for each language
-- **Translation projects** -- managed workflows for content translation
+- **MSM** - Blueprints and Live Copies for content reuse across regions/brands
+- **Rollout** - pushing blueprint changes to live copies
+- **Inheritance** - how live copies inherit and override content
+- **Language copies** - parallel site structures for each language
+- **Translation projects** - managed workflows for content translation
 - **Machine translation** integration
-- **i18n dictionaries** -- translating UI strings in HTL and Java
+- **i18n dictionaries** - translating UI strings in HTL and Java
 
 The content side is complete. The final two chapters cover production concerns: Dispatcher caching and Cloud Manager
 deployment.
 
-Next up: [Dispatcher & Caching](./13-dispatcher-and-caching.md) -- Dispatcher architecture, cache rules, filters,
+Next up: [Dispatcher & Caching](./13-dispatcher-and-caching.md) - Dispatcher architecture, cache rules, filters,
 rewrites, vanity URLs, invalidation, and local SDK testing.

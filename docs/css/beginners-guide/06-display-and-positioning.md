@@ -15,14 +15,14 @@ sidebar_position: 6
 
 # Display & Positioning
 
-Every HTML element follows a default flow -- block elements stack vertically, inline elements sit side by side. The
+Every HTML element follows a default flow - block elements stack vertically, inline elements sit side by side. The
 `display` and `position` properties let you override that default behaviour.
 
 ## Normal flow
 
 Before you change anything, the browser places elements in **normal flow**:
 
-- **Block elements** (`<div>`, `<p>`, `<h1>`--`<h6>`, `<section>`, `<ul>`) start on a new line and stretch to fill the
+- **Block elements** (`<div>`, `<p>`, `<h1>`-`<h6>`, `<section>`, `<ul>`) start on a new line and stretch to fill the
   full width of their parent
 - **Inline elements** (`<span>`, `<a>`, `<strong>`, `<em>`, `<img>`) sit on the same line as surrounding text and only
   take up as much width as their content needs
@@ -162,7 +162,7 @@ The element stays in normal flow (it still occupies its original space) but you 
 ```
 
 This moves the element 10px down and 20px to the right **from where it would normally be**. Other elements are not
-affected -- they do not fill the gap.
+affected - they do not fill the gap.
 
 `relative` is most often used as a **positioning context** for absolute children (see below).
 
@@ -293,7 +293,7 @@ Important rules:
 - `z-index` only works on **positioned** elements (anything except `static`)
 - Higher values appear on top of lower values
 - Negative values are allowed
-- `z-index` creates **stacking contexts** -- a `z-index` on a parent element groups all its children into a single
+- `z-index` creates **stacking contexts** - a `z-index` on a parent element groups all its children into a single
   layer. A child cannot escape its parent's stacking context no matter how high its `z-index` is.
 
 > **Tip:** Avoid using arbitrary high values like `z-index: 9999`. Instead, define a simple scale in your project:
@@ -394,5 +394,5 @@ z-index management.
 
 ## Next step
 
-Display and position give you control over individual elements. The next chapter introduces **Flexbox** -- a dedicated
+Display and position give you control over individual elements. The next chapter introduces **Flexbox** - a dedicated
 layout system for arranging groups of elements in rows or columns.

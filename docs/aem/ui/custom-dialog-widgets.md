@@ -7,7 +7,7 @@ tags: [aem, ui, dialogs]
 # Custom Dialog Widgets
 
 AEM's Granite UI provides a rich set of dialog fields, but multi-site and multi-tenant projects often
-need **context-aware** widgets that adapt their behaviour based on the page being edited -- for
+need **context-aware** widgets that adapt their behaviour based on the page being edited - for
 example, a PathField that automatically roots itself to the current site's DAM folder, or an asset
 finder that only shows assets belonging to the current brand.
 
@@ -611,12 +611,12 @@ return rootPath;
 
 ## See also
 
-- [Component Dialogs](../component-dialogs.mdx) -- all dialog field types including PathField
-- [Servlets](../backend/servlets.mdx) -- DataSource servlet patterns
-- [Overlays](./overlays.mdx) -- customising product UI
-- [Render Conditions](./render-conditions.mdx) -- conditionally showing fields
-- [Coral UI](./coral-ui.mdx) -- client-side dialog scripting
+- [Component Dialogs](../component-dialogs.mdx) - all dialog field types including PathField
+- [Servlets](../backend/servlets.mdx) - DataSource servlet patterns
+- [Overlays](./overlays.mdx) - customising product UI
+- [Render Conditions](./render-conditions.mdx) - conditionally showing fields
+- [Coral UI](./coral-ui.mdx) - client-side dialog scripting
 - [Touch UI](./touch-ui.mdx)
-- [Client Libraries](../client-libraries.mdx) -- loading authoring clientlibs
-- [Tags and Taxonomies](../content/tags-taxonomies.md) -- tag-based DataSources
-- [Multi-Tenancy UI Frontend](./multi-tenancy-support-ui-frontend.mdx) -- multi-tenant frontend patterns
+- [Client Libraries](../client-libraries.mdx) - loading authoring clientlibs
+- [Tags and Taxonomies](../content/tags-taxonomies.md) - tag-based DataSources
+- [Multi-Tenancy UI Frontend](./multi-tenancy-support-ui-frontend.mdx) - multi-tenant frontend patterns

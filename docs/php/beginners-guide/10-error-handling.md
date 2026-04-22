@@ -29,7 +29,7 @@ PHP errors fall into three broad categories:
 | **Logic error**  | Code runs but gives wrong results | Off-by-one in a loop, wrong condition in an if |
 
 Syntax errors prevent PHP from running your script at all. Runtime errors crash during execution. Logic errors are the
-hardest to find because PHP does not tell you about them -- your code runs fine but produces the wrong output.
+hardest to find because PHP does not tell you about them - your code runs fine but produces the wrong output.
 
 ## Error levels
 
@@ -135,7 +135,7 @@ How it works:
 1. PHP executes the code inside `try`
 2. If an exception is thrown, PHP jumps to the `catch` block
 3. If no exception is thrown, the `catch` block is skipped
-4. The `finally` block always runs -- whether an exception occurred or not
+4. The `finally` block always runs - whether an exception occurred or not
 
 ```mermaid
 flowchart TD
@@ -344,7 +344,7 @@ Stack trace:
 
 Read it from bottom to top:
 
-1. `{main}` -- the script started in `index.php`
+1. `{main}` - the script started in `index.php`
 2. `index.php` line 8 called `calculate()`
 3. `calculator.php` line 12 called `divide()`
 4. `math.php` line 5 threw the exception
@@ -450,11 +450,11 @@ If you see a completely blank page, it usually means:
 - **Development:** Show all errors (`E_ALL`, `display_errors = On`)
 - **Production:** Log all errors, display none (`display_errors = Off`, `log_errors = On`)
 - **Use exceptions** instead of `die()` or `exit()` for error handling
-- **Catch specific** exception types -- avoid catching `Exception` everywhere
-- **Never suppress errors** with the `@` operator (`@file_get_contents()`) -- it hides problems
-- **Add context** to exceptions -- include relevant data like IDs, filenames, or input values
-- **Clean up resources** in `finally` blocks -- close files, database connections, etc.
-- **Log before re-throwing** if needed -- `catch`, log, then `throw` to preserve the stack trace
+- **Catch specific** exception types - avoid catching `Exception` everywhere
+- **Never suppress errors** with the `@` operator (`@file_get_contents()`) - it hides problems
+- **Add context** to exceptions - include relevant data like IDs, filenames, or input values
+- **Clean up resources** in `finally` blocks - close files, database connections, etc.
+- **Log before re-throwing** if needed - `catch`, log, then `throw` to preserve the stack trace
 
 ## Summary
 
@@ -465,9 +465,9 @@ If you see a completely blank page, it usually means:
 - Create custom exception classes for domain-specific errors
 - `set_error_handler()` converts legacy errors to exceptions
 - `var_dump()` and `print_r()` are your basic debugging tools
-- Stack traces read bottom-to-top -- the deepest call is at the top
+- Stack traces read bottom-to-top - the deepest call is at the top
 - Xdebug adds step-through debugging, making complex bugs much easier to find
 - Never display error details to end users in production
 
-Next up: [Working with Files](./11-working-with-files.md) -- reading, writing, and uploading files, CSV handling, and
+Next up: [Working with Files](./11-working-with-files.md) - reading, writing, and uploading files, CSV handling, and
 directory operations.

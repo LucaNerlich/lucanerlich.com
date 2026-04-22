@@ -20,7 +20,7 @@ create variables, what kinds of data PHP can handle, and how PHP's type system w
 
 ## What is a variable?
 
-A variable is a named container for a value. Think of it as a labeled box -- you put something in the box and refer to
+A variable is a named container for a value. Think of it as a labeled box - you put something in the box and refer to
 it by name later.
 
 In PHP, every variable starts with a **dollar sign** (`$`):
@@ -41,14 +41,14 @@ echo $age;   // Output: 30
 - Can contain letters, numbers, and underscores after the first character: `$item2`, `$total_price`
 - **Case-sensitive**: `$name` and `$Name` are two different variables
 - Cannot start with a number after the `$`: `$2things` is invalid
-- Cannot contain spaces: `$my name` is invalid -- use `$myName` or `$my_name`
+- Cannot contain spaces: `$my name` is invalid - use `$myName` or `$my_name`
 
 > **Tip:** PHP developers commonly use either **camelCase** (`$firstName`) or **snake_case** (`$first_name`). Pick one
 > style and stick with it. The PSR-12 coding standard recommends camelCase for variables.
 
 ### Assigning values
 
-The `=` sign is the **assignment operator**. It does not mean "equals" in the mathematical sense -- it means "store this
+The `=` sign is the **assignment operator**. It does not mean "equals" in the mathematical sense - it means "store this
 value in this variable":
 
 ```php
@@ -72,7 +72,7 @@ echo $b;    // Output: 10
 
 ## Data types
 
-PHP has eight fundamental data types. Don't worry about memorizing them all right now -- we will use them throughout the
+PHP has eight fundamental data types. Don't worry about memorizing them all right now - we will use them throughout the
 guide.
 
 ### Scalar types (single values)
@@ -102,7 +102,7 @@ Let's explore each scalar type in detail.
 
 ## Strings
 
-A string is a sequence of characters -- any text. PHP supports two main ways to define strings:
+A string is a sequence of characters - any text. PHP supports two main ways to define strings:
 
 ### Single quotes
 
@@ -166,7 +166,7 @@ echo strlen($text);  // Output: 5
 
 ## Integers
 
-Integers are whole numbers -- no decimal point:
+Integers are whole numbers - no decimal point:
 
 ```php
 <?php
@@ -222,7 +222,7 @@ var_dump($result == 0.3);  // May be false!
 var_dump(abs($result - 0.3) < 0.00001);  // true
 ```
 
-This is not a PHP bug -- it is how floating-point arithmetic works in every programming language.
+This is not a PHP bug - it is how floating-point arithmetic works in every programming language.
 
 ## Booleans
 
@@ -357,7 +357,7 @@ echo PHP_FLOAT_MAX;  // Largest representable float
 
 ## Type juggling
 
-PHP is a **dynamically typed** language. You do not declare the type of a variable -- PHP figures it out from the value
+PHP is a **dynamically typed** language. You do not declare the type of a variable - PHP figures it out from the value
 you assign:
 
 ```php
@@ -415,7 +415,7 @@ var_dump(is_array($value));   // bool(false)
 echo gettype($value);         // "integer"
 ```
 
-## Loose vs strict comparison -- a preview
+## Loose vs strict comparison - a preview
 
 This topic comes up constantly in PHP. The `==` operator performs type juggling before comparing:
 
@@ -428,7 +428,7 @@ var_dump(0 == false);     // bool(true)
 var_dump('' == 0);        // bool(true) in PHP 7, bool(false) in PHP 8
 ```
 
-The `===` operator compares **both value and type** -- no juggling:
+The `===` operator compares **both value and type** - no juggling:
 
 ```php
 <?php
@@ -486,11 +486,11 @@ php profile.php
 - Variables start with `$` and are case-sensitive
 - PHP has four scalar types: `string`, `int`, `float`, `bool`
 - `null` represents "no value"
-- Use `var_dump()` to inspect a variable's type and value -- it is your best debugging friend
+- Use `var_dump()` to inspect a variable's type and value - it is your best debugging friend
 - Constants are defined with `define()` or `const` and cannot be changed
-- PHP is dynamically typed -- variables can hold any type and PHP converts between types automatically (type juggling)
+- PHP is dynamically typed - variables can hold any type and PHP converts between types automatically (type juggling)
 - Always prefer `===` (strict) over `==` (loose) for comparisons
 - Use single quotes for plain strings, double quotes when you need variable interpolation
 
-Next up: [Operators & Expressions](./03-operators-and-expressions.md) -- arithmetic, comparisons, logical operators,
+Next up: [Operators & Expressions](./03-operators-and-expressions.md) - arithmetic, comparisons, logical operators,
 the null coalescing operator, and how to combine them into expressions.

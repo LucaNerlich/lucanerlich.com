@@ -34,7 +34,7 @@ The binary is at `target/release/todo-api`.
 | `debug`   | `target/debug/`       | No        | Yes           | Fast        |
 | `release` | `target/release/`     | Yes       | No            | Slower      |
 
-The release binary is typically 5--10x smaller and significantly faster than the debug build.
+The release binary is typically 5-10x smaller and significantly faster than the debug build.
 
 > **Tip:** You can further reduce binary size by adding to `Cargo.toml`:
 >
@@ -49,7 +49,7 @@ The release binary is typically 5--10x smaller and significantly faster than the
 
 This section assumes a fresh Ubuntu/Debian VPS with SSH access.
 
-### Step 1 -- Build on the server (simplest approach)
+### Step 1 - Build on the server (simplest approach)
 
 SSH into your server and install Rust:
 
@@ -73,7 +73,7 @@ cd todo-api
 cargo build --release
 ```
 
-### Step 2 -- Cross-compilation (build locally, deploy binary)
+### Step 2 - Cross-compilation (build locally, deploy binary)
 
 Alternatively, build on your local machine for the server's architecture:
 
@@ -95,14 +95,14 @@ scp target/x86_64-unknown-linux-gnu/release/todo-api user@your-server:~/
 >
 > ```bash
 > cargo install cross
-> cross build --release --target x86_64-unknown-linux-gnu
+> cross build -release -target x86_64-unknown-linux-gnu
 > ```
 
 ## Setting up a systemd service
 
 Create a systemd service so your API starts automatically and restarts on failure.
 
-### Step 1 -- Create a dedicated user
+### Step 1 - Create a dedicated user
 
 ```bash
 sudo useradd -r -s /bin/false todoapi
@@ -111,7 +111,7 @@ sudo cp ~/todo-api /opt/todoapi/
 sudo chown -R todoapi:todoapi /opt/todoapi
 ```
 
-### Step 2 -- Create the service file
+### Step 2 - Create the service file
 
 `/etc/systemd/system/todoapi.service`:
 
@@ -134,7 +134,7 @@ Environment=RUST_LOG=info
 WantedBy=multi-user.target
 ```
 
-### Step 3 -- Enable and start
+### Step 3 - Enable and start
 
 ```bash
 sudo systemctl daemon-reload
@@ -275,7 +275,7 @@ EXPOSE 8080
 CMD ["todo-api"]
 ```
 
-The multi-stage build keeps the final image small -- only the binary and minimal runtime dependencies are included, not
+The multi-stage build keeps the final image small - only the binary and minimal runtime dependencies are included, not
 the entire Rust toolchain.
 
 ### Build and run
@@ -377,18 +377,18 @@ Before going live, verify:
 - **systemd** manages the process lifecycle (start, stop, restart, auto-start)
 - **nginx** acts as a reverse proxy, handling TLS and forwarding to your app
 - **Let's Encrypt** provides free HTTPS certificates via Certbot
-- Use **environment variables** for configuration -- never hardcode secrets
+- Use **environment variables** for configuration - never hardcode secrets
 - **Docker multi-stage builds** produce small, portable images
 - **GitHub Actions** automates testing, linting, and deployment
 
-Congratulations -- you have gone from `fn main()` to a deployed, production-ready REST API.
+Congratulations - you have gone from `fn main()` to a deployed, production-ready REST API.
 
-Next up: [Practice Projects](./19-practice-projects.md) -- eight project ideas from beginner to advanced to solidify
+Next up: [Practice Projects](./19-practice-projects.md) - eight project ideas from beginner to advanced to solidify
 everything you have learned.
 
 ### Recommended external resources
 
-- [The Rust Programming Language](https://doc.rust-lang.org/book/) -- the official book for deeper coverage
-- [Rust by Example](https://doc.rust-lang.org/rust-by-example/) -- learn by reading annotated examples
-- [Async Book](https://rust-lang.github.io/async-book/) -- full async/await guide
-- [Rustlings](https://github.com/rust-lang/rustlings) -- small exercises to practice Rust
+- [The Rust Programming Language](https://doc.rust-lang.org/book/) - the official book for deeper coverage
+- [Rust by Example](https://doc.rust-lang.org/rust-by-example/) - learn by reading annotated examples
+- [Async Book](https://rust-lang.github.io/async-book/) - full async/await guide
+- [Rustlings](https://github.com/rust-lang/rustlings) - small exercises to practice Rust

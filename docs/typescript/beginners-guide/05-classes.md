@@ -18,7 +18,7 @@ sidebar_position: 5
 
 TypeScript builds on JavaScript's ES2015 class syntax and adds a full suite of access modifiers, readonly properties,
 abstract classes, and compile-time checks that make object-oriented code significantly safer. If you are coming from
-Java or C#, much of this will feel familiar -- with some important differences.
+Java or C#, much of this will feel familiar - with some important differences.
 
 ## Basic class syntax
 
@@ -59,7 +59,7 @@ TypeScript adds three access modifiers that control where a class member can be 
 
 | Modifier    | Accessible from                                      |
 |-------------|------------------------------------------------------|
-| `public`    | Anywhere (the default -- you rarely write it explicitly) |
+| `public`    | Anywhere (the default - you rarely write it explicitly) |
 | `private`   | Only within the class body                           |
 | `protected` | Within the class body and all subclasses             |
 
@@ -98,7 +98,7 @@ console.log(emp.getInfo());         // OK
 ```
 
 > **Important:** TypeScript's access modifiers are compile-time only. The compiled JavaScript has no concept of
-> `private` or `protected` -- the properties are still accessible at runtime. For true private fields, use the
+> `private` or `protected` - the properties are still accessible at runtime. For true private fields, use the
 > JavaScript `#` syntax (ECMAScript private fields), which does enforce privacy at runtime.
 
 ### ECMAScript private fields vs TypeScript private
@@ -416,7 +416,7 @@ if (form.validate()) {
 
 ## Abstract classes
 
-Abstract classes cannot be instantiated directly -- they exist to be extended. They can contain abstract method
+Abstract classes cannot be instantiated directly - they exist to be extended. They can contain abstract method
 declarations (which must be implemented by subclasses) and concrete implementations:
 
 ```typescript
@@ -475,10 +475,10 @@ shapes.forEach(s => console.log(s.describe()));
 
 | Aspect                | Abstract class                              | Interface                              |
 |-----------------------|---------------------------------------------|----------------------------------------|
-| Concrete methods      | Yes -- can implement shared logic           | No -- only method signatures           |
-| State (properties)    | Yes -- can hold state with access modifiers | No -- only property declarations       |
-| Multiple inheritance  | No -- a class can extend only one           | Yes -- a class can implement many      |
-| Constructor logic     | Yes -- can have constructor code            | No -- no constructors                  |
+| Concrete methods      | Yes - can implement shared logic           | No - only method signatures           |
+| State (properties)    | Yes - can hold state with access modifiers | No - only property declarations       |
+| Multiple inheritance  | No - a class can extend only one           | Yes - a class can implement many      |
+| Constructor logic     | Yes - can have constructor code            | No - no constructors                  |
 | Best for              | Shared implementation in a hierarchy        | Contracts / capabilities / duck typing |
 
 ## Putting it together: a repository pattern
@@ -545,11 +545,11 @@ console.log(found?.name); // Alice
 - **Constructor shorthand** (`constructor(public name: string)`) declares and assigns in one step
 - `readonly` properties can only be set in the constructor
 - **Getters and setters** allow computed or validated property access
-- **Static members** belong to the class, not instances -- useful for factories and singletons
+- **Static members** belong to the class, not instances - useful for factories and singletons
 - `extends` creates a subclass; call `super()` in the constructor and `super.method()` to access parent methods
 - Use the `override` keyword when overriding parent methods for compile-time safety
 - `implements` enforces that a class satisfies one or more interfaces
 - **Abstract classes** cannot be instantiated; they provide shared logic while requiring subclasses to implement specific methods
 
-Next up: [Generics](./06-generics.md) -- generic functions, interfaces, classes, constraints with `extends`, default
+Next up: [Generics](./06-generics.md) - generic functions, interfaces, classes, constraints with `extends`, default
 type parameters, and `keyof` / `typeof`.

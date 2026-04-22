@@ -10,7 +10,7 @@ tags: [aem, cloud-service, operations]
 Adobe Experience Manager. It replaces the traditional on-premise and Adobe Managed Services
 (AMS) hosting models with a platform that auto-scales, auto-updates, and enforces strict
 separation between code and content. Understanding its constraints and capabilities is
-essential -- many patterns that work on AEM 6.5 do not apply on AEMaaCS.
+essential - many patterns that work on AEM 6.5 do not apply on AEMaaCS.
 
 ```mermaid
 graph TD
@@ -50,8 +50,8 @@ graph TD
 | **Deployment**          | Package Manager, WebDAV, manual install | Cloud Manager pipelines only                                 |
 | **Infrastructure**      | Self-managed servers                    | Fully managed, auto-scaled by Adobe                          |
 | **Updates**             | Manual upgrades (months/years)          | Continuous updates (monthly, automatic)                      |
-| **`/apps` and `/libs`** | Mutable at runtime                      | **Immutable** -- deployed via pipeline only                  |
-| **`/etc/designs`**      | Design mode for component config        | **Deprecated** -- use editable templates and policies        |
+| **`/apps` and `/libs`** | Mutable at runtime                      | **Immutable** - deployed via pipeline only                  |
+| **`/etc/designs`**      | Design mode for component config        | **Deprecated** - use editable templates and policies        |
 | **Custom run modes**    | Any custom run mode name                | Only `author`, `publish`, `preview` + `dev`, `stage`, `prod` |
 | **CRXDE Lite**          | Available in all environments           | Available on dev/RDE only, **not in stage/prod**             |
 | **Repository access**   | Direct JCR access, WebDAV               | Developer Console for logs; no direct JCR in prod            |
@@ -155,7 +155,7 @@ Initialisation (repoinit)** scripts to bootstrap required structures:
 
 AEMaaCS replaces the traditional replication agent model with **Sling Content
 Distribution**. Content published on the author tier is distributed to publish instances
-automatically -- there are no manually configured replication agents.
+automatically - there are no manually configured replication agents.
 
 ```mermaid
 sequenceDiagram
@@ -176,7 +176,7 @@ sequenceDiagram
 Key differences:
 - **No replication agents** to configure or troubleshoot
 - Content is distributed to **all publish instances** simultaneously
-- Distribution is **asynchronous** -- there is a short delay (seconds to minutes)
+- Distribution is **asynchronous** - there is a short delay (seconds to minutes)
 - The distribution queue is visible in the **Distribution Agent** UI on author
 - **Tree activation** distributes an entire subtree at once
 - Failed distributions are retried automatically
@@ -331,9 +331,9 @@ graph LR
     Blob -->|"ingestion"| Target
 ```
 
-1. **Extraction** -- CTT reads content from the source AEM instance
-2. **Upload** -- Content is uploaded to a cloud staging area (blob store)
-3. **Ingestion** -- Content is imported into the target AEMaaCS environment
+1. **Extraction** - CTT reads content from the source AEM instance
+2. **Upload** - Content is uploaded to a cloud staging area (blob store)
+3. **Ingestion** - Content is imported into the target AEMaaCS environment
 
 CTT supports incremental transfers (delta), so you can do a bulk initial migration
 followed by smaller top-ups closer to go-live.
@@ -342,12 +342,12 @@ followed by smaller top-ups closer to go-live.
 
 **CAM** is a companion tool that helps plan and execute the migration:
 
-- **Best Practice Analyzer (BPA)** -- scans your AEM 6.x instance and flags
+- **Best Practice Analyzer (BPA)** - scans your AEM 6.x instance and flags
 compatibility issues (deprecated APIs, unsupported configs)
-- **Repository Modernizer** -- restructures content packages to separate `/apps` (code)
+- **Repository Modernizer** - restructures content packages to separate `/apps` (code)
 from `/content` (mutable content)
-- **Index Converter** -- converts AEM 6.x index definitions to the AEMaaCS format
-- **Dispatcher Converter** -- converts AMS/on-prem Dispatcher configs to the AEMaaCS
+- **Index Converter** - converts AEM 6.x index definitions to the AEMaaCS format
+- **Dispatcher Converter** - converts AMS/on-prem Dispatcher configs to the AEMaaCS
 structure
 
 ### Common migration challenges
@@ -421,8 +421,8 @@ Sensitive values (API keys, passwords) must **not** be stored in code. Use
 }
 ```
 
-- `$[secret:NAME]` -- resolves from Cloud Manager secret variables (encrypted)
-- `$[env:NAME]` -- resolves from Cloud Manager environment variables
+- `$[secret:NAME]` - resolves from Cloud Manager secret variables (encrypted)
+- `$[env:NAME]` - resolves from Cloud Manager environment variables
 
 Set them in Cloud Manager: **Environments > Environment Variables**.
 
@@ -432,10 +432,10 @@ Set them in Cloud Manager: **Environments > Environment Variables**.
 
 AEMaaCS automatically scales both the author and publish tiers based on load:
 
-- **Publish tier** -- scales horizontally (more instances) based on request volume
-- **Author tier** -- scales vertically and horizontally for concurrent authoring
-- **CDN** -- Fastly CDN with global PoPs handles edge caching automatically
-- **Maintenance windows** -- Adobe runs compaction, garbage collection, and index
+- **Publish tier** - scales horizontally (more instances) based on request volume
+- **Author tier** - scales vertically and horizontally for concurrent authoring
+- **CDN** - Fastly CDN with global PoPs handles edge caching automatically
+- **Maintenance windows** - Adobe runs compaction, garbage collection, and index
 optimization during scheduled maintenance windows
 
 ### What you control
@@ -547,18 +547,18 @@ that take time.
 
 ## See also
 
-- [Architecture](../architecture.mdx) -- AEM's layered architecture
-- [Local development setup](./aem-dev-setup.md) -- Cloud SDK setup guide
-- [Deployment](./deployment.mdx) -- Cloud Manager pipelines, package structure
-- [Dispatcher configuration](./dispatcher-configuration.mdx) -- CDN config, caching, filters
-- [Performance](./performance.mdx) -- Oak indexes, caching strategies
-- [Security basics](./security.mdx) -- CSRF, XSS, production-ready mode
-- [ACLs and Permissions](./acl-permissions.md) -- repoinit, service users, Netcentric ACL Tool
-- [Testing](./testing.mdx) -- Cloud Manager quality gates
-- [Edge Delivery Services](./helix.mdx) -- alternative delivery model
-- [Adobe I/O App Builder](./aio-app-builder.md) -- serverless extensions
-- [E-Mail Service](./email.md) -- SMTP and Advanced Networking
-- [OSGi configuration](../backend/osgi-configuration.mdx) -- run-mode based config structure
-- [Templates and Policies](../components/templates-policies.md) -- replacing `/etc/designs`
-- [Sling Jobs and Schedulers](../backend/sling-jobs.md) -- background processing on AEMaaCS
-- [Context-Aware Configuration](../backend/context-aware-configuration.md) -- site-specific config
+- [Architecture](../architecture.mdx) - AEM's layered architecture
+- [Local development setup](./aem-dev-setup.md) - Cloud SDK setup guide
+- [Deployment](./deployment.mdx) - Cloud Manager pipelines, package structure
+- [Dispatcher configuration](./dispatcher-configuration.mdx) - CDN config, caching, filters
+- [Performance](./performance.mdx) - Oak indexes, caching strategies
+- [Security basics](./security.mdx) - CSRF, XSS, production-ready mode
+- [ACLs and Permissions](./acl-permissions.md) - repoinit, service users, Netcentric ACL Tool
+- [Testing](./testing.mdx) - Cloud Manager quality gates
+- [Edge Delivery Services](./helix.mdx) - alternative delivery model
+- [Adobe I/O App Builder](./aio-app-builder.md) - serverless extensions
+- [E-Mail Service](./email.md) - SMTP and Advanced Networking
+- [OSGi configuration](../backend/osgi-configuration.mdx) - run-mode based config structure
+- [Templates and Policies](../components/templates-policies.md) - replacing `/etc/designs`
+- [Sling Jobs and Schedulers](../backend/sling-jobs.md) - background processing on AEMaaCS
+- [Context-Aware Configuration](../backend/context-aware-configuration.md) - site-specific config

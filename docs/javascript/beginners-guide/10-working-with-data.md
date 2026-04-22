@@ -15,7 +15,7 @@ sidebar_position: 10
 
 # Working with Data
 
-Real web applications need data -- from APIs, from the user, from the browser. This chapter covers fetching data from
+Real web applications need data - from APIs, from the user, from the browser. This chapter covers fetching data from
 external sources, handling JSON, and storing data locally.
 
 ## The Fetch API
@@ -35,10 +35,10 @@ Result:
 Leanne Graham
 ```
 
-This uses **promises** -- `fetch` returns a promise that resolves to a `Response` object. `.json()` parses the response
+This uses **promises** - `fetch` returns a promise that resolves to a `Response` object. `.json()` parses the response
 body as JSON (also returns a promise).
 
-## Promises -- a quick overview
+## Promises - a quick overview
 
 A **promise** represents a value that will be available in the future. It has three states:
 
@@ -113,7 +113,7 @@ Sincere@april.biz
 ## Error handling with fetch
 
 `fetch` only rejects on **network errors** (no internet, DNS failure). HTTP errors like 404 or 500 are **not**
-rejections -- you must check `response.ok`:
+rejections - you must check `response.ok`:
 
 ```js
 async function getUser(id) {
@@ -378,7 +378,7 @@ async function loadUsers() {
 document.addEventListener("DOMContentLoaded", loadUsers);
 ```
 
-This pattern -- loading indicator, fetch data, build DOM, handle errors -- is the foundation of every data-driven web
+This pattern - loading indicator, fetch data, build DOM, handle errors - is the foundation of every data-driven web
 page.
 
 ## `localStorage` and `sessionStorage`
@@ -649,8 +649,8 @@ This example demonstrates:
 - Wrap `fetch` calls in `try`/`catch` for error handling.
 - Use `Promise.all` for parallel requests.
 - `localStorage` persists data across sessions; `sessionStorage` only until the tab closes.
-- Both storage APIs only store strings -- use `JSON.stringify`/`JSON.parse` for objects.
+- Both storage APIs only store strings - use `JSON.stringify`/`JSON.parse` for objects.
 - Combine fetch, DOM manipulation, and storage for data-driven pages.
 
-Next up: [Project: Build a Complete Website](./11-project-build-a-website.md) -- putting everything together into a
+Next up: [Project: Build a Complete Website](./11-project-build-a-website.md) - putting everything together into a
 real, multi-page site.

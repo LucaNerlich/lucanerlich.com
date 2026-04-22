@@ -38,10 +38,10 @@ end-to-end.
 | Matching / assertions | **AssertJ** or plain JUnit | AssertJ chaining (`assertThat(model).isNotNull().extracting(...)...`) reads better for deep objects |
 | Mocking collaborators | **Mockito** | Use for external services; prefer `AemContext.registerService` for Sling/OSGi services |
 | HTTP mocking | **WireMock** | Stubs external APIs your Sling Models call |
-| UI tests | **Selenium / WebDriver** via the AEM Archetype `ui.tests` module, **Cypress**, or **Playwright** | Hobbes.js is deprecated -- avoid starting new tests on it |
+| UI tests | **Selenium / WebDriver** via the AEM Archetype `ui.tests` module, **Cypress**, or **Playwright** | Hobbes.js is deprecated - avoid starting new tests on it |
 | Dispatcher config | **`dispatcher-cloud-optimized`** CLI | Validates `dispatcher.any` structure offline |
 
-:::info AEM Mocks vs Sling Mocks -- what's the difference?
+:::info AEM Mocks vs Sling Mocks - what's the difference?
 **Sling Mocks** is the upstream Apache project. It gives you a Sling-aware in-memory environment
 (`SlingContext`, resource resolution, adaptable, OSGi service registry).
 
@@ -54,7 +54,7 @@ Use AEM Mocks by default. Drop to plain Sling Mocks only for pure Sling/OSGi cod
 touches `com.day.cq.*`.
 :::
 
-## `AemContext` -- the building block
+## `AemContext` - the building block
 
 Most of your test surface is a single `AemContext` instance:
 
@@ -92,10 +92,10 @@ new AemContext(ResourceResolverType.JCR_MOCK);
 
 | Type | Backing store | Queries | Use when |
 |------|---------------|---------|----------|
-| `RESOURCERESOLVER_MOCK` *(default)* | In-memory map | **No** JCR queries | 95% of Sling Model unit tests -- fastest |
+| `RESOURCERESOLVER_MOCK` *(default)* | In-memory map | **No** JCR queries | 95% of Sling Model unit tests - fastest |
 | `JCR_MOCK` | Fake JCR | Limited | You need `Node.getProperty()` style JCR API but not real queries |
 | `JCR_OAK` | Real Oak (segment store, in-memory) | **Yes** (JCR-SQL2, XPath) | Anything that runs a QueryBuilder / SQL2 query |
-| `JCR_JACKRABBIT` | Real Jackrabbit 2 | **Yes** | Rare -- only for legacy integration with Jackrabbit-specific APIs |
+| `JCR_JACKRABBIT` | Real Jackrabbit 2 | **Yes** | Rare - only for legacy integration with Jackrabbit-specific APIs |
 
 The trade-off is speed: `RESOURCERESOLVER_MOCK` starts in milliseconds, `JCR_OAK` takes hundreds
 of milliseconds per class. If a test doesn't need queries, keep the default.
@@ -200,10 +200,10 @@ class TeaserModelTest {
 ```
 
 :::tip `adaptTo` returned `null`? Run this checklist.
-- `addModelsForClasses(Foo.class)` -- Sling Models aren't auto-scanned in tests.
-- `@Model(adaptables = ...)` -- a test adapting from `Resource` won't match a model declared
+- `addModelsForClasses(Foo.class)` - Sling Models aren't auto-scanned in tests.
+- `@Model(adaptables = ...)` - a test adapting from `Resource` won't match a model declared
   `adaptables = SlingHttpServletRequest.class`.
-- Required injections -- a missing `@ValueMapValue(...)` without a default causes adaptation to
+- Required injections - a missing `@ValueMapValue(...)` without a default causes adaptation to
   fail silently. Check the test log: wcm.io writes the reason at DEBUG.
 :::
 
@@ -226,7 +226,7 @@ void readsSelector() {
 ### Testing an OSGi service
 
 Services come in two shapes: **registered-and-wired** (use `registerInjectActivateService`) and
-**manually constructed** (you new-up the impl and inject `@Reference` fields yourself -- usually
+**manually constructed** (you new-up the impl and inject `@Reference` fields yourself - usually
 a sign the service should be simpler).
 
 ```java
@@ -273,7 +273,7 @@ void writesWithServiceUser() throws Exception {
 }
 ```
 
-In AEM Mocks the sub-service check is permissive -- every request for a service resolver
+In AEM Mocks the sub-service check is permissive - every request for a service resolver
 succeeds. That matches what you want in unit tests (you're testing the write logic, not the
 repoinit config). Sub-service mapping correctness belongs in an integration test against a real
 SDK instance.
@@ -342,7 +342,7 @@ one class rather than sprinkling them across your suite.
 
 ### Testing Context-Aware Configuration
 
-Register the config explicitly -- AEM Mocks ships a `ConfigurationResolver` that reads from the
+Register the config explicitly - AEM Mocks ships a `ConfigurationResolver` that reads from the
 test resource tree:
 
 ```java
@@ -430,12 +430,12 @@ mvn clean verify -PfedDev \
 ```
 
 For Cypress / Playwright setups, point the `baseUrl` at your AEM Publish (or the Dispatcher, if
-you want to exercise the full stack) and keep tests to happy paths -- long UI suites become the
+you want to exercise the full stack) and keep tests to happy paths - long UI suites become the
 slowest stage in CI.
 
 ## Dispatcher config validation
 
-Dispatcher configs regress easily -- a misplaced `/allow` in `filters.any` can silently expose
+Dispatcher configs regress easily - a misplaced `/allow` in `filters.any` can silently expose
 `/system/console`. Run the Adobe-provided validator on every PR:
 
 ```bash title="scripts/validate-dispatcher.sh"
@@ -472,40 +472,40 @@ JaCoCo integrates cleanly with the AEM archetype. Add to the `core/pom.xml`:
 ```
 
 Report lands in `core/target/site/jacoco/index.html`. Aim for meaningful coverage of Sling Models
-and services -- don't chase 100% for HTL or generated code.
+and services - don't chase 100% for HTL or generated code.
 
 ## Smoke-test checklist (pre-release)
 
 - [ ] Create a page with every custom component; save and reopen each dialog.
 - [ ] Publish a content page and verify rendering on Publish.
-- [ ] Exercise Dispatcher by requesting a page twice -- second request should be a cache hit
+- [ ] Exercise Dispatcher by requesting a page twice - second request should be a cache hit
       (check `X-Cache-Info` or the `cache/` directory).
-- [ ] Hit `/system/console/*` through Dispatcher from outside -- must return 404.
+- [ ] Hit `/system/console/*` through Dispatcher from outside - must return 404.
 - [ ] Verify clientlibs load without 404s (check the Network tab).
 - [ ] Run `validate.sh` against the current Dispatcher config.
 
 ## CI pipeline tips
 
-- **Unit tests** on every commit -- they're fast, they should never block a PR for infrastructure
+- **Unit tests** on every commit - they're fast, they should never block a PR for infrastructure
   reasons.
 - **Integration tests** (`JCR_OAK`-backed query tests) on every PR to `main`.
-- **Dispatcher validation** as a merge gate -- it's a 2-second check with a high blast radius.
+- **Dispatcher validation** as a merge gate - it's a 2-second check with a high blast radius.
 - **UI tests** against an ephemeral test environment, ideally not on every PR. Run nightly or on
   merge to `main`.
 - Publish the **JaCoCo report** as a build artifact so reviewers can see coverage deltas.
 
 ## Common pitfalls
 
-- **Forgetting `addModelsForClasses`** -- `adaptTo` returns `null` and the test fails with a
+- **Forgetting `addModelsForClasses`** - `adaptTo` returns `null` and the test fails with a
   confusing NPE three lines later.
-- **Wrong `ResourceResolverType`** -- a JCR-SQL2 query silently returns zero results under
+- **Wrong `ResourceResolverType`** - a JCR-SQL2 query silently returns zero results under
   `RESOURCERESOLVER_MOCK`. The test "passes" for the wrong reason.
-- **Relying on real tag resolution** -- `TagManager.resolve()` works in `JCR_OAK` but is stubbed
+- **Relying on real tag resolution** - `TagManager.resolve()` works in `JCR_OAK` but is stubbed
   under `RESOURCERESOLVER_MOCK`. Load tags into `/content/cq:tags/...` or use `JCR_OAK`.
-- **Testing against hardcoded `admin` in integration tests** -- mirrors a real antipattern. Use
+- **Testing against hardcoded `admin` in integration tests** - mirrors a real antipattern. Use
   service users; they need to work in tests too.
-- **Coupling tests to property order** -- `ValueMap` iteration order is not guaranteed.
-- **Leaving `println` / `LOG.debug` breadcrumbs** -- harmless locally, noise in CI logs. Use
+- **Coupling tests to property order** - `ValueMap` iteration order is not guaranteed.
+- **Leaving `println` / `LOG.debug` breadcrumbs** - harmless locally, noise in CI logs. Use
   AssertJ's descriptive failures instead.
 
 ## See also

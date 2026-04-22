@@ -7,17 +7,17 @@ tags: [aem, clientlibs, frontend, css, javascript]
 # Client Libraries
 
 Client libraries (clientlibs) are AEM's mechanism for managing CSS and JavaScript delivery. They provide
-dependency management, aggregation, minification, proxy serving, and cache busting -- all configured
+dependency management, aggregation, minification, proxy serving, and cache busting - all configured
 declaratively in the repository.
 
 Unlike raw static files, clientlibs give you:
 
-- **Categories** -- logical names that group CSS/JS files together
-- **Dependencies** -- declare load order between libraries
-- **Embedding** -- inline one library's content into another to reduce HTTP requests
-- **Proxy serving** -- serve files from `/etc.clientlibs/` instead of `/apps/` (which is blocked on publish)
-- **Minification** -- built-in CSS/JS minification and GZip compression
-- **Cache busting** -- content-hash URLs for long-term browser caching
+- **Categories** - logical names that group CSS/JS files together
+- **Dependencies** - declare load order between libraries
+- **Embedding** - inline one library's content into another to reduce HTTP requests
+- **Proxy serving** - serve files from `/etc.clientlibs/` instead of `/apps/` (which is blocked on publish)
+- **Minification** - built-in CSS/JS minification and GZip compression
+- **Cache busting** - content-hash URLs for long-term browser caching
 
 ## Clientlib Folder Structure
 
@@ -83,7 +83,7 @@ layout.css
 Rules:
 - One filename per line
 - Lines starting with `#` are directives or comments
-- `#base=js` sets the base directory to `js/` -- all subsequent filenames are relative to it
+- `#base=js` sets the base directory to `js/` - all subsequent filenames are relative to it
 - Files are concatenated in the order listed
 - Missing files cause a build warning (but not a hard failure)
 
@@ -111,7 +111,7 @@ Reference them in CSS with relative paths:
 
 ## Categories
 
-Categories are the **identity** of a clientlib. They are logical names -- not file paths -- that you reference
+Categories are the **identity** of a clientlib. They are logical names - not file paths - that you reference
 when loading CSS/JS in your templates.
 
 ### Naming conventions
@@ -164,7 +164,7 @@ When `myproject.site` is loaded, AEM ensures `myproject.dependencies` and `mypro
 ### Embedding
 
 The `embed` property **inlines** another clientlib's CSS/JS content into this one. The embedded library's
-files become part of this library's output -- no extra HTTP request.
+files become part of this library's output - no extra HTTP request.
 
 ```xml
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
@@ -365,7 +365,7 @@ Override the default minifier per clientlib using `cssProcessor` and `jsProcesso
           jsProcessor="[default:none, min:none]"/>
 ```
 
-Setting processors to `none` disables AEM's minification for this clientlib -- useful when your
+Setting processors to `none` disables AEM's minification for this clientlib - useful when your
 `ui.frontend` build already produces minified output.
 
 ## Versioning and Cache Busting
@@ -469,7 +469,7 @@ AEM does **not** include built-in support for SCSS, TypeScript, or PostCSS. For 
 `ui.frontend` module with a webpack or Vite build pipeline. The build output is plain CSS/JS that
 AEM serves as a regular clientlib.
 
-See the [Custom Component Guide -- Frontend via ui.frontend](./custom-component.mdx#frontend-via-uifrontend-module)
+See the [Custom Component Guide - Frontend via ui.frontend](./custom-component.mdx#frontend-via-uifrontend-module)
 and the [Multi-Tenancy UI Frontend Themes](./ui/multi-tenancy-support-ui-frontend.mdx) page for detailed setup.
 
 ## Common Patterns
@@ -529,8 +529,8 @@ custom validation, or dynamic field behaviour.
 The `cq.authoring.dialog` category is loaded automatically by AEM when any component dialog opens.
 Scope your JS to your component using specific CSS selectors.
 
-See [Component Dialogs -- Dialog Clientlib](./component-dialogs.mdx#dynamic-showhide-based-on-a-selection) and
-[Custom Component Guide -- Dialog Clientlib](./custom-component.mdx#step-7-the-dialog-clientlib) for full examples.
+See [Component Dialogs - Dialog Clientlib](./component-dialogs.mdx#dynamic-showhide-based-on-a-selection) and
+[Custom Component Guide - Dialog Clientlib](./custom-component.mdx#step-7-the-dialog-clientlib) for full examples.
 
 ### Editor clientlib
 
@@ -559,18 +559,18 @@ multi-tenancy setup, see [Multi-Tenancy UI Frontend Themes](./ui/multi-tenancy-s
 
 ## Best Practices
 
-- **Always set `allowProxy="{Boolean}true"`** -- mandatory for AEMaaCS, required for publish on all environments.
-- **Namespace categories with your project prefix** -- `myproject.site`, not just `site`. Avoids collisions with other packages.
-- **Keep categories small and purposeful** -- one clientlib per concern (site base, each component, editor hooks). Combine them via `embed` in a parent clientlib.
-- **Use `embed` for production bundling** -- inline component clientlibs into the site clientlib to reduce HTTP requests.
-- **Use `dependencies` for shared vendor libraries** -- so they are cached once and reused across clientlibs.
-- **Split CSS and JS loading** -- CSS in the `<head>`, JS at the end of `<body>` with `defer`. Avoids render-blocking.
-- **Disable AEM minification when using `ui.frontend`** -- set `cssProcessor` and `jsProcessor` to `none` if webpack/Vite already minifies.
-- **Use the `ui.frontend` module for SCSS, TypeScript, or complex builds** -- AEM's built-in processing is limited to LESS and basic minification.
+- **Always set `allowProxy="{Boolean}true"`** - mandatory for AEMaaCS, required for publish on all environments.
+- **Namespace categories with your project prefix** - `myproject.site`, not just `site`. Avoids collisions with other packages.
+- **Keep categories small and purposeful** - one clientlib per concern (site base, each component, editor hooks). Combine them via `embed` in a parent clientlib.
+- **Use `embed` for production bundling** - inline component clientlibs into the site clientlib to reduce HTTP requests.
+- **Use `dependencies` for shared vendor libraries** - so they are cached once and reused across clientlibs.
+- **Split CSS and JS loading** - CSS in the `<head>`, JS at the end of `<body>` with `defer`. Avoids render-blocking.
+- **Disable AEM minification when using `ui.frontend`** - set `cssProcessor` and `jsProcessor` to `none` if webpack/Vite already minifies.
+- **Use the `ui.frontend` module for SCSS, TypeScript, or complex builds** - AEM's built-in processing is limited to LESS and basic minification.
 - **Test with `?debugClientLibs=true`** during development to verify individual files load correctly.
 - **Check the dump libs tool** after deployments to detect category collisions or broken dependencies.
-- **Never put sensitive data in clientlibs** -- they are publicly accessible on publish. No API keys, tokens, or server-side logic.
-- **Use `resources/` for fonts and images** -- they are served through the proxy and benefit from cache headers.
+- **Never put sensitive data in clientlibs** - they are publicly accessible on publish. No API keys, tokens, or server-side logic.
+- **Use `resources/` for fonts and images** - they are served through the proxy and benefit from cache headers.
 
 ## Common Pitfalls
 

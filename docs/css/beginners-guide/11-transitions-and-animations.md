@@ -101,7 +101,7 @@ The timing function controls the animation's acceleration curve:
 For UI interactions, `ease` or `ease-out` feel the most natural. `linear` is good for continuous animations like
 progress bars.
 
-> **Tip:** Keep transition durations short -- 0.15s to 0.3s for hover effects. Longer durations (0.3s--0.5s) work for
+> **Tip:** Keep transition durations short - 0.15s to 0.3s for hover effects. Longer durations (0.3s-0.5s) work for
 > larger movements like panels sliding in.
 
 ### Which properties can be transitioned?
@@ -182,7 +182,7 @@ Chain multiple transforms in one declaration:
 }
 ```
 
-Order matters -- transforms are applied right to left.
+Order matters - transforms are applied right to left.
 
 ### transform-origin
 
@@ -469,4 +469,4 @@ The `.visible` class is typically added by JavaScript when the element enters th
 ## Next step
 
 Transitions and transforms make your interfaces dynamic. The next chapter covers **pseudo-classes and pseudo-elements**
--- special selectors that target element states and create virtual elements.
+- special selectors that target element states and create virtual elements.

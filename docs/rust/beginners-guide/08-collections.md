@@ -22,7 +22,7 @@ runtime, you use the standard library's **collections**. The three you will use 
 
 All three store data on the heap and manage their own memory through ownership.
 
-## Vec -- a dynamic array
+## Vec - a dynamic array
 
 `Vec<T>` (pronounced "vector") is a growable, heap-allocated list of values of type `T`:
 
@@ -150,7 +150,7 @@ fn main() {
 
 Functions that accept `&[T]` work with both arrays and vectors, making them very flexible.
 
-## String -- owned UTF-8 text
+## String - owned UTF-8 text
 
 We covered `String` vs `&str` in chapter 5. Here we go deeper into `String` as a collection.
 
@@ -205,7 +205,7 @@ fn main() {
 
 > **Tip:** Prefer `format!()` for concatenation. It is more readable and does not move any of its arguments.
 
-### Indexing -- why you cannot do s[0]
+### Indexing - why you cannot do s[0]
 
 ```rust
 fn main() {
@@ -214,7 +214,7 @@ fn main() {
 }
 ```
 
-Rust strings are UTF-8 encoded. A single "character" might be 1--4 bytes. Indexing by byte offset could land in the
+Rust strings are UTF-8 encoded. A single "character" might be 1-4 bytes. Indexing by byte offset could land in the
 middle of a multi-byte character, which would be invalid. Instead, use:
 
 ```rust
@@ -261,7 +261,7 @@ fn main() {
 | `chars()`           | Iterator over Unicode characters       | Iterator        |
 | `lines()`           | Iterator over lines                    | Iterator        |
 
-## HashMap -- key-value storage
+## HashMap - key-value storage
 
 `HashMap<K, V>` stores key-value pairs with O(1) average lookup time:
 
@@ -281,7 +281,7 @@ fn main() {
 }
 ```
 
-> **Note:** `HashMap` is not in the prelude -- you must `use std::collections::HashMap;`.
+> **Note:** `HashMap` is not in the prelude - you must `use std::collections::HashMap;`.
 
 ### Creating from iterators
 
@@ -501,12 +501,12 @@ fn main() {
 
 ## Summary
 
-- **`Vec<T>`** is a growable array -- `push`, `pop`, `insert`, `remove`, iterate with `for x in &v`
-- **`String`** is a growable UTF-8 string -- `push_str`, `format!`, no direct indexing, use `.chars()` for characters
-- **`HashMap<K, V>`** stores key-value pairs -- `.insert()`, `.get()`, `.entry()` API for conditional inserts
+- **`Vec<T>`** is a growable array - `push`, `pop`, `insert`, `remove`, iterate with `for x in &v`
+- **`String`** is a growable UTF-8 string - `push_str`, `format!`, no direct indexing, use `.chars()` for characters
+- **`HashMap<K, V>`** stores key-value pairs - `.insert()`, `.get()`, `.entry()` API for conditional inserts
 - All three own their data on the heap and are dropped when they go out of scope
 - Accept `&[T]` and `&str` in function parameters for maximum flexibility
 - The entry API is the idiomatic way to update or insert HashMap values
 
-Next up: [Error Handling](./09-error-handling.md) -- `Result<T, E>` in depth, the `?` operator, custom error types,
+Next up: [Error Handling](./09-error-handling.md) - `Result<T, E>` in depth, the `?` operator, custom error types,
 and when to `panic!` vs return an error.

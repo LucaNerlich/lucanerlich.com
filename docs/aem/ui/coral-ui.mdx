@@ -6,7 +6,7 @@ tags: [aem, ui, coral]
 
 # Coral UI
 
-Coral UI is Adobe's **web component library** that powers the entire AEM Touch UI -- dialogs, the
+Coral UI is Adobe's **web component library** that powers the entire AEM Touch UI - dialogs, the
 Sites console, the DAM console, the page editor toolbar, and every admin interface. When you build
 custom dialog fields, admin consoles, or author-facing UI in AEM, you use Coral UI components.
 
@@ -315,7 +315,7 @@ Browse all available icons at:
 
 ## Coral UI in Dialog Clientlibs
 
-The most common use of Coral UI in custom code is **dialog clientlibs** -- JavaScript that runs
+The most common use of Coral UI in custom code is **dialog clientlibs** - JavaScript that runs
 inside component dialogs to add custom behaviour (show/hide fields, validation, dynamic defaults).
 
 ### Show/hide fields based on a dropdown value
@@ -660,7 +660,7 @@ unique field name before executing your logic.
 ### Don't manipulate Coral DOM internals
 
 Coral components manage their own internal DOM structure (shadow DOM). Don't rely on or manipulate
-internal elements -- use the component's JavaScript API instead:
+internal elements - use the component's JavaScript API instead:
 
 ```javascript
 // ❌ Bad: manipulating internal DOM
@@ -705,10 +705,10 @@ your need. Custom fields add maintenance overhead and may break on AEM upgrades.
 | Pitfall | Solution |
 |---------|----------|
 | `Coral is not defined` | Ensure your clientlib has `coralui3` as a dependency |
-| Component API methods return `undefined` | Use `Coral.commons.ready()` -- the component isn't initialised yet |
+| Component API methods return `undefined` | Use `Coral.commons.ready()` - the component isn't initialised yet |
 | Dialog script runs for wrong component | Scope your script by checking for a unique field name |
 | Styles break after AEM upgrade | Don't rely on internal Coral DOM structure; use the public API |
-| `foundation-contentloaded` fires multiple times | Normal -- it fires for each new content load (dialog open, multifield add); make your init logic idempotent |
+| `foundation-contentloaded` fires multiple times | Normal - it fires for each new content load (dialog open, multifield add); make your init logic idempotent |
 | Custom field not saving values | Ensure the `<input>` has a `name` attribute matching `./propertyName` |
 | jQuery `$` not available | Use `(function($, Coral) { ... })(jQuery, Coral);` wrapper |
 
@@ -721,10 +721,10 @@ your need. Custom fields add maintenance overhead and may break on AEM upgrades.
 
 ## See also
 
-- [Touch UI (Author UI)](./touch-ui.mdx) -- Touch UI architecture
-- [Overlays](./overlays.mdx) -- customising existing AEM UI
-- [Render Conditions](./render-conditions.mdx) -- showing/hiding UI elements
-- [Component Dialogs](../component-dialogs.mdx) -- dialog field types and XML structure
-- [Client Libraries](../client-libraries.mdx) -- loading clientlibs
-- [Custom Component Guide](../custom-component.mdx) -- building components with dialog clientlibs
-- [HTL Templates](../htl-templates.mdx) -- server-side rendering
+- [Touch UI (Author UI)](./touch-ui.mdx) - Touch UI architecture
+- [Overlays](./overlays.mdx) - customising existing AEM UI
+- [Render Conditions](./render-conditions.mdx) - showing/hiding UI elements
+- [Component Dialogs](../component-dialogs.mdx) - dialog field types and XML structure
+- [Client Libraries](../client-libraries.mdx) - loading clientlibs
+- [Custom Component Guide](../custom-component.mdx) - building components with dialog clientlibs
+- [HTL Templates](../htl-templates.mdx) - server-side rendering

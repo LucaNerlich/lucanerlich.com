@@ -59,10 +59,10 @@ Use it when you want to know:
 
 In the Computed panel (or at the bottom of the Styles panel), you see the visual box model:
 
-- **Content** -- the innermost blue box
-- **Padding** -- green around the content
-- **Border** -- yellow around the padding
-- **Margin** -- orange around the border
+- **Content** - the innermost blue box
+- **Padding** - green around the content
+- **Border** - yellow around the padding
+- **Margin** - orange around the border
 
 Hover over each layer to see it highlighted on the page. Click values in the diagram to edit them.
 
@@ -70,8 +70,8 @@ Hover over each layer to see it highlighted on the page. Click values in the dia
 
 Shows Grid and Flexbox overlays. When you select a grid or flex container:
 
-- **Grid overlay** -- draws grid lines, track sizes, and cell boundaries
-- **Flex overlay** -- shows direction, alignment, and free space distribution
+- **Grid overlay** - draws grid lines, track sizes, and cell boundaries
+- **Flex overlay** - shows direction, alignment, and free space distribution
 - Click the grid/flex badge in the Elements panel to toggle the overlay
 
 These overlays are invaluable for understanding why items are positioned where they are.
@@ -80,7 +80,7 @@ These overlays are invaluable for understanding why items are positioned where t
 
 **Problem:** The vertical space between two elements is not what you expect.
 
-**Cause:** Vertical margins between adjacent block elements **collapse** -- the browser uses only the larger margin,
+**Cause:** Vertical margins between adjacent block elements **collapse** - the browser uses only the larger margin,
 not the sum of both (covered in chapter 3).
 
 **Example:**
@@ -96,7 +96,7 @@ Expected gap: 40px. Actual gap: 24px.
 
 - Use `padding` instead of `margin` on one element
 - Add a border or padding to the parent element (even `1px` prevents collapse)
-- Use Flexbox or Grid on the parent -- flex/grid children do not collapse margins
+- Use Flexbox or Grid on the parent - flex/grid children do not collapse margins
 - Use `gap` instead of margins for spacing between siblings
 
 > **Tip:** Many developers avoid margin collapsing entirely by only using `margin-bottom` (or only `margin-top`) and
@@ -168,7 +168,7 @@ Use `max-width` instead of `width` and `min-height` instead of `height` to let c
 | Any element (flexbox)        | `align-items: center` + `min-height` on the container    |
 | Any element (grid)           | `place-items: center` + `min-height` on the container    |
 
-The modern approach -- works in virtually every case:
+The modern approach - works in virtually every case:
 
 ```css
 .parent {
@@ -283,13 +283,13 @@ If the answer to question 2 is yes, remove or change the overflow on that ancest
 When something looks wrong, follow this systematic approach:
 
 1. **Inspect the element** in DevTools
-2. **Check the Styles panel** -- is the rule present? Is it crossed out?
-3. **Check the Computed panel** -- what is the final computed value?
-4. **Check the Box Model diagram** -- is padding, border, or margin unexpected?
-5. **Toggle declarations on/off** -- isolate which rule causes the issue
-6. **Check the parent** -- many layout issues come from the parent, not the element itself
-7. **Check for overflow** -- is the parent clipping the content?
-8. **Add a temporary border** -- `border: 2px solid red` makes invisible boxes visible
+2. **Check the Styles panel** - is the rule present? Is it crossed out?
+3. **Check the Computed panel** - what is the final computed value?
+4. **Check the Box Model diagram** - is padding, border, or margin unexpected?
+5. **Toggle declarations on/off** - isolate which rule causes the issue
+6. **Check the parent** - many layout issues come from the parent, not the element itself
+7. **Check for overflow** - is the parent clipping the content?
+8. **Add a temporary border** - `border: 2px solid red` makes invisible boxes visible
 
 > **Tip:** The temporary border trick is the oldest debugging technique in CSS. When you cannot figure out where an
 > element is or how big it is, give it a bright red border and everything becomes clear.
@@ -314,13 +314,13 @@ Use [caniuse.com](https://caniuse.com) to check browser support before using new
 
 ## What you learned
 
-- **DevTools** are your primary CSS debugging tool -- learn the Elements, Styles, Computed, and Layout panels
-- **Margin collapse** causes unexpected spacing -- use `gap`, Flexbox/Grid, or one-direction margins
-- **Overflow** happens when content exceeds fixed dimensions -- use `max-width` and `min-height`
+- **DevTools** are your primary CSS debugging tool - learn the Elements, Styles, Computed, and Layout panels
+- **Margin collapse** causes unexpected spacing - use `gap`, Flexbox/Grid, or one-direction margins
+- **Overflow** happens when content exceeds fixed dimensions - use `max-width` and `min-height`
 - **Centring** is solved with `display: flex; justify-content: center; align-items: center`
 - **z-index** requires a `position` value and respects stacking contexts
-- **Specificity conflicts** are visible in DevTools -- simplify selectors instead of escalating
-- **inline-block gaps** come from HTML whitespace -- use Flexbox instead
+- **Specificity conflicts** are visible in DevTools - simplify selectors instead of escalating
+- **inline-block gaps** come from HTML whitespace - use Flexbox instead
 - Use a **systematic debugging checklist** instead of random trial and error
 
 ## Next step

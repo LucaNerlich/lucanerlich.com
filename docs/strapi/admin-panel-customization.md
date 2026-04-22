@@ -22,7 +22,7 @@ mv src/admin/app.example.tsx src/admin/app.tsx  # or .js
 mkdir -p src/admin/extensions
 ```
 
-In Strapi 5, the dev server runs in `watch-admin` mode by default -- changes to `src/admin/` hot-reload automatically.
+In Strapi 5, the dev server runs in `watch-admin` mode by default - changes to `src/admin/` hot-reload automatically.
 
 ---
 
@@ -332,6 +332,6 @@ module.exports = ({env}) => ({
 
 ## See also
 
-- [Plugin Development](plugin-development.md) -- building full plugins with admin UI
-- [Configuration and Deployment](configuration-and-deployment.md) -- admin server configuration
-- [Authentication and Permissions](authentication-and-permissions.md) -- admin panel security
+- [Plugin Development](plugin-development.md) - building full plugins with admin UI
+- [Configuration and Deployment](configuration-and-deployment.md) - admin server configuration
+- [Authentication and Permissions](authentication-and-permissions.md) - admin panel security

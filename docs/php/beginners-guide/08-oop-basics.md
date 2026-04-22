@@ -15,19 +15,19 @@ sidebar_position: 8
 
 # Object-Oriented Programming Basics
 
-Object-oriented programming (OOP) is a way of organizing code around "things" -- real-world or conceptual objects -- instead of procedures. Instead of a long list of functions that pass data around, you group related data and behavior into objects. This chapter introduces classes, objects, properties, methods, constructors, visibility, and other OOP fundamentals in PHP.
+Object-oriented programming (OOP) is a way of organizing code around "things" - real-world or conceptual objects - instead of procedures. Instead of a long list of functions that pass data around, you group related data and behavior into objects. This chapter introduces classes, objects, properties, methods, constructors, visibility, and other OOP fundamentals in PHP.
 
 ## What is OOP? Why use it?
 
-**Object-oriented programming** structures your code around objects. An object bundles data (properties) and the operations that work on that data (methods) into a single unit. Think of a car: it has properties like color, speed, and fuel level, and methods like `start()`, `accelerate()`, and `brake()`. You do not need separate functions scattered across your codebase -- the car object knows how to operate on itself.
+**Object-oriented programming** structures your code around objects. An object bundles data (properties) and the operations that work on that data (methods) into a single unit. Think of a car: it has properties like color, speed, and fuel level, and methods like `start()`, `accelerate()`, and `brake()`. You do not need separate functions scattered across your codebase - the car object knows how to operate on itself.
 
 ### Organizing code around things
 
-Procedural code focuses on steps: "do this, then do that." OOP focuses on things: "this object has this data and can do these actions." When you model a user, a product, or an order, you create a class that describes what that thing is and what it can do. Each user, product, or order in your program becomes an instance of that class -- an object.
+Procedural code focuses on steps: "do this, then do that." OOP focuses on things: "this object has this data and can do these actions." When you model a user, a product, or an order, you create a class that describes what that thing is and what it can do. Each user, product, or order in your program becomes an instance of that class - an object.
 
 ### Real-world analogy
 
-A **class** is like a blueprint for a house. It defines the structure -- rooms, doors, windows -- but it is not a house you can live in. An **object** is the actual house built from that blueprint. You can build many houses from the same blueprint; each house is a separate instance with its own state (different furniture, different occupants), but they all share the same structure.
+A **class** is like a blueprint for a house. It defines the structure - rooms, doors, windows - but it is not a house you can live in. An **object** is the actual house built from that blueprint. You can build many houses from the same blueprint; each house is a separate instance with its own state (different furniture, different occupants), but they all share the same structure.
 
 OOP helps you:
 
@@ -51,7 +51,7 @@ class User {
 }
 ```
 
-The class body can be empty -- you have defined a minimal class. By convention, class names use **PascalCase** (each word capitalized).
+The class body can be empty - you have defined a minimal class. By convention, class names use **PascalCase** (each word capitalized).
 
 ### Creating objects
 
@@ -113,7 +113,7 @@ Each object has its own `$name` and `$age`. Changing `$user->name` does not affe
 
 ### Initializing values
 
-You can initialize properties with literal values or expressions. As of PHP 8.0, you can use constructor promotion to simplify property declaration -- you will see that when we cover constructors.
+You can initialize properties with literal values or expressions. As of PHP 8.0, you can use constructor promotion to simplify property declaration - you will see that when we cover constructors.
 
 ## Methods
 
@@ -161,7 +161,7 @@ Methods can receive parameters and return values, just like functions. They can 
 
 ## The $this keyword
 
-Inside a class, `$this` refers to the **current object** -- the instance on which the method was called. Use `$this` to access the object's properties and methods from within the class.
+Inside a class, `$this` refers to the **current object** - the instance on which the method was called. Use `$this` to access the object's properties and methods from within the class.
 
 ```php
 <?php
@@ -192,7 +192,7 @@ echo $user->describe();  // Output: Bob is 25 years old.
 var_dump($user->isAdult());  // Output: bool(true)
 ```
 
-When you call `$user->greet()`, `$this` inside `greet()` refers to `$user`. You cannot use `$this` outside a class -- it is only valid inside instance methods.
+When you call `$user->greet()`, `$this` inside `greet()` refers to `$user`. You cannot use `$this` outside a class - it is only valid inside instance methods.
 
 > **Warning:** `$this` is not available in static methods. Static methods belong to the class, not to an object, so there is no "current object."
 
@@ -247,7 +247,7 @@ $product2 = new Product('Gadget', 19.99);
 
 ### Constructor property promotion (PHP 8.0+)
 
-PHP 8.0 introduced **constructor property promotion** -- add `public`, `private`, or `protected` before a constructor parameter to automatically create and assign that property:
+PHP 8.0 introduced **constructor property promotion** - add `public`, `private`, or `protected` before a constructor parameter to automatically create and assign that property:
 
 ```php
 <?php
@@ -272,7 +272,7 @@ Visibility modifiers control **who can access** a property or method. PHP has th
 
 ### public
 
-`public` members are accessible from anywhere -- inside the class, in subclasses, and from outside the class.
+`public` members are accessible from anywhere - inside the class, in subclasses, and from outside the class.
 
 ### private
 
@@ -323,7 +323,7 @@ echo $account->getBalance(); // OK -- public method exposes balance
 
 By making `$balance` private, you prevent code outside the class from changing it directly. The only way to modify it is through `deposit()`, which can enforce rules (e.g., positive amounts only).
 
-> **Tip:** Default to `private` for properties. Expose only what is necessary through public methods. This is called **encapsulation** -- hiding implementation details and controlling how data is accessed.
+> **Tip:** Default to `private` for properties. Expose only what is necessary through public methods. This is called **encapsulation** - hiding implementation details and controlling how data is accessed.
 
 ## Getters and setters
 
@@ -331,10 +331,10 @@ When you make a property `private`, external code cannot read or write it direct
 
 ### Why use getters and setters?
 
-- **Validation** -- a setter can reject invalid values (e.g., negative price, empty name)
-- **Computed values** -- a getter can derive a value instead of storing it
-- **Consistency** -- you can add logging, caching, or side effects in one place
-- **Future flexibility** -- you can change how data is stored without breaking callers
+- **Validation** - a setter can reject invalid values (e.g., negative price, empty name)
+- **Computed values** - a getter can derive a value instead of storing it
+- **Consistency** - you can add logging, caching, or side effects in one place
+- **Future flexibility** - you can change how data is stored without breaking callers
 
 ### Implementing getters and setters
 
@@ -420,7 +420,7 @@ class MathUtils {
 echo MathUtils::square(5);  // Output: 25
 ```
 
-Inside a static method, you cannot use `$this` -- there is no current object. Use `self::` to reference the class or static members.
+Inside a static method, you cannot use `$this` - there is no current object. Use `self::` to reference the class or static members.
 
 ### When to use static
 
@@ -455,9 +455,9 @@ Use the class name and `::` to access a constant: `Status::ACTIVE`. You can also
 
 ### When to use constants
 
-- **Magic strings or numbers** -- instead of `if ($status === 'active')`, use `if ($status === Status::ACTIVE)`
-- **Configuration values** -- e.g., default limits, tax rates
-- **Enumerations** -- before PHP 8.1 enums, constants were the common way to define a fixed set of values
+- **Magic strings or numbers** - instead of `if ($status === 'active')`, use `if ($status === Status::ACTIVE)`
+- **Configuration values** - e.g., default limits, tax rates
+- **Enumerations** - before PHP 8.1 enums, constants were the common way to define a fixed set of values
 
 ```php
 <?php
@@ -562,7 +562,7 @@ The `Product` class encapsulates name, price, and quantity, with a getter for th
 
 ## Summary
 
-- OOP organizes code around objects -- things with data (properties) and behavior (methods)
+- OOP organizes code around objects - things with data (properties) and behavior (methods)
 - A class is a blueprint; an object is an instance created with `new ClassName()`
 - Properties hold data; access them with `$object->property`
 - Methods are functions inside a class; call them with `$object->method()`
@@ -574,4 +574,4 @@ The `Product` class encapsulates name, price, and quantity, with a getter for th
 - Class constants (`const`) hold fixed values; access them with `ClassName::CONSTANT`
 - Build classes that model real concepts and keep related logic together
 
-Next up: [OOP Advanced](./09-oop-advanced.md) -- inheritance, interfaces, abstract classes, traits, and namespaces.
+Next up: [OOP Advanced](./09-oop-advanced.md) - inheritance, interfaces, abstract classes, traits, and namespaces.

@@ -457,7 +457,7 @@ export default {
 { "data": { "id": 1, "attributes": { "title": "My Post" } } }
 ```
 
-**Strapi 5** flattens the response -- attributes are directly on the data object, and `documentId` replaces `id` as
+**Strapi 5** flattens the response - attributes are directly on the data object, and `documentId` replaces `id` as
 the primary identifier:
 
 ```json

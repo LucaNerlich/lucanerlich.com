@@ -7,7 +7,7 @@ tags: [aem, experience-fragments, xf, personalisation]
 # Experience Fragments
 
 **Experience Fragments (XFs)** are reusable, self-contained content experiences that can be
-delivered across multiple channels -- web pages, email campaigns, social media, and Adobe
+delivered across multiple channels - web pages, email campaigns, social media, and Adobe
 Target personalisation offers. Unlike Content Fragments (which store structured data), XFs
 contain **fully rendered content** including layout, components, and styling.
 
@@ -39,7 +39,7 @@ graph TD
 |---------------------|------------------------------------------------|----------------------------------------------|
 | **What it stores**  | Rendered content (components + layout)         | Structured data (fields)                     |
 | **Authoring**       | Visual editor (like a page)                    | Form-based editor (model fields)             |
-| **Rendering**       | Has its own HTML rendering                     | No rendering -- data only                    |
+| **Rendering**       | Has its own HTML rendering                     | No rendering - data only                    |
 | **Variations**      | Web, email, social, plain text                 | Named content variations                     |
 | **Personalisation** | Adobe Target integration                       | Not directly (via GraphQL)                   |
 | **Headless**        | JSON export (limited)                          | GraphQL, Assets HTTP API                     |
@@ -461,11 +461,11 @@ Create a new variation or version before making breaking changes.
 
 ## See also
 
-- [Content Fragments](./content-fragments.md) -- structured content (data vs experience)
-- [Component Dialogs](../component-dialogs.mdx) -- XF picker dialog field
-- [Multi-Site Manager](./multi-site-manager-msm.md) -- Live Copies of XFs
-- [i18n and Translation](./i18n-translation.md) -- translating XFs
-- [Headless GraphQL](./graphql.mdx) -- headless content delivery
-- [Templates and Policies](../components/templates-policies.md) -- XF templates
-- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) -- Content Distribution replaces replication
-- [Replication and Activation](./replication-activation.mdx) -- publishing XFs
+- [Content Fragments](./content-fragments.md) - structured content (data vs experience)
+- [Component Dialogs](../component-dialogs.mdx) - XF picker dialog field
+- [Multi-Site Manager](./multi-site-manager-msm.md) - Live Copies of XFs
+- [i18n and Translation](./i18n-translation.md) - translating XFs
+- [Headless GraphQL](./graphql.mdx) - headless content delivery
+- [Templates and Policies](../components/templates-policies.md) - XF templates
+- [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) - Content Distribution replaces replication
+- [Replication and Activation](./replication-activation.mdx) - publishing XFs

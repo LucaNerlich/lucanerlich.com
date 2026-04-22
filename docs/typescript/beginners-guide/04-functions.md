@@ -39,7 +39,7 @@ function logError(message: string, code: number): void {
 ```
 
 The return type annotation (`: number`, `: string`, `: void`) comes after the closing parenthesis. TypeScript also
-infers return types from the function body -- the annotation is optional but recommended for public functions:
+infers return types from the function body - the annotation is optional but recommended for public functions:
 
 ```typescript
 // TypeScript infers the return type as number
@@ -59,7 +59,7 @@ function divide(a: number, b: number): number {
 
 ## Optional parameters
 
-Parameters marked with `?` are optional -- they can be omitted by the caller, and their type inside the function is
+Parameters marked with `?` are optional - they can be omitted by the caller, and their type inside the function is
 `T | undefined`:
 
 ```typescript
@@ -110,7 +110,7 @@ paginate(items, 1, 50);       // page=1, pageSize=50
 paginate(items, undefined, 50); // page=1 (default), pageSize=50
 ```
 
-Default parameters give the function a concrete type -- no `| undefined` inside the body:
+Default parameters give the function a concrete type - no `| undefined` inside the body:
 
 ```typescript
 function formatDate(date: Date, locale: string = "en-US"): string {
@@ -224,7 +224,7 @@ const subtract: MathOp = (a, b) => a - b;
 
 ### Arrow functions and this
 
-Arrow functions do not have their own `this` -- they capture it from the enclosing scope. This is often what you want
+Arrow functions do not have their own `this` - they capture it from the enclosing scope. This is often what you want
 for callbacks:
 
 ```typescript
@@ -241,7 +241,7 @@ class Timer {
 }
 ```
 
-With a regular function in `setInterval`, `this` would be `undefined` (in strict mode) or the global object -- a
+With a regular function in `setInterval`, `this` would be `undefined` (in strict mode) or the global object - a
 classic JavaScript bug.
 
 ## void vs never
@@ -274,7 +274,7 @@ function assertDefined<T>(value: T | null | undefined, name: string): T {
 
 ## Function overloads
 
-Overloads let you declare multiple signatures for a single function -- useful when the return type depends on the input:
+Overloads let you declare multiple signatures for a single function - useful when the return type depends on the input:
 
 ```typescript
 // Overload signatures (no implementation body)
@@ -297,7 +297,7 @@ formatValue(true);              // "Yes"
 formatValue(new Date());        // "4/18/2026"
 ```
 
-A more practical example -- a function that returns different types based on input:
+A more practical example - a function that returns different types based on input:
 
 ```typescript
 function createElement(tag: "div"): HTMLDivElement;
@@ -378,7 +378,7 @@ const fn = greeter.greet;
 // fn(); // Error: The 'this' context of type 'void' is not assignable to type 'Greeter'
 ```
 
-The `this` parameter is erased in the compiled output -- it is purely a type-checking aid.
+The `this` parameter is erased in the compiled output - it is purely a type-checking aid.
 
 ## Practical example: an HTTP client wrapper
 
@@ -471,5 +471,5 @@ console.log(user.name); // TypeScript knows user is User
 - Function overloads let you describe functions whose return type depends on input
 - Generic functions infer type parameters from their arguments
 
-Next up: [Classes](./05-classes.md) -- class syntax, access modifiers, constructors, inheritance, abstract classes,
+Next up: [Classes](./05-classes.md) - class syntax, access modifiers, constructors, inheritance, abstract classes,
 and implementing interfaces.

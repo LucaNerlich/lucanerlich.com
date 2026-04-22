@@ -74,7 +74,7 @@ todo-api/
     └── error.rs       # Error handling
 ```
 
-## Step 1 -- Error type
+## Step 1 - Error type
 
 `src/error.rs`:
 
@@ -119,7 +119,7 @@ impl From<rusqlite::Error> for ApiError {
 
 Implementing `ResponseError` for `ApiError` lets Actix automatically convert errors into HTTP responses.
 
-## Step 2 -- Models
+## Step 2 - Models
 
 `src/models.rs`:
 
@@ -147,7 +147,7 @@ pub struct UpdateTodo {
 
 `CreateTodo` and `UpdateTodo` represent the request body. `Todo` is the response.
 
-## Step 3 -- Database layer
+## Step 3 - Database layer
 
 `src/db.rs`:
 
@@ -260,7 +260,7 @@ impl Database {
 The `Database` struct wraps a `Mutex<Connection>` for thread-safe access. Each method locks the connection, executes
 a query, and returns typed results.
 
-## Step 4 -- Handlers and server
+## Step 4 - Handlers and server
 
 `src/main.rs`:
 
@@ -402,11 +402,11 @@ curl -X DELETE http://localhost:8080/todos/1
 
 | Method   | Path           | Body                | Description        |
 |----------|---------------|---------------------|--------------------|
-| `GET`    | `/todos`      | --                  | List all todos     |
-| `GET`    | `/todos/{id}` | --                  | Get one todo       |
+| `GET`    | `/todos`      | -                  | List all todos     |
+| `GET`    | `/todos/{id}` | -                  | Get one todo       |
 | `POST`   | `/todos`      | `{ "title": "..." }` | Create a todo    |
 | `PUT`    | `/todos/{id}` | `{ "title": "...", "completed": true }` | Update a todo |
-| `DELETE` | `/todos/{id}` | --                  | Delete a todo      |
+| `DELETE` | `/todos/{id}` | -                  | Delete a todo      |
 
 ## Key Actix Web concepts
 
@@ -429,8 +429,8 @@ Extractors are types in handler parameters that Actix populates from the request
 
 Middleware wraps handlers to add cross-cutting concerns:
 
-- `Logger` -- logs every request
-- `Cors` -- handles Cross-Origin Resource Sharing headers
+- `Logger` - logs every request
+- `Cors` - handles Cross-Origin Resource Sharing headers
 - Custom middleware for authentication, rate limiting, etc.
 
 ## Summary
@@ -443,5 +443,5 @@ Middleware wraps handlers to add cross-cutting concerns:
 - **rusqlite** provides a simple SQLite interface with parameterized queries
 - CORS and logging are added via middleware
 
-Next up: [Deploy to a VPS with nginx](./18-deploy-vps-nginx.md) -- building for release, creating a systemd service,
+Next up: [Deploy to a VPS with nginx](./18-deploy-vps-nginx.md) - building for release, creating a systemd service,
 setting up nginx as a reverse proxy, HTTPS, Docker, and CI/CD.

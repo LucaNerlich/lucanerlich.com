@@ -373,7 +373,7 @@ String task = queue.poll(5, TimeUnit.SECONDS);
 
 ## See also
 
-- [Streams and Collectors](./java-streams.md) -- processing collections functionally
-- [Generics and Type Erasure](./generics.md) -- generic collection types
-- [Concurrency](./concurrency.md) -- thread safety and concurrent patterns
-- [Modern Java Features](./modern-java-features.md) -- sequenced collections (Java 21)
+- [Streams and Collectors](./java-streams.md) - processing collections functionally
+- [Generics and Type Erasure](./generics.md) - generic collection types
+- [Concurrency](./concurrency.md) - thread safety and concurrent patterns
+- [Modern Java Features](./modern-java-features.md) - sequenced collections (Java 21)

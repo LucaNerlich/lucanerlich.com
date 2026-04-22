@@ -363,7 +363,7 @@ HttpResponse<String> response = sendWithRetry(client, request,
 
 ## See also
 
-- [JSON Processing: Jackson and Gson](./json-processing.md) -- serialisation/deserialisation
-- [Concurrency](./concurrency.md) -- CompletableFuture, virtual threads for I/O
-- [Error Handling](./error-handling.md) -- handling HTTP errors gracefully
-- [Testing](./testing.md) -- mocking HTTP clients in tests
+- [JSON Processing: Jackson and Gson](./json-processing.md) - serialisation/deserialisation
+- [Concurrency](./concurrency.md) - CompletableFuture, virtual threads for I/O
+- [Error Handling](./error-handling.md) - handling HTTP errors gracefully
+- [Testing](./testing.md) - mocking HTTP clients in tests

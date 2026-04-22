@@ -29,7 +29,7 @@ This design keeps servers simple and scalable. It also means you must explicitly
 
 ### Why the Server Forgets You
 
-The server does not maintain a connection between requests. After sending the response, the connection closes. When you click a link or submit a form, a new connection is opened. The server has no way to know that this new request belongs to the same person who visited a moment ago -- unless you send identifying information with each request.
+The server does not maintain a connection between requests. After sending the response, the connection closes. When you click a link or submit a form, a new connection is opened. The server has no way to know that this new request belongs to the same person who visited a moment ago - unless you send identifying information with each request.
 
 ## Cookies
 
@@ -97,7 +97,7 @@ When the browser sends a cookie, PHP makes it available in the `$_COOKIE` superg
 $theme = $_COOKIE['user_preference'] ?? 'light_mode';
 ```
 
-Always use the null coalescing operator (`??`) when reading cookies -- they may not exist if the user cleared them or never received them.
+Always use the null coalescing operator (`??`) when reading cookies - they may not exist if the user cleared them or never received them.
 
 ## Reading and Deleting Cookies
 
@@ -214,8 +214,8 @@ When a user logs out, you must destroy the session so the next request is treate
 
 ### session_destroy() and session_unset()
 
-- **`session_unset()`** -- Clears all variables in `$_SESSION`. The session itself still exists.
-- **`session_destroy()`** -- Deletes the session data on the server. The `$_SESSION` array is not automatically cleared in the current request.
+- **`session_unset()`** - Clears all variables in `$_SESSION`. The session itself still exists.
+- **`session_destroy()`** - Deletes the session data on the server. The `$_SESSION` array is not automatically cleared in the current request.
 
 For a proper logout, you typically clear `$_SESSION`, destroy the session, and remove the session cookie:
 
@@ -249,7 +249,7 @@ exit;
 1. Start the session (so you can access and clear it).
 2. Clear `$_SESSION`.
 3. Call `session_destroy()`.
-4. Delete the session cookie (optional but recommended -- otherwise the browser may send a dead ID).
+4. Delete the session cookie (optional but recommended - otherwise the browser may send a dead ID).
 5. Redirect to the login page.
 
 ## Session Flow Diagram
@@ -441,7 +441,7 @@ $_SESSION['user_id'] = $user['id'];
 - Set the session cookie with `httponly` and `secure` so JavaScript cannot read it and it is only sent over HTTPS.
 - Use HTTPS everywhere so the session ID is not sent in cleartext.
 - Regenerate the session ID on login.
-- Consider binding the session to the user's IP or User-Agent (with care -- these can change for legitimate users).
+- Consider binding the session to the user's IP or User-Agent (with care - these can change for legitimate users).
 
 ### Secure Cookie Settings
 
@@ -495,15 +495,15 @@ Use cookies for non-sensitive preferences. Use sessions for authentication, shop
 
 ## Summary
 
-- **HTTP is stateless** -- the server does not remember you between requests. Cookies and sessions add state.
+- **HTTP is stateless** - the server does not remember you between requests. Cookies and sessions add state.
 - **Cookies** are name-value pairs stored by the browser and sent with each request. Use `setcookie()` to set them and `$_COOKIE` to read them. Set `httponly` and `secure` for sensitive cookies.
-- **Reading cookies** -- use `isset()` or `??`. **Deleting** -- set expiry to a past time with the same path/domain.
+- **Reading cookies** - use `isset()` or `??`. **Deleting** - set expiry to a past time with the same path/domain.
 - **Sessions** store data on the server and use a session ID cookie. Call `session_start()` before using `$_SESSION`.
-- **Setting and reading** -- assign to `$_SESSION` and read with `isset()` before access.
-- **Destroying sessions** -- clear `$_SESSION`, call `session_destroy()`, and optionally delete the session cookie. Redirect after logout.
-- **Flash messages** -- store in session, redirect, display once, then `unset()`.
-- **Login/logout** -- validate credentials against the database, store user in `$_SESSION`, protect pages by checking `$_SESSION['user_id']`, and destroy the session on logout.
-- **Session security** -- use `session_regenerate_id(true)` after login, set `httponly` and `secure` on the session cookie, and avoid storing sensitive data in cookies.
-- **Cookies vs sessions** -- cookies for preferences; sessions for authentication and sensitive state.
+- **Setting and reading** - assign to `$_SESSION` and read with `isset()` before access.
+- **Destroying sessions** - clear `$_SESSION`, call `session_destroy()`, and optionally delete the session cookie. Redirect after logout.
+- **Flash messages** - store in session, redirect, display once, then `unset()`.
+- **Login/logout** - validate credentials against the database, store user in `$_SESSION`, protect pages by checking `$_SESSION['user_id']`, and destroy the session on logout.
+- **Session security** - use `session_regenerate_id(true)` after login, set `httponly` and `secure` on the session cookie, and avoid storing sensitive data in cookies.
+- **Cookies vs sessions** - cookies for preferences; sessions for authentication and sensitive state.
 
-**Next up:** [Composer & Packages](./14-composer-and-packages.md) -- dependency management, PSR-4 autoloading, and using third-party packages.
+**Next up:** [Composer & Packages](./14-composer-and-packages.md) - dependency management, PSR-4 autoloading, and using third-party packages.
