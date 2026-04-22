@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.2] - 2026-04-22
+
+### Fixed
+- Component Dialogs — restored three in-page anchor links (`#empty-dialog--starting-point`, `#layout--read-only`, `#msm--live-copy-considerations`) whose double-dash segments were inadvertently collapsed by the v1.9.1 typography sweep, breaking the Docusaurus build
+
 ## [1.9.1] - 2026-04-22
 
 ### Changed
