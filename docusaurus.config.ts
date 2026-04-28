@@ -324,11 +324,6 @@ const config: Config = {
                     label: 'Other',
                     position: 'left',
                 },
-                {
-                    href: 'https://github.com/LucaNerlich/lucanerlich.com',
-                    label: 'GitHub',
-                    position: 'right',
-                },
             ],
         },
         footer: {
