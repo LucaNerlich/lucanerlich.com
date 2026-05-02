@@ -19,12 +19,8 @@ export const sidebarOrder: Record<string, string[]> = {
         'intro',
         'aem',
         'strapi',
-        'content-modeling',
-        'web-content',
+        'building-for-the-web',
         'git',
-        'web-performance',
-        'semantic-html',
-        'build-a-blog',
         'css',
         'javascript',
         'java',
@@ -33,6 +29,28 @@ export const sidebarOrder: Record<string, string[]> = {
         'design-patterns',
         'other',
         'projects',
+    ],
+
+    // ------------------------------------------------------------------
+    // Building for the Web – content design, modeling, semantics, performance
+    // ------------------------------------------------------------------
+    'building-for-the-web': [
+        'web-content',
+        'content-modeling',
+        'semantic-html',
+        'web-performance',
+        'build-a-blog',
+    ],
+
+    'building-for-the-web/web-content': [
+        'overview',
+        'readability-and-typography',
+        'structure-and-hierarchy',
+        'forms-and-interactions',
+        'microcopy-and-error-states',
+        'color-and-contrast',
+        'images-and-media',
+        'information-architecture',
     ],
 
     // ------------------------------------------------------------------

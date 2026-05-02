@@ -206,10 +206,10 @@ Why it looks ugly is the point of Step 2.
 ## Step 2 - style it with CSS
 
 Open `styles.css` and paste this in. It is about 60 lines. Read top to bottom. If any selector or property is new to
-you, the [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) has a chapter for each area - in particular
-the [box model](./css/beginners-guide/03-the-box-model.md),
-[colors and typography](./css/beginners-guide/04-colors-and-typography.md), and
-[Flexbox](./css/beginners-guide/07-flexbox.md) chapters back up what happens in the header and cards below.
+you, the [CSS Beginners' Guide](../css/beginners-guide/01-introduction.md) has a chapter for each area - in particular
+the [box model](../css/beginners-guide/03-the-box-model.md),
+[colors and typography](../css/beginners-guide/04-colors-and-typography.md), and
+[Flexbox](../css/beginners-guide/07-flexbox.md) chapters back up what happens in the header and cards below.
 
 ```css
 /* Reset and defaults */
@@ -325,12 +325,12 @@ and footer. Resize the browser window narrow and the aside will jump below the p
   light values;
   `html[data-theme="dark"]` overrides them when the attribute is present. The JavaScript in Step 3 just flips that
   attribute - no CSS needs to be rewritten at runtime. See
-  [CSS Custom Properties](./css/beginners-guide/13-css-custom-properties.md) for the full picture (scoping,
+  [CSS Custom Properties](../css/beginners-guide/13-css-custom-properties.md) for the full picture (scoping,
   fallbacks, `calc()` integration).
 - **`repeat(auto-fit, minmax(18rem, 1fr))`**. This is the whole responsive layout. "Fit as many 18rem-wide columns as
   will fit, and let each take an equal share of the remaining space." On a phone you get one column; on a laptop you
-  get two. The [CSS Grid chapter](./css/beginners-guide/08-css-grid.md) covers `auto-fit` vs `auto-fill` and why this
-  pattern avoids a media query; [Responsive Design](./css/beginners-guide/09-responsive-design.md) covers the cases
+  get two. The [CSS Grid chapter](../css/beginners-guide/08-css-grid.md) covers `auto-fit` vs `auto-fill` and why this
+  pattern avoids a media query; [Responsive Design](../css/beginners-guide/09-responsive-design.md) covers the cases
   where a media query is still the right tool.
 
 ## Step 3 - add JavaScript
@@ -338,7 +338,7 @@ and footer. Resize the browser window narrow and the aside will jump below the p
 Open `app.js` and paste this in. The **DOM** is just a JavaScript view of the page - every HTML element becomes an
 object you can read, change, or attach a click handler to. Every DOM method here - `getElementById`,
 `querySelectorAll`, `addEventListener`, `dataset`, `setAttribute` - is covered in depth in
-[The DOM](./javascript/beginners-guide/08-the-dom.md) and [Events](./javascript/beginners-guide/09-events.md).
+[The DOM](../javascript/beginners-guide/08-the-dom.md) and [Events](../javascript/beginners-guide/09-events.md).
 
 ```js
 // 1. Theme toggle ---------------------------------------------------
@@ -405,7 +405,7 @@ Refresh the page. Three things should happen:
 | Block         | Concept it teaches                                                                                   |
 |---------------|------------------------------------------------------------------------------------------------------|
 | Theme toggle  | DOM attributes, event listeners, `localStorage`, CSS custom properties as a single source of truth.  |
-| Relative dates| `Intl.RelativeTimeFormat` - the browser's built-in human-readable dates. See [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) for the sibling APIs (numbers, currency, full dates). |
+| Relative dates| `Intl.RelativeTimeFormat` - the browser's built-in human-readable dates. See [Intl API Formatting](../javascript/javascript-intl-api-formatting.md) for the sibling APIs (numbers, currency, full dates). |
 | Tag filter    | `querySelectorAll`, `dataset`, `hidden` attribute, and toggling state with a single top-level var.   |
 
 ## Step 4 - a responsive header and footer
@@ -419,7 +419,7 @@ drops below the main column. But two places still look cramped on a phone:
 This step upgrades both - a proper mobile menu behind a toggle button, and a multi-column footer that stacks on
 narrow screens. A **media query** is a CSS rule that only applies when the screen is a certain size (for example,
 "these styles only on screens narrower than 640px"). If you want the theory behind this section, see
-[Responsive Design](./css/beginners-guide/09-responsive-design.md) for breakpoints and media queries.
+[Responsive Design](../css/beginners-guide/09-responsive-design.md) for breakpoints and media queries.
 
 ### Part A - mobile menu in the header
 
@@ -596,8 +596,8 @@ query because the nav morphs into a totally different UI.
 
 Hard-coded posts are fine for a personal page. If you want the structure to grow, move the posts into a data file.
 This is also the point where you need `fetch()` and a local server - see
-[Working with Data](./javascript/beginners-guide/10-working-with-data.md) for the fundamentals and
-[Async/Await Patterns](./javascript/async-await-guide.md) for the Promise behaviour behind `await`.
+[Working with Data](../javascript/beginners-guide/10-working-with-data.md) for the fundamentals and
+[Async/Await Patterns](../javascript/async-await-guide.md) for the Promise behaviour behind `await`.
 
 Create `posts.json` next to `app.js`:
 
@@ -741,7 +741,7 @@ npm run build
 
 You get a `dist/` folder with static HTML, CSS, and JS that can be dropped onto any static host (GitHub Pages, Netlify,
 a plain nginx VPS). For the VPS route in particular, [Deploy to a VPS with
-nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) walks through the full server-side setup.
+nginx](../javascript/beginners-guide/12-deploy-vps-nginx.md) walks through the full server-side setup.
 
 ### When is Vite worth it?
 
@@ -828,7 +828,7 @@ to understand what actually happens when someone visits a URL, running your own 
 it.
 
 This section is the "just-get-it-showing" version. For SSH hardening, firewalls, a real domain, and HTTPS with Let's
-Encrypt, follow the full [Deploy to a VPS with nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) guide after
+Encrypt, follow the full [Deploy to a VPS with nginx](../javascript/beginners-guide/12-deploy-vps-nginx.md) guide after
 you have the basics working.
 
 1. **Get a VPS** (Virtual Private Server - a Linux computer in a data centre, rented by the month). Hetzner,
@@ -921,19 +921,19 @@ There is no wrong pick - a static blog will run happily on any of them.
 ## Next steps
 
 - [Semantic HTML](./semantic-html.mdx) - reference for every element you used here.
-- [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) - go deeper on selectors, the box model, Grid, and
-  Flexbox. The chapters on [CSS Grid](./css/beginners-guide/08-css-grid.md),
-  [Responsive Design](./css/beginners-guide/09-responsive-design.md), and
-  [CSS Custom Properties](./css/beginners-guide/13-css-custom-properties.md) directly extend what you built here.
-- [JavaScript Beginners' Guide](./javascript/beginners-guide/01-introduction.md) - 15 chapters from `console.log` to
-  deploying a site on a VPS. [The DOM](./javascript/beginners-guide/08-the-dom.md),
-  [Events](./javascript/beginners-guide/09-events.md), and
-  [Working with Data](./javascript/beginners-guide/10-working-with-data.md) cover everything `app.js` and `posts.json`
+- [CSS Beginners' Guide](../css/beginners-guide/01-introduction.md) - go deeper on selectors, the box model, Grid, and
+  Flexbox. The chapters on [CSS Grid](../css/beginners-guide/08-css-grid.md),
+  [Responsive Design](../css/beginners-guide/09-responsive-design.md), and
+  [CSS Custom Properties](../css/beginners-guide/13-css-custom-properties.md) directly extend what you built here.
+- [JavaScript Beginners' Guide](../javascript/beginners-guide/01-introduction.md) - 15 chapters from `console.log` to
+  deploying a site on a VPS. [The DOM](../javascript/beginners-guide/08-the-dom.md),
+  [Events](../javascript/beginners-guide/09-events.md), and
+  [Working with Data](../javascript/beginners-guide/10-working-with-data.md) cover everything `app.js` and `posts.json`
   touch.
-- [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) - deeper dive on the `Intl` family we used for
+- [Intl API Formatting](../javascript/javascript-intl-api-formatting.md) - deeper dive on the `Intl` family we used for
   relative dates.
-- [Project: Build a Complete Website](./javascript/beginners-guide/11-project-build-a-website.md) - the multi-page
+- [Project: Build a Complete Website](../javascript/beginners-guide/11-project-build-a-website.md) - the multi-page
   portfolio version of this tutorial, with navigation, form validation, and routing.
-- [Deploy to a VPS with nginx](./javascript/beginners-guide/12-deploy-vps-nginx.md) - put the finished blog on the
+- [Deploy to a VPS with nginx](../javascript/beginners-guide/12-deploy-vps-nginx.md) - put the finished blog on the
   internet.
 - [Web Performance](./web-performance.md) - once your blog is live, the Core Web Vitals checklist to keep it fast.

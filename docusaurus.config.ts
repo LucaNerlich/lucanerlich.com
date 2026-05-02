@@ -247,6 +247,36 @@ const config: Config = {
                     {from: '/other/tech/mermaid-diagrams/', to: '/other/mermaid-diagrams/'},
                     {from: '/other/tech/my-shell-setup/', to: '/other/my-shell-setup/'},
                     {from: '/other/tech/sql-guide/', to: '/other/sql-guide/'},
+
+                    // Building for the Web group: defensive redirects from the new
+                    // file-path-implied URLs back to the canonical slug URLs (which
+                    // were preserved across the move via explicit slug frontmatter).
+                    {from: '/building-for-the-web/content-modeling/', to: '/content-modeling/'},
+                    {from: '/building-for-the-web/semantic-html/', to: '/semantic-html/'},
+                    {from: '/building-for-the-web/web-performance/', to: '/web-performance/'},
+                    {from: '/building-for-the-web/build-a-blog/', to: '/build-a-blog/'},
+                    {from: '/building-for-the-web/web-content/', to: '/web-content/'},
+                    {from: '/building-for-the-web/web-content/overview/', to: '/web-content/website-content-and-presentation/'},
+
+                    // Web Content split: section anchors on the monolith are now
+                    // standalone pages; map the closest path-level guesses.
+                    {from: '/web-content/overview/', to: '/web-content/website-content-and-presentation/'},
+                    {from: '/web-content/readability/', to: '/web-content/readability-and-typography/'},
+                    {from: '/web-content/typography/', to: '/web-content/readability-and-typography/'},
+                    {from: '/web-content/headings/', to: '/web-content/structure-and-hierarchy/'},
+                    {from: '/web-content/page-structure/', to: '/web-content/structure-and-hierarchy/'},
+                    {from: '/web-content/visual-hierarchy/', to: '/web-content/structure-and-hierarchy/'},
+                    {from: '/web-content/forms/', to: '/web-content/forms-and-interactions/'},
+                    {from: '/web-content/links/', to: '/web-content/forms-and-interactions/'},
+                    {from: '/web-content/microcopy/', to: '/web-content/microcopy-and-error-states/'},
+                    {from: '/web-content/error-states/', to: '/web-content/microcopy-and-error-states/'},
+                    {from: '/web-content/empty-states/', to: '/web-content/microcopy-and-error-states/'},
+                    {from: '/web-content/color/', to: '/web-content/color-and-contrast/'},
+                    {from: '/web-content/contrast/', to: '/web-content/color-and-contrast/'},
+                    {from: '/web-content/images/', to: '/web-content/images-and-media/'},
+                    {from: '/web-content/media/', to: '/web-content/images-and-media/'},
+                    {from: '/web-content/navigation/', to: '/web-content/information-architecture/'},
+                    {from: '/web-content/ia/', to: '/web-content/information-architecture/'},
                 ],
             },
         ],

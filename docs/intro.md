@@ -67,12 +67,12 @@ plus a section on [anti-patterns](./design-patterns/anti-patterns.mdx) and commo
 
 ## More Topics
 
-- [Content Modeling](./content-modeling.md) - CMS-agnostic guide to content types, relations, and performance pitfalls
-- [Website Content and Presentation](./web-content/website-content-and-presentation.md) - Readability, UX, focus, color, and how content works with modeling and semantics
+- [Content Modeling](./building-for-the-web/content-modeling.md) - CMS-agnostic guide to content types, relations, and performance pitfalls
+- [Website Content and Presentation](./building-for-the-web/web-content/overview.md) - Readability, UX, focus, color, and how content works with modeling and semantics
 - [Git](./git/beginners-guide/01-introduction.md) - Beginners guide covering branching, merging, rebasing, workflows, and commit conventions
-- [Web Performance](./web-performance.md) - Core Web Vitals, Lighthouse, image optimization, caching, and CDN patterns
-- [Semantic HTML](./semantic-html.mdx) - Element reference, accessibility, and common anti-patterns
-- [Build a Simple Blog Page](./build-a-blog.md) - Super-beginner tutorial: a working blog with only HTML, CSS, and vanilla JS, plus how Vite fits in later
+- [Web Performance](./building-for-the-web/web-performance.md) - Core Web Vitals, Lighthouse, image optimization, caching, and CDN patterns
+- [Semantic HTML](./building-for-the-web/semantic-html.mdx) - Element reference, accessibility, and common anti-patterns
+- [Build a Simple Blog Page](./building-for-the-web/build-a-blog.md) - Super-beginner tutorial: a working blog with only HTML, CSS, and vanilla JS, plus how Vite fits in later
 - [Mermaid Diagrams](./other/mermaid-diagrams.mdx) - Flowcharts, sequence diagrams, class diagrams, and more
 
 ---
