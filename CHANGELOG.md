@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.10.0] - 2026-05-02
+
+### Added
+- New "Building for the Web" sidebar category — groups Content Modeling, Semantic HTML, Web Performance, Build a Simple Blog Page, and the Web Content section under one parent, replacing five separate top-level entries
+- Web Content section split into eight focused chapters (Overview, Readability & Typography, Structure & Hierarchy, Forms & Interactions, Microcopy & Error States, Color & Contrast, Images & Media, Information Architecture) instead of a single 746-line monolith
+- New "Microcopy and Error States" chapter — buttons and primary actions, helper text and field hints, validation errors with inline `aria-describedby` patterns, empty states (including filtered variants), loading states with skeletons and progress bars, success confirmations, destructive confirmation dialogs, 404 and 5xx error pages, voice consistency, and a quick-reference table
+- New "Information Architecture" chapter — primary / utility / footer navigation patterns, `aria-current="page"` active state, breadcrumbs, taxonomies and label-drift, faceted filtering, search UX (typo recovery, recent and suggested queries), URL slug design rules, localised URLs, hub pages versus alphabetical dumps, and an IA audit checklist
+- Web Content guide expanded across the existing sections with extensive Do / Don't code examples covering language and tone, microcopy, typography and measure (CSS), heading hierarchy, lists versus paragraphs, primary CTAs, progressive disclosure, link text, form labels and inline errors, mobile-first DOM order, color tokens, dark-mode token redefinition, link underlines, alt text, and video captions (#52)
+- Cursor Cloud specific instructions in `AGENTS.md` (#50)
+- Initial Web Content section for readability, UX, focus, and visual design (#49)
+
+### Changed
+- 22 client-side redirects added in `docusaurus.config.ts` to catch URLs constructed from the new file paths (e.g. `/building-for-the-web/content-modeling/` → `/content-modeling/`) and likely shortened guesses (e.g. `/web-content/microcopy/` → `/web-content/microcopy-and-error-states/`); all original canonical URLs remain stable via explicit `slug:` frontmatter
+- Removed the standalone GitHub link from the site
+
 ## [1.9.2] - 2026-04-22
 
 ### Fixed
