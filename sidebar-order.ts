@@ -20,6 +20,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'aem',
         'strapi',
         'content-modeling',
+        'web-content',
         'git',
         'web-performance',
         'semantic-html',
