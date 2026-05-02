@@ -65,5 +65,6 @@ This site provides reference documentation and practical guides aimed at develop
 ## Optional
 
 - [Content Modeling](https://lucanerlich.com/content-modeling/): CMS-agnostic guide to content types, relations, and performance pitfalls
+- [Website Content and Presentation](https://lucanerlich.com/web-content/website-content-and-presentation/): Readability, UX, focus, color, and inclusive content structure
 - [Web Performance](https://lucanerlich.com/web-performance/): Core Web Vitals, Lighthouse, image optimisation, caching, and CDN patterns
 - [Semantic HTML](https://lucanerlich.com/semantic-html/): Element reference, accessibility, and common anti-patterns

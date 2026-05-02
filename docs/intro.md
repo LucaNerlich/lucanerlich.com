@@ -68,6 +68,7 @@ plus a section on [anti-patterns](./design-patterns/anti-patterns.mdx) and commo
 ## More Topics
 
 - [Content Modeling](./content-modeling.md) - CMS-agnostic guide to content types, relations, and performance pitfalls
+- [Website Content and Presentation](./web-content/website-content-and-presentation.md) - Readability, UX, focus, color, and how content works with modeling and semantics
 - [Git](./git/beginners-guide/01-introduction.md) - Beginners guide covering branching, merging, rebasing, workflows, and commit conventions
 - [Web Performance](./web-performance.md) - Core Web Vitals, Lighthouse, image optimization, caching, and CDN patterns
 - [Semantic HTML](./semantic-html.mdx) - Element reference, accessibility, and common anti-patterns
