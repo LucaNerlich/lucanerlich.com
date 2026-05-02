@@ -185,3 +185,43 @@ Rust, C, F#.
 2. Add a `_category_.json` with `label` and optional `generatedIndex`
 3. Add the directory name to the parent's array in `sidebar-order.ts`
 4. Run `pnpm build` to verify
+
+## Cursor Cloud specific instructions
+
+### Environment prerequisites
+
+Node.js 22 and pnpm 10.x are required. The VM update script installs these
+automatically via NodeSource and corepack. No additional system dependencies
+are needed.
+
+### Running the dev server
+
+```bash
+pnpm start --host 0.0.0.0 --port 3000
+```
+
+Use `--host 0.0.0.0` so the site is accessible from the Desktop browser pane.
+The dev server supports hot reload; editing any `.md`, `.mdx`, `.ts`, `.css`,
+or config file triggers an automatic rebuild.
+
+### Verification workflow
+
+There is no test suite. The verification steps are:
+
+1. `pnpm build` -- the only "test". Fails on broken links, anchors, or images.
+2. `pnpm start` -- visually confirm the site renders correctly in a browser.
+
+### Gotchas
+
+- **No lockfile in repo**: `pnpm-lock.yaml` is gitignored. `pnpm install`
+  generates it fresh each time. This means dependency versions may drift
+  between environments; `pnpm build` is the gate.
+- **`.nvmrc` says v16**: Ignore it. The correct Node version is `^22` per
+  `engines` in `package.json`.
+- **No ESLint / Prettier**: There are no JS/TS linters configured. The only
+  prose linter is Vale (optional, not installed in the Cloud VM by default).
+- **SWC build warnings**: The `vscode-languageserver-types` critical dependency
+  warning during `pnpm build` is benign and can be ignored.
+- **Algolia and Umami**: Both are external services configured with public
+  client-side keys. They are non-functional in local dev (Umami is skipped on
+  localhost). No secrets are needed.
