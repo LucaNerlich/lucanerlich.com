@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.11.1] - 2026-05-03
+
+### Fixed
+- Removed redundant "Edge Delivery Services - " prefix from all 14 chapter page titles in the new `docs/aem/edge-delivery/` section
+
 ## [1.11.0] - 2026-05-03
 
 ### Added
