@@ -1,0 +1,8 @@
+{
+    "label": "Edge Delivery",
+    "link": {
+        "type": "generated-index",
+        "slug": "/aem/edge-delivery",
+        "description": "Adobe Edge Delivery Services (EDS, formerly Project Helix / Franklin) -- architecture, blocks, customizing, the helix5 Admin API, Universal Editor, Sidekick Library, Forms, and Commerce."
+    }
+}

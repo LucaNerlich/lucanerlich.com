@@ -1,0 +1,178 @@
+---
+title: Edge Delivery Services - Forms
+description: EDS for Forms -- Adaptive Forms blocks, document-based form authoring, submission handling, and integration patterns.
+tags: [aem, edge-delivery, forms, adaptive-forms]
+---
+
+# EDS for Forms
+
+EDS extends the same edge-delivery model to **Adaptive Forms**. Authors compose forms
+in AEM Forms or in a document, and EDS renders them as fast, accessible, semantic HTML
+served from the CDN. The form runtime is just another block.
+
+## Two authoring paths
+
+### Document-based forms
+
+Author a form as a table -- one row per field. The `form` block converts it into a
+semantic `<form>`:
+
+```
+| Form                    |          |          |
+|-------------------------|----------|----------|
+| Field type | Label      | Name     | Required |
+| text       | First name | first    | true     |
+| text       | Last name  | last     | true     |
+| email      | Email      | email    | true     |
+| select     | Country    | country |          |
+| submit     | Subscribe  |          |          |
+```
+
+The first row is the block name (and optional variations). Subsequent rows describe
+the fields. The `form` block in [aem-boilerplate-blocks](https://github.com/adobe-rnd/aem-boilerplate-blocks/tree/main/blocks/form)
+ships a working reference implementation.
+
+### Adaptive Forms (AEM Forms)
+
+For complex forms -- multi-step flows, conditional fields, server-side validation --
+authors use the **AEM Forms** authoring UI. The form definition is rendered into
+the EDS pipeline via the Adaptive Forms block. EDS handles delivery and accessibility;
+AEM Forms handles validation rules, drafts, and submission storage.
+
+This requires an AEM Forms entitlement.
+
+## The form block
+
+Whichever authoring path you pick, the runtime side is the `form` block. Like any
+EDS block, it's a folder of JS + CSS:
+
+```
+/blocks/form/
+    form.js
+    form.css
+    form-fields.js
+    form-validation.js
+    form-submit.js
+```
+
+Responsibilities split across the helper modules:
+
+- `form.js` -- decoration entry point: read fields, build `<form>`, wire submit
+- `form-fields.js` -- render input types (text, email, select, radio, checkbox,
+  textarea, file, date)
+- `form-validation.js` -- client-side validation, ARIA error wiring
+- `form-submit.js` -- collect values, post to the configured endpoint, handle
+  success / error UI
+
+## Submission targets
+
+The `form` block reads a target URL from a `submit` row or a meta tag. Common targets:
+
+| Target | Use case |
+|--------|----------|
+| **AEM Forms endpoint** | Stores the submission in AEM, runs server-side validation, optionally fires a workflow |
+| **External REST API** | Anything else -- CRM, marketing automation, custom backend |
+| **SharePoint list** | For internal forms, store directly in a SharePoint list |
+| **Email** | Via a serverless function or `mailto:` action |
+| **Webhook** | For lightweight integrations (Slack, Teams, custom) |
+
+A typical `submit` row in a document-based form:
+
+```
+| submit | Subscribe | endpoint=/api/subscribe |
+```
+
+Read the endpoint with `readBlockConfig` and POST JSON:
+
+```javascript title="blocks/form/form-submit.js"
+export async function submit(form, endpoint) {
+    const data = Object.fromEntries(new FormData(form).entries());
+    const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`Submit failed: ${res.status}`);
+    return res.json();
+}
+```
+
+## Validation
+
+Client-side validation uses the HTML constraint API plus ARIA wiring:
+
+```html
+<input type="email" name="email" required aria-describedby="email-error">
+<p id="email-error" class="form-error" hidden>Please enter a valid email address.</p>
+```
+
+For server-side validation (especially with AEM Forms), the submit endpoint returns
+a structured error response that the block displays inline.
+
+## Spam and abuse
+
+Edge delivery means the form is *very* fast to load -- attackers will find it. Pick
+at least one of:
+
+- **CAPTCHA** -- reCAPTCHA, Cloudflare Turnstile, hCaptcha. Render in `delayed.js`
+  to keep LCP clean.
+- **Honeypot field** -- an `<input>` hidden with CSS that humans never fill but bots
+  often do.
+- **Time check** -- record the load timestamp; reject submissions submitted faster
+  than a human plausibly could.
+- **Rate limit at the CDN** -- limit requests per IP at the edge.
+
+## Accessibility
+
+The `form` block is tested with screen readers. Keep these invariants when
+customising:
+
+- Every input has a programmatically associated `<label>` (use `for`/`id` or wrap)
+- Required fields use both `required` and `aria-required="true"`
+- Errors use `aria-describedby` and `role="alert"`
+- Submit buttons have a clear, unique label
+- Focus is visible (don't strip `:focus-visible` outlines)
+
+## Common patterns
+
+### Multi-step form
+
+The block reads `step` rows that group fields:
+
+```
+| step | personal-details |
+| text | First name | first |
+| text | Last name  | last  |
+| step | preferences      |
+| select | Topic | topic |
+```
+
+JS hides steps after the current one and wires Next / Previous buttons.
+
+### File upload to AEM Assets
+
+For document upload forms, post the file directly to an AEM Assets endpoint via the
+[Asset Upload API](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/assets/admin/configure-asset-publish-api.html).
+Get a one-time upload token from your backend so the API key never lands in the
+browser.
+
+### Save draft
+
+For long forms, persist values to `localStorage` after each change so a refresh
+doesn't lose work:
+
+```javascript
+form.addEventListener('input', () => {
+    const data = Object.fromEntries(new FormData(form).entries());
+    localStorage.setItem(`form-draft:${form.dataset.id}`, JSON.stringify(data));
+});
+```
+
+Clear the draft on successful submit.
+
+## See also
+
+- [Blocks](./blocks.mdx) -- the form block follows normal block conventions
+- [Customizing](./customizing.mdx) -- response headers (CSP) for form submissions
+- aem.live: [forms documentation](https://www.aem.live/docs/forms)
+- Adobe docs: [EDS for Forms](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview.html)

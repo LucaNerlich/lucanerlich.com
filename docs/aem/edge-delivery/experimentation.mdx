@@ -1,0 +1,105 @@
+---
+title: Edge Delivery Services - Experimentation
+description: Built-in A/B and multivariate testing, audiences, and edge-side resolution -- no third-party tool required.
+tags: [aem, edge-delivery, experimentation, ab-testing, personalisation]
+---
+
+# Experimentation
+
+EDS has **built-in experimentation** -- A/B and multivariate testing, plus audience
+targeting -- without any third-party tool. Variants are resolved at the **CDN edge**, so
+visitors never see a flicker of the control before the variant takes over.
+
+## How a test is set up
+
+Define experiments in a spreadsheet (the "experiments" sheet in your content source):
+
+| Experiment | Page | Variant | Split |
+|------------|------|---------|-------|
+| hero-test | /home | /experiments/hero-v2 | 50 |
+| pricing-cta | /pricing | /experiments/pricing-cta-b | 50 |
+
+- **Page** -- the URL being tested
+- **Variant** -- an alternative page that replaces the original for the test group
+- **Split** -- percentage of traffic that sees the variant
+
+Variant pages are authored exactly like the original page -- same blocks, same authoring
+flow -- just with different content.
+
+## Audiences
+
+Target content to specific audiences using the "audiences" sheet:
+
+| Audience | Condition |
+|----------|-----------|
+| mobile | device = mobile |
+| returning | returning-visitor = true |
+| germany | geo.country = DE |
+
+Combined with experiments:
+
+| Experiment | Page | Variant | Split | Audience |
+|------------|------|---------|-------|----------|
+| hero-test-de | /home | /experiments/hero-de | 100 | germany |
+
+Audiences resolve **at the edge**, so geographic and device targeting happens before
+the HTML is even sent to the browser. No client-side JavaScript is required to swap
+content.
+
+## Multivariate
+
+Add multiple variant rows for the same experiment and EDS will distribute traffic
+across them according to the splits:
+
+| Experiment | Page | Variant | Split |
+|------------|------|---------|-------|
+| hero-mvt | /home | /experiments/hero-a | 33 |
+| hero-mvt | /home | /experiments/hero-b | 33 |
+| hero-mvt | /home | /experiments/hero-c | 34 |
+
+## Tracking results
+
+EDS does not write results back into the spreadsheet. You wire your analytics tool of
+choice (Adobe Analytics, GA4, Plausible) and read the experiment / variant assignment
+from a meta tag or a `data-experiment` attribute that the EDS runtime adds to the
+`<body>`.
+
+A typical setup in `delayed.js`:
+
+```javascript title="scripts/delayed.js"
+const exp = document.body.dataset.experiment;
+const variant = document.body.dataset.experimentVariant;
+if (exp && window.analytics) {
+    window.analytics.track('experiment-exposure', { exp, variant });
+}
+```
+
+## Stickiness
+
+EDS sets a cookie when a visitor is assigned to a variant, so they see the same variant
+on subsequent visits until the experiment ends or the cookie is cleared.
+
+## Concluding an experiment
+
+Two options:
+
+1. **Bake the winner in** -- replace the original page's content with the winning
+   variant, then remove the experiment row.
+2. **Promote the variant** -- delete the original page, redirect to the variant URL.
+
+Option 1 keeps URLs stable and is the default.
+
+## Limitations
+
+- Variant pages must live in the Content Bus -- you can't run an experiment against an
+  external URL.
+- Splits are per-experiment, not stacked. If you run two experiments on the same page,
+  visitors are assigned independently to each.
+- Server-side personalisation tied to authenticated identity is out of scope -- use
+  the [hybrid pattern](./best-practices.mdx#hybrid-routing) for those pages.
+
+## See also
+
+- [Performance](./performance.mdx) -- edge resolution avoids the flicker that hurts CLS
+- [Customizing](./customizing.mdx) -- wiring analytics in `delayed.js`
+- aem.live: [experimentation docs](https://www.aem.live/docs/experimentation)

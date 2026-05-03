@@ -1,0 +1,126 @@
+---
+title: Edge Delivery Services - Best practices, hybrid AEM, pitfalls
+description: Hybrid routing patterns mixing EDS with traditional AEM Publish, common pitfalls and fixes, licensing, and external resources.
+tags: [aem, edge-delivery, best-practices, hybrid, licensing]
+---
+
+# Best practices
+
+This chapter is the running list of "things you wish someone had told you" -- patterns
+that pay off, mistakes that bite teams more than once, plus licensing notes and
+upstream resources.
+
+## Hybrid routing
+
+EDS and traditional AEM Publish coexist well. Common pattern:
+
+```
+www.example.com/           -- EDS (marketing homepage)
+www.example.com/blog/      -- EDS (blog)
+www.example.com/products/  -- EDS (catalog)
+www.example.com/account/   -- AEM Publish (authenticated)
+www.example.com/api/       -- AEM Publish (servlets)
+www.example.com/forms/     -- EDS for Forms
+```
+
+Configure path-based routing at your CDN (Adobe-managed CDN, or a BYO CDN in front).
+Two practical rules:
+
+1. **One origin per path prefix.** Routing rules should be flat -- not deeply nested
+   regex. The simplest one wins.
+2. **Cache identity stays consistent.** A URL that flips between origins under
+   different conditions is a bug magnet -- cache key, surrogate keys, and
+   purge windows have to align.
+
+### Shared content
+
+Content Fragments authored in AEM are consumable from both sides:
+
+- Traditional AEM: via Sling Models or the GraphQL endpoint
+- EDS: via the Content Fragment / GraphQL API or Universal Editor
+
+Keep one source of truth. A "product description" lives once; both AEM Publish and
+EDS pull it.
+
+### Migration strategy
+
+Most teams migrate incrementally:
+
+1. **Start with EDS** for new marketing pages or a redesign
+2. **Keep existing AEM Sites** for pages with complex server-side logic
+3. **Gradually move** pages to EDS as their blocks mature
+4. **Retire Publish + Dispatcher** for fully migrated sites (often optional --
+   the two-origin setup can stay indefinitely)
+
+## Common pitfalls
+
+| Pitfall | Why it happens | Fix |
+|---------|----------------|-----|
+| Lighthouse score drops below 100 | Render-blocking third-party script in `<head>` | Move it to `delayed.js` |
+| Block JS runs before DOM is ready | Misconception -- `decorate()` *is* called after DOM insertion | Trust the runtime; remove `DOMContentLoaded` workarounds |
+| Content changes not on production | Author clicked Preview but not Publish | Train authors on the two-step flow; add a [Sidekick plugin](./sidekick.mdx#building-a-custom-plugin) that highlights "preview-only" rows |
+| Custom domain shows stale content | BYO CDN missing push-invalidation | Configure the webhook target -- see [Customizing](./customizing.mdx#bring-your-own-cdn) |
+| Authors see broken layout in Word/Docs | Authoring table structure doesn't match block expectations | Document the content model per block; ship a [Sidekick block library](./sidekick.mdx#sidekick-library) so authors copy from a working example |
+| Block CSS leaks to other blocks | Global selectors in `block.css` | Scope every selector under `.blockname`; lint for it in CI |
+| Large `scripts.js` bundle | Functionality bundled instead of split | Each block owns its JS / CSS; lazy-load shared utilities from `/plugins/` |
+| EDS and AEM Publish disagree on the same URL | Two origins claim the same path | Use path-based routing at the CDN -- no overlapping prefixes |
+| `data-aue-*` attributes lost during decoration | Block `decorate()` clones nodes instead of moving them | Re-parent (`block.append(child)`) instead of `cloneNode` |
+| Slow PDP / PLP under load | Decoration fetches data in series across blocks | Hoist the data fetch to `scripts.js` and pass results to blocks |
+| Mysterious 404 on a known URL | Author deleted the doc but didn't unpublish | Run an [Admin API drift audit](./admin-api.mdx#audit-drift-between-source-and-live) |
+| API key leaked to the browser | Key embedded in a block | Move secrets server-side; have a thin proxy that adds the `Authorization` header |
+
+## Performance hygiene
+
+- Run [Lighthouse CI](./performance.mdx#measuring-on-every-pr) on every PR.
+- Budget delayed scripts. Even `delayed.js` can hurt if it pulls 200KB.
+- Profile blocks in DevTools' Performance tab when adding interactivity. The
+  decoration step shows up as user timing if you `performance.mark` it.
+
+## Authoring hygiene
+
+- **Block library** in Sidekick is your contract with authors. Keep it current.
+- **Section metadata** is the right home for theming hints. Don't reinvent.
+- **Content fragments** (UE only) keep shared copy DRY -- footers, banners, CTAs.
+
+## Operations hygiene
+
+- Schedule a weekly **drift audit** ([Admin API](./admin-api.mdx#audit-drift-between-source-and-live))
+  that flags pages where source is newer than live.
+- Use **snapshots** before high-stakes publishes (campaign launches, price changes).
+- Watch the **`/log` endpoint** for unexpected publishers -- it's the audit trail.
+
+## Licensing
+
+| Aspect | Details |
+|--------|---------|
+| **Included with** | AEM Sites as a Cloud Service |
+| **Page views** | Covered under the AEM Sites page-view tier |
+| **CDN traffic** | Adobe-managed CDN included; BYO CDN is the customer's responsibility |
+| **Authoring** | AEM authoring or document-based (SharePoint / Google Drive included) |
+| **Forms** | EDS for Forms may require a separate AEM Forms entitlement |
+| **Commerce** | Commerce Storefront requires Adobe Commerce or a third-party backend |
+| **Universal Editor** | Included with AEM as a Cloud Service |
+| **Sidekick** | Free Chrome / Edge extension |
+| **Admin API** | Included; rate-limited per repo |
+
+## External Resources
+
+- [Edge Delivery Services overview](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/edge-delivery/overview.html)
+- [aem.live](https://www.aem.live/) -- developer docs and tutorials
+- [EDS Block Collection](https://www.aem.live/developer/block-collection)
+- [aem-boilerplate](https://github.com/adobe/aem-boilerplate) -- starter repo
+- [aem-boilerplate-blocks](https://github.com/adobe-rnd/aem-boilerplate-blocks)
+- [AEM Sidekick](https://chromewebstore.google.com/detail/aem-sidekick/igkmdomcgoebiipaifhmpfjhbjccggml)
+- [Sidekick Library docs](https://www.aem.live/developer/sidekick-library)
+- [Universal Editor introduction](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/introduction.html)
+- [EDS for Forms](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview.html)
+- [Commerce Storefront on EDS](https://experienceleague.adobe.com/developer/commerce/storefront/)
+- [Admin API reference](https://www.aem.live/docs/admin)
+
+## See also
+
+- [Overview](./overview.mdx)
+- [Architecture](./architecture.mdx)
+- [Customizing](./customizing.mdx)
+- [Admin API](./admin-api.mdx)
+- [Dispatcher Configuration](../infrastructure/dispatcher-configuration.mdx) -- traditional delivery layer (replaced by EDS CDN)

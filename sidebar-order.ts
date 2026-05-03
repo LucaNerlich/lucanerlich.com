@@ -59,6 +59,7 @@ export const sidebarOrder: Record<string, string[]> = {
     'aem': [
         'beginners-guide',
         'architecture',
+        'edge-delivery',
         'custom-component',
         'component-dialogs',
         'htl-templates',
@@ -69,6 +70,23 @@ export const sidebarOrder: Record<string, string[]> = {
         'content',
         'ui',
         'infrastructure',
+    ],
+
+    'aem/edge-delivery': [
+        'overview',
+        'architecture',
+        'authoring',
+        'blocks',
+        'customizing',
+        'universal-editor',
+        'development',
+        'sidekick',
+        'admin-api',
+        'experimentation',
+        'performance',
+        'forms',
+        'commerce',
+        'best-practices',
     ],
 
     'aem/beginners-guide': [

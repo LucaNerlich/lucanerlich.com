@@ -1,0 +1,236 @@
+---
+title: Edge Delivery Services - Universal Editor
+description: Wiring EDS blocks into the Universal Editor with component-definition.json, component-models.json, component-filters.json, and data-aue-* instrumentation.
+tags: [aem, edge-delivery, universal-editor, ue, component-definition, instrumentation]
+---
+
+# Universal Editor
+
+The **Universal Editor (UE)** is Adobe's framework-agnostic visual editor. For EDS,
+it replaces the classic AEM Page Editor and gives authors a true WYSIWYG experience
+on top of the same block-based pipeline that powers document-based authoring.
+
+This chapter is about the **block-side wiring** -- the three JSON config files plus the
+HTML attributes that tell UE what to make editable. Authoring concepts and
+when-to-pick-UE-vs-docs live in [Authoring models](./authoring.mdx).
+
+## The three JSON files
+
+Three files live at the root of an EDS project that supports UE:
+
+| File | What it controls |
+|------|------------------|
+| `component-definition.json` | Which blocks exist and the authoring fields each exposes |
+| `component-models.json` | The schemas (data models) referenced by definitions |
+| `component-filters.json` | Which blocks are allowed inside which container (sections, columns, etc.) |
+
+UE reads these on load and uses them to render the authoring sidebar, validate input,
+and limit insertion choices.
+
+### component-definition.json
+
+Lists every component (block) the editor should know about. Each entry has an `id`,
+a display `title`, and a `plugins.xwalk.page.template` block that says what kind of
+markup the block produces.
+
+```json title="component-definition.json"
+{
+    "groups": [
+        {
+            "title": "Blocks",
+            "id": "blocks",
+            "components": [
+                {
+                    "title": "Hero",
+                    "id": "hero",
+                    "plugins": {
+                        "xwalk": {
+                            "page": {
+                                "resourceType": "core/franklin/components/block/v1/block",
+                                "template": {
+                                    "name": "Hero",
+                                    "model": "hero",
+                                    "filter": "hero"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "title": "Cards",
+                    "id": "cards",
+                    "plugins": {
+                        "xwalk": {
+                            "page": {
+                                "resourceType": "core/franklin/components/block/v1/block",
+                                "template": {
+                                    "name": "Cards",
+                                    "model": "cards",
+                                    "filter": "cards"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
+```
+
+### component-models.json
+
+Defines the authoring **fields** for each component referenced above. This is what
+authors actually fill in.
+
+```json title="component-models.json"
+{
+    "models": [
+        {
+            "id": "hero",
+            "fields": [
+                {
+                    "component": "reference",
+                    "valueType": "string",
+                    "name": "image",
+                    "label": "Background image",
+                    "multi": false
+                },
+                { "component": "text", "name": "imageAlt", "label": "Alt text" },
+                { "component": "text", "name": "title", "label": "Heading" },
+                { "component": "richtext", "name": "body", "label": "Body" },
+                { "component": "aem-content", "name": "cta", "label": "CTA link" }
+            ]
+        },
+        {
+            "id": "cards",
+            "fields": [
+                { "component": "container", "name": "cards", "label": "Cards" }
+            ]
+        }
+    ]
+}
+```
+
+Common field components: `text`, `multiline`, `richtext`, `select`, `boolean`,
+`reference` (for assets), `aem-content` (for content fragments / pages), `container`
+(for nested children).
+
+### component-filters.json
+
+Whitelists which components can be inserted inside which container.
+
+```json title="component-filters.json"
+{
+    "filters": [
+        {
+            "id": "section",
+            "components": ["hero", "cards", "columns", "text", "image", "embed"]
+        },
+        {
+            "id": "cards",
+            "components": ["card-item"]
+        },
+        {
+            "id": "hero",
+            "components": []
+        }
+    ]
+}
+```
+
+The `id` matches the `template.filter` value in `component-definition.json`. An empty
+list means "leaf" -- the block accepts no nested children.
+
+## Instrumentation: `data-aue-*` attributes
+
+When UE loads a page, it inspects the rendered HTML for `data-aue-*` attributes to
+know what's editable. Your block decoration code adds these attributes so the editor
+can hover-highlight, edit, and re-order elements in place.
+
+| Attribute | What it marks |
+|-----------|---------------|
+| `data-aue-resource` | The content resource (where the value persists) |
+| `data-aue-prop` | Which property of that resource is being shown |
+| `data-aue-type` | Field component (e.g. `text`, `richtext`, `image`, `reference`) |
+| `data-aue-label` | Label shown in the editor sidebar |
+| `data-aue-filter` | For container elements -- which filter applies here |
+| `data-aue-behavior` | `component` for a whole block, `container` for a nested zone |
+
+For document-based authoring, EDS injects these attributes automatically based on the
+table position. For UE, the source already comes pre-instrumented from AEM and your
+block decoration must **preserve** the attributes when restructuring the DOM.
+
+A pattern that survives both modes:
+
+```javascript title="/blocks/hero/hero.js"
+export default function decorate(block) {
+    const image = block.querySelector('picture');
+    const heading = block.querySelector('h1, h2, h3');
+    const cta = block.querySelector('a');
+
+    // Preserve any UE instrumentation by moving nodes, not cloning
+    block.innerHTML = '';
+
+    const content = document.createElement('div');
+    content.classList.add('hero-content');
+    if (heading) content.append(heading);
+    if (cta) content.append(cta);
+
+    if (image) block.append(image);
+    block.append(content);
+}
+```
+
+`block.innerHTML = ''` then `block.append(...)` is safe because the children retained
+their original `data-aue-*` attributes -- you didn't clone, you re-parented.
+
+## Connecting to a content source
+
+The site's `fstab.yaml` points at the AEM author URL:
+
+```yaml title="fstab.yaml"
+mountpoints:
+  /: https://author-p12345-e67890.adobeaemcloud.com/
+```
+
+Plus a `helix-config.yaml` content section:
+
+```yaml title="helix-config.yaml"
+content:
+  source:
+    type: aem
+    url: https://author-p12345-e67890.adobeaemcloud.com/
+```
+
+UE itself opens at `https://experience.adobe.com/aem/editor` and points at the same
+AEM instance. The editor then fetches the EDS preview of the page being edited and
+displays it inside an iframe.
+
+## Tradeoffs vs document-based authoring
+
+| Aspect | Universal Editor | Document-based |
+|--------|------------------|----------------|
+| Author UX | Visual, in-context | Word / Docs |
+| Field validation | Strong (per-model) | Weak (free text in tables) |
+| Translation | AEM MSM, GLaaS | Manual or external service |
+| Reusable fragments | Yes (Content Fragments) | Limited (`/fragments/` pattern) |
+| Setup cost | High (AEM + UE config) | Low (SharePoint / Drive folder) |
+| Best for | Structured content, governance | Marketing speed, low-skill authors |
+
+## Common gotchas
+
+| Symptom | Likely cause | Fix |
+|---------|--------------|-----|
+| Block not visible in UE | Missing entry in `component-definition.json` | Add it; restart UE |
+| Block visible but not insertable into a section | Missing in `component-filters.json` | Add to the relevant filter |
+| Edits don't persist | `data-aue-resource` / `data-aue-prop` lost during decoration | Don't clone nodes; re-parent them |
+| Field shows wrong widget | `component` mismatch in `component-models.json` | Check valid components: text, richtext, reference, etc. |
+| Multilingual content not loading | Wrong `cf` (content fragment) reference path | Check `aem-content` field's reference resolution |
+
+## See also
+
+- [Blocks](./blocks.mdx) -- the rendering side of components
+- [Authoring models](./authoring.mdx) -- when to pick UE vs docs
+- [Customizing](./customizing.mdx) -- decoration overrides preserve `data-aue-*`
+- Adobe docs: [Universal Editor introduction](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/introduction.html)

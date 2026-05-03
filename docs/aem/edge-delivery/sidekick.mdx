@@ -1,0 +1,183 @@
+---
+title: Edge Delivery Services - Sidekick & Sidekick Library
+description: The Sidekick browser extension for authors, and the Sidekick Library plugin model that lets you ship custom block-library tools.
+tags: [aem, edge-delivery, sidekick, sidekick-library, plugins, authoring]
+---
+
+# Sidekick & Sidekick Library
+
+The **AEM Sidekick** is a browser extension that turns any open document or rendered
+page into an EDS authoring console. It exposes Preview / Publish / Bulk actions and --
+via the **Sidekick Library** -- a plugin surface for project-specific tooling.
+
+## Sidekick: the core extension
+
+Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/aem-sidekick/igkmdomcgoebiipaifhmpfjhbjccggml).
+After installation the Sidekick toolbar appears on any URL configured in the
+extension's project list.
+
+| Action | Description |
+|--------|-------------|
+| **Preview** | Renders the current document on `*.aem.page` |
+| **Publish** | Pushes content to `*.aem.live` (production) |
+| **Edit** | Opens the document source (SharePoint / Google Drive / AEM author) |
+| **Delete** | Removes the page from the Content Bus |
+| **Bulk Preview / Publish** | From a SharePoint / Drive folder, operate on many pages at once |
+| **Plugins** | Project-specific actions, including the [Sidekick Library](#sidekick-library) |
+
+## Project config: `tools/sidekick/config.json`
+
+A site can ship its own Sidekick config to register custom plugins, change the icon,
+or restrict the toolbar to specific URL patterns. The extension auto-discovers the
+config at `https://main--{repo}--{org}.aem.live/tools/sidekick/config.json`:
+
+```json title="tools/sidekick/config.json"
+{
+    "project": "Example",
+    "host": "www.example.com",
+    "previewHost": "main--example--example.aem.page",
+    "liveHost": "main--example--example.aem.live",
+    "plugins": [
+        {
+            "id": "library",
+            "title": "Library",
+            "environments": ["edit"],
+            "url": "/tools/sidekick/library.html",
+            "includePaths": ["**.docx**"]
+        },
+        {
+            "id": "tags",
+            "title": "Tags",
+            "environments": ["edit"],
+            "url": "/tools/sidekick/tags.html"
+        },
+        {
+            "id": "publish-bulk",
+            "title": "Publish all",
+            "environments": ["preview"],
+            "event": "publish-bulk"
+        }
+    ]
+}
+```
+
+`environments` controls when the plugin is shown: `edit` (when authoring a doc),
+`preview` (on a `*.aem.page` URL), `live` (on the live URL), or `prod` (on the custom
+domain).
+
+## Sidekick Library
+
+The **Sidekick Library** is a plugin that displays a side-panel of project-specific
+authoring assets -- typically a **block library** (copy-paste examples of every block
+your project ships) and a **tag library** (the controlled vocabulary). Authors browse
+the library, click an item, and have it inserted into their document.
+
+The library is just an HTML page that EDS hosts at `/tools/sidekick/library.html` and
+that the Sidekick loads in a side panel.
+
+### Wiring the library
+
+```html title="tools/sidekick/library.html"
+<!doctype html>
+<html>
+    <head>
+        <title>Library</title>
+        <script type="module" src="https://www.aem.live/tools/sidekick/library.js"></script>
+    </head>
+    <body>
+        <sidekick-library config-path="/tools/sidekick/library.json"></sidekick-library>
+    </body>
+</html>
+```
+
+The library element loads `library.json`, which lists the data sources for each tab.
+
+### library.json -- the manifest
+
+```json title="tools/sidekick/library.json"
+{
+    "blocks": "/tools/sidekick/blocks.json",
+    "tags": "/tools/sidekick/tags.json"
+}
+```
+
+Each entry points at a sheet (a published spreadsheet, just like content metadata)
+that the library renders.
+
+### A `blocks` source
+
+The blocks source is an authored sheet listing every block, a thumbnail, the source
+markup, and an optional description. The library renders one card per row and
+copies the source to clipboard or inserts it directly into the doc.
+
+```
+| name      | path                         | preview                  |
+|-----------|------------------------------|--------------------------|
+| Hero      | /library/blocks/hero         | /library/previews/hero   |
+| Cards     | /library/blocks/cards        | /library/previews/cards  |
+| Carousel  | /library/blocks/carousel     | /library/previews/carousel |
+```
+
+The **path** column points at a Word / Docs file whose body is the block markup the
+library should copy. **preview** points at a screenshot (a Page in the Content Bus or
+an asset URL).
+
+### A `tags` source
+
+```
+| key             | value           |
+|-----------------|-----------------|
+| topic/cloud     | Cloud           |
+| topic/security  | Security        |
+| audience/dev    | Developers      |
+```
+
+Authors browse and insert tags into the page metadata table without typos.
+
+## Building a custom plugin
+
+Beyond the library, you can ship arbitrary tools. A plugin is just an HTML page;
+the Sidekick opens it in a panel and passes the current page context via
+`postMessage`:
+
+```html title="tools/sidekick/screenshot.html"
+<!doctype html>
+<html>
+    <body>
+        <button id="capture">Screenshot this page</button>
+        <script type="module">
+            const sidekick = document.querySelector('helix-sidekick') || window.parent;
+
+            document.getElementById('capture').addEventListener('click', async () => {
+                const url = new URL(window.parent.location.href).pathname;
+                const res = await fetch(`/api/screenshot?path=${encodeURIComponent(url)}`);
+                const blob = await res.blob();
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'screenshot.png';
+                a.click();
+            });
+        </script>
+    </body>
+</html>
+```
+
+Register it in `config.json` with `"url": "/tools/sidekick/screenshot.html"` and an
+appropriate `environments` list.
+
+## Tips
+
+- **Theme the library** to match the project. The custom element accepts CSS variables
+  -- override them in `library.html`.
+- **Keep block previews up to date** -- a stale screenshot teaches authors a wrong
+  expectation.
+- **Restrict environments** -- a destructive plugin (e.g. "Delete all") should be
+  confined to specific environments and ideally guarded by a confirm dialog.
+- **Use the Admin API** ([helix5](./admin-api.mdx)) for plugin actions that must
+  affect the Content Bus rather than the document source.
+
+## See also
+
+- [Authoring models](./authoring.mdx)
+- [Admin API](./admin-api.mdx) -- programmatic preview / publish from a plugin
+- aem.live: [Sidekick Library docs](https://www.aem.live/developer/sidekick-library)

@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.11.0] - 2026-05-03
+
+### Added
+- New AEM **Edge Delivery Services** section under `docs/aem/edge-delivery/` — 14 chapters replacing the previous single-page treatment: Overview, Architecture, Authoring models, Blocks (the component model), Customizing, Universal Editor, Development workflow, Sidekick & Sidekick Library, Admin API (helix5), Experimentation, Performance, Forms, Commerce Storefront, and Best practices
+- Blocks deep-dive — decoration lifecycle (eager / lazy / delayed phases driven by `aem.js`), reading rows and cells from the table-derived DOM, the `readBlockConfig` helper, block variations, key-value options, auto-blocks, accessing section / page metadata, common patterns and anti-patterns
+- Customizing chapter — `scripts/scripts.js` orchestration, `aem.js` decoration override hooks (`decorateMain`, `decorateButtons`, `decorateIcons`, `decorateSections`, `decorateBlocks`, `buildAutoBlocks`), `delayed.js` patterns, `head.html` resource hints, theme tokens in `styles/styles.css`, font self-hosting, `paths.yaml` rewrites, `helix-config.yaml` response headers (CSP, HSTS, Permissions-Policy), bring-your-own-CDN setup, and the `/plugins/` directory
+- **Admin API (helix5) reference** — full `admin.hlx.page` documentation with API-key auth, endpoint catalogue (`/status`, `/preview`, `/live`, `/code`, `/index`, `/cache`, `/log`, `/profile`, `/sitemap`, `/snapshot`, `/job`, `/config`), webhooks, common workflows (sitemap-driven bulk republish, scheduled GitHub Actions cron, source-vs-live drift audit, surrogate-key purges), error and rate-limit guidance, and a security checklist
+- Universal Editor chapter — the three JSON config files (`component-definition.json`, `component-models.json`, `component-filters.json`), `data-aue-*` instrumentation attributes, and the decoration pattern that preserves them by re-parenting nodes instead of cloning
+- Sidekick chapter — core extension actions plus the **Sidekick Library** (block library and tag library plugins), `tools/sidekick/config.json` plugin manifest, and a worked example of building a custom Sidekick plugin
+- EDS for Forms chapter — document-based and AEM Forms authoring paths, the `form` block and its helper modules, submission targets (AEM Forms, REST, SharePoint, email, webhooks), client-side validation with ARIA wiring, spam mitigation, accessibility invariants, and patterns for multi-step forms, asset uploads, and draft persistence
+- EDS Commerce Storefront chapter — render-time vs run-time data flows, the storefront block library (PLP, PDP, cart, checkout, account, search, recommendations), Adobe Commerce GraphQL integration, surrogate-key caching strategy, customer auth, SEO, performance pitfalls, and adapter strategies for commercetools / Shopify / custom backends
+- Experimentation chapter — experiments and audiences sheets, edge-side resolution (no client-side flicker), multivariate setup, sticky cookie assignment, analytics wiring in `delayed.js`, and concluding-an-experiment patterns
+
+### Changed
+- Sidebar — `edge-delivery` inserted between `architecture` and the legacy AEM topic groups in `sidebar-order.ts`; new `aem/edge-delivery` ordering key arranges chapters in reading order (overview → architecture → authoring → blocks → customizing → universal-editor → development → sidekick → admin-api → experimentation → performance → forms → commerce → best-practices)
+- Five sibling docs repointed from the old `helix.mdx` location to `../edge-delivery/overview.mdx`: SPA Editor, GraphQL, AIO App Builder, Dispatcher Configuration, AEM as a Cloud Service
+- Overview page preserves the `/aem/edge-delivery-services/` slug so the existing `/aem/helix/` redirect (and any external bookmarks) keep resolving
+
+### Removed
+- `docs/aem/infrastructure/helix.mdx` — fully migrated into the new `docs/aem/edge-delivery/` section
+
 ## [1.10.0] - 2026-05-02
 
 ### Added

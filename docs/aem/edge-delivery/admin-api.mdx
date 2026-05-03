@@ -1,0 +1,473 @@
+---
+title: Edge Delivery Services - Admin API (helix5)
+description: Full reference for the helix5 Admin API at admin.hlx.page -- authentication, endpoint groups (status, preview, live, code, index, cache, log, profile, sitemap, snapshot, job), webhooks, and common workflows with curl and JS examples.
+tags: [aem, edge-delivery, admin-api, helix5, automation, webhooks]
+---
+
+# Admin API (helix5)
+
+The **helix5 Admin API** is the programmable interface to your EDS site. Everything the
+Sidekick can do -- preview, publish, purge, list jobs, manage indexes, fetch logs --
+is available as an HTTP endpoint at `https://admin.hlx.page/`. The API powers CI
+integrations, scheduled republish jobs, content audits, and bespoke author tooling.
+
+This chapter is a working reference: authentication, endpoint catalogue, webhooks, and
+the workflows teams build on top.
+
+## Base URL
+
+```
+https://admin.hlx.page/{action}/{owner}/{repo}/{ref}/{path}
+```
+
+| Segment | Meaning | Example |
+|---------|---------|---------|
+| `action` | Endpoint group (see [Endpoint catalogue](#endpoint-catalogue)) | `preview` |
+| `owner` | GitHub org / user | `acme` |
+| `repo` | GitHub repository | `acme-website` |
+| `ref` | Branch / tag | `main` |
+| `path` | Content path (URL-encoded) | `/products/widget` |
+
+## Authentication
+
+Three auth modes are supported, picked in this order of preference:
+
+1. **API key (server-to-server)** -- a project API key issued via the Admin API itself.
+   Send it in the `Authorization: token <api-key>` header. This is the default for CI
+   and scripts.
+2. **Sidekick session cookie** -- when the request comes from a logged-in author via
+   the Sidekick, the session cookie auths the call. You don't manage this; the
+   extension does.
+3. **Anonymous** -- a small subset of read-only endpoints (e.g. `status` for public
+   sites) is available without auth.
+
+### Issuing an API key
+
+A project owner mints API keys via the API itself or the EDS admin UI. The key is
+scoped to a single repo and to one or more action groups:
+
+```bash
+curl -X POST https://admin.hlx.page/config/acme/acme-website/main/api-keys \
+    -H "Authorization: token $ADMIN_BOOTSTRAP_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "description": "CI republish job",
+        "scopes": ["preview", "live", "cache:purge"],
+        "expiresAt": "2027-01-01T00:00:00Z"
+    }'
+```
+
+Store the returned `apiKey` value -- it's only shown once.
+
+### Using the key
+
+```bash
+curl -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/status/acme/acme-website/main/products/widget
+```
+
+```javascript
+const res = await fetch(
+    `https://admin.hlx.page/status/${owner}/${repo}/${ref}${path}`,
+    { headers: { Authorization: `token ${process.env.EDS_API_KEY}` } },
+);
+const status = await res.json();
+```
+
+## Endpoint catalogue
+
+| Group | Verbs | Purpose |
+|-------|-------|---------|
+| `/status` | `GET` | Inspect a path's preview / live / source state |
+| `/preview` | `POST`, `DELETE` | Render to preview / unpublish from preview |
+| `/live` | `POST`, `DELETE` | Promote preview to live / unpublish from live |
+| `/code` | `POST` | Trigger a code-bus refresh after a force push or branch switch |
+| `/index` | `POST`, `GET` | Rebuild or query indexes (sitemap, search) |
+| `/cache` | `POST` | Programmatic cache purge at the CDN edge |
+| `/log` | `GET` | Per-resource event log -- preview / publish / errors |
+| `/profile` | `GET` | Current user / token info -- scopes, expiry |
+| `/sitemap` | `POST`, `GET` | Regenerate or fetch sitemap.xml |
+| `/snapshot` | `POST`, `GET`, `DELETE` | Point-in-time content snapshots for rollback |
+| `/job` | `GET`, `DELETE` | Inspect or cancel async bulk jobs |
+| `/config` | `GET`, `POST`, `DELETE` | Site config: API keys, headers, redirects |
+
+### `/status` -- inspect a resource
+
+```bash
+curl -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/status/acme/acme-website/main/products/widget
+```
+
+```json
+{
+    "webPath": "/products/widget",
+    "resourcePath": "/products/widget.md",
+    "preview": {
+        "status": 200,
+        "url": "https://main--acme-website--acme.aem.page/products/widget",
+        "lastModified": "2026-04-30T11:23:14Z",
+        "sourceLastModified": "2026-04-30T11:22:50Z"
+    },
+    "live": {
+        "status": 200,
+        "url": "https://main--acme-website--acme.aem.live/products/widget",
+        "lastModified": "2026-04-29T17:00:11Z",
+        "sourceLastModified": "2026-04-29T16:59:48Z"
+    },
+    "source": {
+        "status": 200,
+        "lastModified": "2026-04-30T11:22:50Z"
+    }
+}
+```
+
+Read this to detect drift between source, preview, and live -- the basis of any
+republish workflow.
+
+### `/preview` -- render to preview
+
+`POST` triggers a preview render:
+
+```bash
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/preview/acme/acme-website/main/products/widget
+```
+
+`DELETE` unpublishes the preview (the URL returns 404 until re-previewed):
+
+```bash
+curl -X DELETE -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/preview/acme/acme-website/main/products/widget
+```
+
+For bulk operations send `paths` as the body:
+
+```bash
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    -H "Content-Type: application/json" \
+    https://admin.hlx.page/preview/acme/acme-website/main/* \
+    -d '{ "paths": ["/products/widget", "/products/gadget", "/about/team"] }'
+```
+
+The bulk variant is async and returns a `jobId`:
+
+```json
+{ "jobId": "abc123", "status": "pending", "self": "/job/acme/acme-website/main/abc123" }
+```
+
+### `/live` -- promote to live
+
+Same shape as `/preview`. `POST` publishes, `DELETE` unpublishes:
+
+```bash
+# Publish a single page
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/live/acme/acme-website/main/products/widget
+
+# Bulk publish from a sitemap-like list
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    -H "Content-Type: application/json" \
+    https://admin.hlx.page/live/acme/acme-website/main/* \
+    -d '{ "paths": ["/products/widget", "/products/gadget"] }'
+```
+
+### `/code` -- refresh code-bus
+
+After a force-push, branch switch, or large refactor, trigger a code-bus refresh so
+the pipeline pulls the latest blocks and scripts:
+
+```bash
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/code/acme/acme-website/main
+```
+
+Only needed in the unusual case where the repo state is ahead of what EDS has cached
+(for example, after `git push --force`). Normal pushes are auto-detected.
+
+### `/index` -- rebuild indexes
+
+Indexes (defined in `helix-query.yaml`) feed sitemaps, search experiences, and
+auto-block sources. Force a rebuild:
+
+```bash
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/index/acme/acme-website/main
+```
+
+`GET` returns the index status:
+
+```bash
+curl -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/index/acme/acme-website/main
+```
+
+### `/cache` -- programmatic purge
+
+Push-invalidation usually handles purges, but you can force one:
+
+```bash
+# Purge a single path
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/cache/acme/acme-website/main/products/widget
+
+# Purge by surrogate key (e.g. all pages tagged with a section)
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    -H "Content-Type: application/json" \
+    https://admin.hlx.page/cache/acme/acme-website/main \
+    -d '{ "keys": ["section:products"] }'
+```
+
+### `/log` -- per-resource events
+
+```bash
+curl -H "Authorization: token $EDS_API_KEY" \
+    "https://admin.hlx.page/log/acme/acme-website/main/products/widget?limit=20"
+```
+
+```json
+{
+    "events": [
+        { "ts": "2026-04-30T11:23:14Z", "action": "preview", "user": "alice@acme.com", "status": 200 },
+        { "ts": "2026-04-30T11:22:50Z", "action": "source-modified", "user": "alice@acme.com" }
+    ]
+}
+```
+
+Useful for auditing who published what and when.
+
+### `/profile` -- check your token
+
+```bash
+curl -H "Authorization: token $EDS_API_KEY" https://admin.hlx.page/profile
+```
+
+```json
+{
+    "name": "ci-republish",
+    "email": "ci@acme.com",
+    "scopes": ["preview", "live", "cache:purge"],
+    "expiresAt": "2027-01-01T00:00:00Z"
+}
+```
+
+Check this from CI on startup -- a 401 here is a friendlier failure mode than a 401
+mid-job.
+
+### `/sitemap` -- regenerate sitemap.xml
+
+```bash
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/sitemap/acme/acme-website/main
+```
+
+Useful after bulk content changes. EDS regenerates sitemaps on a schedule, but a
+manual trigger is sometimes faster.
+
+### `/snapshot` -- rollback safety net
+
+Snapshots capture the live state of a path (or path glob) at a moment in time. Restore
+later if a bad publish ships:
+
+```bash
+# Take a snapshot before a risky publish
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    -H "Content-Type: application/json" \
+    https://admin.hlx.page/snapshot/acme/acme-website/main \
+    -d '{ "name": "pre-launch", "paths": ["/products/**"] }'
+
+# List snapshots
+curl -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/snapshot/acme/acme-website/main
+
+# Restore
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/snapshot/acme/acme-website/main/pre-launch/restore
+```
+
+### `/job` -- inspect bulk operations
+
+Bulk operations return a `jobId`. Poll for status:
+
+```bash
+curl -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/job/acme/acme-website/main/abc123
+```
+
+```json
+{
+    "jobId": "abc123",
+    "status": "running",
+    "progress": { "total": 120, "succeeded": 87, "failed": 2 },
+    "errors": [
+        { "path": "/products/legacy", "status": 404, "message": "source not found" }
+    ]
+}
+```
+
+`status` values: `pending`, `running`, `done`, `failed`, `cancelled`.
+
+### `/config` -- site config and API keys
+
+Manage API keys (shown above) plus other site config (response headers, redirects)
+without touching the GitHub repo. Most teams keep config in `helix-config.yaml` so
+that PRs are the audit trail; `/config` is for emergency overrides.
+
+## Webhooks
+
+EDS posts webhooks on key events. Configure them via `/config`:
+
+```bash
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    -H "Content-Type: application/json" \
+    https://admin.hlx.page/config/acme/acme-website/main/webhooks \
+    -d '{
+        "url": "https://hooks.acme.com/eds",
+        "events": ["preview.created", "live.published", "job.failed"],
+        "secret": "shared-secret-for-hmac-validation"
+    }'
+```
+
+| Event | Fired when |
+|-------|------------|
+| `preview.created` | A preview render completed |
+| `preview.deleted` | A preview was unpublished |
+| `live.published` | A page went live |
+| `live.deleted` | A page was unpublished from live |
+| `job.completed` | A bulk job finished |
+| `job.failed` | A bulk job hit fatal errors |
+| `cache.purged` | A purge completed |
+| `code.refreshed` | The code-bus was refreshed |
+
+Each payload includes the path, actor, timestamp, and an HMAC signature you should
+verify against the `secret`.
+
+## Common workflows
+
+### Republish a sitemap of pages
+
+```javascript title="scripts/republish-all.js"
+import { setTimeout as wait } from 'node:timers/promises';
+
+const { EDS_API_KEY } = process.env;
+const owner = 'acme';
+const repo = 'acme-website';
+const ref = 'main';
+const headers = { Authorization: `token ${EDS_API_KEY}`, 'Content-Type': 'application/json' };
+
+async function startBulk(action, paths) {
+    const res = await fetch(`https://admin.hlx.page/${action}/${owner}/${repo}/${ref}/*`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ paths }),
+    });
+    if (!res.ok) throw new Error(`${action} failed: ${res.status}`);
+    return res.json();
+}
+
+async function pollJob(jobId) {
+    while (true) {
+        const res = await fetch(
+            `https://admin.hlx.page/job/${owner}/${repo}/${ref}/${jobId}`,
+            { headers },
+        );
+        const job = await res.json();
+        if (job.status === 'done' || job.status === 'failed') return job;
+        await wait(2000);
+    }
+}
+
+const sitemap = await fetch(`https://www.example.com/sitemap.xml`).then((r) => r.text());
+const paths = [...sitemap.matchAll(/<loc>https?:\/\/[^/]+(\/[^<]*)<\/loc>/g)].map((m) => m[1]);
+
+const previewJob = await startBulk('preview', paths);
+const previewResult = await pollJob(previewJob.jobId);
+console.log('preview:', previewResult.progress);
+
+const liveJob = await startBulk('live', paths);
+const liveResult = await pollJob(liveJob.jobId);
+console.log('live:', liveResult.progress);
+```
+
+### Scheduled republish via cron
+
+```yaml title=".github/workflows/scheduled-republish.yml"
+name: Scheduled republish
+on:
+    schedule:
+        - cron: '0 4 * * *' # 04:00 UTC daily
+    workflow_dispatch:
+
+jobs:
+    republish:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with: { node-version: 22 }
+            - run: node scripts/republish-all.js
+              env:
+                  EDS_API_KEY: ${{ secrets.EDS_API_KEY }}
+```
+
+### Audit drift between source and live
+
+```javascript
+const drifted = [];
+for (const path of paths) {
+    const res = await fetch(
+        `https://admin.hlx.page/status/${owner}/${repo}/${ref}${path}`,
+        { headers },
+    );
+    const s = await res.json();
+    if (s.source.lastModified > s.live.lastModified) {
+        drifted.push({
+            path,
+            sourceModified: s.source.lastModified,
+            liveModified: s.live.lastModified,
+        });
+    }
+}
+console.table(drifted);
+```
+
+### Bulk purge a section
+
+```bash
+curl -X POST -H "Authorization: token $EDS_API_KEY" \
+    -H "Content-Type: application/json" \
+    https://admin.hlx.page/cache/acme/acme-website/main \
+    -d '{ "keys": ["section:products"] }'
+```
+
+Surrogate keys are emitted as response headers by the pipeline -- inspect `Surrogate-Key`
+on a live response to see what's available.
+
+## Errors and rate limits
+
+- `401` -- token missing or expired (check `/profile`)
+- `403` -- token lacks the required scope
+- `404` -- path not found in the source for `/preview`, or not yet previewed for `/live`
+- `409` -- conflict (e.g. trying to publish an unpreviewed page)
+- `429` -- rate limited; back off (`Retry-After` header indicates wait time)
+- `5xx` -- pipeline error; usually transient, retry with exponential backoff
+
+Bulk operations are **idempotent** at the path level -- re-running a `POST /preview`
+on an already-previewed path is safe.
+
+## Security checklist
+
+- Store API keys in your secret manager (GitHub Actions secrets, Vault, AWS Secrets
+  Manager). Never commit them.
+- Scope keys narrowly -- a republish bot doesn't need `cache:purge` if it never
+  purges.
+- Rotate keys quarterly; set `expiresAt` rather than relying on revocation.
+- Verify webhook HMAC signatures before acting on the payload.
+- Restrict outbound webhook URLs to your own domain to limit the blast radius if a
+  config write is compromised.
+
+## See also
+
+- [Sidekick](./sidekick.mdx) -- the UI front-end for many of these endpoints
+- [Customizing](./customizing.mdx) -- `helix-config.yaml` for declarative site config
+- [Architecture](./architecture.mdx) -- how the API ties into the pipeline
+- aem.live: [Admin API](https://www.aem.live/docs/admin)

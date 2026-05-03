@@ -575,6 +575,6 @@ editable content must flow through the JSON model.
 - [Architecture](../architecture.mdx) - overall AEM architecture
 - [Client Libraries](../client-libraries.mdx) - frontend bundling
 - [Multi-Tenancy UI Frontend](./multi-tenancy-support-ui-frontend.mdx) - webpack / Vite setup
-- [Edge Delivery Services](../infrastructure/helix.mdx) - alternative delivery model
+- [Edge Delivery Services](../edge-delivery/overview.mdx) - alternative delivery model
 - [Headless GraphQL](../content/graphql.mdx) - decoupled content delivery
 - [Templates and Policies](../components/templates-policies.md) - SPA page templates

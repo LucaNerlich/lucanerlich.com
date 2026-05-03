@@ -1,0 +1,79 @@
+---
+title: Edge Delivery Services - Authoring models
+description: Document-based authoring (Word/Docs) vs Universal Editor authoring on AEM. How they compare and how to choose.
+tags: [aem, edge-delivery, authoring, universal-editor, sharepoint, google-drive]
+---
+
+# Authoring models
+
+EDS supports two authoring approaches. Both produce the same Content Bus output, so the
+delivery pipeline doesn't care which one you pick. The choice is about **who authors**,
+**where content lives**, and **how much governance** you need.
+
+## Document-based authoring
+
+Authors create content in **Microsoft Word** (via SharePoint) or **Google Docs** (via
+Google Drive). Structured content is authored using simple tables that map to blocks.
+
+```
+| Hero                    |
+|-------------------------|
+| ![hero.jpg](hero.jpg)   |
+| Welcome to our site     |
+| [Get started](/start)   |
+```
+
+This table becomes a `hero` block in the rendered HTML. The Sidekick browser extension
+provides preview and publish actions from inside the document.
+
+**Strengths**
+
+- Zero learning curve for authors -- they already know Word / Google Docs
+- No AEM authoring UI needed
+- Great for marketing teams, campaigns, landing pages, blog posts
+
+**Limitations**
+
+- Less control over deeply nested or component-driven structure
+- No in-context WYSIWYG preview while editing the document
+- Looser governance -- anyone with access to the doc can edit
+
+## AEM authoring + Universal Editor
+
+Authors use the AEM content repository and the **Universal Editor** -- a modern,
+framework-agnostic visual editor that replaces the classic Page Editor for EDS.
+
+**Strengths**
+
+- Visual, in-context editing (true WYSIWYG)
+- Full AEM content model (structured content, content fragments, experience fragments)
+- Familiar for AEM authors migrating from traditional Sites
+- Workflows, permissions, and versioning out of the box
+
+**Limitations**
+
+- Requires AEM as a Cloud Service
+- More setup than document-based authoring
+
+For wiring blocks into UE, see [Universal Editor](./universal-editor.mdx).
+
+## Choosing an authoring model
+
+| Criterion | Document-based | Universal Editor |
+|-----------|----------------|------------------|
+| Author skill level | Low (Word / Docs) | Medium (AEM UI) |
+| Content complexity | Simple pages, blogs, landing pages | Complex layouts, reusable fragments |
+| Governance | Loose | Structured (permissions, workflows) |
+| Preview fidelity | Approximate | Exact |
+| Infrastructure | SharePoint or Google Workspace | AEM as a Cloud Service |
+| Translation | Adobe-managed translation, GLaaS, manual | AEM + multi-site manager |
+
+You can run both side-by-side. The same site can serve a `/blog/` tree authored in
+SharePoint and a `/products/` tree authored in Universal Editor -- the Content Bus
+makes this transparent.
+
+## See also
+
+- [Blocks](./blocks.mdx) -- the rendered output of authored content
+- [Universal Editor](./universal-editor.mdx) -- wiring blocks into UE
+- [Sidekick](./sidekick.mdx) -- the Preview / Publish browser extension

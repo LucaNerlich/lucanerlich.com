@@ -1113,7 +1113,7 @@ logger.info({ assetPath, fileSize, duration }, 'Asset upload complete');
 
 - [Architecture](../architecture.mdx) - how App Builder fits into the AEM landscape
 - [AEM as a Cloud Service](./cloud-service.mdx) - the platform App Builder extends
-- [Edge Delivery Services](./helix.mdx) - alternative delivery model
+- [Edge Delivery Services](../edge-delivery/overview.mdx) - alternative delivery model
 - [Deployment](./deployment.mdx) - Cloud Manager pipelines (contrast with App Builder deploy)
 - [Content Fragments](../content/content-fragments.md) - content that I/O Events can react to
 - [GraphQL](../content/graphql.mdx) - headless content delivery from AEM

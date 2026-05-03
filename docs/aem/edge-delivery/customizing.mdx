@@ -1,0 +1,326 @@
+---
+title: Edge Delivery Services - Customizing
+description: How to extend EDS at the project level -- scripts.js, aem.js decoration overrides, head.html, fonts, paths.yaml, response headers, and shared plugins.
+tags: [aem, edge-delivery, customizing, theming, plugins, helix-config]
+---
+
+# Customizing
+
+Out of the box, EDS gives you a working site. The interesting work is in shaping it:
+adding a theme, swapping decoration logic, configuring response headers, wiring
+analytics, and pulling in shared plugins. Almost everything is project-local code in
+GitHub -- there are no servers to configure.
+
+## scripts/scripts.js -- your global init
+
+`scripts.js` orchestrates the page. The boilerplate ships a working version that calls
+the three lifecycle phases from `aem.js`:
+
+```javascript title="scripts/scripts.js"
+import {
+    decorateBlocks,
+    decorateButtons,
+    decorateIcons,
+    decorateMain,
+    decorateSections,
+    loadBlocks,
+    loadCSS,
+    loadFooter,
+    loadHeader,
+    waitForLCP,
+    sampleRUM,
+} from './aem.js';
+
+const LCP_BLOCKS = ['hero']; // blocks that can be the LCP candidate
+
+async function loadEager(doc) {
+    document.documentElement.lang = 'en';
+    decorateTemplateAndTheme();
+    const main = doc.querySelector('main');
+    if (main) {
+        decorateMain(main);
+        await waitForLCP(LCP_BLOCKS);
+    }
+}
+
+async function loadLazy(doc) {
+    const main = doc.querySelector('main');
+    await loadBlocks(main);
+    loadHeader(doc.querySelector('header'));
+    loadFooter(doc.querySelector('footer'));
+    loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
+    sampleRUM('lazy');
+}
+
+function loadDelayed() {
+    window.setTimeout(() => import('./delayed.js'), 3000);
+}
+
+async function loadPage() {
+    await loadEager(document);
+    await loadLazy(document);
+    loadDelayed();
+}
+
+loadPage();
+```
+
+Three things you typically customise here:
+
+1. **`LCP_BLOCKS`** -- list block names that can be the LCP element so `aem.js` knows
+   to wait for them before painting.
+2. **`decorateTemplateAndTheme`** -- read page metadata (e.g. `<meta name="theme">`) and
+   add a class on `<body>` so theme CSS can target it.
+3. **The order of decoration calls** -- if you have project-specific decorations, slot
+   them in.
+
+## Decoration overrides
+
+`aem.js` exports a handful of decorations called inside `decorateMain`. Each is a hook
+you can override or wrap.
+
+| Function | What it does | Override to... |
+|----------|--------------|----------------|
+| `decorateButtons(main)` | Promotes `<a>` inside paragraphs to buttons | Change button class names, add icon support, suppress promotion for specific links |
+| `decorateIcons(main, prefix)` | Replaces `:icon-name:` with inline SVG from `/icons/` | Swap the icon location, add a fallback, support a custom prefix |
+| `decorateSections(main)` | Adds `section` wrapper divs and applies section-metadata classes | Add custom data attributes, support new metadata keys |
+| `decorateBlocks(main)` | Tags every block with `data-block-name` and queues loading | Filter which blocks get loaded eagerly vs lazily |
+| `buildAutoBlocks(main)` | Synthesises blocks from markup (e.g. hero from H1+picture) | Add your own auto-blocks |
+| `decorateMain(main)` | Calls everything above in order | Insert custom passes before / after |
+
+**Strategy:** don't fork `aem.js`. Instead, call the original in `scripts.js` and add
+project-specific passes around it:
+
+```javascript title="scripts/scripts.js (excerpt)"
+import { decorateMain as upstreamDecorateMain } from './aem.js';
+
+function decorateMain(main) {
+    decorateBlogTeaser(main);     // project-specific
+    upstreamDecorateMain(main);
+    decorateAnchorLinks(main);    // project-specific
+}
+```
+
+This keeps you on the upgrade path when `aem.js` ships changes.
+
+## scripts/delayed.js -- the analytics dumping ground
+
+Anything that doesn't need to render or shift layout belongs here:
+
+```javascript title="scripts/delayed.js"
+// Adobe Launch
+const launchScript = document.createElement('script');
+launchScript.src = 'https://assets.adobedtm.com/.../launch.min.js';
+launchScript.async = true;
+document.head.append(launchScript);
+
+// Plausible
+const plausible = document.createElement('script');
+plausible.src = 'https://plausible.io/js/script.js';
+plausible.dataset.domain = 'example.com';
+plausible.defer = true;
+document.head.append(plausible);
+
+// Cookie consent banner
+import('https://cdn.cookieconsent.example.com/banner.js');
+```
+
+The 3-second delay (configured in `scripts.js`) means none of this hits Lighthouse.
+
+## head.html -- early `<head>` content
+
+`head.html` is concatenated into every page's `<head>` after the EDS-generated tags.
+Use it for:
+
+- Resource hints (`preconnect`, `dns-prefetch`)
+- Open Graph / Twitter card defaults
+- Favicon and PWA manifest links
+- Font preloads
+- Verification meta tags (Google Site Verification, etc.)
+
+```html title="head.html"
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+
+<link rel="preconnect" href="https://main--example--example.aem.live" crossorigin>
+<link rel="preconnect" href="https://www.googletagmanager.com">
+
+<meta property="og:image" content="https://www.example.com/og-default.jpg">
+
+<script src="/scripts/scripts.js" type="module"></script>
+<link rel="stylesheet" href="/styles/styles.css">
+```
+
+The `<script>` and `<link rel="stylesheet">` lines are the bridge to your code -- they
+must be present.
+
+## styles/styles.css -- the theme
+
+`styles.css` is the global stylesheet and the home for design tokens:
+
+```css title="styles/styles.css"
+:root {
+    /* colours */
+    --text-color: #1a1a1a;
+    --background-color: #ffffff;
+    --link-color: #0061fe;
+    --link-hover-color: #003ea1;
+    --highlight-background-color: #f5f5f5;
+
+    /* typography */
+    --body-font-family: 'Inter', sans-serif;
+    --heading-font-family: 'Inter Display', sans-serif;
+    --body-font-size-m: 1.125rem;
+    --body-font-size-s: 1rem;
+    --heading-font-size-xxl: clamp(2.5rem, 4vw, 4rem);
+
+    /* spacing */
+    --spacing-s: 0.5rem;
+    --spacing-m: 1rem;
+    --spacing-l: 2rem;
+}
+
+[data-theme='dark'] {
+    --text-color: #f5f5f5;
+    --background-color: #111111;
+    --link-color: #5fa8ff;
+}
+```
+
+Block CSS should consume these variables, not hard-code values. That keeps theme
+changes (and the `data-theme` toggle) one-line.
+
+`styles/lazy-styles.css` holds below-the-fold styles -- loaded after LCP so it doesn't
+delay first paint.
+
+## Fonts
+
+The performant pattern:
+
+```css title="styles/fonts.css"
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('/fonts/inter.woff2') format('woff2');
+}
+```
+
+```html title="head.html"
+<link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles/fonts.css">
+```
+
+Self-host fonts wherever possible -- third-party font CDNs add a connection on the
+critical path.
+
+## paths.yaml -- URL rewrites
+
+```yaml title="paths.yaml"
+mappings:
+  - /about-us:/company/about
+  - /docs/v1/(.*):/docs/legacy/$1
+
+includes:
+  - /sitemap.xml
+```
+
+`mappings` rewrites requests on the way through the pipeline; the URL stays the same in
+the browser. Use this for clean public URLs that map to deep authoring paths.
+
+For HTTP redirects, author a `redirects.json` (or `redirects.xlsx`) at the content
+source root.
+
+## helix-config.yaml -- response headers, redirects, CDN
+
+The helix5 site config (`helix-config.yaml` -- previously split across `paths.yaml`,
+`headers.yaml`, and admin-API-only settings) governs site-level behaviour:
+
+```yaml title="helix-config.yaml"
+version: 1
+content:
+  source:
+    type: aem
+    url: https://author-p12345-e67890.adobeaemcloud.com/
+
+cdn:
+  prod:
+    host: www.example.com
+    routes:
+      - "/*"
+
+headers:
+  - url: "/**"
+    response:
+      - { name: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }
+      - { name: "X-Frame-Options", value: "SAMEORIGIN" }
+      - { name: "Content-Security-Policy", value: "default-src 'self' https:; img-src 'self' https: data:;" }
+      - { name: "Permissions-Policy", value: "geolocation=(), camera=(), microphone=()" }
+  - url: "/api/**"
+    response:
+      - { name: "Cache-Control", value: "public, max-age=60" }
+```
+
+`headers` is the single most under-used feature. Lock down CSP, HSTS, X-Frame-Options,
+and Permissions-Policy here -- they apply at the edge before HTML reaches the browser.
+
+## Bring your own CDN
+
+Adobe ships a managed CDN, but you can place Akamai, Cloudflare, or Fastly in front
+of `*.aem.live`:
+
+1. **Origin** -- set `*.aem.live` (or your `helix-config.yaml` `cdn.prod.host` value)
+   as the CDN origin.
+2. **Host header** -- forward `Host` or set `X-Forwarded-Host` so EDS routes to the
+   right repo.
+3. **TTLs** -- match EDS defaults (long TTL + push-purge).
+4. **Push-invalidation** -- accept the `X-Push-Invalidation` webhook from EDS so
+   pages update within seconds of publish.
+
+Custom domain via Adobe-managed CDN: add the domain in Cloud Manager / EDS admin,
+create a CNAME to `*.aem.live`, TLS is provisioned automatically.
+
+## /plugins -- shared utilities
+
+The `/plugins/` directory hosts shared utilities consumed by multiple blocks. Common
+tenants:
+
+- **`/plugins/experimentation/`** -- the experimentation runtime (already used by
+  `aem.js`)
+- **`/plugins/martech/`** -- shared Adobe Launch / Analytics integration
+- **`/plugins/rum/`** -- Real User Monitoring sampling
+- **`/plugins/sidekick/`** -- the [Sidekick Library](./sidekick.mdx#sidekick-library)
+
+Plugins are imported from blocks the same as any local module:
+
+```javascript
+import { trackEvent } from '../../plugins/martech/martech.js';
+
+export default function decorate(block) {
+    block.querySelectorAll('a').forEach((a) => {
+        a.addEventListener('click', () => trackEvent('cta-click', { href: a.href }));
+    });
+}
+```
+
+Some plugins ship via npm; others are vendored (copied) into the repo. Vendoring keeps
+the deploy frictionless -- no `npm install` step in production.
+
+## Custom domains and TLS
+
+For the simplest setup with the Adobe-managed CDN:
+
+1. Add your domain in the AEM Cloud Manager or EDS admin
+2. Create a CNAME record pointing to `*.aem.live`
+3. TLS certificates are provisioned automatically
+
+For BYO CDN, terminate TLS at your CDN and forward to `*.aem.live` over HTTPS.
+
+## See also
+
+- [Blocks](./blocks.mdx) -- the decoration pipeline blocks plug into
+- [Universal Editor](./universal-editor.mdx) -- block models JSON for UE
+- [Performance](./performance.mdx) -- the loading-phase contract `scripts.js` honours
+- [Admin API](./admin-api.mdx) -- programmatically updating site config
