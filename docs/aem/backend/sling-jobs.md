@@ -663,3 +663,5 @@ with a dedicated service user.
 - [Java Best Practices](./java-best-practices.mdx) - threading and concurrency
 - [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) - AEMaaCS constraints and RDEs
 - [Adobe I/O App Builder](../infrastructure/aio-app-builder.md) - serverless alternative for heavy processing
+- [Apache Sling Eventing and Job Handling](https://sling.apache.org/documentation/bundles/apache-sling-eventing-and-job-handling.html) - official Sling Jobs and queues reference
+- [Apache Sling Scheduler](https://sling.apache.org/documentation/bundles/scheduler-service-commons-scheduler.html) - Scheduler service / cron expression reference

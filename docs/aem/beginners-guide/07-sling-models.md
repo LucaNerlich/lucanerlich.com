@@ -606,5 +606,11 @@ You learned:
 With components (HTL + dialogs + Sling Models) covered, we are ready to build a complete site. The next chapter covers
 templates and policies - how pages are structured and which components are allowed.
 
+## Official Documentation
+
+- [Apache Sling Models](https://sling.apache.org/documentation/bundles/models.html) - official Sling Models reference with all injectors
+- [wcm.io AEM Mocks](https://wcm.io/testing/aem-mock/) - the `AemContext` testing library used in this guide
+- [Sling Models API Javadoc](https://javadoc.io/doc/org.apache.sling/org.apache.sling.models.api/latest/index.html) - annotations and interfaces
+
 Next up: [Templates & Policies](./08-templates-and-policies.md) - editable templates, template types, structure vs
 initial content, component policies, and page structure.

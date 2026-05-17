@@ -580,7 +580,7 @@ After the container starts, your site is available at `http://localhost:8080`. A
 | `./bin/validator full dispatcher/src` | Full validation of all Dispatcher configs (same checks as Cloud Manager) |
 | `./bin/validator httpd dispatcher/src` | Validate Apache httpd configs only |
 | `./bin/validator dispatcher dispatcher/src` | Validate Dispatcher module configs only |
-| `./bin/docker_run.sh src host.docker.internal:4503 8080` | Start Dispatcher container on port 8080 |
+| `./bin/docker_run.sh dispatcher/src host.docker.internal:4503 8080` | Start Dispatcher container on port 8080 |
 | `docker logs -f <container_id>` | Tail Dispatcher/Apache logs in real time |
 
 ### Debugging Tips

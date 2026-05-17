@@ -300,5 +300,11 @@ You learned:
 - The **ui.frontend** module for modern build tooling
 - **Debugging** - `debugClientLibs`, dump/rebuild tools
 
+## Official Documentation
+
+- [AEM Client Libraries — AEM 6.5](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/introduction/clientlibs) - comprehensive clientlib reference
+- [AEM Client Libraries — AEMaaCS](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/clientlibs) - cloud-specific proxy serving
+- [aem-clientlib-generator](https://github.com/wcm-io-devops/cq-maven-plugins/tree/develop/clientlibs-generator) - tool for building clientlibs from ui.frontend
+
 Next up: [Building Pages](./10-building-pages.md) - using Core Components, responsive grid, navigation, header/footer,
 and assembling a homepage and article page.

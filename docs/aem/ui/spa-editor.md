@@ -562,10 +562,10 @@ editable content must flow through the JSON model.
 
 ## External Resources
 
-- [AEM SPA Editor overview](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/implementing/developing/hybrid/introduction.html)
-- [Getting started with React](https://experienceleague.adobe.com/docs/experience-manager-learn/getting-started-with-aem-headless/spa-editor/react/overview.html)
+- [AEM SPA Editor overview](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/hybrid/introduction.html)
+- [Getting started with React](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-with-aem-headless/spa-editor/react/overview.html)
 - [SPA Editor SDK (npm)](https://www.npmjs.com/package/@adobe/aem-react-editable-components)
-- [Remote SPA documentation](https://experienceleague.adobe.com/docs/experience-manager-learn/getting-started-with-aem-headless/spa-editor/remote-spa/overview.html)
+- [Remote SPA documentation](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-with-aem-headless/spa-editor/remote-spa/overview.html)
 - [AEM Project Archetype](https://github.com/adobe/aem-project-archetype)
 
 ## See also

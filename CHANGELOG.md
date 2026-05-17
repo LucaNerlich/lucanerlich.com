@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.11.2] - 2026-05-17
+
+### Fixed
+- Corrected `docker_run.sh` command in the Dispatcher deployment guide — removed spurious extra path arguments; correct form is `./bin/docker_run.sh dispatcher/src host.docker.internal:4503 8080`
+- Fixed inconsistent `src` path in Dispatcher SDK validation commands table (`src` → `dispatcher/src`)
+- Updated 31 Adobe Experience League URLs from the deprecated `/docs/` path to the canonical `/en/docs/` format across 14 AEM guide files
+
+### Changed
+- Added 114 official documentation links (Apache Sling, OSGi specification, Apache Felix, Jackrabbit Oak, Adobe Experience League, aem.live, wcm.io, web.dev, OWASP) to 21 previously link-free files across the AEM guide — including backend, beginners-guide, content, components, edge-delivery, infrastructure, and UI sections
+
 ## [1.11.1] - 2026-05-03
 
 ### Fixed

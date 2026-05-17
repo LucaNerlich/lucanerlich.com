@@ -611,3 +611,6 @@ content, not just placeholder text.
 - [Tags and Taxonomies](./tags-taxonomies.md) - localising tag titles
 - [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) - translation cloud configs on AEMaaCS
 - [Architecture](../architecture.mdx) - multi-language site architecture
+- [AEM i18n Development Guide (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/components/i18n/i18n-dev) - Sling i18n API, dictionaries, and resolvers
+- [Translation Integration Framework (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/translation/translation-integrations) - TIF connectors and workflows
+- [Apache Sling Internationalization Support](https://sling.apache.org/documentation/bundles/internationalization-support-i18n.html) - underlying Sling i18n spec

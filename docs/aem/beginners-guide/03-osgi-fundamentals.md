@@ -532,5 +532,12 @@ You learned:
 
 With the foundation covered (JCR, Sling, OSGi), we are ready to build our first AEM component.
 
+## Official Documentation
+
+- [OSGi Declarative Services Specification](https://docs.osgi.org/specification/osgi.cmpn/8.1.0/service.component.html) - `@Component`, `@Reference`, and `@Activate` spec
+- [Apache Felix Configuration Admin](https://felix.apache.org/documentation/subprojects/apache-felix-config-admin.html) - underlying Config Admin service
+- [AEM OSGi Configuration (AEMaaCS)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/deploying/configuring-osgi) - cloud-specific deployment of OSGi configs
+- [Apache Sling Service User Mapper](https://sling.apache.org/documentation/bundles/service-user-mapper-service-user-provisioning-and-authentication.html) - service users and repoinit
+
 Next up: [Your First Component](./04-your-first-component.md) - component anatomy, creating a simple component, placing
 it on a page, and understanding the component-dialog-model triad.

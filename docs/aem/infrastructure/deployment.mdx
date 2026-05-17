@@ -280,7 +280,7 @@ Cloud Manager validates Dispatcher configurations before deployment. Run the loc
 
 ```bash
 # Validate Dispatcher config locally
-./bin/docker_run.sh src/conf.d src/conf.dispatcher.d out host.docker.internal:4503 8080
+./bin/docker_run.sh dispatcher/src host.docker.internal:4503 8080
 
 # Or use the Adobe-provided validator
 ./bin/validator full dispatcher/src

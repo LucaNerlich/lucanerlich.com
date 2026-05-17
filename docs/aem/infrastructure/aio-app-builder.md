@@ -1102,7 +1102,7 @@ logger.info({ assetPath, fileSize, duration }, 'Asset upload complete');
 - [App Builder documentation](https://developer.adobe.com/app-builder/docs/overview/) - official docs
 - [Adobe I/O Runtime](https://developer.adobe.com/runtime/docs/) - serverless platform reference
 - [I/O Events documentation](https://developer.adobe.com/events/docs/) - event-driven architecture
-- [Asset Compute SDK](https://experienceleague.adobe.com/docs/asset-compute/using/extend/develop-custom-application.html) -
+- [Asset Compute SDK](https://experienceleague.adobe.com/en/docs/asset-compute/using/extend/develop-custom-application.html) -
   custom asset workers
 - [AEM Assets HTTP API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/admin/developer-reference-material-apis) -
   direct binary upload

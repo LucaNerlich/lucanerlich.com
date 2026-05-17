@@ -421,5 +421,11 @@ You learned:
 - A practical **Article Card** example combining multiple features
 - HTL **best practices**
 
+## Official Documentation
+
+- [HTL Specification (GitHub)](https://github.com/adobe/htl-spec/blob/master/SPECIFICATION.md) - authoritative HTL language spec
+- [HTL Overview (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-htl/using/overview) - Adobe's HTL guide
+- [HTL Global Objects Reference](https://experienceleague.adobe.com/en/docs/experience-manager-htl/using/htl/global-objects) - all globally available objects
+
 Next up: [Component Dialogs](./06-component-dialogs.md) - Touch UI dialogs with Granite/Coral, field types, tabs,
 multifields, validation, and conditional fields.
