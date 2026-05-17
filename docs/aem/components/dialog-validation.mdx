@@ -285,7 +285,7 @@ Validates that a text field contains a properly formatted URL.
     $(window)
         .adaptTo("foundation-registry")
         .register("foundation.validation.validator", {
-            selector: "[data-validation=url], [data-foundation-validation=url]",
+            selector: "[data-validation~='url'], [data-foundation-validation~='url']",
 
             validate: function (el) {
                 var value = $(el).val().toString().trim();
@@ -372,7 +372,7 @@ Restricts a path field to only accept files with specific extensions (e.g. SVG i
     $(window)
         .adaptTo("foundation-registry")
         .register("foundation.validation.validator", {
-            selector: "[data-validation=extension-svg], [data-foundation-validation=extension-svg]",
+            selector: "[data-validation~='extension-svg'], [data-foundation-validation~='extension-svg']",
 
             validate: function (el) {
                 var value = $(el).val().toString().trim();
@@ -538,7 +538,7 @@ Enforces a maximum character count on a text field or textarea, showing the curr
     $(window)
         .adaptTo("foundation-registry")
         .register("foundation.validation.validator", {
-            selector: "[data-validation=char-count], [data-foundation-validation=char-count]",
+            selector: "[data-validation~='char-count'], [data-foundation-validation~='char-count']",
 
             validate: function (el) {
                 var value = $(el).val().toString();
@@ -586,7 +586,7 @@ Validates that a text field contains a properly formatted email address.
     $(window)
         .adaptTo("foundation-registry")
         .register("foundation.validation.validator", {
-            selector: "[data-validation=email], [data-foundation-validation=email]",
+            selector: "[data-validation~='email'], [data-foundation-validation~='email']",
 
             validate: function (el) {
                 var value = $(el).val().toString().trim();
@@ -630,7 +630,7 @@ Validates international phone number formats.
     $(window)
         .adaptTo("foundation-registry")
         .register("foundation.validation.validator", {
-            selector: "[data-validation=phone], [data-foundation-validation=phone]",
+            selector: "[data-validation~='phone'], [data-foundation-validation~='phone']",
 
             validate: function (el) {
                 var value = $(el).val().toString().trim();
@@ -683,7 +683,7 @@ required only when an image is selected.
     $(window)
         .adaptTo("foundation-registry")
         .register("foundation.validation.validator", {
-            selector: "[data-validation=conditional-required]",
+            selector: "[data-validation~='conditional-required']",
 
             validate: function (el) {
                 var $el = $(el);
@@ -737,7 +737,7 @@ Validates that a textarea contains valid JSON (useful for configuration fields).
     $(window)
         .adaptTo("foundation-registry")
         .register("foundation.validation.validator", {
-            selector: "[data-validation=json], [data-foundation-validation=json]",
+            selector: "[data-validation~='json'], [data-foundation-validation~='json']",
 
             validate: function (el) {
                 var value = $(el).val().toString().trim();
@@ -1080,7 +1080,7 @@ Then in each validator file:
     $(window)
         .adaptTo("foundation-registry")
         .register("foundation.validation.validator", {
-            selector: "[data-validation=email]",
+            selector: "[data-validation~='email']",
             validate: function (el) {
                 // ... validation logic ...
             },

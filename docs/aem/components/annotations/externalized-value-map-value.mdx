@@ -220,7 +220,7 @@ public @interface ExternalizedValueMapValue {
     /**
      * Override the JCR property name if it differs from the Java field name.
      */
-    String name() default StringUtils.EMPTY;
+    String name() default "";
 
     /**
      * Controls injection behavior: REQUIRED, OPTIONAL, or DEFAULT.
@@ -263,25 +263,38 @@ public class ExternalizedValueMapValueInjector
             DisposalCallbackRegistry disposalCallbackRegistry) {
 
         // Only process String fields annotated with @ExternalizedValueMapValue
-        if (ReflectionUtil.isAssignableFrom(type, String.class)
-                && annotatedElement.isAnnotationPresent(ExternalizedValueMapValue.class)
-                && adaptable instanceof SlingHttpServletRequest) {
+        if (!(type instanceof Class) || !String.class.isAssignableFrom((Class<?>) type)) {
+            return null;
+        }
+        if (!annotatedElement.isAnnotationPresent(ExternalizedValueMapValue.class)) {
+            return null;
+        }
 
-            SlingHttpServletRequest request = (SlingHttpServletRequest) adaptable;
-            ExternalizedValueMapValue annotation =
-                annotatedElement.getAnnotation(ExternalizedValueMapValue.class);
+        // Resolve the request and resource from the adaptable
+        SlingHttpServletRequest request = null;
+        Resource resource = null;
+        if (adaptable instanceof SlingHttpServletRequest) {
+            request = (SlingHttpServletRequest) adaptable;
+            resource = request.getResource();
+        } else if (adaptable instanceof Resource) {
+            resource = (Resource) adaptable;
+        }
+        if (request == null || resource == null) {
+            return null;
+        }
 
-            // Use the annotation's name attribute, or fall back to the field name
-            String key = StringUtils.defaultIfBlank(annotation.name(), name);
+        ExternalizedValueMapValue annotation =
+            annotatedElement.getAnnotation(ExternalizedValueMapValue.class);
 
-            // Read the raw property value from the component's resource
-            Resource resource = InjectorUtil.getResourceFromAdaptable(adaptable);
-            String rawValue = resource.getValueMap().get(key, String.class);
+        // Use the annotation's name attribute, or fall back to the field name
+        String key = StringUtils.defaultIfBlank(annotation.name(), name);
 
-            // Externalize the path if it has a value
-            if (StringUtils.isNotBlank(rawValue)) {
-                return externalizerService.externalize(request, rawValue);
-            }
+        // Read the raw property value from the component's resource
+        String rawValue = resource.getValueMap().get(key, String.class);
+
+        // Externalize the path if it has a value
+        if (StringUtils.isNotBlank(rawValue)) {
+            return externalizerService.externalize(request, rawValue);
         }
 
         return null;
@@ -479,3 +492,6 @@ negligible performance impact. There is no need to cache externalized values.
 - [OSGi Configuration](../../backend/osgi-configuration.mdx) - configuring the Externalizer
 - [Architecture](../../architecture.mdx) - Sling request processing and URL mapping
 - [Security](../../infrastructure/security.mdx)
+- [Apache Sling Models Injectors](https://sling.apache.org/documentation/bundles/models.html#available-injectors) - how injectors and `@Source` work
+- [AEM Externalizer (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/externalizer) - official `com.day.cq.commons.Externalizer` reference
+- [Sling URL Mapping](https://sling.apache.org/documentation/the-sling-engine/url-decomposition.html) - how `ResourceResolver.map()` resolves URLs

@@ -37,7 +37,7 @@ Each GitHub Release produces the following artefacts
 In general, downloading the `core.wcm.components.all-<version>.zip` and installing it via
 the [JCR Package Manager](http://localhost:4502/crx/packmgr/index.jsp) is enough.
 
-If you are running an AEM Cloud SDK, the Core Components will be preinstalled in `/libs/wcm/core`.
+If you are running an AEM Cloud SDK, the Core Components are bundled with the SDK and available under `/apps/core/wcm/components/` — you do not need to install them separately on AEMaaCS.
 
 #### Core Components - Manual Installation
 
@@ -47,10 +47,14 @@ need to be added to the root pom, the 'all' pom, 'core' pom and the 'ui.apps' po
 
 If you bootstrap your development environment via the maven AEM Project Archetype, this will have been done for you.
 
+:::tip Check for the latest version
+Always verify the current release at the [Core Components GitHub Releases](https://github.com/adobe/aem-core-wcm-components/releases) page before pinning a version — the examples below use a recent release but a newer one may be available.
+:::
+
 ##### Root POM
 
 ```xml title="/pom.xml"
-<core.wcm.components.version>2.15.2</core.wcm.components.version>
+<core.wcm.components.version>2.27.0</core.wcm.components.version>
 
 <!-- [...] -->
 
