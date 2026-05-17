@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.11.3] - 2026-05-17
+
+### Fixed
+- `dialog-validation.mdx`: Corrected 14 CSS attribute selectors from exact `=` to word `~=` match — exact match silently fails when a field carries multiple space-separated validators
+- `component-dialogs.mdx`: Fixed `rootPath` attribute casing on Coral 3 pathfield examples (`rootpath` → `rootPath`)
+- `externalized-value-map-value.mdx`: Fixed annotation default value (`StringUtils.EMPTY` → `""`); rewrote injector `getValue()` to use standard Java type-checking and proper adaptable resolution instead of undefined `ReflectionUtil`/`InjectorUtil` helpers that would cause compile errors
+- `core-components.mdx`: Corrected Core Components install path (`/libs/wcm/core` → `/apps/core/wcm/components/`); updated example version from `2.15.2` (2021) to `2.27.0`; added tip linking to the GitHub releases page
+
 ## [1.11.2] - 2026-05-17
 
 ### Fixed
