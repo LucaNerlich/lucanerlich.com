@@ -1,0 +1,371 @@
+.app {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-bottom: 0.5rem;
+}
+
+.title {
+    margin: 0;
+    font-size: 2rem;
+    line-height: 1.1;
+}
+
+.subtitle {
+    margin: 0;
+    color: var(--custom-muted);
+    max-width: 60ch;
+}
+
+.headerActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.currencyLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--custom-muted);
+    font-size: 0.875rem;
+}
+
+.card {
+    background: var(--ifm-background-surface-color);
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: 10px;
+    padding: 1.25rem 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.sectionTitle {
+    margin: 0;
+    font-size: 1.125rem;
+}
+
+.subSectionTitle {
+    margin: 0.5rem 0 0;
+    font-size: 0.95rem;
+    color: var(--custom-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.inlineForm {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.expenseForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.expenseFormGrid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+    .expenseFormGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.fieldLabel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--custom-muted);
+}
+
+.input,
+.select {
+    background: var(--ifm-background-color);
+    color: var(--ifm-font-color-base);
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: 6px;
+    padding: 0.5rem 0.625rem;
+    font: inherit;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input:focus,
+.select:focus {
+    outline: 2px solid var(--ifm-color-primary);
+    outline-offset: 1px;
+    border-color: transparent;
+}
+
+.input:disabled,
+.select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.inlineForm .input {
+    flex: 1 1 200px;
+    min-width: 0;
+}
+
+.primaryButton {
+    background: var(--ifm-color-primary);
+    color: var(--ifm-button-color, #fff);
+    border: 1px solid var(--ifm-color-primary);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    transition: background 120ms ease;
+}
+
+.primaryButton:hover:not(:disabled) {
+    background: var(--ifm-color-primary-dark);
+    border-color: var(--ifm-color-primary-dark);
+}
+
+.primaryButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.secondaryButton {
+    background: transparent;
+    color: var(--ifm-font-color-base);
+    border: 1px solid var(--ifm-color-emphasis-300);
+    border-radius: 6px;
+    padding: 0.5rem 0.875rem;
+    cursor: pointer;
+    font: inherit;
+}
+
+.secondaryButton:hover {
+    background: var(--ifm-color-emphasis-100);
+}
+
+.linkButton {
+    background: none;
+    border: none;
+    color: var(--custom-muted);
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0.25rem 0.5rem;
+    font: inherit;
+}
+
+.linkButton:hover {
+    color: var(--ifm-font-color-base);
+}
+
+.muted {
+    color: var(--custom-muted);
+    margin: 0;
+}
+
+.mutedInline {
+    color: var(--custom-muted);
+    margin-left: 0.75rem;
+    font-size: 0.875rem;
+}
+
+.error {
+    color: var(--custom-accent-red);
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.chips {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem 0.35rem 0.75rem;
+    background: var(--ifm-color-emphasis-100);
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: 999px;
+    font-size: 0.9rem;
+}
+
+.chipRemove {
+    background: none;
+    border: none;
+    color: var(--custom-muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0 0.25rem;
+    border-radius: 4px;
+}
+
+.chipRemove:hover {
+    color: var(--custom-accent-red);
+    background: var(--ifm-color-emphasis-200);
+}
+
+.tableWrap {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+    padding: 0.6rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--ifm-color-emphasis-200);
+    vertical-align: middle;
+}
+
+.table th {
+    font-weight: 600;
+    color: var(--custom-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.numCell {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.actionCell {
+    width: 1%;
+    text-align: right;
+}
+
+.summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--ifm-color-emphasis-100);
+    border-radius: 8px;
+}
+
+.summary > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.summaryLabel {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--custom-muted);
+}
+
+.summaryValue {
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.balanceList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.balanceRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0.5rem;
+    border-radius: 6px;
+}
+
+.balanceRow:nth-child(odd) {
+    background: var(--ifm-color-emphasis-100);
+}
+
+.balancePositive {
+    color: var(--custom-accent-green);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.balanceNegative {
+    color: var(--custom-accent-red);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.balanceZero {
+    color: var(--custom-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.transferList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.transferRow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--ifm-color-emphasis-100);
+    border-radius: 6px;
+}
+
+.transferFrom {
+    color: var(--custom-accent-red);
+    font-weight: 600;
+}
+
+.transferTo {
+    color: var(--custom-accent-green);
+    font-weight: 600;
+}
+
+.transferArrow {
+    color: var(--custom-muted);
+}
+
+.transferAmount {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    justify-self: end;
+}

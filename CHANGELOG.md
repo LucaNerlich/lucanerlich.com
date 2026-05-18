@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.12.0] - 2026-05-18
+
+### Added
+- New `/apps/` section with a self-contained **Splitter** app (`/apps/splitter/`) — add people, log shared expenses, and get the minimum settlement transactions. All state is encoded in the URL hash so sessions are shareable by copying the link. Landing page at `/apps/` lists all available apps.
+
 ## [1.11.3] - 2026-05-17
 
 ### Fixed
