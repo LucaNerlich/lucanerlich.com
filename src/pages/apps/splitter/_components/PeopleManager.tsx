@@ -20,41 +20,33 @@ const PeopleManager: React.FC<Props> = ({people, onAdd, onRemove}) => {
     };
 
     return (
-        <div>
-            <form onSubmit={submit} className={styles.inlineForm}>
-                <input
-                    type="text"
-                    value={name}
-                    placeholder="Person's name"
-                    onChange={e => setName(e.target.value)}
-                    className={styles.input}
-                    aria-label="Person's name"
-                />
-                <button type="submit" className={styles.primaryButton}>
-                    Add person
-                </button>
-            </form>
-            {people.length === 0 ? (
-                <p className={styles.muted}>Add at least two people to start splitting.</p>
-            ) : (
-                <ul className={styles.chips}>
-                    {people.map(p => (
-                        <li key={p.id} className={styles.chip}>
-                            <span>{p.name}</span>
-                            <button
-                                type="button"
-                                className={styles.chipRemove}
-                                onClick={() => onRemove(p.id)}
-                                aria-label={`Remove ${p.name}`}
-                                title={`Remove ${p.name}`}
-                            >
-                                ×
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
+        <form onSubmit={submit} className={styles.tagInputWrap}>
+            {people.map(p => (
+                <span key={p.id} className={styles.chip}>
+                    {p.name}
+                    <button
+                        type="button"
+                        className={styles.chipRemove}
+                        onClick={() => onRemove(p.id)}
+                        aria-label={`Remove ${p.name}`}
+                        title={`Remove ${p.name}`}
+                    >
+                        ×
+                    </button>
+                </span>
+            ))}
+            <input
+                type="text"
+                value={name}
+                placeholder={people.length === 0 ? 'Add first person…' : 'Add another…'}
+                onChange={e => setName(e.target.value)}
+                className={styles.tagInput}
+                aria-label="Person's name"
+            />
+            <button type="submit" className={styles.primaryButton}>
+                Add
+            </button>
+        </form>
     );
 };
 

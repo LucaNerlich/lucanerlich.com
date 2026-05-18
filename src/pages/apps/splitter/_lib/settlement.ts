@@ -18,7 +18,8 @@ export const computeBalances = (state: AppState): Map<string, number> => {
 
     if (state.people.length === 0) return balances;
 
-    const sortedIds = [...state.people.map(p => p.id)].sort();
+    const collator = new Intl.Collator('en', {sensitivity: 'variant'});
+    const sortedIds = [...state.people.map(p => p.id)].sort(collator.compare);
     const N = state.people.length;
 
     let total = 0;

@@ -1,6 +1,4 @@
-export type Currency = 'EUR' | 'USD' | 'GBP' | 'CHF';
-
-export const CURRENCIES: Currency[] = ['EUR', 'USD', 'GBP', 'CHF'];
+export type Currency = 'EUR';
 
 export type Person = {
     id: string;
@@ -26,8 +24,7 @@ export type Action =
     | {type: 'ADD_PERSON'; name: string}
     | {type: 'REMOVE_PERSON'; id: string}
     | {type: 'ADD_EXPENSE'; description: string; cents: number; paidBy: string}
-    | {type: 'REMOVE_EXPENSE'; id: string}
-    | {type: 'SET_CURRENCY'; currency: Currency};
+    | {type: 'REMOVE_EXPENSE'; id: string};
 
 export const emptyState = (): AppState => ({
     v: 1,

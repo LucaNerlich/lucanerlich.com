@@ -1,16 +1,15 @@
 import React from 'react';
-import type {Currency, Expense, Person} from '../_lib/types';
+import type {Expense, Person} from '../_lib/types';
 import {formatMoney} from '../_lib/money';
 import styles from '../splitter.module.css';
 
 type Props = {
     expenses: Expense[];
     people: Person[];
-    currency: Currency;
     onRemove: (id: string) => void;
 };
 
-const ExpenseList: React.FC<Props> = ({expenses, people, currency, onRemove}) => {
+const ExpenseList: React.FC<Props> = ({expenses, people, onRemove}) => {
     const nameOf = (id: string) => people.find(p => p.id === id)?.name ?? '—';
 
     return (
@@ -28,7 +27,7 @@ const ExpenseList: React.FC<Props> = ({expenses, people, currency, onRemove}) =>
                     {expenses.map(e => (
                         <tr key={e.id}>
                             <td>{e.description}</td>
-                            <td className={styles.numCell}>{formatMoney(e.cents, currency)}</td>
+                            <td className={styles.numCell}>{formatMoney(e.cents)}</td>
                             <td>{nameOf(e.paidBy)}</td>
                             <td className={styles.actionCell}>
                                 <button

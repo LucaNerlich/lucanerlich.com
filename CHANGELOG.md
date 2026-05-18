@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.12.1] - 2026-05-18
+
+### Fixed
+- Splitter: expense description is now optional — the form submits without one
+- Splitter: tab focus is now trapped within the expense form so rapid keyboard entry (description → amount → paid by → Add → repeat) no longer escapes to the footer
+- Splitter: adding an expense with an empty description no longer silently no-ops (the reducer guard was still requiring a non-empty description)
+- Splitter: people chips are now rendered inline with the name input in a tag-input style instead of awkwardly below it
+
+### Changed
+- Splitter: removed multi-currency support; EUR is the only currency (simplifies the UI)
+- Splitter: all formatting and sorting now uses the `Intl` API — `Intl.NumberFormat` (cached), `Intl.Collator` for deterministic ID sorting, `Intl.PluralRules` for "expense/expenses" copy
+
 ## [1.12.0] - 2026-05-18
 
 ### Added

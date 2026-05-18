@@ -39,13 +39,13 @@ const ResultsPanel: React.FC<Props> = ({state}) => {
                 <div>
                     <span className={styles.summaryLabel}>Total spent</span>
                     <span className={styles.summaryValue}>
-                        {formatMoney(totalCents, state.currency)}
+                        {formatMoney(totalCents)}
                     </span>
                 </div>
                 <div>
                     <span className={styles.summaryLabel}>Per person</span>
                     <span className={styles.summaryValue}>
-                        {formatMoney(Math.round(fairShare), state.currency)}
+                        {formatMoney(Math.round(fairShare))}
                     </span>
                 </div>
             </div>
@@ -66,7 +66,7 @@ const ResultsPanel: React.FC<Props> = ({state}) => {
                             <span>{p.name}</span>
                             <span className={cls}>
                                 {sign}
-                                {formatMoney(net, state.currency)}
+                                {formatMoney(net)}
                             </span>
                         </li>
                     );
@@ -86,7 +86,7 @@ const ResultsPanel: React.FC<Props> = ({state}) => {
                             </span>
                             <span className={styles.transferTo}>{nameOf(t.to)}</span>
                             <span className={styles.transferAmount}>
-                                {formatMoney(t.cents, state.currency)}
+                                {formatMoney(t.cents)}
                             </span>
                         </li>
                     ))}

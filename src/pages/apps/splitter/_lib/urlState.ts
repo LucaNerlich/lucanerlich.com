@@ -1,12 +1,11 @@
-import type {AppState, Currency, Expense, Person} from './types';
-import {CURRENCIES} from './types';
+import type {AppState, Expense, Person} from './types';
 
 type WirePerson = [string, string];
 type WireExpense = [string, string, number, string];
 
 type Wire = {
     v: 1;
-    c: Currency;
+    c: string;
     p: WirePerson[];
     e: WireExpense[];
 };
@@ -20,7 +19,7 @@ const toWire = (state: AppState): Wire => ({
 
 const fromWire = (w: Wire): AppState => ({
     v: 1,
-    currency: CURRENCIES.includes(w.c) ? w.c : 'EUR',
+    currency: 'EUR',
     people: w.p.map(([id, name]): Person => ({id: String(id), name: String(name)})),
     expenses: w.e.map(([id, description, cents, paidBy]): Expense => ({
         id: String(id),

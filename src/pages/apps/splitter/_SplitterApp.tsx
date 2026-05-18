@@ -1,6 +1,8 @@
 import React, {useEffect, useReducer, useRef, useState} from 'react';
 import type {Action, AppState} from './_lib/types';
 import {emptyState, newId} from './_lib/types';
+
+const pluralRules = new Intl.PluralRules('en', {type: 'cardinal'});
 import {encodeState, decodeState} from './_lib/urlState';
 import PeopleManager from './_components/PeopleManager';
 import ExpenseForm from './_components/ExpenseForm';
@@ -24,21 +26,18 @@ const reducer = (state: AppState, action: Action): AppState => {
                 expenses: state.expenses.filter(e => e.paidBy !== action.id),
             };
         case 'ADD_EXPENSE': {
-            const desc = action.description.trim();
-            if (!desc || action.cents <= 0) return state;
+            if (action.cents <= 0) return state;
             if (!state.people.some(p => p.id === action.paidBy)) return state;
             return {
                 ...state,
                 expenses: [
                     ...state.expenses,
-                    {id: newId(), description: desc, cents: action.cents, paidBy: action.paidBy},
+                    {id: newId(), description: action.description.trim(), cents: action.cents, paidBy: action.paidBy},
                 ],
             };
         }
         case 'REMOVE_EXPENSE':
             return {...state, expenses: state.expenses.filter(e => e.id !== action.id)};
-        case 'SET_CURRENCY':
-            return {...state, currency: action.currency};
         default:
             return state;
     }
@@ -79,8 +78,9 @@ const SplitterApp: React.FC = () => {
         if (!person) return;
         const expenseCount = state.expenses.filter(e => e.paidBy === id).length;
         if (expenseCount > 0) {
+            const expenseWord = pluralRules.select(expenseCount) === 'one' ? 'expense' : 'expenses';
             const ok = window.confirm(
-                `${person.name} paid ${expenseCount} expense${expenseCount === 1 ? '' : 's'}. Remove them and those expenses?`,
+                `${person.name} paid ${expenseCount} ${expenseWord}. Remove them and those expenses?`,
             );
             if (!ok) return;
         }
@@ -112,24 +112,6 @@ const SplitterApp: React.FC = () => {
                     bookmark or share the link to keep or send the session.
                 </p>
                 <div className={styles.headerActions}>
-                    <label className={styles.currencyLabel}>
-                        Currency
-                        <select
-                            value={state.currency}
-                            onChange={e =>
-                                dispatch({
-                                    type: 'SET_CURRENCY',
-                                    currency: e.target.value as AppState['currency'],
-                                })
-                            }
-                            className={styles.select}
-                        >
-                            <option value="EUR">EUR €</option>
-                            <option value="USD">USD $</option>
-                            <option value="GBP">GBP £</option>
-                            <option value="CHF">CHF</option>
-                        </select>
-                    </label>
                     <button
                         type="button"
                         className={styles.secondaryButton}
@@ -161,7 +143,6 @@ const SplitterApp: React.FC = () => {
                 <h2 className={styles.sectionTitle}>Add expense</h2>
                 <ExpenseForm
                     people={state.people}
-                    currency={state.currency}
                     onAdd={(description, cents, paidBy) =>
                         dispatch({type: 'ADD_EXPENSE', description, cents, paidBy})
                     }
@@ -174,7 +155,6 @@ const SplitterApp: React.FC = () => {
                     <ExpenseList
                         expenses={state.expenses}
                         people={state.people}
-                        currency={state.currency}
                         onRemove={id => dispatch({type: 'REMOVE_EXPENSE', id})}
                     />
                 </section>

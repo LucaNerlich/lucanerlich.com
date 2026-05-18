@@ -1,19 +1,20 @@
-import React, {useEffect, useState} from 'react';
-import type {Currency, Person} from '../_lib/types';
+import React, {useEffect, useRef, useState} from 'react';
+import type {Person} from '../_lib/types';
 import {toCents} from '../_lib/money';
 import styles from '../splitter.module.css';
 
 type Props = {
     people: Person[];
-    currency: Currency;
     onAdd: (description: string, cents: number, paidBy: string) => void;
 };
 
-const ExpenseForm: React.FC<Props> = ({people, currency, onAdd}) => {
+const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
     const [paidBy, setPaidBy] = useState<string>(people[0]?.id ?? '');
     const [error, setError] = useState<string | null>(null);
+    const descriptionRef = useRef<HTMLInputElement>(null);
+    const submitRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         if (!people.some(p => p.id === paidBy)) {
@@ -24,11 +25,6 @@ const ExpenseForm: React.FC<Props> = ({people, currency, onAdd}) => {
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
-        const trimmed = description.trim();
-        if (!trimmed) {
-            setError('Description required.');
-            return;
-        }
         const cents = toCents(amount);
         if (cents === null || cents <= 0) {
             setError('Amount must be greater than 0.');
@@ -38,9 +34,10 @@ const ExpenseForm: React.FC<Props> = ({people, currency, onAdd}) => {
             setError('Choose who paid.');
             return;
         }
-        onAdd(trimmed, cents, paidBy);
+        onAdd(description.trim(), cents, paidBy);
         setDescription('');
         setAmount('');
+        descriptionRef.current?.focus();
     };
 
     const disabled = people.length === 0;
@@ -49,18 +46,25 @@ const ExpenseForm: React.FC<Props> = ({people, currency, onAdd}) => {
         <form onSubmit={submit} className={styles.expenseForm}>
             <div className={styles.expenseFormGrid}>
                 <label className={styles.fieldLabel}>
-                    <span>Description</span>
+                    <span>Description <span className={styles.optional}>(optional)</span></span>
                     <input
+                        ref={descriptionRef}
                         type="text"
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                         placeholder="Dinner, taxi, groceries…"
                         disabled={disabled}
                         className={styles.input}
+                        onKeyDown={e => {
+                            if (e.key === 'Tab' && e.shiftKey) {
+                                e.preventDefault();
+                                submitRef.current?.focus();
+                            }
+                        }}
                     />
                 </label>
                 <label className={styles.fieldLabel}>
-                    <span>Amount ({currency})</span>
+                    <span>Amount (€)</span>
                     <input
                         type="number"
                         value={amount}
@@ -71,6 +75,12 @@ const ExpenseForm: React.FC<Props> = ({people, currency, onAdd}) => {
                         placeholder="0.00"
                         disabled={disabled}
                         className={styles.input}
+                        onKeyDown={e => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                (e.currentTarget.form?.querySelector('select') as HTMLElement | null)?.focus();
+                            }
+                        }}
                     />
                 </label>
                 <label className={styles.fieldLabel}>
@@ -80,6 +90,12 @@ const ExpenseForm: React.FC<Props> = ({people, currency, onAdd}) => {
                         onChange={e => setPaidBy(e.target.value)}
                         disabled={disabled}
                         className={styles.select}
+                        onKeyDown={e => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                e.currentTarget.form?.requestSubmit();
+                            }
+                        }}
                     >
                         {people.length === 0 ? (
                             <option value="">— add people first —</option>
@@ -95,7 +111,18 @@ const ExpenseForm: React.FC<Props> = ({people, currency, onAdd}) => {
             </div>
             {error && <p className={styles.error}>{error}</p>}
             <div>
-                <button type="submit" className={styles.primaryButton} disabled={disabled}>
+                <button
+                    ref={submitRef}
+                    type="submit"
+                    className={styles.primaryButton}
+                    disabled={disabled}
+                    onKeyDown={e => {
+                        if (e.key === 'Tab' && !e.shiftKey) {
+                            e.preventDefault();
+                            descriptionRef.current?.focus();
+                        }
+                    }}
+                >
                     Add expense
                 </button>
                 {disabled && (
