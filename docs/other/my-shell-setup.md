@@ -219,7 +219,7 @@ alias mv='mv -iv'                           # Preferred 'mv' implementation
 alias mkdir='mkdir -pv'                     # Preferred 'mkdir' implementation
 alias ll='ls -FGlAhp'                       # Preferred 'ls' implementation
 alias less='less -FSRXc'                    # Preferred 'less' implementation
-cd() { builtin cd "$@"; ll; }               # Always list directory contents upon 'cd'
+cd() { builtin cd "$@"; [[ -o interactive ]] && ll; }   # List dir contents upon 'cd' (interactive shells only)
 alias cd2='cd ../../'                       # Go back 2 directory levels
 alias cd3='cd ../../../'                     # Go back 3 directory levels
 alias cd4='cd ../../../../'                  # Go back 4 directory levels
