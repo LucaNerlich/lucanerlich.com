@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.0] - 2026-06-03
+
+### Added
+- AEM guide: [Omnisearch Selection Bar Actions](/aem/ui/omnisearch-selection-bar-actions) — explains why Granite UI render conditions cannot be used for per-asset checks in the omnisearch selection bar, and how to implement a two-layer solution (DM feature flag render condition + custom JSON check servlet + client-side `foundation-selections-change` activator)
+
+### Changed
+- Updated `@types/react` to `19.2.15`
+- Added `pullfrog.yml` workflow
+
+### Fixed
+- `shell-setup`: restrict `cd` alias to interactive shells only
+
 ## [1.12.1] - 2026-05-18
 
 ### Fixed
