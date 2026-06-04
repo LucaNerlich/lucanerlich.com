@@ -151,6 +151,19 @@ The `granite:rendercondition` here is the DM feature flag check - it only asks "
 this AEM instance", not "does this asset have smart crops". That per-asset question is handled
 client-side.
 
+:::note Feature flag identifiers
+The flag strings `com.adobe.dam.asset.dynamicmedia.feature.flag` (DM hybrid/on-prem) and
+`com.adobe.dam.asset.scene7.feature.flag` (DM with Scene7 / Cloud Service) are not listed in
+public Adobe documentation. They can be discovered by inspecting Adobe's own `/libs/dam/gui/`
+nodes in CRXDE Lite — the built-in Smart Crop action already uses these same flags.
+
+The underlying `granite/ui/components/foundation/renderconditions/feature` component is
+documented in the Granite UI API reference:
+[AEM 6.5](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/renderconditions/feature/index.html)
+·
+[AEM Cloud Service](https://developer.adobe.com/experience-manager/reference-materials/cloud-service/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/renderconditions/feature/index.html)
+:::
+
 You also need to create the intermediate path nodes. FileVault requires them:
 
 ```xml title="apps/granite/.content.xml  (and each intermediate directory)"

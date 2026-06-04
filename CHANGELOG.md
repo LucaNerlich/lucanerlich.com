@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.1] - 2026-06-04
+
+### Changed
+- AEM Omnisearch Selection Bar Actions: added callout documenting the source of the DM/Scene7 feature flag identifiers and links to the Granite UI `feature` rendercondition API reference (AEM 6.5 + Cloud Service)
+
 ## [1.13.0] - 2026-06-03
 
 ### Added
