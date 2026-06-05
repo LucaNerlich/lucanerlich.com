@@ -3,6 +3,7 @@
     "position": 1,
     "link": {
         "type": "generated-index",
+        "slug": "/css/beginners-guide",
         "description": "A comprehensive CSS beginners guide -- from your first stylesheet to modern layout techniques, animations, and professional architecture."
     }
 }

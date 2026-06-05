@@ -3,6 +3,7 @@
     "position": 1,
     "link": {
         "type": "generated-index",
+        "slug": "/testing/beginners-guide",
         "description": "A practical testing guide for JavaScript/TypeScript and Java - from writing your first unit test to CI integration and TDD."
     }
 }

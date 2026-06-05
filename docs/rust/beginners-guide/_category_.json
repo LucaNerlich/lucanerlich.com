@@ -3,6 +3,7 @@
     "position": 1,
     "link": {
         "type": "generated-index",
+        "slug": "/rust/beginners-guide",
         "description": "A comprehensive Rust beginners guide -- from your first Hello World to deploying a REST API on a VPS."
     }
 }

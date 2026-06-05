@@ -3,6 +3,7 @@
     "position": 1,
     "link": {
         "type": "generated-index",
+        "slug": "/git/beginners-guide",
         "description": "A comprehensive Git beginners guide - from initialising a repository to advanced branching strategies and team workflows."
     }
 }

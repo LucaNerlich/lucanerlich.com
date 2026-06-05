@@ -3,6 +3,7 @@
     "position": 1,
     "link": {
         "type": "generated-index",
+        "slug": "/docker/beginners-guide",
         "description": "A comprehensive Docker beginners guide - from your first container to deploying multi-service applications with Docker Compose."
     }
 }

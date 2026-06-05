@@ -277,6 +277,23 @@ const config: Config = {
                     {from: '/web-content/media/', to: '/web-content/images-and-media/'},
                     {from: '/web-content/navigation/', to: '/web-content/information-architecture/'},
                     {from: '/web-content/ia/', to: '/web-content/information-architecture/'},
+
+                    // Beginners-guide category indexes: the shared "Beginners Guide"
+                    // label previously auto-generated ugly, non-descriptive
+                    // /category/beginners-guide-N/ URLs. Each category now has an
+                    // explicit slug; these redirects preserve the old links.
+                    {from: '/category/beginners-guide/', to: '/aem/beginners-guide/'},
+                    {from: '/category/beginners-guide-1/', to: '/strapi/beginners-guide/'},
+                    {from: '/category/beginners-guide-2/', to: '/git/beginners-guide/'},
+                    {from: '/category/beginners-guide-3/', to: '/css/beginners-guide/'},
+                    {from: '/category/beginners-guide-4/', to: '/javascript/beginners-guide/'},
+                    {from: '/category/beginners-guide-5/', to: '/java/beginners-guide/'},
+                    {from: '/category/beginners-guide-6/', to: '/php/beginners-guide/'},
+                    {from: '/category/beginners-guide-7/', to: '/rust/beginners-guide/'},
+                    {from: '/category/beginners-guide-8/', to: '/docker/beginners-guide/'},
+                    {from: '/category/beginners-guide-9/', to: '/linux/beginners-guide/'},
+                    {from: '/category/beginners-guide-10/', to: '/testing/beginners-guide/'},
+                    {from: '/category/beginners-guide-11/', to: '/typescript/beginners-guide/'},
                 ],
             },
         ],
