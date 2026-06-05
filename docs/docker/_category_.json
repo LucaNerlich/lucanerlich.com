@@ -3,6 +3,6 @@
     "link": {
         "type": "generated-index",
         "slug": "/docker",
-        "description": "Docker guides — from running your first container to multi-stage builds, Compose, and production deployment."
+        "description": "Docker guides - from running your first container to multi-stage builds, Compose, and production deployment."
     }
 }

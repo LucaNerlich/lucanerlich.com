@@ -20,7 +20,7 @@ sidebar_position: 2
 The basic Git workflow is a cycle you will repeat many times each day: **edit files**, **stage changes**, **commit
 snapshots**. This chapter walks through each step in detail and shows you how to read the history you are building.
 
-## git status — Know Where You Stand
+## git status - Know Where You Stand
 
 `git status` is your most-used Git command. Run it constantly. It tells you:
 
@@ -53,9 +53,9 @@ Untracked files:
 
 | Section                     | Meaning                                                             |
 |-----------------------------|---------------------------------------------------------------------|
-| **Changes to be committed** | Staged — will go into the next commit                               |
-| **Changes not staged**      | Modified tracked files — Git sees the change but it is not staged   |
-| **Untracked files**         | New files Git has never seen — not staged and not committed         |
+| **Changes to be committed** | Staged - will go into the next commit                               |
+| **Changes not staged**      | Modified tracked files - Git sees the change but it is not staged   |
+| **Untracked files**         | New files Git has never seen - not staged and not committed         |
 
 ### Short status
 
@@ -70,7 +70,7 @@ git status -s
 
 The two columns represent: first = staging area, second = working tree. `??` means untracked.
 
-## git add — Staging Changes
+## git add - Staging Changes
 
 `git add` moves changes from the working tree into the staging area.
 
@@ -118,7 +118,7 @@ git add -p README.md
 
 This lets you make several logical changes to one file and commit them as separate, focused commits.
 
-## git commit — Saving a Snapshot
+## git commit - Saving a Snapshot
 
 Once you have staged the changes you want, `git commit` saves them permanently in the repository history.
 
@@ -166,7 +166,7 @@ git add forgotten-file.js
 git commit --amend -m "Add login form with validation"
 ```
 
-> **Warning:** Amending rewrites the commit. Never amend commits that have already been pushed and shared with others —
+> **Warning:** Amending rewrites the commit. Never amend commits that have already been pushed and shared with others -
 > it rewrites history and causes problems for anyone who has pulled your changes.
 
 ### Commit all tracked changes at once
@@ -177,7 +177,7 @@ git commit -am "Fix typo in error message"
 
 The `-a` flag stages all modifications to **already-tracked** files and commits them. It does not add untracked files.
 
-## git diff — Seeing What Changed
+## git diff - Seeing What Changed
 
 `git diff` shows the line-by-line differences between states.
 
@@ -232,7 +232,7 @@ index 83db48f..bf268d7 100644
 | `+`    | A line that was added         |
 | ` `    | A line that is unchanged      |
 
-## git log — Reading History
+## git log - Reading History
 
 `git log` shows the commit history.
 
@@ -307,7 +307,7 @@ git log --oneline --graph --decorate --all
 ## Writing Good Commit Messages
 
 A commit message is a letter to your future self and your teammates. A good message explains **what** changed and **why**
-— not just "fixed stuff". Good messages make `git log` a useful project journal instead of an inscrutable list of hashes.
+- not just "fixed stuff". Good messages make `git log` a useful project journal instead of an inscrutable list of hashes.
 
 ### The 50/72 rule
 
@@ -349,7 +349,7 @@ Format:
 | `feat`     | A new feature                                            |
 | `fix`      | A bug fix                                                |
 | `docs`     | Documentation changes only                               |
-| `style`    | Formatting, missing semicolons — no logic change         |
+| `style`    | Formatting, missing semicolons - no logic change         |
 | `refactor` | Code restructure without feature change or bug fix       |
 | `test`     | Adding or updating tests                                 |
 | `chore`    | Build process, tooling, dependency updates               |
@@ -401,7 +401,7 @@ npx standard-version
 | `fixed the bug`          | Which bug? What fix?                           | `fix(parser): handle null input in lexer` |
 | `asdfgh`                 | Clearly a placeholder                          | Take five seconds to write a real message |
 
-## Putting It All Together — A Complete Workflow
+## Putting It All Together - A Complete Workflow
 
 Here is a realistic example of a feature being developed:
 
@@ -442,11 +442,11 @@ understand the entire feature implementation at a glance.
 
 You now know:
 
-- `git status` — see the state of every file in your working tree and staging area
-- `git add` — move changes into the staging area, including partial-file staging with `-p`
-- `git commit` — save a snapshot with a meaningful message
-- `git diff` — inspect changes between any two states
-- `git log` — read the project history with powerful filters and display options
-- **Good commit messages** — the 50/72 rule and Conventional Commits
+- `git status` - see the state of every file in your working tree and staging area
+- `git add` - move changes into the staging area, including partial-file staging with `-p`
+- `git commit` - save a snapshot with a meaningful message
+- `git diff` - inspect changes between any two states
+- `git log` - read the project history with powerful filters and display options
+- **Good commit messages** - the 50/72 rule and Conventional Commits
 
-Next up: [Branches](./03-branches.md) — what branches are, how to create and switch between them, and when to use them.
+Next up: [Branches](./03-branches.md) - what branches are, how to create and switch between them, and when to use them.

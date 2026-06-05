@@ -1,7 +1,7 @@
 // Greedy minimum-transactions settlement.
 // Note: the optimal minimum-transactions problem is NP-hard. Greedy matching
 // of largest debtor with largest creditor produces at most N-1 transactions
-// and is near-optimal in practice — the standard trade-off for this kind of
+// and is near-optimal in practice - the standard trade-off for this kind of
 // "splitwise"-style UX.
 
 import type {AppState} from './types';

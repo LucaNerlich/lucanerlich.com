@@ -295,7 +295,7 @@ docker run -d \
   my-app:latest
 ```
 
-Note: when you use a non-`json-file` or non-`local` driver, `docker logs` stops working because logs are no longer stored locally. This is a common gotcha — you must use your log aggregation system (CloudWatch console, Graylog, etc.) to view them.
+Note: when you use a non-`json-file` or non-`local` driver, `docker logs` stops working because logs are no longer stored locally. This is a common gotcha - you must use your log aggregation system (CloudWatch console, Graylog, etc.) to view them.
 
 ---
 
@@ -333,10 +333,10 @@ JSON output (what Docker captures):
 Containers are ephemeral. If your application writes logs to a file inside the container, those logs are lost when the container is removed. Always log to stdout (info/debug) and stderr (errors), and let Docker's log driver handle collection and forwarding.
 
 ```javascript
-// Good — logs go to stdout where Docker captures them
+// Good - logs go to stdout where Docker captures them
 console.log(JSON.stringify({ level: 'info', message: 'Server started' }));
 
-// Bad — logs go to a file in the ephemeral container filesystem
+// Bad - logs go to a file in the ephemeral container filesystem
 fs.appendFileSync('/var/log/app.log', 'Server started\n');
 ```
 

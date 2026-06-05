@@ -93,7 +93,7 @@ const SplitterApp: React.FC = () => {
             setCopied(true);
             window.setTimeout(() => setCopied(false), 1500);
         } catch {
-            // clipboard blocked — no-op
+            // clipboard blocked - no-op
         }
     };
 
@@ -108,7 +108,7 @@ const SplitterApp: React.FC = () => {
             <header className={styles.header}>
                 <h1 className={styles.title}>Splitter</h1>
                 <p className={styles.subtitle}>
-                    Who owes whom how much. Your data lives in this page's URL —
+                    Who owes whom how much. Your data lives in this page's URL -
                     bookmark or share the link to keep or send the session.
                 </p>
                 <div className={styles.headerActions}>

@@ -226,7 +226,7 @@ interface Product {
 
 function formatProduct(product: Product): string {
     const availability = product.inStock ? "In stock" : "Out of stock";
-    return `[${product.id}] ${product.name} — $${product.price.toFixed(2)} (${availability})`;
+    return `[${product.id}] ${product.name} - $${product.price.toFixed(2)} (${availability})`;
 }
 
 function applyDiscount(product: Product, percent: number): Product {
@@ -262,8 +262,8 @@ node dist/index.js
 ```
 
 ```text
-[1] ThinkPad X1 — $1299.99 (In stock)
-[1] ThinkPad X1 — $1104.99 (In stock)
+[1] ThinkPad X1 - $1299.99 (In stock)
+[1] ThinkPad X1 - $1104.99 (In stock)
 ```
 
 ### What just happened

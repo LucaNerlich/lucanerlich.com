@@ -16,7 +16,7 @@ sidebar_position: 1
 
 # Introduction to Software Testing
 
-Every developer has been there: you ship a change, it looks fine locally, and three hours later a bug report lands in your inbox. The feature that broke had nothing to do with what you changed — or so you thought. Automated tests exist to catch exactly these moments before they become incidents.
+Every developer has been there: you ship a change, it looks fine locally, and three hours later a bug report lands in your inbox. The feature that broke had nothing to do with what you changed - or so you thought. Automated tests exist to catch exactly these moments before they become incidents.
 
 This guide takes a practical approach to testing across two ecosystems: **JavaScript/TypeScript** (using Jest and Vitest) and **Java** (using JUnit 5). Each chapter builds on the previous one, moving from isolated unit tests through integration testing, mocking, TDD, and finally CI pipeline integration.
 
@@ -53,7 +53,7 @@ The testing pyramid is a mental model for thinking about the *mix* of tests you 
 
 ### Unit Tests
 
-A unit test exercises a single function, method, or class in complete isolation. External dependencies — databases, HTTP services, file systems — are replaced with fakes or mocks. Unit tests are the majority of your test suite because they are:
+A unit test exercises a single function, method, or class in complete isolation. External dependencies - databases, HTTP services, file systems - are replaced with fakes or mocks. Unit tests are the majority of your test suite because they are:
 
 - Fast (milliseconds each)
 - Deterministic (no network flakiness)
@@ -61,7 +61,7 @@ A unit test exercises a single function, method, or class in complete isolation.
 
 ### Integration Tests
 
-Integration tests verify that two or more components work correctly together. A typical example: a service class that calls a repository, which talks to a real (or in-memory) database. These tests are slower and more complex to set up but catch a class of bugs that unit tests miss — mismatched contracts between components.
+Integration tests verify that two or more components work correctly together. A typical example: a service class that calls a repository, which talks to a real (or in-memory) database. These tests are slower and more complex to set up but catch a class of bugs that unit tests miss - mismatched contracts between components.
 
 ### End-to-End (E2E) Tests
 
@@ -96,22 +96,22 @@ These numbers vary by project, but the direction is universal. Automated tests m
 
 **Code coverage** measures the percentage of your production code that is executed by your test suite. The common metrics:
 
-- **Line coverage** — what percentage of lines were hit at least once
-- **Branch coverage** — what percentage of conditional branches (if/else, switch arms) were taken
-- **Function coverage** — what percentage of functions were called
-- **Statement coverage** — similar to line coverage but counts individual statements
+- **Line coverage** - what percentage of lines were hit at least once
+- **Branch coverage** - what percentage of conditional branches (if/else, switch arms) were taken
+- **Function coverage** - what percentage of functions were called
+- **Statement coverage** - similar to line coverage but counts individual statements
 
-Coverage is a useful signal but not a goal in itself. 100% line coverage does not mean your code is correct — it means every line ran. A test that calls a function but makes no assertions will cover it without verifying anything.
+Coverage is a useful signal but not a goal in itself. 100% line coverage does not mean your code is correct - it means every line ran. A test that calls a function but makes no assertions will cover it without verifying anything.
 
 A practical target:
-- **< 50%** — risky; likely missing large sections of logic
-- **50–70%** — survivable for legacy code, but aim higher for new code
-- **70–85%** — solid for most production services
-- **> 90%** — appropriate for libraries and critical path code, but beware diminishing returns
+- **< 50%** - risky; likely missing large sections of logic
+- **50–70%** - survivable for legacy code, but aim higher for new code
+- **70–85%** - solid for most production services
+- **> 90%** - appropriate for libraries and critical path code, but beware diminishing returns
 
 ## Tooling Overview
 
-This guide uses the following tools. You do not need to install them all now — each chapter covers setup in context.
+This guide uses the following tools. You do not need to install them all now - each chapter covers setup in context.
 
 ### JavaScript / TypeScript
 

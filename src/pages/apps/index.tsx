@@ -15,7 +15,7 @@ const APPS: AppEntry[] = [
         slug: 'splitter',
         title: 'Splitter',
         description:
-            'Who owes whom how much. Add people, log expenses, see the minimum settlement. State lives in the URL — share the link.',
+            'Who owes whom how much. Add people, log expenses, see the minimum settlement. State lives in the URL - share the link.',
         icon: '🧮',
     },
 ];
@@ -30,7 +30,7 @@ export default function AppsIndex(): React.ReactElement {
                 <header className={styles.header}>
                     <h1 className={styles.title}>Apps</h1>
                     <p className={styles.subtitle}>
-                        Small, self-contained tools. No accounts, no backend — each app's
+                        Small, self-contained tools. No accounts, no backend - each app's
                         state lives entirely in your browser or its URL.
                     </p>
                 </header>

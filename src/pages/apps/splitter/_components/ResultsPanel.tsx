@@ -29,7 +29,7 @@ const ResultsPanel: React.FC<Props> = ({state}) => {
         );
     }
 
-    const nameOf = (id: string) => state.people.find(p => p.id === id)?.name ?? '—';
+    const nameOf = (id: string) => state.people.find(p => p.id === id)?.name ?? '-';
     const fairShare = totalCents / state.people.length;
 
     return (

@@ -2,7 +2,7 @@
 alwaysApply: true
 ---
 These rules define essential practices for writing and generating secure code.  
-They apply universally — to manual development, automated tooling, and AI-generated code.
+They apply universally - to manual development, automated tooling, and AI-generated code.
 Our codebase follows a **security‑first** mindset: security is built in from day one.
 
 All violations must include a clear explanation of which rule was triggered and why, to help developers understand and fix the issue effectively.

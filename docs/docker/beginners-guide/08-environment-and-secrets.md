@@ -1,7 +1,7 @@
 ---
 title: "Environment Variables and Secrets"
 sidebar_label: "Env & Secrets"
-description: Learn how to manage configuration and secrets in Docker using ENV, ARG, .env files, runtime injection, and Docker secrets — without baking sensitive data into images.
+description: Learn how to manage configuration and secrets in Docker using ENV, ARG, .env files, runtime injection, and Docker secrets - without baking sensitive data into images.
 slug: /docker/beginners-guide/environment-and-secrets
 tags: [docker, beginners, devops]
 keywords:
@@ -16,7 +16,7 @@ sidebar_position: 8
 
 # Environment Variables and Secrets
 
-Almost every application needs configuration: database URLs, API keys, feature flags, port numbers. Docker provides several mechanisms to inject this configuration into containers. Using them correctly — especially for sensitive data — is one of the most important habits to develop early.
+Almost every application needs configuration: database URLs, API keys, feature flags, port numbers. Docker provides several mechanisms to inject this configuration into containers. Using them correctly - especially for sensitive data - is one of the most important habits to develop early.
 
 The golden rule: **secrets must never be baked into an image**. An image is a shareable artefact. Anything embedded in it can be extracted by anyone who has access to it, now or in the future.
 
@@ -45,7 +45,7 @@ WORKDIR /app
 COPY . .
 RUN npm ci --omit=dev
 
-# These are baked into the image — fine for non-sensitive defaults
+# These are baked into the image - fine for non-sensitive defaults
 ENV NODE_ENV=production \
     PORT=3000 \
     LOG_LEVEL=info
@@ -65,7 +65,7 @@ docker run -d -p 3000:3000 \
 
 ### ARG
 
-Use `ARG` for values needed only during the build step — version numbers, build flags.
+Use `ARG` for values needed only during the build step - version numbers, build flags.
 
 ```dockerfile
 ARG NODE_VERSION=20
@@ -74,7 +74,7 @@ FROM node:${NODE_VERSION}-alpine
 ARG APP_VERSION=dev
 RUN echo "Building version: $APP_VERSION"
 
-# ARG is NOT available here at runtime — this would be empty
+# ARG is NOT available here at runtime - this would be empty
 # CMD ["echo", "$APP_VERSION"]
 ```
 
@@ -100,7 +100,7 @@ Here are three antipatterns that commit secrets into image layers:
 ### Antipattern 1: ENV with a real secret
 
 ```dockerfile
-# BAD — this password is in every layer from here forward
+# BAD - this password is in every layer from here forward
 ENV DATABASE_PASSWORD=mysupersecretpassword
 ```
 
@@ -114,7 +114,7 @@ docker inspect my-app | grep -i password
 ### Antipattern 2: Secrets copied in via COPY
 
 ```dockerfile
-# BAD — .env file with secrets is baked into the image layer
+# BAD - .env file with secrets is baked into the image layer
 COPY .env /app/.env
 ```
 
@@ -214,7 +214,7 @@ REDIS_URL=redis://prod-redis:6379
 docker run -d --env-file production.env my-app
 ```
 
-Unlike Compose's `.env` (which substitutes into YAML), `--env-file` injects variables directly into the container. The file is not read by the daemon — it is processed by the CLI on your local machine.
+Unlike Compose's `.env` (which substitutes into YAML), `--env-file` injects variables directly into the container. The file is not read by the daemon - it is processed by the CLI on your local machine.
 
 ---
 
@@ -236,7 +236,7 @@ docker secret create ssl_cert ./certs/server.crt
 # List secrets
 docker secret ls
 
-# Secrets cannot be read back after creation — this is intentional
+# Secrets cannot be read back after creation - this is intentional
 ```
 
 ### Using secrets in a Compose file (Swarm deploy)
@@ -259,7 +259,7 @@ secrets:
 Inside the container, the secret is available at `/run/secrets/db_password`. Your application reads it from the filesystem rather than from an environment variable:
 
 ```javascript
-// Node.js — read secret from file
+// Node.js - read secret from file
 const fs = require('fs');
 const dbPassword = fs.readFileSync('/run/secrets/db_password', 'utf8').trim();
 ```
@@ -307,7 +307,7 @@ RUN npm run build
 ```
 
 ```bash
-# Pass the secret at build time — it never enters the image
+# Pass the secret at build time - it never enters the image
 docker build \
   --secret id=npm_token,src=$HOME/.npmrc \
   -t my-app .
@@ -342,4 +342,4 @@ Before shipping a Docker image:
 - [ ] Secrets are injected at runtime, not baked in at build time
 - [ ] A `.env.example` with placeholder values exists for onboarding new developers
 
-Proper secret handling is not just about security — it makes your images truly portable. An image without hardcoded secrets can be deployed to development, staging, and production by injecting the appropriate values at runtime.
+Proper secret handling is not just about security - it makes your images truly portable. An image without hardcoded secrets can be deployed to development, staging, and production by injecting the appropriate values at runtime.

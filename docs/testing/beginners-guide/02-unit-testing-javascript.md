@@ -16,7 +16,7 @@ sidebar_position: 2
 
 # Unit Testing in JavaScript & TypeScript
 
-A unit test in JavaScript is a function that calls your code with a known input and asserts that the output matches what you expect. The test framework (Jest or Vitest) runs your tests, reports failures, and provides the assertion helpers you need. This chapter covers both frameworks because you will encounter both in the wild — their APIs are nearly identical by design.
+A unit test in JavaScript is a function that calls your code with a known input and asserts that the output matches what you expect. The test framework (Jest or Vitest) runs your tests, reports failures, and provides the assertion helpers you need. This chapter covers both frameworks because you will encounter both in the wild - their APIs are nearly identical by design.
 
 ## Choosing Between Jest and Vitest
 
@@ -298,7 +298,7 @@ describe('UserRepository', () => {
     });
 
     afterEach(async () => {
-        // Runs after each individual test — clean up mutations
+        // Runs after each individual test - clean up mutations
         await db.truncate('users');
     });
 
@@ -366,14 +366,14 @@ During development you sometimes need to skip a test temporarily or focus on one
 // Skip this test (it shows as pending)
 it.skip('not ready yet', () => { /* ... */ });
 
-// Only run this test (dangerous — do not commit)
+// Only run this test (dangerous - do not commit)
 it.only('focus here', () => { /* ... */ });
 
 // Conditional skip
 it.skipIf(process.env.CI === 'true')('skipped in CI', () => { /* ... */ });
 ```
 
-`it.only` (or `test.only`) will cause all other tests in the file to be skipped. Never commit a `.only` — most teams have a lint rule (`no-only-tests`) to catch it.
+`it.only` (or `test.only`) will cause all other tests in the file to be skipped. Never commit a `.only` - most teams have a lint rule (`no-only-tests`) to catch it.
 
 ## Testing Async Code
 
@@ -388,7 +388,7 @@ async function fetchUser(id: number): Promise<{ name: string }> {
 }
 
 it('fetches a user', async () => {
-    // We'll mock fetch in chapter 4 — for now, this shows the pattern
+    // We'll mock fetch in chapter 4 - for now, this shows the pattern
     const user = await fetchUser(1);
     expect(user.name).toBeDefined();
 });
@@ -402,7 +402,7 @@ it('throws on 404', async () => {
 });
 ```
 
-### Using done callback (legacy — avoid in new code)
+### Using done callback (legacy - avoid in new code)
 
 ```typescript
 it('legacy callback test', (done) => {

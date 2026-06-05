@@ -18,13 +18,13 @@ sidebar_position: 4
 
 Merging is how you bring work from one branch back into another. It is the natural conclusion of the branching
 workflow: you work on a feature branch in isolation, then merge it into `main` when the work is done. Git supports
-several merge strategies, and knowing which one to expect — and how to handle conflicts — is essential for working
+several merge strategies, and knowing which one to expect - and how to handle conflicts - is essential for working
 in any team.
 
 ## Fast-Forward Merge
 
 A **fast-forward merge** is the simplest case. It happens when the target branch has not diverged from the source
-branch — in other words, when every commit on the target is also an ancestor of the source.
+branch - in other words, when every commit on the target is also an ancestor of the source.
 
 Imagine this history:
 
@@ -72,7 +72,7 @@ Many teams enforce `--no-ff` on merge to `main` so the history clearly shows fea
 
 ## Three-Way Merge
 
-A **three-way merge** happens when both branches have diverged — each has commits the other does not have.
+A **three-way merge** happens when both branches have diverged - each has commits the other does not have.
 
 ```
 A ── B ── C   ← main (has commit C that feature doesn't)
@@ -87,7 +87,7 @@ git switch main
 git merge feature/payment
 ```
 
-Git creates a new **merge commit** `M` that has two parents — `C` and `E`:
+Git creates a new **merge commit** `M` that has two parents - `C` and `E`:
 
 ```
 A ── B ── C ───── M   ← main
@@ -109,7 +109,7 @@ git merge feature/payment
 ## Merge Conflicts
 
 A **merge conflict** occurs when two branches modify the **same lines** of the same file (or one branch deletes a file
-the other modified). Git cannot decide which version is correct — it asks you to resolve the conflict manually.
+the other modified). Git cannot decide which version is correct - it asks you to resolve the conflict manually.
 
 ### When conflicts arise
 
@@ -145,7 +145,7 @@ function calculateTotal(items) {
 
 ### Resolving conflicts step by step
 
-**Step 1 — Identify all conflicts**
+**Step 1 - Identify all conflicts**
 
 ```bash
 git status
@@ -158,7 +158,7 @@ git status
 #         both modified:   src/checkout.js
 ```
 
-**Step 2 — Open each conflicting file and edit it**
+**Step 2 - Open each conflicting file and edit it**
 
 Decide which version is correct, or write a new version that incorporates both:
 
@@ -172,14 +172,14 @@ function calculateTotal(items) {
 
 Remove all conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`). The file must be valid code with no markers remaining.
 
-**Step 3 — Stage the resolved files**
+**Step 3 - Stage the resolved files**
 
 ```bash
 git add src/cart.js
 git add src/checkout.js
 ```
 
-**Step 4 — Commit the merge**
+**Step 4 - Commit the merge**
 
 ```bash
 git commit
@@ -195,9 +195,9 @@ You can edit the message to add context about how you resolved the conflict.
 git diff --check
 ```
 
-This flags any remaining conflict markers — useful before committing.
+This flags any remaining conflict markers - useful before committing.
 
-## git mergetool — Visual Conflict Resolution
+## git mergetool - Visual Conflict Resolution
 
 For complex conflicts, a visual merge tool is far easier than editing raw conflict markers.
 
@@ -224,10 +224,10 @@ git mergetool
 ```
 
 Git opens your configured tool for each conflicting file in sequence. The tool shows three panes:
-- **LOCAL** — your branch's version
-- **REMOTE** — the incoming branch's version
-- **BASE** — the common ancestor (helps you understand what changed in each branch)
-- **MERGED** — the result you are editing
+- **LOCAL** - your branch's version
+- **REMOTE** - the incoming branch's version
+- **BASE** - the common ancestor (helps you understand what changed in each branch)
+- **MERGED** - the result you are editing
 
 After saving and closing the tool, Git marks the file as resolved. When all files are resolved, run `git commit` to
 complete the merge.
@@ -243,7 +243,7 @@ git merge --abort
 This works at any point during the merge, including when there are conflicts. It resets the working tree and index to
 the state before the merge began.
 
-## Fast-Forward vs Three-Way vs No-FF — Quick Reference
+## Fast-Forward vs Three-Way vs No-FF - Quick Reference
 
 | Scenario                               | Merge type         | Creates merge commit? | History        |
 |----------------------------------------|--------------------|-----------------------|----------------|
@@ -279,7 +279,7 @@ git switch main   # Switch to the destination
 git merge feature/login
 ```
 
-A common mistake is being on `feature/login` and running `git merge main` — that merges `main` into your feature
+A common mistake is being on `feature/login` and running `git merge main` - that merges `main` into your feature
 branch, which may not be what you want (though it is sometimes useful for staying up to date with main).
 
 ### Pull before merging
@@ -308,18 +308,18 @@ git push origin --delete feature/login
 
 Do not be alarmed by merge conflicts. They are Git telling you that two people edited the same part of the code and
 it needs a human decision. The process of resolving them carefully is part of collaboration. The longer you wait to
-merge branches, the more conflicts you accumulate — so merge often.
+merge branches, the more conflicts you accumulate - so merge often.
 
 ## Summary
 
 You now understand:
 
-- **Fast-forward merge** — the simplest case, no merge commit, linear history
-- **Three-way merge** — when branches diverge, Git creates a merge commit with two parents
-- **`--no-ff`** — always create a merge commit to preserve branch topology
-- **Conflict resolution** — edit conflict markers, stage resolved files, commit
-- **`git mergetool`** — visual conflict resolution with your preferred editor
-- **`git merge --abort`** — escape hatch when a merge goes wrong
+- **Fast-forward merge** - the simplest case, no merge commit, linear history
+- **Three-way merge** - when branches diverge, Git creates a merge commit with two parents
+- **`--no-ff`** - always create a merge commit to preserve branch topology
+- **Conflict resolution** - edit conflict markers, stage resolved files, commit
+- **`git mergetool`** - visual conflict resolution with your preferred editor
+- **`git merge --abort`** - escape hatch when a merge goes wrong
 
-Next up: [Rebasing](./05-rebasing.md) — an alternative to merging that rewrites history to keep it linear, with
+Next up: [Rebasing](./05-rebasing.md) - an alternative to merging that rewrites history to keep it linear, with
 interactive rebase for cleaning up commits before sharing them.

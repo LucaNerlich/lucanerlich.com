@@ -37,7 +37,7 @@ difference explains why Git feels the way it does.
 | **Offline work**         | Very limited                                    | Full history and branching available offline            |
 | **Speed**                | Network-bound                                   | Most operations are local and instant                   |
 | **Branching**            | Slow and expensive (copies directories)         | Instant and cheap (just a pointer)                      |
-| **Single point of failure** | Yes — server goes down, work stops           | No — every clone is a full backup                       |
+| **Single point of failure** | Yes - server goes down, work stops           | No - every clone is a full backup                       |
 
 With Git, every developer's machine holds the **complete project history**. You can commit, branch, diff, and browse
 logs entirely offline. Network access is only needed when you want to share your work with others.
@@ -46,10 +46,10 @@ logs entirely offline. Network access is only needed when you want to share your
 
 Most version control systems store data as a list of file changes over time (delta-based storage). Git thinks
 differently: every time you commit, Git takes a **snapshot** of the entire project and stores a reference to it. If a
-file has not changed, Git stores a link to the previous identical file rather than a copy — this makes snapshots
+file has not changed, Git stores a link to the previous identical file rather than a copy - this makes snapshots
 efficient.
 
-Each snapshot (commit) is identified by a SHA-1 hash — a 40-character string like
+Each snapshot (commit) is identified by a SHA-1 hash - a 40-character string like
 `a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2`. This hash is computed from the content of the commit, so it is
 effectively a fingerprint. If anything changes, the hash changes.
 
@@ -172,7 +172,7 @@ git init
 # Initialized empty Git repository in /home/user/my-project/.git/
 ```
 
-This creates a hidden `.git/` directory. That directory is the repository — it contains the object database, refs,
+This creates a hidden `.git/` directory. That directory is the repository - it contains the object database, refs,
 configuration, and everything Git needs. **Never delete or manually edit the `.git/` directory.**
 
 ```bash
@@ -216,7 +216,7 @@ The staging area gives you **precise control** over what goes into each commit. 
 while fixing a bug, but one of those edits is actually a refactor that belongs in a separate commit. With the staging
 area, you can add just the bug-fix files to the index and commit them, then add the refactor separately.
 
-This workflow — edit → stage → commit — is the heartbeat of Git. You will use it hundreds of times a day.
+This workflow - edit → stage → commit - is the heartbeat of Git. You will use it hundreds of times a day.
 
 ## The .gitignore File
 
@@ -328,11 +328,11 @@ move files through the three areas.
 
 You now understand:
 
-- **What Git is** — a distributed version control system that stores snapshots, not diffs
+- **What Git is** - a distributed version control system that stores snapshots, not diffs
 - **How to install and configure Git** with your name, email, and editor
 - **How to initialise a repository** with `git init`
-- **The three areas** — working tree, staging area, and history — and why they exist
-- **How `.gitignore` works** — keeping build artifacts and secrets out of your repository
+- **The three areas** - working tree, staging area, and history - and why they exist
+- **How `.gitignore` works** - keeping build artifacts and secrets out of your repository
 
-Next up: [Basic Workflow](./02-basic-workflow.md) — staging changes, writing commits, reading history with `git log`,
+Next up: [Basic Workflow](./02-basic-workflow.md) - staging changes, writing commits, reading history with `git log`,
 and crafting good commit messages.

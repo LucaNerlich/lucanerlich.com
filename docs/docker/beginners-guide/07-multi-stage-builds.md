@@ -16,9 +16,9 @@ sidebar_position: 7
 
 # Multi-Stage Builds
 
-A common problem with Dockerfiles is that building an application requires a lot of tools — compilers, build systems, test runners, bundlers — that serve no purpose at runtime and only bloat the final image. A Node.js image that includes TypeScript, ts-node, jest, and all the `devDependencies` might be 800 MB. The same application, just the compiled JavaScript and production `node_modules`, might be 80 MB.
+A common problem with Dockerfiles is that building an application requires a lot of tools - compilers, build systems, test runners, bundlers - that serve no purpose at runtime and only bloat the final image. A Node.js image that includes TypeScript, ts-node, jest, and all the `devDependencies` might be 800 MB. The same application, just the compiled JavaScript and production `node_modules`, might be 80 MB.
 
-**Multi-stage builds** solve this by letting you use multiple `FROM` instructions in a single Dockerfile. Each `FROM` starts a new stage, and you can selectively `COPY` artefacts from one stage into another. Docker discards the intermediate stages — they are never part of the final image.
+**Multi-stage builds** solve this by letting you use multiple `FROM` instructions in a single Dockerfile. Each `FROM` starts a new stage, and you can selectively `COPY` artefacts from one stage into another. Docker discards the intermediate stages - they are never part of the final image.
 
 ---
 
@@ -27,7 +27,7 @@ A common problem with Dockerfiles is that building an application requires a lot
 Without multi-stage builds, the naive approach is to build inside the container and ship everything:
 
 ```dockerfile
-# Single-stage — ships build tools, source maps, devDependencies, etc.
+# Single-stage - ships build tools, source maps, devDependencies, etc.
 FROM node:20
 
 WORKDIR /app
@@ -98,7 +98,7 @@ COPY --from=builder /app/dist/index.js ./
 COPY --from=nginx:alpine /etc/nginx/nginx.conf ./nginx.conf.reference
 ```
 
-The last form — copying from an external image — is useful for grabbing well-known config templates or static binaries.
+The last form - copying from an external image - is useful for grabbing well-known config templates or static binaries.
 
 ---
 
@@ -124,7 +124,7 @@ Here is a production-quality Dockerfile for a TypeScript Express API.
 
 ```dockerfile
 # ============================================================
-# Stage 1 — deps: Install ALL dependencies (including dev)
+# Stage 1 - deps: Install ALL dependencies (including dev)
 # ============================================================
 FROM node:20-alpine AS deps
 
@@ -135,7 +135,7 @@ RUN npm ci
 
 
 # ============================================================
-# Stage 2 — builder: Compile TypeScript
+# Stage 2 - builder: Compile TypeScript
 # ============================================================
 FROM deps AS builder
 
@@ -146,7 +146,7 @@ RUN npm run build
 
 
 # ============================================================
-# Stage 3 — tester: Run tests (optional; used in CI with --target tester)
+# Stage 3 - tester: Run tests (optional; used in CI with --target tester)
 # ============================================================
 FROM builder AS tester
 
@@ -155,7 +155,7 @@ RUN npm test
 
 
 # ============================================================
-# Stage 4 — production: Minimal runtime image
+# Stage 4 - production: Minimal runtime image
 # ============================================================
 FROM node:20-alpine AS production
 
@@ -192,7 +192,7 @@ docker build --target tester -t my-app:test .
 # Build production image
 docker build --target production -t my-app:latest .
 
-# Full build (defaults to the last stage — production)
+# Full build (defaults to the last stage - production)
 docker build -t my-app:latest .
 ```
 
@@ -231,7 +231,7 @@ COPY . .
 # CGO_ENABLED=0 produces a fully static binary
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app/server ./cmd/server
 
-# Stage 2: scratch image (literally empty — just the binary)
+# Stage 2: scratch image (literally empty - just the binary)
 FROM scratch
 
 COPY --from=builder /app/server /server
@@ -242,7 +242,7 @@ EXPOSE 8080
 ENTRYPOINT ["/server"]
 ```
 
-The `scratch` base image contains nothing. The final image contains only the binary and the CA certificates. The result is typically under 10 MB — compared to 800 MB+ for a Go development image.
+The `scratch` base image contains nothing. The final image contains only the binary and the CA certificates. The result is typically under 10 MB - compared to 800 MB+ for a Go development image.
 
 ---
 

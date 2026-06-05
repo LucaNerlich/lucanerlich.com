@@ -16,12 +16,12 @@ sidebar_position: 3
 
 # Unit Testing in Java with JUnit 5
 
-JUnit 5 is the current standard test framework for Java. It is a significant evolution from JUnit 4 — modular, extensible, and much more expressive. If you have written tests before in JUnit 4, many concepts carry over; the annotations and some APIs have changed, but the philosophy is the same. If you are starting fresh, JUnit 5 is what you should learn.
+JUnit 5 is the current standard test framework for Java. It is a significant evolution from JUnit 4 - modular, extensible, and much more expressive. If you have written tests before in JUnit 4, many concepts carry over; the annotations and some APIs have changed, but the philosophy is the same. If you are starting fresh, JUnit 5 is what you should learn.
 
 JUnit 5 is composed of three sub-projects:
-- **JUnit Platform** — the foundation for launching tests on the JVM
-- **JUnit Jupiter** — the new programming model (the annotations you write)
-- **JUnit Vintage** — backwards-compatibility layer for running JUnit 3/4 tests
+- **JUnit Platform** - the foundation for launching tests on the JVM
+- **JUnit Jupiter** - the new programming model (the annotations you write)
+- **JUnit Vintage** - backwards-compatibility layer for running JUnit 3/4 tests
 
 In practice you add one dependency and work entirely with Jupiter.
 
@@ -274,7 +274,7 @@ assertArrayEquals(new int[]{1, 2}, result);
 // Exceptions
 assertThrows(IllegalArgumentException.class, () -> service.create(null));
 
-// Multiple assertions — all run even if one fails
+// Multiple assertions - all run even if one fails
 assertAll("user fields",
     () -> assertEquals("Alice", user.getName()),
     () -> assertEquals(30, user.getAge()),
@@ -406,7 +406,7 @@ Nested classes can have their own `@BeforeEach` / `@AfterEach`, which compose wi
 
 Parameterised tests run the same test logic with multiple inputs. This is perfect for boundary conditions and data-driven testing.
 
-### @ValueSource — simple values
+### @ValueSource - simple values
 
 ```java
 import org.junit.jupiter.params.ParameterizedTest;
@@ -420,7 +420,7 @@ void isBlankForBlankStrings(String input) {
 }
 ```
 
-### @CsvSource — multiple parameters per case
+### @CsvSource - multiple parameters per case
 
 ```java
 import org.junit.jupiter.params.provider.CsvSource;
@@ -437,7 +437,7 @@ void slugifyConvertsToSlug(String input, String expected) {
 }
 ```
 
-### @MethodSource — complex objects
+### @MethodSource - complex objects
 
 ```java
 import org.junit.jupiter.params.provider.MethodSource;
@@ -572,4 +572,4 @@ class StringUtilsTest {
 }
 ```
 
-Run with `mvn test` or `./gradlew test`. IntelliJ IDEA and VS Code with the Java extension can also run individual tests with a green arrow in the gutter. Next, we move to mocking — replacing dependencies your code relies on.
+Run with `mvn test` or `./gradlew test`. IntelliJ IDEA and VS Code with the Java extension can also run individual tests with a green arrow in the gutter. Next, we move to mocking - replacing dependencies your code relies on.

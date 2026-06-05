@@ -1,7 +1,7 @@
 ---
 title: "Practice Project: TypeScript Utility Library"
 sidebar_label: "Practice Project"
-description: End-to-end exercise — build and test a small TypeScript utility library with Vitest (unit and integration tests), full coverage report, and GitHub Actions CI.
+description: End-to-end exercise - build and test a small TypeScript utility library with Vitest (unit and integration tests), full coverage report, and GitHub Actions CI.
 slug: /testing/beginners-guide/practice-project
 tags: [testing, beginners, typescript, vitest, github-actions, ci, coverage]
 keywords:
@@ -15,12 +15,12 @@ sidebar_position: 12
 
 # Practice Project: TypeScript Utility Library
 
-This chapter brings together everything covered in the guide. You will build a small but realistic TypeScript utility library — `@myorg/formatters` — from scratch, test it with Vitest, generate a coverage report, and set up GitHub Actions to run the tests on every push.
+This chapter brings together everything covered in the guide. You will build a small but realistic TypeScript utility library - `@myorg/formatters` - from scratch, test it with Vitest, generate a coverage report, and set up GitHub Actions to run the tests on every push.
 
 The library provides three utilities:
-- `formatCurrency` — formats a number as a currency string
-- `formatRelativeTime` — formats a date as a human-readable relative string ("3 hours ago")
-- `formatList` — joins an array of strings into a natural-language list ("Alice, Bob, and Carol")
+- `formatCurrency` - formats a number as a currency string
+- `formatRelativeTime` - formats a date as a human-readable relative string ("3 hours ago")
+- `formatList` - joins an array of strings into a natural-language list ("Alice, Bob, and Carol")
 
 These are simple enough to understand in minutes but complex enough to have meaningful edge cases worth testing.
 
@@ -413,7 +413,7 @@ import { describe, it, expect } from 'vitest';
 import { formatList } from './formatList';
 
 describe('formatList', () => {
-    describe('conjunction (default — "and")', () => {
+    describe('conjunction (default - "and")', () => {
         it('returns empty string for an empty array', () => {
             expect(formatList([])).toBe('');
         });
@@ -584,7 +584,7 @@ This workflow:
 1. Runs on every push to `main` and every pull request
 2. Tests against Node.js 20 and 22 in parallel
 3. Uploads the HTML coverage report as an artifact
-4. Pushes coverage data to Codecov (optional — remove if not used)
+4. Pushes coverage data to Codecov (optional - remove if not used)
 5. Runs a build step after tests pass to verify the TypeScript compiles cleanly
 
 ## What You Have Built
@@ -597,16 +597,16 @@ By completing this project you have:
 - Generated an **HTML coverage report** that shows exactly which lines and branches are tested
 - Set up a **GitHub Actions CI pipeline** that runs tests on multiple Node.js versions, uploads reports, and blocks merges on failure
 
-The patterns here — test file alongside source, coverage thresholds in config, CI matrix builds, artifact uploads — are directly applicable to any TypeScript project: a React component library, a Node.js API, a CLI tool, or a shared internal package.
+The patterns here - test file alongside source, coverage thresholds in config, CI matrix builds, artifact uploads - are directly applicable to any TypeScript project: a React component library, a Node.js API, a CLI tool, or a shared internal package.
 
 ## Suggested Extensions
 
 Once you are comfortable with this project, try extending it:
 
-1. **Add integration tests** — write tests that use your formatters together (e.g., format a list of prices, each formatted with `formatCurrency`).
-2. **Add a `parseAmount` function** — it takes a formatted currency string and returns a number. Write it TDD-style.
-3. **Add Storybook stories** — if you convert this to a React component library, document each formatter with stories.
-4. **Publish to npm** — add a `release` workflow using `changesets` or `semantic-release` that publishes the package when a PR is merged to main.
-5. **Add E2E tests** — build a tiny demo web app that uses the formatters and write a Playwright test that verifies the output in the browser.
+1. **Add integration tests** - write tests that use your formatters together (e.g., format a list of prices, each formatted with `formatCurrency`).
+2. **Add a `parseAmount` function** - it takes a formatted currency string and returns a number. Write it TDD-style.
+3. **Add Storybook stories** - if you convert this to a React component library, document each formatter with stories.
+4. **Publish to npm** - add a `release` workflow using `changesets` or `semantic-release` that publishes the package when a PR is merged to main.
+5. **Add E2E tests** - build a tiny demo web app that uses the formatters and write a Playwright test that verifies the output in the browser.
 
-You now have the complete foundation: unit testing, mocking, integration testing, TDD, component testing, snapshot testing, E2E testing, coverage, and CI. The next step is practice — pick a real project and apply these concepts one test at a time.
+You now have the complete foundation: unit testing, mocking, integration testing, TDD, component testing, snapshot testing, E2E testing, coverage, and CI. The next step is practice - pick a real project and apply these concepts one test at a time.

@@ -18,14 +18,14 @@ sidebar_position: 6
 
 # Remote Repositories
 
-So far, all our work has been local. Remote repositories are copies of your repository hosted on a server — GitHub,
+So far, all our work has been local. Remote repositories are copies of your repository hosted on a server - GitHub,
 GitLab, Bitbucket, or a self-hosted instance. They are how teams collaborate: one canonical "source of truth" that
 everyone pushes to and pulls from.
 
 This chapter covers everything you need to work confidently with remote repositories: cloning, fetching, pulling,
 pushing, and understanding the tracking relationships that connect your local branches to their remote counterparts.
 
-## git clone — Getting a Copy
+## git clone - Getting a Copy
 
 `git clone` downloads a remote repository to your machine, including all branches, tags, and the full history.
 
@@ -53,7 +53,7 @@ git clone --branch develop https://github.com/org/repo.git
 
 ### Shallow clone (for CI or quick inspection)
 
-A shallow clone fetches only the most recent commits — much faster for large repositories when you do not need the
+A shallow clone fetches only the most recent commits - much faster for large repositories when you do not need the
 full history:
 
 ```bash
@@ -138,7 +138,7 @@ ssh-add ~/.ssh/id_ed25519
 cat ~/.ssh/id_ed25519.pub
 ```
 
-## git fetch — Download Without Merging
+## git fetch - Download Without Merging
 
 `git fetch` downloads new commits, branches, and tags from the remote but **does not change your working tree or
 local branches**. It updates the remote-tracking references (like `origin/main`).
@@ -189,7 +189,7 @@ git fetch -p
 After colleagues delete branches on the remote, `--prune` removes the corresponding `origin/<branch>` references from
 your local repo. Without it, you accumulate stale remote-tracking branches.
 
-## git pull — Fetch and Merge in One Step
+## git pull - Fetch and Merge in One Step
 
 `git pull` is a convenience command that does `git fetch` followed by `git merge` (or `git rebase` if configured):
 
@@ -216,9 +216,9 @@ git config --global pull.rebase true
 ### When pull fails
 
 If you have local commits that conflict with what was fetched, `git pull` will either create a merge commit (with
-merge) or ask you to resolve conflicts before continuing (with rebase). Do not panic — this is normal collaboration.
+merge) or ask you to resolve conflicts before continuing (with rebase). Do not panic - this is normal collaboration.
 
-## git push — Sharing Your Work
+## git push - Sharing Your Work
 
 `git push` uploads your local commits to the remote repository.
 
@@ -280,7 +280,7 @@ git branch -vv
 | `[origin/main]`        | Tracks `origin/main`, in sync                                  |
 | `[origin/main: ahead 2]` | You have 2 commits to push                                   |
 | `[origin/main: behind 3]` | Remote has 3 commits you need to pull                       |
-| `[origin/main: ahead 1, behind 2]` | Diverged — need to merge or rebase               |
+| `[origin/main: ahead 1, behind 2]` | Diverged - need to merge or rebase               |
 
 ### Set up tracking manually
 
@@ -363,12 +363,12 @@ git remote show origin
 
 You now understand:
 
-- **`git clone`** — download a repository with full history and set up `origin` automatically
-- **Remotes** — named URLs; `origin` by convention, `upstream` for the source of a fork
-- **`git fetch`** — download changes without touching your working tree; use `--prune` to clean stale refs
-- **`git pull`** — fetch and merge (or rebase) in one command
-- **`git push`** — share your commits; use `-u` to set up tracking; use `--force-with-lease` carefully
-- **Tracking branches** — the link between local and remote branches that makes push/pull ergonomic
+- **`git clone`** - download a repository with full history and set up `origin` automatically
+- **Remotes** - named URLs; `origin` by convention, `upstream` for the source of a fork
+- **`git fetch`** - download changes without touching your working tree; use `--prune` to clean stale refs
+- **`git pull`** - fetch and merge (or rebase) in one command
+- **`git push`** - share your commits; use `-u` to set up tracking; use `--force-with-lease` carefully
+- **Tracking branches** - the link between local and remote branches that makes push/pull ergonomic
 
-Next up: [Tags and Releases](./07-tags-and-releases.md) — marking specific commits with version numbers and creating
+Next up: [Tags and Releases](./07-tags-and-releases.md) - marking specific commits with version numbers and creating
 releases.

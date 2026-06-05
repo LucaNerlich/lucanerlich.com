@@ -19,7 +19,7 @@ sidebar_position: 8
 
 One of Git's most valuable properties is that it is very hard to permanently lose work. Most "undo" operations are
 reversible, and the reflog gives you a time machine to recover from almost any mistake. But there are degrees of
-permanence, and the wrong command applied to the wrong situation can cause real headaches — especially on shared
+permanence, and the wrong command applied to the wrong situation can cause real headaches - especially on shared
 branches.
 
 This chapter covers every major undo operation, when to use each, and how to recover when things go wrong.
@@ -44,7 +44,7 @@ Before reaching for an undo command, ask:
 | Amend the last commit message or content   | `git commit --amend`                      |
 | Recover a dropped commit or branch         | `git reflog`                              |
 
-## git restore — Discarding Working Tree Changes
+## git restore - Discarding Working Tree Changes
 
 `git restore` discards changes in the working tree, reverting a file to its last committed (or staged) state. This is
 the modern replacement for `git checkout -- <file>`.
@@ -56,7 +56,7 @@ the modern replacement for `git checkout -- <file>`.
 git restore src/auth.js
 ```
 
-The file is restored to its state in the last commit. **This discards your edits permanently** — there is no undo.
+The file is restored to its state in the last commit. **This discards your edits permanently** - there is no undo.
 Be sure before running it.
 
 ### Discard all unstaged changes
@@ -89,7 +89,7 @@ Useful for pulling a single file out of history without checking out the whole c
 git restore --source origin/main src/config.js
 ```
 
-## git reset — Moving the Branch Pointer
+## git reset - Moving the Branch Pointer
 
 `git reset` moves the current branch pointer to a different commit. It is more powerful than `git restore` because it
 affects the commit history, not just individual files.
@@ -111,7 +111,7 @@ git reset --soft HEAD~1
 The last commit is gone from the history, but all the changes it contained are back in the staging area, ready to be
 committed again (perhaps with a different message or after adding more files).
 
-Useful for: "I committed too early — I have more to add to this commit."
+Useful for: "I committed too early - I have more to add to this commit."
 
 ```bash
 git reset --soft HEAD~1
@@ -150,7 +150,7 @@ git reset --hard HEAD~1
 The last commit is gone and all changes in it are **permanently discarded** from your working tree and staging area.
 This is the most destructive form of reset.
 
-Useful for: "This whole commit was a mistake — throw it away completely."
+Useful for: "This whole commit was a mistake - throw it away completely."
 
 ```bash
 # Go back 3 commits and discard everything since then
@@ -174,9 +174,9 @@ git log --oneline
 git reset --hard a9b8c7d
 ```
 
-## git revert — Safe Undo for Shared History
+## git revert - Safe Undo for Shared History
 
-`git revert` creates a **new commit** that undoes the changes of a previous commit. It never rewrites history — it
+`git revert` creates a **new commit** that undoes the changes of a previous commit. It never rewrites history - it
 adds to it. This makes it safe to use on shared branches.
 
 ```bash
@@ -206,7 +206,7 @@ git commit -m "revert: roll back broken authentication changes"
 
 | Aspect                       | `git revert`                         | `git reset`                           |
 |------------------------------|--------------------------------------|---------------------------------------|
-| **Rewrites history**         | No — adds a new commit               | Yes — removes commits from history    |
+| **Rewrites history**         | No - adds a new commit               | Yes - removes commits from history    |
 | **Safe on shared branches**  | Yes                                  | No                                    |
 | **Undoes pushed commits**    | Yes                                  | Requires force-push (dangerous)       |
 | **Creates a commit**         | Yes                                  | No                                    |
@@ -235,9 +235,9 @@ git commit --amend --no-edit
 ```
 
 > **Warning:** `--amend` rewrites the last commit (new hash). If the commit has already been pushed, you will need
-> to force-push to update the remote — and your colleagues will face conflicts. Only amend unpushed commits.
+> to force-push to update the remote - and your colleagues will face conflicts. Only amend unpushed commits.
 
-## git clean — Remove Untracked Files
+## git clean - Remove Untracked Files
 
 `git clean` removes files that are not tracked by Git (i.e., not in the staging area or history). Useful for cleaning
 up build artifacts, generated files, or test outputs that are not in `.gitignore`.
@@ -262,10 +262,10 @@ git clean -fdx
 > **Warning:** `git clean` is irreversible. There is no recycle bin and no reflog for untracked files. Always run
 > `git clean -n` first to preview what will be deleted.
 
-## git reflog — Your Safety Net
+## git reflog - Your Safety Net
 
-The **reflog** is Git's journal of everywhere `HEAD` has been. Every time a branch tip moves — whether from a commit,
-reset, checkout, rebase, or merge — an entry is added. The reflog is local and private; it is not pushed to remotes.
+The **reflog** is Git's journal of everywhere `HEAD` has been. Every time a branch tip moves - whether from a commit,
+reset, checkout, rebase, or merge - an entry is added. The reflog is local and private; it is not pushed to remotes.
 
 ```bash
 git reflog
@@ -349,17 +349,17 @@ git reset --hard <hash-before-reset>
 ```
 
 > **Key insight:** The reflog only tracks committed snapshots. Work that was **never committed** cannot be recovered
-> after a `--hard` reset. Commit often — even WIP commits you plan to clean up — to protect your work.
+> after a `--hard` reset. Commit often - even WIP commits you plan to clean up - to protect your work.
 
 ## Summary
 
 You now understand:
 
-- **`git restore`** — discard working tree changes or unstage files
-- **`git reset --soft/--mixed/--hard`** — move the branch pointer with varying levels of destructiveness
-- **`git revert`** — the safe, history-preserving way to undo committed changes on shared branches
-- **`git clean`** — remove untracked files (preview with `-n` first!)
-- **`git commit --amend`** — fix the last commit before it is shared
-- **`git reflog`** — your time machine for recovering from almost any mistake
+- **`git restore`** - discard working tree changes or unstage files
+- **`git reset --soft/--mixed/--hard`** - move the branch pointer with varying levels of destructiveness
+- **`git revert`** - the safe, history-preserving way to undo committed changes on shared branches
+- **`git clean`** - remove untracked files (preview with `-n` first!)
+- **`git commit --amend`** - fix the last commit before it is shared
+- **`git reflog`** - your time machine for recovering from almost any mistake
 
-Next up: [Advanced Commands](./09-advanced-commands.md) — git stash, cherry-pick, bisect, blame, and shortlog.
+Next up: [Advanced Commands](./09-advanced-commands.md) - git stash, cherry-pick, bisect, blame, and shortlog.

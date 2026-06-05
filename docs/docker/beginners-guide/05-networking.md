@@ -16,7 +16,7 @@ sidebar_position: 5
 
 # Docker Networking
 
-Every container gets its own network namespace — its own virtual network interface, IP address, and routing table. Docker connects containers together (and to the outside world) through **networks**. Understanding how Docker networking works is essential for building multi-container applications where your web server needs to talk to your database, or your API needs to reach a message queue.
+Every container gets its own network namespace - its own virtual network interface, IP address, and routing table. Docker connects containers together (and to the outside world) through **networks**. Understanding how Docker networking works is essential for building multi-container applications where your web server needs to talk to your database, or your API needs to reach a message queue.
 
 ---
 
@@ -58,11 +58,11 @@ Containers on the default bridge can communicate **by IP address** but **not by 
 docker run -d --name c1 alpine sleep 3600
 docker run -d --name c2 alpine sleep 3600
 
-# From c2, try to ping c1 by name — this FAILS on the default bridge
+# From c2, try to ping c1 by name - this FAILS on the default bridge
 docker exec c2 ping c1
 # ping: bad address 'c1'
 
-# Pinging by IP works (but IPs change on restart — fragile)
+# Pinging by IP works (but IPs change on restart - fragile)
 docker exec c2 ping 172.17.0.2
 ```
 
@@ -92,7 +92,7 @@ docker run -d --name web --network my-app-net nginx
 docker run -d --name db  --network my-app-net postgres:16 \
   -e POSTGRES_PASSWORD=secret
 
-# From 'web', ping 'db' by name — this WORKS on a custom bridge
+# From 'web', ping 'db' by name - this WORKS on a custom bridge
 docker exec web ping db
 # PING db (192.168.10.3): 56 data bytes
 # 64 bytes from 192.168.10.3: seq=0 ttl=64 time=0.125 ms
@@ -157,13 +157,13 @@ docker run -d -p 80 nginx
 docker port <container_name> 80
 ```
 
-Binding to `127.0.0.1` is important for databases and admin panels — it prevents external machines on your network from connecting to a service that should only be accessed locally.
+Binding to `127.0.0.1` is important for databases and admin panels - it prevents external machines on your network from connecting to a service that should only be accessed locally.
 
 ---
 
 ## The `host` Network Driver
 
-With `--network host`, the container's processes bind directly to the host's network interfaces. There is no NAT, no port mapping — if the container listens on port 8080, it is immediately reachable on the host's port 8080.
+With `--network host`, the container's processes bind directly to the host's network interfaces. There is no NAT, no port mapping - if the container listens on port 8080, it is immediately reachable on the host's port 8080.
 
 ```bash
 docker run -d --network host nginx
@@ -175,9 +175,9 @@ docker run -d --network host nginx
 - No need to manage port mappings
 
 **Cons:**
-- No network isolation — container can see all host network traffic
+- No network isolation - container can see all host network traffic
 - Port conflicts between containers
-- Not available on Docker Desktop (macOS/Windows) — only works on Linux
+- Not available on Docker Desktop (macOS/Windows) - only works on Linux
 
 ---
 
@@ -199,7 +199,7 @@ Use `none` for batch processing jobs that handle sensitive data and should never
 The key DNS rule for user-defined networks:
 
 - Containers resolve each other by **container name** (`--name`)
-- Containers can also be given **network aliases** — alternative DNS names on that network
+- Containers can also be given **network aliases** - alternative DNS names on that network
 
 ```bash
 # Create an alias so 'database' resolves to this container
@@ -297,7 +297,7 @@ docker run -d \
   nginx:alpine
 ```
 
-Inside `nginx.conf`, you would reference the upstream as `http://api:3000` — Docker's DNS resolves `api` to the API container's IP within the `app-stack` network.
+Inside `nginx.conf`, you would reference the upstream as `http://api:3000` - Docker's DNS resolves `api` to the API container's IP within the `app-stack` network.
 
 ---
 

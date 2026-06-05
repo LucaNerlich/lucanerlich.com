@@ -76,12 +76,12 @@ By default, variables defined inside a function are **global** and bleed into th
 ```bash
 #!/bin/bash
 
-# Without local — BAD
+# Without local - BAD
 calculate_sum() {
-    RESULT=$(( $1 + $2 ))   # RESULT is global — visible outside the function
+    RESULT=$(( $1 + $2 ))   # RESULT is global - visible outside the function
 }
 
-# With local — GOOD
+# With local - GOOD
 calculate_sum() {
     local a="$1"
     local b="$2"
@@ -91,7 +91,7 @@ calculate_sum() {
 
 SUM=$(calculate_sum 10 20)
 echo "Sum: $SUM"
-# "result" variable does not exist here — it was local to the function
+# "result" variable does not exist here - it was local to the function
 ```
 
 Always declare function-internal variables as `local`. This prevents accidental name collisions with the rest of the script.
@@ -162,12 +162,12 @@ DB_URL=$(get_db_url "$ENVIRONMENT") || {
 
 ---
 
-## Sourcing Scripts — `source` and `.`
+## Sourcing Scripts - `source` and `.`
 
 `source` (or its alias `.`) executes a script in the **current shell** rather than a subshell. This means variables and functions defined in the sourced file become available in your current session or script.
 
 ```bash
-# lib/common.sh — shared library
+# lib/common.sh - shared library
 log_info() {
     echo "[INFO]  $(date '+%Y-%m-%d %H:%M:%S') $*"
 }
@@ -200,9 +200,9 @@ Sourcing is also how shell configuration files work. When you add something to `
 
 ## Error Handling
 
-The default behaviour of bash is to continue executing after a command fails. This is dangerous in scripts — a failed `mkdir` might lead to writing files in the wrong place, a failed `cd` might cause `rm -rf *` to delete the wrong directory.
+The default behaviour of bash is to continue executing after a command fails. This is dangerous in scripts - a failed `mkdir` might lead to writing files in the wrong place, a failed `cd` might cause `rm -rf *` to delete the wrong directory.
 
-### `set -e` — Exit on Error
+### `set -e` - Exit on Error
 
 ```bash
 #!/bin/bash
@@ -210,10 +210,10 @@ set -e   # Exit immediately if any command returns non-zero
 
 echo "Step 1"
 cp /nonexistent/file /tmp/   # This fails
-echo "Step 2"                # This is NEVER reached — script exits after the cp fails
+echo "Step 2"                # This is NEVER reached - script exits after the cp fails
 ```
 
-### `set -u` — Error on Undefined Variables
+### `set -u` - Error on Undefined Variables
 
 ```bash
 #!/bin/bash
@@ -224,14 +224,14 @@ echo "$UNDEFINED_VAR"   # Script exits with error instead of using empty string
 
 This catches a huge class of bugs: a typo in a variable name no longer silently evaluates to an empty string.
 
-### `set -o pipefail` — Propagate Pipe Errors
+### `set -o pipefail` - Propagate Pipe Errors
 
 By default, a pipe's exit code is the exit code of the **last** command. This means errors early in a pipeline are silently ignored:
 
 ```bash
 # Without pipefail:
 cat /nonexistent | grep "something"
-echo $?   # 1 (grep's exit code — nothing found)
+echo $?   # 1 (grep's exit code - nothing found)
 # cat's failure was silently swallowed
 
 # With pipefail, the pipe fails if ANY command in it fails
@@ -256,7 +256,7 @@ This combination catches:
 
 ---
 
-## `trap` — Cleanup on Exit
+## `trap` - Cleanup on Exit
 
 `trap` registers commands to run when the script exits or receives a signal. This is how you ensure cleanup always happens, even if the script fails.
 
@@ -275,7 +275,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Now do your work — even if this fails, cleanup() will run
+# Now do your work - even if this fails, cleanup() will run
 cd "$TEMP_DIR"
 git clone https://github.com/example/repo.git .
 ./build.sh
@@ -324,7 +324,7 @@ PREVIOUS_VERSION=$(readlink /opt/myapp/current | xargs basename)
 NEW_VERSION="$1"
 
 rollback() {
-    echo "Deployment failed — rolling back to $PREVIOUS_VERSION" >&2
+    echo "Deployment failed - rolling back to $PREVIOUS_VERSION" >&2
     ln -sfn "/opt/myapp/$PREVIOUS_VERSION" /opt/myapp/current
     sudo systemctl restart myapp
 }
@@ -335,7 +335,7 @@ trap rollback ERR
 ln -sfn "/opt/myapp/$NEW_VERSION" /opt/myapp/current
 sudo systemctl restart myapp
 
-# Health check — if this fails, ERR trap triggers rollback
+# Health check - if this fails, ERR trap triggers rollback
 curl --fail http://localhost:3000/health
 
 # Deactivate the rollback trap on clean exit

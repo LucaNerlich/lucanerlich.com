@@ -17,7 +17,7 @@ sidebar_position: 3
 # Branches
 
 A branch is one of Git's most powerful features and one of its most misunderstood. In many version control systems,
-branching is a heavyweight operation — copying directories, taking minutes, and discouraging frequent use. In Git, a
+branching is a heavyweight operation - copying directories, taking minutes, and discouraging frequent use. In Git, a
 branch is simply a **movable pointer** to a commit. Creating one takes milliseconds and costs almost no disk space.
 
 Understanding branches unlocks the ability to work on multiple features in parallel, experiment without risk, and
@@ -52,7 +52,7 @@ A ── B ── C   ← main
 
 This divergence is the whole point of branches: independent lines of work that can later be merged back together.
 
-## HEAD — Where You Are
+## HEAD - Where You Are
 
 `HEAD` is a special pointer that tells Git which commit you are currently on. Usually, `HEAD` points to a branch, and
 that branch points to a commit. When you make a commit, the branch moves forward, and HEAD follows.
@@ -105,7 +105,7 @@ git branch
 
 ## Switching Branches
 
-### git switch (recommended — Git 2.23+)
+### git switch (recommended - Git 2.23+)
 
 ```bash
 git switch feature/login
@@ -129,7 +129,7 @@ git switch -c feature/payment
 git checkout -b feature/payment
 ```
 
-This is the most common way to start work on a new feature — you almost always want to switch to a new branch
+This is the most common way to start work on a new feature - you almost always want to switch to a new branch
 immediately after creating it.
 
 ### Switch back to main
@@ -235,9 +235,9 @@ git checkout a1b2c3d
 
 This is useful for:
 
-- **Inspecting old code** — browse how the project looked at a specific commit
-- **Running old tests** — reproduce a bug that existed at a known commit
-- **Experimental work** — try something without committing to a branch name
+- **Inspecting old code** - browse how the project looked at a specific commit
+- **Running old tests** - reproduce a bug that existed at a known commit
+- **Experimental work** - try something without committing to a branch name
 
 When you are in detached HEAD state:
 
@@ -282,8 +282,8 @@ Good branch names communicate intent. Common conventions:
 
 Tips:
 - Use **lowercase with hyphens**, not underscores or camelCase
-- Be **descriptive** — `fix/login` is too vague, `fix/login-redirect-loop-after-oauth` is clear
-- Avoid **very long names** — they are hard to type and read in terminal output
+- Be **descriptive** - `fix/login` is too vague, `fix/login-redirect-loop-after-oauth` is clear
+- Avoid **very long names** - they are hard to type and read in terminal output
 
 ## When to Branch
 
@@ -320,12 +320,12 @@ This graph shows:
 
 You now understand:
 
-- A **branch** is a lightweight pointer to a commit — not a copy of the codebase
+- A **branch** is a lightweight pointer to a commit - not a copy of the codebase
 - `git branch <name>` creates a branch; `git switch <name>` switches to it
 - `git switch -c <name>` creates and switches in one command
 - `HEAD` points to your current location; **detached HEAD** points directly to a commit
 - Branches should be **deleted after merging** to keep the repository clean
 - Branch **naming conventions** communicate intent and integrate with workflows
 
-Next up: [Merging](./04-merging.md) — bringing branches back together with fast-forward merges, three-way merges, and
+Next up: [Merging](./04-merging.md) - bringing branches back together with fast-forward merges, three-way merges, and
 conflict resolution.

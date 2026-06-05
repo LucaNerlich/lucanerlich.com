@@ -16,7 +16,7 @@ sidebar_position: 11
 
 # Test Coverage
 
-Code coverage tells you how much of your production code is exercised by your test suite. It is one of the most useful — and most misunderstood — metrics in software engineering. This chapter explains what coverage measures, how to configure it for JavaScript (Istanbul/c8) and Java (JaCoCo), and how to use it as a CI quality gate.
+Code coverage tells you how much of your production code is exercised by your test suite. It is one of the most useful - and most misunderstood - metrics in software engineering. This chapter explains what coverage measures, how to configure it for JavaScript (Istanbul/c8) and Java (JaCoCo), and how to use it as a CI quality gate.
 
 ## Coverage Metrics
 
@@ -28,10 +28,10 @@ The percentage of executable lines hit at least once during a test run. Line cov
 
 ```typescript
 function getDiscount(user: User): number {
-    if (user.isPremium) {          // line 1 — executed
-        return 0.20;               // line 2 — executed (test uses a premium user)
+    if (user.isPremium) {          // line 1 - executed
+        return 0.20;               // line 2 - executed (test uses a premium user)
     }
-    return 0;                      // line 3 — NOT executed (no test for non-premium)
+    return 0;                      // line 3 - NOT executed (no test for non-premium)
 }
 ```
 
@@ -384,7 +384,7 @@ it('does not crash', () => {
 });
 ```
 
-Coverage is a floor, not a ceiling. A module at 50% line coverage almost certainly has gaps worth filling. A module at 95% coverage could still have incorrect logic — coverage just means those lines ran.
+Coverage is a floor, not a ceiling. A module at 50% line coverage almost certainly has gaps worth filling. A module at 95% coverage could still have incorrect logic - coverage just means those lines ran.
 
 ## Practical Coverage Targets
 

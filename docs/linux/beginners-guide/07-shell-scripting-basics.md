@@ -29,13 +29,13 @@ The first line of every script should be a **shebang** (`#!`) that tells the ker
 #!/bin/bash
 ```
 
-Without it, the script may be executed by the current shell, which might be `sh`, `zsh`, or something else — and subtle differences can cause bugs. Always specify `#!/bin/bash` explicitly.
+Without it, the script may be executed by the current shell, which might be `sh`, `zsh`, or something else - and subtle differences can cause bugs. Always specify `#!/bin/bash` explicitly.
 
 Other shebangs you may see:
 
 ```bash
-#!/usr/bin/env bash   # Finds bash in $PATH — more portable but slightly slower
-#!/bin/sh             # POSIX sh — maximum portability, fewer features
+#!/usr/bin/env bash   # Finds bash in $PATH - more portable but slightly slower
+#!/bin/sh             # POSIX sh - maximum portability, fewer features
 #!/usr/bin/env python3
 #!/usr/bin/env node
 ```
@@ -142,7 +142,7 @@ echo "Script PID: $$"
 
 Quoting controls how the shell interprets special characters.
 
-### Double Quotes — `"..."`
+### Double Quotes - `"..."`
 
 Variables and command substitutions are expanded inside double quotes. Spaces are preserved.
 
@@ -153,7 +153,7 @@ echo "Home: $HOME"      # Home: /home/ubuntu
 echo "Today: $(date)"   # Today: Fri Apr 10 09:00:00 UTC 2026
 ```
 
-### Single Quotes — `'...'`
+### Single Quotes - `'...'`
 
 Everything inside single quotes is literal. No expansion at all.
 
@@ -163,9 +163,9 @@ echo 'Hello, $NAME!'    # Hello, $NAME!  (literal)
 echo 'Today: $(date)'   # Today: $(date)  (literal)
 ```
 
-Use single quotes when you want to pass a string with special characters verbatim — for example, a regex pattern or a literal dollar sign.
+Use single quotes when you want to pass a string with special characters verbatim - for example, a regex pattern or a literal dollar sign.
 
-### Escaping — `\`
+### Escaping - `\`
 
 A backslash escapes the next character inside double quotes:
 
@@ -184,7 +184,7 @@ echo -e "Line1\nLine2"        # Line1
 Command substitution captures the output of a command and uses it as a value.
 
 ```bash
-# Modern syntax: $(...)  — preferred
+# Modern syntax: $(...)  - preferred
 CURRENT_DATE=$(date +%Y-%m-%d)
 echo "Today is $CURRENT_DATE"
 
@@ -200,7 +200,7 @@ echo "Java version: $JAVA_VERSION"
 OLDEST_LOG=$(ls -t /var/log/*.log | tail -1)
 echo "Oldest log: $OLDEST_LOG"
 
-# Backtick syntax — legacy, avoid in new scripts
+# Backtick syntax - legacy, avoid in new scripts
 HOSTNAME=`hostname`   # works, but harder to nest and read
 ```
 
@@ -246,7 +246,7 @@ Exit codes matter when scripts call other scripts or when CI/CD systems check wh
 
 ---
 
-## Conditionals — `if`, `elif`, `else`
+## Conditionals - `if`, `elif`, `else`
 
 ### Basic Syntax
 
@@ -327,7 +327,7 @@ if ! grep -q "ERROR" /var/log/app.log; then
 fi
 ```
 
-### Double Brackets `[[` — Extended Test
+### Double Brackets `[[` - Extended Test
 
 `[[` is a bash-specific extension that is safer and more feature-rich than `[`:
 
@@ -355,7 +355,7 @@ fi
 
 ## Loops
 
-### `for` Loop — Iterate Over a List
+### `for` Loop - Iterate Over a List
 
 ```bash
 #!/bin/bash
@@ -387,7 +387,7 @@ for USER in $(cut -d':' -f1 /etc/passwd); do
 done
 ```
 
-### `while` Loop — Loop While Condition Is True
+### `while` Loop - Loop While Condition Is True
 
 ```bash
 #!/bin/bash
@@ -427,10 +427,10 @@ while true; do
 done
 ```
 
-### `until` Loop — Loop Until Condition Is True
+### `until` Loop - Loop Until Condition Is True
 
 ```bash
-# Opposite of while — runs until the condition becomes true
+# Opposite of while - runs until the condition becomes true
 RETRIES=0
 until ping -c 1 db.example.com &>/dev/null; do
     RETRIES=$((RETRIES + 1))
@@ -440,7 +440,7 @@ done
 echo "Database is reachable"
 ```
 
-### Loop Control — `break` and `continue`
+### Loop Control - `break` and `continue`
 
 ```bash
 for FILE in /var/log/*.log; do
@@ -459,7 +459,7 @@ done
 
 ---
 
-## `case` — Multi-Branch Switch
+## `case` - Multi-Branch Switch
 
 `case` is cleaner than a long chain of `if/elif` when you need to match a variable against multiple values.
 
@@ -511,11 +511,11 @@ esac
 
 ## A Complete Example Script
 
-Putting it all together — a deployment script:
+Putting it all together - a deployment script:
 
 ```bash
 #!/bin/bash
-# deploy.sh — deploy a new version of the application
+# deploy.sh - deploy a new version of the application
 
 APP_NAME="myapp"
 DEPLOY_DIR="/opt/${APP_NAME}"

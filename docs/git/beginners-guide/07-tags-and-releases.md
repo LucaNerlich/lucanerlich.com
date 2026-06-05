@@ -18,7 +18,7 @@ sidebar_position: 7
 # Tags and Releases
 
 Every software project eventually ships a version. Tags give you a way to permanently mark a specific commit as a
-release point — a snapshot of the codebase at version `v1.0.0`, `v2.3.1`, or any other milestone. Unlike branches,
+release point - a snapshot of the codebase at version `v1.0.0`, `v2.3.1`, or any other milestone. Unlike branches,
 tags do not move: once created, a tag always refers to the same commit. They are the stable anchors in your project
 history.
 
@@ -45,7 +45,7 @@ objects by tools like `git describe` and GitHub Releases.
 git tag v1.0.0
 ```
 
-This tags the current `HEAD` commit. No metadata, no message — just a name pointing to a hash.
+This tags the current `HEAD` commit. No metadata, no message - just a name pointing to a hash.
 
 ### Annotated tag
 
@@ -144,7 +144,7 @@ temporary lightweight tags you may have created locally.
 
 ## Checking Out a Tag
 
-Tags are not branches — you cannot commit on a tag. Checking out a tag puts you in **detached HEAD** state:
+Tags are not branches - you cannot commit on a tag. Checking out a tag puts you in **detached HEAD** state:
 
 ```bash
 git checkout v1.0.0
@@ -219,7 +219,7 @@ When your tag is `v2.0.0`, users of your library know immediately that upgrading
 When they see `v1.3.0`, they know it is safe to upgrade from `v1.2.x`. This communication is invaluable in
 ecosystems where packages have hundreds of dependents.
 
-## git describe — Human-Readable Version Strings
+## git describe - Human-Readable Version Strings
 
 `git describe` generates a version string based on the most recent annotated tag:
 
@@ -229,9 +229,9 @@ git describe
 ```
 
 This means:
-- `v1.2.0` — the most recent annotated tag
-- `14` — 14 commits since that tag
-- `g8a7b6c5` — abbreviated commit hash (`g` prefix means "git")
+- `v1.2.0` - the most recent annotated tag
+- `14` - 14 commits since that tag
+- `g8a7b6c5` - abbreviated commit hash (`g` prefix means "git")
 
 If you are exactly on a tag:
 
@@ -257,7 +257,7 @@ Most platforms treat annotated tags as the basis for creating releases. After pu
 
 ```bash
 # Create a release from a tag
-gh release create v1.0.0 --title "v1.0.0 — Initial Release" --notes "
+gh release create v1.0.0 --title "v1.0.0 - Initial Release" --notes "
 ## What's New
 
 - User authentication with JWT
@@ -289,7 +289,7 @@ npx standard-version
 ```bash
 npx semantic-release
 # Full automation: determines version, creates tag, publishes to npm, creates GitHub Release
-# Runs in CI — no manual steps
+# Runs in CI - no manual steps
 ```
 
 These tools only work correctly when your commit messages follow the [Conventional Commits](./02-basic-workflow.md#conventional-commits)
@@ -329,11 +329,11 @@ git tag -l "v1.*"
 
 You now understand:
 
-- **Lightweight tags** — simple pointers, good for local bookmarks
-- **Annotated tags** — full objects with metadata, use these for releases
+- **Lightweight tags** - simple pointers, good for local bookmarks
+- **Annotated tags** - full objects with metadata, use these for releases
 - **Creating, listing, pushing, and deleting** tags on both local and remote
-- **Semantic versioning** — MAJOR.MINOR.PATCH and what each part means
-- **`git describe`** — generating version strings from tags
-- **Release automation** — `standard-version` and `semantic-release`
+- **Semantic versioning** - MAJOR.MINOR.PATCH and what each part means
+- **`git describe`** - generating version strings from tags
+- **Release automation** - `standard-version` and `semantic-release`
 
-Next up: [Undoing Changes](./08-undoing-changes.md) — git restore, reset, revert, and using reflog as a safety net.
+Next up: [Undoing Changes](./08-undoing-changes.md) - git restore, reset, revert, and using reflog as a safety net.

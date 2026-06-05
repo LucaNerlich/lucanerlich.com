@@ -12,7 +12,7 @@ Understanding the deployment model is critical because it determines how you str
 
 ## AEMaaCS Cloud Manager Pipelines
 
-Cloud Manager is the sole deployment mechanism for AEMaaCS. You cannot install packages via CRX Package Manager or WebDAV in production — all code flows through pipelines.
+Cloud Manager is the sole deployment mechanism for AEMaaCS. You cannot install packages via CRX Package Manager or WebDAV in production - all code flows through pipelines.
 
 ### Pipeline Types
 
@@ -45,7 +45,7 @@ Each stage acts as a quality gate. If unit tests or code quality scans fail, the
 
 ### Configuration
 
-Pipelines are configured entirely through the **Cloud Manager UI** — there is no YAML or pipeline-as-code file. You select the Git branch, the environment targets, and the pipeline type. Triggers can be manual or on Git push.
+Pipelines are configured entirely through the **Cloud Manager UI** - there is no YAML or pipeline-as-code file. You select the Git branch, the environment targets, and the pipeline type. Triggers can be manual or on Git push.
 
 ## Package Structure
 
@@ -117,12 +117,12 @@ mvn clean install -PautoInstallSinglePackage -Daem.host=localhost -Daem.port=450
 ```
 
 :::tip
-Use `-PautoInstallBundle -pl core` during backend development — it skips the full package build and installs only the OSGi bundle, completing in seconds rather than minutes.
+Use `-PautoInstallBundle -pl core` during backend development - it skips the full package build and installs only the OSGi bundle, completing in seconds rather than minutes.
 :::
 
 ## Content Package Filters
 
-The `filter.xml` file in each content package declares which repository paths the package owns. It controls what gets installed and — critically — what gets removed during installation.
+The `filter.xml` file in each content package declares which repository paths the package owns. It controls what gets installed and - critically - what gets removed during installation.
 
 ### filter.xml Example
 
@@ -153,11 +153,11 @@ The `filter.xml` file in each content package declares which repository paths th
 | Path | Type | Behavior on Deploy |
 |---|---|---|
 | `/apps` | **Immutable** | Fully replaced on every deployment |
-| `/libs` | **Immutable** | Owned by Adobe — never deploy here |
+| `/libs` | **Immutable** | Owned by Adobe - never deploy here |
 | `/content` | **Mutable** | Only deployed on first install; authors own this |
 | `/conf` | **Mutable** | Editable templates, policies; merge on install |
 | `/etc` | **Mutable** | Workflow models, designs (legacy) |
-| `/var` | **Mutable** | Workflow instances, audit logs — never package |
+| `/var` | **Mutable** | Workflow instances, audit logs - never package |
 
 :::warning
 Deploying mutable content (e.g., `/content`) with `mode="replace"` in AEMaaCS will overwrite author changes. Always use `mode="merge"` or rely on `repoinit` scripts for content initialization.
@@ -165,7 +165,7 @@ Deploying mutable content (e.g., `/content`) with `mode="replace"` in AEMaaCS wi
 
 ## Rapid Development Environments (RDE)
 
-RDEs are lightweight AEMaaCS environments designed for fast iteration. They allow you to deploy code and content directly from the command line — bypassing the full Cloud Manager pipeline.
+RDEs are lightweight AEMaaCS environments designed for fast iteration. They allow you to deploy code and content directly from the command line - bypassing the full Cloud Manager pipeline.
 
 ### When to Use RDEs
 
@@ -250,11 +250,11 @@ This requires duplicate infrastructure and load balancer integration, but elimin
 
 | Strategy | When to Use | Speed | Risk |
 |---|---|---|---|
-| **Pipeline redeploy** | AEMaaCS — revert Git commit, trigger pipeline | ~45 min | Low — identical to any deployment |
-| **Package uninstall** | On-prem/AMS — uninstall via Package Manager | Minutes | Medium — snapshot may be stale |
-| **RDE reset** | RDE environments only | ~30 sec | Low — clean slate |
-| **Blue-green switch** | On-prem/AMS with dual environments | Seconds | Low — previous version still running |
-| **Git revert + redeploy** | Any environment | Varies | Low — uses standard pipeline |
+| **Pipeline redeploy** | AEMaaCS - revert Git commit, trigger pipeline | ~45 min | Low - identical to any deployment |
+| **Package uninstall** | On-prem/AMS - uninstall via Package Manager | Minutes | Medium - snapshot may be stale |
+| **RDE reset** | RDE environments only | ~30 sec | Low - clean slate |
+| **Blue-green switch** | On-prem/AMS with dual environments | Seconds | Low - previous version still running |
+| **Git revert + redeploy** | Any environment | Varies | Low - uses standard pipeline |
 
 :::tip
 On AEMaaCS, the safest rollback is always **reverting the Git commit and redeploying** through the pipeline. Cloud Manager does not support "rollback to previous deployment" as a native action.
@@ -268,7 +268,7 @@ The Cloud Manager build validator rejects packages that attempt to write mutable
 
 ### Missing Filter Rules
 
-If a path is not covered by `filter.xml`, it will not be included in the package — even if the files exist in your project. Always verify filters after adding new components or configurations.
+If a path is not covered by `filter.xml`, it will not be included in the package - even if the files exist in your project. Always verify filters after adding new components or configurations.
 
 ### Large Packages Timing Out
 

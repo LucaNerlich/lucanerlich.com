@@ -16,7 +16,7 @@ sidebar_position: 6
 
 # Integration Testing
 
-Unit tests verify individual pieces in isolation. Integration tests verify that those pieces work correctly together. The word "together" is the key: an integration test deliberately allows some real infrastructure — a database, an HTTP server, a message queue — to participate in the test.
+Unit tests verify individual pieces in isolation. Integration tests verify that those pieces work correctly together. The word "together" is the key: an integration test deliberately allows some real infrastructure - a database, an HTTP server, a message queue - to participate in the test.
 
 This chapter covers the two most common integration test targets: **database interactions** and **HTTP endpoints**, for both Node.js/TypeScript (using Supertest) and Java/Spring (using MockMvc and Spring Boot Test), plus **Testcontainers** for running real databases in Docker.
 
@@ -138,7 +138,7 @@ describe('User API', () => {
 
 ### Adding a Real Database
 
-For real persistence testing, connect to SQLite in-memory (or Postgres via Testcontainers — see below):
+For real persistence testing, connect to SQLite in-memory (or Postgres via Testcontainers - see below):
 
 ```typescript
 // src/db.ts
@@ -172,7 +172,7 @@ export function findUserById(id: number): User | undefined {
 ```
 
 ```typescript
-// src/userRepository.test.ts (integration test — hits a real DB)
+// src/userRepository.test.ts (integration test - hits a real DB)
 import { createUser, findUserById } from './userRepository';
 import { db } from './db';
 
@@ -366,7 +366,7 @@ class UserIntegrationTest {
 }
 ```
 
-## Testcontainers — Real Databases in Docker
+## Testcontainers - Real Databases in Docker
 
 In-memory databases (H2, SQLite) are convenient but sometimes behave differently from your production database. Testcontainers starts a real Docker container for each test run:
 
@@ -495,11 +495,11 @@ describe('UserRepository (Postgres)', () => {
 
 | Scenario | Write an integration test? |
 |---|---|
-| Simple pure function | No — unit test is enough |
-| Service calling a mocked repository | No — unit test with Mockito/jest.fn() |
+| Simple pure function | No - unit test is enough |
+| Service calling a mocked repository | No - unit test with Mockito/jest.fn() |
 | Repository writing to and reading from a real DB | Yes |
 | HTTP endpoint + serialization + validation + service | Yes (slice test) |
 | Full request-response round trip with DB | Yes (@SpringBootTest or Supertest + real DB) |
-| External payment API | No — mock at the boundary; contract test separately |
+| External payment API | No - mock at the boundary; contract test separately |
 
 Chapter 7 covers TDD, where you will see how these test types fit into the development workflow.

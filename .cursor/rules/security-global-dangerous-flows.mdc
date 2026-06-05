@@ -5,7 +5,7 @@ alwaysApply: false
 ---
 # Dangerous Flow Identification
 
-A **Dangerous Flow** occurs when user input—or data derived from it—is used in a way that introduces **vulnerabilities, undefined behavior, or unwanted system interactions**. This can range from command injection, SSRF, and path traversal to logic bugs and broken access controls. The goal is to trace the lifecycle of untrusted inputs and assess whether their use is safe.
+A **Dangerous Flow** occurs when user input-or data derived from it-is used in a way that introduces **vulnerabilities, undefined behavior, or unwanted system interactions**. This can range from command injection, SSRF, and path traversal to logic bugs and broken access controls. The goal is to trace the lifecycle of untrusted inputs and assess whether their use is safe.
 
 ---
 
@@ -148,7 +148,7 @@ What is the potential risk
 
 ## Recognizing Dangerous Functions
 
-Dangerous functions are operations that can cause unintended side effects, system compromise, or data exposure **when given untrusted input**. These functions are not always obviously labeled as "dangerous" — so the AI must reason **based on context** and the **type of behavior** involved.
+Dangerous functions are operations that can cause unintended side effects, system compromise, or data exposure **when given untrusted input**. These functions are not always obviously labeled as "dangerous" - so the AI must reason **based on context** and the **type of behavior** involved.
 
 ### General Heuristics
 

@@ -46,7 +46,7 @@ mv .git/hooks/pre-commit.sample .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
 
-Hooks can be written in any language the shell can execute: bash, Python, Node.js, Ruby — whatever is available on
+Hooks can be written in any language the shell can execute: bash, Python, Node.js, Ruby - whatever is available on
 the developer's machine.
 
 ### Exit codes matter
@@ -61,7 +61,7 @@ This is how a pre-commit hook blocks a commit: return a non-zero exit code and G
 ### The .git/hooks/ limitation
 
 `.git/` is not tracked by Git. This means hooks written there are **not shared** with the team. Every developer would
-have to set them up manually. This is why tools like husky and lefthook exist — they move hooks into the repository
+have to set them up manually. This is why tools like husky and lefthook exist - they move hooks into the repository
 itself (tracked by Git) and install them on `npm install` / first run.
 
 ## Common Hook Types
@@ -103,7 +103,7 @@ This guide focuses on client-side hooks.
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(js|jsx|ts|tsx)$')
 
 if [ -z "$STAGED_FILES" ]; then
-    # No JS/TS files staged — nothing to lint
+    # No JS/TS files staged - nothing to lint
     exit 0
 fi
 
@@ -242,10 +242,10 @@ git commit --no-verify -m "emergency: hotfix for production outage"
 git push --no-verify
 ```
 
-This is an escape hatch for genuine emergencies. Document its use in your team's norms — `--no-verify` should be
+This is an escape hatch for genuine emergencies. Document its use in your team's norms - `--no-verify` should be
 rare and traceable.
 
-## husky — Hooks for Node.js Projects
+## husky - Hooks for Node.js Projects
 
 [husky](https://typicode.github.io/husky) is the most popular hook manager for JavaScript/Node.js projects. It
 stores hooks as files in your repository and installs them automatically via a `prepare` npm script.
@@ -294,7 +294,7 @@ chmod +x .husky/commit-msg
 
 These files are committed to the repository and shared with the whole team.
 
-## lint-staged — Run Linters on Staged Files Only
+## lint-staged - Run Linters on Staged Files Only
 
 Running ESLint on your entire codebase before every commit is slow. [lint-staged](https://github.com/lint-staged/lint-staged)
 runs linters only on the files that are staged for commit.
@@ -334,7 +334,7 @@ npx lint-staged
 Now when you run `git commit`, lint-staged lints and auto-fixes only the staged files, then re-stages them. The commit
 only proceeds if all checks pass.
 
-## commitlint — Validate Commit Messages
+## commitlint - Validate Commit Messages
 
 [commitlint](https://commitlint.js.org/) validates commit messages against a configurable rule set. Combined with the
 `commit-msg` hook, it enforces Conventional Commits automatically.
@@ -366,7 +366,7 @@ git commit -m "feat(auth): add multi-factor authentication"
 # ✔   commit validated successfully
 ```
 
-## lefthook — A Fast Alternative to husky
+## lefthook - A Fast Alternative to husky
 
 [lefthook](https://github.com/evilmartians/lefthook) is a multi-language hook manager written in Go. It is faster than
 husky, works with any language (not just Node.js), and uses a YAML configuration file.
@@ -381,7 +381,7 @@ npm install --save-dev lefthook
 npx lefthook install
 ```
 
-### Configuration — `lefthook.yml`
+### Configuration - `lefthook.yml`
 
 ```yaml
 pre-commit:
@@ -422,7 +422,7 @@ pre-push:
 | **Ecosystem**           | Largest in JS world            | Growing                         |
 | **Zero-dependency**     | No (needs Node)                | Yes (single binary)             |
 
-## Complete Example — JavaScript Project
+## Complete Example - JavaScript Project
 
 Here is a complete, production-ready setup for a Node.js / TypeScript project:
 
@@ -474,13 +474,13 @@ Now every developer on the team automatically has:
 You now understand:
 
 - **Git hooks** are scripts that run automatically at specific points in the Git workflow
-- **`pre-commit`** — lint and format staged files before a commit is created
-- **`commit-msg`** — validate the commit message format
-- **`pre-push`** — run tests or checks before code leaves the machine
-- **husky** — the standard hook manager for Node.js projects; stores hooks in the repo
-- **lint-staged** — run linters only on staged files for speed
-- **commitlint** — enforce Conventional Commits via the `commit-msg` hook
-- **lefthook** — a faster, language-agnostic alternative to husky
+- **`pre-commit`** - lint and format staged files before a commit is created
+- **`commit-msg`** - validate the commit message format
+- **`pre-push`** - run tests or checks before code leaves the machine
+- **husky** - the standard hook manager for Node.js projects; stores hooks in the repo
+- **lint-staged** - run linters only on staged files for speed
+- **commitlint** - enforce Conventional Commits via the `commit-msg` hook
+- **lefthook** - a faster, language-agnostic alternative to husky
 
-Next up: [Practice Project](./12-practice-project.md) — a complete end-to-end exercise covering the full workflow from
+Next up: [Practice Project](./12-practice-project.md) - a complete end-to-end exercise covering the full workflow from
 initialisation to a tagged release.

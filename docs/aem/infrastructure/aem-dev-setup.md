@@ -165,7 +165,7 @@ The Apache Maven Archetype describes Archetypes like this
 > project templates.
 
 To summarize, by using an archetype, which itself has been created by the AEM Developer Team, we can set specific
-variables with which the archetype bootstraps itself and creates a customized set of files and directories — ready to
+variables with which the archetype bootstraps itself and creates a customized set of files and directories - ready to
 use.
 
 The following example demonstrates a bash command using v27 of the `aem-project-archetype`.

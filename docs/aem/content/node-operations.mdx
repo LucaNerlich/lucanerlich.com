@@ -10,8 +10,8 @@ tags: [aem, jcr, utilities]
 
 AEM stores all content in the Java Content Repository (JCR). When working with JCR nodes programmatically, you have two main APIs at your disposal:
 
-- **Sling Resource API** (recommended) — higher-level abstraction that works with `Resource` objects and `ResourceResolver`. Portable, testable, and the idiomatic way to work in AEM.
-- **JCR Node API** — the lower-level `javax.jcr` API that operates directly on `Node`, `Session`, and `Property` objects. Use when the Sling API does not expose the feature you need (versioning, ordering, workspace operations).
+- **Sling Resource API** (recommended) - higher-level abstraction that works with `Resource` objects and `ResourceResolver`. Portable, testable, and the idiomatic way to work in AEM.
+- **JCR Node API** - the lower-level `javax.jcr` API that operates directly on `Node`, `Session`, and `Property` objects. Use when the Sling API does not expose the feature you need (versioning, ordering, workspace operations).
 
 :::tip
 Prefer the Sling Resource API for everyday CRUD operations. Fall back to the JCR API only when you need capabilities like node ordering, versioning, or workspace-level copy.
@@ -238,7 +238,7 @@ public void copyNode(Session session) throws Exception {
 ```
 
 :::tip
-`session.move()` is transient — it requires `session.save()` to persist. `workspace.copy()` is immediate and does not require a save. Move is atomic; copy duplicates the entire subtree including all child nodes and properties.
+`session.move()` is transient - it requires `session.save()` to persist. `workspace.copy()` is immediate and does not require a save. Move is atomic; copy duplicates the entire subtree including all child nodes and properties.
 :::
 
 ---
@@ -420,7 +420,7 @@ A batch size of **1000** is a good starting point. For nodes with large binary p
 | **Move**                 | `resolver.move()`                | `session.move()`                 |
 | **Copy**                 | Not natively supported           | `workspace.copy()`               |
 | **Testability**          | Easy to mock                     | Harder to mock                   |
-| **Recommended**          | Yes — default choice             | When Sling API is insufficient   |
+| **Recommended**          | Yes - default choice             | When Sling API is insufficient   |
 
 ---
 

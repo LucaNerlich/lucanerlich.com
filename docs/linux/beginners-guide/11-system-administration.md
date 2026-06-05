@@ -1,7 +1,7 @@
 ---
 title: "System Administration"
 sidebar_label: "System Administration"
-description: Administer a Linux server — disk usage, cron jobs, log management, and environment variable configuration.
+description: Administer a Linux server - disk usage, cron jobs, log management, and environment variable configuration.
 slug: /linux/beginners-guide/system-administration
 tags: [linux, bash, shell, beginners]
 keywords:
@@ -21,9 +21,9 @@ Day-to-day server administration involves monitoring disk space, scheduling recu
 
 ## Disk Usage
 
-Disk-full situations are among the most common server emergencies. Monitoring disk usage proactively — and knowing how to find what is consuming space when things go wrong — is an essential skill.
+Disk-full situations are among the most common server emergencies. Monitoring disk usage proactively - and knowing how to find what is consuming space when things go wrong - is an essential skill.
 
-### `df` — Disk Free (Filesystem Level)
+### `df` - Disk Free (Filesystem Level)
 
 `df` shows how much space is used and available on each mounted filesystem.
 
@@ -37,7 +37,7 @@ df -h
 # tmpfs           2.0G     0  2.0G   0% /dev/shm
 # /dev/sdb1        50G  8.2G   39G  18% /data
 
-# Show inode usage (important — you can run out of inodes with many small files)
+# Show inode usage (important - you can run out of inodes with many small files)
 df -i
 
 # Show only real filesystems (exclude tmpfs, devtmpfs, etc.)
@@ -46,7 +46,7 @@ df -h --exclude-type=tmpfs --exclude-type=devtmpfs
 
 A disk at over 90% use is a warning sign. At 100%, writes fail and services crash.
 
-### `du` — Disk Usage (Directory Level)
+### `du` - Disk Usage (Directory Level)
 
 When `df` shows a disk is full, use `du` to find where the space went.
 
@@ -92,7 +92,7 @@ find /var/log -type f -size +100M -ls 2>/dev/null
 
 ## Disk Partitions and Block Devices
 
-### `lsblk` — List Block Devices
+### `lsblk` - List Block Devices
 
 ```bash
 # Show all block devices in a tree
@@ -113,9 +113,9 @@ lsblk -f
 lsblk -b
 ```
 
-### `fdisk` — Partition Table Management
+### `fdisk` - Partition Table Management
 
-Use `fdisk` to view partition tables. Be cautious with modifications — mistakes destroy data.
+Use `fdisk` to view partition tables. Be cautious with modifications - mistakes destroy data.
 
 ```bash
 # List all partition tables (safe, read-only)
@@ -127,11 +127,11 @@ sudo fdisk -l /dev/sda
 # Interactive partitioning (destructive if you write changes)
 sudo fdisk /dev/sdb
 # Inside fdisk:
-# p — print partition table
-# n — new partition
-# d — delete partition
-# w — write changes and exit (WARNING: this commits changes)
-# q — quit without saving
+# p - print partition table
+# n - new partition
+# d - delete partition
+# w - write changes and exit (WARNING: this commits changes)
+# q - quit without saving
 ```
 
 ### Mounting a New Disk
@@ -155,7 +155,7 @@ sudo mkdir -p /data
 # 5. Mount it
 sudo mount /dev/sdb1 /data
 
-# 6. Make it permanent — add to /etc/fstab
+# 6. Make it permanent - add to /etc/fstab
 echo "UUID=$(blkid -s UUID -o value /dev/sdb1) /data ext4 defaults 0 2" \
   | sudo tee -a /etc/fstab
 
@@ -165,11 +165,11 @@ sudo mount -a
 
 ---
 
-## Scheduling Tasks — `cron`
+## Scheduling Tasks - `cron`
 
 `cron` is the standard Linux job scheduler. It runs commands at specified times automatically.
 
-### `crontab` — Edit User Cron Jobs
+### `crontab` - Edit User Cron Jobs
 
 ```bash
 # Edit the cron table for the current user
@@ -230,10 +230,10 @@ Each cron entry has six fields:
 ### Cron Job Best Practices
 
 ```bash
-# Always use absolute paths — cron runs with a minimal environment
+# Always use absolute paths - cron runs with a minimal environment
 0 2 * * * /opt/scripts/backup.sh > /var/log/backup.log 2>&1
 
-# Redirect output — by default, cron emails output (often not set up)
+# Redirect output - by default, cron emails output (often not set up)
 */5 * * * * /opt/scripts/monitor.sh >> /var/log/monitor.log 2>&1
 
 # Discard output entirely (silent cron job)
@@ -318,7 +318,7 @@ awk '{print substr($4, 2, 14)}' /var/log/nginx/access.log \
 
 ---
 
-## Log Rotation — `logrotate`
+## Log Rotation - `logrotate`
 
 Without rotation, log files grow until they fill the disk. `logrotate` solves this by periodically compressing, renaming, and deleting old logs.
 
@@ -362,7 +362,7 @@ Create `/etc/logrotate.d/myapp`:
 | `daily` | Rotate every day (`weekly`, `monthly` also valid) |
 | `rotate 30` | Keep 30 rotated files before deleting |
 | `compress` | gzip the rotated file |
-| `delaycompress` | Compress on the next rotation (not immediately — useful for services that keep file handles) |
+| `delaycompress` | Compress on the next rotation (not immediately - useful for services that keep file handles) |
 | `missingok` | Don't error if the log file is missing |
 | `notifempty` | Skip rotation if the file is empty |
 | `create 0640 deploy adm` | Create the new log file with these permissions |
@@ -441,7 +441,7 @@ sudo chmod 644 /etc/profile.d/myapp.sh
 
 ### Environment Variables for Services
 
-When running applications as systemd services, do **not** rely on `.bashrc` — systemd does not load it. Set environment variables in the service unit file:
+When running applications as systemd services, do **not** rely on `.bashrc` - systemd does not load it. Set environment variables in the service unit file:
 
 ```ini
 [Service]
@@ -496,9 +496,9 @@ A useful set of commands to run when you first connect to a server to assess its
 
 ```bash
 #!/bin/bash
-# system-health.sh — quick server health overview
+# system-health.sh - quick server health overview
 
-echo "=== $(hostname) — $(date) ==="
+echo "=== $(hostname) - $(date) ==="
 echo ""
 
 echo "--- Uptime & Load ---"

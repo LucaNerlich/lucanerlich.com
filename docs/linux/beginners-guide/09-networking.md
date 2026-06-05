@@ -19,7 +19,7 @@ As a developer working on Linux servers, you will regularly need to inspect netw
 
 ---
 
-## Viewing Network Interfaces — `ip`
+## Viewing Network Interfaces - `ip`
 
 The `ip` command is the modern replacement for the deprecated `ifconfig`.
 
@@ -63,7 +63,7 @@ The `inet` line shows the IPv4 address (`203.0.113.42`) and subnet mask (`/24`).
 
 ---
 
-## Connectivity Test — `ping`
+## Connectivity Test - `ping`
 
 ```bash
 # Basic ping (runs until Ctrl+C)
@@ -88,7 +88,7 @@ fi
 
 ---
 
-## HTTP Requests — `curl`
+## HTTP Requests - `curl`
 
 `curl` is the Swiss Army knife of HTTP. It can make any type of request, follow redirects, handle cookies, set headers, upload files, and more.
 
@@ -107,7 +107,7 @@ curl -I https://api.example.com/health
 # Show both headers and body (-i)
 curl -i https://api.example.com/users/1
 
-# Verbose output — shows request + response headers (debugging)
+# Verbose output - shows request + response headers (debugging)
 curl -v https://api.example.com/users
 ```
 
@@ -214,7 +214,7 @@ check_service_health "http://localhost:3000/health"
 
 ---
 
-## Downloading Files — `wget`
+## Downloading Files - `wget`
 
 `wget` is simpler than `curl` for downloading files:
 
@@ -240,7 +240,7 @@ wget -c https://example.com/large-file.iso
 
 ---
 
-## Port and Socket Inspection — `ss`
+## Port and Socket Inspection - `ss`
 
 `ss` (socket statistics) replaces the older `netstat` command.
 
@@ -275,12 +275,12 @@ tcp    LISTEN  0       511     0.0.0.0:443           0.0.0.0:*           users:(
 tcp    LISTEN  0       128     127.0.0.1:3000        0.0.0.0:*           users:(("node",pid=9012,fd=22))
 ```
 
-- `0.0.0.0:22` — listening on all interfaces on port 22 (SSH)
-- `127.0.0.1:3000` — listening on localhost only on port 3000 (app, not public-facing)
+- `0.0.0.0:22` - listening on all interfaces on port 22 (SSH)
+- `127.0.0.1:3000` - listening on localhost only on port 3000 (app, not public-facing)
 
 ---
 
-## Port Scanning — `nmap`
+## Port Scanning - `nmap`
 
 `nmap` scans a host or network for open ports. Use it to verify firewall rules and check what services are exposed.
 
@@ -309,7 +309,7 @@ nmap localhost
 
 ---
 
-## DNS Resolution — `dig` and `nslookup`
+## DNS Resolution - `dig` and `nslookup`
 
 ### `dig`
 
@@ -370,7 +370,7 @@ echo "203.0.113.50  staging-api.example.com" | sudo tee -a /etc/hosts
 
 ---
 
-## SSH Configuration — `~/.ssh/config`
+## SSH Configuration - `~/.ssh/config`
 
 Rather than typing long `ssh` commands, define aliases in `~/.ssh/config`:
 
@@ -439,7 +439,7 @@ ssh -R 9000:localhost:3000 ubuntu@myserver
 
 ---
 
-## Copying Files Over SSH — `scp`
+## Copying Files Over SSH - `scp`
 
 ```bash
 # Copy a local file to a remote server
@@ -463,7 +463,7 @@ scp file.txt prod:/opt/myapp/
 
 ---
 
-## Efficient File Sync — `rsync`
+## Efficient File Sync - `rsync`
 
 `rsync` is more powerful than `scp` for copying and synchronising directories. It only transfers files that have changed, making it much faster for incremental updates.
 
@@ -493,7 +493,7 @@ rsync -av --progress ./large-file.tar.gz ubuntu@myserver:/tmp/
 # Sync remote back to local (backup)
 rsync -av ubuntu@myserver:/opt/myapp/data/ ./local-backup/
 
-# Bandwidth limit (in KB/s) — useful on production servers
+# Bandwidth limit (in KB/s) - useful on production servers
 rsync -av --bwlimit=5000 ./dist/ ubuntu@myserver:/opt/myapp/public/
 ```
 

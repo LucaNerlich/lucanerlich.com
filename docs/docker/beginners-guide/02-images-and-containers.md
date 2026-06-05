@@ -39,7 +39,7 @@ Image names follow the pattern `[registry/][namespace/]name[:tag]`. When you omi
 
 ### Browsing available tags
 
-Docker Hub shows available tags at `https://hub.docker.com/_/nginx`. For images you use regularly (Node.js, Postgres, Redis), it is worth checking the tags page to understand what variants exist — `alpine` variants are smaller, numbered tags are stable, `slim` variants have fewer tools pre-installed.
+Docker Hub shows available tags at `https://hub.docker.com/_/nginx`. For images you use regularly (Node.js, Postgres, Redis), it is worth checking the tags page to understand what variants exist - `alpine` variants are smaller, numbered tags are stable, `slim` variants have fewer tools pre-installed.
 
 ---
 
@@ -52,7 +52,7 @@ Docker Hub shows available tags at `https://hub.docker.com/_/nginx`. For images 
 docker run -d -p 8080:80 --name my-nginx nginx
 ```
 
-Open `http://localhost:8080` in your browser — you should see the nginx welcome page.
+Open `http://localhost:8080` in your browser - you should see the nginx welcome page.
 
 Let us unpack the flags:
 
@@ -95,7 +95,7 @@ docker run -d -p 127.0.0.1:5432:5432 postgres
 
 ### Volume mounts (`-v`)
 
-Containers have an ephemeral writable layer — data written inside a container is lost when the container is removed. Use `-v` to persist data. Volumes are covered in depth in Chapter 4; here is the syntax:
+Containers have an ephemeral writable layer - data written inside a container is lost when the container is removed. Use `-v` to persist data. Volumes are covered in depth in Chapter 4; here is the syntax:
 
 ```bash
 # Named volume (Docker manages the storage location)
@@ -123,13 +123,13 @@ docker run -d \
 
 ### Naming containers (`--name`)
 
-Without `--name`, Docker generates a random name like `cranky_einstein`. Always name containers you will reference later — it is much easier to type `docker stop my-nginx` than `docker stop 3f9b8c21a0e2`.
+Without `--name`, Docker generates a random name like `cranky_einstein`. Always name containers you will reference later - it is much easier to type `docker stop my-nginx` than `docker stop 3f9b8c21a0e2`.
 
 ---
 
 ## Interactive Mode (`-it`)
 
-Some tasks require an interactive shell inside a container — exploring the filesystem, running ad-hoc commands, debugging.
+Some tasks require an interactive shell inside a container - exploring the filesystem, running ad-hoc commands, debugging.
 
 ```bash
 # Start an Alpine Linux shell
@@ -140,8 +140,8 @@ docker run -it ubuntu bash
 ```
 
 The flags:
-- `-i` (`--interactive`) — Keep stdin open so you can type commands
-- `-t` (`--tty`) — Allocate a pseudo-TTY (terminal), giving you a proper shell prompt
+- `-i` (`--interactive`) - Keep stdin open so you can type commands
+- `-t` (`--tty`) - Allocate a pseudo-TTY (terminal), giving you a proper shell prompt
 
 Once inside, you are in an isolated environment. Try:
 
@@ -320,7 +320,7 @@ Over time, stopped containers, unused images, and dangling build cache accumulat
 # Remove all stopped containers, unused networks, dangling images, build cache
 docker system prune
 
-# Also remove unused volumes (careful — this deletes data!)
+# Also remove unused volumes (careful - this deletes data!)
 docker system prune --volumes
 
 # Check how much space Docker is using

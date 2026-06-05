@@ -17,7 +17,7 @@ sidebar_position: 12
 # Practice Project
 
 This chapter is a complete, hands-on exercise. You will build a small command-line task manager called **tasker**
-from scratch, using the Git skills you have learned throughout this guide. Every step is real — no "imagine you have
+from scratch, using the Git skills you have learned throughout this guide. Every step is real - no "imagine you have
 done X." Type every command.
 
 By the end you will have:
@@ -50,9 +50,9 @@ Tasks:
   [2] Review pull requests
 ```
 
-The implementation is deliberately simple — the focus is the Git workflow, not the application code.
+The implementation is deliberately simple - the focus is the Git workflow, not the application code.
 
-## Part 1 — Initialise the Repository
+## Part 1 - Initialise the Repository
 
 ### Step 1: Create the project directory
 
@@ -80,7 +80,7 @@ tasks.json
 EOF
 ```
 
-> We put `tasks.json` in `.gitignore` so that the saved task data (which will live in a JSON file) is not tracked —
+> We put `tasks.json` in `.gitignore` so that the saved task data (which will live in a JSON file) is not tracked -
 > each user has their own tasks.
 
 ### Step 4: Create package.json
@@ -134,7 +134,7 @@ git status
 git commit -m "chore: initialise project with README and gitignore"
 ```
 
-### Step 7: Create a remote and push (optional — requires GitHub account)
+### Step 7: Create a remote and push (optional - requires GitHub account)
 
 ```bash
 # If you have GitHub CLI installed:
@@ -146,7 +146,7 @@ gh repo create tasker --public --source=. --push
 # 3. git push -u origin main
 ```
 
-## Part 2 — Feature Branch: Core Task Commands
+## Part 2 - Feature Branch: Core Task Commands
 
 ### Step 8: Create a feature branch
 
@@ -332,7 +332,7 @@ git log --oneline
 # a1b2c3d chore: initialise project with README and gitignore
 ```
 
-## Part 3 — Simulated Code Review
+## Part 3 - Simulated Code Review
 
 In a real project, you would push the branch and open a pull request. A reviewer would leave comments. Let us
 simulate that process.
@@ -348,9 +348,9 @@ git push -u origin feature/core-commands
 Imagine a reviewer says:
 
 > "The `markDone` function exits with `process.exit(1)` but does not throw an error that can be tested. Also, there
-> are no automated tests — can you add a basic test file?"
+> are no automated tests - can you add a basic test file?"
 
-### Step 16: Address review feedback — add tests
+### Step 16: Address review feedback - add tests
 
 ```bash
 mkdir tests
@@ -439,9 +439,9 @@ npm test
 git push
 ```
 
-## Part 4 — Squash-Merge the Pull Request
+## Part 4 - Squash-Merge the Pull Request
 
-After approval, merge the feature branch into `main` with a squash — combining all five commits into a single,
+After approval, merge the feature branch into `main` with a squash - combining all five commits into a single,
 clean commit.
 
 ### Step 19: Squash and merge locally (simulating what GitHub does)
@@ -494,7 +494,7 @@ git branch -d feature/core-commands
 git push origin --delete feature/core-commands
 ```
 
-## Part 5 — Tag the Release
+## Part 5 - Tag the Release
 
 The feature is merged and working. Time to ship `v1.0.0`.
 
@@ -533,7 +533,7 @@ git commit -m "chore(release): bump version to 1.0.0"
 ```bash
 git tag -a v1.0.0 -m "Release v1.0.0
 
-Initial release of tasker — a minimal command-line task manager.
+Initial release of tasker - a minimal command-line task manager.
 
 Features:
 - Add tasks: node tasker.js add 'Description'
@@ -553,7 +553,7 @@ git push origin v1.0.0
 
 ```bash
 gh release create v1.0.0 \
-  --title "v1.0.0 — Initial Release" \
+  --title "v1.0.0 - Initial Release" \
   --notes "Initial release of tasker. See README for usage."
 ```
 
@@ -576,34 +576,34 @@ git show v1.0.0 --stat
 # ...
 ```
 
-## Recap — What You Practised
+## Recap - What You Practised
 
 | Step | Skill |
 |------|-------|
-| Init, `.gitignore`, first commit | Chapter 1 — Introduction |
-| Staged commits per logical unit | Chapter 2 — Basic Workflow |
-| Feature branch creation and switching | Chapter 3 — Branches |
-| Simulated code review changes | Chapter 4 — Merging concepts |
-| Squash-merge to main | Chapter 5 — Rebasing (squash) |
-| Push, track remote branch | Chapter 6 — Remote Repositories |
-| Annotated tag and push | Chapter 7 — Tags and Releases |
-| Clean history via squash | Chapter 5 — Rebasing |
-| GitHub release creation | Chapter 7 — Tags and Releases |
+| Init, `.gitignore`, first commit | Chapter 1 - Introduction |
+| Staged commits per logical unit | Chapter 2 - Basic Workflow |
+| Feature branch creation and switching | Chapter 3 - Branches |
+| Simulated code review changes | Chapter 4 - Merging concepts |
+| Squash-merge to main | Chapter 5 - Rebasing (squash) |
+| Push, track remote branch | Chapter 6 - Remote Repositories |
+| Annotated tag and push | Chapter 7 - Tags and Releases |
+| Clean history via squash | Chapter 5 - Rebasing |
+| GitHub release creation | Chapter 7 - Tags and Releases |
 
 ## What to Try Next
 
 Now that you have a working repository, experiment with the concepts from this guide:
 
-1. **Create a second feature branch** — add a `node tasker.js remove <id>` command. Practice rebasing it onto the
+1. **Create a second feature branch** - add a `node tasker.js remove <id>` command. Practice rebasing it onto the
    latest `main` before merging.
 
 2. **Introduce a bug intentionally**, then use `git bisect` to find the commit that broke it.
 
-3. **Set up husky and lint-staged** — install ESLint and enforce it on every commit.
+3. **Set up husky and lint-staged** - install ESLint and enforce it on every commit.
 
-4. **Try interactive rebase** — make some WIP commits, then squash them with `git rebase -i HEAD~3` before merging.
+4. **Try interactive rebase** - make some WIP commits, then squash them with `git rebase -i HEAD~3` before merging.
 
-5. **Simulate a conflict** — create two branches that edit the same line in `src/tasks.js`, then merge both and
+5. **Simulate a conflict** - create two branches that edit the same line in `src/tasks.js`, then merge both and
    resolve the conflict manually.
 
 ## Final Thoughts

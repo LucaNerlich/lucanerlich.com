@@ -13,7 +13,7 @@ intercept every request that matches their configuration and can inspect or modi
 and **after** the servlet executes. This is the same `javax.servlet.Filter` contract you know from the Servlet
 specification, but registered through OSGi annotations instead of `web.xml`.
 
-Filters are ideal for **cross-cutting concerns** — logic that applies to many requests regardless of which servlet
+Filters are ideal for **cross-cutting concerns** - logic that applies to many requests regardless of which servlet
 handles them. Typical examples include logging, security-header injection, authentication checks, and decoration-tag
 removal.
 
@@ -66,12 +66,12 @@ public class AnnotatedFilterExample implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        // Pre-processing — runs before the servlet
+        // Pre-processing - runs before the servlet
         // ...
 
         chain.doFilter(request, response);
 
-        // Post-processing — runs after the servlet
+        // Post-processing - runs after the servlet
         // ...
     }
 
@@ -96,7 +96,7 @@ The `scope` attribute controls **when** in the Sling request lifecycle the filte
 
 :::warning
 Choosing the wrong scope is a common source of bugs. A `REQUEST`-scoped filter will **never** fire for
-`data-sly-resource` includes — you need `INCLUDE` or `COMPONENT` for that.
+`data-sly-resource` includes - you need `INCLUDE` or `COMPONENT` for that.
 :::
 
 You can specify multiple scopes on a single filter:
@@ -291,7 +291,7 @@ Set the ranking via the `@Component` annotation:
 @Component(property = "service.ranking:Integer=1000")
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST}, pattern = "/content/.*")
 public class HighPriorityFilter implements Filter {
-    // Executes FIRST — good for authentication checks
+    // Executes FIRST - good for authentication checks
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
@@ -306,7 +306,7 @@ public class HighPriorityFilter implements Filter {
 @Component(property = "service.ranking:Integer=100")
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST}, pattern = "/content/.*")
 public class LowPriorityFilter implements Filter {
-    // Executes SECOND — good for response decoration
+    // Executes SECOND - good for response decoration
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
@@ -345,11 +345,11 @@ Filters and servlets serve different purposes. Use this decision table to pick t
 
 ### 1. Forgetting `chain.doFilter()`
 
-If you forget to call `chain.doFilter(request, response)`, the request **hangs** — no servlet is ever invoked and the
+If you forget to call `chain.doFilter(request, response)`, the request **hangs** - no servlet is ever invoked and the
 client receives no response (or a timeout).
 
 ```java
-// BAD — request will never reach the servlet
+// BAD - request will never reach the servlet
 @Override
 public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
         throws IOException, ServletException {
@@ -361,13 +361,13 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 ### 2. Overly Broad Pattern Matching
 
 A pattern like `"/.*"` matches **every** request in the entire JCR. This causes a measurable performance hit because the
-filter code runs on author UI requests, DAM asset requests, and health-check calls — not just page content.
+filter code runs on author UI requests, DAM asset requests, and health-check calls - not just page content.
 
 ```java
-// BAD — matches everything
+// BAD - matches everything
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST}, pattern = "/.*")
 
-// GOOD — scoped to your site's content
+// GOOD - scoped to your site's content
 @SlingServletFilter(scope = {SlingServletFilterScope.REQUEST}, pattern = "/content/mysite/.*")
 ```
 
@@ -393,14 +393,14 @@ if (WCMMode.DISABLED.equals(mode)) {
 
 ### 5. Thread Safety
 
-Sling servlet filters are **singletons** — OSGi creates exactly one instance that handles all concurrent requests. Never
+Sling servlet filters are **singletons** - OSGi creates exactly one instance that handles all concurrent requests. Never
 store per-request state in instance fields.
 
 ```java
-// BAD — shared mutable state
+// BAD - shared mutable state
 private String currentUser;
 
-// GOOD — use local variables inside doFilter()
+// GOOD - use local variables inside doFilter()
 @Override
 public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
         throws IOException, ServletException {
@@ -410,7 +410,7 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 ```
 
 :::warning
-Violating thread safety in a filter can cause **data leaks** between users — one user may see another user's data.
+Violating thread safety in a filter can cause **data leaks** between users - one user may see another user's data.
 :::
 
 ## See also

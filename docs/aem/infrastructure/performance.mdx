@@ -62,13 +62,13 @@ AND node.[sling:resourceType] = 'mysite/components/article'
 If the plan says **traverse**, your query has no suitable index and must be fixed.
 
 :::warning Traversal queries
-A traversal warning in `error.log` — `*WARN* org.apache.jackrabbit.oak.plugins.index.Cursors$TraversingCursor Traversal query ... ; consider creating an index` — means Oak is walking the tree node by node. In production this can time out or bring the instance to its knees. **Never ignore traversal warnings.**
+A traversal warning in `error.log` - `*WARN* org.apache.jackrabbit.oak.plugins.index.Cursors$TraversingCursor Traversal query ... ; consider creating an index` - means Oak is walking the tree node by node. In production this can time out or bring the instance to its knees. **Never ignore traversal warnings.**
 :::
 
 ### QueryBuilder Best Practices
 
 ```java
-// Paginate results — never use p.limit=-1 in production
+// Paginate results - never use p.limit=-1 in production
 Map<String, String> params = new HashMap<>();
 params.put("path", "/content/mysite");
 params.put("type", "cq:Page");
@@ -123,7 +123,7 @@ public class ArticleModel {
     @ValueMapValue
     private String description;
 
-    // GOOD — @PostConstruct only sets simple derived state
+    // GOOD - @PostConstruct only sets simple derived state
     @PostConstruct
     protected void init() {
         if (StringUtils.isBlank(title)) {
@@ -168,11 +168,11 @@ public class NavigationModel {
 If a service is only needed in one code path, obtain it programmatically instead of injecting it at model construction time.
 
 ```java
-// BAD — SearchService is injected (and potentially initialised) on every adaptation
+// BAD - SearchService is injected (and potentially initialised) on every adaptation
 @OSGiService
 private SearchService searchService;
 
-// GOOD — obtain only when needed
+// GOOD - obtain only when needed
 @SlingObject
 private ResourceResolver resolver;
 
@@ -215,10 +215,10 @@ Each `data-sly-resource` call triggers a full Sling resolution cycle (resource r
 
 ```html
 <!-- Prefer flat component structures over deep nesting -->
-<!-- BAD — 4 levels of includes -->
+<!-- BAD - 4 levels of includes -->
 <sly data-sly-resource="${'header' @ resourceType='mysite/components/header'}" />
 
-<!-- GOOD — render inline when possible, or keep nesting ≤ 2 levels -->
+<!-- GOOD - render inline when possible, or keep nesting ≤ 2 levels -->
 <header class="site-header">
     <sly data-sly-use.header="com.mysite.models.HeaderModel">
         <nav>${header.navigationHtml @ context='unsafe'}</nav>
@@ -231,12 +231,12 @@ Each `data-sly-resource` call triggers a full Sling resolution cycle (resource r
 Move complex logic into the Sling Model rather than computing it in HTL loops.
 
 ```html
-<!-- BAD — string manipulation repeated for every item -->
+<!-- BAD - string manipulation repeated for every item -->
 <ul data-sly-list.item="${model.items}">
     <li>${item.title @ context='html'} - ${item.date @ format='yyyy-MM-dd'}</li>
 </ul>
 
-<!-- GOOD — let the model pre-format the data -->
+<!-- GOOD - let the model pre-format the data -->
 <ul data-sly-list.item="${model.formattedItems}">
     <li>${item.display @ context='html'}</li>
 </ul>
@@ -296,7 +296,7 @@ Inline the minimal CSS needed for the first paint directly in `<head>`:
 
 ```html
 <style>
-    /* Critical CSS — extracted via tools like Critical or Penthouse */
+    /* Critical CSS - extracted via tools like Critical or Penthouse */
     .header { display: flex; height: 64px; }
     .hero { min-height: 50vh; background: var(--bg-primary); }
 </style>
@@ -348,7 +348,7 @@ Monitor the Dispatcher `access.log` and `dispatcher.log`. If fewer than 95 % of 
 In practice, combine both: use invalidation for content pages and TTL for static assets.
 
 ```apacheconf
-# dispatcher.any — enable TTL caching
+# dispatcher.any - enable TTL caching
 /cache {
     /enableTTL "1"
     /headers {
@@ -413,10 +413,10 @@ Resource resolvers and JCR sessions hold references to the underlying persistenc
 
 ### Don't Hold Sessions Open Longer Than Needed
 
-Open a service resource resolver, do your work, and close it — all in the tightest scope possible.
+Open a service resource resolver, do your work, and close it - all in the tightest scope possible.
 
 ```java
-// GOOD — try-with-resources guarantees closure
+// GOOD - try-with-resources guarantees closure
 Map<String, Object> params = Map.of(
     ResourceResolverFactory.SUBSERVICE, "my-service-user"
 );
@@ -437,14 +437,14 @@ A leaked `ResourceResolver` keeps an open JCR session, which holds repository st
 Each `session.save()` triggers a commit to the persistence layer. Saving inside a loop is extremely slow.
 
 ```java
-// BAD — save after every node
+// BAD - save after every node
 for (Resource child : parentResource.getChildren()) {
     ModifiableValueMap props = child.adaptTo(ModifiableValueMap.class);
     props.put("processed", true);
     resolver.commit(); // expensive per-node commit
 }
 
-// GOOD — batch all changes into one commit
+// GOOD - batch all changes into one commit
 for (Resource child : parentResource.getChildren()) {
     ModifiableValueMap props = child.adaptTo(ModifiableValueMap.class);
     props.put("processed", true);
@@ -541,7 +541,7 @@ The built-in query debugger at:
 /libs/granite/operations/content/diagnosistools/queryPerformance.html
 ```
 
-lets you run `EXPLAIN` queries, see which index is selected, and view the query execution plan — all from a browser. Use this as your first stop when investigating slow queries.
+lets you run `EXPLAIN` queries, see which index is selected, and view the query execution plan - all from a browser. Use this as your first stop when investigating slow queries.
 
 ---
 
@@ -549,14 +549,14 @@ lets you run `EXPLAIN` queries, see which index is selected, and view the query 
 
 :::warning Avoid these frequent mistakes
 
-1. **Queries without indexes** — Every custom query must have a matching Oak index. Check with `EXPLAIN` before deploying.
-2. **ResourceResolver leaks** — Always close resolvers with try-with-resources. A single leaked resolver per request will eventually crash the instance.
-3. **Blocking JS in `<head>`** — Render-blocking scripts destroy Time to Interactive. Use `defer` or `async` for non-critical scripts.
-4. **Uncached Dispatcher paths** — If a URL pattern is not in the Dispatcher cache rules, every request hits publish. Audit `/cache/rules` regularly.
-5. **Over-invalidation** — A broad stat-file level or overly aggressive flush agents can nuke the entire cache on every activation. Use fine-grained invalidation rules.
-6. **`p.limit=-1` in QueryBuilder** — Fetches all results in one call. Always paginate.
-7. **Heavy `@PostConstruct` methods** — Run on every adaptation. Move expensive work into lazy getters.
-8. **Saving inside loops** — Each `resolver.commit()` / `session.save()` is a full repository commit. Batch writes.
+1. **Queries without indexes** - Every custom query must have a matching Oak index. Check with `EXPLAIN` before deploying.
+2. **ResourceResolver leaks** - Always close resolvers with try-with-resources. A single leaked resolver per request will eventually crash the instance.
+3. **Blocking JS in `<head>`** - Render-blocking scripts destroy Time to Interactive. Use `defer` or `async` for non-critical scripts.
+4. **Uncached Dispatcher paths** - If a URL pattern is not in the Dispatcher cache rules, every request hits publish. Audit `/cache/rules` regularly.
+5. **Over-invalidation** - A broad stat-file level or overly aggressive flush agents can nuke the entire cache on every activation. Use fine-grained invalidation rules.
+6. **`p.limit=-1` in QueryBuilder** - Fetches all results in one call. Always paginate.
+7. **Heavy `@PostConstruct` methods** - Run on every adaptation. Move expensive work into lazy getters.
+8. **Saving inside loops** - Each `resolver.commit()` / `session.save()` is a full repository commit. Batch writes.
 :::
 
 ---

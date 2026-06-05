@@ -21,7 +21,7 @@ With the fundamentals mastered, this chapter covers a set of commands that exper
 Each one solves a specific problem: temporarily shelving unfinished work, transplanting single commits between branches,
 hunting down the commit that introduced a bug, and understanding who wrote what.
 
-## git stash — Shelving Unfinished Work
+## git stash - Shelving Unfinished Work
 
 You are halfway through a feature when your team lead asks you to fix an urgent bug on `main`. Your working tree has
 uncommitted changes that you do not want to commit yet. `git stash` saves your current work-in-progress to a temporary
@@ -44,7 +44,7 @@ git status
 git stash push -m "Dark mode: halfway through CSS variables"
 ```
 
-Always give your stash a name if you might have multiple stashes — the default message (`WIP on <branch>`) becomes
+Always give your stash a name if you might have multiple stashes - the default message (`WIP on <branch>`) becomes
 confusing fast.
 
 ### Include untracked files in the stash
@@ -71,7 +71,7 @@ git stash list
 # stash@{1}: WIP on feature/auth: some unfinished work
 ```
 
-Stashes are stored as a stack — `stash@{0}` is always the most recent.
+Stashes are stored as a stack - `stash@{0}` is always the most recent.
 
 ### Apply the most recent stash
 
@@ -122,7 +122,7 @@ git stash branch feature/dark-mode-v2 stash@{0}
 
 This is the cleanest way to resume work when the branch has moved on and the stash conflicts.
 
-## git cherry-pick — Transplanting Commits
+## git cherry-pick - Transplanting Commits
 
 `git cherry-pick` applies the changes from one or more specific commits to the current branch, creating new commits.
 It is like copying a commit from one branch to another.
@@ -189,10 +189,10 @@ git cherry-pick --abort
 | Applying a hotfix to multiple release branches              | As a substitute for a proper merge workflow      |
 
 Cherry-pick creates **duplicate commits** (different hashes, same content). When the original branch is eventually
-merged, Git may identify the duplicate changes and handle them — but it can also cause confusing conflicts. Use
+merged, Git may identify the duplicate changes and handle them - but it can also cause confusing conflicts. Use
 cherry-pick deliberately, not habitually.
 
-## git bisect — Binary Search for Bugs
+## git bisect - Binary Search for Bugs
 
 `git bisect` helps you find the exact commit that introduced a bug using binary search. Instead of manually checking
 out commit after commit, Git does the math and halves the search space with each step.
@@ -201,19 +201,19 @@ out commit after commit, Git does the math and halves the search space with each
 
 Your app worked at `v1.0.0`. The current `HEAD` is broken. Somewhere in 200 commits, something went wrong.
 
-### Step 1 — Start bisect
+### Step 1 - Start bisect
 
 ```bash
 git bisect start
 ```
 
-### Step 2 — Mark the known bad commit (HEAD)
+### Step 2 - Mark the known bad commit (HEAD)
 
 ```bash
 git bisect bad
 ```
 
-### Step 3 — Mark a known good commit
+### Step 3 - Mark a known good commit
 
 ```bash
 git bisect good v1.0.0
@@ -223,7 +223,7 @@ git bisect good v1.0.0
 
 Git checks out the midpoint commit.
 
-### Step 4 — Test and mark
+### Step 4 - Test and mark
 
 Test the current commit. Does the bug exist?
 
@@ -237,7 +237,7 @@ git bisect good
 
 Git checks out a new midpoint each time, halving the search space.
 
-### Step 5 — Git finds the culprit
+### Step 5 - Git finds the culprit
 
 After roughly `log2(200) ≈ 8` steps:
 
@@ -251,7 +251,7 @@ After roughly `log2(200) ≈ 8` steps:
 #     refactor(parser): simplify expression evaluation
 ```
 
-### Step 6 — End bisect
+### Step 6 - End bisect
 
 ```bash
 git bisect reset
@@ -274,7 +274,7 @@ git bisect reset
 
 This can reduce a bug hunt from hours to minutes.
 
-## git blame — Who Wrote This Line?
+## git blame - Who Wrote This Line?
 
 `git blame` annotates every line of a file with the commit hash, author, and date of the last change to that line.
 
@@ -317,11 +317,11 @@ git show 9g8h7i6
 # Shows the diff and commit message for that hash
 ```
 
-> **Note on culture:** `git blame` is a debugging tool, not an accusation. The goal is to understand context —
-> "what was the reasoning here?" — not to assign fault. In a healthy team, anyone should be able to run `git blame`
+> **Note on culture:** `git blame` is a debugging tool, not an accusation. The goal is to understand context -
+> "what was the reasoning here?" - not to assign fault. In a healthy team, anyone should be able to run `git blame`
 > without it creating interpersonal tension.
 
-## git shortlog — Summarise Contributions
+## git shortlog - Summarise Contributions
 
 `git shortlog` groups commits by author, making it easy to see who has contributed what to a project.
 
@@ -370,7 +370,7 @@ git shortlog -se
 
 Useful when the same person has committed under different names.
 
-## Combining These Commands — A Real Investigation
+## Combining These Commands - A Real Investigation
 
 Here is how these commands work together in practice:
 
@@ -391,22 +391,22 @@ git blame src/pricing.js -L 45,55
 # Jump to the commit that last touched those lines
 git show 9g8h7i6
 
-# See if there's a pattern — did this author make other related changes?
+# See if there's a pattern - did this author make other related changes?
 git log --author="Carol White" --oneline --since="2025-04-01"
 ```
 
-In 10 minutes you have identified the commit, the author, and the context — without anyone having to manually search
+In 10 minutes you have identified the commit, the author, and the context - without anyone having to manually search
 through hundreds of commits.
 
 ## Summary
 
 You now know:
 
-- **`git stash`** — shelve work-in-progress and restore it later; list, apply, pop, and drop stashes
-- **`git cherry-pick`** — copy specific commits to the current branch; handle conflicts with `--continue`
-- **`git bisect`** — binary search your history to find the commit that introduced a bug; automate with a test script
-- **`git blame`** — see who last changed each line of a file and when
-- **`git shortlog`** — summarise contributions by author
+- **`git stash`** - shelve work-in-progress and restore it later; list, apply, pop, and drop stashes
+- **`git cherry-pick`** - copy specific commits to the current branch; handle conflicts with `--continue`
+- **`git bisect`** - binary search your history to find the commit that introduced a bug; automate with a test script
+- **`git blame`** - see who last changed each line of a file and when
+- **`git shortlog`** - summarise contributions by author
 
-Next up: [Workflows](./10-workflows.md) — GitHub Flow, GitFlow, trunk-based development, and choosing the right
+Next up: [Workflows](./10-workflows.md) - GitHub Flow, GitFlow, trunk-based development, and choosing the right
 workflow for your team.

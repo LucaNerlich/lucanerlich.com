@@ -1,5 +1,5 @@
 ---
-title: "Practice Project — Deploy a Node.js App"
+title: "Practice Project - Deploy a Node.js App"
 sidebar_label: "Practice Project"
 description: End-to-end exercise provisioning a fresh Ubuntu VPS, securing it, deploying a Node.js app as a systemd service, and configuring log rotation.
 slug: /linux/beginners-guide/practice-project
@@ -13,11 +13,11 @@ keywords:
 sidebar_position: 12
 ---
 
-# Practice Project — Deploy a Node.js App
+# Practice Project - Deploy a Node.js App
 
 This chapter brings together everything covered in the guide into a single, end-to-end project. You will start from a fresh Ubuntu 22.04 LTS VPS, secure it, deploy a minimal Node.js application as a managed systemd service, and configure log rotation. Every step uses commands from the preceding chapters.
 
-The goal is not just to follow instructions — it is to understand *why* each step is taken.
+The goal is not just to follow instructions - it is to understand *why* each step is taken.
 
 ---
 
@@ -69,7 +69,7 @@ apt install -y curl git vim ufw fail2ban
 
 ## Phase 2: Create a Non-Root User
 
-Running everything as root is dangerous — a single mistake or compromised process can damage the entire system. Create a dedicated user.
+Running everything as root is dangerous - a single mistake or compromised process can damage the entire system. Create a dedicated user.
 
 ```bash
 # Create the deploy user with a home directory
@@ -152,7 +152,7 @@ ChallengeResponseAuthentication no
 # Only allow specific users
 AllowUsers deploy
 
-# Use a non-standard port (optional — reduces noise in auth.log)
+# Use a non-standard port (optional - reduces noise in auth.log)
 # Port 2222
 ```
 
@@ -186,7 +186,7 @@ sudo ufw status
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 
-# Allow SSH (do this FIRST — before enabling, or you'll lock yourself out)
+# Allow SSH (do this FIRST - before enabling, or you'll lock yourself out)
 sudo ufw allow ssh
 # Or if you changed the port:
 # sudo ufw allow 2222/tcp
@@ -495,7 +495,7 @@ This script simulates deploying a new version without downtime:
 ```bash
 sudo tee /opt/myapp/deploy.sh > /dev/null << 'SCRIPT'
 #!/bin/bash
-# deploy.sh — deploy a new version of myapp
+# deploy.sh - deploy a new version of myapp
 set -euo pipefail
 
 readonly APP_DIR="/opt/myapp"
@@ -522,7 +522,7 @@ rollback() {
     log "Rolling back to ${PREVIOUS_VERSION}..."
     ln -sfn "${APP_DIR}/releases/${PREVIOUS_VERSION}" "$CURRENT_LINK"
     sudo systemctl restart "$APP_NAME"
-    die "Deployment of ${VERSION} failed — rolled back to ${PREVIOUS_VERSION}"
+    die "Deployment of ${VERSION} failed - rolled back to ${PREVIOUS_VERSION}"
 }
 trap rollback ERR
 
@@ -544,7 +544,7 @@ until curl -sf "http://localhost:3000/health" > /dev/null; do
     sleep 2
 done
 
-# Deployment succeeded — deactivate rollback trap
+# Deployment succeeded - deactivate rollback trap
 trap - ERR
 
 log "Successfully deployed ${VERSION}"
@@ -614,15 +614,15 @@ echo "Firewall: $(sudo ufw status | head -1)"
 By completing this project you have:
 
 1. **Created a non-root deployment user** with least-privilege sudo rules
-2. **Hardened SSH** — key-only authentication, root login disabled
-3. **Configured UFW firewall** — deny-by-default, only SSH/HTTP/HTTPS allowed
+2. **Hardened SSH** - key-only authentication, root login disabled
+3. **Configured UFW firewall** - deny-by-default, only SSH/HTTP/HTTPS allowed
 4. **Protected against brute force** with fail2ban
 5. **Installed and managed a Node.js app** under the deploy user
 6. **Defined a systemd service** with automatic restart and security restrictions
 7. **Configured log rotation** to keep 30 days of compressed logs
 8. **Written a deployment script** with automatic rollback on failure
 
-These patterns apply to any application stack — Java, Python, Ruby, or Go. The OS-level concerns (user, SSH, firewall, service, logs) are identical regardless of what the application is written in.
+These patterns apply to any application stack - Java, Python, Ruby, or Go. The OS-level concerns (user, SSH, firewall, service, logs) are identical regardless of what the application is written in.
 
 ---
 

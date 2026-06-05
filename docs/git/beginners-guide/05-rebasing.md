@@ -18,13 +18,13 @@ sidebar_position: 5
 
 Rebasing is Git's other strategy for integrating changes from one branch into another. While merging creates a merge
 commit that ties two branch histories together, rebasing **rewrites** the commit history to make it appear as though
-your work was done on top of the latest state of the target branch. The result is a clean, linear history — no merge
+your work was done on top of the latest state of the target branch. The result is a clean, linear history - no merge
 commits, no divergence indicators.
 
 Used well, rebasing produces a project history that reads like a well-edited story. Used carelessly on shared branches,
 it causes havoc for collaborators. This chapter explains both uses and the critical rule that prevents the havoc.
 
-## Rebase vs Merge — The Core Difference
+## Rebase vs Merge - The Core Difference
 
 Consider two branches that have diverged from a common ancestor:
 
@@ -65,7 +65,7 @@ A ── B ── C   ← main
 ```
 
 Git replays commits `D` and `E` on top of `C`, producing new commits `D'` and `E'`. The content is the same, but
-the commit hashes are **different** (because the parent changed). The history is now linear — `feature/search` looks
+the commit hashes are **different** (because the parent changed). The history is now linear - `feature/search` looks
 like it was always based on `C`.
 
 After rebasing, you can merge with a clean fast-forward:
@@ -82,17 +82,17 @@ Result:
 A ── B ── C ── D' ── E'   ← main, feature/search
 ```
 
-## Rebase vs Merge — When to Use Each
+## Rebase vs Merge - When to Use Each
 
 | Consideration              | Merge                                           | Rebase                                             |
 |----------------------------|-------------------------------------------------|----------------------------------------------------|
 | **History style**          | Non-linear, shows actual development path       | Linear, like all work was sequential               |
-| **Merge commits**          | Yes — explicit integration points               | No — clean history                                 |
-| **Shared branches**        | Safe — never rewrites commits                   | Dangerous — rewrites commit hashes                 |
+| **Merge commits**          | Yes - explicit integration points               | No - clean history                                 |
+| **Shared branches**        | Safe - never rewrites commits                   | Dangerous - rewrites commit hashes                 |
 | **Feature branches**       | Works fine                                      | Great for keeping up to date with main             |
 | **Public / shared history**| Always safe                                     | Never rebase (the golden rule)                     |
 | **Conflict handling**      | Resolve once in the merge commit                | Resolve per replayed commit (can be more work)     |
-| **Readability**            | Shows reality — branches existed                | Cleaner log — easier to `bisect` and `blame`       |
+| **Readability**            | Shows reality - branches existed                | Cleaner log - easier to `bisect` and `blame`       |
 | **`git bisect`**           | Works, but non-linear                           | Works better with linear history                   |
 
 **Rule of thumb:**
@@ -135,7 +135,7 @@ Git continues replaying the remaining commits. If at any point you want to aband
 git rebase --abort
 ```
 
-## Interactive Rebase — Rewriting History
+## Interactive Rebase - Rewriting History
 
 Interactive rebase (`git rebase -i`) is a powerful tool for editing commits **before** you share them. It lets you:
 
@@ -218,7 +218,7 @@ fixup 3d2c1b0 WIP
 fixup 7a6b5c4 fix typo
 ```
 
-No second editor opens — Git just squashes the commits silently. This is the fastest way to clean up.
+No second editor opens - Git just squashes the commits silently. This is the fastest way to clean up.
 
 ### Rewording a commit message
 
@@ -269,7 +269,7 @@ git commit --fixup HEAD~1
 git rebase -i --autosquash main
 ```
 
-Git automatically moves and marks `fixup!` commits as `fixup` in the interactive editor — you just save and close.
+Git automatically moves and marks `fixup!` commits as `fixup` in the interactive editor - you just save and close.
 
 ## The Golden Rule of Rebasing
 
@@ -281,7 +281,7 @@ shared history in ways that are difficult to recover from.
 
 ### Safe to rebase:
 - Local commits that have never been pushed
-- Commits on a **personal** feature branch that only you work on (even if pushed — you can force-push if needed and
+- Commits on a **personal** feature branch that only you work on (even if pushed - you can force-push if needed and
   inform your team)
 
 ### Never rebase:
@@ -331,7 +331,7 @@ You now understand:
 - **Merge** creates a merge commit that joins two branch histories; rebase rewrites them
 - **Interactive rebase** (`git rebase -i`) lets you squash, reword, drop, and reorder commits
 - **`fixup` and `autosquash`** make it easy to clean up commits as you work
-- **The golden rule** — never rebase commits that are already on a shared branch
+- **The golden rule** - never rebase commits that are already on a shared branch
 
-Next up: [Remote Repositories](./06-remote-repositories.md) — cloning, pushing, pulling, and managing remote tracking
+Next up: [Remote Repositories](./06-remote-repositories.md) - cloning, pushing, pulling, and managing remote tracking
 branches.

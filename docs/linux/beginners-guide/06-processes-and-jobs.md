@@ -22,8 +22,8 @@ Every program running on a Linux system is a process. Understanding how to view 
 ## Process Basics
 
 When you run a command, the shell creates a new process. Each process has:
-- A **PID** (Process ID) — unique integer identifier
-- A **PPID** (Parent Process ID) — the PID of the process that created it
+- A **PID** (Process ID) - unique integer identifier
+- A **PPID** (Parent Process ID) - the PID of the process that created it
 - An **owner** (the user who started it)
 - CPU and memory usage statistics
 - A **state** (running, sleeping, zombie, stopped)
@@ -32,7 +32,7 @@ The `init` or `systemd` process always has PID 1 and is the ancestor of all othe
 
 ---
 
-## Viewing Processes — `ps`
+## Viewing Processes - `ps`
 
 `ps` (process status) shows a snapshot of current processes.
 
@@ -78,7 +78,7 @@ root      9012  0.0  0.0   5756   812 ?        Ss   Apr09   0:00 /usr/sbin/sshd
 | `%CPU` | CPU usage percentage |
 | `%MEM` | Memory usage percentage |
 | `VSZ` | Virtual memory size (KB) |
-| `RSS` | Resident Set Size — actual RAM used (KB) |
+| `RSS` | Resident Set Size - actual RAM used (KB) |
 | `TTY` | Terminal (`?` means no terminal) |
 | `STAT` | Process state (S=sleeping, R=running, Z=zombie, D=uninterruptible sleep) |
 | `START` | Start time |
@@ -87,7 +87,7 @@ root      9012  0.0  0.0   5756   812 ?        Ss   Apr09   0:00 /usr/sbin/sshd
 
 ---
 
-## Interactive Process Monitor — `top` and `htop`
+## Interactive Process Monitor - `top` and `htop`
 
 ### `top`
 
@@ -149,7 +149,7 @@ Signals are software interrupts sent to processes. Every process can define how 
 ### Sending Signals
 
 ```bash
-# Send SIGTERM (graceful stop) — default
+# Send SIGTERM (graceful stop) - default
 kill 1234
 
 # Send SIGKILL (force kill)
@@ -198,7 +198,7 @@ pkill nginx
 
 ## Background Jobs
 
-### Running in the Background — `&`
+### Running in the Background - `&`
 
 Append `&` to run a command in the background, immediately returning your shell prompt.
 
@@ -210,7 +210,7 @@ Append `&` to run a command in the background, immediately returning your shell 
 # The script continues running; you get your prompt back
 ```
 
-### Listing Jobs — `jobs`
+### Listing Jobs - `jobs`
 
 ```bash
 jobs
@@ -218,7 +218,7 @@ jobs
 # [2]-  Stopped    vim file.txt
 ```
 
-### Foreground and Background — `fg` / `bg`
+### Foreground and Background - `fg` / `bg`
 
 ```bash
 # Bring job 1 to the foreground
@@ -233,7 +233,7 @@ bg %1   # resume it in the background
 fg
 ```
 
-### Surviving Disconnects — `nohup`
+### Surviving Disconnects - `nohup`
 
 When you disconnect from SSH, all processes you started (including background jobs) receive `SIGHUP` and terminate. `nohup` prevents this.
 
@@ -249,12 +249,12 @@ echo $!
 # 5679
 ```
 
-### `screen` and `tmux` — Terminal Multiplexers
+### `screen` and `tmux` - Terminal Multiplexers
 
 For serious long-running tasks, terminal multiplexers are better than `nohup`:
 
 ```bash
-# tmux — create a new session
+# tmux - create a new session
 tmux new -s deploy
 
 # Detach from session (leaves it running): Ctrl+B, then D
@@ -382,7 +382,7 @@ sudo systemctl status myapp
 
 ## Reading Logs with `journalctl`
 
-`journalctl` queries the systemd journal — the centralized log storage for all services managed by systemd.
+`journalctl` queries the systemd journal - the centralized log storage for all services managed by systemd.
 
 ```bash
 # All logs (newest at end)

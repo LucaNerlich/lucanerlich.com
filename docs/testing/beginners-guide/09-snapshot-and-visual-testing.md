@@ -16,7 +16,7 @@ sidebar_position: 9
 
 # Snapshot & Visual Testing
 
-Snapshot testing captures the rendered output of a component (or any serialisable value) and saves it to a file. Subsequent test runs compare the current output against the saved snapshot — if they differ, the test fails. This sounds like a safety net but can become a maintenance burden if used carelessly.
+Snapshot testing captures the rendered output of a component (or any serialisable value) and saves it to a file. Subsequent test runs compare the current output against the saved snapshot - if they differ, the test fails. This sounds like a safety net but can become a maintenance burden if used carelessly.
 
 This chapter covers Jest's built-in snapshot mechanism, its trade-offs, and how Storybook can complement or replace snapshots for visual component testing.
 
@@ -53,7 +53,7 @@ exports[`renders a success badge 1`] = `
 `;
 ```
 
-If you change the component — even adding a CSS class — the test fails until you update the snapshot.
+If you change the component - even adding a CSS class - the test fails until you update the snapshot.
 
 ### Updating Snapshots
 

@@ -3,6 +3,6 @@
     "link": {
         "type": "generated-index",
         "slug": "/typescript",
-        "description": "TypeScript guides — from your first typed function to advanced generics, utility types, and compiler configuration."
+        "description": "TypeScript guides - from your first typed function to advanced generics, utility types, and compiler configuration."
     }
 }

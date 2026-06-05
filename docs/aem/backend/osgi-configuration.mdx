@@ -8,7 +8,7 @@ tags: [aem, osgi, configuration]
 
 OSGi configuration is the primary mechanism for controlling the behavior of AEM services at runtime.
 In a modern AEM project, configurations are stored as **JSON files** inside the code repository and
-deployed alongside the application — ensuring that every environment receives consistent, version-controlled settings.
+deployed alongside the application - ensuring that every environment receives consistent, version-controlled settings.
 
 :::tip Why code-deployed configs matter
 Storing OSGi configs in the repository means they are reviewed in pull requests, tracked in Git history, and
@@ -89,7 +89,7 @@ com.example.core.services.impl.MyServiceImpl~site-a.cfg.json
 com.example.core.services.impl.MyServiceImpl~site-b.cfg.json
 ```
 
-The text after `~` is an arbitrary label — it does not affect behavior but should be descriptive.
+The text after `~` is an arbitrary label - it does not affect behavior but should be descriptive.
 
 :::danger PID must match the class name exactly
 A single typo in the PID means the configuration will be silently ignored. Copy-paste the fully qualified
@@ -100,7 +100,7 @@ class name from the Java source to avoid mistakes.
 
 ## Configuration Format
 
-The modern standard is **`.cfg.json`** — a plain JSON file. Older formats (`.config`, `.cfg`) are still
+The modern standard is **`.cfg.json`** - a plain JSON file. Older formats (`.config`, `.cfg`) are still
 supported but should be avoided in new projects.
 
 ### Property Types
@@ -138,7 +138,7 @@ supported but should be avoided in new projects.
 The recommended approach is to define an **annotation interface** that describes the configuration schema
 and bind it to the component via `@Designate`.
 
-### Step 1 — Define the Configuration Interface
+### Step 1 - Define the Configuration Interface
 
 ```java title="AssetSyncConfig.java"
 import org.osgi.service.metatype.annotations.AttributeDefinition;
@@ -182,7 +182,7 @@ public @interface AssetSyncConfig {
 }
 ```
 
-### Step 2 — Bind the Configuration to the Service
+### Step 2 - Bind the Configuration to the Service
 
 ```java title="AssetSyncServiceImpl.java"
 import org.osgi.service.component.annotations.Activate;
@@ -215,7 +215,7 @@ public class AssetSyncServiceImpl implements AssetSyncService {
         this.allowedMimeTypes = config.allowedMimeTypes();
         this.maxRetries = config.maxRetries();
 
-        LOG.info("AssetSyncService activated — enabled={}, interval={}m, endpoint={}",
+        LOG.info("AssetSyncService activated - enabled={}, interval={}m, endpoint={}",
                 enabled, syncInterval, endpoint);
     }
 
@@ -265,11 +265,11 @@ manager without exception.
 On AEM 6.5 you can use the **Adobe Granite Crypto Support** to encrypt values:
 
 1. Navigate to `/system/console/crypto` on the target instance.
-2. Encrypt the secret — the console returns a string starting with `{enc:...}`.
+2. Encrypt the secret - the console returns a string starting with `{enc:...}`.
 3. Place the encrypted string in the `.cfg.json` file.
 
 This approach keeps the plain-text secret out of the repository, but the encryption key is
-instance-specific — encrypted values cannot be moved between instances without re-encryption.
+instance-specific - encrypted values cannot be moved between instances without re-encryption.
 
 ---
 
@@ -287,7 +287,7 @@ The OSGi Web Console is available on local and non-production AEM instances at:
 :::warning Console changes are lost on deployment
 Any configuration change made through the Felix Console is stored in the JCR at
 `/apps/system/config` and will be **overwritten** by the next code deployment. Use the console
-for **debugging only** — never as a substitute for repository-deployed configs.
+for **debugging only** - never as a substitute for repository-deployed configs.
 :::
 
 ---
@@ -311,25 +311,25 @@ The table below lists frequently configured services and their PIDs.
 
 ## Common Pitfalls
 
-1. **Wrong run mode folder** — placing a publish config in `config.author/` means it is never active on
+1. **Wrong run mode folder** - placing a publish config in `config.author/` means it is never active on
 publish instances. Double-check the folder name.
 
-2. **Missing tilde in factory configs** — without the `~identifier` suffix, AEM treats the file as a
+2. **Missing tilde in factory configs** - without the `~identifier` suffix, AEM treats the file as a
 singleton and only one instance will ever be created.
 
-3. **PID typo** — the filename PID must exactly match the fully qualified class name annotated with
+3. **PID typo** - the filename PID must exactly match the fully qualified class name annotated with
 `@Component`. A silent mismatch means the config is never applied.
 
-4. **Editing configs via Felix Console in production** — changes are overwritten on the next deployment
+4. **Editing configs via Felix Console in production** - changes are overwritten on the next deployment
 and create configuration drift. Always deploy configs through the repository.
 
-5. **Config not picked up after deployment** — verify the content package filter in
+5. **Config not picked up after deployment** - verify the content package filter in
 `ui.config/src/main/content/META-INF/vault/filter.xml` includes the `osgiconfig` path.
 
-6. **Forgetting the `.cfg.json` extension** — files without the correct extension are ignored by the
+6. **Forgetting the `.cfg.json` extension** - files without the correct extension are ignored by the
 OSGi installer.
 
-7. **Using legacy formats in new projects** — `.config` and `.cfg` files still work but lack JSON
+7. **Using legacy formats in new projects** - `.config` and `.cfg` files still work but lack JSON
 tooling support and are harder to read. Prefer `.cfg.json` for all new configs.
 
 :::tip Validate configs in CI

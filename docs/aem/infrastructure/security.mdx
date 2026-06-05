@@ -7,8 +7,8 @@ tags: [aem, security, best-practices]
 # Security Basics
 
 Security in AEM is a multi-layered concern that spans user management, access control, request filtering,
-XSS protection, and Dispatcher hardening. A single misconfiguration — an open servlet, a leaked service
-resolver, or a missing Dispatcher rule — can expose sensitive content or grant attackers administrative access.
+XSS protection, and Dispatcher hardening. A single misconfiguration - an open servlet, a leaked service
+resolver, or a missing Dispatcher rule - can expose sensitive content or grant attackers administrative access.
 
 This page covers the most critical security topics every AEM developer and architect should understand.
 The sections progress from repository-level controls (service users, ACLs, CUGs) through request-level
@@ -17,7 +17,7 @@ defences (CSRF, referrer filter, XSS) to infrastructure-level hardening (Dispatc
 :::tip Core principles
 - **Least privilege** for every user, service account, and Dispatcher rule.
 - **Validate all input** and never execute dynamic code.
-- **Defence in depth** — never rely on a single layer.
+- **Defence in depth** - never rely on a single layer.
 - **Keep secrets out** of the repository, clientlibs, and version control.
 :::
 
@@ -232,7 +232,7 @@ against cross-site request forgery attacks.
 
 1. AEM generates a unique CSRF token per session.
 2. The token is embedded in forms and AJAX requests.
-3. The server validates the token on every mutating request — rejecting requests with missing or
+3. The server validates the token on every mutating request - rejecting requests with missing or
 invalid tokens.
 
 ### Adding CSRF tokens to forms
@@ -328,7 +328,7 @@ Cross-site scripting (XSS) is one of the most common web vulnerabilities. AEM pr
 layers of defence including HTL context-aware escaping, the AntiSamy framework, and the XSSAPI.
 
 For detailed XSS protection including AntiSamy configuration and XSSAPI usage, see
-[HTL Templates — XSS Protection](../htl-templates.mdx#xss-protection-configuration-antisamy).
+[HTL Templates - XSS Protection](../htl-templates.mdx#xss-protection-configuration-antisamy).
 
 ### Quick reminder: HTL context escaping
 
@@ -344,7 +344,7 @@ HTL automatically applies context-appropriate escaping based on the output conte
 <!-- Escaped as HTML attribute -->
 <div data-config="${properties.config @ context='attribute'}"></div>
 
-<!-- DANGEROUS: disables escaping — only for trusted, already-safe markup -->
+<!-- DANGEROUS: disables escaping - only for trusted, already-safe markup -->
 <div>${properties.trustedHtml @ context='unsafe'}</div>
 ```
 
@@ -372,7 +372,7 @@ These paths must **never** be accessible on a public-facing publish instance:
 | `/apps/*` | Application code and component definitions |
 | `/libs/*` | AEM platform code |
 | `/bin/*` | Sling servlets (allow specific exceptions only) |
-| `/etc.clientlibs/*` | Allow this — proxied clientlibs are safe |
+| `/etc.clientlibs/*` | Allow this - proxied clientlibs are safe |
 | `/services/*` | Internal service endpoints |
 | `/content/dam/*.json` | Prevents JSON enumeration of DAM assets |
 
@@ -477,7 +477,7 @@ forcing the browser to download rather than render the content inline.
 }
 ```
 
-This configuration forces downloads for SVG, HTML, and XML files served from the DAM — the most
+This configuration forces downloads for SVG, HTML, and XML files served from the DAM - the most
 common vectors for stored XSS via file upload.
 
 :::tip
@@ -491,28 +491,28 @@ the settings match your security requirements, especially if you allow user-uplo
 
 The following are frequently encountered security issues in AEM projects:
 
-1. **Open SlingPostServlet on publish** — The default Sling POST Servlet can create, modify, and
+1. **Open SlingPostServlet on publish** - The default Sling POST Servlet can create, modify, and
 delete content. If not blocked on publish, attackers can modify the repository. Always deny
 POST to general content paths at the Dispatcher level.
 
-2. **Unprotected custom servlets** — Servlets registered under `/bin/` or via resource types must
+2. **Unprotected custom servlets** - Servlets registered under `/bin/` or via resource types must
 enforce authentication and authorisation. Never assume the Dispatcher will be the only control.
 
-3. **Leaked service resolvers** — Failing to close a `ResourceResolver` obtained via
+3. **Leaked service resolvers** - Failing to close a `ResourceResolver` obtained via
 `getServiceResourceResolver()` leaks JCR sessions. Under load, this exhausts the session pool
 and crashes the instance.
 
-4. **Overly broad Dispatcher allow rules** — Rules like `/0010 { /type "allow" /url "*" }` negate
+4. **Overly broad Dispatcher allow rules** - Rules like `/0010 { /type "allow" /url "*" }` negate
 all subsequent deny rules if placed incorrectly. Always follow a deny-by-default pattern.
 
-5. **Secrets in clientlibs** — API keys, internal hostnames, or tokens embedded in JavaScript
+5. **Secrets in clientlibs** - API keys, internal hostnames, or tokens embedded in JavaScript
 clientlibs are visible to anyone inspecting the page source. Use server-side proxies or
 environment-specific OSGi configs instead.
 
-6. **Missing CSRF tokens on forms** — Custom forms that skip CSRF token validation are vulnerable
+6. **Missing CSRF tokens on forms** - Custom forms that skip CSRF token validation are vulnerable
 to cross-site request forgery attacks.
 
-7. **Wildcard `allow.hosts` in referrer filter** — Using `*` or overly broad regex patterns
+7. **Wildcard `allow.hosts` in referrer filter** - Using `*` or overly broad regex patterns
 in the Sling Referrer Filter effectively disables the protection.
 
 :::danger

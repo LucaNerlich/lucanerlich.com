@@ -3,6 +3,6 @@
     "link": {
         "type": "generated-index",
         "slug": "/git",
-        "description": "Git guides — from your first commit to branching strategies, rebasing, hooks, and collaborative workflows."
+        "description": "Git guides - from your first commit to branching strategies, rebasing, hooks, and collaborative workflows."
     }
 }

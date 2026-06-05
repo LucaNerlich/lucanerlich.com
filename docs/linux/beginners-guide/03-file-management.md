@@ -15,11 +15,11 @@ sidebar_position: 3
 
 # File Management
 
-Understanding how to create, copy, move, delete, and search for files is foundational to everything you will do on a Linux system — from deploying configuration files to cleaning up a full disk in a production incident. This chapter covers every file management command you will need in day-to-day server work.
+Understanding how to create, copy, move, delete, and search for files is foundational to everything you will do on a Linux system - from deploying configuration files to cleaning up a full disk in a production incident. This chapter covers every file management command you will need in day-to-day server work.
 
 ---
 
-## Creating Files — `touch`
+## Creating Files - `touch`
 
 `touch` is primarily used to create an empty file or update the timestamp of an existing one.
 
@@ -48,7 +48,7 @@ rm "$LOCK_FILE"
 
 ---
 
-## Creating Directories — `mkdir`
+## Creating Directories - `mkdir`
 
 ```bash
 # Create a single directory
@@ -68,11 +68,11 @@ mkdir -p logs/{debug,info,error}
 # Creates: logs/debug/  logs/info/  logs/error/
 ```
 
-The `-p` flag is essential in scripts because it makes the command idempotent — if the directory already exists, it succeeds silently instead of erroring out.
+The `-p` flag is essential in scripts because it makes the command idempotent - if the directory already exists, it succeeds silently instead of erroring out.
 
 ---
 
-## Copying Files and Directories — `cp`
+## Copying Files and Directories - `cp`
 
 ```bash
 # Copy a file
@@ -115,7 +115,7 @@ cp /etc/nginx/conf.d/*.conf /tmp/nginx-backup/
 
 ---
 
-## Moving and Renaming — `mv`
+## Moving and Renaming - `mv`
 
 `mv` both moves and renames. There is no separate rename command.
 
@@ -147,7 +147,7 @@ mv -v old.txt new.txt
 
 ---
 
-## Deleting Files and Directories — `rm`
+## Deleting Files and Directories - `rm`
 
 `rm` is permanent on Linux. There is no recycle bin. Be careful.
 
@@ -170,7 +170,7 @@ rm -r directory/
 # Force deletion without prompts (suppresses errors for missing files)
 rm -f file.txt
 
-# Recursive + force (the "nuke" combination — use with extreme caution)
+# Recursive + force (the "nuke" combination - use with extreme caution)
 rm -rf directory/
 
 # Remove an empty directory (safer alternative)
@@ -182,8 +182,8 @@ rmdir empty-directory/
 ```bash
 # DANGER: this deletes everything in /
 # A missing space can be catastrophic:
-rm -rf /opt/myapp        # safe — specific path
-rm -rf / opt/myapp       # CATASTROPHIC — deletes root filesystem
+rm -rf /opt/myapp        # safe - specific path
+rm -rf / opt/myapp       # CATASTROPHIC - deletes root filesystem
 
 # Always double-check with echo first
 echo rm -rf /opt/myapp/logs/
@@ -202,7 +202,7 @@ fi
 
 ---
 
-## Links — `ln`
+## Links - `ln`
 
 Linux supports two types of links: **hard links** and **soft (symbolic) links**.
 
@@ -224,7 +224,7 @@ ls -li original.txt hardlink.txt
 Key properties:
 - Hard links cannot span filesystems (both files must be on the same disk/partition)
 - Hard links cannot point to directories (with rare exceptions)
-- Deleting the "original" does not delete the data — it just removes one directory entry. The data persists until all hard links are removed.
+- Deleting the "original" does not delete the data - it just removes one directory entry. The data persists until all hard links are removed.
 
 ### Soft (Symbolic) Links
 
@@ -276,7 +276,7 @@ ln -sf /opt/myapp/v1.1.9 /opt/myapp/current
 
 ---
 
-## Finding Files — `find`
+## Finding Files - `find`
 
 `find` is one of the most powerful commands in Linux. It traverses a directory tree and returns files matching your criteria.
 
@@ -402,7 +402,7 @@ find /var/log -name "*.log" ! -name "debug.log"
 
 ---
 
-## Finding Files by Name — `locate`
+## Finding Files by Name - `locate`
 
 `locate` is much faster than `find` because it searches a pre-built database rather than the live filesystem. The trade-off is that the database is updated periodically (usually nightly), so very recently created files may not appear.
 
@@ -430,7 +430,7 @@ Use `locate` for quick lookups of established files. Use `find` when you need re
 
 ---
 
-## Finding Commands — `which` and `whereis`
+## Finding Commands - `which` and `whereis`
 
 ```bash
 # Find the full path of a command (searches $PATH)

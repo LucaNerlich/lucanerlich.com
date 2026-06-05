@@ -15,7 +15,7 @@ sidebar_position: 4
 
 # Volumes and Bind Mounts
 
-By default, every file a container writes goes into its **writable layer** — a thin, container-specific filesystem that is thrown away the moment you remove the container. For stateless workloads (web servers, API handlers) that is fine. For anything that holds state — databases, uploaded files, log aggregators — you need a way to survive container restarts and replacements.
+By default, every file a container writes goes into its **writable layer** - a thin, container-specific filesystem that is thrown away the moment you remove the container. For stateless workloads (web servers, API handlers) that is fine. For anything that holds state - databases, uploaded files, log aggregators - you need a way to survive container restarts and replacements.
 
 Docker solves this with two mechanisms: **named volumes** and **bind mounts**. They look similar from the outside (both use the `-v` flag) but serve different purposes and have different ownership semantics.
 
@@ -75,13 +75,13 @@ docker run -d \
   postgres:16
 ```
 
-Stop and remove the container — the data in `pgdata` survives:
+Stop and remove the container - the data in `pgdata` survives:
 
 ```bash
 docker stop postgres-dev
 docker rm postgres-dev
 
-# Start a brand new container using the same volume — data is still there
+# Start a brand new container using the same volume - data is still there
 docker run -d \
   --name postgres-dev \
   -e POSTGRES_PASSWORD=secret \
@@ -100,9 +100,9 @@ docker run -v myvolume:/data busybox
 
 ### Volume initialisation behaviour
 
-When Docker mounts a **named volume** into a container and the volume is empty, Docker copies the existing contents of the container's directory into the volume. This is how official database images seed the volume with initial data — Postgres pre-populates `/var/lib/postgresql/data` on first run.
+When Docker mounts a **named volume** into a container and the volume is empty, Docker copies the existing contents of the container's directory into the volume. This is how official database images seed the volume with initial data - Postgres pre-populates `/var/lib/postgresql/data` on first run.
 
-Bind mounts do **not** have this behaviour — they simply overlay whatever is on the host.
+Bind mounts do **not** have this behaviour - they simply overlay whatever is on the host.
 
 ---
 
@@ -142,7 +142,7 @@ docker run -d \
 # Short form with options (read-only)
 -v /host/config:/etc/myapp/config:ro
 
-# Long form (--mount) — more explicit
+# Long form (--mount) - more explicit
 --mount type=bind,source=/host/path,target=/container/path,readonly
 ```
 
@@ -166,7 +166,7 @@ docker run -d \
 
 ## Sharing Volumes Between Containers
 
-Multiple containers can mount the same volume simultaneously. This is how sidecar patterns work — for example, a log shipper container reading log files written by the main app.
+Multiple containers can mount the same volume simultaneously. This is how sidecar patterns work - for example, a log shipper container reading log files written by the main app.
 
 ```bash
 # Main app writes logs to the volume
@@ -182,13 +182,13 @@ docker run -d \
   fluentd
 ```
 
-Be careful with concurrent writes from multiple containers — you are responsible for handling any write conflicts at the application level.
+Be careful with concurrent writes from multiple containers - you are responsible for handling any write conflicts at the application level.
 
 ---
 
 ## Removing Volumes
 
-Volumes are not removed when you remove a container. This is intentional — Docker does not want to silently destroy your database data.
+Volumes are not removed when you remove a container. This is intentional - Docker does not want to silently destroy your database data.
 
 ```bash
 # Remove a specific volume (must not be in use by any container)
@@ -201,7 +201,7 @@ docker volume prune
 docker rm -v my-container
 ```
 
-Anonymous volumes — those created without a name, such as the implicit volume created by a `VOLUME` instruction in a Dockerfile — are removed with the container when you pass `-v` to `docker rm`.
+Anonymous volumes - those created without a name, such as the implicit volume created by a `VOLUME` instruction in a Dockerfile - are removed with the container when you pass `-v` to `docker rm`.
 
 ---
 
@@ -222,9 +222,9 @@ docker run -d \
 
 The default `local` driver stores volumes on the host filesystem. Docker supports third-party **volume drivers** that store data elsewhere:
 
-- `convoy` — AWS EBS, NFS
-- `rexray` — Multi-cloud (AWS, GCE, Azure)
-- `nfs` — Network File System shares
+- `convoy` - AWS EBS, NFS
+- `rexray` - Multi-cloud (AWS, GCE, Azure)
+- `nfs` - Network File System shares
 
 ```bash
 # Create a volume using an NFS driver (plugin must be installed)

@@ -19,7 +19,7 @@ Before you can do anything useful on a Linux server, you need to know where you 
 
 ---
 
-## Where Am I? — `pwd`
+## Where Am I? - `pwd`
 
 `pwd` (Print Working Directory) tells you your current location in the filesystem.
 
@@ -28,11 +28,11 @@ pwd
 # /home/ubuntu
 ```
 
-Always run `pwd` when you first connect to a server or open a new terminal — it grounds you before you start making changes.
+Always run `pwd` when you first connect to a server or open a new terminal - it grounds you before you start making changes.
 
 ---
 
-## Listing Files — `ls`
+## Listing Files - `ls`
 
 `ls` lists the contents of a directory. On its own it shows files and directories in the current location.
 
@@ -90,7 +90,7 @@ Permissions are covered in detail in Chapter 5.
 
 ---
 
-## Changing Directory — `cd`
+## Changing Directory - `cd`
 
 ```bash
 # Go to a specific directory
@@ -130,7 +130,7 @@ cd /var/log/ap<Tab>  # completes to /var/log/apache2/ (if it exists)
 
 This is one of the most important concepts to internalise.
 
-**Absolute path** — starts with `/`. It describes the full path from the root of the filesystem. It works regardless of your current directory.
+**Absolute path** - starts with `/`. It describes the full path from the root of the filesystem. It works regardless of your current directory.
 
 ```bash
 cd /home/ubuntu/projects
@@ -138,7 +138,7 @@ ls /etc/nginx/nginx.conf
 cat /var/log/syslog
 ```
 
-**Relative path** — does not start with `/`. It is interpreted relative to your current working directory.
+**Relative path** - does not start with `/`. It is interpreted relative to your current working directory.
 
 ```bash
 # If you are in /home/ubuntu:
@@ -153,7 +153,7 @@ cat ../other-user/file.txt  # ../  goes up one level first
 
 ---
 
-## The Home Directory — `~`
+## The Home Directory - `~`
 
 Every user has a home directory. For `ubuntu` it is `/home/ubuntu`. For `root` it is `/root`.
 
@@ -172,7 +172,7 @@ ls ~/projects
 
 ---
 
-## Visualising Directory Trees — `tree`
+## Visualising Directory Trees - `tree`
 
 `tree` prints a recursive directory listing as a visual tree. It is not always installed by default.
 
@@ -217,7 +217,7 @@ Example output:
 
 ## The Linux Filesystem Hierarchy
 
-Unlike Windows, which has drive letters (`C:\`, `D:\`), Linux has a single unified filesystem tree rooted at `/`. Everything — local disks, network mounts, virtual filesystems — appears somewhere under `/`.
+Unlike Windows, which has drive letters (`C:\`, `D:\`), Linux has a single unified filesystem tree rooted at `/`. Everything - local disks, network mounts, virtual filesystems - appears somewhere under `/`.
 
 ### Top-Level Directories
 
@@ -234,18 +234,18 @@ Unlike Windows, which has drive letters (`C:\`, `D:\`), Linux has a single unifi
 ├── opt      → Optional / third-party software
 ├── proc     → Virtual filesystem: process and kernel information
 ├── root     → Home directory for the root user
-├── run      → Runtime data (PIDs, sockets) — cleared on boot
+├── run      → Runtime data (PIDs, sockets) - cleared on boot
 ├── sbin     → System administration binaries
 ├── srv      → Data for services (web, FTP)
 ├── sys      → Virtual filesystem: hardware and kernel parameters
-├── tmp      → Temporary files — cleared on reboot
+├── tmp      → Temporary files - cleared on reboot
 ├── usr      → User programs, libraries, documentation
 └── var      → Variable data: logs, databases, mail, caches
 ```
 
 ### Directories You Will Work With Most
 
-#### `/etc` — Configuration
+#### `/etc` - Configuration
 
 All system-wide configuration lives here. It is entirely plain-text files and directories.
 
@@ -275,12 +275,12 @@ Never delete files from `/etc` unless you know exactly what you are doing. Alway
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 ```
 
-#### `/var` — Variable Data
+#### `/var` - Variable Data
 
 Contains data that changes at runtime: logs, databases, package cache, mail spools.
 
 ```bash
-/var/log/             # Log files — you will spend a lot of time here
+/var/log/             # Log files - you will spend a lot of time here
 /var/log/syslog       # General system log (Debian/Ubuntu)
 /var/log/messages     # General system log (RHEL/Fedora)
 /var/log/auth.log     # Authentication attempts
@@ -290,9 +290,9 @@ Contains data that changes at runtime: logs, databases, package cache, mail spoo
 /var/run/             # Symlink to /run
 ```
 
-#### `/usr` — User Programs
+#### `/usr` - User Programs
 
-Despite the name, `/usr` is not user home directories — it is where installed programs and their data live.
+Despite the name, `/usr` is not user home directories - it is where installed programs and their data live.
 
 ```bash
 /usr/bin/             # Programs installed for all users (node, java, python3)
@@ -305,7 +305,7 @@ Despite the name, `/usr` is not user home directories — it is where installed 
 
 When you install a package with `apt install nodejs`, the binary ends up in `/usr/bin/node` and libraries in `/usr/lib/nodejs`.
 
-#### `/tmp` — Temporary Files
+#### `/tmp` - Temporary Files
 
 Any user can write to `/tmp`. Files here are deleted on reboot. Use it for scratch files in scripts.
 
@@ -317,9 +317,9 @@ echo "data" > "$TMPFILE"
 rm "$TMPFILE"
 ```
 
-#### `/proc` — Process and Kernel Information
+#### `/proc` - Process and Kernel Information
 
-`/proc` is a virtual filesystem — its contents are generated on-the-fly by the kernel. Reading a file here queries the kernel directly.
+`/proc` is a virtual filesystem - its contents are generated on-the-fly by the kernel. Reading a file here queries the kernel directly.
 
 ```bash
 # Current kernel version
@@ -345,7 +345,7 @@ cat /proc/uptime
 ls /proc/$$/fd
 ```
 
-#### `/dev` — Devices
+#### `/dev` - Devices
 
 Physical and virtual devices appear as files here.
 
@@ -353,7 +353,7 @@ Physical and virtual devices appear as files here.
 /dev/sda              # First SATA disk
 /dev/sda1             # First partition of that disk
 /dev/nvme0n1          # First NVMe disk (common on modern cloud VMs)
-/dev/null             # The black hole — writing to it discards data
+/dev/null             # The black hole - writing to it discards data
 /dev/zero             # Produces infinite zeros when read
 /dev/random           # Cryptographically secure random bytes
 /dev/tty              # Current terminal

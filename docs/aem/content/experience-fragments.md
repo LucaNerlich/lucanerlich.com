@@ -469,6 +469,6 @@ Create a new variation or version before making breaking changes.
 - [Templates and Policies](../components/templates-policies.md) - XF templates
 - [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) - Content Distribution replaces replication
 - [Replication and Activation](./replication-activation.mdx) - publishing XFs
-- [Experience Fragments — AEM 6.5 (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/authoring/authoring/experience-fragments) - authoring and management guide
-- [Experience Fragments — AEMaaCS (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/fragments/experience-fragments) - cloud-specific guidance
+- [Experience Fragments - AEM 6.5 (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/authoring/authoring/experience-fragments) - authoring and management guide
+- [Experience Fragments - AEMaaCS (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/fragments/experience-fragments) - cloud-specific guidance
 - [XF + Adobe Target integration](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/experience-fragments-target) - A/B testing and personalisation

@@ -18,7 +18,7 @@ sidebar_position: 9
 
 # Registries and Image Management
 
-An image built on your laptop is only useful if you can share it. **Registries** are the distribution mechanism for Docker images — they store images, manage versions through tags, and control access. Mastering registries is essential for any team workflow or CI/CD pipeline.
+An image built on your laptop is only useful if you can share it. **Registries** are the distribution mechanism for Docker images - they store images, manage versions through tags, and control access. Mastering registries is essential for any team workflow or CI/CD pipeline.
 
 ---
 
@@ -132,7 +132,7 @@ docker push localhost:5000/my-app:latest
 docker pull localhost:5000/my-app:latest
 ```
 
-For production use, add TLS and authentication — an unauthenticated HTTP registry is only suitable for trusted local networks.
+For production use, add TLS and authentication - an unauthenticated HTTP registry is only suitable for trusted local networks.
 
 ### AWS ECR
 
@@ -179,12 +179,12 @@ Good tagging is critical for production deployments. Inconsistent tags make it h
 | Tag | Meaning | Mutable? |
 |---|---|---|
 | `latest` | Most recent build on the default branch | Yes (anti-pattern in production) |
-| `1.2.3` | Exact semantic version | No — treat as immutable |
-| `1.2` | Minor version track | Yes — updated with each patch |
-| `1` | Major version track | Yes — updated with each minor |
+| `1.2.3` | Exact semantic version | No - treat as immutable |
+| `1.2` | Minor version track | Yes - updated with each patch |
+| `1` | Major version track | Yes - updated with each minor |
 | `main` or `develop` | Branch name | Yes |
-| `sha-a1b2c3d` | Git commit SHA (short) | No — immutable |
-| `pr-123` | Pull request number | Yes — updated on each PR push |
+| `sha-a1b2c3d` | Git commit SHA (short) | No - immutable |
+| `pr-123` | Pull request number | Yes - updated on each PR push |
 
 ### Recommended production tagging strategy
 
@@ -207,9 +207,9 @@ docker push myrepo/my-app:latest
 
 ### Why `latest` is an antipattern in production
 
-- `latest` is mutable — today's `latest` and tomorrow's `latest` may be different images.
+- `latest` is mutable - today's `latest` and tomorrow's `latest` may be different images.
 - Pulling `latest` in production means you may get an untested version silently.
-- It makes rollbacks ambiguous — you cannot easily deploy "the previous latest."
+- It makes rollbacks ambiguous - you cannot easily deploy "the previous latest."
 
 Use specific version tags in production manifests. Reserve `latest` for pointing developers to the most recent development image.
 
@@ -332,13 +332,13 @@ When a user pulls `myusername/my-app:1.0.0`, Docker automatically selects the la
 
 ## Registry Best Practices
 
-1. **Use access tokens, not passwords** — Tokens can be scoped and rotated.
-2. **Pin to specific tags in production** — Never deploy `latest` to production.
-3. **Use immutable tags (SHAs or exact versions)** — Makes rollbacks and auditing reliable.
-4. **Scan images before deployment** — Integrate Docker Scout or Trivy into CI.
-5. **Set up retention policies** — Registries grow; delete old images and untagged digests automatically.
-6. **Limit registry access** — Use private repositories for proprietary applications.
-7. **Sign images** — Use Docker Content Trust or sigstore/cosign to cryptographically verify image integrity.
+1. **Use access tokens, not passwords** - Tokens can be scoped and rotated.
+2. **Pin to specific tags in production** - Never deploy `latest` to production.
+3. **Use immutable tags (SHAs or exact versions)** - Makes rollbacks and auditing reliable.
+4. **Scan images before deployment** - Integrate Docker Scout or Trivy into CI.
+5. **Set up retention policies** - Registries grow; delete old images and untagged digests automatically.
+6. **Limit registry access** - Use private repositories for proprietary applications.
+7. **Sign images** - Use Docker Content Trust or sigstore/cosign to cryptographically verify image integrity.
 
 ```bash
 # Sign an image with cosign (after installing cosign)

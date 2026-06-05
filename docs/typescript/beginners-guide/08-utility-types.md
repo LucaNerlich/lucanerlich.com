@@ -1,7 +1,7 @@
 ---
 title: "Utility Types"
 sidebar_label: "Utility Types"
-description: Practical examples of TypeScript's built-in utility types — Partial, Required, Readonly, Pick, Omit, Record, Exclude, Extract, NonNullable, ReturnType, and Parameters.
+description: Practical examples of TypeScript's built-in utility types - Partial, Required, Readonly, Pick, Omit, Record, Exclude, Extract, NonNullable, ReturnType, and Parameters.
 slug: /typescript/beginners-guide/utility-types
 tags: [typescript, beginners]
 keywords:

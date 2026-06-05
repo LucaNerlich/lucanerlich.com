@@ -10,8 +10,8 @@ tags: [aem, dispatcher, caching]
 
 The AEM Dispatcher is an **Apache HTTP Server (`httpd`) module** that sits between the CDN/load balancer and the AEM Publish instances. It serves two critical functions:
 
-1. **Caching** — stores rendered pages and static assets on the web server's filesystem so that subsequent requests are served directly from disk, bypassing the publish instance entirely.
-2. **Security filtering** — acts as a request-level firewall that blocks access to internal paths, admin consoles, and unintended URL patterns before they ever reach AEM.
+1. **Caching** - stores rendered pages and static assets on the web server's filesystem so that subsequent requests are served directly from disk, bypassing the publish instance entirely.
+2. **Security filtering** - acts as a request-level firewall that blocks access to internal paths, admin consoles, and unintended URL patterns before they ever reach AEM.
 
 In an AEM as a Cloud Service (AEMaaCS) topology, every request to a Publish tier flows through the Dispatcher:
 
@@ -67,8 +67,8 @@ dispatcher/src/
 
 | Directory | Purpose | Key files |
 |---|---|---|
-| `conf.d/` | Standard Apache httpd directives — virtual hosts, rewrite rules, environment variables | `rewrite.rules`, `default.vhost`, `custom.vars` |
-| `conf.dispatcher.d/` | Dispatcher module directives — farms, filters, cache, headers | `filters.any`, `rules.any`, `default.farm` |
+| `conf.d/` | Standard Apache httpd directives - virtual hosts, rewrite rules, environment variables | `rewrite.rules`, `default.vhost`, `custom.vars` |
+| `conf.dispatcher.d/` | Dispatcher module directives - farms, filters, cache, headers | `filters.any`, `rules.any`, `default.farm` |
 | `opt-in/` | Feature flags consumed by the Dispatcher SDK tooling | `USE_SOURCES_DIRECTLY` |
 
 :::warning
@@ -89,7 +89,7 @@ Both delivery targets use the same `mod_dispatcher` binary, but the surrounding 
 | Flush agents | Pre-wired by Adobe | Author-side replication agents, manually configured |
 | Environment variables | Set in Cloud Manager UI, read via `${ENV_VAR}` | Injected via `httpd` config or OS env |
 | SDK version | Versioned module shipped with the AEM SDK zip | `dispatcher-apache*-linux-x86_64-*.tar.gz` installed manually |
-| Hostname in `renders` | Replaced at deploy — keep `localhost:4503` in source | Real publish hostnames |
+| Hostname in `renders` | Replaced at deploy - keep `localhost:4503` in source | Real publish hostnames |
 | Opt-in flags | `opt-in/USE_SOURCES_DIRECTLY` | Not applicable |
 
 :::tip
@@ -167,7 +167,7 @@ The `/renders` section tells the Dispatcher where to forward cache-miss requests
 }
 ```
 
-In AEMaaCS, the hostname and port are replaced at deployment time by environment-specific values — you should keep `localhost:4503` for local SDK testing.
+In AEMaaCS, the hostname and port are replaced at deployment time by environment-specific values - you should keep `localhost:4503` for local SDK testing.
 
 ---
 
@@ -196,7 +196,7 @@ Two layers of virtual host matching exist side-by-side: one at the Apache `httpd
 ```
 
 - `ServerName` is the canonical hostname; `ServerAlias` adds extra hostnames that resolve to the same vhost.
-- `ServerName` must match the incoming `Host` header exactly — wildcards only work in `ServerAlias`.
+- `ServerName` must match the incoming `Host` header exactly - wildcards only work in `ServerAlias`.
 - Enable the vhost by symlinking it into `enabled_vhosts/`:
 
 ```bash
@@ -221,7 +221,7 @@ The Dispatcher farm evaluates its own `/virtualhosts` glob list. A request that 
 When multiple farms are active, each has its own `virtualhosts.any`. The Dispatcher evaluates farms in file-name order and picks the **first farm whose glob list matches** the incoming `Host` header. Name farms `00_api.farm`, `10_publish.farm`, etc., so the order is deterministic.
 
 :::warning
-Forgetting `"localhost"` in `virtualhosts.any` is a classic cause of local SDK requests returning `404` — the Apache side accepts the request, but the Dispatcher farm silently declines it.
+Forgetting `"localhost"` in `virtualhosts.any` is a classic cause of local SDK requests returning `404` - the Apache side accepts the request, but the Dispatcher farm silently declines it.
 :::
 
 ---
@@ -274,7 +274,7 @@ Filter rules are evaluated **top-to-bottom**. The first matching rule wins. Alwa
 | `/content/dam/*` | Allow | Digital assets (images, PDFs, videos) |
 | `/graphql/execute.json/*` | Allow | Content Fragment GraphQL endpoint |
 | `/libs/*` | Deny | Internal server-side libraries |
-| `/apps/*` | Deny | Application code — never exposed publicly |
+| `/apps/*` | Deny | Application code - never exposed publicly |
 | `/system/*` | Deny | AEM system servlets |
 | `/crx/*` | Deny | CRX/DE repository browser |
 | `/bin/*` | Deny | Internal servlets and workflow triggers |
@@ -411,10 +411,10 @@ The `statfileslevel` setting controls how deep in the directory tree `.stat` fil
 
 | Level | Behaviour | Trade-off |
 |---|---|---|
-| `"0"` | Single `.stat` at the docroot — every flush invalidates the entire cache | Simple but aggressive |
+| `"0"` | Single `.stat` at the docroot - every flush invalidates the entire cache | Simple but aggressive |
 | `"1"` | `.stat` per first-level directory (e.g., `/content/mysite/`) | Balanced for single-site setups |
 | `"2"` | `.stat` per second-level directory (e.g., `/content/mysite/en/`) | Good for multi-language sites |
-| `"3"+` | Deeper granularity — only nearby cached files are invalidated | Precise but more `.stat` file overhead |
+| `"3"+` | Deeper granularity - only nearby cached files are invalidated | Precise but more `.stat` file overhead |
 
 :::tip
 For a typical multi-language site, `statfileslevel "2"` is a good starting point. It ensures that flushing an English page does not invalidate cached German pages.
@@ -439,7 +439,7 @@ Triggers:       On Receive (replication events)
 
 ## Cache Warming
 
-After a large invalidation — a site-wide publish, a CDN purge, or a fresh deployment — the Dispatcher cache is cold. The first request for each page pays the full publish round-trip. **Cache warming** pre-populates the cache before real traffic arrives.
+After a large invalidation - a site-wide publish, a CDN purge, or a fresh deployment - the Dispatcher cache is cold. The first request for each page pays the full publish round-trip. **Cache warming** pre-populates the cache before real traffic arrives.
 
 ### Sitemap-driven pre-warm
 
@@ -459,7 +459,7 @@ curl -s "$SITEMAP" \
       -H "Host: www.mysite.com" {}
 ```
 
-The `-P 8` flag runs eight parallel workers — enough to saturate the Dispatcher without overwhelming the publish tier.
+The `-P 8` flag runs eight parallel workers - enough to saturate the Dispatcher without overwhelming the publish tier.
 
 ### Post-deploy warming
 
@@ -612,7 +612,7 @@ Run the validator as a Git pre-commit hook so that broken configurations never r
 
 ## Debugging Toolkit
 
-When requests don't behave as expected, the Dispatcher is usually the noisiest layer — but also the one with the most observable state.
+When requests don't behave as expected, the Dispatcher is usually the noisiest layer - but also the one with the most observable state.
 
 ### Verbose logging with `DISP_LOG_LEVEL`
 
@@ -620,11 +620,11 @@ Set `DISP_LOG_LEVEL=debug` on the Dispatcher container (or vhost `LogLevel`) to 
 
 | Level | What it logs |
 |---|---|
-| `error` | Failures only — default for prod |
+| `error` | Failures only - default for prod |
 | `warn` | Plus warnings (cache write failures, missing renders) |
 | `info` | Plus cache hits/misses and rule matches |
 | `debug` | Plus per-rule evaluation trace |
-| `trace1` … `trace8` | Internal dispatcher state — use sparingly |
+| `trace1` … `trace8` | Internal dispatcher state - use sparingly |
 
 ```bash
 # Inside the Dispatcher container
@@ -638,11 +638,11 @@ tail -f /var/log/apache2/dispatcher.log
 
 1. **Was the request a `GET` or `HEAD`?** The Dispatcher only caches safe methods.
 2. **Did the response carry a `Set-Cookie` header?** Responses with cookies are never cached. Strip the cookie in a Sling filter or at the CDN.
-3. **Did the response include `Dispatcher: no-cache`?** That header is an opt-out — remove it or understand why it's set.
+3. **Did the response include `Dispatcher: no-cache`?** That header is an opt-out - remove it or understand why it's set.
 4. **Did the URL contain a query string?** By default, any `?` in the URL skips the cache. Use `/ignoreUrlParams` in the farm to allowlist known params.
 5. **Was the status `200`?** Only `200` and (if enabled) `404` are cached.
 6. **Did a filter rule `deny` the path?** Check `dispatcher.log` for `deny` lines.
-7. **Was the cache directory writable?** `ls -la /mnt/var/www/html` inside the container — permission errors here are silent in older dispatcher versions.
+7. **Was the cache directory writable?** `ls -la /mnt/var/www/html` inside the container - permission errors here are silent in older dispatcher versions.
 
 ### Useful inspection commands
 
@@ -672,7 +672,7 @@ Security headers (`Strict-Transport-Security`, `X-Content-Type-Options`, `Conten
 
 | Layer | Set headers here when… | How |
 |---|---|---|
-| **CDN (`cdn.yaml`)** | You run AEMaaCS and want headers on every response, including CDN-served errors and redirects | `responseTransformations` rules — see the CDN section above |
+| **CDN (`cdn.yaml`)** | You run AEMaaCS and want headers on every response, including CDN-served errors and redirects | `responseTransformations` rules - see the CDN section above |
 | **Apache vhost** | You run on-prem/AMS, or need headers on responses the CDN bypasses | `Header always set X-Content-Type-Options nosniff` in the vhost |
 | **AEM (Sling filter)** | The header depends on the rendered content (per-page CSP nonces, per-component policies) | `OSGi Filter` with `sling.filter.scope=REQUEST` |
 
@@ -704,7 +704,7 @@ Load balancers and orchestrators (Kubernetes, AWS ALB, GCP NLB) need an endpoint
 
 ### Dispatcher-only check
 
-A simple static file bypasses the publish tier entirely — use this for the load balancer's "is Apache up" check:
+A simple static file bypasses the publish tier entirely - use this for the load balancer's "is Apache up" check:
 
 ```apacheconf
 # conf.d/available_vhosts/default.vhost
@@ -721,7 +721,7 @@ echo "ok" > /var/www/healthcheck.html
 
 ### End-to-end check
 
-An end-to-end check verifies that the Dispatcher can reach the publish tier and that the publish tier responds. The AEM out-of-the-box endpoint is `/libs/granite/core/content/login.html` — allow it through the filter for the health-check source IP only:
+An end-to-end check verifies that the Dispatcher can reach the publish tier and that the publish tier responds. The AEM out-of-the-box endpoint is `/libs/granite/core/content/login.html` - allow it through the filter for the health-check source IP only:
 
 ```apacheconf
 # filters.any
@@ -1290,7 +1290,7 @@ For the full specification, see the [Adobe documentation on CDN traffic configur
 ### 1. Overly Broad Allow Rules
 
 ```apacheconf
-# BAD — allows everything, defeating the purpose of the filter
+# BAD - allows everything, defeating the purpose of the filter
 /0001 { /type "deny"  /url "*" }
 /0002 { /type "allow" /url "/*" }
 ```
@@ -1319,7 +1319,7 @@ Forgetting to allow `/etc.clientlibs/*` causes all JavaScript and CSS to fail on
 
 ### 4. Forgetting to Invalidate
 
-After deploying content changes, verify that your flush agents are active and that `.stat` files are being updated. A stale cache is invisible — the site looks fine but shows old content.
+After deploying content changes, verify that your flush agents are active and that `.stat` files are being updated. A stale cache is invisible - the site looks fine but shows old content.
 
 ### 5. Not Testing with the Dispatcher During Development
 

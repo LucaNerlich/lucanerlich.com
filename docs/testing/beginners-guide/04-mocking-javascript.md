@@ -18,7 +18,7 @@ sidebar_position: 4
 
 Unit tests should be fast and deterministic. The moment a test hits a real network, database, or file system, it becomes slow, flaky, and dependent on external state. **Mocking** solves this by replacing the real dependency with a controlled stand-in that you define in the test.
 
-Jest and Vitest both ship a comprehensive mocking system. The APIs are largely identical — examples in this chapter work in both frameworks with minor import differences noted where relevant.
+Jest and Vitest both ship a comprehensive mocking system. The APIs are largely identical - examples in this chapter work in both frameworks with minor import differences noted where relevant.
 
 ## Why Mock?
 
@@ -46,9 +46,9 @@ A test with a mocked `fetch`:
 - Takes microseconds
 - Can simulate any scenario you need
 
-## jest.fn() — Creating a Mock Function
+## jest.fn() - Creating a Mock Function
 
-`jest.fn()` creates a mock function — a function that records every call made to it and lets you define what it returns.
+`jest.fn()` creates a mock function - a function that records every call made to it and lets you define what it returns.
 
 ```typescript
 const mockFn = jest.fn();
@@ -119,7 +119,7 @@ it('calls the sender with the correct arguments', async () => {
 });
 ```
 
-## jest.spyOn() — Spying on Existing Methods
+## jest.spyOn() - Spying on Existing Methods
 
 `jest.fn()` creates a brand new function. `jest.spyOn()` wraps an *existing* method on an object, letting you observe calls without fully replacing the implementation.
 
@@ -159,7 +159,7 @@ describe('Logger', () => {
 });
 ```
 
-## jest.mock() — Mocking Entire Modules
+## jest.mock() - Mocking Entire Modules
 
 `jest.mock()` replaces an entire module with a mocked version. Every export from the module becomes a `jest.fn()` (or a hoisted auto-mock). This is the most powerful mocking mechanism.
 

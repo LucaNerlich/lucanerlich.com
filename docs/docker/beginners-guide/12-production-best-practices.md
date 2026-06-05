@@ -1,7 +1,7 @@
 ---
 title: "Production Best Practices"
 sidebar_label: "Production Best Practices"
-description: Learn how to harden Docker containers for production — non-root users, read-only filesystems, minimal base images, resource limits, restart policies, and a complete end-to-end project.
+description: Learn how to harden Docker containers for production - non-root users, read-only filesystems, minimal base images, resource limits, restart policies, and a complete end-to-end project.
 slug: /docker/beginners-guide/production-best-practices
 tags: [docker, beginners, devops]
 keywords:
@@ -22,7 +22,7 @@ Getting a container to run is the easy part. Getting it to run **safely and reli
 
 ## 1. Run as a Non-Root User
 
-By default, processes inside a container run as `root` (UID 0). If an attacker exploits your application and escapes the container, they have root access on the host — unless you drop privileges.
+By default, processes inside a container run as `root` (UID 0). If an attacker exploits your application and escapes the container, they have root access on the host - unless you drop privileges.
 
 ### In the Dockerfile
 
@@ -115,7 +115,7 @@ Every package in a base image is a potential vulnerability. Smaller base images 
 | `node:20-slim` | ~230 MB | Slim Debian + Node.js |
 | `node:20-alpine` | ~60 MB | Alpine Linux + Node.js |
 | `gcr.io/distroless/nodejs20-debian12` | ~110 MB | No shell, no package manager |
-| `scratch` | 0 B | Empty — for static binaries only |
+| `scratch` | 0 B | Empty - for static binaries only |
 
 ### Alpine
 
@@ -135,7 +135,7 @@ ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "src/index.js"]
 ```
 
-(`dumb-init` is a tiny init process that correctly forwards signals to child processes — important for graceful shutdown.)
+(`dumb-init` is a tiny init process that correctly forwards signals to child processes - important for graceful shutdown.)
 
 ### Distroless
 
@@ -156,7 +156,7 @@ EXPOSE 3000
 CMD ["src/index.js"]
 ```
 
-Note: with distroless, `docker exec -it my-app sh` will not work — there is no shell. Use `docker exec my-app node -e "console.log('test')"` for ad-hoc debugging, or temporarily rebuild with a full image.
+Note: with distroless, `docker exec -it my-app sh` will not work - there is no shell. Use `docker exec my-app node -e "console.log('test')"` for ad-hoc debugging, or temporarily rebuild with a full image.
 
 ---
 
@@ -167,7 +167,7 @@ Without resource limits, a single misbehaving container can consume all availabl
 ### Memory limits
 
 ```bash
-# Hard memory limit — container is killed (OOMKilled) if it exceeds this
+# Hard memory limit - container is killed (OOMKilled) if it exceeds this
 docker run -d --memory 512m my-app
 
 # Soft limit (Docker tries to reclaim memory above this when the host is under pressure)
@@ -572,4 +572,4 @@ Before going live with a Dockerised application, verify:
 | `docker scout` in CI | Catches CVEs before deployment |
 | `.dockerignore` | Keeps context small and secrets safe |
 
-Containerisation is not just about packaging — it is a discipline. The practices in this chapter make your containers reliable, observable, and defensible in production. Combined with the CI/CD workflow from the previous chapter, you have a complete, professional Docker workflow from development to production.
+Containerisation is not just about packaging - it is a discipline. The practices in this chapter make your containers reliable, observable, and defensible in production. Combined with the CI/CD workflow from the previous chapter, you have a complete, professional Docker workflow from development to production.

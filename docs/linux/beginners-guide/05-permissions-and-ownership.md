@@ -15,7 +15,7 @@ sidebar_position: 5
 
 # Permissions and Ownership
 
-Linux has a fine-grained permission system that controls who can read, write, and execute every file and directory on the system. Understanding permissions is not optional — misconfigured permissions cause security vulnerabilities, service failures, and are a frequent source of "Permission denied" errors in production.
+Linux has a fine-grained permission system that controls who can read, write, and execute every file and directory on the system. Understanding permissions is not optional - misconfigured permissions cause security vulnerabilities, service failures, and are a frequent source of "Permission denied" errors in production.
 
 ---
 
@@ -95,7 +95,7 @@ A full permission set is three octal digits:
 
 ---
 
-## Changing Permissions — `chmod`
+## Changing Permissions - `chmod`
 
 `chmod` (change mode) modifies the permission bits.
 
@@ -131,14 +131,14 @@ chmod o-rwx private.txt
 ### Octal Mode
 
 ```bash
-# Set to rwxr-xr-x (755) — standard for executables/directories
+# Set to rwxr-xr-x (755) - standard for executables/directories
 chmod 755 script.sh
 chmod 755 /opt/myapp/
 
-# Set to rw-r--r-- (644) — standard for config/data files
+# Set to rw-r--r-- (644) - standard for config/data files
 chmod 644 app.conf
 
-# Set to rw------- (600) — private files
+# Set to rw------- (600) - private files
 chmod 600 ~/.ssh/id_ed25519
 
 # Recursive: apply to directory and all contents
@@ -154,7 +154,7 @@ find /opt/myapp/bin -type f -exec chmod 755 {} +
 
 ---
 
-## Changing Ownership — `chown` and `chgrp`
+## Changing Ownership - `chown` and `chgrp`
 
 ```bash
 # Change owner
@@ -197,7 +197,7 @@ chmod -R 770 /var/log/myapp/
 
 ---
 
-## Default Permissions — `umask`
+## Default Permissions - `umask`
 
 When you create a new file or directory, Linux assigns default permissions. The `umask` (user file-creation mask) controls this by specifying which permission bits to remove from the defaults.
 
@@ -239,7 +239,7 @@ For sensitive applications (private key storage, secrets directories), use umask
 
 Beyond the standard rwx bits, Linux has three special bits.
 
-### Setuid (SUID) — 4000
+### Setuid (SUID) - 4000
 
 When set on an executable, it runs with the **owner's permissions** regardless of who executes it.
 
@@ -260,7 +260,7 @@ chmod u+s executable
 
 SUID on scripts is generally ignored by the kernel. It only works reliably on compiled binaries.
 
-### Setgid (SGID) — 2000
+### Setgid (SGID) - 2000
 
 When set on an **executable**, it runs with the **group's permissions**. When set on a **directory**, new files created inside inherit the directory's group instead of the creator's primary group.
 
@@ -276,9 +276,9 @@ chmod 2755 executable
 chmod g+s directory/
 ```
 
-### Sticky Bit — 1000
+### Sticky Bit - 1000
 
-When set on a directory, only the **file's owner**, the **directory's owner**, or **root** can delete files inside it — even if other users have write access to the directory.
+When set on a directory, only the **file's owner**, the **directory's owner**, or **root** can delete files inside it - even if other users have write access to the directory.
 
 ```bash
 # /tmp always has sticky bit set
@@ -293,7 +293,7 @@ chmod +t /opt/shared-uploads/
 
 ---
 
-## Privilege Escalation — `sudo`
+## Privilege Escalation - `sudo`
 
 `sudo` (superuser do) allows a permitted user to run commands as root (or another user) without logging in as root.
 
@@ -316,7 +316,7 @@ sudo -l
 
 ### `/etc/sudoers` Basics
 
-The sudoers file controls who can use sudo and what they can do. **Always edit it with `visudo`** — it validates syntax before saving, preventing you from locking yourself out.
+The sudoers file controls who can use sudo and what they can do. **Always edit it with `visudo`** - it validates syntax before saving, preventing you from locking yourself out.
 
 ```bash
 sudo visudo
@@ -353,7 +353,7 @@ sudo visudo -f /etc/sudoers.d/deploy
 deploy ALL=(ALL) NOPASSWD: /bin/systemctl restart myapp, /bin/systemctl status myapp
 ```
 
-### `su` — Switch User
+### `su` - Switch User
 
 ```bash
 # Switch to root (requires root password)
@@ -389,9 +389,9 @@ find / -type f \( -perm /4000 -o -perm /2000 \) 2>/dev/null
 
 # Application log directory: app writes, ops can read
 ls -ld /var/log/myapp/
-# drwxrwxr-x deploy ops — or drwxr-x--- deploy adm
+# drwxrwxr-x deploy ops - or drwxr-x--- deploy adm
 
 # Web root: web server reads, not writes
 ls -ld /var/www/html/
-# drwxr-xr-x root root — nginx/apache serves as its own user
+# drwxr-xr-x root root - nginx/apache serves as its own user
 ```

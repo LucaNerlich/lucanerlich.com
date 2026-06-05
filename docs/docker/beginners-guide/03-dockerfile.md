@@ -29,7 +29,7 @@ A Dockerfile is a sequence of instructions, one per line. Docker executes them f
 INSTRUCTION arguments
 ```
 
-Here is a minimal working example — a Node.js application:
+Here is a minimal working example - a Node.js application:
 
 ```dockerfile
 FROM node:20-alpine
@@ -55,7 +55,7 @@ Let us go through every instruction you will use.
 
 ### FROM
 
-Every Dockerfile must start with `FROM`. It sets the **base image** — the starting point your image builds on top of.
+Every Dockerfile must start with `FROM`. It sets the **base image** - the starting point your image builds on top of.
 
 ```dockerfile
 # Start from an official base
@@ -69,9 +69,9 @@ FROM node:20-alpine AS builder
 ```
 
 Choosing the right base image matters:
-- `node:20` — Full Debian-based image (~1 GB). Everything installed.
-- `node:20-slim` — Debian with only the essentials (~200 MB).
-- `node:20-alpine` — Alpine Linux-based (~60 MB). Smaller, but uses `musl` libc, which occasionally causes compatibility issues with native addons.
+- `node:20` - Full Debian-based image (~1 GB). Everything installed.
+- `node:20-slim` - Debian with only the essentials (~200 MB).
+- `node:20-alpine` - Alpine Linux-based (~60 MB). Smaller, but uses `musl` libc, which occasionally causes compatibility issues with native addons.
 
 ### WORKDIR
 
@@ -109,7 +109,7 @@ COPY --chown=node:node . .
 # Unpack a local tarball
 ADD app.tar.gz /app/
 
-# Fetch from a URL (avoid this — it defeats layer caching and is hard to audit)
+# Fetch from a URL (avoid this - it defeats layer caching and is hard to audit)
 ADD https://example.com/config.json /config/
 ```
 
@@ -131,7 +131,7 @@ The `&&` chaining pattern is important for package managers: if you run `apt-get
 
 ### EXPOSE
 
-Documents which network ports the container listens on. It does **not** publish the port — that is done with `-p` at `docker run` time. It is metadata for tooling and humans.
+Documents which network ports the container listens on. It does **not** publish the port - that is done with `-p` at `docker run` time. It is metadata for tooling and humans.
 
 ```dockerfile
 EXPOSE 3000
@@ -166,7 +166,7 @@ docker build --build-arg APP_VERSION=2.1.0 .
 Provides the **default command** to run when a container starts. It can be overridden by anything you pass after the image name in `docker run`.
 
 ```dockerfile
-# Exec form (preferred — no shell interpretation, signals work correctly)
+# Exec form (preferred - no shell interpretation, signals work correctly)
 CMD ["node", "src/index.js"]
 
 # Shell form (runs via /bin/sh -c)
@@ -177,7 +177,7 @@ Always prefer the exec form (`["executable", "arg1", "arg2"]`) so that the proce
 
 ### ENTRYPOINT
 
-Sets the executable that always runs. Unlike `CMD`, it is not overridden by arguments passed to `docker run` — those arguments are passed *to* the entrypoint instead.
+Sets the executable that always runs. Unlike `CMD`, it is not overridden by arguments passed to `docker run` - those arguments are passed *to* the entrypoint instead.
 
 ```dockerfile
 ENTRYPOINT ["node"]
@@ -199,7 +199,7 @@ CMD ["node", "src/index.js"]
 
 ### USER
 
-Switches the user for subsequent `RUN`, `CMD`, and `ENTRYPOINT` instructions. Always drop privileges before the final `CMD` — running as root inside a container is a security risk.
+Switches the user for subsequent `RUN`, `CMD`, and `ENTRYPOINT` instructions. Always drop privileges before the final `CMD` - running as root inside a container is a security risk.
 
 ```dockerfile
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
@@ -236,7 +236,7 @@ CMD ["node", "src/index.js"]
 ```dockerfile
 FROM node:20-alpine
 WORKDIR /app
-# Only package files first — this layer is cached as long as package.json hasn't changed
+# Only package files first - this layer is cached as long as package.json hasn't changed
 COPY package*.json ./
 RUN npm ci --omit=dev
 # Source code changes only bust layers from here down
@@ -269,7 +269,7 @@ docker-compose*
 README.md
 ```
 
-Without `.dockerignore`, `node_modules` (often hundreds of megabytes) would be copied into the build context on every `docker build`, then immediately overwritten by `npm ci` — wasting time and bandwidth.
+Without `.dockerignore`, `node_modules` (often hundreds of megabytes) would be copied into the build context on every `docker build`, then immediately overwritten by `npm ci` - wasting time and bandwidth.
 
 ---
 

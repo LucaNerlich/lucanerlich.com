@@ -15,19 +15,19 @@ sidebar_position: 10
 
 # Package Management
 
-Every Linux distribution includes a **package manager** — a tool that downloads, installs, updates, and removes software from a curated repository of pre-built packages. Package managers handle dependency resolution automatically: when you install `nginx`, it also installs every library nginx depends on.
+Every Linux distribution includes a **package manager** - a tool that downloads, installs, updates, and removes software from a curated repository of pre-built packages. Package managers handle dependency resolution automatically: when you install `nginx`, it also installs every library nginx depends on.
 
 The package manager you use depends entirely on the distribution you are running. As a developer working across different environments, you will encounter at least two of these.
 
 ---
 
-## Debian / Ubuntu — `apt`
+## Debian / Ubuntu - `apt`
 
 `apt` (Advanced Package Tool) is the package manager for Debian-based systems including Ubuntu, Linux Mint, and Raspberry Pi OS. It is the one you will use most often on cloud servers.
 
 ### Updating the Package Index
 
-Before installing anything, update the local package list — this fetches the latest package metadata from the configured repositories:
+Before installing anything, update the local package list - this fetches the latest package metadata from the configured repositories:
 
 ```bash
 sudo apt update
@@ -41,7 +41,7 @@ This does **not** install anything. It only refreshes the list of available pack
 # Upgrade all upgradable packages
 sudo apt upgrade
 
-# Non-interactive upgrade (no prompts — safe for scripts)
+# Non-interactive upgrade (no prompts - safe for scripts)
 sudo apt upgrade -y
 
 # Full upgrade: also handles packages that require removal to upgrade
@@ -176,7 +176,7 @@ echo "Done"
 
 ---
 
-## Adding Repositories — PPAs
+## Adding Repositories - PPAs
 
 Ubuntu's default repositories do not always have the latest software versions. **PPAs** (Personal Package Archives) and third-party repositories provide more recent or specialised packages.
 
@@ -228,14 +228,14 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io
 ```
 
 Repository configurations are stored in:
-- `/etc/apt/sources.list` — main sources file
-- `/etc/apt/sources.list.d/*.list` — drop-in files (preferred for third-party repos)
+- `/etc/apt/sources.list` - main sources file
+- `/etc/apt/sources.list.d/*.list` - drop-in files (preferred for third-party repos)
 
 ---
 
-## RHEL / Fedora / CentOS — `dnf` and `yum`
+## RHEL / Fedora / CentOS - `dnf` and `yum`
 
-`dnf` (Dandified YUM) is the package manager for Red Hat-based systems. It replaced `yum` in Fedora 22 and RHEL 8. On older RHEL/CentOS 7 systems, use `yum` — the syntax is largely identical.
+`dnf` (Dandified YUM) is the package manager for Red Hat-based systems. It replaced `yum` in Fedora 22 and RHEL 8. On older RHEL/CentOS 7 systems, use `yum` - the syntax is largely identical.
 
 ### Core Commands
 
@@ -301,7 +301,7 @@ dnf repolist all
 # Enable a repository
 sudo dnf config-manager --enable epel
 
-# Add EPEL (Extra Packages for Enterprise Linux — essential for RHEL/CentOS)
+# Add EPEL (Extra Packages for Enterprise Linux - essential for RHEL/CentOS)
 sudo dnf install epel-release
 
 # Add a third-party repo (example: nginx.org)
@@ -325,7 +325,7 @@ You can generally substitute `yum` for `dnf` and the commands will work.
 
 ---
 
-## Alpine Linux — `apk`
+## Alpine Linux - `apk`
 
 Alpine uses `apk` (Alpine Package Keeper). It is primarily encountered inside Docker containers.
 
@@ -342,7 +342,7 @@ apk add nginx
 # Install multiple packages
 apk add nginx curl git bash
 
-# Install without caching (smaller Docker image — very common)
+# Install without caching (smaller Docker image - very common)
 apk add --no-cache nginx curl git
 
 # Remove a package

@@ -549,7 +549,7 @@ $tasks = $pdo->query('SELECT * FROM tasks ORDER BY created_at DESC')->fetchAll(P
                 </form>
                 <strong><?php echo htmlspecialchars($task['title']); ?></strong>
                 <?php if ($task['description']): ?>
-                    — <?php echo htmlspecialchars($task['description']); ?>
+                    - <?php echo htmlspecialchars($task['description']); ?>
                 <?php endif; ?>
                 <form method="post" action="" style="display: inline;">
                     <input type="hidden" name="action" value="delete">

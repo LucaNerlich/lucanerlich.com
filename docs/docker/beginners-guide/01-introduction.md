@@ -15,7 +15,7 @@ sidebar_position: 1
 
 # Introduction to Docker
 
-Docker is a platform that lets you package, ship, and run applications inside isolated environments called **containers**. Instead of saying "it works on my machine," you package your application along with everything it needs — its runtime, libraries, configuration — into a single portable unit that behaves identically on a developer laptop, a CI server, and a production host.
+Docker is a platform that lets you package, ship, and run applications inside isolated environments called **containers**. Instead of saying "it works on my machine," you package your application along with everything it needs - its runtime, libraries, configuration - into a single portable unit that behaves identically on a developer laptop, a CI server, and a production host.
 
 Since its public release in 2013, Docker has become the de-facto standard for containerisation and is at the heart of the modern software delivery pipeline. Understanding Docker is now a baseline skill for developers, regardless of their speciality.
 
@@ -42,8 +42,8 @@ This does not mean containers are always superior. VMs provide stronger isolatio
 
 Linux containers rely on two kernel primitives:
 
-- **Namespaces** — Each container gets its own view of process IDs, network interfaces, filesystem mounts, user IDs, and hostname. A process inside a container cannot see processes in other containers.
-- **cgroups (control groups)** — Limits the CPU, memory, and I/O that a container's processes can consume.
+- **Namespaces** - Each container gets its own view of process IDs, network interfaces, filesystem mounts, user IDs, and hostname. A process inside a container cannot see processes in other containers.
+- **cgroups (control groups)** - Limits the CPU, memory, and I/O that a container's processes can consume.
 
 Docker wraps these primitives with a friendly CLI and image format, making them accessible without deep kernel knowledge.
 
@@ -59,7 +59,7 @@ An image is a **read-only template** that describes the filesystem and metadata 
 
 ### Container
 
-A container is a **running instance of an image** — the object to the image's class. You can start many containers from the same image simultaneously, and each has its own writable layer on top of the image layers. Stopping or deleting a container does not affect the underlying image.
+A container is a **running instance of an image** - the object to the image's class. You can start many containers from the same image simultaneously, and each has its own writable layer on top of the image layers. Stopping or deleting a container does not affect the underlying image.
 
 ### Registry
 
@@ -73,7 +73,7 @@ The Docker **daemon** (`dockerd`) is the background service that manages images,
 
 ## Installing Docker
 
-### Option A — Docker Desktop (macOS / Windows / Linux GUI)
+### Option A - Docker Desktop (macOS / Windows / Linux GUI)
 
 Docker Desktop is the easiest way to get started on a developer workstation. It bundles the Docker daemon, the CLI, Docker Compose, and a graphical dashboard.
 
@@ -83,7 +83,7 @@ Docker Desktop is the easiest way to get started on a developer workstation. It 
 
 On macOS and Windows, Docker Desktop runs the Linux daemon inside a lightweight VM (using HyperKit / WSL 2) because those kernels do not have native Linux namespace support. This is transparent to you as a user.
 
-### Option B — Docker Engine on Linux (production / headless servers)
+### Option B - Docker Engine on Linux (production / headless servers)
 
 On a Linux server you typically install just the engine, without the GUI.
 
@@ -118,7 +118,7 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io \
 sudo usermod -aG docker $USER
 ```
 
-For other distributions (Fedora, Arch, RHEL) the steps are similar — consult the [official install docs](https://docs.docker.com/engine/install/).
+For other distributions (Fedora, Arch, RHEL) the steps are similar - consult the [official install docs](https://docs.docker.com/engine/install/).
 
 ---
 
@@ -173,6 +173,6 @@ docker image --help
 
 ## What Comes Next
 
-Now that Docker is installed and you understand the core vocabulary, the next chapter dives into working with images and containers — pulling images from Docker Hub, starting and stopping containers, and understanding the flags you will use every day.
+Now that Docker is installed and you understand the core vocabulary, the next chapter dives into working with images and containers - pulling images from Docker Hub, starting and stopping containers, and understanding the flags you will use every day.
 
 You will quickly find that Docker's CLI is opinionated and consistent, which means once you learn the pattern for one command, most others feel familiar immediately.

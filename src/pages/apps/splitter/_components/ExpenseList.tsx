@@ -10,7 +10,7 @@ type Props = {
 };
 
 const ExpenseList: React.FC<Props> = ({expenses, people, onRemove}) => {
-    const nameOf = (id: string) => people.find(p => p.id === id)?.name ?? '—';
+    const nameOf = (id: string) => people.find(p => p.id === id)?.name ?? '-';
 
     return (
         <div className={styles.tableWrap}>

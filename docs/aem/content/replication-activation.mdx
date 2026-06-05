@@ -20,13 +20,13 @@ flowchart LR
     D -->|4. Deserialize & Install| E[Content Repository]
 ```
 
-1. **Trigger** — An author activates a page (manually, via workflow, or programmatically).
-2. **Serialize** — The replication agent reads the affected nodes from the JCR and packages them into a serialization format.
-3. **Transport** — The serialized payload is sent over HTTP(S) to the publish instance's replication receiver servlet.
-4. **Deserialize & Install** — The publish instance unpacks the payload and writes the nodes into its own repository.
+1. **Trigger** - An author activates a page (manually, via workflow, or programmatically).
+2. **Serialize** - The replication agent reads the affected nodes from the JCR and packages them into a serialization format.
+3. **Transport** - The serialized payload is sent over HTTP(S) to the publish instance's replication receiver servlet.
+4. **Deserialize & Install** - The publish instance unpacks the payload and writes the nodes into its own repository.
 
 :::tip
-AEM serializes not just the page node but also its `jcr:content` subtree. Referenced assets and components are **not** automatically included — they must be activated separately (or via a workflow that handles references).
+AEM serializes not just the page node but also its `jcr:content` subtree. Referenced assets and components are **not** automatically included - they must be activated separately (or via a workflow that handles references).
 :::
 
 ## Replication Agents
@@ -55,13 +55,13 @@ http://localhost:4502/etc/replication/agents.author/publish.html
 | **Transport User** | `transportUser` | User on the publish instance that writes the content |
 | **Transport Password** | `transportPassword` | Encrypted password for the transport user |
 | **Trigger** | `triggers` | `onModification`, `onDistribute`, `onOffTime`, or `manual` |
-| **Enabled** | `enabled` | `true` or `false` — disabled agents silently drop replication requests |
+| **Enabled** | `enabled` | `true` or `false` - disabled agents silently drop replication requests |
 | **Retry Delay** | `retryDelay` | Milliseconds between retries on transport failure (default `60000`) |
 | **Max Retries** | `maxRetries` | Number of retry attempts before the item is marked as failed |
-| **Log Level** | `logLevel` | `error`, `info`, or `debug` — controls verbosity in the agent log |
+| **Log Level** | `logLevel` | `error`, `info`, or `debug` - controls verbosity in the agent log |
 
 :::warning
-Always use a **dedicated service user** with minimal write permissions for `transportUser`. Never use `admin` in production — a compromised publish instance could otherwise gain full author-level access.
+Always use a **dedicated service user** with minimal write permissions for `transportUser`. Never use `admin` in production - a compromised publish instance could otherwise gain full author-level access.
 :::
 
 ### Creating an Agent via CRXDE
@@ -167,7 +167,7 @@ replicator.replicate(session, ReplicationActionType.ACTIVATE, "/content/mysite/e
 ```
 
 :::warning
-Always wrap replication calls in proper error handling and ensure the `Session` comes from a service user with replication permissions — not from the request's session in a servlet context.
+Always wrap replication calls in proper error handling and ensure the `Session` comes from a service user with replication permissions - not from the request's session in a servlet context.
 :::
 
 ## Tree Activation
@@ -223,7 +223,7 @@ For large subtrees (thousands of pages), prefer the **Managed Publishing** workf
 
 ## Reverse Replication
 
-Reverse replication moves content in the opposite direction — from **publish** back to **author**. This is used when content originates on the publish tier, such as user-generated content (UGC), form submissions, or community data.
+Reverse replication moves content in the opposite direction - from **publish** back to **author**. This is used when content originates on the publish tier, such as user-generated content (UGC), form submissions, or community data.
 
 ### How It Works
 
@@ -239,8 +239,8 @@ Reverse replication moves content in the opposite direction — from **publish**
 
 ### When to Avoid
 
-- High-volume data flows — reverse replication is not designed for bulk data transfer
-- Real-time requirements — polling introduces latency
+- High-volume data flows - reverse replication is not designed for bulk data transfer
+- Real-time requirements - polling introduces latency
 - When a dedicated data store (e.g. an external database or API) would be more appropriate
 
 ## Content Distribution (AEM as a Cloud Service)
@@ -259,7 +259,7 @@ In **AEM as a Cloud Service (AEMaaCS)**, classic queue-based replication is repl
 
 ### Golden Publish Topology
 
-In AEMaaCS, content is distributed to a **golden publish** instance first, which then fans out to all other publish instances. Authors do not configure individual replication agents — the infrastructure handles distribution, retries, and ordering automatically.
+In AEMaaCS, content is distributed to a **golden publish** instance first, which then fans out to all other publish instances. Authors do not configure individual replication agents - the infrastructure handles distribution, retries, and ordering automatically.
 
 :::tip
 On AEMaaCS, use the **Manage Publication** wizard or `replicator.replicate()` as usual. The API remains the same; only the transport layer changes under the hood.
@@ -301,19 +301,19 @@ A single failed item blocks all subsequent items in the queue (FIFO ordering). M
 
 ## Common Pitfalls
 
-1. **References not activated** — Publishing a page does not automatically publish linked assets, referenced content fragments, or experience fragments. Use the "References" panel in the Sites console to check and publish dependencies.
+1. **References not activated** - Publishing a page does not automatically publish linked assets, referenced content fragments, or experience fragments. Use the "References" panel in the Sites console to check and publish dependencies.
 
-2. **Circular replication** — Misconfiguring agents so that author replicates to publish and publish replicates back to author creates an infinite loop. Ensure reverse replication agents are configured correctly with distinct outbox/inbox paths.
+2. **Circular replication** - Misconfiguring agents so that author replicates to publish and publish replicates back to author creates an infinite loop. Ensure reverse replication agents are configured correctly with distinct outbox/inbox paths.
 
-3. **Queue backlog causing publish delays** — Large tree activations or bulk imports can flood the queue. Stagger activations or use off-peak scheduling.
+3. **Queue backlog causing publish delays** - Large tree activations or bulk imports can flood the queue. Stagger activations or use off-peak scheduling.
 
-4. **Activating unfinished content** — Without a proper workflow (e.g. review/approval), authors may accidentally publish draft pages. Enforce workflows on content paths.
+4. **Activating unfinished content** - Without a proper workflow (e.g. review/approval), authors may accidentally publish draft pages. Enforce workflows on content paths.
 
-5. **Forgetting dependent templates and policies** — A page will not render correctly on publish if its template, editable template policies, or client libraries have not been deployed or activated. Always verify that infrastructure content is in sync.
+5. **Forgetting dependent templates and policies** - A page will not render correctly on publish if its template, editable template policies, or client libraries have not been deployed or activated. Always verify that infrastructure content is in sync.
 
-6. **Agent credentials expiring** — If the transport user's password changes on publish but not in the agent configuration, replication silently fails. Use service users with non-expiring credentials or automate credential rotation.
+6. **Agent credentials expiring** - If the transport user's password changes on publish but not in the agent configuration, replication silently fails. Use service users with non-expiring credentials or automate credential rotation.
 
-7. **Missing Dispatcher flush** — Content may be activated on publish but visitors still see the old version because the Dispatcher cache was not invalidated. Ensure flush agents are configured and healthy.
+7. **Missing Dispatcher flush** - Content may be activated on publish but visitors still see the old version because the Dispatcher cache was not invalidated. Ensure flush agents are configured and healthy.
 
 ## See also
 

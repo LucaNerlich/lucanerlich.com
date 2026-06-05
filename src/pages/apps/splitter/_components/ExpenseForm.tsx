@@ -98,7 +98,7 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
                         }}
                     >
                         {people.length === 0 ? (
-                            <option value="">— add people first —</option>
+                            <option value="">- add people first -</option>
                         ) : (
                             people.map(p => (
                                 <option key={p.id} value={p.id}>

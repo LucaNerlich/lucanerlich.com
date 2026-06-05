@@ -21,7 +21,7 @@ Linux systems are built around plain text. Configuration files, logs, data files
 
 ## Reading Files
 
-### `cat` — Print Entire File
+### `cat` - Print Entire File
 
 `cat` (concatenate) prints the full contents of a file to the terminal.
 
@@ -41,7 +41,7 @@ cat -A file.txt
 
 `cat` is fine for small files. For large files, use `less`.
 
-### `less` — Paginated Reading
+### `less` - Paginated Reading
 
 `less` opens a file for reading one page at a time. It does not load the entire file into memory, making it ideal for large log files.
 
@@ -65,7 +65,7 @@ Key bindings inside `less`:
 | `N` | Previous match |
 | `q` | Quit |
 
-### `head` — First Lines
+### `head` - First Lines
 
 ```bash
 # Show first 10 lines (default)
@@ -78,7 +78,7 @@ head -n 50 /var/log/syslog
 head -c 100 /var/log/syslog
 ```
 
-### `tail` — Last Lines
+### `tail` - Last Lines
 
 ```bash
 # Show last 10 lines (default)
@@ -105,7 +105,7 @@ tail -n 50 -f /var/log/myapp/app.log
 
 Pipes and redirection are the glue that connects individual tools into powerful processing pipelines.
 
-### Pipe — `|`
+### Pipe - `|`
 
 A pipe sends the standard output of one command as the standard input of the next.
 
@@ -166,7 +166,7 @@ grep "ERROR" <<< "some ERROR message here"
 
 ---
 
-## Searching Text — `grep`
+## Searching Text - `grep`
 
 `grep` searches for lines matching a pattern in files or standard input.
 
@@ -245,7 +245,7 @@ grep -rl "db_password" /etc/ /opt/ 2>/dev/null
 
 ---
 
-## Stream Editing — `sed`
+## Stream Editing - `sed`
 
 `sed` (stream editor) reads input line by line, applies editing commands, and prints the result. It is most commonly used for find-and-replace.
 
@@ -327,7 +327,7 @@ sed -i "s|max_connections = .*|max_connections = 200|" /etc/postgresql/14/main/p
 
 ---
 
-## Field Processing — `awk`
+## Field Processing - `awk`
 
 `awk` is a full programming language for processing structured text. It splits each line into fields (separated by whitespace by default) and lets you act on them.
 
@@ -398,9 +398,9 @@ awk 'NR > 1 {sum += $3} END {print "Total:", sum}' report.csv
 
 ---
 
-## Extracting Fields — `cut`
+## Extracting Fields - `cut`
 
-`cut` is simpler than awk — use it when you just need specific fields.
+`cut` is simpler than awk - use it when you just need specific fields.
 
 ```bash
 # Extract characters 1-10
@@ -421,7 +421,7 @@ git log --pretty="%an" | sort | uniq -c | sort -rn
 
 ---
 
-## Sorting — `sort`
+## Sorting - `sort`
 
 ```bash
 # Sort alphabetically (default)
@@ -448,7 +448,7 @@ ls -s /var/log/*.log | sort -n
 
 ---
 
-## Unique Lines — `uniq`
+## Unique Lines - `uniq`
 
 `uniq` filters adjacent duplicate lines. Always sort first unless you want to keep non-adjacent duplicates.
 
@@ -483,7 +483,7 @@ awk '{print $6}' access.log | tr -d '"' | sort | uniq -c | sort -rn
 
 ---
 
-## Word and Line Count — `wc`
+## Word and Line Count - `wc`
 
 ```bash
 # Count lines, words, and bytes

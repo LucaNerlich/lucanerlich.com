@@ -15,7 +15,7 @@ sidebar_position: 11
 
 # Docker in CI/CD
 
-Building images on your laptop is only the first step. In a team environment, images should be built, tested, scanned, and pushed automatically on every commit — and deployed automatically on merges to the main branch. This is the core of a Docker-based CI/CD pipeline.
+Building images on your laptop is only the first step. In a team environment, images should be built, tested, scanned, and pushed automatically on every commit - and deployed automatically on merges to the main branch. This is the core of a Docker-based CI/CD pipeline.
 
 This chapter builds a complete GitHub Actions workflow that takes your code from a `git push` to a running container in production.
 
@@ -39,10 +39,10 @@ CI gives you a single, authoritative build process that every team member and ev
 
 A GitHub Actions workflow is a YAML file in `.github/workflows/`. It defines:
 
-- **Triggers** (`on:`) — Which events start the workflow (push, pull_request, release, schedule)
-- **Jobs** — Parallel or sequential groups of steps
-- **Steps** — Individual shell commands or actions (reusable workflow units)
-- **Runners** — The VMs that execute jobs (`ubuntu-latest`, `macos-latest`, Windows)
+- **Triggers** (`on:`) - Which events start the workflow (push, pull_request, release, schedule)
+- **Jobs** - Parallel or sequential groups of steps
+- **Steps** - Individual shell commands or actions (reusable workflow units)
+- **Runners** - The VMs that execute jobs (`ubuntu-latest`, `macos-latest`, Windows)
 
 ```yaml
 name: CI
@@ -170,7 +170,7 @@ jobs:
 
 ## Understanding Layer Caching in CI
 
-Without caching, every CI run reinstalls dependencies from scratch. With caching, the dependency-install layer is reused until `package.json` changes — turning a 4-minute build into a 30-second one.
+Without caching, every CI run reinstalls dependencies from scratch. With caching, the dependency-install layer is reused until `package.json` changes - turning a 4-minute build into a 30-second one.
 
 ### GitHub Actions cache (`type=gha`)
 
@@ -285,9 +285,9 @@ The simplest deployment strategy for a single server is to SSH in and `docker pu
 
 Note the `environment: production` in the job above. In your GitHub repo settings, you can configure environments with:
 
-- **Required reviewers** — A human must approve before the job runs
-- **Deployment branches** — Only `main` can deploy to production
-- **Wait timer** — Add a delay before deployment proceeds
+- **Required reviewers** - A human must approve before the job runs
+- **Deployment branches** - Only `main` can deploy to production
+- **Wait timer** - Add a delay before deployment proceeds
 
 This gives you a lightweight approval gate without a separate deployment tool.
 
@@ -357,11 +357,11 @@ jobs:
 
 ## CI/CD Best Practices
 
-1. **Never use `latest` as the deploy tag** — Always deploy by the exact image SHA or semver tag.
-2. **Scan before deploying** — Block the pipeline if critical CVEs are found.
-3. **Pin action versions** — Use `@v4` not `@main` to avoid supply-chain attacks.
-4. **Store credentials in GitHub Secrets** — Never hardcode registry credentials in YAML.
-5. **Use environments with protection rules** — Require approval for production deployments.
-6. **Keep build and deploy jobs separate** — Build once, deploy the same image to staging and then production.
-7. **Clean up old images** — Add `docker image prune` to your deployment script.
-8. **Test rollback** — Have a documented and tested procedure for reverting to the previous image tag.
+1. **Never use `latest` as the deploy tag** - Always deploy by the exact image SHA or semver tag.
+2. **Scan before deploying** - Block the pipeline if critical CVEs are found.
+3. **Pin action versions** - Use `@v4` not `@main` to avoid supply-chain attacks.
+4. **Store credentials in GitHub Secrets** - Never hardcode registry credentials in YAML.
+5. **Use environments with protection rules** - Require approval for production deployments.
+6. **Keep build and deploy jobs separate** - Build once, deploy the same image to staging and then production.
+7. **Clean up old images** - Add `docker image prune` to your deployment script.
+8. **Test rollback** - Have a documented and tested procedure for reverting to the previous image tag.

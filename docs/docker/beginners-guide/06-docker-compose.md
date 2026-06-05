@@ -16,7 +16,7 @@ sidebar_position: 6
 
 # Docker Compose
 
-Running a single container with `docker run` is straightforward. Running a web server, a database, a cache, and a background worker — all wired together, all starting in the right order, all sharing the right volumes and networks — quickly becomes unmanageable with raw CLI commands.
+Running a single container with `docker run` is straightforward. Running a web server, a database, a cache, and a background worker - all wired together, all starting in the right order, all sharing the right volumes and networks - quickly becomes unmanageable with raw CLI commands.
 
 **Docker Compose** solves this by letting you describe your entire application stack in a single YAML file (`docker-compose.yml`) and manage it with a handful of commands.
 
@@ -256,7 +256,7 @@ networks:
   backend:
 ```
 
-Here, `nginx` can reach both `api` and `db`, but `db` cannot be reached from `frontend` — a useful security boundary.
+Here, `nginx` can reach both `api` and `db`, but `db` cannot be reached from `frontend` - a useful security boundary.
 
 ---
 
@@ -432,7 +432,7 @@ docker compose config
 docker compose -f docker-compose.prod.yml config
 ```
 
-`docker compose config` is invaluable for debugging variable substitution — it shows the fully-resolved configuration with all `${VAR}` replaced by their actual values.
+`docker compose config` is invaluable for debugging variable substitution - it shows the fully-resolved configuration with all `${VAR}` replaced by their actual values.
 
 ---
 
@@ -461,6 +461,6 @@ Docker Compose eliminates the error-prone process of managing multi-container ap
 
 Key takeaways:
 - Use `depends_on` with `condition: service_healthy` for reliable startup ordering
-- Use `.env` files for configuration — keep secrets out of the Compose file
+- Use `.env` files for configuration - keep secrets out of the Compose file
 - Use `docker-compose.override.yml` for local development adjustments
 - `docker compose config` is your best friend for debugging YAML and variable substitution

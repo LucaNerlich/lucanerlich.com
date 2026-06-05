@@ -16,7 +16,7 @@ sidebar_position: 8
 
 # React Component Testing
 
-Testing React components presents a unique challenge: components are not just functions that return a value — they render UI, respond to user events, manage state, and talk to APIs. The question is always what to test and at what level.
+Testing React components presents a unique challenge: components are not just functions that return a value - they render UI, respond to user events, manage state, and talk to APIs. The question is always what to test and at what level.
 
 **React Testing Library (RTL)** answers this with a guiding philosophy: *test the way your users interact with the application, not the implementation details*. This means querying for elements the way a user finds them (by their visible text, their role, their label) and interacting with them through events, not by reaching into component internals.
 
@@ -80,7 +80,7 @@ test('renders the button label', () => {
 });
 ```
 
-### screen — Querying Elements
+### screen - Querying Elements
 
 RTL provides three families of query:
 
@@ -372,7 +372,7 @@ expect(element).toBeChecked();
 RTL's philosophy helps avoid bad tests, but it is worth being explicit:
 
 - **Do not test implementation details**: component state values, method calls on the component instance, internal event handler references
-- **Do not test the library itself**: do not test that React renders your JSX — test that the rendered output is what a user would see
+- **Do not test the library itself**: do not test that React renders your JSX - test that the rendered output is what a user would see
 - **Do not snapshot everything**: see chapter 9 for when snapshots are appropriate
 - **Do not duplicate coverage**: if `LoginForm` is already tested thoroughly, the page that renders it does not need to re-test the form logic
 

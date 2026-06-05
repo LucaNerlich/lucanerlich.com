@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 ## [1.13.0] - 2026-06-03
 
 ### Added
-- AEM guide: [Omnisearch Selection Bar Actions](/aem/ui/omnisearch-selection-bar-actions) — explains why Granite UI render conditions cannot be used for per-asset checks in the omnisearch selection bar, and how to implement a two-layer solution (DM feature flag render condition + custom JSON check servlet + client-side `foundation-selections-change` activator)
+- AEM guide: [Omnisearch Selection Bar Actions](/aem/ui/omnisearch-selection-bar-actions) - explains why Granite UI render conditions cannot be used for per-asset checks in the omnisearch selection bar, and how to implement a two-layer solution (DM feature flag render condition + custom JSON check servlet + client-side `foundation-selections-change` activator)
 
 ### Changed
 - Updated `@types/react` to `19.2.15`
@@ -22,24 +22,24 @@ All notable changes to this project will be documented in this file.
 ## [1.12.1] - 2026-05-18
 
 ### Fixed
-- Splitter: expense description is now optional — the form submits without one
+- Splitter: expense description is now optional - the form submits without one
 - Splitter: tab focus is now trapped within the expense form so rapid keyboard entry (description → amount → paid by → Add → repeat) no longer escapes to the footer
 - Splitter: adding an expense with an empty description no longer silently no-ops (the reducer guard was still requiring a non-empty description)
 - Splitter: people chips are now rendered inline with the name input in a tag-input style instead of awkwardly below it
 
 ### Changed
 - Splitter: removed multi-currency support; EUR is the only currency (simplifies the UI)
-- Splitter: all formatting and sorting now uses the `Intl` API — `Intl.NumberFormat` (cached), `Intl.Collator` for deterministic ID sorting, `Intl.PluralRules` for "expense/expenses" copy
+- Splitter: all formatting and sorting now uses the `Intl` API - `Intl.NumberFormat` (cached), `Intl.Collator` for deterministic ID sorting, `Intl.PluralRules` for "expense/expenses" copy
 
 ## [1.12.0] - 2026-05-18
 
 ### Added
-- New `/apps/` section with a self-contained **Splitter** app (`/apps/splitter/`) — add people, log shared expenses, and get the minimum settlement transactions. All state is encoded in the URL hash so sessions are shareable by copying the link. Landing page at `/apps/` lists all available apps.
+- New `/apps/` section with a self-contained **Splitter** app (`/apps/splitter/`) - add people, log shared expenses, and get the minimum settlement transactions. All state is encoded in the URL hash so sessions are shareable by copying the link. Landing page at `/apps/` lists all available apps.
 
 ## [1.11.3] - 2026-05-17
 
 ### Fixed
-- `dialog-validation.mdx`: Corrected 14 CSS attribute selectors from exact `=` to word `~=` match — exact match silently fails when a field carries multiple space-separated validators
+- `dialog-validation.mdx`: Corrected 14 CSS attribute selectors from exact `=` to word `~=` match - exact match silently fails when a field carries multiple space-separated validators
 - `component-dialogs.mdx`: Fixed `rootPath` attribute casing on Coral 3 pathfield examples (`rootpath` → `rootPath`)
 - `externalized-value-map-value.mdx`: Fixed annotation default value (`StringUtils.EMPTY` → `""`); rewrote injector `getValue()` to use standard Java type-checking and proper adaptable resolution instead of undefined `ReflectionUtil`/`InjectorUtil` helpers that would cause compile errors
 - `core-components.mdx`: Corrected Core Components install path (`/libs/wcm/core` → `/apps/core/wcm/components/`); updated example version from `2.15.2` (2021) to `2.27.0`; added tip linking to the GitHub releases page
@@ -47,12 +47,12 @@ All notable changes to this project will be documented in this file.
 ## [1.11.2] - 2026-05-17
 
 ### Fixed
-- Corrected `docker_run.sh` command in the Dispatcher deployment guide — removed spurious extra path arguments; correct form is `./bin/docker_run.sh dispatcher/src host.docker.internal:4503 8080`
+- Corrected `docker_run.sh` command in the Dispatcher deployment guide - removed spurious extra path arguments; correct form is `./bin/docker_run.sh dispatcher/src host.docker.internal:4503 8080`
 - Fixed inconsistent `src` path in Dispatcher SDK validation commands table (`src` → `dispatcher/src`)
 - Updated 31 Adobe Experience League URLs from the deprecated `/docs/` path to the canonical `/en/docs/` format across 14 AEM guide files
 
 ### Changed
-- Added 114 official documentation links (Apache Sling, OSGi specification, Apache Felix, Jackrabbit Oak, Adobe Experience League, aem.live, wcm.io, web.dev, OWASP) to 21 previously link-free files across the AEM guide — including backend, beginners-guide, content, components, edge-delivery, infrastructure, and UI sections
+- Added 114 official documentation links (Apache Sling, OSGi specification, Apache Felix, Jackrabbit Oak, Adobe Experience League, aem.live, wcm.io, web.dev, OWASP) to 21 previously link-free files across the AEM guide - including backend, beginners-guide, content, components, edge-delivery, infrastructure, and UI sections
 
 ## [1.11.1] - 2026-05-03
 
@@ -62,31 +62,31 @@ All notable changes to this project will be documented in this file.
 ## [1.11.0] - 2026-05-03
 
 ### Added
-- New AEM **Edge Delivery Services** section under `docs/aem/edge-delivery/` — 14 chapters replacing the previous single-page treatment: Overview, Architecture, Authoring models, Blocks (the component model), Customizing, Universal Editor, Development workflow, Sidekick & Sidekick Library, Admin API (helix5), Experimentation, Performance, Forms, Commerce Storefront, and Best practices
-- Blocks deep-dive — decoration lifecycle (eager / lazy / delayed phases driven by `aem.js`), reading rows and cells from the table-derived DOM, the `readBlockConfig` helper, block variations, key-value options, auto-blocks, accessing section / page metadata, common patterns and anti-patterns
-- Customizing chapter — `scripts/scripts.js` orchestration, `aem.js` decoration override hooks (`decorateMain`, `decorateButtons`, `decorateIcons`, `decorateSections`, `decorateBlocks`, `buildAutoBlocks`), `delayed.js` patterns, `head.html` resource hints, theme tokens in `styles/styles.css`, font self-hosting, `paths.yaml` rewrites, `helix-config.yaml` response headers (CSP, HSTS, Permissions-Policy), bring-your-own-CDN setup, and the `/plugins/` directory
-- **Admin API (helix5) reference** — full `admin.hlx.page` documentation with API-key auth, endpoint catalogue (`/status`, `/preview`, `/live`, `/code`, `/index`, `/cache`, `/log`, `/profile`, `/sitemap`, `/snapshot`, `/job`, `/config`), webhooks, common workflows (sitemap-driven bulk republish, scheduled GitHub Actions cron, source-vs-live drift audit, surrogate-key purges), error and rate-limit guidance, and a security checklist
-- Universal Editor chapter — the three JSON config files (`component-definition.json`, `component-models.json`, `component-filters.json`), `data-aue-*` instrumentation attributes, and the decoration pattern that preserves them by re-parenting nodes instead of cloning
-- Sidekick chapter — core extension actions plus the **Sidekick Library** (block library and tag library plugins), `tools/sidekick/config.json` plugin manifest, and a worked example of building a custom Sidekick plugin
-- EDS for Forms chapter — document-based and AEM Forms authoring paths, the `form` block and its helper modules, submission targets (AEM Forms, REST, SharePoint, email, webhooks), client-side validation with ARIA wiring, spam mitigation, accessibility invariants, and patterns for multi-step forms, asset uploads, and draft persistence
-- EDS Commerce Storefront chapter — render-time vs run-time data flows, the storefront block library (PLP, PDP, cart, checkout, account, search, recommendations), Adobe Commerce GraphQL integration, surrogate-key caching strategy, customer auth, SEO, performance pitfalls, and adapter strategies for commercetools / Shopify / custom backends
-- Experimentation chapter — experiments and audiences sheets, edge-side resolution (no client-side flicker), multivariate setup, sticky cookie assignment, analytics wiring in `delayed.js`, and concluding-an-experiment patterns
+- New AEM **Edge Delivery Services** section under `docs/aem/edge-delivery/` - 14 chapters replacing the previous single-page treatment: Overview, Architecture, Authoring models, Blocks (the component model), Customizing, Universal Editor, Development workflow, Sidekick & Sidekick Library, Admin API (helix5), Experimentation, Performance, Forms, Commerce Storefront, and Best practices
+- Blocks deep-dive - decoration lifecycle (eager / lazy / delayed phases driven by `aem.js`), reading rows and cells from the table-derived DOM, the `readBlockConfig` helper, block variations, key-value options, auto-blocks, accessing section / page metadata, common patterns and anti-patterns
+- Customizing chapter - `scripts/scripts.js` orchestration, `aem.js` decoration override hooks (`decorateMain`, `decorateButtons`, `decorateIcons`, `decorateSections`, `decorateBlocks`, `buildAutoBlocks`), `delayed.js` patterns, `head.html` resource hints, theme tokens in `styles/styles.css`, font self-hosting, `paths.yaml` rewrites, `helix-config.yaml` response headers (CSP, HSTS, Permissions-Policy), bring-your-own-CDN setup, and the `/plugins/` directory
+- **Admin API (helix5) reference** - full `admin.hlx.page` documentation with API-key auth, endpoint catalogue (`/status`, `/preview`, `/live`, `/code`, `/index`, `/cache`, `/log`, `/profile`, `/sitemap`, `/snapshot`, `/job`, `/config`), webhooks, common workflows (sitemap-driven bulk republish, scheduled GitHub Actions cron, source-vs-live drift audit, surrogate-key purges), error and rate-limit guidance, and a security checklist
+- Universal Editor chapter - the three JSON config files (`component-definition.json`, `component-models.json`, `component-filters.json`), `data-aue-*` instrumentation attributes, and the decoration pattern that preserves them by re-parenting nodes instead of cloning
+- Sidekick chapter - core extension actions plus the **Sidekick Library** (block library and tag library plugins), `tools/sidekick/config.json` plugin manifest, and a worked example of building a custom Sidekick plugin
+- EDS for Forms chapter - document-based and AEM Forms authoring paths, the `form` block and its helper modules, submission targets (AEM Forms, REST, SharePoint, email, webhooks), client-side validation with ARIA wiring, spam mitigation, accessibility invariants, and patterns for multi-step forms, asset uploads, and draft persistence
+- EDS Commerce Storefront chapter - render-time vs run-time data flows, the storefront block library (PLP, PDP, cart, checkout, account, search, recommendations), Adobe Commerce GraphQL integration, surrogate-key caching strategy, customer auth, SEO, performance pitfalls, and adapter strategies for commercetools / Shopify / custom backends
+- Experimentation chapter - experiments and audiences sheets, edge-side resolution (no client-side flicker), multivariate setup, sticky cookie assignment, analytics wiring in `delayed.js`, and concluding-an-experiment patterns
 
 ### Changed
-- Sidebar — `edge-delivery` inserted between `architecture` and the legacy AEM topic groups in `sidebar-order.ts`; new `aem/edge-delivery` ordering key arranges chapters in reading order (overview → architecture → authoring → blocks → customizing → universal-editor → development → sidekick → admin-api → experimentation → performance → forms → commerce → best-practices)
+- Sidebar - `edge-delivery` inserted between `architecture` and the legacy AEM topic groups in `sidebar-order.ts`; new `aem/edge-delivery` ordering key arranges chapters in reading order (overview → architecture → authoring → blocks → customizing → universal-editor → development → sidekick → admin-api → experimentation → performance → forms → commerce → best-practices)
 - Five sibling docs repointed from the old `helix.mdx` location to `../edge-delivery/overview.mdx`: SPA Editor, GraphQL, AIO App Builder, Dispatcher Configuration, AEM as a Cloud Service
 - Overview page preserves the `/aem/edge-delivery-services/` slug so the existing `/aem/helix/` redirect (and any external bookmarks) keep resolving
 
 ### Removed
-- `docs/aem/infrastructure/helix.mdx` — fully migrated into the new `docs/aem/edge-delivery/` section
+- `docs/aem/infrastructure/helix.mdx` - fully migrated into the new `docs/aem/edge-delivery/` section
 
 ## [1.10.0] - 2026-05-02
 
 ### Added
-- New "Building for the Web" sidebar category — groups Content Modeling, Semantic HTML, Web Performance, Build a Simple Blog Page, and the Web Content section under one parent, replacing five separate top-level entries
+- New "Building for the Web" sidebar category - groups Content Modeling, Semantic HTML, Web Performance, Build a Simple Blog Page, and the Web Content section under one parent, replacing five separate top-level entries
 - Web Content section split into eight focused chapters (Overview, Readability & Typography, Structure & Hierarchy, Forms & Interactions, Microcopy & Error States, Color & Contrast, Images & Media, Information Architecture) instead of a single 746-line monolith
-- New "Microcopy and Error States" chapter — buttons and primary actions, helper text and field hints, validation errors with inline `aria-describedby` patterns, empty states (including filtered variants), loading states with skeletons and progress bars, success confirmations, destructive confirmation dialogs, 404 and 5xx error pages, voice consistency, and a quick-reference table
-- New "Information Architecture" chapter — primary / utility / footer navigation patterns, `aria-current="page"` active state, breadcrumbs, taxonomies and label-drift, faceted filtering, search UX (typo recovery, recent and suggested queries), URL slug design rules, localised URLs, hub pages versus alphabetical dumps, and an IA audit checklist
+- New "Microcopy and Error States" chapter - buttons and primary actions, helper text and field hints, validation errors with inline `aria-describedby` patterns, empty states (including filtered variants), loading states with skeletons and progress bars, success confirmations, destructive confirmation dialogs, 404 and 5xx error pages, voice consistency, and a quick-reference table
+- New "Information Architecture" chapter - primary / utility / footer navigation patterns, `aria-current="page"` active state, breadcrumbs, taxonomies and label-drift, faceted filtering, search UX (typo recovery, recent and suggested queries), URL slug design rules, localised URLs, hub pages versus alphabetical dumps, and an IA audit checklist
 - Web Content guide expanded across the existing sections with extensive Do / Don't code examples covering language and tone, microcopy, typography and measure (CSS), heading hierarchy, lists versus paragraphs, primary CTAs, progressive disclosure, link text, form labels and inline errors, mobile-first DOM order, color tokens, dark-mode token redefinition, link underlines, alt text, and video captions (#52)
 - Cursor Cloud specific instructions in `AGENTS.md` (#50)
 - Initial Web Content section for readability, UX, focus, and visual design (#49)
@@ -98,33 +98,33 @@ All notable changes to this project will be documented in this file.
 ## [1.9.2] - 2026-04-22
 
 ### Fixed
-- Component Dialogs — restored three in-page anchor links (`#empty-dialog--starting-point`, `#layout--read-only`, `#msm--live-copy-considerations`) whose double-dash segments were inadvertently collapsed by the v1.9.1 typography sweep, breaking the Docusaurus build
+- Component Dialogs - restored three in-page anchor links (`#empty-dialog--starting-point`, `#layout--read-only`, `#msm--live-copy-considerations`) whose double-dash segments were inadvertently collapsed by the v1.9.1 typography sweep, breaking the Docusaurus build
 
 ## [1.9.1] - 2026-04-22
 
 ### Changed
-- Docs-wide typography cleanup — replaced the `--` em-dash substitute with a single `-` across 217 docs files, while preserving frontmatter delimiters, fenced code blocks (including mermaid arrows and CLI flags), inline code spans, table separators, and HTML comment delimiters
+- Docs-wide typography cleanup - replaced the `--` em-dash substitute with a single `-` across 217 docs files, while preserving frontmatter delimiters, fenced code blocks (including mermaid arrows and CLI flags), inline code spans, table separators, and HTML comment delimiters
 
 ## [1.9.0] - 2026-04-21
 
 ### Added
-- Build a Simple Blog Page — new "Before you start — what the pieces are" section orienting absolute beginners (what a website actually is, what HTML / CSS / JS each do, per-OS instructions for creating a folder and blank files in Finder / File Explorer / Linux file managers, why a word processor will not work, and what the `file://` URL prefix means), plus a new **Step 6 — Get this live on the internet** with two full deployment walkthroughs: **Option A** AWS S3 static hosting (free-tier account, bucket creation with public-access block unchecked, file upload, static-website-hosting toggle, public-read bucket-policy JSON snippet, bucket-website endpoint) with caveats on HTTPS via CloudFront / billing / Netlify-Pages alternatives; **Option B** VPS + nginx (ssh in, `apt install nginx`, `scp` the files up, move to `/var/www/blog`, minimal `server {}` block at `/etc/nginx/sites-available/blog`, symlink into `sites-enabled`, `nginx -t` and `systemctl reload nginx`) linking to the deeper VPS + nginx chapter for hardening and HTTPS; closes with an "S3 vs VPS vs Netlify" decision table
+- Build a Simple Blog Page - new "Before you start - what the pieces are" section orienting absolute beginners (what a website actually is, what HTML / CSS / JS each do, per-OS instructions for creating a folder and blank files in Finder / File Explorer / Linux file managers, why a word processor will not work, and what the `file://` URL prefix means), plus a new **Step 6 - Get this live on the internet** with two full deployment walkthroughs: **Option A** AWS S3 static hosting (free-tier account, bucket creation with public-access block unchecked, file upload, static-website-hosting toggle, public-read bucket-policy JSON snippet, bucket-website endpoint) with caveats on HTTPS via CloudFront / billing / Netlify-Pages alternatives; **Option B** VPS + nginx (ssh in, `apt install nginx`, `scp` the files up, move to `/var/www/blog`, minimal `server {}` block at `/etc/nginx/sites-available/blog`, symlink into `sites-enabled`, `nginx -t` and `systemctl reload nginx`) linking to the deeper VPS + nginx chapter for hardening and HTTPS; closes with an "S3 vs VPS vs Netlify" decision table
 
 ### Changed
-- Build a Simple Blog Page — plain-English glosses added on first use for **semantic HTML**, the **DOM**, **CSS custom properties**, **localStorage**, **media query**, and `<script type="module">`; VS Code recommendation now explains *why* (syntax highlighting, not a word processor); Summary gained a deployment bullet
+- Build a Simple Blog Page - plain-English glosses added on first use for **semantic HTML**, the **DOM**, **CSS custom properties**, **localStorage**, **media query**, and `<script type="module">`; VS Code recommendation now explains *why* (syntax highlighting, not a word processor); Summary gained a deployment bullet
 
 ## [1.8.0] - 2026-04-20
 
 ### Added
-- Build a Simple Blog Page — new Step 4 "Responsive header and footer" covering a mobile nav toggle with `aria-expanded` / `aria-controls` + `.visually-hidden` utility, a `@media (max-width: 40rem)` query, the adjacent-sibling combinator pattern (`[aria-expanded="true"] + nav`) for CSS-driven disclosure, and a multi-column footer that stacks via the same `repeat(auto-fit, minmax())` trick — plus a decision table contrasting `auto-fit` / `minmax()` against `@media` queries
+- Build a Simple Blog Page - new Step 4 "Responsive header and footer" covering a mobile nav toggle with `aria-expanded` / `aria-controls` + `.visually-hidden` utility, a `@media (max-width: 40rem)` query, the adjacent-sibling combinator pattern (`[aria-expanded="true"] + nav`) for CSS-driven disclosure, and a multi-column footer that stacks via the same `repeat(auto-fit, minmax())` trick - plus a decision table contrasting `auto-fit` / `minmax()` against `@media` queries
 
 ### Changed
-- Build a Simple Blog Page — cross-reference links threaded through every step: Step 2 links to the CSS beginners' chapters on box model / colors & typography / Flexbox, plus CSS Grid / Responsive Design / CSS Custom Properties for the "two things worth understanding" notes; Step 3 links to DOM and Events chapters; the relative-dates row links to the Intl API Formatting guide; Step 5 (fetch) links to Working with Data and the Async/Await guide; Vite section links to the VPS deploy chapter; Next steps expanded with targeted chapter links plus Web Performance. Summary and "What you will build" updated to mention the responsive header and multi-column footer; previous "Step 4 -- load posts from a JSON file" renumbered to Step 5 (optional)
+- Build a Simple Blog Page - cross-reference links threaded through every step: Step 2 links to the CSS beginners' chapters on box model / colors & typography / Flexbox, plus CSS Grid / Responsive Design / CSS Custom Properties for the "two things worth understanding" notes; Step 3 links to DOM and Events chapters; the relative-dates row links to the Intl API Formatting guide; Step 5 (fetch) links to Working with Data and the Async/Await guide; Vite section links to the VPS deploy chapter; Next steps expanded with targeted chapter links plus Web Performance. Summary and "What you will build" updated to mention the responsive header and multi-column footer; previous "Step 4 -- load posts from a JSON file" renumbered to Step 5 (optional)
 
 ## [1.7.0] - 2026-04-20
 
 ### Added
-- Build a Simple Blog Page guide — a standalone, super-beginner start-to-finish tutorial for building a working blog page with only HTML, CSS, and vanilla JavaScript (semantic markup, CSS Grid layout with `auto-fit`/`minmax`, CSS custom properties driving a `data-theme` dark-mode toggle, `Intl.RelativeTimeFormat` for human-readable dates, `localStorage` persistence, click-to-filter tags), plus an optional Step 4 that moves posts into `posts.json` via `fetch` with a `type="module"` / top-level-`await` variant, and a bonus section on when and how to adopt Vite (dev server, HMR, production build, "when is Vite worth it?" decision table) — sits at `/build-a-blog`, linked from the sidebar after Semantic HTML and from the home page under More Topics
+- Build a Simple Blog Page guide - a standalone, super-beginner start-to-finish tutorial for building a working blog page with only HTML, CSS, and vanilla JavaScript (semantic markup, CSS Grid layout with `auto-fit`/`minmax`, CSS custom properties driving a `data-theme` dark-mode toggle, `Intl.RelativeTimeFormat` for human-readable dates, `localStorage` persistence, click-to-filter tags), plus an optional Step 4 that moves posts into `posts.json` via `fetch` with a `type="module"` / top-level-`await` variant, and a bonus section on when and how to adopt Vite (dev server, HMR, production build, "when is Vite worth it?" decision table) - sits at `/build-a-blog`, linked from the sidebar after Semantic HTML and from the home page under More Topics
 
 ## [1.6.0] - 2026-04-20
 
@@ -132,41 +132,41 @@ All notable changes to this project will be documented in this file.
 - Changelog page at `/changelog`, rendered directly from the root `CHANGELOG.md` so the release history is browsable on the site
 
 ### Changed
-- Footer restructured from four thin columns (Content / Legal / Socials / Tech) into four balanced columns: **Docs** (AEM, Strapi, JavaScript, Java, Design Patterns), **Guides** (Docker, Linux, Git, Testing), **More** (Projects, Other, Changelog, Imprint), and **Connect** (LinkedIn, Xing, GitHub, Gitlab) — surfaces top content hubs, mirrors the navbar, and merges profile + repo links
+- Footer restructured from four thin columns (Content / Legal / Socials / Tech) into four balanced columns: **Docs** (AEM, Strapi, JavaScript, Java, Design Patterns), **Guides** (Docker, Linux, Git, Testing), **More** (Projects, Other, Changelog, Imprint), and **Connect** (LinkedIn, Xing, GitHub, Gitlab) - surfaces top content hubs, mirrors the navbar, and merges profile + repo links
 - Copyright line hyphen upgraded to an em-dash
 
 ## [1.5.0] - 2026-04-20
 
 ### Added
-- AEM Dispatcher Configuration guide — AEMaaCS vs AEM 6.5 comparison, two-layer Virtual Host Matching (Apache vhost + Dispatcher `virtualhosts.any` with farm ordering and `localhost` pitfall), Cache Warming (sitemap-driven, post-deploy, targeted), Debugging Toolkit (`DISP_LOG_LEVEL` levels, "why didn't this cache?" 7-step decision tree, inspection commands), Security Headers placement (CDN / Apache / Sling filter decision table), Health Check Endpoints (Dispatcher-only vs end-to-end, Kubernetes liveness/readiness split)
-- AEM Testing guide — expanded from stub into a full reference: test pyramid, tooling choices table, AEM Mocks vs Sling Mocks distinction, `AemContext` API reference, `ResourceResolverType` matrix (RESOURCERESOLVER_MOCK / JCR_MOCK / JCR_OAK / JCR_JACKRABBIT trade-offs), content loading patterns (JSON, Filevault XML, binary), eight concrete test patterns (Sling Model, request-adaptable model, OSGi service, service-user resolver, servlet, JCR-SQL2 query, Context-Aware Config, WireMock external HTTP), UI.tests module with WebdriverIO, Dispatcher validation CI gate, JaCoCo setup, smoke checklist, and common pitfalls
+- AEM Dispatcher Configuration guide - AEMaaCS vs AEM 6.5 comparison, two-layer Virtual Host Matching (Apache vhost + Dispatcher `virtualhosts.any` with farm ordering and `localhost` pitfall), Cache Warming (sitemap-driven, post-deploy, targeted), Debugging Toolkit (`DISP_LOG_LEVEL` levels, "why didn't this cache?" 7-step decision tree, inspection commands), Security Headers placement (CDN / Apache / Sling filter decision table), Health Check Endpoints (Dispatcher-only vs end-to-end, Kubernetes liveness/readiness split)
+- AEM Testing guide - expanded from stub into a full reference: test pyramid, tooling choices table, AEM Mocks vs Sling Mocks distinction, `AemContext` API reference, `ResourceResolverType` matrix (RESOURCERESOLVER_MOCK / JCR_MOCK / JCR_OAK / JCR_JACKRABBIT trade-offs), content loading patterns (JSON, Filevault XML, binary), eight concrete test patterns (Sling Model, request-adaptable model, OSGi service, service-user resolver, servlet, JCR-SQL2 query, Context-Aware Config, WireMock external HTTP), UI.tests module with WebdriverIO, Dispatcher validation CI gate, JaCoCo setup, smoke checklist, and common pitfalls
 
 ### Changed
-- `/llms.txt` — added the five new beginner guides (TypeScript, Docker, Git, Testing, Linux), added links to Dialog Validation, JCR Queries and API, Context-Aware Configuration, Testing, and Security basics, fixed the broken `/aem/infrastructure/dispatcher/` URL to point at `/aem/infrastructure/dispatcher-configuration/`, removed the stale `/git/` entry now that the Git beginners guide is in the top section
+- `/llms.txt` - added the five new beginner guides (TypeScript, Docker, Git, Testing, Linux), added links to Dialog Validation, JCR Queries and API, Context-Aware Configuration, Testing, and Security basics, fixed the broken `/aem/infrastructure/dispatcher/` URL to point at `/aem/infrastructure/dispatcher-configuration/`, removed the stale `/git/` entry now that the Git beginners guide is in the top section
 
 ## [1.4.0] - 2026-04-20
 
 ### Added
-- AEM Dialog Validation guide — `validate()` trigger table with `.checkValidity()` imperative example, "Two ways to declare a validator" subsection (`validation` attribute vs `granite:data/foundation-validation` child node), per-item multifield validation with partner-field revalidation, async/server-side validation with debounced fetch and cached results, expanded built-in validators split into field-level attributes and registered `foundation.*` validators, "Styling the invalid state" CSS section, and a 5-step debugging checklist
-- AEM Touch UI Component Dialogs — Adobe's native `cq-dialog-dropdown-showhide` / `cq-dialog-checkbox-showhide` pattern, FieldSet grouping widget with persistence explanation (Well vs FieldSet vs Multifield comparison), full `cq:editConfig` reference (drop targets, inline editors, refresh listeners, disabling default toolbar actions), link-tuple pattern (label + URL + target) with a security-aware `rel` Sling Model
+- AEM Dialog Validation guide - `validate()` trigger table with `.checkValidity()` imperative example, "Two ways to declare a validator" subsection (`validation` attribute vs `granite:data/foundation-validation` child node), per-item multifield validation with partner-field revalidation, async/server-side validation with debounced fetch and cached results, expanded built-in validators split into field-level attributes and registered `foundation.*` validators, "Styling the invalid state" CSS section, and a 5-step debugging checklist
+- AEM Touch UI Component Dialogs - Adobe's native `cq-dialog-dropdown-showhide` / `cq-dialog-checkbox-showhide` pattern, FieldSet grouping widget with persistence explanation (Well vs FieldSet vs Multifield comparison), full `cq:editConfig` reference (drop targets, inline editors, refresh listeners, disabling default toolbar actions), link-tuple pattern (label + URL + target) with a security-aware `rel` Sling Model
 
 ### Changed
-- AEM Dialog Validation guide — template validator now null-safe (`var value = (raw == null ? "" : String(raw)).trim()`), selectors updated to `~=` space-separated-word match so fields with multiple validators still trigger
-- AEM Touch UI Component Dialogs — `cq-msm-lockable` section expanded from a passing mention to a full explanation (mechanics, pitfalls, composite-multifield example), Tags field extended with `rootPath` scoping and a `TagManager`-based Sling Model reader
-- AEM Touch UI Component Dialogs — Validation section trimmed to a declarative quick-reference that links to the dedicated Dialog Validation page, removing duplicated content
+- AEM Dialog Validation guide - template validator now null-safe (`var value = (raw == null ? "" : String(raw)).trim()`), selectors updated to `~=` space-separated-word match so fields with multiple validators still trigger
+- AEM Touch UI Component Dialogs - `cq-msm-lockable` section expanded from a passing mention to a full explanation (mechanics, pitfalls, composite-multifield example), Tags field extended with `rootPath` scoping and a `TagManager`-based Sling Model reader
+- AEM Touch UI Component Dialogs - Validation section trimmed to a declarative quick-reference that links to the dedicated Dialog Validation page, removing duplicated content
 
 ## [1.3.2] - 2026-04-20
 
 ### Fixed
-- AEM JCR guide — SQL2 example no longer teaches query injection via user-controlled locale concatenation; now shows an allowlist pattern for caller-supplied values
-- AEM JCR guide — Session API example rewritten to use `getServiceResourceResolver` with a sub-service; removed hardcoded `admin:admin` credentials, fixed wrong port (`4503` → `4502` for author), dropped unused `TransientRepository` import, moved credentials warning out of the code fence into a `:::danger` admonition
-- AEM JCR guide — Groovy queries migrated from the deprecated `'sql'` language to `'JCR-SQL2'`; xpath cleanup example rewritten as JCR-SQL2; added dev-only console warning
-- AEM JCR guide — fixed stray footnote marker (`>`) and an orphan comment line that rendered outside its code fence; dropped obsolete `jackrabbit-standalone-2.4.0.jar` version reference
-- AEM Context-Aware Configuration guide — HTL `<script>` interpolation now uses explicit `@ context="scriptString"` to defend against XSS if HTL's auto-context misfires; `HeaderModel` null-checks the config returned from `.as(...)`
-- AEM Security basics — service-user mapping section now distinguishes AEMaaCS (repoinit + `ui.config`) from 6.5 (OSGi Console / Users admin UI) delivery
+- AEM JCR guide - SQL2 example no longer teaches query injection via user-controlled locale concatenation; now shows an allowlist pattern for caller-supplied values
+- AEM JCR guide - Session API example rewritten to use `getServiceResourceResolver` with a sub-service; removed hardcoded `admin:admin` credentials, fixed wrong port (`4503` → `4502` for author), dropped unused `TransientRepository` import, moved credentials warning out of the code fence into a `:::danger` admonition
+- AEM JCR guide - Groovy queries migrated from the deprecated `'sql'` language to `'JCR-SQL2'`; xpath cleanup example rewritten as JCR-SQL2; added dev-only console warning
+- AEM JCR guide - fixed stray footnote marker (`>`) and an orphan comment line that rendered outside its code fence; dropped obsolete `jackrabbit-standalone-2.4.0.jar` version reference
+- AEM Context-Aware Configuration guide - HTL `<script>` interpolation now uses explicit `@ context="scriptString"` to defend against XSS if HTL's auto-context misfires; `HeaderModel` null-checks the config returned from `.as(...)`
+- AEM Security basics - service-user mapping section now distinguishes AEMaaCS (repoinit + `ui.config`) from 6.5 (OSGi Console / Users admin UI) delivery
 
 ### Changed
-- AEM Architecture — moved `WCMUsePojo` out of the Sling Models comparison table into a dedicated "legacy" aside to avoid implying it is still a current choice
+- AEM Architecture - moved `WCMUsePojo` out of the Sling Models comparison table into a dedicated "legacy" aside to avoid implying it is still a current choice
 - AEM curl examples across Architecture, Groovy Console, Content Fragments, GraphQL, and Servlets guides now carry a consistent "Local SDK / dev only" note above every `admin:admin` block
 
 ## [1.3.1] - 2026-04-20
@@ -190,11 +190,11 @@ All notable changes to this project will be documented in this file.
 ## [1.2.0] - 2026-04-18
 
 ### Added
-- TypeScript beginner guide (12 chapters) — basic types through advanced mapped types, utility types, and real-world usage with React and Node.js
-- Docker beginner guide (12 chapters) — first container through multi-stage builds, Docker Compose, secrets, registries, and production hardening
-- Git beginner guide (12 chapters) — first commit through rebasing, collaborative workflows (GitHub Flow, GitFlow, trunk-based), and hooks
-- Testing beginner guide (12 chapters) — Jest/Vitest and JUnit 5, mocking with Mockito, TDD, React Testing Library, Playwright e2e, and coverage
-- Linux beginner guide (12 chapters) — filesystem navigation through bash scripting, networking, package management, and VPS hardening
+- TypeScript beginner guide (12 chapters) - basic types through advanced mapped types, utility types, and real-world usage with React and Node.js
+- Docker beginner guide (12 chapters) - first container through multi-stage builds, Docker Compose, secrets, registries, and production hardening
+- Git beginner guide (12 chapters) - first commit through rebasing, collaborative workflows (GitHub Flow, GitFlow, trunk-based), and hooks
+- Testing beginner guide (12 chapters) - Jest/Vitest and JUnit 5, mocking with Mockito, TDD, React Testing Library, Playwright e2e, and coverage
+- Linux beginner guide (12 chapters) - filesystem navigation through bash scripting, networking, package management, and VPS hardening
 - Navbar restructured into Language and Guides dropdowns to accommodate the expanded content
 
 ### Fixed
@@ -203,7 +203,7 @@ All notable changes to this project will be documented in this file.
 ## [1.1.2] - 2026-04-18
 
 ### Added
-- GitHub Actions CI workflow — builds on every PR and push to `main`, catching broken links before deployment
+- GitHub Actions CI workflow - builds on every PR and push to `main`, catching broken links before deployment
 - Projects and Other sections added to the top navbar for direct discoverability
 - Preconnect hints for Algolia DocSearch domains to reduce search latency
 - Frontmatter (title, description, tags, keywords, sidebar position) added to all four project pages

@@ -16,7 +16,7 @@ sidebar_position: 7
 
 # Test-Driven Development (TDD)
 
-Test-Driven Development turns the usual order on its head: instead of writing code and then testing it, you write a failing test first, then write just enough code to make it pass, then clean up the code. This cycle — **red, green, refactor** — is repeated for every small piece of behaviour.
+Test-Driven Development turns the usual order on its head: instead of writing code and then testing it, you write a failing test first, then write just enough code to make it pass, then clean up the code. This cycle - **red, green, refactor** - is repeated for every small piece of behaviour.
 
 TDD is not about having tests. It is about using tests to *drive* the design of your code. The tests you write before the code act as a specification, and the act of writing them forces you to think about the API, edge cases, and error handling before you are too deep in implementation to change course.
 
@@ -43,9 +43,9 @@ TDD is not about having tests. It is about using tests to *drive* the design of 
           └──────── repeat ──────►
 ```
 
-**Red**: Write one test that describes the next small piece of behaviour. Run the tests — the new test must fail (if it passes, either the test is wrong or the feature already exists). The failure proves the test is actually checking something.
+**Red**: Write one test that describes the next small piece of behaviour. Run the tests - the new test must fail (if it passes, either the test is wrong or the feature already exists). The failure proves the test is actually checking something.
 
-**Green**: Write the simplest code possible to make the test pass. Resist the urge to be clever — you can clean up in refactor. A hardcoded return value is often sufficient for the first pass.
+**Green**: Write the simplest code possible to make the test pass. Resist the urge to be clever - you can clean up in refactor. A hardcoded return value is often sufficient for the first pass.
 
 **Refactor**: With all tests green, improve the code's structure, remove duplication, rename for clarity. Run the tests again to confirm nothing broke.
 
@@ -53,16 +53,16 @@ TDD is not about having tests. It is about using tests to *drive* the design of 
 
 TDD is not a silver bullet. It is most valuable when:
 
-- The **business logic is complex** — tax calculation, pricing rules, state machines
-- The **API design is unclear** — writing the test first forces you to decide how the code will be used
-- You are **fixing a bug** — write a test that reproduces the bug, then fix it
-- Working in an **unfamiliar area** — tests give you early confidence signals
+- The **business logic is complex** - tax calculation, pricing rules, state machines
+- The **API design is unclear** - writing the test first forces you to decide how the code will be used
+- You are **fixing a bug** - write a test that reproduces the bug, then fix it
+- Working in an **unfamiliar area** - tests give you early confidence signals
 
 TDD tends to be less productive when:
 
 - You are doing **UI layout** or visual styling
-- You are writing **exploratory code** (spike/proof of concept) — throw it away and rewrite with TDD when you know what you are building
-- The problem is **completely clear and simple** — sometimes just writing the code is faster
+- You are writing **exploratory code** (spike/proof of concept) - throw it away and rewrite with TDD when you know what you are building
+- The problem is **completely clear and simple** - sometimes just writing the code is faster
 
 The goal is to make TDD a habit for the code that matters, not a religion applied everywhere.
 
@@ -75,7 +75,7 @@ We will build a `ShoppingCart` class step by step using TDD. The rules:
 - The total is the sum of `quantity * unitPrice` for all items
 - Applying a percentage discount reduces the total
 
-### Step 1 — Red: Empty cart has zero total
+### Step 1 - Red: Empty cart has zero total
 
 ```typescript
 // src/cart/cart.test.ts
@@ -94,9 +94,9 @@ describe('ShoppingCart', () => {
 });
 ```
 
-Running the tests: **RED** — `ShoppingCart` does not exist.
+Running the tests: **RED** - `ShoppingCart` does not exist.
 
-### Step 2 — Green: Minimal implementation
+### Step 2 - Green: Minimal implementation
 
 ```typescript
 // src/cart/cart.ts
@@ -109,7 +109,7 @@ export class ShoppingCart {
 
 Tests: **GREEN**.
 
-### Step 3 — Red: Adding an item increases total
+### Step 3 - Red: Adding an item increases total
 
 ```typescript
 it('adds an item and updates the total', () => {
@@ -118,9 +118,9 @@ it('adds an item and updates the total', () => {
 });
 ```
 
-**RED** — `addItem` does not exist.
+**RED** - `addItem` does not exist.
 
-### Step 4 — Green: Track items
+### Step 4 - Green: Track items
 
 ```typescript
 interface LineItem {
@@ -144,7 +144,7 @@ export class ShoppingCart {
 
 **GREEN**.
 
-### Step 5 — Red: Adding same item merges quantity
+### Step 5 - Red: Adding same item merges quantity
 
 ```typescript
 it('merges quantity when the same item is added twice', () => {
@@ -155,9 +155,9 @@ it('merges quantity when the same item is added twice', () => {
 });
 ```
 
-**RED** — quantities are not merged and `getItemCount` does not exist.
+**RED** - quantities are not merged and `getItemCount` does not exist.
 
-### Step 6 — Green + Refactor
+### Step 6 - Green + Refactor
 
 ```typescript
 export class ShoppingCart {
@@ -187,9 +187,9 @@ export class ShoppingCart {
 }
 ```
 
-**GREEN**. Note the refactor to `Map` — using a name as a key naturally prevents duplicates.
+**GREEN**. Note the refactor to `Map` - using a name as a key naturally prevents duplicates.
 
-### Step 7 — Red: Remove item
+### Step 7 - Red: Remove item
 
 ```typescript
 it('removes an item from the cart', () => {
@@ -205,7 +205,7 @@ it('does nothing when removing an item not in the cart', () => {
 });
 ```
 
-### Step 8 — Green
+### Step 8 - Green
 
 ```typescript
 removeItem(name: string): void {
@@ -215,7 +215,7 @@ removeItem(name: string): void {
 
 **GREEN**.
 
-### Step 9 — Red: Percentage discount
+### Step 9 - Red: Percentage discount
 
 ```typescript
 it('applies a percentage discount to the total', () => {
@@ -230,7 +230,7 @@ it('throws when discount is out of range', () => {
 });
 ```
 
-### Step 10 — Green
+### Step 10 - Green
 
 ```typescript
 private discountPercent = 0;
@@ -392,6 +392,6 @@ Tests that stub every dependency in the class under test often end up testing th
 
 ### TDD as a checkbox
 
-TDD only adds value when you genuinely think about the API while writing the test. Going through the motions — writing a trivial test, writing the obvious code, repeating — produces test coverage without design insight.
+TDD only adds value when you genuinely think about the API while writing the test. Going through the motions - writing a trivial test, writing the obvious code, repeating - produces test coverage without design insight.
 
-TDD is a skill that improves with practice. Start with a small, well-defined feature and work through the cycle a few times. The feedback loop it creates — write test, see it fail for the right reason, make it pass, clean up — becomes genuinely addictive once it clicks.
+TDD is a skill that improves with practice. Start with a small, well-defined feature and work through the cycle a few times. The feedback loop it creates - write test, see it fail for the right reason, make it pass, clean up - becomes genuinely addictive once it clicks.

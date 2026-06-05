@@ -34,7 +34,7 @@ interface User {
 }
 
 function displayUser(user: User): void {
-    console.log(`${user.name} <${user.email}> — joined ${user.createdAt.toLocaleDateString()}`);
+    console.log(`${user.name} <${user.email}> - joined ${user.createdAt.toLocaleDateString()}`);
 }
 
 const alice: User = {

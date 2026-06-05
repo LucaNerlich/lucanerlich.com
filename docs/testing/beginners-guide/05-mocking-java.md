@@ -16,7 +16,7 @@ sidebar_position: 5
 
 # Mocking in Java with Mockito
 
-Mockito is the standard mocking library for Java. It integrates seamlessly with JUnit 5 and lets you replace real dependencies with controlled fakes. When your service class depends on a repository that talks to a database, Mockito lets you define exactly what that repository returns for each test — without starting a database.
+Mockito is the standard mocking library for Java. It integrates seamlessly with JUnit 5 and lets you replace real dependencies with controlled fakes. When your service class depends on a repository that talks to a database, Mockito lets you define exactly what that repository returns for each test - without starting a database.
 
 ## Adding Mockito
 
@@ -84,7 +84,7 @@ You can also create mocks programmatically when you do not use the extension:
 UserRepository userRepository = Mockito.mock(UserRepository.class);
 ```
 
-## @InjectMocks — Injecting Mocks into the Class Under Test
+## @InjectMocks - Injecting Mocks into the Class Under Test
 
 `@InjectMocks` creates an instance of the class under test and injects all available `@Mock` fields into it. Mockito tries constructor injection first, then setter injection, then field injection.
 
@@ -114,7 +114,7 @@ This is equivalent to:
 UserService userService = new UserService(userRepository, emailService);
 ```
 
-Prefer constructor injection in your production classes — it makes `@InjectMocks` work reliably and the dependencies explicit.
+Prefer constructor injection in your production classes - it makes `@InjectMocks` work reliably and the dependencies explicit.
 
 ## Stubbing with when().thenReturn()
 
@@ -174,7 +174,7 @@ when(userRepository.findById(1L))
     .thenThrow(new RuntimeException("DB error"));  // third call
 ```
 
-### thenAnswer() — Dynamic Return Values
+### thenAnswer() - Dynamic Return Values
 
 Use `thenAnswer` when the return value depends on the argument:
 
@@ -237,7 +237,7 @@ verify(emailService).send(anyString(), anyString());
 verifyNoMoreInteractions(userRepository, emailService);
 ```
 
-## ArgumentCaptor — Capturing Arguments for Inspection
+## ArgumentCaptor - Capturing Arguments for Inspection
 
 When the argument passed to a mock is complex and you want to inspect its fields, use `ArgumentCaptor`:
 
@@ -490,4 +490,4 @@ class UserServiceTest {
 }
 ```
 
-This pattern — `@Mock` for dependencies, `@InjectMocks` for the class under test, `when()` for stubbing, `verify()` for interaction checks — covers the vast majority of Java unit testing scenarios. Chapter 6 moves on to integration tests where some of these mocks are replaced with real infrastructure.
+This pattern - `@Mock` for dependencies, `@InjectMocks` for the class under test, `when()` for stubbing, `verify()` for interaction checks - covers the vast majority of Java unit testing scenarios. Chapter 6 moves on to integration tests where some of these mocks are replaced with real infrastructure.

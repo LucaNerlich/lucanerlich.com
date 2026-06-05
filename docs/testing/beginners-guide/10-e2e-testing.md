@@ -16,7 +16,7 @@ sidebar_position: 10
 
 # End-to-End Testing with Playwright
 
-End-to-end (E2E) tests drive your application through a real (or headless) browser, exercising the full stack from the user interface down to the database. They are the highest-fidelity tests you can write — a passing E2E test means the feature works the way a real user would experience it.
+End-to-end (E2E) tests drive your application through a real (or headless) browser, exercising the full stack from the user interface down to the database. They are the highest-fidelity tests you can write - a passing E2E test means the feature works the way a real user would experience it.
 
 [Playwright](https://playwright.dev/) is Microsoft's open-source browser automation library. It supports Chromium, Firefox, and WebKit (Safari's engine), runs headlessly in CI, and produces detailed traces and screenshots when tests fail.
 
@@ -73,9 +73,9 @@ export default defineConfig({
 ```
 
 Key settings:
-- `baseURL` — all `page.goto('/')` calls are relative to this
-- `trace: 'on-first-retry'` — generates a Playwright Trace (a rich recording) when a test is retried
-- `webServer` — Playwright starts your dev server automatically before the tests and stops it after
+- `baseURL` - all `page.goto('/')` calls are relative to this
+- `trace: 'on-first-retry'` - generates a Playwright Trace (a rich recording) when a test is retried
+- `webServer` - Playwright starts your dev server automatically before the tests and stops it after
 
 ## Your First Test
 
@@ -129,10 +129,10 @@ await page.reload();
 
 ### Finding Elements
 
-Playwright's locators are lazy — they are not evaluated until you interact with them. This means Playwright automatically waits for the element to appear.
+Playwright's locators are lazy - they are not evaluated until you interact with them. This means Playwright automatically waits for the element to appear.
 
 ```typescript
-// By role (preferred — same philosophy as RTL)
+// By role (preferred - same philosophy as RTL)
 page.getByRole('button', { name: 'Submit' })
 page.getByRole('textbox', { name: 'Email' })
 page.getByRole('link', { name: 'Sign in' })
@@ -345,9 +345,9 @@ test('completes registration with valid data', async ({ page }) => {
 
 When a test fails in CI, Playwright captures diagnostic artifacts:
 
-- **Screenshot** — a PNG of the browser at the point of failure
-- **Video** — a video recording of the entire test
-- **Trace** — a rich recording that includes DOM snapshots, network activity, console logs, and a timeline
+- **Screenshot** - a PNG of the browser at the point of failure
+- **Video** - a video recording of the entire test
+- **Trace** - a rich recording that includes DOM snapshots, network activity, console logs, and a timeline
 
 View a trace locally:
 
