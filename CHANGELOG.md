@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.2] - 2026-06-05
+
+### Fixed
+- Corrected beginners-guide category index page slugs to use descriptive names instead of generic identifiers
+
+### Changed
+- Expanded AEM beginners guide and reference content
+- Switched static site serving from Caddy to Node + `serve`
+- Updated pnpm lockfile
+
 ## [1.13.1] - 2026-06-04
 
 ### Changed
