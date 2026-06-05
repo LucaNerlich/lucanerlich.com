@@ -124,6 +124,8 @@ RAG for facts, fine-tune for style).
 
 ## See also
 
+- [Cost, Latency & Model Routing](./cost-and-latency.md) -- when local wins on cost and privacy
+- [Privacy & Data Handling](./privacy-and-data.md) -- data residency and on-prem inference
 - [Large Language Models](./llm.md) -- foundation, frontier, and open-weights distinctions
 - [RAG](./rag.md) -- managed (Bedrock Knowledge Bases) vs self-hosted retrieval
 - [Tooling and Frameworks](./tooling.md) -- model serving and LLMOps

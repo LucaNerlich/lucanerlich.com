@@ -98,6 +98,11 @@ A dense numeric vector (typically 384--4096 dimensions) representing text, an im
 that semantically similar inputs land close together in vector space. The layer [RAG](./rag.md#embeddings-the-layer-rag-depends-on)
 depends on.
 
+## Fallback chain {#fallback-chain}
+
+Trying a cheaper or faster [model](./llm.md) first and escalating to a higher tier only when validation fails,
+confidence is low, or the user requests it. See [Cost, Latency & Model Routing](./cost-and-latency.md).
+
 ## Fine-tuning {#fine-tuning}
 
 Continued training of a pretrained model on task- or domain-specific data, baking knowledge and behavior
@@ -130,6 +135,12 @@ The architecture pattern underlying most modern [LLMs](./llm.md).
 An evaluation metric (also "faithfulness") for whether an answer stuck to its retrieved sources rather than
 [hallucinating](./llm.md#hallucination). See [Evaluation and LLMOps](./evaluation-and-llmops.md).
 
+## Graceful degradation {#graceful-degradation}
+
+Designing a product so core functionality still works when an [LLM](./llm.md) API fails, is disabled, or
+returns low-quality output -- manual mode, cached answers, or queued retry instead of a broken UX. See
+[AI in Products](./ai-in-products.md).
+
 ## Guardrails {#guardrails}
 
 Input/output policy enforcement around an LLM: content filtering, PII redaction, claim verification, and
@@ -146,6 +157,12 @@ guardrails. See [LLMs](./llm.md#hallucination).
 Building the evaluation and execution scaffolding -- datasets, runner, judges, traces, CI gates -- that turns
 a non-deterministic model into a testable, observable system. See
 [Evaluation and LLMOps](./evaluation-and-llmops.md#harness-engineering).
+
+## Human-in-the-loop {#human-in-the-loop}
+
+Requiring human approval, review, or escalation before an [agent](./agents.md) or LLM feature takes
+high-impact or irreversible action. Includes maker-checker and audit trails. See
+[Human-in-the-Loop](./human-in-the-loop.md).
 
 ## Hybrid retrieval {#hybrid-retrieval}
 
@@ -227,6 +244,12 @@ A system where several specialized agents coordinate (orchestrator-worker, route
 critic-refiner, network) to exceed a single agent's capability or context. See
 [Agents](./agents.md#multi-agent-patterns).
 
+## Model routing {#model-routing}
+
+Sending each request to an appropriate model tier (frontier, mid, small/local) via classifiers, fallback
+chains, or task-specific rules to balance quality, [cost, and latency](./cost-and-latency.md). See
+[Cost, Latency & Model Routing](./cost-and-latency.md).
+
 ## Open-weights model {#open-weights}
 
 A model whose weights are downloadable (Llama, Mistral, Qwen, DeepSeek, Gemma, Phi), so it can be
@@ -261,7 +284,12 @@ fluent [base model](#base-model). See [LLMs](./llm.md#how-an-llm-is-built).
 ## Prompt engineering {#prompt-engineering}
 
 Shaping model behavior by changing the input text -- instructions, examples, and formatting. The cheapest,
-fastest adaptation lever before RAG or fine-tuning.
+fastest adaptation lever before RAG or fine-tuning. See [Context Engineering](./context-engineering.md).
+
+## Prompt caching {#prompt-caching}
+
+A provider feature that discounts repeated identical prefix [tokens](#token) across requests -- useful when
+system prompts or long documents stay stable. See [Cost, Latency & Model Routing](./cost-and-latency.md).
 
 ## Prompt injection {#prompt-injection}
 
@@ -302,6 +330,12 @@ quality win than swapping the [embedding](#embedding) model. See [RAG](./rag.md#
 Searching by meaning rather than keyword match, using [embeddings](#embedding) and similarity. The
 capability that powers retrieval in [RAG](./rag.md).
 
+## Semantic cache {#semantic-cache}
+
+Caching [LLM](./llm.md) responses keyed by embedding similarity of the query -- returning a stored answer when
+a new question is close enough to a prior one. Requires TTL and invalidation when source data changes. See
+[Cost, Latency & Model Routing](./cost-and-latency.md#caching-strategies).
+
 ## SPDD (REASONS Canvas) {#spdd}
 
 Structured-Prompt-Driven Development -- a methodology treating prompts as versioned, reviewed delivery
@@ -312,6 +346,11 @@ artifacts, structured by the seven-part REASONS Canvas. See
 
 An agent writing to a persistent store outside the context window and reading it back -- external memory that
 conserves the attention budget. See [Context Engineering](./context-engineering.md#long-horizon-techniques).
+
+## Structured output {#structured-output}
+
+Constraining an [LLM](./llm.md) response to a machine-parseable schema (JSON Schema, tool arguments) with
+validation and repair loops. See [Structured Outputs](./structured-outputs.md).
 
 ## Sub-agent architecture {#sub-agent}
 

@@ -147,6 +147,7 @@ uses both.
 ## See also
 
 - [Large Language Models](./llm.md) -- the model an agent loop is built around
+- [Human-in-the-Loop](./human-in-the-loop.md) -- approval gates and maker-checker in production
 - [RAG](./rag.md) -- retrieval as a (often tool-driven) way to ground answers
 - [Tooling and Frameworks](./tooling.md) -- LangGraph, CrewAI, ADK, MCP servers, observability
 - [Cloud vs Local Models](./cloud-vs-local.md) -- where agent models run

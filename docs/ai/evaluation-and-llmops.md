@@ -128,7 +128,11 @@ versioning, RAG/embedding pipelines, token economics, and eval harnesses on top.
 ## See also
 
 - [Tooling and Frameworks](./tooling.md) -- the observability and eval tool landscape (LangSmith, MLflow, Ragas)
+- [Cost, Latency & Model Routing](./cost-and-latency.md) -- measuring and optimizing production spend
+- [Structured Outputs](./structured-outputs.md) -- deterministic scorers for schema-valid output
 - [AI Agents](./agents.md) -- why agents make every LLMOps concern harder
 - [RAG](./rag.md) -- what groundedness/faithfulness scorers evaluate
 - [AI Safety & Guardrails](./safety.md) -- safety scorers and red-teaming inputs
+- [Debugging LLM Apps](./debugging-llm-apps.md) -- incident response when evals miss a failure
+- [Which Pattern When?](./which-pattern-when.md) -- architecture choices evals should reflect
 - [AI Glossary](./glossary.md) -- LLM-as-judge, groundedness, harness engineering, MLOps, and more

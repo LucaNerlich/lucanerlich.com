@@ -93,12 +93,15 @@ in development workflows. It reuses the same building blocks:
 - [Context & Prompt Engineering](./context-engineering.md) -- the finite-attention constraint these methods design around
 - [Agent Skills](./skills.md) -- version-controlled workflow packages that encode repeatable agent rituals
 - [AI Agents](./agents.md) -- sub-agents, tool use, and the loops that do the implementation work
-- [Evaluation and LLMOps](./evaluation-and-llmops.md) -- the feedback loops (tests, CI, eval) that cap AI quality
+- [Evaluation & LLMOps](./evaluation-and-llmops.md) -- the feedback loops (tests, CI, eval) that cap AI quality
+- [Which Pattern When?](./which-pattern-when.md) -- choose RAG, agents, skills, and related patterns for your goal
+- [Debugging LLM Apps](./debugging-llm-apps.md) -- production troubleshooting runbook
 
 ## See also
 
 - [AI Agents](./agents.md) -- the agents that perform the "Night Shift"
 - [Agent Skills](./skills.md) -- reusable workflows for deployment, review, and other agent rituals
+- [Project Memory & Rules](./project-memory-and-rules.md) -- AGENTS.md, CLAUDE.md, and Cursor rules
 - [Context & Prompt Engineering](./context-engineering.md) -- the Smart Zone and sub-agent patterns
 - [Knowledge Management with LLMs](./knowledge-management.md) -- schema files and project memory for agents
 - [AI Glossary](./glossary.md) -- SPDD, deep modules, vertical slices, and more

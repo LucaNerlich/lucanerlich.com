@@ -150,10 +150,16 @@ A useful LLM application is rarely just *the model*. It is the model plus:
 - **Guardrails** -- safety and policy enforcement.
 - **[LLMOps](./tooling.md)** -- evaluation, monitoring, cost control, and versioning in production.
 
+See [Cost, Latency & Model Routing](./cost-and-latency.md) for token economics and tier choice, and
+[Structured Outputs](./structured-outputs.md) when your stack needs machine-parseable responses.
+
 ## See also
 
 - [AI Agents](./agents.md) -- wrapping LLMs in tool-use loops
 - [RAG](./rag.md) -- augmenting an LLM with external knowledge
+- [Cost, Latency & Model Routing](./cost-and-latency.md) -- per-token cost and model tiers
+- [AI in Products](./ai-in-products.md) -- shipping LLM features to users
 - [Tooling and Frameworks](./tooling.md) -- the ecosystem around the model
 - [Cloud vs Local Models](./cloud-vs-local.md) -- where and how to run a model
 - [AI Glossary](./glossary.md) -- quick definitions of the terms above
+- [Which Pattern When?](./which-pattern-when.md) -- where LLMs fit in a larger architecture

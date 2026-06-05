@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.20.0] - 2026-06-05
+
+### Added
+- Eight new [AI](/ai) section pages for product and operations topics, with cross-links and glossary entries:
+    - [Cost, Latency & Model Routing](/ai/cost-and-latency) -- token economics, model tiers, routing, and caching
+    - [Structured Outputs](/ai/structured-outputs) -- JSON schemas, validation, and repair loops
+    - [AI in Products](/ai/ai-in-products) -- UX patterns, streaming, when not to use AI, graceful degradation
+    - [Privacy & Data Handling](/ai/privacy-and-data) -- PII, logging, residency, and minimization
+    - [Project Memory & Rules](/ai/project-memory-and-rules) -- AGENTS.md, CLAUDE.md, and Cursor rules vs skills
+    - [Human-in-the-Loop](/ai/human-in-the-loop) -- approval gates, maker-checker, and audit trails
+    - [Which Pattern When?](/ai/which-pattern-when) -- capstone decision guide for RAG, agents, skills, and related patterns
+    - [Debugging LLM Apps](/ai/debugging-llm-apps) -- production troubleshooting runbook
+- New glossary terms: graceful degradation, human-in-the-loop, model routing, prompt caching, structured output, fallback chain, semantic cache
+
+### Changed
+- Expanded the [AI](/ai) category index description and cross-linked the new pages from existing AI topics
+
 ## [1.19.0] - 2026-06-05
 
 ### Added

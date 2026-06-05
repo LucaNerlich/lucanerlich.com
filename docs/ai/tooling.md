@@ -126,11 +126,14 @@ sibling of MLOps. The shift from classical MLOps is from *retraining* as the cen
 
 LLMOps covers model + prompt versioning, evaluation suites, cost/latency optimization (token budgeting,
 caching, model cascading), monitoring (drift, refusal rate, groundedness, p95 latency, per-tenant cost),
-and incident response for non-deterministic failures. Agents make every one of these harder, because a
-single user turn fans out to many model and tool calls.
+and incident response for non-deterministic failures. See [Cost, Latency & Model Routing](./cost-and-latency.md)
+for the economics layer. Agents make every one of these harder, because a single user turn fans out to many
+model and tool calls.
 
 ## See also
 
+- [Cost, Latency & Model Routing](./cost-and-latency.md) -- token economics, caching, and model routing
+- [Structured Outputs](./structured-outputs.md) -- schema validity as an eval scorer
 - [AI Agents](./agents.md) -- what these frameworks orchestrate
 - [RAG](./rag.md) -- the retrieval stack these data tools serve
 - [Cloud vs Local Models](./cloud-vs-local.md) -- managed platforms vs self-hosted serving

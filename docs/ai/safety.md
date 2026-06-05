@@ -114,12 +114,15 @@ flowchart LR
   monitoring, and frameworks like the **NIST AI Risk Management Framework** (Govern / Map / Measure / Manage).
 
 Safety is ultimately a sociotechnical problem: it depends on the context the system operates in, not just the
-model. Evaluate risk holistically -- in context, with humans in the loop where the stakes warrant it.
+model. Evaluate risk holistically -- in context, with [humans in the loop](./human-in-the-loop.md) where the
+stakes warrant it.
 
 ## See also
 
 - [Large Language Models](./llm.md#hallucination) -- hallucination, the failure safety mitigations contain
 - [AI Agents](./agents.md) -- why agentic systems compound safety concerns
+- [Privacy & Data Handling](./privacy-and-data.md) -- PII, logging, and data residency (distinct from attacks)
+- [Human-in-the-Loop](./human-in-the-loop.md) -- approval and audit for high-impact actions
 - [RAG](./rag.md) -- grounding as a safety mitigation; also an injection vector
 - [Evaluation and LLMOps](./evaluation-and-llmops.md) -- safety scorers and continuous monitoring
 - [Cloud vs Local Models](./cloud-vs-local.md) -- managed guardrail services

@@ -62,7 +62,7 @@ in practice is *when* content enters the context and *what* it is for.
 |---|---|---|---|
 | **Skills** | `SKILL.md` in a named folder | On demand when task matches | Multi-step workflows, procedures |
 | **Rules** (Cursor) | `.mdc` with frontmatter | Automatically by glob or always-apply | Short conventions, coding standards |
-| **Project memory** | `AGENTS.md`, `CLAUDE.md` | Every relevant session | Repo-wide conventions, architecture |
+| **Project memory** | [`AGENTS.md`](./project-memory-and-rules.md), `CLAUDE.md` | Every relevant session | Repo-wide conventions, architecture |
 | **[MCP](./agents.md#mcp-model-context-protocol) servers** | Tool protocol | Tool definitions in context | External APIs, databases, services |
 | **System prompts** | Inline / config | Every call | Base behavior, not reusable workflows |
 
@@ -408,6 +408,7 @@ View discovered skills in Cursor via Settings → Rules → Agent Decides sectio
 ## See also
 
 - [Context & Prompt Engineering](./context-engineering.md) -- progressive disclosure and the context budget skills operate within
+- [Project Memory & Rules](./project-memory-and-rules.md) -- always-on AGENTS.md and Cursor rules vs on-demand skills
 - [AI-Assisted Development](./ai-assisted-development.md) -- alignment-before-generation methodologies that skills support
 - [Knowledge Management with LLMs](./knowledge-management.md) -- persistent synthesis vs on-demand workflow context
 - [AI Agents](./agents.md) -- the agent loops that execute skill workflows
