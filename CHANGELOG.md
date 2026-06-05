@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.3] - 2026-06-05
+
+### Fixed
+- Docker: install `curl` in the runtime image so the Coolify container healthcheck passes (Alpine ships no `curl`, and busybox `wget` could not reach the IPv4-bound static server)
+
 ## [1.13.2] - 2026-06-05
 
 ### Fixed
