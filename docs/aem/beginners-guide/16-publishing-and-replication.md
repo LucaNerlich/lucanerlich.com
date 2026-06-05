@@ -139,7 +139,7 @@ You learned:
 
 - [Publishing Pages (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/sites-console/publishing-pages)
 - [Replication (AEM 6.5)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/deploying/configuring/replication)
-- [Sling Content Distribution (AEMaaCS)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/content-distribution)
+- [Sling Content Distribution (AEMaaCS)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/replication)
 
 Next up: [Workflows](./17-workflows.md) - automating content operations with workflow models,
 launchers, and custom process steps.

@@ -402,7 +402,7 @@ A couple of these need context:
 
 - [Core Components (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-core-components/using/introduction) - the full component library
 - [Core Components live examples (Component Library)](https://www.aemcomponents.dev/) - interactive demos and markup
-- [Authoring Pages (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/fundamentals/editing-content) - the page editor for content authors
+- [Authoring Pages (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/edit-content) - the page editor for content authors
 - [Managing Assets (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/manage/manage-digital-assets) - DAM upload, metadata, renditions
 
 ## Summary

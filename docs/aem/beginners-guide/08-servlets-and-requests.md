@@ -177,7 +177,7 @@ You learned:
 
 ## Official Documentation
 
-- [Servlets and Request Handling (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/development/develop-sling-servlets)
+- [Servlets and Request Handling (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/development/understand-java-api-best-practices)
 - [Apache Sling Servlets & Scripts](https://sling.apache.org/documentation/the-sling-engine/servlets.html)
 - [Servlets deep dive](../backend/servlets.mdx) - registration patterns, selectors, and security on this site
 

@@ -9,12 +9,12 @@ tags: [aem, jcr, repository]
 ## JCR Queries
 
 I highly recommend downloading and "studying"
-the [JCR Query Cheatsheet](https://experienceleague.adobe.com/en/docs/experience-manager-65/assets/JCR_query_cheatsheet-v1.1.pdf) [^1].
+the [JCR Query Cheatsheet](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/query-builder/querybuilder-predicate-reference) [^1].
 
 ### QueryBuilder
 
 The QueryBuilder API executes a query which can be customized via
-a [predicates](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/search/query-builder-predicates.html?lang=en)
+a [predicates](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/query-builder/querybuilder-predicate-reference)
 hashmap.
 The below configuration creates a query that searches for nodes below a given path,
 that have two predefined property key/value pairs.
@@ -215,7 +215,7 @@ Locally via CRX/DE and on deployed environments via "empty" Content-Package.
 
 ## References
 
-[^1]: <https://experienceleague.adobe.com/en/docs/experience-manager-65/deploying/practices/best-practices-for-queries-and-indexing.html?lang=en#jcrquerycheatsheet>
+[^1]: <https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/query-builder/querybuilder-api>
 
 ## See also
 

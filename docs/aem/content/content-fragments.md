@@ -721,7 +721,7 @@ production because they are **cacheable** by the Dispatcher and CDN and they kee
 
 Enabling a model generates its GraphQL schema (e.g. an `Article` model creates the `articleByPath` and
 `articleList` entry points). Create a project GraphQL endpoint so queries resolve at
-`/content/_cq_graphql/myproject/endpoint.json` (see
+`/content/cq:graphql/myproject/endpoint.json` (see
 [AEM GraphQL API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/headless/graphql-api/content-fragments)).
 
 ### 2. Save a persisted query
@@ -933,9 +933,8 @@ public List<Map<String, Object>> exportFragments(ResourceResolver resolver,
 ### Assets HTTP API (REST)
 
 For external systems that need to create or read fragments without Java. See the
-[Content Fragments Support in the Assets HTTP API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/assets-api-content-fragments)
-reference, and for read delivery the newer
-[Content Fragment Delivery OpenAPI](https://developer.adobe.com/experience-manager-apis/references/openapi-aem-content-fragments/) (AEMaaCS):
+[Content Fragments Support in the Assets HTTP API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/admin/assets-api-content-fragments)
+reference (AEMaaCS):
 
 ```bash
 # Local SDK / dev only -- real environments use a scoped service account, not admin:admin.
@@ -991,21 +990,38 @@ curl -u admin:admin \
   call
 - **Use persisted GraphQL queries** on Publish - they are cacheable by Dispatcher and CDN
 
-Example property index for the model reference, deployed as a content package
-(`ui.apps/.../_oak_index/cfModel/.content.xml`):
+The model reference (`cq:model`) lives on the `jcr:content/data` node -- a **relative path two levels
+deep**. A `type="property"` index cannot index that (its `propertyNames` is a single property *name*,
+and Oak only transforms the single `jcr:content` -> parent hop), so use a **Lucene** index with an
+`indexRule` on `dam:Asset`, deployed as a content package
+(`ui.apps/.../_oak_index/cfModel-custom-1/.content.xml`):
 
-```xml title="Oak property index for cq:model"
+```xml title="Oak Lucene index for cq:model"
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0"
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:dam="http://www.day.com/dam/1.0"
+          xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0"
           jcr:primaryType="oak:QueryIndexDefinition"
-          type="property"
-          propertyNames="[jcr:content/data/cq:model]"
-          reindex="{Boolean}true"/>
+          type="lucene"
+          async="[async]"
+          compatVersion="{Long}2"
+          evaluatePathRestrictions="{Boolean}true">
+    <indexRules jcr:primaryType="nt:unstructured">
+        <dam:Asset jcr:primaryType="nt:unstructured">
+            <properties jcr:primaryType="nt:unstructured">
+                <cqModel
+                    jcr:primaryType="nt:unstructured"
+                    name="jcr:content/data/cq:model"
+                    propertyIndex="{Boolean}true"/>
+            </properties>
+        </dam:Asset>
+    </indexRules>
+</jcr:root>
 ```
 
-For text search across fragment fields, prefer a custom **Lucene** index over a property index. See
-Adobe's [Content Search and Indexing](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/indexing)
-documentation for AEMaaCS index deployment (`/oak:index` via `ui.config`/`ui.apps`).
+For full-text search across fragment fields, add `analyzed="{Boolean}true"` properties to the same
+index. See Adobe's [Content Search and Indexing](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/indexing)
+documentation for AEMaaCS index deployment (`/oak:index` via `ui.apps`, using the `-custom-N` naming convention).
 
 ### Common pitfalls
 

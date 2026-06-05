@@ -181,10 +181,9 @@ You learned:
 
 ## Official Documentation
 
-- [Testing AEM (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/cloud-service/testing/overview)
-- [wcm.io AEM Mocks](https://wcm.io/testing/aem-mock/) - the `AemContext` library
-- [Developer Console & debugging (AEMaaCS)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/development-tools)
-- [Logging in AEMaaCS](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/introduction/logging)
+- [wcm.io AEM Mocks](https://wcm.io/testing/aem-mock/) - the `AemContext` library used in this guide
+- [Java API Best Practices in AEM (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/development/understand-java-api-best-practices) - testable Sling/JCR API usage
+- [Debugging AEM as a Cloud Service (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/cloud-service/debugging/debugging-aem-as-a-cloud-service/overview) - developer console, logs, and debugging tools
 
 Next up: [Deployment & Cloud Manager](./21-deployment-and-cloud-manager.md) - Git, CI/CD pipelines,
 environments, and Rapid Development Environments.

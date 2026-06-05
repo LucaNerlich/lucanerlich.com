@@ -670,7 +670,7 @@ if (group == null) {
 
 int count = 0
 group.getMembers().each { Authorizable member ->
-    out.println("${member.id}${member instanceof Group ? ' (group)' : ''} -> ${member.path}")
+    out.println("${member.getID()}${member instanceof Group ? ' (group)' : ''} -> ${member.path}")
     count++
 }
 
@@ -786,13 +786,16 @@ int broken = 0
 
 getPage(BASE_PATH).recurse { page ->
     page.node?.recurse { node ->
-        node.properties.each { name, value ->
+        // node.properties is a JCR PropertyIterator of javax.jcr.Property objects
+        node.properties.each { prop ->
             // Only check single-value string properties that look like a content/dam path
-            if (value instanceof String && value.startsWith('/content/')) {
+            if (prop.multiple || prop.type != javax.jcr.PropertyType.STRING) return
+            String value = prop.string
+            if (value.startsWith('/content/')) {
                 // Strip selectors/extensions and anchors before resolving
                 String path = value.replaceAll(/[?#].*$/, '').replaceAll(/\.[^\/.]+$/, '')
                 if (!session.nodeExists(path) && !session.nodeExists(value)) {
-                    out.println("BROKEN: ${node.path}@${name} -> ${value}")
+                    out.println("BROKEN: ${node.path}@${prop.name} -> ${value}")
                     broken++
                 }
             }
@@ -820,30 +823,32 @@ resourceResolver.getResource(BASE_PATH).listChildren().each { child ->
     def asset = child.adaptTo(Asset.class)
     if (asset == null) return
 
-    // referenceSearch via QueryBuilder: any node whose property equals this asset path
+    // There is no QueryBuilder "any property" predicate, so use a full-text phrase
+    // search for the asset path anywhere under /content as a reference heuristic.
     def params = [
-        'path'          : '/content',
-        'property'      : '*',
-        'property.value': child.path,
-        'p.limit'       : '1'
+        'path'    : '/content',
+        'fulltext': '"' + child.path + '"',
+        'p.limit' : '1'
     ]
     def result = queryBuilder.createQuery(
         com.day.cq.search.PredicateGroup.create(params), session).result
 
     if (result.totalMatches == 0) {
-        out.println("ORPHAN: ${child.path}")
+        out.println("POSSIBLE ORPHAN: ${child.path}")
         orphans++
     }
 }
 
 out.println('----------------------------------------')
-out.println("Orphaned assets (no references found): ${orphans}")
+out.println("Possible orphans (no full-text reference found): ${orphans}")
 return orphans
 ```
 
 :::warning "Unreferenced" is not "safe to delete"
-An asset may be referenced from external systems, hardcoded URLs, or rich-text HTML this query does
-not scan. Always review the list (and back up) before deleting.
+This is a **full-text heuristic**: it can miss references (external systems, hardcoded URLs, rich-text
+HTML, paths split across properties) and is only as good as the search index. For an authoritative
+answer, enumerate the known reference properties or use `com.day.cq.wcm.api.reference.ReferenceSearch`.
+Always review the list (and back up) before deleting.
 :::
 
 ### Permission report for a path

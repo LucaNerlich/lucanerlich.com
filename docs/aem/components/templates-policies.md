@@ -580,6 +580,6 @@ content repository.
 - [Extending the Responsive Grid](../ui/extending-responsive-grid.md) - container components
 - [SPA Editor](../ui/spa-editor.md) - SPA page templates
 - [Experience Fragments](../content/experience-fragments.md) - XF templates
-- [Editable Templates - AEM 6.5 (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/page-templates-editable) - comprehensive editable template reference
-- [Style System (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/components/style-system) - CSS class policies via dialogs
+- [Editable Templates - AEM 6.5 (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/components-templates/templates) - comprehensive editable template reference
+- [Style System (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/style-system) - CSS class policies via dialogs
 - [Editable Templates - AEMaaCS (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates) - cloud-specific template authoring

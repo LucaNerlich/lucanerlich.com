@@ -126,7 +126,7 @@ capability to be enabled. Treat them as suggestions an author reviews, not groun
 For sites with heavy image/video needs, **Dynamic Media** delivers responsive, on-the-fly transformed
 media (smart crops, zoom/pan, interactive video) from Adobe's CDN. It is an opt-in capability; for
 most projects the Core Components + adaptive image servlet are sufficient. See Adobe's
-[Dynamic Media documentation](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/dynamic-media/dynamic-media) when you need it.
+[Assets documentation](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/overview) (Dynamic Media section) when you need it.
 
 ## Using assets on pages
 
@@ -184,8 +184,8 @@ You learned:
 
 - [Assets overview (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/overview)
 - [Managing Digital Assets](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/manage/manage-digital-assets) - upload, metadata, renditions
-- [Metadata Schemas](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/admin/metadata-schemas)
-- [Processing Profiles](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/configure-asset-processing)
+- [Metadata Schemas](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/manage/metadata-schemas)
+- [Processing Profiles](https://experienceleague.adobe.com/en/docs/experience-manager-learn/assets/configuring/processing-profiles)
 
 Next up: [Content Fragments & GraphQL](./13-content-fragments-and-graphql.md) - channel-neutral
 structured content, Content Fragment Models, the AEM GraphQL API, and headless delivery.

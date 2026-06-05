@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.15.0] - 2026-06-05
+
+### Added
+- AEM: new [AEMaaCS vs AEM 6.5](/aem/infrastructure/aemaacs-vs-aem-65) reference page comparing deployment, repository mutability, replication vs content distribution, asset processing, indexing, Dispatcher, and security
+- AEM: new [Glossary](/aem/glossary) of core AEM, Sling, OSGi, and Oak terms, cross-linked to the deep-dive pages
+- AEM: new [Recipes](/aem/recipes) - task-oriented how-to checklists (build a component, deliver headless content, make a query fast, publish, secure, debug, translate)
+
+### Fixed
+- Corrected ~60 broken Adobe Experience League documentation links across the AEM docs (Experience League taxonomy changes and dropped `.html` suffixes); all external Adobe links now resolve
+- Corrected technical errors in code examples: Groovy `Authorizable.getID()`, JCR `Property` iteration in the broken-link finder, the orphaned-asset reference search, the Content Fragment `cq:model` Oak (Lucene) index, and a dialog checkbox value type
+
+### Changed
+- Tuned Vale prose linting with an AEM vocabulary so technical terms (OSGi, repoinit, ACLs, clientlib, etc.) are no longer flagged as misspellings; synced Vale style packages are now git-ignored
+
 ## [1.14.0] - 2026-06-05
 
 ### Added

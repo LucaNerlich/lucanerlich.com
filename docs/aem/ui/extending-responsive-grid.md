@@ -698,8 +698,8 @@ Nested responsive grids (a container inside a container inside a container) work
 ## External Resources
 
 - [AEM Responsive Grid System](https://adobe-marketing-cloud.github.io/aem-responsivegrid/)
-- [Responsive Layout Documentation](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/sites/authoring/features/responsive-layout.html)
-- [Adobe SPA Editor: Custom Container Components](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-with-aem-headless/spa-editor/react/custom-component.html)
+- [Responsive Layout Documentation](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/responsive-layout)
+- [Adobe SPA Editor: Custom Container Components](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/hybrid/introduction)
 - [Lombok @Delegate](https://projectlombok.org/features/experimental/Delegate)
 
 ## See also

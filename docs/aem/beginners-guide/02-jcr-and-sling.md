@@ -245,7 +245,7 @@ what it needs:
     → Sling uses scripts from the Core Component unless you provide your own
 ```
 
-- [Sling Resource Merger](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/sling-resource-merger)
+- [Sling Resource Merger](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/sling-resource-merger)
 
 ### Script selection rules
 

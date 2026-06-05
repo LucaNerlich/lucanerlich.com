@@ -59,6 +59,8 @@ export const sidebarOrder: Record<string, string[]> = {
     'aem': [
         'beginners-guide',
         'architecture',
+        'glossary',
+        'recipes',
         'edge-delivery',
         'custom-component',
         'component-dialogs',

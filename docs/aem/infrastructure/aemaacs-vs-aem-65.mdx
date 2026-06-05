@@ -1,0 +1,144 @@
+---
+title: AEMaaCS vs AEM 6.5
+description: A consolidated comparison of AEM as a Cloud Service and AEM 6.5 -- deployment, repository mutability, replication vs content distribution, asset processing, indexing, dispatcher, and the development workflow differences that actually affect your code.
+sidebar_position: 2.5
+tags: [aem, cloud-service, aem-65, comparison]
+keywords:
+    - aemaacs vs aem 6.5
+    - aem cloud service differences
+    - aem on-premise vs cloud
+    - aem 6.5 lts
+---
+
+# AEMaaCS vs AEM 6.5
+
+Most of this site applies to **both** AEM as a Cloud Service (AEMaaCS) and AEM 6.5, because they share
+the same core stack -- JCR (Oak), Sling, OSGi, HTL, Sling Models, Core Components. But a handful of
+operational and architectural differences genuinely change how you build, deploy, and debug. This page
+consolidates them so you do not have to rediscover them chapter by chapter.
+
+:::note Which one am I on?
+If you deploy through **Cloud Manager** and there is no `crx-quickstart` folder you control, you are on
+**AEMaaCS**. If you run a JAR / installed instance you administer yourself (on-prem or AMS), you are on
+**6.5**. AEM 6.5 also has an **LTS** track with extended support.
+:::
+
+## At a glance
+
+| Topic | AEM as a Cloud Service | AEM 6.5 |
+|-------|------------------------|---------|
+| **Hosting** | Adobe-managed, auto-scaling containers | Self-managed (on-prem) or AMS |
+| **Topology** | Author cluster + horizontally-scaled publish + CDN | Fixed author/publish instances you size |
+| **Releases** | Continuous (Adobe updates the runtime) | Versioned service packs you install |
+| **Repository** | Split into **immutable** (`/apps`, `/libs`) and **mutable** (`/content`, `/conf`, `/home`) | Single mutable repository |
+| **Deployment** | Git + **Cloud Manager** pipelines only | Package Manager, Maven `-PautoInstall`, CI of your choice |
+| **Dev environment** | Local **SDK** + **RDE**; no prod filesystem | Full local install; filesystem access |
+| **Replication** | **Sling Content Distribution** (managed) | **Replication agents** (`/etc/replication`) |
+| **Asset processing** | **Asset Compute** microservices | **DAM Update Asset** workflow |
+| **Java** | Adobe-managed JDK (Java 11/17/21 class support) | You choose the JDK |
+| **CRXDE Lite** | Local SDK only; blocked in cloud envs | Available everywhere |
+| **Custom OSGi config** | Git-deployed `.cfg.json`; secrets via `$[secret:...]` | Web console or `.cfg.json` |
+| **Dispatcher** | Flexible mode, validated in pipeline | Classic config, manually managed |
+
+## Repository mutability (the big one)
+
+On AEMaaCS the repository is split:
+
+- **Immutable** -- `/apps` and `/libs` are read-only at runtime and replaced only by a deployment. You
+  cannot write to them from running code, and you cannot overlay `/libs`.
+- **Mutable** -- `/content`, `/conf`, `/home`, `/var` are writable at runtime.
+
+Consequences for your code:
+
+- **No runtime writes to `/apps`.** Patterns that wrote nodes under `/apps` at startup must move to
+  `/conf` or `/var`.
+- **No `/libs` overlays.** Customize via `sling:resourceSuperType`, render conditions, and supported
+  extension points instead of overlaying `/libs`.
+- **`repoinit`** is the supported way to create service users, paths, and ACLs deterministically on
+  every startup (see [Security & Permissions](/aem/beginners-guide/security-and-permissions)).
+
+On 6.5 the repository is a single mutable tree, so these restrictions do not apply -- which is exactly
+why migrated code often breaks on AEMaaCS.
+
+## Deployment & development workflow
+
+| | AEMaaCS | AEM 6.5 |
+|---|---|---|
+| Code path to prod | Git -> Cloud Manager pipeline (build, code quality, deploy) | Build package, install via Package Manager / Maven |
+| Fast iteration | **RDE** (Rapid Development Environment) -- push code in seconds | Local instance + `mvn -PautoInstallSinglePackage` |
+| Config & secrets | `.cfg.json` in Git; `$[env:VAR]` / `$[secret:VAR]` placeholders | Web console or `.cfg.json` |
+| Quality gate | Mandatory code-quality + security + (optional) UI tests in pipeline | Whatever your CI enforces |
+
+See [Deployment & Cloud Manager](/aem/beginners-guide/deployment-and-cloud-manager) and the
+[Cloud Manager documentation](https://experienceleague.adobe.com/en/docs/experience-manager-learn/cloud-service/local-development-environment-set-up/development-tools).
+
+## Publishing: replication vs content distribution
+
+- **AEM 6.5** uses **replication agents** under `/etc/replication` (Agent on author, Dispatcher Flush)
+  that you configure and monitor.
+- **AEMaaCS** uses **Sling Content Distribution** through Adobe-managed infrastructure -- there are
+  **no replication agents to configure**, and CDN/Dispatcher invalidation is automatic.
+
+The authoring actions (Activate/Deactivate) and the `Replicator` API are the **same** on both. See
+[Publishing & Replication](/aem/beginners-guide/publishing-and-replication) and the AEMaaCS
+[Replication operations](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/replication) reference.
+
+## Asset processing
+
+- **AEMaaCS:** **Asset Compute** microservices generate renditions (fast, cloud-native, modern formats
+  like WebP/AVIF), configured via **Processing Profiles**. See
+  [Asset microservices](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/manage/asset-microservices-configure-and-use).
+- **AEM 6.5:** the **DAM Update Asset** workflow (ImageMagick/Sling) generates renditions on the
+  instance.
+
+See [Assets & DAM](/aem/beginners-guide/assets-and-dam).
+
+## Search & indexing
+
+Both use Oak indexes under `/oak:index`, deployed as content. The difference is the **deployment
+contract**:
+
+- **AEMaaCS** requires the `<indexName>-custom-<N>` naming convention so the pipeline can merge custom
+  indexes with out-of-the-box ones with zero downtime.
+- **6.5** lets you deploy/modify indexes directly and trigger reindexing yourself.
+
+See [Search & Indexing](../content/search-and-indexing.mdx).
+
+## Dispatcher
+
+- **AEMaaCS:** Dispatcher config lives in your repo in **flexible mode**, is **validated by the
+  pipeline**, and the CDN sits in front. See [Dispatcher in the Cloud](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/disp-overview).
+- **6.5:** you manage the Apache + Dispatcher module configuration on your own web tier.
+
+See [Dispatcher & Caching](/aem/beginners-guide/dispatcher-and-caching).
+
+## Security & access
+
+- **AEMaaCS:** author login is via **Adobe IMS / Admin Console** (you do not manage author passwords in
+  AEM); in-repository **authorization** (ACLs, groups) is still defined as usual, ideally via
+  `repoinit`. CRXDE Lite and `/system/console` are not available in cloud environments.
+- **6.5:** you manage users/passwords in AEM (or via LDAP/SAML), with full console access.
+
+See [Security & Permissions](/aem/beginners-guide/security-and-permissions).
+
+## What stays the same
+
+If you are learning AEM, the overwhelming majority of skills transfer between both platforms:
+
+- JCR / Sling / OSGi fundamentals
+- Components: HTL, Touch UI dialogs, Sling Models, Core Components
+- Editable templates and policies
+- Content Fragments and the GraphQL API
+- Multi-Site Manager, translation, and i18n
+- The `Replicator`, `QueryBuilder`, `WorkflowSession`, and DAM `Asset` APIs
+
+The differences are concentrated in **operations and deployment**, not in day-to-day component code.
+
+## See also
+
+- [AEM as a Cloud Service](./cloud-service.mdx) - the cloud platform in depth
+- [Deployment & Cloud Manager](/aem/beginners-guide/deployment-and-cloud-manager)
+- [Publishing & Replication](/aem/beginners-guide/publishing-and-replication)
+- [Search & Indexing](../content/search-and-indexing.mdx)
+- [AEM as a Cloud Service Overview (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/overview/introduction)
+- [Migrating from AEM 6.x](/aem/beginners-guide/deployment-and-cloud-manager) - Content Transfer Tool and Cloud Manager onboarding

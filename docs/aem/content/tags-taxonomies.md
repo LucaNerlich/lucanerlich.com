@@ -621,4 +621,4 @@ handles locale resolution automatically.
 - [AEM as a Cloud Service](../infrastructure/cloud-service.mdx) - tag replication via Content Distribution
 - [Multi-Site Manager](./multi-site-manager-msm.md) - multi-site tag governance
 - [AEM Tagging Framework (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/tagging/framework) - tag node structure, TagManager API, and taxonomy design
-- [Administering Tags (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/tags) - tag console and bulk management
+- [Administering Tags (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/tags) - tag console and bulk management

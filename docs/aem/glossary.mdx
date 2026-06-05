@@ -1,0 +1,233 @@
+---
+title: AEM Glossary
+description: Plain-English definitions of the core AEM, Sling, OSGi, and Oak terms used throughout this documentation, with links to the deep-dive pages.
+sidebar_position: 2
+tags: [aem, glossary, reference]
+keywords:
+    - aem glossary
+    - aem terminology
+    - jcr sling osgi terms
+    - aem definitions
+---
+
+# AEM Glossary
+
+Short, plain-English definitions of the terms used across this site. Where a concept has a dedicated
+page, the term links to it.
+
+## A
+
+**ACL (Access Control List)**
+A set of permission entries (allow/deny privileges for a principal) attached to a repository path.
+Permissions inherit down the tree. See [Security & Permissions](/aem/beginners-guide/security-and-permissions).
+
+**AEM as a Cloud Service (AEMaaCS)**
+The Adobe-managed, auto-scaling cloud version of AEM, deployed through Cloud Manager. See
+[AEMaaCS vs AEM 6.5](./infrastructure/aemaacs-vs-aem-65.mdx).
+
+**Asset Compute**
+The AEMaaCS microservice framework that generates asset renditions on upload (the cloud replacement
+for the DAM Update Asset workflow). See [Assets & DAM](/aem/beginners-guide/assets-and-dam).
+
+## B
+
+**Blueprint**
+The source site in Multi-Site Manager from which Live Copies inherit content. See
+[Multi-Site Manager & i18n](/aem/beginners-guide/multi-site-manager-and-i18n).
+
+**Bundle**
+An OSGi module: a JAR with extra metadata that can be installed, started, and stopped at runtime.
+Your project's Java code ships as a bundle. See [OSGi Fundamentals](/aem/beginners-guide/osgi-fundamentals).
+
+## C
+
+**Client Library (clientlib)**
+A managed bundle of CSS/JS served by AEM, identified by a `categories` value. See
+[Client Libraries](/aem/beginners-guide/client-libraries).
+
+**Closed User Group (CUG)**
+A publish-tier access policy that restricts a content branch to authenticated, authorized visitors.
+
+**Component**
+A reusable, configurable unit of content/markup. Most project components are proxies of
+[Core Components](./components/core-components.mdx). See [Your First Component](/aem/beginners-guide/your-first-component).
+
+**Content Fragment (CF)**
+Channel-neutral, structured content authored against a model and delivered via GraphQL/REST or HTL.
+See [Content Fragments](./content/content-fragments.md).
+
+**Content Policy**
+The design-time configuration of a component within a template (allowed components, styles, defaults),
+stored under `/conf`. See [Templates & Policies](/aem/beginners-guide/templates-and-policies).
+
+**Coral UI**
+Adobe's design system / web-component library that renders the Touch UI (dialogs, consoles). See
+[Coral UI](./ui/coral-ui.mdx).
+
+**CRXDE Lite**
+A browser-based repository explorer (`/crx/de`) for inspecting and editing JCR nodes. Local SDK only on
+AEMaaCS.
+
+## D
+
+**DAM (Digital Asset Management)**
+The `/content/dam` subtree and tooling for storing assets (images, video, documents) as `dam:Asset`
+nodes. See [Assets & DAM](/aem/beginners-guide/assets-and-dam).
+
+**Design Dialog**
+A component's policy dialog (`_cq_design_dialog`) whose values are stored on the template policy and
+apply to all instances. See [Component Dialogs](./component-dialogs.mdx#design-dialog-template-policies).
+
+**Dialog**
+The Touch UI form (`_cq_dialog`) authors use to configure a component instance. See
+[Component Dialogs](./component-dialogs.mdx).
+
+**Dispatcher**
+Adobe's caching/security layer (an Apache module) in front of the publish tier. See
+[Dispatcher & Caching](/aem/beginners-guide/dispatcher-and-caching).
+
+## E
+
+**Editable Template**
+A template authored in the UI (stored under `/conf`) that keeps a live connection to pages created from
+it. The modern alternative to static templates. See [Templates & Policies](/aem/beginners-guide/templates-and-policies).
+
+**Experience Fragment (XF)**
+A reusable, presentation-ready group of components (with layout) that can be embedded on multiple pages
+or exported to other channels. See [Experience Fragments](./content/experience-fragments.md).
+
+## G
+
+**Granite UI**
+The server-side framework of form fields and components that render the Touch UI authoring interface.
+See [Component Dialogs](./component-dialogs.mdx).
+
+**GraphQL API**
+AEM's query API for delivering Content Fragments to headless consumers; the schema is generated from CF
+Models. See [Headless GraphQL](./content/graphql.mdx).
+
+**Groovy Console**
+A community tool for running Groovy scripts against a running instance for maintenance and bulk
+operations. See [Groovy Console](./groovy-console.mdx).
+
+## H
+
+**HTL (HTML Template Language)**
+AEM's secure, server-side templating language (formerly Sightly) used to render components. See
+[HTL Templates](./htl-templates.mdx).
+
+## I
+
+**i18n**
+Internationalization -- translating UI strings via dictionaries resolved in HTL/Java. See
+[Multi-Site Manager & i18n](/aem/beginners-guide/multi-site-manager-and-i18n).
+
+**Immutable / mutable repository**
+On AEMaaCS, `/apps` and `/libs` are immutable (deploy-time only) while `/content`, `/conf`, `/home`,
+`/var` are mutable. See [AEMaaCS vs AEM 6.5](./infrastructure/aemaacs-vs-aem-65.mdx).
+
+## J
+
+**JCR (Java Content Repository)**
+The hierarchical content database (a tree of nodes and properties) at the heart of AEM, implemented by
+Apache Jackrabbit Oak. See [The JCR & Sling](/aem/beginners-guide/jcr-and-sling).
+
+## L
+
+**Live Copy**
+An MSM site/branch that inherits from a Blueprint and can selectively break inheritance for local
+overrides.
+
+**Lucene index**
+The standard Oak full-text/property index type used for custom AEM queries. See
+[Search & Indexing](./content/search-and-indexing.mdx).
+
+## M
+
+**MSM (Multi-Site Manager)**
+The framework for reusing content across regions/brands via Blueprints and Live Copies. See
+[Multi-Site Manager & i18n](/aem/beginners-guide/multi-site-manager-and-i18n).
+
+**Multifield**
+A dialog widget that lets authors add `n` repeatable entries; composite multifields store structured
+sub-nodes. See [Component Dialogs](./component-dialogs.mdx#multifield).
+
+## O
+
+**Oak**
+Apache Jackrabbit Oak, the scalable repository implementation backing the JCR in modern AEM.
+
+**OSGi**
+The Java module/service runtime (Apache Felix) AEM is built on; your services are OSGi components wired
+by Declarative Services. See [OSGi Fundamentals](/aem/beginners-guide/osgi-fundamentals).
+
+**Overlay**
+Customizing `/libs` functionality by mirroring its path under `/apps` (supported on 6.5; not for `/libs`
+on AEMaaCS). See [Overlays](./ui/overlays.mdx).
+
+## P
+
+**Proxy component**
+A project component that inherits from a Core Component via `sling:resourceSuperType`, customizing only
+what it needs. See [Templates & Policies](/aem/beginners-guide/templates-and-policies).
+
+## R
+
+**RDE (Rapid Development Environment)**
+An AEMaaCS environment that accepts fast, direct code/config pushes for quick iteration. See
+[Deployment & Cloud Manager](/aem/beginners-guide/deployment-and-cloud-manager).
+
+**Rendition**
+A generated, derived copy of an asset (resized/reformatted) used for delivery.
+
+**repoinit**
+A Sling language for declaring users, groups, paths, and ACLs that are applied deterministically on
+startup -- the supported way to manage permissions as code. See
+[Security & Permissions](/aem/beginners-guide/security-and-permissions).
+
+**Replication**
+Copying content from author to publish (also called activation/publishing). AEMaaCS uses managed Sling
+Content Distribution; 6.5 uses replication agents. See [Publishing & Replication](/aem/beginners-guide/publishing-and-replication).
+
+## S
+
+**Service user**
+A least-privilege system account application code uses (via a subservice mapping) instead of an admin
+session. See [Sling Models](/aem/beginners-guide/sling-models#service-users-and-repoinit).
+
+**Sling**
+Apache Sling, the REST framework that maps HTTP requests to JCR resources and selects scripts/servlets
+to render them. See [The JCR & Sling](/aem/beginners-guide/jcr-and-sling).
+
+**Sling Model**
+An annotation-driven Java POJO that adapts a resource/request and exposes data to HTL. See
+[Sling Models](/aem/beginners-guide/sling-models).
+
+**Style System**
+A policy feature that lets authors apply predefined CSS classes to components without code changes.
+
+## T
+
+**Template**
+The blueprint for a page's structure, initial content, and policies. See
+[Templates & Policies](/aem/beginners-guide/templates-and-policies).
+
+**Touch UI**
+The modern, Coral-based authoring interface (as opposed to the legacy Classic UI). See
+[Touch UI](./ui/touch-ui.mdx).
+
+**Traversal**
+A query that scans nodes one by one because no index matches -- slow and dangerous in production. See
+[Search & Indexing](./content/search-and-indexing.mdx).
+
+## W
+
+**Workflow**
+An automated, multi-step process (with automated and human steps) run by the Granite Workflow engine.
+See [Workflows](/aem/beginners-guide/workflows).
+
+## See also
+
+- [AEM Beginners Guide](/aem/beginners-guide/introduction) - learn these concepts in order
+- [Architecture](./architecture.mdx) - how the pieces fit together
+- [AEMaaCS vs AEM 6.5](./infrastructure/aemaacs-vs-aem-65.mdx) - platform differences

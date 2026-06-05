@@ -163,8 +163,8 @@ You learned:
 ## Official Documentation
 
 - [Workflows (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/workflows/overview)
-- [Administering Workflows](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/operations/workflows)
-- [Developing Workflow Process Steps](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/workflows/customize-workflow-step)
+- [Administering Workflows](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/operations/workflows)
+- [Workflows -- developer reference (this site)](../backend/workflows.mdx) - custom process steps, participant choosers, the `WorkflowSession` API
 
 Next up: [Dispatcher & Caching](./18-dispatcher-and-caching.md) - the caching layer in front of
 publish, cache rules, filters, and invalidation.

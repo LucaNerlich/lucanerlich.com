@@ -39,7 +39,7 @@ The following chapters each present a Coral XML snippet which can be copied into
 
 ## AEM Component Help Pages
 
-1. Open the [CRXDE](https://experienceleague.adobe.com/en/docs/experience-manager-65/developing/devtools/developing-with-crxde-lite.html?lang=en) [http://localhost:4502/crx/de/index.jsp](http://localhost:4502/crx/de/index.jsp) console.
+1. Open the CRXDE Lite [http://localhost:4502/crx/de/index.jsp](http://localhost:4502/crx/de/index.jsp) console.
 2. Go to the component path. Example: `/apps/<projectname>/components/some/text`.
 3. Now create a new markdown file inside the component called **README.md**.
 4. Add any documentation content you need.
@@ -218,7 +218,7 @@ This is an empty dialog structure and components can be placed in tabs (you can 
 - [Coral UI Icon List](https://developer.adobe.com/experience-manager/reference-materials/6-5/coral-ui/coralui3/Coral.Icon.html#availableIcons)
 - [Creating a New Granite UI Field Component (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65-lts/content/implementing/developing/platform/granite-ui-component)
 - [Adding Fields to an AEM Dialog -- WKND tutorial](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
-- [Configuring the Rich Text Editor (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/rich-text-editor)
+- [Configuring the Rich Text Editor (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/configuring-and-extending/rich-text-editor)
 
 ![Empty dialog](/images/aem/dialogfields/empty.png)
 
@@ -1202,8 +1202,7 @@ Any dialog field can be added to each accordion item `items` block.
 
 ### Tags field
 
-See also the [Tags and Taxonomies](./content/tags-taxonomies.md) deep dive and Adobe's
-[Administering Tags](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/site-and-page-features/tags) documentation.
+See also the [Tags and Taxonomies](./content/tags-taxonomies.md) deep dive.
 
 ```xml
 <tags
@@ -1857,9 +1856,9 @@ The Rich Text Editor (`cq/gui/components/authoring/dialog/richtext`) is the most
 the dialog framework. It is driven by **plugins** (each plugin contributes toolbar buttons and
 behaviours) and a **toolbar** definition that decides which of those buttons are shown. The official
 references are Adobe's
-[Configuring the Rich Text Editor](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/rich-text-editor)
+[Configuring the Rich Text Editor](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/configuring-and-extending/rich-text-editor)
 guide and the
-[RichText Granite UI reference](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/cq/gui/components/authoring/dialog/richtext/index.html).
+[Configure the RTE plug-ins (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/configuring-and-extending/configure-rich-text-editor-plug-ins).
 
 ### Minimal inline RTE
 
@@ -1920,7 +1919,7 @@ component CSS, paste-as-plaintext, special characters, find/replace, and source 
         </links>
         <paraformat
             jcr:primaryType="nt:unstructured">
-            <formats jcr:primaryType="nt:unstructured">
+            <formats jcr:primaryType="cq:WidgetCollection">
                 <p   jcr:primaryType="nt:unstructured" tag="p"  description="Paragraph"/>
                 <h2  jcr:primaryType="nt:unstructured" tag="h2" description="Heading 2"/>
                 <h3  jcr:primaryType="nt:unstructured" tag="h3" description="Heading 3"/>
@@ -2187,7 +2186,7 @@ Eyebrow + title + rich-text description + a CTA (label/URL/target) + a style sel
                                                        text="Open in new tab"
                                                        name="./ctaNewTab"
                                                        value="{Boolean}true"
-                                                       uncheckedValue="false"/>
+                                                       uncheckedValue="{Boolean}false"/>
                                         </items>
                                     </column>
                                 </items>

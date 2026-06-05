@@ -619,8 +619,8 @@ templates and policies - how pages are structured and which components are allow
 
 ## Official Documentation
 
-- [Developing Sling Models (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/development/develop-sling-model) - Adobe's Sling Models tutorial for AEM
-- [AEM Sling Model Exporter & JSON (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/development/sling-model-exporter-in-aem) - `.model.json` and headless export
+- [Developing Sling Models (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/project-archetype/component-basics) - Adobe's Sling Models tutorial for AEM
+- [AEM Sling Model Exporter & JSON (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/development/understand-sling-model-exporter) - `.model.json` and headless export
 - [Apache Sling Models](https://sling.apache.org/documentation/bundles/models.html) - official Sling Models reference with all injectors
 - [wcm.io AEM Mocks](https://wcm.io/testing/aem-mock/) - the `AemContext` testing library used in this guide
 - [Sling Models API Javadoc](https://javadoc.io/doc/org.apache.sling/org.apache.sling.models.api/latest/index.html) - annotations and interfaces

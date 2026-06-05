@@ -350,10 +350,10 @@ You learned:
 
 ## Official Documentation
 
-- [Multi Site Manager (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/introduction/msm) - blueprints, live copies, rollout configs
-- [Translating Content for Multilingual Sites](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/translation/overview) - translation framework and projects
-- [Configuring the Translation Integration Framework](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/translation/integration-framework) - connectors and rules
-- [Internationalizing Components (i18n)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/components/i18n/i18n-dev) - dictionaries in HTL and Java
+- [Multi Site Manager (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/reusing-content/msm/overview) - blueprints, live copies, rollout configs
+- [Translating Content for Multilingual Sites](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/reusing-content/translation/overview) - translation framework and projects
+- [Configuring the Translation Integration Framework](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/reusing-content/translation/integration-framework) - connectors and rules
+- [Identifying Content to Translate (Translation Rules)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/reusing-content/translation/rules) - registering translatable properties
 
 The content side is complete. The final two chapters cover production concerns: Dispatcher caching and Cloud Manager
 deployment.

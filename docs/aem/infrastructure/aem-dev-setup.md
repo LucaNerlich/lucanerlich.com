@@ -452,7 +452,7 @@ repo get -u admin -p admin http://localhost:4502 /content/mysite/en
 ## Set up a local Dispatcher with Docker
 
 Just follow the steps described
-here: [local-development-environment-set-up/dispatcher-tools](https://experienceleague.adobe.com/en/docs/experience-manager-learn/cloud-service/local-development-environment-set-up/dispatcher-tools.html).
+here: [local-development-environment-set-up/dispatcher-tools](https://experienceleague.adobe.com/en/docs/experience-manager-learn/cloud-service/local-development-environment-set-up/dispatcher-tools).
 
 On Windows, the `docker_run.cmd` file will need to be slightly modified. Remove the following lines:
 

@@ -471,4 +471,4 @@ Create a new variation or version before making breaking changes.
 - [Replication and Activation](./replication-activation.mdx) - publishing XFs
 - [Experience Fragments - AEM 6.5 (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/authoring/authoring/experience-fragments) - authoring and management guide
 - [Experience Fragments - AEMaaCS (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/fragments/experience-fragments) - cloud-specific guidance
-- [XF + Adobe Target integration](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/experience-fragments-target) - A/B testing and personalisation
+- XF + Adobe Target integration - A/B testing and personalisation (configured via Adobe Target)

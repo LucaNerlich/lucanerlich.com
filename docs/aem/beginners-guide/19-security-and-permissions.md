@@ -140,10 +140,10 @@ You learned:
 
 ## Official Documentation
 
-- [User Administration and Security (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/security/security-overview)
+- [User Administration and Security (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/cloud-service/accessing/aem-users-groups-and-permissions)
 - [Permissions in AEM](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/security/security)
 - [Repository Initialization (repoinit)](https://sling.apache.org/documentation/bundles/repository-initialization.html)
-- [Closed User Groups](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/security/cug)
+- [Closed User Groups](https://experienceleague.adobe.com/en/docs/experience-manager-learn/assets/advanced/closed-user-groups)
 
 Next up: [Testing & Debugging](./20-testing-and-debugging.md) - unit testing Sling Models, integration
 tests, and the debugging tools that save you hours.

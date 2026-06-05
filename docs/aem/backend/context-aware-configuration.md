@@ -470,5 +470,5 @@ belong in OSGi configurations.
 - [Architecture](../architecture.mdx) - how configuration fits into AEM's layers
 - [Templates and Policies](../components/templates-policies.md) - template-level configuration
 - [Apache Sling Context-Aware Configuration](https://sling.apache.org/documentation/bundles/context-aware-configuration/context-aware-configuration.html) - official CA Config reference
-- [AEM Context-Aware Configuration (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/context-aware-config) - AEM 6.5 implementation guide
+- [AEM Context-Aware Configuration (Experience League)](https://sling.apache.org/documentation/bundles/context-aware-configuration/context-aware-configuration.html) - AEM 6.5 implementation guide
 - [wcm.io Context-Aware Configuration Extensions](https://wcm.io/caconfig/) - editor UI and advanced features

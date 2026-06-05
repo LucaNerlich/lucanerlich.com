@@ -56,7 +56,7 @@ templates**. The difference matters when you inherit or migrate a project:
 If you find `cq:template` pointing at an `/apps/...` path with a `cq:Template` node, you are looking
 at a static template. New components and chapters in this guide assume editable templates throughout.
 See Adobe's [Page Templates -- Editable](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates)
-and [Creating Page Templates](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/page-templates-static).
+and [Creating Page Templates](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/templates/page-templates-static).
 
 ### Template Types
 
@@ -398,7 +398,7 @@ You learned:
 ## Official Documentation
 
 - [Page Templates (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates) - editable templates, the template editor, and enabling templates
-- [Creating Page Templates (developer)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/page-templates-static) - template types, structure vs initial content
+- [Creating Page Templates (developer)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/templates/page-templates-static) - template types, structure vs initial content
 - [Style System](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/style-system) - author-applied CSS classes
 - [WKND tutorial -- Pages & Templates](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
 

@@ -344,9 +344,9 @@ You learned:
 
 ## Official Documentation
 
-- [AEM as a Cloud Service Dispatcher](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/dispatcher) - configuration in the cloud
-- [Dispatcher in the Cloud (overview)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/disambiguation) - CDN, Dispatcher, Publish layering
-- [Caching with the CDN](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/cdn-cache) - cache headers and TTLs
+- [AEM as a Cloud Service Dispatcher](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/disp-overview) - configuration in the cloud
+- [Dispatcher in the Cloud (overview)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/overview) - CDN, Dispatcher, Publish layering
+- [Caching with the CDN](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/caching) - cache headers and TTLs
 - [Dispatcher Configuration tool & validator](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/validation-debug) - local SDK testing
 
 Next up: [Security & Permissions](./19-security-and-permissions.md) - users and groups, ACLs and permission

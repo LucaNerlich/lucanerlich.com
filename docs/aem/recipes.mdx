@@ -1,0 +1,91 @@
+---
+title: AEM Recipes
+description: Task-oriented how-to recipes that stitch the AEM deep-dive pages into end-to-end workflows -- build a component, deliver headless content, make a query fast, publish, secure, and debug.
+sidebar_position: 3
+tags: [aem, recipes, how-to]
+keywords:
+    - aem how-to
+    - aem recipes
+    - aem tasks
+    - aem workflow guide
+---
+
+# AEM Recipes
+
+Goal-oriented walkthroughs that connect the reference pages on this site into complete workflows. Each
+recipe is a short checklist with links to the detailed pages.
+
+## Build a configurable component
+
+1. Scaffold the component and HTL -- [Your First Component](/aem/beginners-guide/your-first-component).
+2. Write the markup with [HTL](/aem/htl-templates) and a [Sling Model](/aem/beginners-guide/sling-models) for logic.
+3. Add an authoring [dialog](/aem/component-dialogs) with the fields authors need.
+4. Add [validation](/aem/components/dialog-validation) for any business rules (and re-check in the model).
+5. Allow it in a [template policy](/aem/beginners-guide/templates-and-policies) so authors can place it.
+
+## Add a dynamic dropdown to a dialog
+
+1. Add a `select` with a `datasource` resource type -- [Component Dialogs: datasource](/aem/component-dialogs#select-with-datasource).
+2. Implement the [datasource servlet](/aem/beginners-guide/servlets-and-requests) that builds the options.
+3. Read the saved value in your [Sling Model](/aem/beginners-guide/sling-models).
+
+## Deliver content headlessly (GraphQL)
+
+1. Model the content as a [Content Fragment Model](/aem/content/content-fragments).
+2. Author fragments in the Content Fragments Console.
+3. Enable the model and create a [GraphQL endpoint](/aem/content/graphql).
+4. Save a **persisted query** and fetch it from your frontend -- [headless end-to-end](/aem/content/content-fragments#headless-end-to-end-from-model-to-frontend).
+5. Configure CORS, the referrer filter, and caching for production.
+
+## Make a slow query fast
+
+1. Run the query through the **Explain Query** tool to confirm whether it traverses -- [Search & Indexing](/aem/content/search-and-indexing).
+2. Tighten the `path` and `type` constraints.
+3. Define an Oak [property or Lucene index](/aem/beginners-guide/search-and-indexing) that matches the filter + sort.
+4. Deploy the index under `/oak:index` (use the `-custom-N` convention on AEMaaCS) and reindex.
+
+## Bulk-edit existing content
+
+1. Write a guarded script in the [Groovy Console](/aem/groovy-console) (always start with `DRY_RUN = true`).
+2. Iterate in batches and `session.save()` periodically.
+3. Review the dry-run output, then flip `DRY_RUN = false`.
+4. For repeatable jobs, schedule the script or trigger it from CI.
+
+## Publish content (and its dependencies)
+
+1. Use **Manage Publication** to activate a page **with its references** (assets, fragments, tags, `/conf`).
+2. Confirm the [replication/distribution](/aem/beginners-guide/publishing-and-replication) completed.
+3. Verify the [Dispatcher/CDN cache](/aem/beginners-guide/dispatcher-and-caching) was flushed.
+
+## Automate a content process
+
+1. Model the steps as a [workflow](/aem/beginners-guide/workflows) (process + participant steps).
+2. Wire a **launcher** to start it on the right JCR change.
+3. For high-volume, non-interactive work, prefer a [Sling Job](/aem/backend/sling-jobs) instead.
+
+## Secure a section of the site
+
+1. Model roles as [groups and ACLs](/aem/beginners-guide/security-and-permissions); assign permissions to groups.
+2. Define them as code with **repoinit** so environments stay consistent.
+3. For gated delivery, apply a **Closed User Group** to the content root.
+4. Harden the [Dispatcher](/aem/beginners-guide/dispatcher-and-caching) with deny-by-default filters.
+
+## Debug "my component isn't rendering"
+
+1. Is the bundle **Active** and the DS component **satisfied**? Check the [OSGi consoles](/aem/beginners-guide/testing-and-debugging).
+2. Which script rendered? Check **Recent Requests** and `sling:resourceType`.
+3. Did the dialog value persist? Inspect the node in CRXDE Lite.
+4. Still stuck? Attach a [remote debugger](/aem/beginners-guide/testing-and-debugging) and set a breakpoint in the model.
+
+## Translate a site
+
+1. Create [language copies](/aem/beginners-guide/multi-site-manager-and-i18n) of the master language.
+2. Configure the **Translation Integration Framework** and a connector.
+3. Register custom translatable properties in **translation rules**.
+4. Translate UI strings with [i18n dictionaries](/aem/beginners-guide/multi-site-manager-and-i18n).
+
+## See also
+
+- [AEM Beginners Guide](/aem/beginners-guide/introduction) - the full learning path
+- [AEM Glossary](/aem/glossary) - terminology
+- [Architecture](/aem/architecture) - how the platform fits together
