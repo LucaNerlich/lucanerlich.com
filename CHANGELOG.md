@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.15.1] - 2026-06-05
+
+### Changed
+- Splitter app: refactored internals for testability with no change to behaviour - state transitions, the settlement summary, URL persistence, and person-name lookup each now live behind a single dedicated module
+- Moved the sidebar ordering algorithm next to its order constants in `sidebar-order.ts` so the Docusaurus config just calls one entry point
+
 ## [1.15.0] - 2026-06-05
 
 ### Added

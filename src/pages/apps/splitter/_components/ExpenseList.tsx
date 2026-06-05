@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import type {Expense, Person} from '../_lib/types';
+import {indexPeople, nameFrom} from '../_lib/people';
 import {formatMoney} from '../_lib/money';
 import styles from '../splitter.module.css';
 
@@ -10,7 +11,8 @@ type Props = {
 };
 
 const ExpenseList: React.FC<Props> = ({expenses, people, onRemove}) => {
-    const nameOf = (id: string) => people.find(p => p.id === id)?.name ?? '-';
+    const peopleIndex = useMemo(() => indexPeople(people), [people]);
+    const nameOf = (id: string) => nameFrom(peopleIndex, id);
 
     return (
         <div className={styles.tableWrap}>

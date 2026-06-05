@@ -71,3 +71,22 @@ export const computeSettlement = (balances: Map<string, number>): Transfer[] => 
 
     return transfers;
 };
+
+export type Summary = {
+    totalCents: number;
+    perPersonCents: number;
+    balances: Map<string, number>;
+    transfers: Transfer[];
+};
+
+// Single source of truth for everything the results view shows. Computing the
+// total, balances, per-person share and transfers in one place keeps the money
+// math in integer cents and stops callers re-deriving the total themselves.
+export const summarize = (state: AppState): Summary => {
+    const totalCents = state.expenses.reduce((acc, e) => acc + e.cents, 0);
+    const balances = computeBalances(state);
+    const transfers = computeSettlement(balances);
+    const N = state.people.length;
+    const perPersonCents = N > 0 ? Math.round(totalCents / N) : 0;
+    return {totalCents, perPersonCents, balances, transfers};
+};

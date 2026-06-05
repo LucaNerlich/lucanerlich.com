@@ -1,6 +1,7 @@
 import React, {useMemo} from 'react';
 import type {AppState} from '../_lib/types';
-import {computeBalances, computeSettlement} from '../_lib/settlement';
+import {summarize} from '../_lib/settlement';
+import {indexPeople, nameFrom} from '../_lib/people';
 import {formatMoney} from '../_lib/money';
 import styles from '../splitter.module.css';
 
@@ -9,12 +10,11 @@ type Props = {
 };
 
 const ResultsPanel: React.FC<Props> = ({state}) => {
-    const {balances, settlement, totalCents} = useMemo(() => {
-        const b = computeBalances(state);
-        const s = computeSettlement(b);
-        const t = state.expenses.reduce((acc, e) => acc + e.cents, 0);
-        return {balances: b, settlement: s, totalCents: t};
-    }, [state]);
+    const {balances, transfers, totalCents, perPersonCents} = useMemo(
+        () => summarize(state),
+        [state],
+    );
+    const peopleIndex = useMemo(() => indexPeople(state.people), [state.people]);
 
     if (state.people.length < 2 || state.expenses.length === 0) {
         return (
@@ -29,8 +29,7 @@ const ResultsPanel: React.FC<Props> = ({state}) => {
         );
     }
 
-    const nameOf = (id: string) => state.people.find(p => p.id === id)?.name ?? '-';
-    const fairShare = totalCents / state.people.length;
+    const nameOf = (id: string) => nameFrom(peopleIndex, id);
 
     return (
         <section className={styles.card}>
@@ -45,7 +44,7 @@ const ResultsPanel: React.FC<Props> = ({state}) => {
                 <div>
                     <span className={styles.summaryLabel}>Per person</span>
                     <span className={styles.summaryValue}>
-                        {formatMoney(Math.round(fairShare))}
+                        {formatMoney(perPersonCents)}
                     </span>
                 </div>
             </div>
@@ -74,11 +73,11 @@ const ResultsPanel: React.FC<Props> = ({state}) => {
             </ul>
 
             <h3 className={styles.subSectionTitle}>Transfers</h3>
-            {settlement.length === 0 ? (
+            {transfers.length === 0 ? (
                 <p className={styles.muted}>Everyone is settled up.</p>
             ) : (
                 <ul className={styles.transferList}>
-                    {settlement.map((t, i) => (
+                    {transfers.map((t, i) => (
                         <li key={i} className={styles.transferRow}>
                             <span className={styles.transferFrom}>{nameOf(t.from)}</span>
                             <span className={styles.transferArrow} aria-hidden>

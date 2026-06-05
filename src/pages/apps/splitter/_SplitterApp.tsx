@@ -1,77 +1,25 @@
-import React, {useEffect, useReducer, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import type {Action, AppState} from './_lib/types';
-import {emptyState, newId} from './_lib/types';
-
-const pluralRules = new Intl.PluralRules('en', {type: 'cardinal'});
+import {emptyState} from './_lib/types';
+import {applyAction} from './_lib/model';
 import {encodeState, decodeState} from './_lib/urlState';
+import {useUrlState} from './_lib/useUrlState';
 import PeopleManager from './_components/PeopleManager';
 import ExpenseForm from './_components/ExpenseForm';
 import ExpenseList from './_components/ExpenseList';
 import ResultsPanel from './_components/ResultsPanel';
 import styles from './splitter.module.css';
 
-const reducer = (state: AppState, action: Action): AppState => {
-    switch (action.type) {
-        case 'HYDRATE':
-            return action.state;
-        case 'ADD_PERSON': {
-            const name = action.name.trim();
-            if (!name) return state;
-            return {...state, people: [...state.people, {id: newId(), name}]};
-        }
-        case 'REMOVE_PERSON':
-            return {
-                ...state,
-                people: state.people.filter(p => p.id !== action.id),
-                expenses: state.expenses.filter(e => e.paidBy !== action.id),
-            };
-        case 'ADD_EXPENSE': {
-            if (action.cents <= 0) return state;
-            if (!state.people.some(p => p.id === action.paidBy)) return state;
-            return {
-                ...state,
-                expenses: [
-                    ...state.expenses,
-                    {id: newId(), description: action.description.trim(), cents: action.cents, paidBy: action.paidBy},
-                ],
-            };
-        }
-        case 'REMOVE_EXPENSE':
-            return {...state, expenses: state.expenses.filter(e => e.id !== action.id)};
-        default:
-            return state;
-    }
-};
+const pluralRules = new Intl.PluralRules('en', {type: 'cardinal'});
 
 const SplitterApp: React.FC = () => {
-    const [state, dispatch] = useReducer(reducer, undefined, emptyState);
-    const hydratedRef = useRef(false);
+    const [state, dispatch] = useUrlState<AppState, Action>({
+        reducer: applyAction,
+        init: emptyState,
+        codec: {encode: encodeState, decode: decodeState},
+        hydrate: decoded => ({type: 'HYDRATE', state: decoded}),
+    });
     const [copied, setCopied] = useState(false);
-
-    useEffect(() => {
-        const hash = window.location.hash.slice(1);
-        if (hash) {
-            const decoded = decodeState(hash);
-            if (decoded) dispatch({type: 'HYDRATE', state: decoded});
-        }
-        hydratedRef.current = true;
-    }, []);
-
-    useEffect(() => {
-        if (!hydratedRef.current) return;
-        const handle = window.setTimeout(() => {
-            const encoded = encodeState(state);
-            const newHash = '#' + encoded;
-            if (window.location.hash !== newHash) {
-                window.history.replaceState(
-                    null,
-                    '',
-                    window.location.pathname + window.location.search + newHash,
-                );
-            }
-        }, 150);
-        return () => window.clearTimeout(handle);
-    }, [state]);
 
     const handleRemovePerson = (id: string) => {
         const person = state.people.find(p => p.id === id);

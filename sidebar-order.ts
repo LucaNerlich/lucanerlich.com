@@ -301,3 +301,76 @@ export const sidebarOrder: Record<string, string[]> = {
         'link-collections',
     ],
 };
+
+// ------------------------------------------------------------------
+// Sidebar ordering algorithm
+// ------------------------------------------------------------------
+// Lives next to the data it consumes so the ordering rules and the order
+// constants form one module. The Docusaurus config calls `sortSidebarItems`
+// as a thin adapter.
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Docusaurus sidebar types are complex internal generics
+type SidebarItem = any;
+type CategoriesMetadata = Record<string, {label?: string; [k: string]: unknown}>;
+
+/**
+ * Recursively sorts sidebar items according to the ordered arrays in
+ * `sidebarOrder`. Items not listed in the constants are appended at the end
+ * in their default (alphabetical / sidebar_position) order.
+ */
+export function sortSidebarItems(
+    items: SidebarItem[],
+    currentDir: string,
+    categoriesMetadata: CategoriesMetadata,
+): SidebarItem[] {
+    // Build a label → directory-name mapping for categories in this directory
+    const labelToDirname: Record<string, string> = {};
+    for (const [catPath, catMeta] of Object.entries(categoriesMetadata)) {
+        const lastSlash = catPath.lastIndexOf('/');
+        const parent = lastSlash === -1 ? '.' : catPath.substring(0, lastSlash);
+        if (parent === currentDir && catMeta.label) {
+            labelToDirname[catMeta.label] = lastSlash === -1 ? catPath : catPath.substring(lastSlash + 1);
+        }
+    }
+
+    // Recurse into category children first
+    const processed = items.map((item: SidebarItem) => {
+        if (item.type === 'category' && item.items) {
+            const dirname = labelToDirname[item.label!];
+            if (dirname) {
+                const childDir = currentDir === '.' ? dirname : `${currentDir}/${dirname}`;
+                return {...item, items: sortSidebarItems(item.items, childDir, categoriesMetadata)};
+            }
+        }
+        return item;
+    });
+
+    // If no explicit order is defined for this directory, keep default order
+    const order = sidebarOrder[currentDir];
+    if (!order) return processed;
+
+    // Resolve each item to a key so we can match against the order array
+    const getKey = (item: SidebarItem): string | null => {
+        if (item.type === 'doc' && item.id) {
+            const parts = item.id.split('/');
+            return parts[parts.length - 1];
+        }
+        if (item.type === 'category') {
+            return labelToDirname[item.label!] ?? null;
+        }
+        return null;
+    };
+
+    // Partition: ordered items first, then the rest
+    const ordered: SidebarItem[] = [];
+    const remaining = [...processed];
+
+    for (const key of order) {
+        const idx = remaining.findIndex((item: SidebarItem) => getKey(item) === key);
+        if (idx !== -1) {
+            ordered.push(remaining.splice(idx, 1)[0]);
+        }
+    }
+
+    return [...ordered, ...remaining];
+}
