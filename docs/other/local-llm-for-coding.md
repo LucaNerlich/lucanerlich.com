@@ -1,4 +1,8 @@
-# How do setup a local & offline GitHub Copilot alternative
+# How to set up a local & offline GitHub Copilot alternative
+
+This guide sets up a local **coding assistant** inside your editor. If you instead want to run a local model
+and call it from your own app, see [Build a Local LLM App](../ai/local-llm-app.md), and
+[Cloud vs Local Models](../ai/cloud-vs-local.md) for when local makes sense.
 
 ## Ollama + Continue Dev
 

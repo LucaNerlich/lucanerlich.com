@@ -104,11 +104,12 @@ on a single consumer GPU -- domain adaptation without renting a cluster. See
 [RAG vs fine-tuning](./rag.md#rag-vs-fine-tuning) for when adaptation is worth it at all (usually:
 RAG for facts, fine-tune for style).
 
-### A worked local setup
+### Worked local setups
 
-For a concrete, offline coding-assistant setup using Ollama plus an editor plugin (a self-hosted GitHub
-Copilot alternative), see the existing guide:
-[How to set up a local and offline Copilot alternative](../other/local-llm-for-coding.md).
+- **Build your own app** -- run a model with Ollama or LM Studio and call it from a tiny app you write:
+  [Build a Local LLM App](./local-llm-app.md).
+- **Local coding assistant** -- an offline, self-hosted GitHub Copilot alternative (Ollama + Continue.dev):
+  [How to set up a local and offline Copilot alternative](../other/local-llm-for-coding.md).
 
 ## A practical default
 
@@ -126,5 +127,6 @@ Copilot alternative), see the existing guide:
 - [Large Language Models](./llm.md) -- foundation, frontier, and open-weights distinctions
 - [RAG](./rag.md) -- managed (Bedrock Knowledge Bases) vs self-hosted retrieval
 - [Tooling and Frameworks](./tooling.md) -- model serving and LLMOps
+- [Build a Local LLM App](./local-llm-app.md) -- run Ollama/LM Studio and call it from your own app
 - [Local & offline Copilot alternative](../other/local-llm-for-coding.md) -- a hands-on Ollama setup
 - [AI Glossary](./glossary.md) -- open-weights, quantization, QLoRA, foundation model, and more

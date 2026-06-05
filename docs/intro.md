@@ -38,6 +38,7 @@ Practical introductions to the building blocks of modern AI -- with an inter-lin
 - [Knowledge Management with LLMs](./ai/knowledge-management.md) - RAG vs just-in-time vs the LLM-wiki pattern vs llms.txt
 - [AI-Assisted Software Development](./ai/ai-assisted-development.md) - SPDD, architect-as-orchestrator, and AI-friendly architecture
 - [Cloud vs Local Models](./ai/cloud-vs-local.md) - enterprise platforms vs running open-weights models locally
+- [Build a Local LLM App](./ai/local-llm-app.md) - run Ollama or LM Studio and connect a simple app you write yourself
 - [AI Glossary](./ai/glossary.md) - quick definitions for the terms above
 
 ---

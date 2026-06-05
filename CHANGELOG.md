@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.18.0] - 2026-06-05
+
+### Added
+- New [Build a Local LLM App](/ai/local-llm-app) guide - run a model locally with Ollama or LM Studio and connect a simple app you write yourself, with copy-paste examples for a zero-dependency Node.js CLI, a single-file browser app, and the OpenAI SDK, plus streaming, CORS guidance, and troubleshooting
+
+### Changed
+- Cross-linked the new local-app guide from [Cloud vs Local Models](/ai/cloud-vs-local) and the [local coding-assistant guide](/other/local-llm-for-coding), and fixed the coding-assistant page title
+
 ## [1.17.0] - 2026-06-05
 
 ### Added
