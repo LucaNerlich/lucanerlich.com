@@ -26,11 +26,23 @@ COPY . .
 RUN pnpm build
 
 # -------------------------
-# 2) Runtime stage -- static files only, no Node / no node_modules
+# 2) Runtime stage -- static files served by a tiny Node static server.
+# Reuses the node:22-alpine base (already pulled reliably in this env) so no
+# extra base image is needed. `serve` uses serve-handler -- the same engine
+# `docusaurus serve` uses -- so it auto-serves build/404.html, and serve.json
+# enforces trailingSlash to match the Docusaurus config. Only `serve` and the
+# static build/ are present -- none of the ~1.5GB build toolchain.
 # -------------------------
-FROM caddy:2-alpine
+FROM node:22-alpine
 
-COPY Caddyfile /etc/caddy/Caddyfile
-COPY --from=builder /app/build /srv
+RUN npm install -g serve@14.2.6
+
+WORKDIR /app
+COPY --from=builder /app/build ./build
+COPY serve.json ./build/serve.json
+
+ENV NODE_ENV=production
 
 EXPOSE 3000
+
+CMD ["serve", "build", "-l", "tcp://0.0.0.0:3000"]
