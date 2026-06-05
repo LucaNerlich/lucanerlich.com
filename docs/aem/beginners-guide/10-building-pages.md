@@ -97,6 +97,42 @@ components are allowed here.
 Like the header, the footer is typically locked in the template and reads from a shared source (Experience Fragment or
 configuration).
 
+## Working with DAM assets
+
+Most pages reference images, videos, and documents stored in the **Digital Asset Management (DAM)**
+repository under `/content/dam`. Before you can drop an image into a Teaser or Image component, the
+asset has to exist in the DAM.
+
+### Uploading assets
+
+1. Open **Assets > Files** (`http://localhost:4502/assets.html/content/dam`).
+2. Navigate to (or create) a folder such as `/content/dam/mysite`.
+3. **Create > Files** and upload, or drag files from your desktop.
+
+On upload, AEM runs **asset processing** (Asset Compute on AEMaaCS, workflows on 6.5) which generates
+**renditions** - resized/cropped copies the delivery components pick from automatically:
+
+| Rendition | Purpose |
+|-----------|---------|
+| `original` | The uploaded file, untouched |
+| `cq5dam.thumbnail.*` | Console thumbnails |
+| `cq5dam.web.*` | Web-optimized delivery rendition |
+| Custom (via processing profile) | Project-specific sizes / formats (e.g. WebP) |
+
+### Metadata
+
+Select an asset and open **Properties** to edit metadata (title, description, `dc:*` fields, tags).
+Good metadata powers search, accessibility (alt text), and dynamic lists. Metadata lives under
+`jcr:content/metadata` on the `dam:Asset` node.
+
+:::tip Alt text and accessibility
+The Image Core Component can pull its `alt` text from the asset's description metadata. Encourage
+authors to fill in descriptions on upload so images are accessible by default.
+:::
+
+For the full asset lifecycle (processing profiles, Smart Tags, Dynamic Media, bulk import) see Adobe's
+[Assets documentation](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/overview).
+
 ## Building the homepage
 
 Let's build a homepage step by step:
@@ -222,6 +258,52 @@ public class ArticlePageModel {
 > }
 > ```
 
+## Extending page properties
+
+Notice the **Featured Image** property used above is not a standard AEM field - it is a custom
+property. Page properties are just a dialog on the **page component**, so you extend them the same way
+you extend any component dialog: by overlaying or adding to the page component's
+`_cq_dialog`.
+
+A proxy page component inherits the Core Components page properties dialog. To add a field, create a
+matching dialog path in your page component and add only your field (the rest is inherited via
+`sling:resourceSuperType`):
+
+```xml title="apps/mysite/components/page/_cq_dialog/.content.xml -- add a Featured Image tab/field"
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog">
+    <content jcr:primaryType="nt:unstructured"
+             sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs jcr:primaryType="nt:unstructured"
+                  sling:resourceType="granite/ui/components/coral/foundation/tabs">
+                <items jcr:primaryType="nt:unstructured">
+                    <metadata jcr:primaryType="nt:unstructured"
+                              jcr:title="Featured Image"
+                              sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <featuredImage
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                fieldLabel="Featured Image"
+                                name="./featuredImage"
+                                rootPath="/content/dam"/>
+                        </items>
+                    </metadata>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>
+```
+
+The value is stored on the page's `jcr:content` node and read back through `currentPage.getProperties()`
+(see [Page properties in code](#page-properties-in-code)). For the full dialog field catalog, see the
+[Touch UI Component Dialogs](../component-dialogs.mdx) reference.
+
 ## Troubleshooting - page assembly issues
 
 | Symptom                                 | First check                                        | Typical fix                                           |
@@ -303,9 +385,25 @@ Toggle between modes in the page toolbar:
 | **Targeting** | Personalization targeting                       |
 | **Timewarp**  | View the page as it was at a specific date/time |
 
+A couple of these need context:
+
+- **Targeting** drives personalization - you define audiences and serve different content/offers to
+  each, typically with Adobe Target. It is an advanced topic; ignore it until you actually run
+  personalization campaigns.
+- **Timewarp** replays the page using version history and scheduled (on/off-time) content, so you can
+  preview "what did this page look like last Tuesday" or "what will it look like when the embargo
+  lifts". It is read-only and great for debugging publish issues.
+
 > For more on Core Components, see the [Core Components](/aem/components/core-components) reference. See
 > also [Experience Fragments](/aem/content/experience-fragments) for reusable content blocks
 > and [Tags and Taxonomies](/aem/content/tags-taxonomies) for content classification.
+
+## Official Documentation
+
+- [Core Components (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-core-components/using/introduction) - the full component library
+- [Core Components live examples (Component Library)](https://www.aemcomponents.dev/) - interactive demos and markup
+- [Authoring Pages (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/fundamentals/editing-content) - the page editor for content authors
+- [Managing Assets (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/manage/manage-digital-assets) - DAM upload, metadata, renditions
 
 ## Summary
 

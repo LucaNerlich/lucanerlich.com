@@ -13,6 +13,17 @@ content errors, and improves the authoring experience by providing immediate, in
 This guide covers the built-in validation system, how to register custom validators, and a collection
 of ready-to-use validation examples.
 
+:::info Official documentation
+- [Using Validation in Granite UI](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/validation/index.html) -- the `foundation.validation` API (`validator`, `selector`, `validate/show/clear`)
+- [Granite UI `field` component](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html) -- the `foundation-field` adapter the validators call
+- [TextField `validation` attribute](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html) -- how a field declares a validator
+- [Creating a New Granite UI Field Component](https://experienceleague.adobe.com/en/docs/experience-manager-65-lts/content/implementing/developing/platform/granite-ui-component)
+
+The validation framework is **identical on AEM 6.5 and AEM as a Cloud Service** -- the same
+`foundation-registry` API, the same field attributes, and the same `cq.authoring.dialog` clientlib
+category. Nothing in this guide is platform-specific.
+:::
+
 ## How Validation Works
 
 ```mermaid
@@ -1252,6 +1263,37 @@ clear: function (el) {
 }
 ```
 :::
+
+## Accessibility
+
+A validation error that is only communicated with a red border is invisible to screen-reader users.
+Calling `fieldAPI.setInvalid(true)` already does most of the work -- Coral sets `aria-invalid="true"`
+on the control -- but make the rest of the experience accessible too:
+
+- **Always show a text message**, never colour alone. The Coral error `Tooltip` you create in `show()`
+  carries the message text; keep it specific (the WCAG "error identification" success criterion).
+- **Associate the message with the field.** Give the tooltip an `id` (the examples already use
+  `Coral.commons.getUID()`) and point the field at it with `aria-describedby` so assistive tech reads
+  the error together with the label:
+
+```javascript
+show: function (el, message) {
+    // ... build the Coral.Tooltip with error.id = Coral.commons.getUID() ...
+    el.setAttribute("aria-describedby", error.id);
+},
+clear: function (el) {
+    // ... remove the tooltip ...
+    el.removeAttribute("aria-describedby");
+}
+```
+
+- **Move focus to the first invalid field** on submit so keyboard users land on the problem rather
+  than hunting for it. `checkValidity()` plus `el.focus()` on the first failure is enough.
+- **Don't disable the submit button** to "prevent" invalid saves -- a disabled control gives no
+  feedback about *why*. Let validation run and report the error instead.
+
+See the [Granite UI `field` accessibility contract](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html)
+and the project's [Component Dialogs accessibility notes](../component-dialogs.mdx#accessibility).
 
 ---
 

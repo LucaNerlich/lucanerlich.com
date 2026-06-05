@@ -29,6 +29,14 @@ graph LR
     Fragment -->|API| Email
 ```
 
+:::info Official documentation
+- [Content Fragments -- overview (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/content-fragments)
+- [Managing Content Fragments](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/managing)
+- [Content Fragment Models](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/content-fragments-models)
+- [AEM GraphQL API for Content Fragments](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/headless/graphql-api/content-fragments)
+- [Headless delivery with Content Fragments & GraphQL](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/content-delivery-with-graphql)
+:::
+
 ## Content Fragment Models
 
 A Content Fragment Model defines the **schema** (fields and their types) for a fragment. Models are
@@ -87,6 +95,41 @@ Models support built-in validation rules:
 | **Unique**                  | Text fields                 | Value must be unique across fragments of this model |
 | **Pattern (Regex)**         | Text fields                 | Value must match the regex                          |
 | **Accept** (for references) | Content/Fragment references | Limits selectable models or paths                   |
+
+---
+
+## Authoring in the Content Fragments Console
+
+Most teams create models and fragments through the UI, not code. On AEM as a Cloud Service the
+dedicated **Content Fragments Console** is the primary entry point; on AEM 6.5 you use the Assets
+console plus **Tools > General > Content Fragment Models**.
+
+### Create a model
+
+1. Open the [Content Fragments Console](http://localhost:4502/aem/content-fragments) (AEMaaCS) or
+   **Tools > General > Content Fragment Models** (6.5).
+2. Select the configuration folder for your site and choose **Create**.
+3. Add fields by dragging data types from the right rail, set each field's **Property Name**
+   (this becomes the GraphQL field name), and mark required/translatable as needed.
+4. **Enable** the model. Only enabled models can back new fragments and generate a GraphQL schema.
+
+### Create a fragment
+
+1. In the console, choose **Create > Content Fragment**, pick the model, the target DAM folder, and a
+   name/title.
+2. Author values in the editor; switch **Variations** in the left rail to author channel-specific
+   versions.
+3. Use **Associated Content** to attach related DAM assets (collections) to the fragment.
+
+:::tip Allow models on a folder
+A model only appears in the **Create** dialog for folders where it is permitted. Configure this on
+the DAM folder's **Properties > Policies / Cloud Configuration** (or via the model's *Allowed Content
+Fragment Models* policy). See
+[Allowing Content Fragment Models on your Assets Folder](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/content-fragments-models).
+:::
+
+Reference: [Managing Content Fragment Models](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/managing-content-fragment-models)
+and [Managing Content Fragments](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/managing).
 
 ---
 
@@ -759,7 +802,10 @@ public List<Map<String, Object>> exportFragments(ResourceResolver resolver,
 
 ### Assets HTTP API (REST)
 
-For external systems that need to create or read fragments without Java:
+For external systems that need to create or read fragments without Java. See the
+[Content Fragments Support in the Assets HTTP API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/assets-api-content-fragments)
+reference, and for read delivery the newer
+[Content Fragment Delivery OpenAPI](https://developer.adobe.com/experience-manager-apis/references/openapi-aem-content-fragments/) (AEMaaCS):
 
 ```bash
 # Local SDK / dev only -- real environments use a scoped service account, not admin:admin.
@@ -815,6 +861,22 @@ curl -u admin:admin \
   call
 - **Use persisted GraphQL queries** on Publish - they are cacheable by Dispatcher and CDN
 
+Example property index for the model reference, deployed as a content package
+(`ui.apps/.../_oak_index/cfModel/.content.xml`):
+
+```xml title="Oak property index for cq:model"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0"
+          jcr:primaryType="oak:QueryIndexDefinition"
+          type="property"
+          propertyNames="[jcr:content/data/cq:model]"
+          reindex="{Boolean}true"/>
+```
+
+For text search across fragment fields, prefer a custom **Lucene** index over a property index. See
+Adobe's [Content Search and Indexing](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/indexing)
+documentation for AEMaaCS index deployment (`/oak:index` via `ui.config`/`ui.apps`).
+
 ### Common pitfalls
 
 | Pitfall                              | Solution                                                                               |
@@ -826,6 +888,8 @@ curl -u admin:admin \
 | Slow fragment queries                | Add an Oak index for the `cq:model` property and your custom filter properties         |
 | Variation content is empty           | Variations inherit from `master`; only fields explicitly set on a variation are stored |
 | CORS errors on GraphQL               | Configure CORS and referrer filters; see [Headless GraphQL](./graphql.mdx)             |
+| Infinite loop / stack overflow resolving references | Fragment A references B which references A. GraphQL limits nesting depth, but custom Java traversal must guard against cycles -- track visited paths in a `Set` and stop on revisit |
+| GraphQL field missing after model change | The schema is regenerated when a model is created/updated/deleted; a disabled model produces no schema. Re-enable and republish the model |
 
 ## See also
 

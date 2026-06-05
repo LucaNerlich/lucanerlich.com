@@ -186,12 +186,50 @@ Configuration**:
 - **Google Cloud Translation**
 - Custom connectors via the Translation Integration Framework
 
+### Translation rules
+
+By default AEM only translates a known set of properties (`jcr:title`, `jcr:description`, etc.). To
+translate **custom** component properties, register them in the **translation rules** configuration
+(`/conf/global/settings/translation/rules/translation_rules.xml`, editable via **Tools > General >
+Translation Configuration**):
+
+```xml title="translation_rules.xml -- translate a custom property and a whole component"
+<nodelist>
+    <!-- Translate the custom 'subtitle' property on any node -->
+    <node path="/content">
+        <property name="subtitle" translate="true"/>
+    </node>
+    <!-- Translate all text properties of a specific component -->
+    <node resourceType="mysite/components/teaser">
+        <property name="pretitle" translate="true"/>
+        <property name="ctaText" translate="true"/>
+    </node>
+</nodelist>
+```
+
+If translated content comes back missing a field, an un-registered property is the usual cause.
+
+### hreflang and multi-language SEO
+
+For search engines, expose the language/region alternates with `hreflang` link tags so each locale's
+page is indexed correctly and duplicate-content penalties are avoided:
+
+```html
+<link rel="alternate" hreflang="en" href="https://example.com/en/"/>
+<link rel="alternate" hreflang="de" href="https://example.com/de/"/>
+<link rel="alternate" hreflang="x-default" href="https://example.com/en/"/>
+```
+
+Generate these in your page component's `customheaderlibs.html` by iterating the available language
+copies (the Language Navigation model or `LanguageManager` API gives you the set). Keep the URL
+structure locale-first (`/en/`, `/de/`) so the alternates map cleanly.
+
 ### Translation best practices
 
 1. **Translate structure first** - create language copies with structure only, then fill in translations
 2. **Use the translation project workflow** - it tracks what is translated and what is not
 3. **Keep master content stable** - finalize English content before translating
-4. **Tag translatable content** - mark which components and properties need translation
+4. **Tag translatable content** - register custom properties in the translation rules (above)
 
 ## i18n dictionaries
 
@@ -219,6 +257,39 @@ Repository node structure example:
 │       ├── sling:key = "readMore"
 │       └── sling:message = "Mehr lesen"
 ```
+
+### JSON dictionaries (modern archetype default)
+
+The node-per-message format above still works, but the current AEM Maven archetype ships **JSON
+dictionaries** instead - they are far easier to maintain in Git and diff in pull requests. A JSON
+dictionary is a single file per language inside a clientlib-style folder marked with the
+`mix:language` mixin:
+
+```text
+ui.apps/.../jcr_root/apps/mysite/i18n/
+├── .content.xml          # cq:ClientLibraryFolder, mixin mix:language is set per-language file
+├── en.json
+└── de.json
+```
+
+```json title="apps/mysite/i18n/en.json"
+{
+    "readMore": "Read More",
+    "close": "Close",
+    "search.placeholder": "Search the site"
+}
+```
+
+```json title="apps/mysite/i18n/de.json"
+{
+    "readMore": "Mehr lesen",
+    "close": "Schliessen",
+    "search.placeholder": "Website durchsuchen"
+}
+```
+
+Sling resolves either format transparently - HTL `${'readMore' @ i18n}` and the Java `I18n` API work
+the same regardless of which storage you use. **Prefer JSON for new projects.**
 
 ### Using i18n in HTL
 
@@ -272,8 +343,17 @@ You learned:
 - **Inheritance** - how live copies inherit and override content
 - **Language copies** - parallel site structures for each language
 - **Translation projects** - managed workflows for content translation
+- **Translation rules** - registering custom properties for translation
 - **Machine translation** integration
-- **i18n dictionaries** - translating UI strings in HTL and Java
+- **i18n dictionaries** - node-based and JSON formats, used in HTL and Java
+- **hreflang** - multi-language SEO alternates
+
+## Official Documentation
+
+- [Multi Site Manager (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/introduction/msm) - blueprints, live copies, rollout configs
+- [Translating Content for Multilingual Sites](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/translation/overview) - translation framework and projects
+- [Configuring the Translation Integration Framework](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/translation/integration-framework) - connectors and rules
+- [Internationalizing Components (i18n)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/components/i18n/i18n-dev) - dictionaries in HTL and Java
 
 The content side is complete. The final two chapters cover production concerns: Dispatcher caching and Cloud Manager
 deployment.

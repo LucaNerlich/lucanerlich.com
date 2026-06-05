@@ -379,7 +379,10 @@ Once logged in at `http://localhost:4502`, explore:
 
 ### Sites Console
 
-**Tools** > **Sites** - manage pages, create content, publish. This is where content authors spend their time.
+Open the global navigation (the Adobe Experience Manager logo, top-left) and choose **Sites**, or go
+directly to `http://localhost:4502/sites.html/content`. This is where content authors create pages,
+manage content, and publish - it is *not* under **Tools** (Tools holds administration consoles like
+Templates, Workflow, and the General configuration browser).
 
 ### CRXDE Lite
 

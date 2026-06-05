@@ -16,6 +16,15 @@ author and publish instances.
 **Access the console** at [/groovyconsole](http://localhost:4502/groovyconsole) (or the legacy
 path `/apps/groovyconsole.html`).
 
+:::note Community tool -- not an Adobe product
+The Groovy Console is an open-source, community-maintained tool, **not** part of AEM and **not**
+supported by Adobe Customer Care. On AEM as a Cloud Service it must be added as a project dependency
+and is intended for **author / RDE / local SDK** use; do not ship it to production publish tiers.
+On Adobe Managed Services (AMS) Adobe blocks its installation on production publish for the same
+reason. Treat every script as code: review it, test it locally, and keep it out of your production
+deployment pipeline unless it is deliberately scoped and access-controlled.
+:::
+
 ## Installation
 
 ### Orbinson fork (recommended)
@@ -639,6 +648,128 @@ out.println("----------------------------------------")
 out.println("Total configurations: ${configs?.size() ?: 0}")
 ```
 
+### Audit users, groups, and memberships
+
+List the members of a group, or find every group a user belongs to, via the JCR User Management API:
+
+```groovy
+import org.apache.jackrabbit.api.security.user.Authorizable
+import org.apache.jackrabbit.api.security.user.Group
+import org.apache.jackrabbit.api.security.user.UserManager
+import org.apache.jackrabbit.api.security.user.User
+
+final String GROUP_ID = 'content-authors'
+
+def userManager = resourceResolver.adaptTo(UserManager)
+def group = userManager.getAuthorizable(GROUP_ID) as Group
+
+if (group == null) {
+    out.println("Group not found: ${GROUP_ID}")
+    return
+}
+
+int count = 0
+group.getMembers().each { Authorizable member ->
+    out.println("${member.id}${member instanceof Group ? ' (group)' : ''} -> ${member.path}")
+    count++
+}
+
+out.println("----------------------------------------")
+out.println("${GROUP_ID} has ${count} direct members")
+return count
+```
+
+### Start a workflow on a payload
+
+Trigger an AEM workflow model programmatically (e.g. to re-run an approval or publish workflow):
+
+```groovy
+import com.adobe.granite.workflow.WorkflowSession
+import com.adobe.granite.workflow.exec.WorkflowData
+import com.adobe.granite.workflow.model.WorkflowModel
+
+final String MODEL_ID = '/var/workflow/models/request_for_activation'
+final String PAYLOAD  = '/content/my-site/en/news'
+final boolean DRY_RUN = true
+
+def wfSession = resourceResolver.adaptTo(WorkflowSession)
+WorkflowModel model = wfSession.getModel(MODEL_ID)
+WorkflowData data = wfSession.newWorkflowData('JCR_PATH', PAYLOAD)
+
+out.println("Model: ${MODEL_ID}")
+out.println("Payload: ${PAYLOAD}")
+
+if (!DRY_RUN) {
+    def workflow = wfSession.startWorkflow(model, data)
+    out.println("Started workflow instance: ${workflow.id}")
+} else {
+    out.println("DRY_RUN - workflow not started")
+}
+```
+
+### Export query results to CSV
+
+Stream query results into a CSV table. The Groovy Console renders a `table` binding as a downloadable
+grid in the **Data** tab; you can also build the CSV string yourself and print it:
+
+```groovy
+import javax.jcr.query.Query
+
+final String BASE_PATH = '/content/my-site'
+
+String sql = """
+    SELECT p.[jcr:path], p.[jcr:content/jcr:title] AS title, p.[jcr:content/cq:template] AS template
+    FROM [cq:Page] AS p
+    WHERE ISDESCENDANTNODE(p, '${BASE_PATH}')
+    ORDER BY p.[jcr:path]
+"""
+
+def qm = session.workspace.queryManager
+def rows = qm.createQuery(sql, Query.JCR_SQL2).execute().rows
+
+def csv = new StringBuilder("path,title,template\n")
+int count = 0
+
+rows.each { row ->
+    // Quote fields and escape embedded quotes to keep the CSV well-formed
+    def cells = ['p.jcr:path', 'title', 'template'].collect { col ->
+        def v = row.getValue(col)?.string ?: ''
+        '"' + v.replace('"', '""') + '"'
+    }
+    csv.append(cells.join(',')).append('\n')
+    count++
+}
+
+out.println(csv.toString())
+out.println("----------------------------------------")
+out.println("Exported ${count} rows")
+return count
+```
+
+:::tip The `table` binding
+The Groovy Console exposes a `table` binding (a list of maps) that renders as a sortable,
+exportable grid in the **Data** tab of the result panel - often nicer than printing CSV to the
+output. Populate it with `table = rows.collect { [path: it.getPath('p'), title: ...] }`.
+:::
+
+### Count nodes by type
+
+A quick repository health check - how many nodes of each primary type live under a path:
+
+```groovy
+final String BASE_PATH = '/content/my-site'
+def counts = [:].withDefault { 0 }
+
+session.getNode(BASE_PATH).recurse { node ->
+    counts[node.primaryNodeType.name]++
+}
+
+counts.sort { -it.value }.each { type, n ->
+    out.println("${n.toString().padLeft(8)}  ${type}")
+}
+return counts.values().sum()
+```
+
 ## Scheduling Scripts
 
 The Groovy Console includes a built-in scheduler for running scripts on a cron schedule or asynchronously.
@@ -720,6 +851,22 @@ If you need the Groovy Console accessible through the Dispatcher (e.g. on a secu
 /003 { /type "allow" /path "/bin/groovyconsole/*" }
 ```
 
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| Script is killed after N seconds | `threadTimeout` in the OSGi config is set | Increase or set `threadTimeout=0` (no limit) for legitimately long jobs |
+| `OutOfMemoryError` / instance grinds to a halt | One giant `session.save()` after millions of changes, or loading all results into memory | Save in batches (see [Batch your saves](#batch-your-saves)) and iterate query results instead of collecting them |
+| `AccessDeniedException` / `PathNotFoundException` | The console runs as the **current user**, who may lack write access to the path | Run as a user in `allowedGroups` with the right ACLs; never grant blanket admin to author groups |
+| Changes "didn't take" | You forgot `session.save()` / `resourceResolver.commit()`, or `DRY_RUN` was still `true` | Confirm the commit runs and the flag is flipped |
+| `ConcurrentModificationException` while deleting | Removing nodes while iterating the same tree | Collect paths first, then delete in a second loop (see [Delete nodes matching a pattern](#delete-nodes-matching-a-pattern)) |
+| Need to abandon mid-run changes | Pending transient changes are in the session | `session.refresh(false)` discards uncommitted changes |
+| Script not visible in Scheduler | It was never saved | Save the script first; scheduled scripts live under `/conf/groovyconsole/scripts` |
+
+When a bulk script goes wrong, the fastest recovery is usually a content-package restore of the
+affected subtree - take a [Package Manager](http://localhost:4502/crx/packmgr) backup before running
+anything destructive on a shared environment.
+
 ## See also
 
 - [Architecture](./architecture.mdx)
@@ -731,5 +878,10 @@ If you need the Groovy Console accessible through the Dispatcher (e.g. on a secu
 - [OSGi Configuration](./backend/osgi-configuration.mdx)
 - [Security basics](./infrastructure/security.mdx)
 - [Orbinson Groovy Console (GitHub)](https://github.com/orbinson/aem-groovy-console)
+- [Orbinson Groovy Console documentation](https://orbinson.github.io/aem-groovy-console/)
 - [CID15 Groovy Console (legacy)](https://github.com/CID15/aem-groovy-console)
 - [Sample scripts (GitHub)](https://github.com/orbinson/aem-groovy-console/tree/main/ui.content/src/main/content/jcr_root/conf/groovyconsole/scripts/samples)
+- [Apache Groovy documentation](https://groovy-lang.org/documentation.html)
+- [AEM QueryBuilder Predicate Reference (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/query-builder/querybuilder-predicate-reference)
+- [JCR Query (JCR-SQL2) -- Apache Jackrabbit Oak Query docs](https://jackrabbit.apache.org/oak/docs/query/query-engine.html)
+- [JCR 2.0 specification (JSR-283)](https://developer.adobe.com/experience-manager/reference-materials/spec/jcr/2.0/index.html)

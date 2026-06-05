@@ -39,6 +39,25 @@ flowchart TD
 | **Editable Template** | `/conf/mysite/settings/wcm/templates/`              | Template authors (UI)       |
 | **Page**              | `/content/mysite/`                                  | Content authors (UI)        |
 
+### Static vs editable templates
+
+Older AEM projects used **static templates** (stored under `/apps/.../templates`, edited only in
+code). Modern projects -- and everything on AEM as a Cloud Service -- should use **editable
+templates**. The difference matters when you inherit or migrate a project:
+
+| | Static template | Editable template |
+|---|---|---|
+| **Stored in** | `/apps` (code) | `/conf` (configuration) |
+| **Who edits structure** | Developers only | Template authors, in the UI |
+| **Changes propagate to existing pages** | No (structure copied at create time) | Yes (structure + locked content stay live) |
+| **Policies / Style System** | Not supported | Supported |
+| **Recommended for new work** | No | **Yes** |
+
+If you find `cq:template` pointing at an `/apps/...` path with a `cq:Template` node, you are looking
+at a static template. New components and chapters in this guide assume editable templates throughout.
+See Adobe's [Page Templates -- Editable](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates)
+and [Creating Page Templates](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/page-templates-static).
+
 ### Template Types
 
 A template type is the blueprint for editable templates. It defines:
@@ -188,10 +207,28 @@ you need - the Core Component includes it automatically if it exists.
 This approach is preferred because you only override the extension points, while the Core Components page component
 handles the full HTML structure, SEO meta tags, and other boilerplate.
 
-## AEMaaCS note - template persistence
+## Templates as code (persisting `/conf`)
 
-In cloud projects, template and policy changes made in the UI should be exported and committed so they are reproducible in
-other environments. Treat template setup as configuration-as-code, not environment-local state.
+Templates, template types, and policies all live under `/conf` in the JCR. Changes you make in the UI
+exist only on **that** environment until you export them into your codebase. Treat template setup as
+**configuration-as-code**:
+
+1. In **CRXDE Lite** or via Package Manager, build a content package whose filter targets your
+   template/policy paths, for example:
+
+```xml title="ui.content/.../META-INF/vault/filter.xml"
+<filter root="/conf/mysite/settings/wcm/templates"/>
+<filter root="/conf/mysite/settings/wcm/template-types"/>
+<filter root="/conf/mysite/settings/wcm/policies"/>
+```
+
+2. Commit the exported XML into your `ui.content` (or a dedicated `ui.conf`) module so it deploys with
+   the rest of the project.
+3. Redeploy on Dev/Stage/Prod through Cloud Manager - the templates arrive identically everywhere.
+
+Without this step, UI-only changes are lost on the next deployment that overwrites `/conf`, and your
+environments drift apart. See [Style System](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/style-system)
+and [Templates documentation](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates).
 
 ## Component policies
 
@@ -309,8 +346,17 @@ The link between a site and its templates is in the site's `jcr:content`:
 
 ```
 /content/mysite/jcr:content
-├── cq:conf = "/conf/mysite"     # Points to the configuration
+├── cq:conf = "/conf/mysite"           # Points to the configuration
+├── cq:allowedTemplates = [            # Regex(es) for templates authors may use here
+│     "/conf/mysite/settings/wcm/templates/.*"
+│   ]
 ```
+
+`cq:allowedTemplates` is a multi-value property of **regex patterns** set on a content root (often
+the site root or a section folder). A template only appears in the **Create Page** dialog if its path
+matches one of these patterns *and* the template is **Enabled**. If authors report "no templates
+available", check this property first, then the template's enabled/published status. You can set it
+in the UI via the page's **Properties > Advanced > Template Settings (Allowed Templates)**.
 
 ## Page creation flow
 
@@ -347,7 +393,14 @@ You learned:
 - The **Style System** lets authors apply CSS classes without code changes
 - The **responsive grid** provides 12-column layout with breakpoints
 - **Proxy components** inherit from Core Components for easy customization
-- Templates are linked to sites via the `cq:conf` property
+- Templates are linked to sites via `cq:conf`, and gated by `cq:allowedTemplates`
+
+## Official Documentation
+
+- [Page Templates (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates) - editable templates, the template editor, and enabling templates
+- [Creating Page Templates (developer)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/page-templates-static) - template types, structure vs initial content
+- [Style System](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/style-system) - author-applied CSS classes
+- [WKND tutorial -- Pages & Templates](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
 
 Next up: [Client Libraries](./09-client-libraries.md) - CSS and JS management, clientlib categories, dependencies,
 embedding, proxy serving, and integration with the page component.

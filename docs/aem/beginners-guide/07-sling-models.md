@@ -444,17 +444,28 @@ Export your model as JSON (or other formats) for headless use cases:
 @Model(
     adaptables = Resource.class,
     adapters = { Hero.class, ComponentExporter.class },
-    resourceType = "mysite/components/hero",
+    resourceType = HeroImpl.RESOURCE_TYPE,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
 @Exporter(name = "jackson", extensions = "json")
-public class HeroImpl implements Hero {
-    // ... same as above
+public class HeroImpl implements Hero, ComponentExporter {
+
+    protected static final String RESOURCE_TYPE = "mysite/components/hero";
+
+    // ... same injected fields and getters as above ...
+
+    // Required by ComponentExporter: identifies the component type in the JSON.
+    // Without this method the model will NOT compile/adapt as a ComponentExporter.
+    @Override
+    public String getExportedType() {
+        return RESOURCE_TYPE;
+    }
 }
 ```
 
-The `ComponentExporter` interface (from `com.adobe.cq.export.json`) is what enables the `.model.json` export. Now you
-can access the component as JSON:
+The `ComponentExporter` interface (from `com.adobe.cq.export.json`) is what enables the `.model.json` export. Note that
+you **must** implement its `getExportedType()` method - it is what the JSON model and the AEM SPA Editor use to map the
+exported data back to a component. Now you can access the component as JSON:
 
 ```bash
 curl http://localhost:4502/content/mysite/en/jcr:content/root/container/hero.model.json
@@ -608,6 +619,8 @@ templates and policies - how pages are structured and which components are allow
 
 ## Official Documentation
 
+- [Developing Sling Models (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/development/develop-sling-model) - Adobe's Sling Models tutorial for AEM
+- [AEM Sling Model Exporter & JSON (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/development/sling-model-exporter-in-aem) - `.model.json` and headless export
 - [Apache Sling Models](https://sling.apache.org/documentation/bundles/models.html) - official Sling Models reference with all injectors
 - [wcm.io AEM Mocks](https://wcm.io/testing/aem-mock/) - the `AemContext` testing library used in this guide
 - [Sling Models API Javadoc](https://javadoc.io/doc/org.apache.sling/org.apache.sling.models.api/latest/index.html) - annotations and interfaces

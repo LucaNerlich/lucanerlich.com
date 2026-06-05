@@ -471,6 +471,41 @@ How it works:
    `showhidetargetvalue` matching the dropdown value that should reveal it
 3. AEM's built-in `cq-dialog-dropdown-showhide` client library handles the show/hide logic automatically
 
+## Validation
+
+Most dialogs only need the **declarative** validation attributes you set directly on a field - no
+JavaScript required:
+
+```xml
+<title jcr:primaryType="nt:unstructured"
+       sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+       fieldLabel="Title"
+       name="./title"
+       required="{Boolean}true"
+       maxlength="{Long}80"/>
+
+<price jcr:primaryType="nt:unstructured"
+       sling:resourceType="granite/ui/components/coral/foundation/form/numberfield"
+       fieldLabel="Price"
+       name="./price"
+       min="{Double}0.01"
+       max="{Double}99999.99"
+       step="{Double}0.01"/>
+```
+
+| Attribute | Effect |
+|-----------|--------|
+| `required="{Boolean}true"` | Field must not be empty |
+| `maxlength="{Long}80"` | Maximum string length (textfield/textarea) |
+| `min` / `max` / `step` | Numeric bounds (numberfield) |
+| `validation="foundation.jcr.name"` | Apply a pre-registered Granite validator |
+
+For anything beyond these (custom regex rules, conditional-required fields, multifield min/max,
+async/server-side checks, and styling the invalid state), see the dedicated
+[Dialog Validation](../components/dialog-validation.mdx) deep dive. Remember the golden rule:
+client-side validation is a UX nicety - **enforce critical rules again in your Sling Model**, because
+authors can bypass the dialog (CRXDE, content packages, the Assets API).
+
 ## Hiding inherited dialog fields
 
 When your proxy component extends a Core Component and you want to **remove** a field from the inherited dialog, use
@@ -497,7 +532,15 @@ You learned:
 - The **`name` attribute** and how it maps to JCR properties
 - A complete **Hero component dialog** example
 - **Conditional visibility** with the dropdown show/hide pattern
+- **Validation** - declarative attributes plus the link to the full validation deep dive
 - **`granite:hide`** for removing inherited dialog fields in proxy components
+
+## Further reading
+
+- [Touch UI Component Dialog Examples](../component-dialogs.mdx) - the full field reference (every widget, RTE, design dialogs, MSM)
+- [Dialog Validation](../components/dialog-validation.mdx) - custom and server-side validation
+- [Creating a New Granite UI Field Component (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65-lts/content/implementing/developing/platform/granite-ui-component)
+- [Granite UI form fields reference (developer.adobe.com)](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html)
 
 Next up: [Sling Models](./07-sling-models.md) - injecting content into Java models, common annotations, adapters,
 exporters, and best practices.

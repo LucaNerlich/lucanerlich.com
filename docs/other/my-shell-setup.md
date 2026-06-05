@@ -1,3 +1,10 @@
+---
+title: My Shell Setup
+description: My zsh + oh-my-zsh + starship terminal setup, Ghostty config, and the .zshrc / PowerShell profiles I use day to day.
+tags: [shell, zsh, terminal, tooling, productivity]
+keywords: [zsh, oh-my-zsh, starship, ghostty, zshrc, powershell profile, terminal setup]
+---
+
 # My zsh Shell setup
 
 The following steps setup my shell (zsh + oh-my-zsh).
@@ -10,9 +17,16 @@ The following steps setup my shell (zsh + oh-my-zsh).
     - https://ohmyz.sh/#install
 4. Install `starship.rs`
     - https://starship.rs
-5. Setup starpship theme
+5. Setup starship theme
     - https://starship.rs/presets/tokyo-night
     - `starship preset tokyo-night -o ~/.config/starship.toml`
+
+:::warning Keep secrets out of your shell config
+The dotfiles below are sanitized examples. **Never commit real tokens, passwords, or API keys to a
+shell profile** -- they end up in your shell history, backups, and any synced dotfiles repo. Load
+secrets from an untracked file instead (see [Managing secrets](#managing-secrets) at the end of this
+page).
+:::
 
 Example terminal tab in my home directory
 ![shell.png](assets/shell.png)
@@ -196,21 +210,23 @@ PROMPT='%(?.%F{green}√.%F{red}?%?)%f %B%F{240}%~%f%b %# '
 #export PATH=$JAVA_HOME:$PATH
 
 ## Java 11
+# JAVA_HOME points at the JDK Home; the executables live in $JAVA_HOME/bin,
+# so add /bin to PATH (NOT $JAVA_HOME itself).
 export JAVA_HOME='/Users/nerlich/tech/jdk-11-arm/Home'
-export PATH=$JAVA_HOME:$PATH
+export PATH="$JAVA_HOME/bin:$PATH"
 
 ## Maven
-export MAVEN_HOME='/Users/nerlich/tech/apache-maven-3.8.4/bin'
-export PATH=$MAVEN_HOME:$PATH
+export MAVEN_HOME='/Users/nerlich/tech/apache-maven-3.8.4'
+export PATH="$MAVEN_HOME/bin:$PATH"
 
 ## Ngrok
-export ngrok='/Users/nerlich/tech/ngrok'
-export PATH=$ngrok:$PATH
+export PATH="/Users/nerlich/tech/ngrok:$PATH"
 
-## AEM
-export githubToken='ghp_<redacted>'
-export PATH=$githubToken:$PATH
-export GITHUB_ACCESS_TOKEN_CLASSIC='ghp_<redacted>'
+## Secrets (tokens, etc.) -- loaded from an untracked file, never hardcoded here.
+# See "Managing secrets" below. Create ~/.zshrc.local (chmod 600, git-ignored) with:
+#   export GITHUB_TOKEN='ghp_...'
+#   export GITHUB_ACCESS_TOKEN_CLASSIC='ghp_...'
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
 
 # FileSystem
 alias ls='ls -GFh'
@@ -357,7 +373,7 @@ function mcip { mvn clean install -PautoInstallSinglePackage }
 function mcipst { mvn clean install -PautoInstallSinglePackage -DskipTests }
 function mcipp { mvn clean install -PautoInstallSinglePackagePublish }
 function mcib { mvn clean install -PautoInstallBundle }
-function msonar { mvn clean verify sonar:sonar -Dsonar.projectKey=R4C -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sqp_d1de0f4ad3b96a15cacf5c725d77fda62516e093 }
+function msonar { mvn clean verify sonar:sonar -Dsonar.projectKey=R4C -Dsonar.host.url=http://localhost:9000 -Dsonar.token=$env:SONAR_TOKEN }
 #endregion
 
 #region Docker aliases
@@ -418,3 +434,69 @@ function aioo { aio where }
 
 Write-Host "Custom aliases loaded successfully!" -ForegroundColor Cyan
 ```
+
+## Recommended extensions
+
+A few oh-my-zsh plugins and CLI tools that make day-to-day work noticeably nicer. Install the tools
+with [Homebrew](https://brew.sh) on macOS (`brew install fzf zoxide eza bat`).
+
+| Tool | What it does | Link |
+|------|--------------|------|
+| `zsh-autosuggestions` | Fish-style suggestions from history as you type | [GitHub](https://github.com/zsh-users/zsh-autosuggestions) |
+| `zsh-syntax-highlighting` | Highlights valid/invalid commands while typing | [GitHub](https://github.com/zsh-users/zsh-syntax-highlighting) |
+| `fzf` | Fuzzy finder for files, history (`Ctrl-R`), and more | [GitHub](https://github.com/junegunn/fzf) |
+| `zoxide` | Smarter `cd` that learns your most-used directories | [GitHub](https://github.com/ajeetdsouza/zoxide) |
+| `eza` | Modern `ls` replacement with colors, icons, git status | [eza.rocks](https://eza.rocks) |
+| `bat` | `cat` with syntax highlighting and paging | [GitHub](https://github.com/sharkdp/bat) |
+| `direnv` | Per-directory environment variables (great for project secrets) | [direnv.net](https://direnv.net) |
+
+To enable the zsh plugins, clone them into `$ZSH_CUSTOM/plugins` and add them to the `plugins` array
+(after `git`):
+
+```bash
+git clone https://github.com/zsh-users/zsh-autosuggestions \
+  "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+git clone https://github.com/zsh-users/zsh-syntax-highlighting \
+  "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+```
+
+```bash title="~/.zshrc -- plugins"
+plugins=(
+  git
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+```
+
+## Managing secrets
+
+Tokens and credentials must **never** live in a committed dotfile. Two safe patterns:
+
+**1. An untracked local file** -- keep machine-specific secrets in `~/.zshrc.local`, lock down its
+permissions, and source it from `~/.zshrc` (as shown in the `.zshrc` above):
+
+```bash
+touch ~/.zshrc.local
+chmod 600 ~/.zshrc.local        # only your user can read it
+cat >> ~/.zshrc.local <<'EOF'
+export GITHUB_TOKEN='ghp_your_real_token_here'
+export SONAR_TOKEN='sqp_your_real_token_here'
+EOF
+```
+
+If you sync your dotfiles to a public/private git repo, add `.zshrc.local` to `.gitignore` so it is
+never committed.
+
+**2. `direnv` for per-project env** -- drop a `.envrc` in a project folder and `direnv` loads/unloads
+the variables automatically as you `cd` in and out. Add `eval "$(direnv hook zsh)"` to your `.zshrc`,
+keep `.envrc` out of version control, and run `direnv allow` once per project.
+
+For shared machines or CI, prefer a real secrets manager (1Password CLI, `pass`, Vault, or your
+CI provider's secret store) over plaintext files.
+
+:::danger Rotate leaked tokens
+If a real token has ever been committed or pasted somewhere public, **revoke and regenerate it** --
+removing it from the file is not enough, because it remains in git history. Rotate
+[GitHub tokens](https://github.com/settings/tokens) and SonarQube tokens from their respective
+account settings.
+:::

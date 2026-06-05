@@ -26,12 +26,12 @@ The following chapters each present a Coral XML snippet which can be copied into
 - [Empty Dialog / Starting Point](#empty-dialog--starting-point)
 - [Simple Data Fields](#simple-data-fields)
 - [Complex Data Fields](#complex-data-fields)
-  - Native showhide (`cq-dialog-dropdown-showhide`)
-  - FieldSet (grouped fields)
-  - Link tuple (label + URL + target)
+  - [Native showhide (`cq-dialog-dropdown-showhide`)](#native-showhide-with-cq-dialog-dropdown-showhide)
+  - [FieldSet (grouped fields)](#fieldset-grouped-fields)
+  - [Link tuple (label + URL + target)](#link-tuple-label--url--target)
 - [Validation](#validation) (see also the deep dive: [Dialog Validation](./components/dialog-validation.mdx))
 - [Dialog Inheritance](#dialog-inheritance)
-- cq editConfig - inline editing, listeners, drop targets
+- [cq editConfig - inline editing, listeners, drop targets](#cq-editconfig---inline-editing-listeners-drop-targets)
 - [Design Dialog (Template Policies)](#design-dialog-template-policies)
 - [Layout & Read Only](#layout--read-only)
 - [MSM / Live Copy considerations](#msm--live-copy-considerations)
@@ -216,6 +216,9 @@ This is an empty dialog structure and components can be placed in tabs (you can 
 - [Tags and Taxonomies](./content/tags-taxonomies.md) - tag field deep dive
 - [Granite UI Server-side API](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
 - [Coral UI Icon List](https://developer.adobe.com/experience-manager/reference-materials/6-5/coral-ui/coralui3/Coral.Icon.html#availableIcons)
+- [Creating a New Granite UI Field Component (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65-lts/content/implementing/developing/platform/granite-ui-component)
+- [Adding Fields to an AEM Dialog -- WKND tutorial](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
+- [Configuring the Rich Text Editor (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/rich-text-editor)
 
 ![Empty dialog](/images/aem/dialogfields/empty.png)
 
@@ -339,6 +342,8 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
 ![Pathbrowser](/images/aem/dialogfields/pathbrowser.png)
 
 ### Asset Upload
+
+[Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fileupload/index.html)
 
 ```xml
 <file
@@ -555,6 +560,10 @@ A visual toggle group, useful for alignment or variant selection. Set `selection
 ### Conditional fields (show/hide)
 
 Use a render condition when you need server-side control (for example, permissions or site-level logic).
+A render condition decides whether a field is even *rendered* into the dialog HTML - the author
+cannot reveal it from the client. See the dedicated [Render Conditions](./ui/render-conditions.mdx)
+page for the full pattern (custom `rendercondition` resource type + server-side logic), and Adobe's
+[Granite UI render condition reference](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/renderconditions/index.html).
 
 ```xml
 <advancedSettings
@@ -948,6 +957,8 @@ For dynamic values, provide a datasource resource type. This works well for auto
 
 ### Multifield
 
+[Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html)
+
 A multifield wraps a predefined group of components and lets an author create `n` of these sets. The data will be saved to subnodes.
 Access that data via `@ChildResource` Annotation in your Sling Model, as described [here](./components/annotations/child-resource.mdx).
 
@@ -1124,6 +1135,9 @@ Any dialog field can be added to each accordion item `items` block.
 ![Accordion](/images/aem/dialogfields/accordion.png)
 
 ### Tags field
+
+See also the [Tags and Taxonomies](./content/tags-taxonomies.md) deep dive and Adobe's
+[Administering Tags](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/site-and-page-features/tags) documentation.
 
 ```xml
 <tags
@@ -1467,7 +1481,8 @@ visible in edit mode.
 - `editorType="title"` - classic title editor (single line, pressing Enter saves).
 
 For Rich Text inline editing, set `editorType="text"` and add the full `rtePlugins` config similar
-to the dialog RTE widget.
+to the dialog RTE widget - see [Rich Text Editor (RTE)](#rich-text-editor-rte) for the complete
+plugin/toolbar structure.
 
 ### Listeners (refresh behaviour after save)
 
@@ -1770,10 +1785,17 @@ public String getVariant() {
 - Use consistent prefixes for related fields (for example, `ctaText`, `ctaLink`).
 - Avoid renaming existing fields unless you migrate content.
 
-## Rich Text Editor tips
+## Rich Text Editor (RTE)
 
-- Keep the toolbar minimal to reduce authoring noise.
-- Use the Styles plugin for semantic markup instead of inline formatting.
+The Rich Text Editor (`cq/gui/components/authoring/dialog/richtext`) is the most configurable field in
+the dialog framework. It is driven by **plugins** (each plugin contributes toolbar buttons and
+behaviours) and a **toolbar** definition that decides which of those buttons are shown. The official
+references are Adobe's
+[Configuring the Rich Text Editor](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/rich-text-editor)
+guide and the
+[RichText Granite UI reference](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/cq/gui/components/authoring/dialog/richtext/index.html).
+
+### Minimal inline RTE
 
 ```xml
 <text
@@ -1790,6 +1812,140 @@ public String getVariant() {
     </uiSettings>
 </text>
 ```
+
+### Full RTE configuration
+
+A complete RTE wires up `rtePlugins` (what is enabled and how it behaves) and `uiSettings` (which
+buttons appear, and in what order, for the inline, dialogFullScreen, and tableEditOptions toolbars).
+This example enables formatting, lists, links, paragraph formats, a Styles dropdown backed by
+component CSS, paste-as-plaintext, special characters, find/replace, and source editing.
+
+```xml title="components/mycomponent/_cq_dialog/.content.xml -- RTE field"
+<text
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="cq/gui/components/authoring/dialog/richtext"
+    fieldLabel="Body"
+    name="./text"
+    useFixedInlineToolbar="{Boolean}true">
+    <rtePlugins jcr:primaryType="nt:unstructured">
+        <format
+            jcr:primaryType="nt:unstructured"
+            features="[bold,italic,underline]"/>
+        <subsuperscript
+            jcr:primaryType="nt:unstructured"
+            features="[subscript,superscript]"/>
+        <lists
+            jcr:primaryType="nt:unstructured"
+            features="[ordered,unordered,indent,outdent]"/>
+        <justify
+            jcr:primaryType="nt:unstructured"
+            features="*"/>
+        <links
+            jcr:primaryType="nt:unstructured"
+            features="[modifylink,unlink]">
+            <!-- Only allow internal and https links; protocols can be restricted -->
+            <linkbrowserConfig
+                jcr:primaryType="nt:unstructured"
+                targetConfig="{Boolean}true">
+                <targetConfig
+                    jcr:primaryType="nt:unstructured"
+                    mode="manual"/>
+            </linkbrowserConfig>
+        </links>
+        <paraformat
+            jcr:primaryType="nt:unstructured">
+            <formats jcr:primaryType="nt:unstructured">
+                <p   jcr:primaryType="nt:unstructured" tag="p"  description="Paragraph"/>
+                <h2  jcr:primaryType="nt:unstructured" tag="h2" description="Heading 2"/>
+                <h3  jcr:primaryType="nt:unstructured" tag="h3" description="Heading 3"/>
+                <blockquote jcr:primaryType="nt:unstructured" tag="blockquote" description="Quote"/>
+            </formats>
+        </paraformat>
+        <styles
+            jcr:primaryType="nt:unstructured"
+            features="*">
+            <styles jcr:primaryType="cq:WidgetCollection">
+                <lead   jcr:primaryType="nt:unstructured" cssName="cmp-text__lead"      text="Lead paragraph"/>
+                <accent jcr:primaryType="nt:unstructured" cssName="cmp-text__accent"    text="Accent"/>
+            </styles>
+        </styles>
+        <misctools
+            jcr:primaryType="nt:unstructured"
+            features="[specialchars,sourceedit]"/>
+        <findreplace
+            jcr:primaryType="nt:unstructured"
+            features="*"/>
+        <undo
+            jcr:primaryType="nt:unstructured"
+            features="*"/>
+        <!-- Strip formatting from pasted Word/Docs content -->
+        <edit
+            jcr:primaryType="nt:unstructured"
+            defaultPasteMode="plaintext"
+            features="*"/>
+        <spellcheck
+            jcr:primaryType="nt:unstructured"
+            features="*"/>
+    </rtePlugins>
+    <uiSettings jcr:primaryType="nt:unstructured">
+        <cui jcr:primaryType="nt:unstructured">
+            <inline
+                jcr:primaryType="nt:unstructured"
+                toolbar="[format#bold,format#italic,format#underline,#styles,#justify,#lists,links#modifylink,links#unlink,#paraformat,misctools#specialchars,fullscreen#start]">
+                <popovers jcr:primaryType="nt:unstructured">
+                    <styles
+                        jcr:primaryType="nt:unstructured"
+                        items="styles:getStyles:styles-pulldown"
+                        ref="styles"/>
+                </popovers>
+            </inline>
+            <dialogFullScreen
+                jcr:primaryType="nt:unstructured"
+                toolbar="[format#bold,format#italic,format#underline,#styles,#justify,#lists,links#modifylink,links#unlink,#paraformat,misctools#specialchars,misctools#sourceedit,findreplace#find,findreplace#replace,undo#undo,undo#redo]">
+                <popovers jcr:primaryType="nt:unstructured">
+                    <styles
+                        jcr:primaryType="nt:unstructured"
+                        items="styles:getStyles:styles-pulldown"
+                        ref="styles"/>
+                </popovers>
+            </dialogFullScreen>
+            <tableEditOptions
+                jcr:primaryType="nt:unstructured"
+                toolbar="[table#insertcolumn-before,table#insertcolumn-after,table#removecolumn,table#insertrow-before,table#insertrow-after,table#removerow,table#mergecells,table#removetable]"/>
+        </cui>
+    </uiSettings>
+</text>
+```
+
+### Common RTE plugins
+
+| Plugin (`rtePlugins/<name>`) | Notable features | Purpose |
+|---|---|---|
+| `format` | `bold`, `italic`, `underline` | Inline character formatting |
+| `subsuperscript` | `subscript`, `superscript` | Sub/superscript |
+| `lists` | `ordered`, `unordered`, `indent`, `outdent` | Lists and indentation |
+| `justify` | `*` | Text alignment |
+| `links` | `modifylink`, `unlink` | Anchor insertion; `linkbrowserConfig` controls the path picker and target |
+| `paraformat` | block `formats` | Wrap selection in `p`, `h2`, `blockquote`, etc. |
+| `styles` | CSS class dropdown | Apply semantic classes (preferred over inline styling) |
+| `misctools` | `specialchars`, `sourceedit` | Special characters and raw HTML editing |
+| `findreplace` / `undo` / `spellcheck` | `*` | Editor utilities |
+| `edit` | `defaultPasteMode` | Controls paste behaviour (`plaintext`, `wordhtml`, `html`) |
+
+### RTE tips
+
+- **Keep the toolbar minimal.** Every button you add is a way for authors to produce off-brand
+  markup. Start small and add on request.
+- **Prefer the Styles plugin over inline formatting.** A `styles` dropdown that applies CSS classes
+  keeps markup semantic and themeable; `format#bold` etc. bake presentation into the content.
+- **Set `defaultPasteMode="plaintext"`** to stop Word/Google Docs styling from leaking into the JCR.
+- **Limit `paraformat`** to the heading levels your design system actually uses, so authors cannot
+  drop an `h1` into the middle of a page and break the document outline.
+- **Render in the right HTL context.** Output RTE values with `@ context='html'` so AEM's XSS filter
+  keeps the safe subset of markup - never `context='unsafe'`. See [HTL Templates](./htl-templates.mdx).
+- For inline (in-context) RTE editing without opening the dialog, see
+  [Inline editor](#inline-editor-edit-text-without-opening-the-dialog) below - it reuses the same
+  `rtePlugins` structure.
 
 ## MSM / Live Copy considerations
 
@@ -2363,3 +2519,26 @@ The following `.content.xml` file is a complete `cq:dialog` file for a component
 - Prefer smaller, focused tabs over a single long list.
 - Keep names stable; renaming properties impacts existing content.
 - Use `granite:class` sparingly to improve spacing or emphasis.
+
+## Accessibility
+
+The Touch UI dialog (Coral) is keyboard- and screen-reader-accessible out of the box, but only if
+you use the framework correctly. A few rules keep dialogs usable for everyone on the authoring team:
+
+- **Always set `fieldLabel`.** The `field` Granite UI component wires the label to the input via
+  `aria-labelledby` using a generated `labelId` ([Granite UI `field` contract](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html)).
+  A field with no `fieldLabel` is unlabelled for screen readers.
+- **Use `fieldDescription` for instructions**, not a separate `text` widget. The description is
+  associated with the field (`aria-describedby`), so assistive tech reads it together with the label.
+- **Don't rely on colour alone.** The invalid state adds the `is-invalid` class and an error tooltip
+  with text - keep that text meaningful (see [Dialog Validation](./components/dialog-validation.mdx)).
+- **Prefer Coral/Granite widgets over raw HTML** in the dialog. Hand-rolled markup in a `text` widget
+  bypasses Coral's focus management and ARIA handling.
+- **Keep a logical tab order.** Author tab order follows DOM order, so order your `items` the way you
+  want the author to traverse them; avoid using CSS to visually reorder fields.
+- **Label icon-only controls.** If you add custom buttons via clientlibs, give them an accessible
+  name (`aria-label` or visible text).
+
+See Adobe's [Coral UI](./ui/coral-ui.mdx) notes and the
+[Granite UI server-side API](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
+for the underlying accessibility contracts.

@@ -382,5 +382,12 @@ You learned:
 - The **headless delivery flow** from author to frontend
 - Using Content Fragments **on pages** with the Content Fragment component
 
+## Official Documentation
+
+- [Content Fragments (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/content-fragments) - models, console, authoring
+- [AEM GraphQL API for Content Fragments](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/headless/graphql-api/content-fragments) - schema generation, queries, persisted queries
+- [Headless delivery with GraphQL](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/content-delivery-with-graphql) - end-to-end headless flow
+- [Getting Started with AEM Headless & GraphQL (tutorial)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-with-aem-headless/graphql/overview)
+
 Next up: [Multi-Site Manager & i18n](./12-multi-site-manager-and-i18n.md) - Blueprints, Live Copies, rollout configs,
 language copies, and the translation framework.
