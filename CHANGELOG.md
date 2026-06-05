@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.0] - 2026-06-05
+
+### Added
+- Expanded the [AI](/ai) section with six new topic pages, cross-linked into the existing pages and glossary:
+    - [Embeddings Deep Dive](/ai/embeddings) - model landscape, dimensions and Matryoshka, vector quantization, domain adaptation, hybrid retrieval, and production pitfalls
+    - [Context & Prompt Engineering](/ai/context-engineering) - the context window as a budget, context rot, and long-horizon techniques (compaction, note-taking, sub-agents, just-in-time)
+    - [Evaluation & LLMOps](/ai/evaluation-and-llmops) - testing non-deterministic systems with datasets/scorers/LLM-as-judge, harness engineering, and operating them in production
+    - [AI Safety & Guardrails](/ai/safety) - guardrails and their limits, prompt injection and jailbreaking, red-teaming, and defense in depth
+    - [Knowledge Management with LLMs](/ai/knowledge-management) - RAG vs just-in-time vs the LLM-wiki pattern vs llms.txt
+    - [AI-Assisted Software Development](/ai/ai-assisted-development) - SPDD, architect-as-orchestrator, and AI-friendly architecture patterns
+- Added 19 new [AI Glossary](/ai/glossary) terms (context rot, just-in-time context, sub-agents, red-teaming, prompt injection, LLM-as-judge, groundedness, harness engineering, LLM-wiki, llms.txt, SPDD, vector quantization, and more), cross-linked to the topic pages
+
 ## [1.16.0] - 2026-06-05
 
 ### Added

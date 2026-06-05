@@ -53,10 +53,22 @@ assistant. It becomes an instruct/chat model only after [post-training](#post-tr
 Prompting or training a model to reason step by step in tokens before answering, trading latency for
 accuracy on multi-step problems. See [LLMs](./llm.md#what-llms-are-good-at).
 
+## Context compaction {#context-compaction}
+
+Summarizing a conversation that is nearing the context-window limit and reinitializing a fresh window with
+the summary -- the first lever for long-horizon coherence. See
+[Context Engineering](./context-engineering.md#long-horizon-techniques).
+
 ## Context engineering {#context-engineering}
 
 The discipline of curating what goes into the [context window](#context-window) across many turns --
 compaction, structured notes, retrieval, and sub-agents. The agentic-era successor to prompt engineering.
+
+## Context rot {#context-rot}
+
+The empirical degradation of an LLM's recall as the context window fills -- "lost in the middle". Caused by
+O(n^2) attention and short-sequence-heavy training data; bigger windows do not fix it. See
+[Context Engineering](./context-engineering.md#context-rot-the-constraint-behind-the-techniques).
 
 ## Context window {#context-window}
 
@@ -67,6 +79,12 @@ input, retrieved context, and generated output must fit inside it. See [LLMs](./
 
 The dominant metric for comparing [embeddings](#embedding): the cosine of the angle between two vectors,
 measuring how similar in meaning two pieces of text are regardless of length. See [RAG](./rag.md).
+
+## Deep modules {#deep-modules}
+
+Modules with simple interfaces that hide significant internal complexity (Ousterhout). AI agents work best
+inside such clear boundaries, because the interface is the contract. See
+[AI-Assisted Software Development](./ai-assisted-development.md).
 
 ## Embedding {#embedding}
 
@@ -101,6 +119,11 @@ structured request to call one. Your code executes it. See [Agents](./agents.md#
 A decoder-only transformer trained to generate text by next-token prediction; also OpenAI's product line.
 The architecture pattern underlying most modern [LLMs](./llm.md).
 
+## Groundedness {#groundedness}
+
+An evaluation metric (also "faithfulness") for whether an answer stuck to its retrieved sources rather than
+[hallucinating](./llm.md#hallucination). See [Evaluation and LLMOps](./evaluation-and-llmops.md).
+
 ## Guardrails {#guardrails}
 
 Input/output policy enforcement around an LLM: content filtering, PII redaction, claim verification, and
@@ -111,6 +134,12 @@ refusal paths. One of the layered mitigations for [hallucination](#hallucination
 Fluent, confident, wrong output -- fabricated facts, invented citations, made-up parameters. A structural
 consequence of next-token prediction, contained (not eliminated) by RAG, tool use, evaluation, and
 guardrails. See [LLMs](./llm.md#hallucination).
+
+## Harness engineering {#harness-engineering}
+
+Building the evaluation and execution scaffolding -- datasets, runner, judges, traces, CI gates -- that turns
+a non-deterministic model into a testable, observable system. See
+[Evaluation and LLMOps](./evaluation-and-llmops.md#harness-engineering).
 
 ## Hybrid retrieval {#hybrid-retrieval}
 
@@ -127,15 +156,42 @@ layer of any LLM application. See [LLMs](./llm.md).
 A [foundation model](#foundation-model) after [post-training](#post-training) -- the variant end users
 actually talk to. See [LLMs](./llm.md#how-an-llm-is-built).
 
+## Jailbreaking {#jailbreaking}
+
+Crafting inputs that bypass an LLM's safety constraints to elicit forbidden output; closely related to prompt
+injection. See [AI Safety & Guardrails](./safety.md#the-attack-surface-prompt-injection-and-jailbreaking).
+
+## Just-in-time context {#just-in-time-context}
+
+A retrieval strategy where an agent keeps lightweight references (paths, queries, links) and loads data on
+demand via tools, instead of pre-loading everything via embeddings. See
+[Context Engineering](./context-engineering.md#long-horizon-techniques).
+
 ## LLM (Large Language Model) {#llm}
 
 A neural network trained on large text corpora to predict the next [token](#token); aligned via
 post-training into a useful assistant. See [Large Language Models](./llm.md).
 
+## LLM-as-judge {#llm-as-judge}
+
+Using a second LLM to score an output against a rubric -- necessary for open-ended responses, but it must be
+calibrated against human judgment. See [Evaluation and LLMOps](./evaluation-and-llmops.md).
+
+## LLM-wiki pattern {#llm-wiki}
+
+A knowledge-management pattern where an LLM incrementally builds and maintains a structured, interlinked
+Markdown wiki between you and raw sources -- compiling synthesis once and keeping it current. See
+[Knowledge Management](./knowledge-management.md).
+
 ## LLMOps {#llmops}
 
 The operational discipline of running LLM apps and agents in production: prompt and model versioning,
 evaluation, cost/latency optimization, monitoring, and incident response. See [Tooling](./tooling.md#llmops-tying-it-together).
+
+## llms.txt {#llms-txt}
+
+A proposed standard for a curated, LLM-readable Markdown overview of a website, published at `/llms.txt`. See
+[Knowledge Management](./knowledge-management.md).
 
 ## LoRA (Low-Rank Adaptation) {#lora}
 
@@ -147,6 +203,17 @@ adapt under 1% of the parameters. The basis of [QLoRA](#qlora). See [RAG vs fine
 An open standard from Anthropic -- the "USB-C for AI" -- that gives LLM apps a uniform way to discover and
 invoke external tools and data, collapsing the N x M integration problem to N + M. See
 [Agents](./agents.md#mcp-model-context-protocol).
+
+## Memex {#memex}
+
+Vannevar Bush's 1945 vision of a personal, curated knowledge store with associative trails -- the conceptual
+ancestor of the [LLM-wiki pattern](#llm-wiki). See [Knowledge Management](./knowledge-management.md).
+
+## MLOps {#mlops}
+
+Machine Learning Operations -- DevOps applied to the full ML lifecycle (data, training, deployment,
+monitoring). [LLMOps](#llmops) is its LLM-specific extension. See
+[Evaluation and LLMOps](./evaluation-and-llmops.md#the-mlops-foundation-underneath).
 
 ## Multi-agent system {#multi-agent}
 
@@ -190,6 +257,12 @@ fluent [base model](#base-model). See [LLMs](./llm.md#how-an-llm-is-built).
 Shaping model behavior by changing the input text -- instructions, examples, and formatting. The cheapest,
 fastest adaptation lever before RAG or fine-tuning.
 
+## Prompt injection {#prompt-injection}
+
+An attack that disguises malicious instructions as normal input to override an LLM's original instructions;
+the OWASP #1 LLM risk, including indirect injection via retrieved data. See
+[AI Safety & Guardrails](./safety.md#the-attack-surface-prompt-injection-and-jailbreaking).
+
 ## Quantization {#quantization}
 
 Replacing model weights with lower-precision approximations (e.g. 4-bit NF4) to cut memory use, with
@@ -208,6 +281,11 @@ Retrieving relevant information from an external source before generation and in
 so the model summarizes facts instead of recalling them. The primary defense against hallucination. See
 [RAG](./rag.md).
 
+## Red-teaming {#red-teaming}
+
+Continuously and adversarially probing a system to discover new failure modes, complementing static
+benchmarks. See [AI Safety & Guardrails](./safety.md#red-teaming).
+
 ## Reranking {#reranking}
 
 Re-scoring the top retrieved candidates with a cross-encoder model to improve relevance -- often a bigger
@@ -217,6 +295,22 @@ quality win than swapping the [embedding](#embedding) model. See [RAG](./rag.md#
 
 Searching by meaning rather than keyword match, using [embeddings](#embedding) and similarity. The
 capability that powers retrieval in [RAG](./rag.md).
+
+## SPDD (REASONS Canvas) {#spdd}
+
+Structured-Prompt-Driven Development -- a methodology treating prompts as versioned, reviewed delivery
+artifacts, structured by the seven-part REASONS Canvas. See
+[AI-Assisted Software Development](./ai-assisted-development.md#methodology-align-then-generate).
+
+## Structured note-taking {#structured-note-taking}
+
+An agent writing to a persistent store outside the context window and reading it back -- external memory that
+conserves the attention budget. See [Context Engineering](./context-engineering.md#long-horizon-techniques).
+
+## Sub-agent architecture {#sub-agent}
+
+A lead agent delegating focused subtasks to sub-agents that explore in clean context windows and return
+distilled summaries. See [Context Engineering](./context-engineering.md#long-horizon-techniques).
 
 ## Temperature {#temperature}
 
@@ -245,6 +339,17 @@ A database specialized for storing and searching high-dimensional [embeddings](#
 (via [ANN](#ann)) rather than exact match. Examples: Pinecone, pgvector, OpenSearch, Weaviate, Milvus,
 Chroma. See [RAG](./rag.md#vector-databases).
 
+## Vector quantization {#vector-quantization}
+
+Compressing embedding vectors (e.g. to `int8` or binary) to cut storage and speed up search; distinct from
+model-weight [quantization](#quantization). For retrieval, unbiased similarity preservation matters more than
+reconstruction accuracy. See [Embeddings Deep Dive](./embeddings.md#dimensions-matryoshka-and-quantization).
+
+## Vertical slices {#vertical-slices}
+
+Implementing a feature across all layers in one pass ("tracer bullets") rather than horizontally per layer,
+forcing integration to work. See [AI-Assisted Software Development](./ai-assisted-development.md).
+
 ## vLLM {#vllm}
 
 A high-throughput inference engine for serving [open-weights models](#open-weights) on GPUs in production.
@@ -255,5 +360,11 @@ See [Cloud vs Local Models](./cloud-vs-local.md#local-model-usage).
 - [Large Language Models](./llm.md)
 - [AI Agents](./agents.md)
 - [RAG](./rag.md)
+- [Embeddings Deep Dive](./embeddings.md)
+- [Context & Prompt Engineering](./context-engineering.md)
 - [Tooling and Frameworks](./tooling.md)
+- [Evaluation and LLMOps](./evaluation-and-llmops.md)
+- [AI Safety & Guardrails](./safety.md)
+- [Knowledge Management with LLMs](./knowledge-management.md)
+- [AI-Assisted Software Development](./ai-assisted-development.md)
 - [Cloud vs Local Models](./cloud-vs-local.md)

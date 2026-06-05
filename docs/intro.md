@@ -30,7 +30,13 @@ Practical introductions to the building blocks of modern AI -- with an inter-lin
 - [Large Language Models](./ai/llm.md) - how an LLM produces text, how it is trained, and what it is and is not good at
 - [AI Agents](./ai/agents.md) - tool use, multi-agent patterns, and the MCP and A2A protocols
 - [RAG](./ai/rag.md) - grounding an LLM in external knowledge with embeddings and vector databases
+- [Embeddings Deep Dive](./ai/embeddings.md) - model landscape, dimensions, quantization, hybrid retrieval, and pitfalls
+- [Context & Prompt Engineering](./ai/context-engineering.md) - the context window as a budget, context rot, and long-horizon techniques
 - [Tooling and Frameworks](./ai/tooling.md) - orchestration, vector DBs, evaluation, and LLMOps
+- [Evaluation & LLMOps](./ai/evaluation-and-llmops.md) - testing non-deterministic systems and operating them in production
+- [AI Safety & Guardrails](./ai/safety.md) - guardrails, prompt injection, red-teaming, and defense in depth
+- [Knowledge Management with LLMs](./ai/knowledge-management.md) - RAG vs just-in-time vs the LLM-wiki pattern vs llms.txt
+- [AI-Assisted Software Development](./ai/ai-assisted-development.md) - SPDD, architect-as-orchestrator, and AI-friendly architecture
 - [Cloud vs Local Models](./ai/cloud-vs-local.md) - enterprise platforms vs running open-weights models locally
 - [AI Glossary](./ai/glossary.md) - quick definitions for the terms above
 
