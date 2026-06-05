@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.18.1] - 2026-06-05
+
+### Changed
+- Splitter: the expense cascade when removing a person now has a single definition shared by the reducer and the removal confirmation, and the bill-split math is centralized behind one `fairShares` function (behaviour unchanged)
+- Moved the client redirects out of `docusaurus.config.ts` into a dedicated `redirects.ts` module with a build-time guard that fails on a duplicate source path
+
 ## [1.18.0] - 2026-06-05
 
 ### Added

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import type {Action, AppState} from './_lib/types';
 import {emptyState} from './_lib/types';
-import {applyAction} from './_lib/model';
+import {applyAction, expensesPaidBy} from './_lib/model';
 import {encodeState, decodeState} from './_lib/urlState';
 import {useUrlState} from './_lib/useUrlState';
 import PeopleManager from './_components/PeopleManager';
@@ -24,7 +24,7 @@ const SplitterApp: React.FC = () => {
     const handleRemovePerson = (id: string) => {
         const person = state.people.find(p => p.id === id);
         if (!person) return;
-        const expenseCount = state.expenses.filter(e => e.paidBy === id).length;
+        const expenseCount = expensesPaidBy(state, id).length;
         if (expenseCount > 0) {
             const expenseWord = pluralRules.select(expenseCount) === 'one' ? 'expense' : 'expenses';
             const ok = window.confirm(

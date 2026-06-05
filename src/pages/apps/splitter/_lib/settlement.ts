@@ -8,10 +8,25 @@ import type {AppState} from './types';
 
 export type Transfer = {from: string; to: string; cents: number};
 
+// The single definition of how a bill is split: each person's fair share of
+// `totalCents`, in integer cents. The remainder cent from an uneven split is
+// distributed deterministically to the first `total mod N` people in id-sorted
+// order, so the shares sum to exactly `totalCents`. Everything that needs a
+// per-person obligation derives from here rather than re-deriving the math.
+export const fairShares = (totalCents: number, sortedIds: string[]): Map<string, number> => {
+    const shares = new Map<string, number>();
+    const N = sortedIds.length;
+    if (N === 0) return shares;
+
+    const baseShare = Math.floor(totalCents / N);
+    const remainder = totalCents - baseShare * N;
+    sortedIds.forEach((id, i) => shares.set(id, baseShare + (i < remainder ? 1 : 0)));
+    return shares;
+};
+
 // Returns a Map<personId, netCents> where positive = is owed, negative = owes.
-// All amounts are integer cents; balances sum to exactly 0 (the remainder
-// cent of total/N is distributed deterministically to the first
-// `total mod N` people in id-sorted order).
+// All amounts are integer cents; balances sum to exactly 0 because every
+// person's obligation comes from the same `fairShares` distribution.
 export const computeBalances = (state: AppState): Map<string, number> => {
     const balances = new Map<string, number>();
     for (const p of state.people) balances.set(p.id, 0);
@@ -20,7 +35,6 @@ export const computeBalances = (state: AppState): Map<string, number> => {
 
     const collator = new Intl.Collator('en', {sensitivity: 'variant'});
     const sortedIds = [...state.people.map(p => p.id)].sort(collator.compare);
-    const N = state.people.length;
 
     let total = 0;
     for (const e of state.expenses) {
@@ -30,11 +44,7 @@ export const computeBalances = (state: AppState): Map<string, number> => {
         }
     }
 
-    const baseShare = Math.floor(total / N);
-    const remainder = total - baseShare * N;
-    for (let i = 0; i < N; i++) {
-        const id = sortedIds[i];
-        const share = baseShare + (i < remainder ? 1 : 0);
+    for (const [id, share] of fairShares(total, sortedIds)) {
         balances.set(id, (balances.get(id) ?? 0) - share);
     }
 
@@ -87,6 +97,10 @@ export const summarize = (state: AppState): Summary => {
     const balances = computeBalances(state);
     const transfers = computeSettlement(balances);
     const N = state.people.length;
+    // Display-only average for the "Per person" line. The exact obligations live
+    // in `balances` (via `fairShares`); when the bill does not divide evenly the
+    // individual shares differ by a cent, so this rounded average is a headline
+    // figure, not a per-person amount anyone actually owes.
     const perPersonCents = N > 0 ? Math.round(totalCents / N) : 0;
     return {totalCents, perPersonCents, balances, transfers};
 };

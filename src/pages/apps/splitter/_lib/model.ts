@@ -2,8 +2,16 @@
 // Owns every state transition and the invariants behind them, so the React
 // reducer is a thin adapter and the rules are testable through one interface.
 
-import type {Action, AppState} from './types';
+import type {Action, AppState, Expense} from './types';
 import {newId} from './types';
+
+/**
+ * Every expense the given person paid. Removing a person cascades to exactly
+ * these expenses, so the reducer and any "what will this delete?" preview share
+ * one definition of the cascade instead of each re-deriving it from raw state.
+ */
+export const expensesPaidBy = (state: AppState, personId: string): Expense[] =>
+    state.expenses.filter(e => e.paidBy === personId);
 
 /**
  * Applies a domain action to the current state and returns the next state.
@@ -22,12 +30,14 @@ export const applyAction = (state: AppState, action: Action): AppState => {
             if (!name) return state;
             return {...state, people: [...state.people, {id: newId(), name}]};
         }
-        case 'REMOVE_PERSON':
+        case 'REMOVE_PERSON': {
+            const dropped = new Set(expensesPaidBy(state, action.id).map(e => e.id));
             return {
                 ...state,
                 people: state.people.filter(p => p.id !== action.id),
-                expenses: state.expenses.filter(e => e.paidBy !== action.id),
+                expenses: state.expenses.filter(e => !dropped.has(e.id)),
             };
+        }
         case 'ADD_EXPENSE': {
             if (action.cents <= 0) return state;
             if (!state.people.some(p => p.id === action.paidBy)) return state;
