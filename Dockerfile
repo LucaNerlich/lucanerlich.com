@@ -35,7 +35,9 @@ RUN pnpm build
 # -------------------------
 FROM node:22-alpine
 
-RUN npm install -g serve@14.2.6
+# curl: required by Coolify's container healthcheck (alpine has no curl, and
+# busybox wget does not fall back from IPv6 ::1 to IPv4). serve: static host.
+RUN apk add --no-cache curl && npm install -g serve@14.2.6
 
 WORKDIR /app
 COPY --from=builder /app/build ./build
