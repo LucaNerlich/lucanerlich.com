@@ -10,7 +10,7 @@ keywords:
   - aem navigation
   - aem page building
   - aem layout container
-sidebar_position: 10
+sidebar_position: 11
 ---
 
 # Building Pages
@@ -21,7 +21,7 @@ assemble a homepage and an article page using Core Components and the responsive
 ## Core Components
 
 AEM Core Components are production-ready, accessible, and SEO-optimized components maintained by Adobe. Your project
-uses them through proxy components (chapter 8).
+uses them through proxy components (chapter 9).
 
 ### Commonly used Core Components
 
@@ -421,5 +421,5 @@ You learned:
 Your site now has pages with content. The next chapter goes deeper into the assets those pages depend
 on - the DAM, metadata, renditions, and Dynamic Media.
 
-Next up: [Assets & DAM](./11-assets-and-dam.md) - uploading and organizing assets, metadata and tagging,
+Next up: [Assets & DAM](./12-assets-and-dam.md) - uploading and organizing assets, metadata and tagging,
 renditions and processing profiles, and delivering optimized media.

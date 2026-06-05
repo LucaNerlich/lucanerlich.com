@@ -10,7 +10,7 @@ keywords:
   - aem page component
   - aem template types
   - aem allowed components
-sidebar_position: 8
+sidebar_position: 9
 ---
 
 # Templates & Policies
@@ -402,5 +402,5 @@ You learned:
 - [Style System](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/style-system) - author-applied CSS classes
 - [WKND tutorial -- Pages & Templates](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
 
-Next up: [Client Libraries](./09-client-libraries.md) - CSS and JS management, clientlib categories, dependencies,
+Next up: [Client Libraries](./10-client-libraries.md) - CSS and JS management, clientlib categories, dependencies,
 embedding, proxy serving, and integration with the page component.

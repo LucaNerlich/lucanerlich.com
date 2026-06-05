@@ -10,7 +10,7 @@ keywords:
   - aem css js
   - aem ui.frontend
   - aem frontend build
-sidebar_position: 9
+sidebar_position: 10
 ---
 
 # Client Libraries
@@ -306,5 +306,5 @@ You learned:
 - [AEM Client Libraries - AEMaaCS](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/clientlibs) - cloud-specific proxy serving
 - [aem-clientlib-generator](https://github.com/wcm-io-devops/cq-maven-plugins/tree/develop/clientlibs-generator) - tool for building clientlibs from ui.frontend
 
-Next up: [Building Pages](./10-building-pages.md) - using Core Components, responsive grid, navigation, header/footer,
+Next up: [Building Pages](./11-building-pages.md) - using Core Components, responsive grid, navigation, header/footer,
 and assembling a homepage and article page.

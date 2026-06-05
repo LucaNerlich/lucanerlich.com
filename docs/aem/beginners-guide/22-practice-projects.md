@@ -10,7 +10,7 @@ keywords:
     - aem hands-on
     - aem tutorial projects
     - aem beginner projects
-sidebar_position: 20
+sidebar_position: 22
 ---
 
 # Practice Projects
@@ -55,7 +55,7 @@ can add, remove, and reorder items in the dialog.
 - Multifield dialog with `composite="{Boolean}true"` (chapter 6)
 - `@ChildResource` and nested Sling Models (chapter 7)
 - `data-sly-repeat` and `data-sly-test` (chapter 5)
-- Component clientlibs (chapter 9)
+- Component clientlibs (chapter 10)
 - BEM class naming with `cmp-` prefix (chapter 5)
 
 #### Hints
@@ -123,12 +123,12 @@ articles.
 
 #### Skills practiced
 
-- Editable templates and template types (chapter 8)
-- Component policies and allowed components (chapter 8)
-- Page properties in Sling Models (chapter 10)
+- Editable templates and template types (chapter 9)
+- Component policies and allowed components (chapter 9)
+- Page properties in Sling Models (chapter 11)
 - QueryBuilder for finding child pages (chapter 2)
-- The Style System for card variants (chapter 8)
-- Client libraries for the blog layout (chapter 9)
+- The Style System for card variants (chapter 9)
+- Client libraries for the blog layout (chapter 10)
 
 #### Hints
 
@@ -157,10 +157,10 @@ Build a headless content structure for events and consume it from a standalone f
 
 #### Skills practiced
 
-- Content Fragment Models and field types (chapter 11)
-- GraphQL queries, filtering, and sorting (chapter 11)
-- Persisted queries (chapter 11)
-- Headless content delivery architecture (chapter 11)
+- Content Fragment Models and field types (chapter 13)
+- GraphQL queries, filtering, and sorting (chapter 13)
+- Persisted queries (chapter 13)
+- Headless content delivery architecture (chapter 13)
 
 #### Hints
 
@@ -212,19 +212,19 @@ Create a small two-language site and configure AEM's translation and internation
 
 #### Skills practiced
 
-- Language copies and site structure (chapter 12)
-- i18n dictionaries in the repository (chapter 12)
+- Language copies and site structure (chapter 15)
+- i18n dictionaries in the repository (chapter 15)
 - HTL `@ i18n` expression option (chapter 5)
-- `I18n` class in Java (chapter 12)
-- Language Navigation component (chapter 10)
-- Page properties and `currentPage.language` (chapter 10)
+- `I18n` class in Java (chapter 15)
+- Language Navigation component (chapter 11)
+- Page properties and `currentPage.language` (chapter 11)
 
 #### Hints
 
 - Structure your site as `/content/mysite/en/` and `/content/mysite/de/`.
 - Create the language copy via **Sites** > **Create** > **Language Copy** and choose "Create structure only" to start.
 - For i18n dictionaries, create nodes under `/apps/mysite/i18n/en/` and `/apps/mysite/i18n/de/` with
-  `sling:MessageEntry` nodes (see chapter 12).
+  `sling:MessageEntry` nodes (see chapter 15).
 - In HTL, `${'Read More' @ i18n}` automatically resolves based on the page's language. Test by viewing the same page
   under `/en/` and `/de/`.
 - For the language-aware component, inject `currentPage` in your Sling Model and branch logic based on
@@ -247,11 +247,11 @@ Starting from the archetype defaults, harden your Dispatcher configuration for a
 
 #### Skills practiced
 
-- Dispatcher filters (chapter 13)
-- Cache rules and stat file invalidation (chapter 13)
-- URL rewrites (chapter 13)
-- Dispatcher SDK validation (chapter 13)
-- Security hardening (chapter 13)
+- Dispatcher filters (chapter 18)
+- Cache rules and stat file invalidation (chapter 18)
+- URL rewrites (chapter 18)
+- Dispatcher SDK validation (chapter 18)
+- Security hardening (chapter 18)
 
 #### Hints
 

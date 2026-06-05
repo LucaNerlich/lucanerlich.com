@@ -10,7 +10,7 @@ keywords:
   - aem pipeline
   - aem rapid development environment
   - aem content transfer
-sidebar_position: 19
+sidebar_position: 21
 ---
 
 # Deployment & Cloud Manager
@@ -401,5 +401,5 @@ You learned:
 With deployment covered, you have seen the full lifecycle: build, configure, publish, secure, test, and
 ship. The final chapter turns theory into practice.
 
-Next up: [Practice Projects](./20-practice-projects.md) - six progressively challenging projects to build your AEM
+Next up: [Practice Projects](./22-practice-projects.md) - six progressively challenging projects to build your AEM
 skills through hands-on practice.

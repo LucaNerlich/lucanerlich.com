@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.0] - 2026-06-05
+
+### Added
+- AEM beginners guide: new [Servlets & Request Handling](/aem/beginners-guide/servlets-and-requests) chapter - resource-type vs path-bound servlets, `SlingSafeMethodsServlet` vs `SlingAllMethodsServlet`, validated POST handling, JSON endpoints, and when to prefer a Sling Model Exporter
+- AEM beginners guide: new [Search & Indexing](/aem/beginners-guide/search-and-indexing) chapter, plus a [Search & Indexing](/aem/content/search-and-indexing) reference page - QueryBuilder vs JCR-SQL2, why unindexed traversals are dangerous, Oak property and Lucene index definitions, AEMaaCS/6.5 deployment, reindexing, and the Explain Query tool
+- [Component Dialogs](/aem/component-dialogs): a dialog cookbook (teaser dialog, composite card-list multifield, link-type switch) and a full datasource servlet example for dynamic selects
+- [Groovy Console](/aem/groovy-console): a maintenance recipes library - broken internal-link finder, orphaned-asset finder, permission report, version purge, and replication-queue report
+- [Content Fragments](/aem/content/content-fragments): an end-to-end headless walkthrough (persisted GraphQL query to frontend `fetch` with CORS/referrer/caching notes) and a "models as code" section for versioning `/conf` models
+
+### Changed
+- Renumbered the AEM beginners guide to 22 chapters to slot in the new Servlets (08) and Search & Indexing (14) chapters; page URLs are unchanged because chapter slugs are explicit
+
 ## [1.13.3] - 2026-06-05
 
 ### Fixed

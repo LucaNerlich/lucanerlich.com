@@ -10,7 +10,7 @@ keywords:
   - aem cache invalidation
   - aem dispatcher sdk
   - aem cdn
-sidebar_position: 16
+sidebar_position: 18
 ---
 
 # Dispatcher & Caching
@@ -118,7 +118,7 @@ Cache rules define which responses the Dispatcher stores:
 ```
 
 > **Tip:** In AEMaaCS, the default rules are already good. Customize only when needed. Note that the blanket JSON deny
-> above would also block caching of GraphQL persisted query responses. If you use headless delivery (chapter 11), add
+> above would also block caching of GraphQL persisted query responses. If you use headless delivery (chapter 13), add
 > an explicit allow rule for the persisted query path as shown.
 
 ### Cacheable responses
@@ -349,5 +349,5 @@ You learned:
 - [Caching with the CDN](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/cdn-cache) - cache headers and TTLs
 - [Dispatcher Configuration tool & validator](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/validation-debug) - local SDK testing
 
-Next up: [Security & Permissions](./17-security-and-permissions.md) - users and groups, ACLs and permission
+Next up: [Security & Permissions](./19-security-and-permissions.md) - users and groups, ACLs and permission
 inheritance, closed user groups, service users, and hardening the publish tier.

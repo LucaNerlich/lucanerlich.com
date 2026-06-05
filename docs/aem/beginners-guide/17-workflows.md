@@ -10,7 +10,7 @@ keywords:
     - aem workflow process step
     - aem granite workflow
     - aem sling jobs
-sidebar_position: 15
+sidebar_position: 17
 ---
 
 # Workflows
@@ -166,5 +166,5 @@ You learned:
 - [Administering Workflows](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/operations/workflows)
 - [Developing Workflow Process Steps](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/workflows/customize-workflow-step)
 
-Next up: [Dispatcher & Caching](./16-dispatcher-and-caching.md) - the caching layer in front of
+Next up: [Dispatcher & Caching](./18-dispatcher-and-caching.md) - the caching layer in front of
 publish, cache rules, filters, and invalidation.

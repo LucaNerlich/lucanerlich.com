@@ -625,5 +625,5 @@ templates and policies - how pages are structured and which components are allow
 - [wcm.io AEM Mocks](https://wcm.io/testing/aem-mock/) - the `AemContext` testing library used in this guide
 - [Sling Models API Javadoc](https://javadoc.io/doc/org.apache.sling/org.apache.sling.models.api/latest/index.html) - annotations and interfaces
 
-Next up: [Templates & Policies](./08-templates-and-policies.md) - editable templates, template types, structure vs
-initial content, component policies, and page structure.
+Next up: [Servlets & Request Handling](./08-servlets-and-requests.md) - writing Sling servlets,
+resource-type vs path binding, selectors and extensions, and returning JSON to the client.

@@ -10,7 +10,7 @@ keywords:
     - aemcontext
     - aem debugging
     - aem remote debug
-sidebar_position: 18
+sidebar_position: 20
 ---
 
 # Testing & Debugging
@@ -165,7 +165,7 @@ breakpoints in your Sling Model, and reproduce the request.
 | Wrong script rendered | Recent Requests -- inspect resolution and `sling:resourceType` |
 | Dialog value not saved | CRXDE -- did the property persist under the expected `./name`? |
 | CSS/JS change not visible | Clientlib proxy cache -- `?debugClientLibs=true`, rebuild clientlibs |
-| Works on author, fails on publish | Published content + ACLs + Dispatcher cache (see chapters 14, 16, 17) |
+| Works on author, fails on publish | Published content + ACLs + Dispatcher cache (see chapters 16, 18, 19) |
 | `NullPointerException` in model | Use `DefaultInjectionStrategy.OPTIONAL` and guard nulls (see [Sling Models](./07-sling-models.md)) |
 
 ## Summary
@@ -186,5 +186,5 @@ You learned:
 - [Developer Console & debugging (AEMaaCS)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/development-tools)
 - [Logging in AEMaaCS](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/introduction/logging)
 
-Next up: [Deployment & Cloud Manager](./19-deployment-and-cloud-manager.md) - Git, CI/CD pipelines,
+Next up: [Deployment & Cloud Manager](./21-deployment-and-cloud-manager.md) - Git, CI/CD pipelines,
 environments, and Rapid Development Environments.

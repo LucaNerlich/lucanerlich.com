@@ -770,6 +770,182 @@ counts.sort { -it.value }.each { type, n ->
 return counts.values().sum()
 ```
 
+## Maintenance recipes
+
+Ready-to-adapt scripts for the audits and clean-ups teams run most. All mutating recipes are guarded
+with `DRY_RUN` -- run once to report, then flip to `false`.
+
+### Find broken internal links
+
+Scans page content for properties that look like internal paths and reports any that no longer resolve
+(common after a content move or a botched rollout):
+
+```groovy
+final String BASE_PATH = '/content/my-site'
+int broken = 0
+
+getPage(BASE_PATH).recurse { page ->
+    page.node?.recurse { node ->
+        node.properties.each { name, value ->
+            // Only check single-value string properties that look like a content/dam path
+            if (value instanceof String && value.startsWith('/content/')) {
+                // Strip selectors/extensions and anchors before resolving
+                String path = value.replaceAll(/[?#].*$/, '').replaceAll(/\.[^\/.]+$/, '')
+                if (!session.nodeExists(path) && !session.nodeExists(value)) {
+                    out.println("BROKEN: ${node.path}@${name} -> ${value}")
+                    broken++
+                }
+            }
+        }
+    }
+}
+
+out.println('----------------------------------------')
+out.println("Broken internal references: ${broken}")
+return broken
+```
+
+### Find orphaned (unreferenced) DAM assets
+
+Lists assets under a folder that nothing references. Reference lookups are expensive, so scope the
+`BASE_PATH` tightly and run off-hours:
+
+```groovy
+import com.day.cq.dam.api.Asset
+
+final String BASE_PATH = '/content/dam/my-site'
+int orphans = 0
+
+resourceResolver.getResource(BASE_PATH).listChildren().each { child ->
+    def asset = child.adaptTo(Asset.class)
+    if (asset == null) return
+
+    // referenceSearch via QueryBuilder: any node whose property equals this asset path
+    def params = [
+        'path'          : '/content',
+        'property'      : '*',
+        'property.value': child.path,
+        'p.limit'       : '1'
+    ]
+    def result = queryBuilder.createQuery(
+        com.day.cq.search.PredicateGroup.create(params), session).result
+
+    if (result.totalMatches == 0) {
+        out.println("ORPHAN: ${child.path}")
+        orphans++
+    }
+}
+
+out.println('----------------------------------------')
+out.println("Orphaned assets (no references found): ${orphans}")
+return orphans
+```
+
+:::warning "Unreferenced" is not "safe to delete"
+An asset may be referenced from external systems, hardcoded URLs, or rich-text HTML this query does
+not scan. Always review the list (and back up) before deleting.
+:::
+
+### Permission report for a path
+
+Dumps the access control entries (ACEs) on a path -- useful for answering "who can edit this?":
+
+```groovy
+import javax.jcr.security.AccessControlManager
+import javax.jcr.security.AccessControlList
+import javax.jcr.security.AccessControlPolicy
+
+final String PATH = '/content/my-site'
+
+AccessControlManager acm = session.accessControlManager
+AccessControlPolicy[] policies = acm.getPolicies(PATH)
+
+if (policies.length == 0) {
+    out.println("No ACLs set directly on ${PATH} (permissions are inherited)")
+}
+
+policies.each { policy ->
+    if (policy instanceof AccessControlList) {
+        policy.accessControlEntries.each { ace ->
+            String privileges = ace.privileges.collect { it.name }.join(', ')
+            out.println("${ace.principal.name}: ${privileges}")
+        }
+    }
+}
+return policies.length
+```
+
+### Purge old page versions
+
+Removes page versions older than a cutoff while keeping the most recent ones, reclaiming repository
+space. Version operations are irreversible -- keep `DRY_RUN = true` until you are sure:
+
+```groovy
+import javax.jcr.version.VersionManager
+import javax.jcr.version.VersionHistory
+import javax.jcr.version.Version
+
+final String BASE_PATH = '/content/my-site'
+final int KEEP_LAST = 5
+final boolean DRY_RUN = true
+
+VersionManager vm = session.workspace.versionManager
+int removed = 0
+
+getPage(BASE_PATH).recurse { page ->
+    String contentPath = page.path + '/jcr:content'
+    if (!session.nodeExists(contentPath)) return
+    def node = session.getNode(contentPath)
+    if (!node.isNodeType('mix:versionable')) return
+
+    VersionHistory history = vm.getVersionHistory(contentPath)
+    def versions = []
+    def it = history.allVersions
+    while (it.hasNext()) {
+        Version v = it.nextVersion()
+        if (v.name != 'jcr:rootVersion') versions << v
+    }
+    // Oldest first; drop everything except the last KEEP_LAST
+    versions.sort { it.created.timeInMillis }
+    def toRemove = versions.size() > KEEP_LAST ? versions[0..<(versions.size() - KEEP_LAST)] : []
+
+    toRemove.each { Version v ->
+        out.println("${DRY_RUN ? 'WOULD REMOVE' : 'REMOVING'}: ${contentPath} version ${v.name}")
+        if (!DRY_RUN) {
+            history.removeVersion(v.name)
+            removed++
+        }
+    }
+}
+
+out.println('----------------------------------------')
+out.println("Versions removed: ${removed} (DRY_RUN=${DRY_RUN})")
+return removed
+```
+
+### Replication queue report
+
+Reports the status and queue size of every replication agent on this instance (AEM 6.5 / AMS -- on
+AEMaaCS distribution is Adobe-managed and has no agents):
+
+```groovy
+import com.day.cq.replication.AgentManager
+import com.day.cq.replication.Agent
+
+def agentManager = sling.getService(AgentManager)
+
+agentManager.agents.values().each { Agent agent ->
+    if (!agent.isValid() || !agent.isEnabled()) {
+        out.println("${agent.id}: disabled/invalid")
+        return
+    }
+    def queue = agent.queue
+    int blocked = queue.isPaused() ? 1 : 0
+    out.println("${agent.id}: ${queue.entries().size()} queued${queue.isPaused() ? ' (PAUSED)' : ''}")
+}
+return agentManager.agents.size()
+```
+
 ## Scheduling Scripts
 
 The Groovy Console includes a built-in scheduler for running scripts on a cron schedule or asynchronously.

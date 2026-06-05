@@ -10,7 +10,7 @@ keywords:
     - aem publish
     - aem content distribution
     - aem replication agent
-sidebar_position: 14
+sidebar_position: 16
 ---
 
 # Publishing & Replication
@@ -108,7 +108,7 @@ see the [Replication & Activation](../content/replication-activation.mdx) refere
 Publishing updates the publish repository, but visitors hit the **Dispatcher** (and CDN) cache. A
 stale cache means visitors keep seeing old content. On 6.5 a Dispatcher Flush agent invalidates the
 affected paths; on AEMaaCS invalidation is automatic. See
-[Dispatcher & Caching](./16-dispatcher-and-caching.md) for cache rules and `statfileslevel`.
+[Dispatcher & Caching](./18-dispatcher-and-caching.md) for cache rules and `statfileslevel`.
 
 ## Troubleshooting
 
@@ -141,5 +141,5 @@ You learned:
 - [Replication (AEM 6.5)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/deploying/configuring/replication)
 - [Sling Content Distribution (AEMaaCS)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/content-distribution)
 
-Next up: [Workflows](./15-workflows.md) - automating content operations with workflow models,
+Next up: [Workflows](./17-workflows.md) - automating content operations with workflow models,
 launchers, and custom process steps.

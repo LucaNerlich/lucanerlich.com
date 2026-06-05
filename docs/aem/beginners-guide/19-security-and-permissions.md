@@ -10,7 +10,7 @@ keywords:
     - aem users and groups
     - aem service user
     - aem closed user group
-sidebar_position: 17
+sidebar_position: 19
 ---
 
 # Security & Permissions
@@ -117,7 +117,7 @@ configure the login page. Unauthorized visitors are redirected to login. CUGs ar
 Security is defense-in-depth -- the repository ACLs are one layer; the edge is another:
 
 - **The Dispatcher is a security layer.** Its filters should deny everything by default and allow only
-  the paths/selectors/extensions your site needs (see [Dispatcher & Caching](./16-dispatcher-and-caching.md)).
+  the paths/selectors/extensions your site needs (see [Dispatcher & Caching](./18-dispatcher-and-caching.md)).
 - **Remove author-only tooling from publish** (CRXDE, the Groovy Console, `/system/console`).
 - **Replace default passwords** (the `admin` account) and disable sample content.
 - **Use HTTPS everywhere** and set security headers at the CDN/Dispatcher.
@@ -145,5 +145,5 @@ You learned:
 - [Repository Initialization (repoinit)](https://sling.apache.org/documentation/bundles/repository-initialization.html)
 - [Closed User Groups](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/security/cug)
 
-Next up: [Testing & Debugging](./18-testing-and-debugging.md) - unit testing Sling Models, integration
+Next up: [Testing & Debugging](./20-testing-and-debugging.md) - unit testing Sling Models, integration
 tests, and the debugging tools that save you hours.

@@ -131,6 +131,44 @@ Fragment Models* policy). See
 Reference: [Managing Content Fragment Models](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/managing-content-fragment-models)
 and [Managing Content Fragments](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/managing).
 
+### Models as code
+
+Models you build in the console live under `/conf` in the JCR. Like templates and policies, they
+should be **exported and committed** so they deploy identically to every environment -- otherwise your
+GraphQL schema differs between Dev, Stage, and Prod.
+
+The model is stored as a `cq:Template`-style structure; export it via FileVault by adding a filter and
+shipping it in a content package (e.g. `ui.content` or a dedicated `ui.conf`):
+
+```xml title="ui.content/.../META-INF/vault/filter.xml"
+<filter root="/conf/myproject/settings/dam/cfm/models"/>
+```
+
+The exported `.content.xml` for a model field carries the field type and validation, for example:
+
+```xml title="/conf/myproject/settings/dam/cfm/models/article/.content.xml (excerpt)"
+<title
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="dam/cfm/models/editor/components/datatypes/multifield"
+    fieldType="text-single"
+    name="title"
+    required="{Boolean}true"
+    valueType="string"/>
+<body
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="dam/cfm/models/editor/components/datatypes/multifield"
+    fieldType="text-multi"
+    name="body"
+    valueType="string"
+    mimeType="text/html"/>
+```
+
+:::tip Treat model changes like schema migrations
+Because the GraphQL schema is generated from the model, **adding** a field is backwards-compatible but
+**renaming or removing** one is a breaking change for every headless consumer. Version models
+deliberately and coordinate changes with client teams.
+:::
+
 ---
 
 ## Content Fragment Structure in the JCR
@@ -670,6 +708,98 @@ Example persisted query:
     }
 }
 ```
+
+---
+
+## Headless end-to-end: from model to frontend
+
+This walks the full path a headless consumer takes: enable the model, save a **persisted query**, then
+fetch it from a JavaScript app. Persisted queries are strongly preferred over ad-hoc POST queries in
+production because they are **cacheable** by the Dispatcher and CDN and they keep the query server-side.
+
+### 1. Enable the model and GraphQL endpoint
+
+Enabling a model generates its GraphQL schema (e.g. an `Article` model creates the `articleByPath` and
+`articleList` entry points). Create a project GraphQL endpoint so queries resolve at
+`/content/_cq_graphql/myproject/endpoint.json` (see
+[AEM GraphQL API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/headless/graphql-api/content-fragments)).
+
+### 2. Save a persisted query
+
+Persist the query above with the AEM GraphQL CLI or a PUT to the persistence endpoint, giving it a
+short name (`featured-articles`):
+
+```bash
+# Local SDK / dev only -- real environments authenticate with a scoped token, not admin:admin.
+curl -u admin:admin -X PUT \
+  -H "Content-Type: application/json" \
+  --data-binary @featured-articles.json \
+  "http://localhost:4502/graphql/persist.json/myproject/featured-articles"
+```
+
+The persisted query is now served (and cached) at:
+
+```text
+GET /graphql/execute.json/myproject/featured-articles
+```
+
+Parameterize with variables by appending `;name=value` segments to the path
+(`.../featured-articles;limit=5`).
+
+### 3. Fetch it from a frontend
+
+```javascript title="lib/aem.js"
+const AEM_HOST = process.env.AEM_PUBLISH_HOST; // e.g. https://publish-p123.adobeaemcloud.com
+
+export async function getFeaturedArticles(limit = 10) {
+    const res = await fetch(
+        `${AEM_HOST}/graphql/execute.json/myproject/featured-articles;limit=${limit}`,
+        { headers: { Accept: "application/json" } }
+    );
+    if (!res.ok) {
+        throw new Error(`AEM GraphQL request failed: ${res.status}`);
+    }
+    const json = await res.json();
+    return json.data.articleList.items;
+}
+```
+
+```jsx title="components/FeaturedArticles.jsx (React)"
+import { useEffect, useState } from "react";
+import { getFeaturedArticles } from "../lib/aem";
+
+export function FeaturedArticles() {
+    const [articles, setArticles] = useState([]);
+
+    useEffect(() => {
+        getFeaturedArticles(5).then(setArticles).catch(console.error);
+    }, []);
+
+    return (
+        <ul>
+            {articles.map((a) => (
+                <li key={a._path}>
+                    <h3>{a.title}</h3>
+                    {/* body.html is sanitized AEM markup -- still review your XSS policy */}
+                    <div dangerouslySetInnerHTML={{ __html: a.body.html }} />
+                </li>
+            ))}
+        </ul>
+    );
+}
+```
+
+### 4. CORS, referrer, and caching
+
+A browser app on another origin needs AEM to allow it:
+
+- **CORS:** configure the Cross-Origin Resource Sharing policy (`alloworigin` / `alloworiginregexp`)
+  for your frontend origin.
+- **Referrer filter:** allow the origin in the Apache Sling Referrer Filter for non-GET methods.
+- **Caching:** persisted queries respond with cache headers and are cacheable at the Dispatcher/CDN;
+  ad-hoc POST queries are not. Keep production reads on persisted queries.
+
+See [Headless GraphQL](./graphql.mdx) for the endpoint, CORS, and referrer configuration in detail.
 
 ---
 

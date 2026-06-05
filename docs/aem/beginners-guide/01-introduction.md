@@ -26,11 +26,11 @@ first.
 | Part                      | Chapters | What you will learn                                                          |
 |---------------------------|----------|------------------------------------------------------------------------------|
 | **1 - Foundation**        | 1-3      | AEM architecture, JCR & Sling, OSGi fundamentals                             |
-| **2 - Components**        | 4-7      | Build components with HTL, dialogs, and Sling Models                         |
-| **3 - Building a Site**   | 8-10     | Templates, policies, client libraries, pages with Core Components            |
-| **4 - Content & Data**    | 11-13    | Assets & DAM, Content Fragments & GraphQL, Multi-Site Manager & i18n         |
-| **5 - Operations**        | 14-18    | Publishing & replication, workflows, Dispatcher, security, testing/debugging |
-| **6 - Deployment**        | 19-20    | Cloud Manager deployment, then hands-on practice projects                    |
+| **2 - Components**        | 4-8      | Build components with HTL, dialogs, Sling Models, and servlets               |
+| **3 - Building a Site**   | 9-11     | Templates, policies, client libraries, pages with Core Components            |
+| **4 - Content & Data**    | 12-14    | Assets & DAM, Content Fragments & GraphQL, search & Oak indexing             |
+| **5 - Operations**        | 15-20    | MSM & i18n, publishing, workflows, Dispatcher, security, testing/debugging   |
+| **6 - Deployment**        | 21-22    | Cloud Manager deployment, then hands-on practice projects                    |
 
 By the end you will have a corporate website with custom components, editable templates, headless content, managed
 assets, secured and tested code, and a production deployment pipeline.
@@ -179,7 +179,7 @@ java -jar aem-publish-p4503.jar
 The publish instance runs at `http://localhost:4503`. It represents the public-facing side of AEM.
 
 > **Tip:** For this guide, the author instance is sufficient. We will use the publish instance when we discuss
-> Dispatcher in chapter 13.
+> Dispatcher in chapter 18.
 
 ## Author vs Publish
 

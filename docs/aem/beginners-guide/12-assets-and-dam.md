@@ -10,7 +10,7 @@ keywords:
     - aem renditions
     - aem metadata schema
     - aem dynamic media
-sidebar_position: 11
+sidebar_position: 12
 ---
 
 # Assets & DAM
@@ -166,7 +166,7 @@ For one-off bulk changes, the [Groovy Console](../groovy-console.mdx) is often t
 - **Let processing profiles produce delivery renditions** - never upload pre-resized "web copies"
   manually; you lose the original and the renditions drift.
 - **Publish assets with their pages.** A page that references an unpublished asset renders a broken
-  image on the publish tier (see [Publishing & Replication](./14-publishing-and-replication.md)).
+  image on the publish tier (see [Publishing & Replication](./16-publishing-and-replication.md)).
 - **Tag instead of naming conventions** for anything you need to search or list dynamically.
 
 ## Summary
@@ -187,5 +187,5 @@ You learned:
 - [Metadata Schemas](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/admin/metadata-schemas)
 - [Processing Profiles](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/configure-asset-processing)
 
-Next up: [Content Fragments & GraphQL](./12-content-fragments-and-graphql.md) - channel-neutral
+Next up: [Content Fragments & GraphQL](./13-content-fragments-and-graphql.md) - channel-neutral
 structured content, Content Fragment Models, the AEM GraphQL API, and headless delivery.
