@@ -10,7 +10,7 @@ keywords:
   - aem live copy
   - aem translation
   - aem i18n
-sidebar_position: 12
+sidebar_position: 13
 ---
 
 # Multi-Site Manager & i18n
@@ -358,5 +358,5 @@ You learned:
 The content side is complete. The final two chapters cover production concerns: Dispatcher caching and Cloud Manager
 deployment.
 
-Next up: [Dispatcher & Caching](./13-dispatcher-and-caching.md) - Dispatcher architecture, cache rules, filters,
-rewrites, vanity URLs, invalidation, and local SDK testing.
+Next up: [Publishing & Replication](./14-publishing-and-replication.md) - activation/deactivation, the
+replication queue, Sling Content Distribution, and publishing assets and references.

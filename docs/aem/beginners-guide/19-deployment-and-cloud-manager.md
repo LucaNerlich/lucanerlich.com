@@ -10,7 +10,7 @@ keywords:
   - aem pipeline
   - aem rapid development environment
   - aem content transfer
-sidebar_position: 14
+sidebar_position: 19
 ---
 
 # Deployment & Cloud Manager
@@ -398,21 +398,8 @@ You learned:
 - **Production checklist** - what to verify before going live
 - **Content Transfer Tool** for AEM 6.5 to AEMaaCS migration
 
-## Congratulations
+With deployment covered, you have seen the full lifecycle: build, configure, publish, secure, test, and
+ship. The final chapter turns theory into practice.
 
-You have completed the AEM Beginners Guide! You now understand:
-
-- The **AEM technology stack** (JCR, Sling, OSGi)
-- How to **build components** (HTL, dialogs, Sling Models)
-- How to **create pages** (templates, policies, Core Components, client libraries)
-- **Headless content delivery** (Content Fragments, GraphQL)
-- **Multi-site and multi-language** management (MSM, i18n)
-- **Production operations** (Dispatcher, Cloud Manager, deployment)
-
-Ready to put it all into practice? The next chapter has six hands-on projects - from building a simple component to
-hardening a Dispatcher config - designed to reinforce everything you have learned.
-
-Next up: [Practice Projects](./15-practice-projects.md) - six progressively challenging projects to build your AEM
+Next up: [Practice Projects](./20-practice-projects.md) - six progressively challenging projects to build your AEM
 skills through hands-on practice.
-
-For reference material beyond the beginner guide, explore the [AEM documentation section](/aem/architecture).

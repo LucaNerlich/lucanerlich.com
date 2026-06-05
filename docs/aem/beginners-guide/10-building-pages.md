@@ -418,8 +418,8 @@ You learned:
 - **Experience Fragments** for reusable content blocks
 - **Authoring tips** for content editors
 
-Your site now has pages with content. The next chapter moves to headless - delivering content as structured data via
-Content Fragments and GraphQL.
+Your site now has pages with content. The next chapter goes deeper into the assets those pages depend
+on - the DAM, metadata, renditions, and Dynamic Media.
 
-Next up: [Content Fragments & GraphQL](./11-content-fragments-and-graphql.md) - Content Fragment Models, creating
-fragments, the AEM GraphQL API, persisted queries, and headless content delivery.
+Next up: [Assets & DAM](./11-assets-and-dam.md) - uploading and organizing assets, metadata and tagging,
+renditions and processing profiles, and delivering optimized media.

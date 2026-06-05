@@ -10,7 +10,7 @@ keywords:
     - aem hands-on
     - aem tutorial projects
     - aem beginner projects
-sidebar_position: 15
+sidebar_position: 20
 ---
 
 # Practice Projects
@@ -281,3 +281,20 @@ After completing these projects:
 - **Write tests** - add unit tests for your Sling Models using `io.wcm.testing.mock` and the `AemContext` framework
 - **Try AEM Forms or AEM Assets** - the platform has more capabilities beyond Sites
 - **Join the community** - the [AEM Community Forum](https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/ct-p/adobe-experience-manager-community) and Adobe Developer Discord are good places to ask questions
+
+## Congratulations
+
+You have completed the **AEM Beginners Guide**. Across 20 chapters you learned to:
+
+- Work with the **AEM technology stack** - JCR, Sling, and OSGi
+- **Build components** with HTL, Touch UI dialogs, and Sling Models
+- **Create pages** with editable templates, policies, Core Components, and client libraries
+- Manage **assets** in the DAM and deliver **headless content** with Content Fragments and GraphQL
+- Run **multi-site and multi-language** sites with MSM, translation, and i18n
+- **Publish and replicate** content, automate with **workflows**, and lock things down with
+  **security and permissions**
+- **Test and debug** your code, then **deploy** through Cloud Manager and RDE
+
+That is the full lifecycle - from a blank project to a secured, tested, production site. For reference
+material beyond the beginner guide, explore the [AEM documentation section](/aem/architecture), and
+keep the [Adobe Experience League](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/overview/introduction) docs close at hand.

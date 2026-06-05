@@ -23,16 +23,17 @@ first.
 
 ## How this guide is structured
 
-| Part                     | Chapters | What you will learn                                               |
-|--------------------------|----------|-------------------------------------------------------------------|
-| **1 - Foundation**      | 1-3     | AEM architecture, JCR & Sling, OSGi fundamentals                  |
-| **2 - Components**      | 4-7     | Build components with HTL, dialogs, and Sling Models              |
-| **3 - Building a Site** | 8-10    | Templates, policies, client libraries, pages with Core Components |
-| **4 - Content & Data**  | 11-12   | Content Fragments, GraphQL, Multi-Site Manager, i18n              |
-| **5 - Production**      | 13-14   | Dispatcher & caching, Cloud Manager deployment                    |
+| Part                      | Chapters | What you will learn                                                          |
+|---------------------------|----------|------------------------------------------------------------------------------|
+| **1 - Foundation**        | 1-3      | AEM architecture, JCR & Sling, OSGi fundamentals                             |
+| **2 - Components**        | 4-7      | Build components with HTL, dialogs, and Sling Models                         |
+| **3 - Building a Site**   | 8-10     | Templates, policies, client libraries, pages with Core Components            |
+| **4 - Content & Data**    | 11-13    | Assets & DAM, Content Fragments & GraphQL, Multi-Site Manager & i18n         |
+| **5 - Operations**        | 14-18    | Publishing & replication, workflows, Dispatcher, security, testing/debugging |
+| **6 - Deployment**        | 19-20    | Cloud Manager deployment, then hands-on practice projects                    |
 
-By the end you will have a corporate website with custom components, editable templates, headless content, and a
-production deployment pipeline.
+By the end you will have a corporate website with custom components, editable templates, headless content, managed
+assets, secured and tested code, and a production deployment pipeline.
 
 ## What is AEM?
 

@@ -10,7 +10,7 @@ keywords:
   - aem headless
   - aem content fragment models
   - aem persisted queries
-sidebar_position: 11
+sidebar_position: 12
 ---
 
 # Content Fragments & GraphQL
@@ -389,5 +389,5 @@ You learned:
 - [Headless delivery with GraphQL](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/content-delivery-with-graphql) - end-to-end headless flow
 - [Getting Started with AEM Headless & GraphQL (tutorial)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-with-aem-headless/graphql/overview)
 
-Next up: [Multi-Site Manager & i18n](./12-multi-site-manager-and-i18n.md) - Blueprints, Live Copies, rollout configs,
+Next up: [Multi-Site Manager & i18n](./13-multi-site-manager-and-i18n.md) - Blueprints, Live Copies, rollout configs,
 language copies, and the translation framework.

@@ -10,7 +10,7 @@ keywords:
   - aem cache invalidation
   - aem dispatcher sdk
   - aem cdn
-sidebar_position: 13
+sidebar_position: 16
 ---
 
 # Dispatcher & Caching
@@ -349,5 +349,5 @@ You learned:
 - [Caching with the CDN](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/cdn-cache) - cache headers and TTLs
 - [Dispatcher Configuration tool & validator](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/content-delivery/validation-debug) - local SDK testing
 
-Next up: [Deployment & Cloud Manager](./14-deployment-and-cloud-manager.md) - Git repo structure, Cloud Manager
-pipelines, environments, content transfer, and Rapid Development Environments.
+Next up: [Security & Permissions](./17-security-and-permissions.md) - users and groups, ACLs and permission
+inheritance, closed user groups, service users, and hardening the publish tier.
