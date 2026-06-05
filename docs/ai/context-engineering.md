@@ -125,6 +125,8 @@ flowchart TB
   memorizing a corpus. The trade-off is that runtime exploration is slower than pre-computed retrieval, so
   hybrid strategies (some data up front, exploration at runtime) are the default for capable agents. This is
   the trend pulling agent design [away from pure pre-inference RAG](./knowledge-management.md).
+- **[Agent skills](./skills.md)** apply the same progressive-disclosure principle to workflows: only name
+  and description load at startup; full instructions enter context when a task matches.
 
 ## See also
 
@@ -132,5 +134,6 @@ flowchart TB
 - [AI Agents](./agents.md) -- the systems these long-horizon techniques serve
 - [RAG](./rag.md) -- one technique within context engineering
 - [Knowledge Management with LLMs](./knowledge-management.md) -- persistent synthesis vs ephemeral retrieval
+- [Agent Skills](./skills.md) -- on-demand workflow packages that load only when relevant
 - [Evaluation and LLMOps](./evaluation-and-llmops.md) -- measuring whether context tactics actually work
 - [AI Glossary](./glossary.md) -- context window, context rot, compaction, sub-agents, and more

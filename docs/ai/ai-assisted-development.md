@@ -91,12 +91,14 @@ This topic overlaps with the rest of the AI section but is specifically about us
 in development workflows. It reuses the same building blocks:
 
 - [Context & Prompt Engineering](./context-engineering.md) -- the finite-attention constraint these methods design around
+- [Agent Skills](./skills.md) -- version-controlled workflow packages that encode repeatable agent rituals
 - [AI Agents](./agents.md) -- sub-agents, tool use, and the loops that do the implementation work
 - [Evaluation and LLMOps](./evaluation-and-llmops.md) -- the feedback loops (tests, CI, eval) that cap AI quality
 
 ## See also
 
 - [AI Agents](./agents.md) -- the agents that perform the "Night Shift"
+- [Agent Skills](./skills.md) -- reusable workflows for deployment, review, and other agent rituals
 - [Context & Prompt Engineering](./context-engineering.md) -- the Smart Zone and sub-agent patterns
 - [Knowledge Management with LLMs](./knowledge-management.md) -- schema files and project memory for agents
 - [AI Glossary](./glossary.md) -- SPDD, deep modules, vertical slices, and more

@@ -31,6 +31,12 @@ The umbrella label for systems where an LLM plans, decides, and acts via tools r
 single output. The same territory as "agents", framed as an architectural property you can add
 incrementally. See [AI Agents](./agents.md).
 
+## Agent skill {#agent-skill}
+
+A portable, version-controlled workflow package (`SKILL.md` plus optional scripts and references) that
+teaches a coding agent how to perform a specific task. Loaded on demand when the agent matches the skill's
+description to the current task, unlike always-on rules or project memory files. See [Agent Skills](./skills.md).
+
 ## ANN (Approximate Nearest Neighbor) {#ann}
 
 The efficiency primitive behind [vector databases](#vector-database): instead of comparing a query against

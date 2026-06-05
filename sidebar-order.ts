@@ -46,6 +46,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'safety',
         'knowledge-management',
         'ai-assisted-development',
+        'skills',
         'cloud-vs-local',
         'local-llm-app',
         'glossary',

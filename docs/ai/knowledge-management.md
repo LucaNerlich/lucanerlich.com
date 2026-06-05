@@ -27,6 +27,7 @@ patterns on that axis and when to use each. It is the conceptual companion to [R
 | [Structured note-taking](./glossary.md#structured-note-taking) | External notes file | Bounded -- agent decides | The agent itself | Note read/write |
 | [LLM-wiki pattern](./glossary.md#llm-wiki) | Persistent interlinked Markdown | Indefinite | LLM via ingest/lint workflows | Index lookup + page reads |
 | [llms.txt](./glossary.md#llms-txt) | Site root, by publisher | Indefinite, low frequency | Site owner (or tooling) | Single file fetch |
+| [Agent skills](./skills.md) | Skill directory (`SKILL.md`) | None -- workflow, not knowledge | Skill author / team | On-demand load when task matches |
 
 Reading top to bottom, each row makes synthesis more persistent and shifts maintenance further from the
 query and closer to the source. Every architecture choice is implicitly choosing *where the maintenance
@@ -99,6 +100,8 @@ who curates once.
 - **LLM-wiki** -- knowledge bases queried repeatedly where synthesis benefits from accumulating (research
   notes, project memory, due diligence).
 - **llms.txt** -- at the publisher boundary, to invite LLM consumption with curated structure.
+- **[Agent skills](./skills.md)** -- repeatable agent workflows (deploy, review, commit format) loaded on
+  demand; they orchestrate work rather than store synthesized knowledge.
 
 These are not mutually exclusive. A coding agent might combine just-in-time retrieval, structured
 note-taking, and a small wiki-like config file; an enterprise system might use RAG over a corpus plus
@@ -116,5 +119,6 @@ hybrids that lean on just-in-time retrieval and external memory rather than pre-
 - [RAG](./rag.md) -- the ephemeral-retrieval baseline these patterns build on or react against
 - [Embeddings Deep Dive](./embeddings.md) -- the substrate under the RAG row of the axis
 - [Context & Prompt Engineering](./context-engineering.md) -- just-in-time, compaction, note-taking, sub-agents
+- [Agent Skills](./skills.md) -- on-demand workflow packages for coding agents
 - [AI Agents](./agents.md) -- where the just-in-time shift is happening
 - [AI Glossary](./glossary.md) -- LLM-wiki, llms.txt, just-in-time context, memex, and more

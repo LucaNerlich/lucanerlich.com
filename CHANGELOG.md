@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.0] - 2026-06-05
+
+### Added
+- New [Agent Skills](/ai/skills) page in the [AI](/ai) section -- multi-tool guide to the `SKILL.md` standard (Cursor, Claude Code, Claude.ai, Codex, Gemini CLI, Copilot CLI), including how skills differ from rules and project memory, how to use and author them, common patterns, and a worked commit-message example
+- Added **Agent skill** to the [AI Glossary](/ai/glossary) and cross-linked the page from [AI-Assisted Development](/ai/ai-assisted-development), [Context & Prompt Engineering](/ai/context-engineering), and [Knowledge Management with LLMs](/ai/knowledge-management)
+
 ## [1.18.1] - 2026-06-05
 
 ### Changed
