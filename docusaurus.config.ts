@@ -255,6 +255,12 @@ const config: Config = {
             },
             items: [
                 {
+                    to: '/ai',
+                    label: 'AI',
+                    position: 'left',
+                    className: 'font-green',
+                },
+                {
                     to: '/aem',
                     label: 'AEM',
                     position: 'left',
@@ -309,6 +315,7 @@ const config: Config = {
                 {
                     title: 'Docs',
                     items: [
+                        {label: 'AI', to: '/ai'},
                         {label: 'AEM', to: '/aem'},
                         {label: 'Strapi', to: '/strapi'},
                         {label: 'JavaScript', to: '/javascript'},

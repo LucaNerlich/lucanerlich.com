@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.16.0] - 2026-06-05
+
+### Added
+- New [AI](/ai) section introducing the core topics, with an inter-linked glossary:
+    - [Large Language Models](/ai/llm) - how an LLM produces text, the three training stages, strengths and limits, hallucination, and the model landscape
+    - [AI Agents](/ai/agents) - tool use/function calling, the multi-agent patterns, and the MCP and A2A connectivity protocols
+    - [RAG](/ai/rag) - retrieval-augmented generation with embeddings and vector databases, RAG vs fine-tuning, and production levers
+    - [Tooling and Frameworks](/ai/tooling) - orchestration frameworks, vector DBs, evaluation/observability, and LLMOps
+    - [Cloud vs Local Models](/ai/cloud-vs-local) - enterprise platforms (Bedrock, SageMaker, Azure Foundry, Vertex AI) vs local open-weights models (Ollama, LM Studio, llama.cpp, vLLM)
+    - [AI Glossary](/ai/glossary) - plain-English definitions of the core AI terms, cross-linked to the topic pages
+
+### Changed
+- Surfaced the AI section across the site: a navbar entry (green accent), a footer link, a homepage section, and first placement in the sidebar after the intro
+
 ## [1.15.1] - 2026-06-05
 
 ### Changed

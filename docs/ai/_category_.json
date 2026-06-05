@@ -1,0 +1,8 @@
+{
+    "label": "AI",
+    "link": {
+        "type": "generated-index",
+        "slug": "/ai",
+        "description": "Practical introductions to the building blocks of modern AI: large language models, agents, retrieval-augmented generation (RAG), the tooling ecosystem, and the trade-offs between enterprise cloud platforms and locally hosted models. Start anywhere and follow the cross-links, or skim the inter-linked glossary."
+    }
+}

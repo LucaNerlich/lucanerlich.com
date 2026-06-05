@@ -23,6 +23,19 @@ Multi-chapter guided introductions, from zero to working knowledge:
 
 ---
 
+## AI
+
+Practical introductions to the building blocks of modern AI -- with an inter-linked glossary.
+
+- [Large Language Models](./ai/llm.md) - how an LLM produces text, how it is trained, and what it is and is not good at
+- [AI Agents](./ai/agents.md) - tool use, multi-agent patterns, and the MCP and A2A protocols
+- [RAG](./ai/rag.md) - grounding an LLM in external knowledge with embeddings and vector databases
+- [Tooling and Frameworks](./ai/tooling.md) - orchestration, vector DBs, evaluation, and LLMOps
+- [Cloud vs Local Models](./ai/cloud-vs-local.md) - enterprise platforms vs running open-weights models locally
+- [AI Glossary](./ai/glossary.md) - quick definitions for the terms above
+
+---
+
 ## AEM
 
 Comprehensive Adobe Experience Manager documentation covering the full stack.

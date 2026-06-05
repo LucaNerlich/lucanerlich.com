@@ -44,3 +44,7 @@ html[data-theme='dark'] {
 .font-red > div > a {
     color: var(--custom-accent-red);
 }
+
+.font-green {
+    color: var(--custom-accent-green) !important;
+}

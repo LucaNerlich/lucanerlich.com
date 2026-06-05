@@ -17,6 +17,7 @@ export const sidebarOrder: Record<string, string[]> = {
     // ------------------------------------------------------------------
     '.': [
         'intro',
+        'ai',
         'aem',
         'strapi',
         'building-for-the-web',
@@ -29,6 +30,18 @@ export const sidebarOrder: Record<string, string[]> = {
         'design-patterns',
         'other',
         'projects',
+    ],
+
+    // ------------------------------------------------------------------
+    // AI – core topic intros first, then the glossary
+    // ------------------------------------------------------------------
+    'ai': [
+        'llm',
+        'agents',
+        'rag',
+        'tooling',
+        'cloud-vs-local',
+        'glossary',
     ],
 
     // ------------------------------------------------------------------
