@@ -163,6 +163,12 @@ with out-of-the-box (OOTB) ones without downtime:
 Validate locally with the **Index Converter / oak-run** tooling and the
 [Content Search & Indexing](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/indexing) docs.
 
+:::tip Skip the full copy with Simplified Index Management
+On recent releases you can define just a `diff.json` delta and let the platform merge and version the
+index for you, instead of copying the whole OOTB definition and tracking `-custom-<N>` by hand. See
+[Simplified Index Management](./simplified-index-management.mdx).
+:::
+
 ### AEM 6.5
 
 Deploy the `/oak:index` node via a content package, set `reindex=true` (or trigger reindex), and watch
@@ -204,6 +210,7 @@ AEM ships tools to see whether a query is indexed and how it executes:
 
 ## See also
 
+- [Simplified Index Management](./simplified-index-management.mdx) - diff-based custom index management
 - [Modify and Query the JCR](./jcr.md) - QueryBuilder predicates and JCR-SQL2 syntax
 - [JCR Node Operations](./node-operations.mdx)
 - [Content Fragments](./content-fragments.md) - querying fragments by model

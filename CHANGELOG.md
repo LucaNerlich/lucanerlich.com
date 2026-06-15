@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.21.0] - 2026-06-15
+
+### Added
+- New [Simplified Index Management](./simplified-index-management.mdx) page: covers diff-based custom index definitions, `diff.json` deltas, and how to let the platform merge and version indexes without copying full OOTB definitions
+- Cross-reference and tip callout in [Search & Indexing](./search-and-indexing.mdx) pointing to Simplified Index Management
+
+### Changed
+- Bumped React to 19.2.7 and `@types/react` to 19.2.17
+
 ## [1.20.1] - 2026-06-15
 
 ### Fixed
