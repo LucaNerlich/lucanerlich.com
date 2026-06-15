@@ -309,6 +309,10 @@ while (true) {
         }
     }
 
+    // Persist each batch instead of accumulating every change in memory
+    // (see "Batch your saves") -- avoids OutOfMemoryError on large datasets.
+    if (!DRY_RUN) s.save()
+
     out.println("Scanned: ${scanned} | Batch: ${returned} | Offset: ${offset}")
 
     if (returned < BATCH_SIZE) break
@@ -406,7 +410,7 @@ out.println("Replaced in ${count} pages (DRY_RUN=${DRY_RUN})")
 
 ### Find pages by template
 
-List all pages using a given template, grouped by path:
+List all pages using a given template, in tree-traversal order:
 
 ```groovy
 final String BASE_PATH = '/content'
@@ -437,8 +441,9 @@ int orphanCount = 0
 getPage(BASE_PATH).recurse { page ->
     page.node?.recurse { node ->
         String resourceType = node.get('sling:resourceType')
-        if (resourceType && !resourceResolver.getResource('/apps/' + resourceType)
-                         && !resourceResolver.getResource('/libs/' + resourceType)) {
+        // getResource honours the Sling search paths (/apps then /libs) and
+        // handles absolute resourceTypes, so no manual prefixing is needed.
+        if (resourceType && !resourceResolver.getResource(resourceType)) {
             out.println("ORPHAN: ${node.path} | resourceType: ${resourceType}")
             orphanCount++
         }
@@ -466,7 +471,8 @@ int count = 0
 
 getPage(BASE_PATH).recurse { page ->
     // Example: deactivate all pages that are hidden in nav
-    if (page.properties['hideInNav'] == 'true') {
+    // (hideInNav is a Boolean property, so check it directly)
+    if (page.properties['hideInNav']) {
         out.println("Deactivating: ${page.path}")
 
         if (!DRY_RUN) {
@@ -511,6 +517,10 @@ return count
 ```
 
 ### DAM: update asset metadata
+
+This example updates the assets **directly** under `BASE_PATH`. To process an entire
+subtree (assets nested in subfolders), adapt the [batched SQL2 template](#batched-sql2-query-baseline-template)
+with `NODE_TYPE = 'dam:Asset'` instead.
 
 ```groovy
 final String BASE_PATH = '/content/dam/my-site'
@@ -573,8 +583,6 @@ out.println("Deleted ${count} nodes (DRY_RUN=${DRY_RUN})")
 ### Create content pages programmatically
 
 ```groovy
-import com.day.cq.wcm.api.Page
-
 final String PARENT_PATH = '/content/my-site/en'
 final String TEMPLATE = '/conf/my-site/settings/wcm/templates/content-page'
 final boolean DRY_RUN = true
@@ -656,7 +664,6 @@ List the members of a group, or find every group a user belongs to, via the JCR 
 import org.apache.jackrabbit.api.security.user.Authorizable
 import org.apache.jackrabbit.api.security.user.Group
 import org.apache.jackrabbit.api.security.user.UserManager
-import org.apache.jackrabbit.api.security.user.User
 
 final String GROUP_ID = 'content-authors'
 
@@ -717,8 +724,11 @@ import javax.jcr.query.Query
 
 final String BASE_PATH = '/content/my-site'
 
+// Select only the page path; read jcr:content properties per row below.
+// (Oak does not reliably return relative properties such as
+// jcr:content/jcr:title in the SELECT list.)
 String sql = """
-    SELECT p.[jcr:path], p.[jcr:content/jcr:title] AS title, p.[jcr:content/cq:template] AS template
+    SELECT p.[jcr:path]
     FROM [cq:Page] AS p
     WHERE ISDESCENDANTNODE(p, '${BASE_PATH}')
     ORDER BY p.[jcr:path]
@@ -727,15 +737,22 @@ String sql = """
 def qm = session.workspace.queryManager
 def rows = qm.createQuery(sql, Query.JCR_SQL2).execute().rows
 
+// Read a property off the page's jcr:content node, or '' if absent
+def contentProp = { String pagePath, String name ->
+    String contentPath = pagePath + '/jcr:content'
+    if (!session.nodeExists(contentPath)) return ''
+    def content = session.getNode(contentPath)
+    content.hasProperty(name) ? content.getProperty(name).string : ''
+}
+
 def csv = new StringBuilder("path,title,template\n")
 int count = 0
 
 rows.each { row ->
+    String path = row.getPath('p')
+    def values = [path, contentProp(path, 'jcr:title'), contentProp(path, 'cq:template')]
     // Quote fields and escape embedded quotes to keep the CSV well-formed
-    def cells = ['p.jcr:path', 'title', 'template'].collect { col ->
-        def v = row.getValue(col)?.string ?: ''
-        '"' + v.replace('"', '""') + '"'
-    }
+    def cells = values.collect { v -> '"' + v.replace('"', '""') + '"' }
     csv.append(cells.join(',')).append('\n')
     count++
 }
@@ -945,7 +962,6 @@ agentManager.agents.values().each { Agent agent ->
         return
     }
     def queue = agent.queue
-    int blocked = queue.isPaused() ? 1 : 0
     out.println("${agent.id}: ${queue.entries().size()} queued${queue.isPaused() ? ' (PAUSED)' : ''}")
 }
 return agentManager.agents.size()

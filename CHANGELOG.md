@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.20.1] - 2026-06-15
+
+### Fixed
+- Groovy Console: the activate/deactivate example now matches on the Boolean `hideInNav` property instead of the string `'true'`, so it actually selects hidden pages
+- Groovy Console: the CSV export reads `jcr:title`/`cq:template` from each page's `jcr:content` node rather than selecting unsupported relative properties in JCR-SQL2, so the exported columns are no longer empty
+- Groovy Console: the orphaned-component scan now resolves `sling:resourceType` via the Sling search paths, handling absolute resource types correctly
+
+### Changed
+- Groovy Console: the baseline SQL2 template now saves per batch (matching the "Batch your saves" guidance) to avoid `OutOfMemoryError` on large datasets
+- Groovy Console: removed unused imports and dead code from examples, corrected the "find pages by template" description, and clarified that the DAM metadata update processes direct children only
+- Groovy Console: bumped the recommended Orbinson dependency to 19.1.0
+
 ## [1.20.0] - 2026-06-05
 
 ### Added
