@@ -1,6 +1,6 @@
 ---
 title: Build a Local LLM App
-description: A hands-on guide to running a model locally with Ollama or LM Studio and talking to it from your own simple app -- with copy-paste code for a browser app, a Node.js CLI, and the OpenAI SDK.
+description: A hands-on guide to running a model locally with Ollama or LM Studio and talking to it from your own simple app - with copy-paste code for a browser app, a Node.js CLI, and the OpenAI SDK.
 tags: [ai, local-models, ollama, lmstudio, tutorial]
 keywords:
     - ollama
@@ -20,13 +20,13 @@ no cloud, works offline.
 ## The key idea: one API, two servers
 
 Both Ollama and LM Studio expose an **OpenAI-compatible HTTP API** on `localhost`. That means your app code
-is identical for either one -- only the base URL, port, and model name change. Anything that can speak to the
+is identical for either one - only the base URL, port, and model name change. Anything that can speak to the
 OpenAI API can speak to a local model.
 
 | | Ollama | LM Studio |
 |---|---|---|
 | Default base URL | `http://localhost:11434/v1` | `http://localhost:1234/v1` |
-| Native API (also) | `http://localhost:11434/api/chat` | -- |
+| Native API (also) | `http://localhost:11434/api/chat` | - |
 | API key | any non-empty string (ignored) | any non-empty string (ignored) |
 | Interface | CLI-first | GUI-first (plus an `lms` CLI) |
 | Get a model | `ollama pull <model>` | search & download in the app |
@@ -48,7 +48,7 @@ ollama list                 # see what you have installed
 
 3. **The API is already running.** Whenever Ollama is running, its server listens on
    `http://localhost:11434`. To start it manually (e.g. on a headless box): `ollama serve`.
-4. **Smoke-test it** with `curl` -- both the OpenAI-compatible and native endpoints work:
+4. **Smoke-test it** with `curl` - both the OpenAI-compatible and native endpoints work:
 
 ```bash
 # OpenAI-compatible endpoint
@@ -66,7 +66,7 @@ curl http://localhost:11434/api/chat -d '{
 ```
 
 If you need to pick a model for your hardware, see
-[quantization and open-weights models](./cloud-vs-local.md#local-model-usage) -- the rule is "largest model
+[quantization and open-weights models](./cloud-vs-local.md#local-model-usage) - the rule is "largest model
 that fits your VRAM".
 
 ## Option B: LM Studio
@@ -94,11 +94,11 @@ endpoint, so switching between Ollama and LM Studio is a one-line change.
 
 ### 1. A Node.js CLI (zero dependencies, streaming)
 
-The most reliable starting point -- no CORS, no build step. Requires Node 18+ (built-in `fetch`). Save as
+The most reliable starting point - no CORS, no build step. Requires Node 18+ (built-in `fetch`). Save as
 `chat.mjs` and run `node chat.mjs "your question"`.
 
 ```js
-// chat.mjs -- a tiny streaming chat client for a local LLM.
+// chat.mjs - a tiny streaming chat client for a local LLM.
 // Ollama:   node chat.mjs "hello"
 // LM Studio: LLM_BASE_URL=http://localhost:1234/v1 LLM_MODEL=your-model node chat.mjs "hello"
 
@@ -225,7 +225,7 @@ below before running it in a browser.
 
 ### 3. Using the official OpenAI SDK
 
-If you already use the OpenAI SDK, just point it at the local base URL -- nothing else changes.
+If you already use the OpenAI SDK, just point it at the local base URL - nothing else changes.
 
 ```js
 import OpenAI from 'openai';
@@ -257,12 +257,12 @@ print(resp.choices[0].message.content)
 
 ## Tuning the behavior
 
-- **System prompt** -- prepend a `{role: 'system', content: '...'}` message to set persona and rules.
-- **Temperature** -- add `"temperature": 0.2` to the request body for more deterministic output (0) or more
+- **System prompt** - prepend a `{role: 'system', content: '...'}` message to set persona and rules.
+- **Temperature** - add `"temperature": 0.2` to the request body for more deterministic output (0) or more
   variety (higher). See [temperature](./glossary.md#temperature).
-- **Swap the model** -- change one string. Pull another with `ollama pull <model>` or load another in
+- **Swap the model** - change one string. Pull another with `ollama pull <model>` or load another in
   LM Studio.
-- **Streaming on/off** -- set `"stream": false` to get the whole response in one JSON object instead of
+- **Streaming on/off** - set `"stream": false` to get the whole response in one JSON object instead of
   token-by-token.
 
 ## CORS and the browser {#cors-and-the-browser}
@@ -271,9 +271,9 @@ The Node CLI talks to `localhost` directly, so it never hits CORS. A **browser**
 origin (or opened as a `file://`) makes a cross-origin request to the model server, which the browser blocks
 unless the server allows it:
 
-- **Ollama** -- set the `OLLAMA_ORIGINS` environment variable before starting it, e.g.
+- **Ollama** - set the `OLLAMA_ORIGINS` environment variable before starting it, e.g.
   `OLLAMA_ORIGINS='*' ollama serve` (or list specific origins). Restart Ollama after changing it.
-- **LM Studio** -- toggle **CORS** on in the Local Server settings.
+- **LM Studio** - toggle **CORS** on in the Local Server settings.
 
 The cleanest setup is to serve the HTML from a tiny static server (for example `npx serve`) and allow that
 exact origin, rather than opening the file directly.
@@ -290,8 +290,8 @@ exact origin, rather than opening the file directly.
 
 ## See also
 
-- [Cloud vs Local Models](./cloud-vs-local.md) -- when to run locally vs in the cloud, and how to size a model
-- [Local & offline Copilot alternative](../other/local-llm-for-coding.md) -- a local coding assistant (Ollama + Continue.dev)
-- [Large Language Models](./llm.md) -- what the model is doing under the hood
-- [RAG](./rag.md) -- add your own documents to a local app
-- [AI Glossary](./glossary.md) -- open-weights, quantization, inference, and more
+- [Cloud vs Local Models](./cloud-vs-local.md) - when to run locally vs in the cloud, and how to size a model
+- [Local & offline Copilot alternative](../other/local-llm-for-coding.md) - a local coding assistant (Ollama + Continue.dev)
+- [Large Language Models](./llm.md) - what the model is doing under the hood
+- [RAG](./rag.md) - add your own documents to a local app
+- [AI Glossary](./glossary.md) - open-weights, quantization, inference, and more

@@ -1,7 +1,7 @@
 ---
 title: "Arrays"
 sidebar_label: "Arrays"
-description: Learn JavaScript arrays -- creating, accessing, mutating, iterating with map/filter/reduce, destructuring, and the spread operator.
+description: Learn JavaScript arrays - creating, accessing, mutating, iterating with map/filter/reduce, destructuring, and the spread operator.
 slug: /javascript/beginners-guide/arrays
 tags: [javascript, beginners, arrays]
 keywords:
@@ -51,7 +51,7 @@ const colors = ["red", "green", "blue"];
 console.log(colors[0]);
 console.log(colors[1]);
 console.log(colors[2]);
-console.log(colors[3]); // out of bounds -- undefined, not an error
+console.log(colors[3]); // out of bounds - undefined, not an error
 ```
 
 Result:

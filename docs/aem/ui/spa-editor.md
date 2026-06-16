@@ -466,7 +466,7 @@ add content.
 
 ```jsx
 const TextEditConfig = {
-    emptyLabel: 'Text -- click to edit',
+    emptyLabel: 'Text - click to edit',
     isEmpty: (props) => !props || !props.text || props.text.trim().length === 0
 };
 ```

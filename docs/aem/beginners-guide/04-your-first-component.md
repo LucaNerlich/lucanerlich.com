@@ -1,7 +1,7 @@
 ---
 title: "Your First Component"
 sidebar_label: "Your First Component"
-description: Component anatomy in AEM -- the cq:Component node, HTL template, dialog, and Sling Model. Creating, deploying, and using a simple component.
+description: Component anatomy in AEM - the cq:Component node, HTL template, dialog, and Sling Model. Creating, deploying, and using a simple component.
 slug: /aem/beginners-guide/your-first-component
 tags: [aem, beginners]
 keywords:

@@ -758,8 +758,8 @@ use(function () {
     // 'this' contains variables passed from HTL via data-sly-use
     var inputValue = this.someVar;
 
-    // ⚠️ Runs server-side (Rhino engine) -- no console.log, no window, no DOM
-    // ⚠️ Must use ES5 syntax -- arrow functions, let/const, template literals will fail
+    // ⚠️ Runs server-side (Rhino engine) - no console.log, no window, no DOM
+    // ⚠️ Must use ES5 syntax - arrow functions, let/const, template literals will fail
 
     return {
         processedValue: inputValue ? inputValue.toUpperCase() : 'DEFAULT'
@@ -863,12 +863,12 @@ required fields with `injectionStrategy = InjectionStrategy.REQUIRED`.
 ### Return empty collections, not null
 
 ```java
-// Bad -- callers must null-check
+// Bad - callers must null-check
 public List<LinkItem> getLinks() {
     return links;
 }
 
-// Good -- always safe to iterate
+// Good - always safe to iterate
 public List<LinkItem> getLinks() {
     return links != null ? Collections.unmodifiableList(links) : Collections.emptyList();
 }

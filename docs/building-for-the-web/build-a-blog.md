@@ -1,7 +1,7 @@
 ---
 title: "Build a Simple Blog Page"
 sidebar_label: "Build a Simple Blog Page"
-description: A super-beginner, start-to-finish tutorial for building a simple blog page using only HTML, CSS, and vanilla JavaScript -- with an optional section on adding Vite later.
+description: A super-beginner, start-to-finish tutorial for building a simple blog page using only HTML, CSS, and vanilla JavaScript - with an optional section on adding Vite later.
 slug: /build-a-blog
 tags: [html, css, javascript, beginners, tutorial]
 keywords:
@@ -129,7 +129,7 @@ Look up any of them in [Semantic HTML](./semantic-html.mdx) for details on what 
                 <time datetime="2026-04-15">15 April 2026</time>
             </header>
             <p>
-                I wanted a place to write things down. Nothing fancy -- just one HTML file, one stylesheet,
+                I wanted a place to write things down. Nothing fancy - just one HTML file, one stylesheet,
                 and a bit of JavaScript. No build step, no framework, no database.
             </p>
             <p>
@@ -153,7 +153,7 @@ Look up any of them in [Semantic HTML](./semantic-html.mdx) for details on what 
                 behind the sidebar you see on the right.
             </p>
             <p>
-                On narrow screens it collapses to a single column automatically -- no media query needed
+                On narrow screens it collapses to a single column automatically - no media query needed
                 if you use <code>minmax()</code> and <code>auto-fit</code>.
             </p>
             <footer>
@@ -467,7 +467,7 @@ Append this to the bottom of `styles.css`:
     border: 0;
 }
 
-/* Mobile menu toggle -- hidden on wide screens */
+/* Mobile menu toggle - hidden on wide screens */
 .nav-toggle {
     display: none;
     font: inherit;
@@ -608,7 +608,7 @@ Create `posts.json` next to `app.js`:
         "date": "2026-04-15",
         "tags": ["html", "beginners"],
         "body": [
-            "I wanted a place to write things down. Nothing fancy -- just one HTML file, one stylesheet, and a bit of JavaScript.",
+            "I wanted a place to write things down. Nothing fancy - just one HTML file, one stylesheet, and a bit of JavaScript.",
             "If you can open a text editor and drag a file into a browser, you can do this too."
         ]
     },
@@ -618,7 +618,7 @@ Create `posts.json` next to `app.js`:
         "tags": ["css", "beginners"],
         "body": [
             "CSS Grid lets you say \"give me two columns\" in one line.",
-            "On narrow screens it collapses to a single column -- no media query needed."
+            "On narrow screens it collapses to a single column - no media query needed."
         ]
     }
 ]
@@ -631,7 +631,7 @@ Replace the date and tag-filter blocks in `app.js` with a single `initPosts()` f
 the page. The theme toggle stays exactly as it was - it does not depend on posts.
 
 ```js
-// Theme toggle -- keep as-is from Step 3.
+// Theme toggle - keep as-is from Step 3.
 
 // Load posts and hydrate -------------------------------------------
 async function loadPosts() {
@@ -714,7 +714,7 @@ introduce Vite.
 To try it, install [Node.js LTS](https://nodejs.org/) first, then from a terminal:
 
 ```bash
-npm create vite@latest my-blog -- --template vanilla
+npm create vite@latest my-blog - --template vanilla
 cd my-blog
 npm install
 npm run dev

@@ -1,7 +1,7 @@
 ---
 title: "Testing"
 sidebar_label: "Testing"
-description: Write your first Java tests -- JUnit 5 setup, assertions, test structure, parameterized tests, and testing the Task Manager and REST API.
+description: Write your first Java tests - JUnit 5 setup, assertions, test structure, parameterized tests, and testing the Task Manager and REST API.
 slug: /java/beginners-guide/testing
 tags: [java, beginners, testing, junit]
 keywords:
@@ -216,13 +216,13 @@ Every test follows the same three-step pattern:
 ```java
 @Test
 void completingATaskMarksItDone() {
-    // Arrange -- set up the test data
+    // Arrange - set up the test data
     Task task = new Task(1, "Write tests", false);
 
-    // Act -- perform the action being tested
+    // Act - perform the action being tested
     Task completed = task.withDone(true);
 
-    // Assert -- verify the result
+    // Assert - verify the result
     assertTrue(completed.done());
     assertEquals("Write tests", completed.description());
 }
@@ -270,7 +270,7 @@ Each test gets a fresh `TaskStore` - tests do not affect each other.
 ```java
 @AfterEach
 void tearDown() {
-    // Clean up resources -- delete temp files, close connections
+    // Clean up resources - delete temp files, close connections
     tempFile.delete();
 }
 ```
@@ -725,7 +725,7 @@ assertEquals(3, list.size());
 assertTrue(list.contains("Ada"));
 assertNotNull(result);
 
-// AssertJ -- reads like English
+// AssertJ - reads like English
 assertThat(list).hasSize(3);
 assertThat(list).contains("Ada");
 assertThat(result).isNotNull();
@@ -814,19 +814,19 @@ Follow the **FIRST** principles:
 ### Command line
 
 ```bash
-# Maven -- run all tests
+# Maven - run all tests
 mvn test
 
-# Maven -- run a specific test class
+# Maven - run a specific test class
 mvn test -Dtest=TaskStoreTest
 
-# Maven -- run a specific test method
+# Maven - run a specific test method
 mvn test -Dtest=TaskStoreTest#addCreatesTask
 
-# Gradle -- run all tests
+# Gradle - run all tests
 gradle test
 
-# Gradle -- run a specific test class
+# Gradle - run a specific test class
 gradle test --tests taskapi.TaskStoreTest
 ```
 

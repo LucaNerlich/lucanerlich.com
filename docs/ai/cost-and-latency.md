@@ -1,6 +1,6 @@
 ---
 title: Cost, Latency & Model Routing
-description: Token economics, latency drivers, and practical patterns for choosing model tiers, caching, and fallback chains -- without treating cost as an afterthought.
+description: Token economics, latency drivers, and practical patterns for choosing model tiers, caching, and fallback chains - without treating cost as an afterthought.
 tags: [ai, cost, latency, model-routing, context-engineering]
 keywords:
     - llm cost optimization
@@ -13,7 +13,7 @@ keywords:
 # Cost, Latency & Model Routing
 
 Every [LLM](./llm.md) call has a price and a wait time. Both scale with context size, model tier, and how
-many times you call the model in a single user request -- especially in [agent](./agents.md) loops where one
+many times you call the model in a single user request - especially in [agent](./agents.md) loops where one
 user message can fan out to dozens of tool-use rounds. This page is the practical economics layer behind
 [context engineering](./context-engineering.md) and [cloud vs local](./cloud-vs-local.md): how to spend
 less, respond faster, and route work to the right model without guessing.
@@ -40,10 +40,10 @@ cost more than one frontier call that succeeds.
 
 Latency is time-to-first-token (streaming) plus time-to-complete. The dominant factors:
 
-- **Model size and load** -- larger models and busy shared APIs add queue time.
-- **Context length** -- more tokens to prefill before generation starts.
-- **Sequential steps** -- agent loops and RAG (retrieve → rerank → generate) stack latency linearly unless parallelized.
-- **Geography** -- round-trip to a distant region adds tens to hundreds of milliseconds per call.
+- **Model size and load** - larger models and busy shared APIs add queue time.
+- **Context length** - more tokens to prefill before generation starts.
+- **Sequential steps** - agent loops and RAG (retrieve → rerank → generate) stack latency linearly unless parallelized.
+- **Geography** - round-trip to a distant region adds tens to hundreds of milliseconds per call.
 
 Users feel latency most in interactive UI; batch and background jobs can tolerate seconds. Design routing
 with that split in mind (see [AI in Products](./ai-in-products.md)).
@@ -62,7 +62,7 @@ Rules of thumb:
 
 - **Route easy work down, hard work up.** Use a cheap model to classify intent or extract fields; call frontier only when the cheap model flags uncertainty or the task requires it.
 - **Do not use frontier for bulk.** Summarizing 10,000 tickets with Opus-class pricing is a budget incident; mid-tier or batch APIs exist for a reason.
-- **Local wins on volume and privacy**, not always on quality -- see [Cloud vs Local Models](./cloud-vs-local.md).
+- **Local wins on volume and privacy**, not always on quality - see [Cloud vs Local Models](./cloud-vs-local.md).
 
 ## Model routing patterns
 
@@ -70,7 +70,7 @@ Rules of thumb:
 
 **Cascade / fallback chain.** Try mid-tier first; if confidence is low, validation fails, or the user escalates, retry with frontier. Good when most requests are easy but edge cases need quality.
 
-**Parallel + merge.** Run two models on the same task and compare or vote -- expensive, use only for high-stakes checks (see [human-in-the-loop](./human-in-the-loop.md)).
+**Parallel + merge.** Run two models on the same task and compare or vote - expensive, use only for high-stakes checks (see [human-in-the-loop](./human-in-the-loop.md)).
 
 **Agent-specific routing.** Planner on frontier, workers on mid-tier; or restrict tool-heavy subtasks to models with strong function-calling at lower cost.
 
@@ -91,13 +91,13 @@ flowchart TB
 
 These levers appear repeatedly across production systems, in rough order of ROI:
 
-1. **Shrink the context** -- drop stale tool results, summarize history, retrieve fewer [RAG](./rag.md) chunks. See [Context Engineering](./context-engineering.md).
-2. **Prompt caching** -- providers cache repeated prefix tokens (system prompt, long docs) at a discount on subsequent calls. Structure prompts so stable content comes first.
-3. **Cheaper retrieval** -- smaller [embedding](./embeddings.md) models, fewer chunks, hybrid search before reranking.
-4. **Batch APIs** -- non-interactive work at lower per-token rates with higher latency tolerance.
-5. **Structured outputs** -- shorter, schema-bound responses instead of rambling prose ([Structured Outputs](./structured-outputs.md)).
-6. **Fewer agent rounds** -- tighter tools, clearer instructions, and human approval gates on expensive loops ([Human-in-the-Loop](./human-in-the-loop.md)).
-7. **Eval-driven trimming** -- use [evaluation](./evaluation-and-llmops.md) to prove a cheaper model is good enough before switching tier.
+1. **Shrink the context** - drop stale tool results, summarize history, retrieve fewer [RAG](./rag.md) chunks. See [Context Engineering](./context-engineering.md).
+2. **Prompt caching** - providers cache repeated prefix tokens (system prompt, long docs) at a discount on subsequent calls. Structure prompts so stable content comes first.
+3. **Cheaper retrieval** - smaller [embedding](./embeddings.md) models, fewer chunks, hybrid search before reranking.
+4. **Batch APIs** - non-interactive work at lower per-token rates with higher latency tolerance.
+5. **Structured outputs** - shorter, schema-bound responses instead of rambling prose ([Structured Outputs](./structured-outputs.md)).
+6. **Fewer agent rounds** - tighter tools, clearer instructions, and human approval gates on expensive loops ([Human-in-the-Loop](./human-in-the-loop.md)).
+7. **Eval-driven trimming** - use [evaluation](./evaluation-and-llmops.md) to prove a cheaper model is good enough before switching tier.
 
 ## Caching strategies
 
@@ -107,7 +107,7 @@ These levers appear repeatedly across production systems, in rough order of ROI:
 | **Semantic cache** | Similar queries → stored answers | FAQ-style support, repeated internal questions |
 | **Result cache** | Exact input hash → output | Deterministic extraction, classification with fixed schemas |
 
-Semantic caches need invalidation when underlying data changes -- treat them like any other cache with TTL
+Semantic caches need invalidation when underlying data changes - treat them like any other cache with TTL
 or event-driven busting, not a permanent truth store.
 
 ## Observability
@@ -124,11 +124,11 @@ dashboards). Set budgets and alerts before production traffic, not after the fir
 
 ## See also
 
-- [Context & Prompt Engineering](./context-engineering.md) -- the context budget that drives both cost and latency
-- [Cloud vs Local Models](./cloud-vs-local.md) -- where models run and the capex vs opex trade-off
-- [Structured Outputs](./structured-outputs.md) -- shorter, validatable responses
-- [AI in Products](./ai-in-products.md) -- when users need fast streaming vs tolerant background jobs
-- [Evaluation & LLMOps](./evaluation-and-llmops.md) -- proving a cheaper tier is safe to ship
-- [Which Pattern When?](./which-pattern-when.md) -- capstone guide for combining patterns
-- [Debugging LLM Apps](./debugging-llm-apps.md) -- when cost or latency spikes in production
-- [AI Glossary](./glossary.md) -- model routing, prompt caching, and related terms
+- [Context & Prompt Engineering](./context-engineering.md) - the context budget that drives both cost and latency
+- [Cloud vs Local Models](./cloud-vs-local.md) - where models run and the capex vs opex trade-off
+- [Structured Outputs](./structured-outputs.md) - shorter, validatable responses
+- [AI in Products](./ai-in-products.md) - when users need fast streaming vs tolerant background jobs
+- [Evaluation & LLMOps](./evaluation-and-llmops.md) - proving a cheaper tier is safe to ship
+- [Which Pattern When?](./which-pattern-when.md) - capstone guide for combining patterns
+- [Debugging LLM Apps](./debugging-llm-apps.md) - when cost or latency spikes in production
+- [AI Glossary](./glossary.md) - model routing, prompt caching, and related terms

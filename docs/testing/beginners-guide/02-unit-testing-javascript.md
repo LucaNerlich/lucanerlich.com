@@ -452,7 +452,7 @@ describe('slugify', () => {
     });
 
     it('collapses multiple spaces and hyphens', () => {
-        expect(slugify('foo  --  bar')).toBe('foo-bar');
+        expect(slugify('foo  -  bar')).toBe('foo-bar');
     });
 
     it('strips leading and trailing hyphens', () => {

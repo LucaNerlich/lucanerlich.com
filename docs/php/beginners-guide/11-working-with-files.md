@@ -362,7 +362,7 @@ The form **must** have `enctype="multipart/form-data"` for file uploads.
 $file = $_FILES['document'];
 
 echo $file['name'];      // Original filename
-echo $file['type'];      // MIME type (from client -- do not trust)
+echo $file['type'];      // MIME type (from client - do not trust)
 echo $file['size'];      // Size in bytes
 echo $file['tmp_name'];  // Temporary path on server
 echo $file['error'];     // UPLOAD_ERR_OK = 0 means success

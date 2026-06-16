@@ -1,7 +1,7 @@
 ---
 title: "Publishing & Replication"
 sidebar_label: "Publishing & Replication"
-description: How content moves from author to publish -- activation and deactivation, the replication queue, replication agents vs Sling Content Distribution, publishing references and assets, and troubleshooting stuck queues.
+description: How content moves from author to publish - activation and deactivation, the replication queue, replication agents vs Sling Content Distribution, publishing references and assets, and troubleshooting stuck queues.
 slug: /aem/beginners-guide/publishing-and-replication
 tags: [aem, beginners]
 keywords:
@@ -15,7 +15,7 @@ sidebar_position: 16
 
 # Publishing & Replication
 
-You have built pages and assets on the **author** instance. Visitors never see the author tier -- they
+You have built pages and assets on the **author** instance. Visitors never see the author tier - they
 see the **publish** tier, fronted by the Dispatcher and a CDN. **Replication** (also called
 *publishing* or *activation*) is the process that copies content from author to publish.
 
@@ -64,14 +64,14 @@ On AEM 6.5, replication is driven by **replication agents** (configured at
 **Dispatcher Flush** agents invalidate the Dispatcher cache after publish.
 
 On **AEM as a Cloud Service**, the classic agent model is replaced by **Sling Content Distribution
-(SCD)** and a managed pipeline -- you do **not** configure replication agents. Content authored on the
+(SCD)** and a managed pipeline - you do **not** configure replication agents. Content authored on the
 author service is distributed to the publish service through Adobe-managed infrastructure, and cache
 invalidation flows to the CDN automatically.
 
 | | AEM 6.5 | AEM as a Cloud Service |
 |---|---|---|
 | Mechanism | Replication agents | Sling Content Distribution (managed) |
-| Configuration | `/etc/replication/agents.*` | None -- Adobe-managed |
+| Configuration | `/etc/replication/agents.*` | None - Adobe-managed |
 | Cache flush | Dispatcher Flush agent | Automatic CDN/Dispatcher invalidation |
 | API | `Replicator` | `Replicator` (still works) |
 
@@ -100,7 +100,7 @@ public void publish(ResourceResolver resolver, String path) throws Exception {
 ```
 
 For bulk or ad-hoc publishing, the [Groovy Console](../groovy-console.mdx#activate--deactivate-pages)
-has a ready-made activation script. For deeper coverage -- tree activation, agents, and the full API --
+has a ready-made activation script. For deeper coverage - tree activation, agents, and the full API --
 see the [Replication & Activation](../content/replication-activation.mdx) reference.
 
 ## After publish: flushing the cache

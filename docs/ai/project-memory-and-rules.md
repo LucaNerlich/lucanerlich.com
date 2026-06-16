@@ -1,6 +1,6 @@
 ---
 title: Project Memory & Rules
-description: Always-on context for coding agents -- AGENTS.md, CLAUDE.md, Cursor rules, and how to split conventions from on-demand skills.
+description: Always-on context for coding agents - AGENTS.md, CLAUDE.md, Cursor rules, and how to split conventions from on-demand skills.
 tags: [ai, agents, rules, project-memory, skills]
 keywords:
     - AGENTS.md
@@ -14,7 +14,7 @@ keywords:
 
 Coding [agents](./agents.md) need persistent instructions: how this repo is structured, which commands to
 run, naming conventions, and security boundaries. That context lives in **project memory files** and
-**rules** -- always-on (or glob-scoped) configuration distinct from on-demand [Agent Skills](./skills.md).
+**rules** - always-on (or glob-scoped) configuration distinct from on-demand [Agent Skills](./skills.md).
 Getting the split right keeps agents aligned without blowing the [context budget](./context-engineering.md).
 
 ## The configuration stack
@@ -41,14 +41,14 @@ flowchart TB
 **`AGENTS.md`** (and tool-specific variants like **`CLAUDE.md`**) is a markdown file at the repo root (or
 paths your tool discovers) that tells the agent how to work in *this* project. Common sections:
 
-- **Overview** -- what the repo is, main packages, tech stack
-- **Commands** -- how to install, build, test, lint (`pnpm build`, not `npm`)
-- **Conventions** -- branch naming, commit style, where configs live
-- **Boundaries** -- what not to touch, security-sensitive areas
-- **Pointers** -- links to deeper docs instead of duplicating them
+- **Overview** - what the repo is, main packages, tech stack
+- **Commands** - how to install, build, test, lint (`pnpm build`, not `npm`)
+- **Conventions** - branch naming, commit style, where configs live
+- **Boundaries** - what not to touch, security-sensitive areas
+- **Pointers** - links to deeper docs instead of duplicating them
 
 Treat it like onboarding for a new senior engineer: enough to orient, not a copy of the entire wiki.
-The [LLM-wiki pattern](./knowledge-management.md) scales when memory outgrows one file -- memory file
+The [LLM-wiki pattern](./knowledge-management.md) scales when memory outgrows one file - memory file
 points to the wiki; skills pull detailed workflows on demand.
 
 ### What belongs in memory vs skills
@@ -83,7 +83,7 @@ alwaysApply: false
 | `globs` | Applied when matching files are open or in context |
 | `alwaysApply: false` + no globs | "Apply intelligently" (legacy pattern; consider migrating to skills) |
 
-**Keep rules short** -- under ~50 lines when possible. Rules compete for the same window as conversation,
+**Keep rules short** - under ~50 lines when possible. Rules compete for the same window as conversation,
 retrieved [RAG](./rag.md) chunks, and tool results. Long rule files cause [context rot](./context-engineering.md).
 
 Use rules for **stable conventions**; use [skills](./skills.md) for **procedures**.
@@ -95,16 +95,16 @@ In large repos:
 - Root `AGENTS.md` describes the monorepo; package-level `AGENTS.md` or rules scoped with globs to
   `packages/foo/**`
 - Nested `.cursor/skills/` under `apps/web/` auto-scope skills to that tree (Cursor)
-- Avoid duplicating the same rule in five packages -- shared rule with broad globs or one memory file with
+- Avoid duplicating the same rule in five packages - shared rule with broad globs or one memory file with
   a package index
 
 ## Writing effective memory
 
-1. **Commands must be copy-paste accurate** -- wrong test command wastes agent turns.
-2. **Prefer pointers over paste** -- "See `docs/architecture.md`" beats inlining stale architecture.
-3. **Update when reality diverges** -- stale memory is worse than none; agents confidently follow wrong paths.
-4. **Version-control with the code** -- memory and rules are team contracts, like CI config.
-5. **Align with [AI-Assisted Development](./ai-assisted-development.md)** -- deep modules and vertical slices
+1. **Commands must be copy-paste accurate** - wrong test command wastes agent turns.
+2. **Prefer pointers over paste** - "See `docs/architecture.md`" beats inlining stale architecture.
+3. **Update when reality diverges** - stale memory is worse than none; agents confidently follow wrong paths.
+4. **Version-control with the code** - memory and rules are team contracts, like CI config.
+5. **Align with [AI-Assisted Development](./ai-assisted-development.md)** - deep modules and vertical slices
    in memory help agents stay in the Smart Zone.
 
 ## Migrating and deduplicating
@@ -112,14 +112,14 @@ In large repos:
 Over time teams accumulate overlapping rules, memory, and skills:
 
 - Cursor **`/migrate-to-skills`** converts eligible dynamic rules and slash commands to skills
-- Audit for duplicate instructions across `AGENTS.md`, rules, and skills -- one source of truth per concern
+- Audit for duplicate instructions across `AGENTS.md`, rules, and skills - one source of truth per concern
 - Move workflow checklists from always-on rules into skills with good descriptions
 
 ## See also
 
-- [Agent Skills](./skills.md) -- on-demand workflows and SKILL.md format
-- [Context & Prompt Engineering](./context-engineering.md) -- why lean memory matters
-- [Knowledge Management with LLMs](./knowledge-management.md) -- AGENTS.md in the LLM-wiki pattern
-- [AI-Assisted Software Development](./ai-assisted-development.md) -- architecture patterns for agent-friendly repos
-- [Privacy & Data Handling](./privacy-and-data.md) -- do not embed secrets in memory files
-- [AI Glossary](./glossary.md) -- project memory and related terms
+- [Agent Skills](./skills.md) - on-demand workflows and SKILL.md format
+- [Context & Prompt Engineering](./context-engineering.md) - why lean memory matters
+- [Knowledge Management with LLMs](./knowledge-management.md) - AGENTS.md in the LLM-wiki pattern
+- [AI-Assisted Software Development](./ai-assisted-development.md) - architecture patterns for agent-friendly repos
+- [Privacy & Data Handling](./privacy-and-data.md) - do not embed secrets in memory files
+- [AI Glossary](./glossary.md) - project memory and related terms

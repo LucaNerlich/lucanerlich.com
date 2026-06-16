@@ -177,7 +177,7 @@ The HTL template renders your custom properties and delegates child rendering to
 
 <!--/* Empty placeholder for the page editor */-->
 <sly data-sly-test="${model.empty && wcmmode.edit}">
-    <div class="cq-placeholder" data-emptytext="Section Container -- Drag components here"></div>
+    <div class="cq-placeholder" data-emptytext="Section Container - Drag components here"></div>
 </sly>
 ```
 
@@ -445,7 +445,7 @@ class SectionContainer extends ResponsiveGrid {
         if (SectionContainerConfig.isEmpty(this.props)) {
             return (
                 <div className="section-container section-container--empty">
-                    <p>Section Container -- Drag components here</p>
+                    <p>Section Container - Drag components here</p>
                 </div>
             );
         }

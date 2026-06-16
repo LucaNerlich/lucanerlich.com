@@ -1,7 +1,7 @@
 ---
 title: "Error Handling"
 sidebar_label: "Error Handling"
-description: Learn Java error handling -- try/catch/finally, checked vs unchecked exceptions, custom exceptions, try-with-resources, and best practices.
+description: Learn Java error handling - try/catch/finally, checked vs unchecked exceptions, custom exceptions, try-with-resources, and best practices.
 slug: /java/beginners-guide/error-handling
 tags: [java, beginners, exceptions, error-handling]
 keywords:
@@ -338,14 +338,14 @@ try (
 ### 1. Catch specific exceptions
 
 ```java
-// Bad -- catches everything, including bugs
+// Bad - catches everything, including bugs
 try {
     riskyOperation();
 } catch (Exception e) {
     System.out.println("Something failed");
 }
 
-// Good -- catches only what you expect
+// Good - catches only what you expect
 try {
     riskyOperation();
 } catch (IOException e) {
@@ -356,14 +356,14 @@ try {
 ### 2. Do not swallow exceptions
 
 ```java
-// Bad -- error disappears silently
+// Bad - error disappears silently
 try {
     riskyOperation();
 } catch (IOException e) {
-    // empty catch block -- the worst thing you can do
+    // empty catch block - the worst thing you can do
 }
 
-// Good -- at least log it
+// Good - at least log it
 try {
     riskyOperation();
 } catch (IOException e) {
@@ -374,7 +374,7 @@ try {
 ### 3. Use exceptions for exceptional situations
 
 ```java
-// Bad -- using exceptions for control flow
+// Bad - using exceptions for control flow
 try {
     int value = Integer.parseInt(input);
     process(value);
@@ -382,7 +382,7 @@ try {
     useDefaultValue();
 }
 
-// Better -- check first
+// Better - check first
 if (input.matches("-?\\d+")) {
     int value = Integer.parseInt(input);
     process(value);
@@ -404,7 +404,7 @@ throw new IllegalArgumentException("Age must be positive, got: " + age);
 ### 5. Prefer unchecked exceptions for programming errors
 
 ```java
-// Good -- caller made a mistake
+// Good - caller made a mistake
 public void setAge(int age) {
     if (age < 0) {
         throw new IllegalArgumentException("Age cannot be negative: " + age);

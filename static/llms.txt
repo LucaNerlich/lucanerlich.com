@@ -1,4 +1,4 @@
-# Luca Nerlich -- Tech Documentation
+# Luca Nerlich - Tech Documentation
 
 > Technical documentation and guides for Adobe Experience Manager (AEM), Java, JavaScript, TypeScript, CSS, PHP, Rust, Docker, Git, Testing, Linux, Strapi, and software design patterns. Every page is built around real-world code examples and common pitfalls.
 

@@ -55,7 +55,7 @@ value in this variable":
 <?php
 
 $message = 'Hello';       // Store the string 'Hello' in $message
-$message = 'Goodbye';     // Overwrite with a new value -- the old one is gone
+$message = 'Goodbye';     // Overwrite with a new value - the old one is gone
 echo $message;             // Output: Goodbye
 ```
 
@@ -187,9 +187,9 @@ If a calculation exceeds this range, PHP automatically converts the result to a 
 <?php
 
 $decimal = 255;        // Decimal (base 10)
-$hex = 0xFF;           // Hexadecimal (base 16) -- also 255
-$octal = 0377;         // Octal (base 8) -- also 255
-$binary = 0b11111111;  // Binary (base 2) -- also 255
+$hex = 0xFF;           // Hexadecimal (base 16) - also 255
+$octal = 0377;         // Octal (base 8) - also 255
+$binary = 0b11111111;  // Binary (base 2) - also 255
 ```
 
 You will mostly use decimal numbers, but hexadecimal is common for colors (`0xFF0000` for red) and binary for bitwise
@@ -272,7 +272,7 @@ echo is_null($data);  // Output: 1 (true)
 
 $name = 'Alice';
 unset($name);
-// $name is now undefined -- accessing it produces a warning
+// $name is now undefined - accessing it produces a warning
 ```
 
 ## Inspecting values with var_dump
@@ -302,11 +302,11 @@ debugging because `echo` hides type information:
 ```php
 <?php
 
-echo true;   // Output: 1 -- you can't tell it was a boolean
-echo false;  // Output: (nothing!) -- false produces no output
+echo true;   // Output: 1 - you can't tell it was a boolean
+echo false;  // Output: (nothing!) - false produces no output
 echo null;   // Output: (nothing!)
 
-var_dump(true);   // bool(true) -- now you know exactly what it is
+var_dump(true);   // bool(true) - now you know exactly what it is
 var_dump(false);  // bool(false)
 var_dump(null);   // NULL
 ```
@@ -433,10 +433,10 @@ The `===` operator compares **both value and type** - no juggling:
 ```php
 <?php
 
-var_dump(0 === false);    // bool(false) -- different types
-var_dump('' === false);   // bool(false) -- different types
-var_dump(42 === 42);      // bool(true) -- same type and value
-var_dump(42 === '42');    // bool(false) -- int vs string
+var_dump(0 === false);    // bool(false) - different types
+var_dump('' === false);   // bool(false) - different types
+var_dump(42 === 42);      // bool(true) - same type and value
+var_dump(42 === '42');    // bool(false) - int vs string
 ```
 
 > **Tip:** Always use `===` (strict comparison) unless you have a specific reason to use `==`. This avoids an entire

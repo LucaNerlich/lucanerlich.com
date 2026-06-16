@@ -1,7 +1,7 @@
 ---
 title: "Specificity & the Cascade"
 sidebar_label: "Specificity & Cascade"
-description: How CSS decides which rule wins -- the cascade algorithm, specificity calculation, inheritance, the !important keyword, and cascade layers.
+description: How CSS decides which rule wins - the cascade algorithm, specificity calculation, inheritance, the !important keyword, and cascade layers.
 slug: /css/beginners-guide/specificity-and-the-cascade
 tags: [css, beginners]
 keywords:

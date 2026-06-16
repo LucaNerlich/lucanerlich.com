@@ -75,7 +75,7 @@ opt.ifPresentOrElse(
 ### Avoid: `get()` without checking
 
 ```java
-// BAD -- throws NoSuchElementException if empty
+// BAD - throws NoSuchElementException if empty
 String value = opt.get();
 
 // If you must use get(), at least check first
@@ -116,7 +116,7 @@ Use when the transformation itself returns an Optional (avoids `Optional<Optiona
 Optional<User> findUser(int id) { ... }
 Optional<Address> getAddress(User user) { ... }
 
-// map would give Optional<Optional<Address>> -- wrong!
+// map would give Optional<Optional<Address>> - wrong!
 // flatMap unwraps the inner Optional
 Optional<String> city = findUser(42)
     .flatMap(this::getAddress)
@@ -251,11 +251,11 @@ class User {
 ### Optional as method parameter
 
 ```java
-// BAD -- forces callers to wrap values
+// BAD - forces callers to wrap values
 void process(Optional<String> name) { ... }
 process(Optional.of("Alice")); // clunky
 
-// GOOD -- accept nullable, overload, or use a default
+// GOOD - accept nullable, overload, or use a default
 void process(String name) { ... }
 void process() { process(null); }
 ```
@@ -263,10 +263,10 @@ void process() { process(null); }
 ### Wrapping and immediately unwrapping
 
 ```java
-// BAD -- pointless
+// BAD - pointless
 String value = Optional.ofNullable(getValue()).orElse("default");
 
-// GOOD -- use a simple null check
+// GOOD - use a simple null check
 String value = getValue();
 if (value == null) value = "default";
 
@@ -275,13 +275,13 @@ String value = Optional.ofNullable(getValue())
     .map(String::strip)
     .filter(s -> !s.isEmpty())
     .orElse("default");
-// This is fine -- the chain justifies the Optional
+// This is fine - the chain justifies the Optional
 ```
 
 ### Using `isPresent()` + `get()` instead of functional methods
 
 ```java
-// BAD -- imperative style defeats the purpose
+// BAD - imperative style defeats the purpose
 if (optional.isPresent()) {
     return optional.get().toUpperCase();
 } else {

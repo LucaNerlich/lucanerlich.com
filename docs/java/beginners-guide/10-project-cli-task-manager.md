@@ -1,7 +1,7 @@
 ---
 title: "Project: CLI Task Manager"
 sidebar_label: "Project: CLI Task Manager"
-description: Build a complete command-line task manager in Java -- CRUD operations, file-based persistence, input validation, and packaging as a runnable JAR.
+description: Build a complete command-line task manager in Java - CRUD operations, file-based persistence, input validation, and packaging as a runnable JAR.
 slug: /java/beginners-guide/project-cli-task-manager
 tags: [java, beginners, project, cli]
 keywords:
@@ -312,7 +312,7 @@ public class TaskApp {
 
     private void printUsage() {
         System.out.println("""
-                Task Manager -- a simple CLI to-do list
+                Task Manager - a simple CLI to-do list
 
                 Usage:
                   add <description>   Add a new task
@@ -414,7 +414,7 @@ java TaskApp
 Result:
 
 ```text
-Task Manager -- a simple CLI to-do list
+Task Manager - a simple CLI to-do list
 
 Usage:
   add <description>   Add a new task

@@ -93,7 +93,7 @@ public class SearchApiServlet extends SlingSafeMethodsServlet { ... }
 The older `@SlingServlet` annotation is deprecated. The even older `@Component` + `@Property`
 pattern should never be used:
 
-```java title="Deprecated -- don't use"
+```java title="Deprecated - don't use"
 // ❌ Old @SlingServlet annotation (deprecated since Sling 2.5)
 @SlingServlet(resourceTypes = "...", methods = "GET")
 public class OldServlet extends SlingSafeMethodsServlet { ... }
@@ -409,7 +409,7 @@ public class CategoryDataSourceServlet extends SlingSafeMethodsServlet {
             })
         );
 
-        // Set on the request -- NOT the response
+        // Set on the request - NOT the response
         request.setAttribute(DataSource.class.getName(), dataSource);
     }
 }
@@ -456,7 +456,7 @@ need to provide AEM's login cookie.
 ### Using curl
 
 ```bash
-# Local SDK / dev only -- never ship admin:admin credentials against a real environment.
+# Local SDK / dev only - never ship admin:admin credentials against a real environment.
 
 # 1. Authenticate and capture the cookie
 curl -u admin:admin -c cookies.txt http://localhost:4502/libs/granite/core/content/login.html

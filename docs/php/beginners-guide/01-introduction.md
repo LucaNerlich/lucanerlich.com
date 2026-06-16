@@ -314,7 +314,7 @@ flowchart TD
     E --> F["Script accesses files, databases, sessions, etc."]
     F --> G["PHP generates output (HTML, JSON, etc.)"]
     G --> H["Output sent to browser as HTTP response"]
-    H --> I["PHP cleans up -- all variables are destroyed"]
+    H --> I["PHP cleans up - all variables are destroyed"]
 ```
 
 The last step is important: **PHP starts fresh on every request.** Unlike Node.js or Java, PHP does not keep a

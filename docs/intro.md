@@ -25,7 +25,7 @@ Multi-chapter guided introductions, from zero to working knowledge:
 
 ## AI
 
-Practical introductions to the building blocks of modern AI -- with an inter-linked glossary.
+Practical introductions to the building blocks of modern AI - with an inter-linked glossary.
 
 - [Large Language Models](./ai/llm.md) - how an LLM produces text, how it is trained, and what it is and is not good at
 - [AI Agents](./ai/agents.md) - tool use, multi-agent patterns, and the MCP and A2A protocols

@@ -33,7 +33,7 @@ todos:
     content: "Write chapter 09: File I/O (Path, Files, reading/writing, CSV parsing)"
     status: completed
   - id: ch10
-    content: "Write chapter 10: Project -- CLI Task Manager (CRUD, file persistence, runnable JAR)"
+    content: "Write chapter 10: Project - CLI Task Manager (CRUD, file persistence, runnable JAR)"
     status: completed
   - id: ch11
     content: "Write chapter 11: REST API (built-in HttpServer, JSON helpers, expose task manager)"
@@ -51,41 +51,41 @@ isProject: false
 
 ## Structure
 
-New subcategory at `docs/java/beginners-guide/` following the same pattern as the JavaScript beginners guide and `[docs/design-patterns/creational/](docs/design-patterns/creational/)` -- a `_category_.json` with individual `.md` files per chapter.
+New subcategory at `docs/java/beginners-guide/` following the same pattern as the JavaScript beginners guide and `[docs/design-patterns/creational/](docs/design-patterns/creational/)` - a `_category_.json` with individual `.md` files per chapter.
 
 ### Files to create
 
-- `docs/java/beginners-guide/_category_.json` -- category metadata with `generated-index` landing page
+- `docs/java/beginners-guide/_category_.json` - category metadata with `generated-index` landing page
 - 12 chapter files (detailed below)
 
 ### Files to modify
 
-- `[sidebar-order.ts](sidebar-order.ts)` -- add `'java'` and `'java/beginners-guide'` keys to pin the guide first in the Java sidebar and order the chapters
+- `[sidebar-order.ts](sidebar-order.ts)` - add `'java'` and `'java/beginners-guide'` keys to pin the guide first in the Java sidebar and order the chapters
 
 ## Chapter Outline
 
-Each chapter follows the same style as the JavaScript guide and existing Java docs (e.g., `[docs/java/collections.md](docs/java/collections.md)`): comprehensive `.md` files with code examples, expected output, and practical exercises. All code uses `javac`/`java` directly -- no build tool required.
+Each chapter follows the same style as the JavaScript guide and existing Java docs (e.g., `[docs/java/collections.md](docs/java/collections.md)`): comprehensive `.md` files with code examples, expected output, and practical exercises. All code uses `javac`/`java` directly - no build tool required.
 
 ### Part 1: Java Fundamentals
 
-1. `**01-introduction.md**` -- What is Java, JDK vs JRE vs JVM, installing the JDK (LTS), choosing an IDE (IntelliJ / VS Code), `javac` and `java` commands, first "Hello World", packages, `main` method anatomy, comments, semicolons and braces
-2. `**02-variables-and-types.md**` -- Primitive types (`int`, `long`, `double`, `float`, `boolean`, `char`, `byte`, `short`), `String` basics, `var` (type inference), type casting (widening/narrowing), `final`, arithmetic/comparison/logical operators, operator precedence, `Math` class
-3. `**03-control-flow.md**` -- `if`/`else if`/`else`, ternary, `switch` (classic + enhanced with arrows + pattern matching preview), `for`/`while`/`do-while`, enhanced `for-each`, `break`/`continue`, labeled loops, common patterns (FizzBuzz)
-4. `**04-methods.md**` -- Defining and calling `static` methods, parameters and return types, method overloading, `void` methods, early return / guard clauses, varargs, pass-by-value semantics, scope, recursion basics
-5. `**05-classes-and-objects.md**` -- Classes vs objects, fields, constructors, `this`, access modifiers (`private`/`public`/`protected`/package-private), getters/setters, encapsulation, `toString`, `equals`/`hashCode`, `static` fields and methods, records (Java 16+), builder pattern intro
-6. `**06-inheritance-and-interfaces.md**` -- `extends`, method overriding, `super`, `abstract` classes, `interface`, `implements`, default methods, polymorphism, `instanceof` + pattern matching, sealed classes (Java 17+), when to use inheritance vs composition
+1. `**01-introduction.md**` - What is Java, JDK vs JRE vs JVM, installing the JDK (LTS), choosing an IDE (IntelliJ / VS Code), `javac` and `java` commands, first "Hello World", packages, `main` method anatomy, comments, semicolons and braces
+2. `**02-variables-and-types.md**` - Primitive types (`int`, `long`, `double`, `float`, `boolean`, `char`, `byte`, `short`), `String` basics, `var` (type inference), type casting (widening/narrowing), `final`, arithmetic/comparison/logical operators, operator precedence, `Math` class
+3. `**03-control-flow.md**` - `if`/`else if`/`else`, ternary, `switch` (classic + enhanced with arrows + pattern matching preview), `for`/`while`/`do-while`, enhanced `for-each`, `break`/`continue`, labeled loops, common patterns (FizzBuzz)
+4. `**04-methods.md**` - Defining and calling `static` methods, parameters and return types, method overloading, `void` methods, early return / guard clauses, varargs, pass-by-value semantics, scope, recursion basics
+5. `**05-classes-and-objects.md**` - Classes vs objects, fields, constructors, `this`, access modifiers (`private`/`public`/`protected`/package-private), getters/setters, encapsulation, `toString`, `equals`/`hashCode`, `static` fields and methods, records (Java 16+), builder pattern intro
+6. `**06-inheritance-and-interfaces.md**` - `extends`, method overriding, `super`, `abstract` classes, `interface`, `implements`, default methods, polymorphism, `instanceof` + pattern matching, sealed classes (Java 17+), when to use inheritance vs composition
 
 ### Part 2: Working with Data
 
-1. `**07-collections.md**` -- `ArrayList`, `HashMap`, `HashSet`, iterating (for-each, iterator), generics intro (`List<String>`), `Collections` utility methods, immutable collections (`List.of`, `Map.of`), choosing the right collection. Cross-link to existing [Collections deep dive](docs/java/collections.md)
-2. `**08-error-handling.md**` -- `try`/`catch`/`finally`, checked vs unchecked exceptions, `throws`, creating custom exceptions, `try-with-resources` and `AutoCloseable`, multi-catch, exception best practices. Cross-link to existing [Error Handling guide](docs/java/error-handling.md)
-3. `**09-file-io.md**` -- `java.nio.file.Path` and `Files`, reading/writing text files, reading line by line, `BufferedReader`/`BufferedWriter`, creating/deleting/listing directories, simple CSV parsing, text-based data persistence
+1. `**07-collections.md**` - `ArrayList`, `HashMap`, `HashSet`, iterating (for-each, iterator), generics intro (`List<String>`), `Collections` utility methods, immutable collections (`List.of`, `Map.of`), choosing the right collection. Cross-link to existing [Collections deep dive](docs/java/collections.md)
+2. `**08-error-handling.md**` - `try`/`catch`/`finally`, checked vs unchecked exceptions, `throws`, creating custom exceptions, `try-with-resources` and `AutoCloseable`, multi-catch, exception best practices. Cross-link to existing [Error Handling guide](docs/java/error-handling.md)
+3. `**09-file-io.md**` - `java.nio.file.Path` and `Files`, reading/writing text files, reading line by line, `BufferedReader`/`BufferedWriter`, creating/deleting/listing directories, simple CSV parsing, text-based data persistence
 
 ### Part 3: Building and Deploying
 
-1. `**10-project-cli-task-manager.md**` -- Design and build a CLI task manager from scratch: task model (record or class), file-based persistence (one task per line or simple delimited format), CRUD operations via command-line arguments, input validation, packaging as a runnable JAR with `jar`, running with `java -jar`. Ties together chapters 1-9.
-2. `**11-rest-api.md**` -- Introduction to HTTP and REST concepts, using `com.sun.net.httpserver.HttpServer` (zero dependencies), creating handlers for GET/POST/PUT/DELETE, request parsing (path, query params, body), manual JSON response building, manual JSON request parsing (helper methods), error responses, refactoring the CLI task manager into an API. Cross-link to existing [HTTP Clients guide](docs/java/http-clients.md)
-3. `**12-deploy-vps-nginx.md**` -- Building a fat JAR, transferring to a VPS with `rsync`/`scp`, creating a `systemd` service unit for the Java process, configuring nginx as a reverse proxy (`proxy_pass`), HTTPS with Let's Encrypt, basic monitoring (`journalctl`), health check endpoint, update/deploy workflow
+1. `**10-project-cli-task-manager.md**` - Design and build a CLI task manager from scratch: task model (record or class), file-based persistence (one task per line or simple delimited format), CRUD operations via command-line arguments, input validation, packaging as a runnable JAR with `jar`, running with `java -jar`. Ties together chapters 1-9.
+2. `**11-rest-api.md**` - Introduction to HTTP and REST concepts, using `com.sun.net.httpserver.HttpServer` (zero dependencies), creating handlers for GET/POST/PUT/DELETE, request parsing (path, query params, body), manual JSON response building, manual JSON request parsing (helper methods), error responses, refactoring the CLI task manager into an API. Cross-link to existing [HTTP Clients guide](docs/java/http-clients.md)
+3. `**12-deploy-vps-nginx.md**` - Building a fat JAR, transferring to a VPS with `rsync`/`scp`, creating a `systemd` service unit for the Java process, configuring nginx as a reverse proxy (`proxy_pass`), HTTPS with Let's Encrypt, basic monitoring (`journalctl`), health check endpoint, update/deploy workflow
 
 ## Cross-links to existing Java content
 

@@ -490,12 +490,12 @@ Wrapper classes are needed when working with collections (chapter 7) because col
 ## Arithmetic operators
 
 ```java
-System.out.println(10 + 3);  // 13  -- addition
-System.out.println(10 - 3);  // 7   -- subtraction
-System.out.println(10 * 3);  // 30  -- multiplication
-System.out.println(10 / 3);  // 3   -- integer division (truncates!)
-System.out.println(10 % 3);  // 1   -- remainder (modulo)
-System.out.println(10.0 / 3); // 3.3333... -- double division
+System.out.println(10 + 3);  // 13  - addition
+System.out.println(10 - 3);  // 7   - subtraction
+System.out.println(10 * 3);  // 30  - multiplication
+System.out.println(10 / 3);  // 3   - integer division (truncates!)
+System.out.println(10 % 3);  // 1   - remainder (modulo)
+System.out.println(10.0 / 3); // 3.3333... - double division
 ```
 
 Result:
@@ -592,11 +592,11 @@ compare content.
 ## Logical operators
 
 ```java
-System.out.println(true && true);   // true  -- AND
+System.out.println(true && true);   // true  - AND
 System.out.println(true && false);  // false
-System.out.println(false || true);  // true  -- OR
+System.out.println(false || true);  // true  - OR
 System.out.println(false || false); // false
-System.out.println(!true);         // false  -- NOT
+System.out.println(!true);         // false  - NOT
 System.out.println(!false);        // true
 ```
 
@@ -618,10 +618,10 @@ true
 ```java
 String name = null;
 
-// Without short-circuit -- would throw NullPointerException
+// Without short-circuit - would throw NullPointerException
 // if (name.length() > 0) { ... }
 
-// With short-circuit -- safe, because the first condition is false
+// With short-circuit - safe, because the first condition is false
 if (name != null && name.length() > 0) {
     System.out.println("Name: " + name);
 } else {
@@ -668,7 +668,7 @@ Result:
 ### Random integers in a range
 
 ```java
-// Random int between 1 and 6 (inclusive) -- like a dice roll
+// Random int between 1 and 6 (inclusive) - like a dice roll
 int dice = (int) (Math.random() * 6) + 1;
 System.out.println("Dice: " + dice);
 ```
@@ -696,8 +696,8 @@ When in doubt, use parentheses to make your intent explicit:
 int result = 2 + 3 * 4; // 14 (multiplication first)
 
 // Clear
-int result2 = 2 + (3 * 4); // 14 -- same but intent is obvious
-int result3 = (2 + 3) * 4; // 20 -- different result
+int result2 = 2 + (3 * 4); // 14 - same but intent is obvious
+int result3 = (2 + 3) * 4; // 20 - different result
 ```
 
 ## Summary

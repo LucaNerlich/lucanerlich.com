@@ -16,7 +16,7 @@ author and publish instances.
 **Access the console** at [/groovyconsole](http://localhost:4502/groovyconsole) (or the legacy
 path `/apps/groovyconsole.html`).
 
-:::note Community tool -- not an Adobe product
+:::note Community tool - not an Adobe product
 The Groovy Console is an open-source, community-maintained tool, **not** part of AEM and **not**
 supported by Adobe Customer Care. On AEM as a Cloud Service it must be added as a project dependency
 and is intended for **author / RDE / local SDK** use; do not ship it to production publish tiers.
@@ -45,7 +45,7 @@ Add the dependency to your root `pom.xml`:
 
 Embed it in your `all` package via the `filevault-package-maven-plugin`:
 
-```xml title="all/pom.xml -- embeddeds section"
+```xml title="all/pom.xml - embeddeds section"
 <embedded>
   <groupId>be.orbinson.aem</groupId>
   <artifactId>aem-groovy-console-all</artifactId>
@@ -97,7 +97,7 @@ Alternatively, download the `.zip` package from the
     </plugin>
     ```
 
-    ```xml title="all/pom.xml -- dependency"
+    ```xml title="all/pom.xml - dependency"
     <dependency>
         <groupId>org.cid15.aem.groovy.console</groupId>
         <artifactId>aem-groovy-console-all</artifactId>
@@ -310,7 +310,7 @@ while (true) {
     }
 
     // Persist each batch instead of accumulating every change in memory
-    // (see "Batch your saves") -- avoids OutOfMemoryError on large datasets.
+    // (see "Batch your saves") - avoids OutOfMemoryError on large datasets.
     if (!DRY_RUN) s.save()
 
     out.println("Scanned: ${scanned} | Batch: ${returned} | Offset: ${offset}")
@@ -790,7 +790,7 @@ return counts.values().sum()
 ## Maintenance recipes
 
 Ready-to-adapt scripts for the audits and clean-ups teams run most. All mutating recipes are guarded
-with `DRY_RUN` -- run once to report, then flip to `false`.
+with `DRY_RUN` - run once to report, then flip to `false`.
 
 ### Find broken internal links
 
@@ -870,7 +870,7 @@ Always review the list (and back up) before deleting.
 
 ### Permission report for a path
 
-Dumps the access control entries (ACEs) on a path -- useful for answering "who can edit this?":
+Dumps the access control entries (ACEs) on a path - useful for answering "who can edit this?":
 
 ```groovy
 import javax.jcr.security.AccessControlManager
@@ -900,7 +900,7 @@ return policies.length
 ### Purge old page versions
 
 Removes page versions older than a cutoff while keeping the most recent ones, reclaiming repository
-space. Version operations are irreversible -- keep `DRY_RUN = true` until you are sure:
+space. Version operations are irreversible - keep `DRY_RUN = true` until you are sure:
 
 ```groovy
 import javax.jcr.version.VersionManager
@@ -947,7 +947,7 @@ return removed
 
 ### Replication queue report
 
-Reports the status and queue size of every replication agent on this instance (AEM 6.5 / AMS -- on
+Reports the status and queue size of every replication agent on this instance (AEM 6.5 / AMS - on
 AEMaaCS distribution is Adobe-managed and has no agents):
 
 ```groovy
@@ -985,7 +985,7 @@ Saved scripts can also be triggered via a POST request, which is useful for CI/C
 maintenance windows:
 
 ```bash
-# Local SDK / dev only -- production instances should authenticate with a dedicated service
+# Local SDK / dev only - production instances should authenticate with a dedicated service
 # account and rotated credentials pulled from CI secrets, not admin:admin.
 
 # Execute a single script
@@ -1039,7 +1039,7 @@ public class ProjectBindingProvider implements BindingExtensionProvider {
 
 If you need the Groovy Console accessible through the Dispatcher (e.g. on a secured publish instance for debugging):
 
-```text title="dispatcher.any -- filter section"
+```text title="dispatcher.any - filter section"
 # Allow Groovy Console page
 /001 { /type "allow" /url "/groovyconsole" }
 /002 { /type "allow" /url "/apps/groovyconsole.html" }
@@ -1080,5 +1080,5 @@ anything destructive on a shared environment.
 - [Sample scripts (GitHub)](https://github.com/orbinson/aem-groovy-console/tree/main/ui.content/src/main/content/jcr_root/conf/groovyconsole/scripts/samples)
 - [Apache Groovy documentation](https://groovy-lang.org/documentation.html)
 - [AEM QueryBuilder Predicate Reference (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/query-builder/querybuilder-predicate-reference)
-- [JCR Query (JCR-SQL2) -- Apache Jackrabbit Oak Query docs](https://jackrabbit.apache.org/oak/docs/query/query-engine.html)
+- [JCR Query (JCR-SQL2) - Apache Jackrabbit Oak Query docs](https://jackrabbit.apache.org/oak/docs/query/query-engine.html)
 - [JCR 2.0 specification (JSR-283)](https://developer.adobe.com/experience-manager/reference-materials/spec/jcr/2.0/index.html)

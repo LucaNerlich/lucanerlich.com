@@ -17,7 +17,7 @@ sidebar_position: 4
 
 # Forms and interactions
 
-Once a page tells users *what* you offer, they need to *act* on it -- click a link, fill a form, navigate elsewhere. Interaction copy and field affordances decide whether they succeed without thinking. Back to the [section overview](./overview.md).
+Once a page tells users *what* you offer, they need to *act* on it - click a link, fill a form, navigate elsewhere. Interaction copy and field affordances decide whether they succeed without thinking. Back to the [section overview](./overview.md).
 
 ## Links and navigation
 
@@ -103,7 +103,7 @@ Every control needs a **visible label**. Placeholder text is **not** a label. As
 
 ## Mobile-first content order
 
-Put the **main answer** early in the **DOM** so small screens and assistive tech hit it first -- not only below a huge decorative hero.
+Put the **main answer** early in the **DOM** so small screens and assistive tech hit it first - not only below a huge decorative hero.
 
 ### Do
 
@@ -130,6 +130,6 @@ Put the **main answer** early in the **DOM** so small screens and assistive tech
 
 ## Related
 
-- [Microcopy and error states](./microcopy-and-error-states.md) -- the exact text for buttons, inline errors, and success confirmations.
-- [Structure and hierarchy](./structure-and-hierarchy.md) -- where the form lives within the page.
-- [Information architecture](./information-architecture.md) -- the navigation patterns that surround interactions.
+- [Microcopy and error states](./microcopy-and-error-states.md) - the exact text for buttons, inline errors, and success confirmations.
+- [Structure and hierarchy](./structure-and-hierarchy.md) - where the form lives within the page.
+- [Information architecture](./information-architecture.md) - the navigation patterns that surround interactions.

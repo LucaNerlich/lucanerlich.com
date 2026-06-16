@@ -1,7 +1,7 @@
 ---
 title: "Managing Content"
 sidebar_label: "Managing Content"
-description: Using the admin panel to create, edit, and publish content -- drafts, publishing workflow, media library, and bulk operations.
+description: Using the admin panel to create, edit, and publish content - drafts, publishing workflow, media library, and bulk operations.
 slug: /strapi/beginners-guide/managing-content
 tags: [strapi, beginners]
 keywords:

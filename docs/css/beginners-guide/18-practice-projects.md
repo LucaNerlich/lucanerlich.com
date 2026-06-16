@@ -1,7 +1,7 @@
 ---
 title: "Practice Projects"
 sidebar_label: "Practice Projects"
-description: Six hands-on CSS projects from beginner to advanced -- personal profile card, navigation bar, photo gallery, landing page, dashboard layout, and CSS art.
+description: Six hands-on CSS projects from beginner to advanced - personal profile card, navigation bar, photo gallery, landing page, dashboard layout, and CSS art.
 slug: /css/beginners-guide/practice-projects
 tags: [css, beginners, projects]
 keywords:

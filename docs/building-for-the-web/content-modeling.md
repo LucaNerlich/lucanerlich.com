@@ -1,7 +1,7 @@
 ---
 title: "Content Modeling"
 sidebar_label: "Content Modeling"
-description: How to architect content models in a CMS -- content types, field selection, relations, performance pitfalls, complexity traps, and practical patterns.
+description: How to architect content models in a CMS - content types, field selection, relations, performance pitfalls, complexity traps, and practical patterns.
 slug: /content-modeling
 tags: [cms, architecture, content-modeling]
 keywords:
@@ -74,7 +74,7 @@ A common question: should "Article" and "News" be one type with a discriminator 
 
 ```mermaid
 flowchart TD
-    Question["Article and News -- one type or two?"]
+    Question["Article and News - one type or two?"]
     FieldOverlap{"Fields overlap > 70%?"}
     SameWorkflow{"Same editorial workflow?"}
     SameAPI{"Consumed the same way in the API?"}
@@ -122,7 +122,7 @@ Every CMS offers a set of primitive field types. Picking the right one matters f
 A common mistake: putting everything into a single rich text field.
 
 ```
-Bad:  [Rich Text: body]  -- contains title, subtitle, pull quotes, CTAs, everything
+Bad:  [Rich Text: body]  - contains title, subtitle, pull quotes, CTAs, everything
 
 Good: [Short Text: title]
       [Short Text: subtitle]
@@ -156,7 +156,7 @@ An enum field with 50+ values is usually a sign that it should be a **separate c
 ```
 Bad:  [Enum: category] with 47 values that editors keep requesting changes to
 
-Good: [Relation: category -> Category]  -- editors manage categories themselves
+Good: [Relation: category -> Category]  - editors manage categories themselves
 ```
 
 Convert to a relation when:

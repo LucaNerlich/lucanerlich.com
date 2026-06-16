@@ -1,7 +1,7 @@
 ---
 title: "Testing & Debugging"
 sidebar_label: "Testing & Debugging"
-description: Unit testing Sling Models with AemContext and wcm.io mocks, integration and UI tests, code coverage, and the debugging tools -- logs, CRXDE, request progress, and remote debugging -- that save hours.
+description: Unit testing Sling Models with AemContext and wcm.io mocks, integration and UI tests, code coverage, and the debugging tools - logs, CRXDE, request progress, and remote debugging - that save hours.
 slug: /aem/beginners-guide/testing-and-debugging
 tags: [aem, beginners]
 keywords:
@@ -25,8 +25,8 @@ the project-level setup, see the [Testing](../infrastructure/testing.mdx) refere
 ```mermaid
 flowchart TD
     UI["UI / E2E tests (few)"]
-    IT["Integration tests -- it.tests (some)"]
-    Unit["Unit tests -- core (many)"]
+    IT["Integration tests - it.tests (some)"]
+    Unit["Unit tests - core (many)"]
 
     UI --> IT
     IT --> Unit
@@ -44,7 +44,7 @@ tests) out of the box.
 ## Unit testing Sling Models
 
 `AemContext` from `io.wcm.testing.mock.aem.junit5` gives you an in-memory JCR + Sling + AEM context, so
-you can register a model, load content, and assert on the result -- no running instance required:
+you can register a model, load content, and assert on the result - no running instance required:
 
 ```java
 import io.wcm.testing.mock.aem.junit5.AemContext;
@@ -92,7 +92,7 @@ ctx.registerService(MyService.class, svc);
 - Branching in `@PostConstruct`
 - Anything with a business rule (formatting, filtering, validation fallbacks)
 
-Do **not** waste tests asserting that the framework injected a value -- test *your* logic.
+Do **not** waste tests asserting that the framework injected a value - test *your* logic.
 
 ## Integration and UI tests
 
@@ -123,7 +123,7 @@ When something breaks, work down from the symptom:
 
 ### CRXDE Lite
 
-`http://localhost:4502/crx/de` -- browse the JCR, confirm a property actually persisted, check
+`http://localhost:4502/crx/de` - browse the JCR, confirm a property actually persisted, check
 `sling:resourceType`, inspect ACLs. Local SDK only on AEMaaCS.
 
 ### Request progress / "Recent requests"
@@ -162,9 +162,9 @@ breakpoints in your Sling Model, and reproduce the request.
 | Symptom | First check |
 |---------|-------------|
 | Component renders nothing | Bundle Active? DS component satisfied? Model adapts? (`/system/console/components`) |
-| Wrong script rendered | Recent Requests -- inspect resolution and `sling:resourceType` |
-| Dialog value not saved | CRXDE -- did the property persist under the expected `./name`? |
-| CSS/JS change not visible | Clientlib proxy cache -- `?debugClientLibs=true`, rebuild clientlibs |
+| Wrong script rendered | Recent Requests - inspect resolution and `sling:resourceType` |
+| Dialog value not saved | CRXDE - did the property persist under the expected `./name`? |
+| CSS/JS change not visible | Clientlib proxy cache - `?debugClientLibs=true`, rebuild clientlibs |
 | Works on author, fails on publish | Published content + ACLs + Dispatcher cache (see chapters 16, 18, 19) |
 | `NullPointerException` in model | Use `DefaultInjectionStrategy.OPTIONAL` and guard nulls (see [Sling Models](./07-sling-models.md)) |
 

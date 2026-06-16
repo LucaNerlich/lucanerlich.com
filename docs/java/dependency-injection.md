@@ -194,7 +194,7 @@ at runtime:
 // BAD: Service Locator pattern
 class UserService {
     User createUser(String name, String email) {
-        // Hidden dependency -- not visible in the constructor
+        // Hidden dependency - not visible in the constructor
         UserRepository repo = ServiceLocator.get(UserRepository.class);
         EmailService emailSvc = ServiceLocator.get(EmailService.class);
         // ...
@@ -223,7 +223,7 @@ Sometimes a dependency is only needed for one method, or varies per call:
 
 ```java
 class ReportGenerator {
-    // The formatter varies per report -- inject it into the method
+    // The formatter varies per report - inject it into the method
     String generate(Report report, ReportFormatter formatter) {
         return formatter.format(report);
     }

@@ -163,7 +163,7 @@ const fruit = "apple";
 switch (fruit) {
     case "apple":
         console.log("Found apple");
-        // No break -- falls through!
+        // No break - falls through!
     case "banana":
         console.log("Found banana");
         break;

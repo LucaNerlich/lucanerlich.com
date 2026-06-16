@@ -50,7 +50,7 @@ token in the [context window](#context-window), letting the model relate words a
 
 ## Base model {#base-model}
 
-A [foundation model](#foundation-model) straight out of pre-training -- fluent but not yet a helpful
+A [foundation model](#foundation-model) straight out of pre-training - fluent but not yet a helpful
 assistant. It becomes an instruct/chat model only after [post-training](#post-training). See
 [LLMs](./llm.md#how-an-llm-is-built).
 
@@ -62,7 +62,7 @@ accuracy on multi-step problems. See [LLMs](./llm.md#what-llms-are-good-at).
 ## Context compaction {#context-compaction}
 
 Summarizing a conversation that is nearing the context-window limit and reinitializing a fresh window with
-the summary -- the first lever for long-horizon coherence. See
+the summary - the first lever for long-horizon coherence. See
 [Context Engineering](./context-engineering.md#long-horizon-techniques).
 
 ## Context engineering {#context-engineering}
@@ -72,7 +72,7 @@ compaction, structured notes, retrieval, and sub-agents. The agentic-era success
 
 ## Context rot {#context-rot}
 
-The empirical degradation of an LLM's recall as the context window fills -- "lost in the middle". Caused by
+The empirical degradation of an LLM's recall as the context window fills - "lost in the middle". Caused by
 O(n^2) attention and short-sequence-heavy training data; bigger windows do not fix it. See
 [Context Engineering](./context-engineering.md#context-rot-the-constraint-behind-the-techniques).
 
@@ -117,7 +117,7 @@ RAG, or fine-tuning) rather than training per task. LLMs are the best-known foun
 
 ## Frontier model {#frontier-model}
 
-The current capability ceiling -- the largest, most capable models (Claude, GPT, Gemini), usually
+The current capability ceiling - the largest, most capable models (Claude, GPT, Gemini), usually
 closed-source and accessed via API. See [Cloud vs Local Models](./cloud-vs-local.md).
 
 ## Function calling {#function-calling}
@@ -138,7 +138,7 @@ An evaluation metric (also "faithfulness") for whether an answer stuck to its re
 ## Graceful degradation {#graceful-degradation}
 
 Designing a product so core functionality still works when an [LLM](./llm.md) API fails, is disabled, or
-returns low-quality output -- manual mode, cached answers, or queued retry instead of a broken UX. See
+returns low-quality output - manual mode, cached answers, or queued retry instead of a broken UX. See
 [AI in Products](./ai-in-products.md).
 
 ## Guardrails {#guardrails}
@@ -148,13 +148,13 @@ refusal paths. One of the layered mitigations for [hallucination](#hallucination
 
 ## Hallucination {#hallucination}
 
-Fluent, confident, wrong output -- fabricated facts, invented citations, made-up parameters. A structural
+Fluent, confident, wrong output - fabricated facts, invented citations, made-up parameters. A structural
 consequence of next-token prediction, contained (not eliminated) by RAG, tool use, evaluation, and
 guardrails. See [LLMs](./llm.md#hallucination).
 
 ## Harness engineering {#harness-engineering}
 
-Building the evaluation and execution scaffolding -- datasets, runner, judges, traces, CI gates -- that turns
+Building the evaluation and execution scaffolding - datasets, runner, judges, traces, CI gates - that turns
 a non-deterministic model into a testable, observable system. See
 [Evaluation and LLMOps](./evaluation-and-llmops.md#harness-engineering).
 
@@ -176,7 +176,7 @@ layer of any LLM application. See [LLMs](./llm.md).
 
 ## Instruct / chat model {#instruct-model}
 
-A [foundation model](#foundation-model) after [post-training](#post-training) -- the variant end users
+A [foundation model](#foundation-model) after [post-training](#post-training) - the variant end users
 actually talk to. See [LLMs](./llm.md#how-an-llm-is-built).
 
 ## Jailbreaking {#jailbreaking}
@@ -197,13 +197,13 @@ post-training into a useful assistant. See [Large Language Models](./llm.md).
 
 ## LLM-as-judge {#llm-as-judge}
 
-Using a second LLM to score an output against a rubric -- necessary for open-ended responses, but it must be
+Using a second LLM to score an output against a rubric - necessary for open-ended responses, but it must be
 calibrated against human judgment. See [Evaluation and LLMOps](./evaluation-and-llmops.md).
 
 ## LLM-wiki pattern {#llm-wiki}
 
 A knowledge-management pattern where an LLM incrementally builds and maintains a structured, interlinked
-Markdown wiki between you and raw sources -- compiling synthesis once and keeping it current. See
+Markdown wiki between you and raw sources - compiling synthesis once and keeping it current. See
 [Knowledge Management](./knowledge-management.md).
 
 ## LLMOps {#llmops}
@@ -223,18 +223,18 @@ adapt under 1% of the parameters. The basis of [QLoRA](#qlora). See [RAG vs fine
 
 ## MCP (Model Context Protocol) {#mcp}
 
-An open standard from Anthropic -- the "USB-C for AI" -- that gives LLM apps a uniform way to discover and
+An open standard from Anthropic - the "USB-C for AI" - that gives LLM apps a uniform way to discover and
 invoke external tools and data, collapsing the N x M integration problem to N + M. See
 [Agents](./agents.md#mcp-model-context-protocol).
 
 ## Memex {#memex}
 
-Vannevar Bush's 1945 vision of a personal, curated knowledge store with associative trails -- the conceptual
+Vannevar Bush's 1945 vision of a personal, curated knowledge store with associative trails - the conceptual
 ancestor of the [LLM-wiki pattern](#llm-wiki). See [Knowledge Management](./knowledge-management.md).
 
 ## MLOps {#mlops}
 
-Machine Learning Operations -- DevOps applied to the full ML lifecycle (data, training, deployment,
+Machine Learning Operations - DevOps applied to the full ML lifecycle (data, training, deployment,
 monitoring). [LLMOps](#llmops) is its LLM-specific extension. See
 [Evaluation and LLMOps](./evaluation-and-llmops.md#the-mlops-foundation-underneath).
 
@@ -283,12 +283,12 @@ fluent [base model](#base-model). See [LLMs](./llm.md#how-an-llm-is-built).
 
 ## Prompt engineering {#prompt-engineering}
 
-Shaping model behavior by changing the input text -- instructions, examples, and formatting. The cheapest,
+Shaping model behavior by changing the input text - instructions, examples, and formatting. The cheapest,
 fastest adaptation lever before RAG or fine-tuning. See [Context Engineering](./context-engineering.md).
 
 ## Prompt caching {#prompt-caching}
 
-A provider feature that discounts repeated identical prefix [tokens](#token) across requests -- useful when
+A provider feature that discounts repeated identical prefix [tokens](#token) across requests - useful when
 system prompts or long documents stay stable. See [Cost, Latency & Model Routing](./cost-and-latency.md).
 
 ## Prompt injection {#prompt-injection}
@@ -305,7 +305,7 @@ minimal quality loss for most tasks. What lets large models fit on consumer GPUs
 
 ## QLoRA {#qlora}
 
-Quantize the base model to 4-bit, freeze it, and train [LoRA](#lora) adapters on top -- the standard recipe
+Quantize the base model to 4-bit, freeze it, and train [LoRA](#lora) adapters on top - the standard recipe
 for fine-tuning a moderate-size LLM on a single consumer GPU. See
 [Cloud vs Local Models](./cloud-vs-local.md#quantization-and-qlora).
 
@@ -322,7 +322,7 @@ benchmarks. See [AI Safety & Guardrails](./safety.md#red-teaming).
 
 ## Reranking {#reranking}
 
-Re-scoring the top retrieved candidates with a cross-encoder model to improve relevance -- often a bigger
+Re-scoring the top retrieved candidates with a cross-encoder model to improve relevance - often a bigger
 quality win than swapping the [embedding](#embedding) model. See [RAG](./rag.md#production-levers-in-order-of-roi).
 
 ## Semantic search {#semantic-search}
@@ -332,19 +332,19 @@ capability that powers retrieval in [RAG](./rag.md).
 
 ## Semantic cache {#semantic-cache}
 
-Caching [LLM](./llm.md) responses keyed by embedding similarity of the query -- returning a stored answer when
+Caching [LLM](./llm.md) responses keyed by embedding similarity of the query - returning a stored answer when
 a new question is close enough to a prior one. Requires TTL and invalidation when source data changes. See
 [Cost, Latency & Model Routing](./cost-and-latency.md#caching-strategies).
 
 ## SPDD (REASONS Canvas) {#spdd}
 
-Structured-Prompt-Driven Development -- a methodology treating prompts as versioned, reviewed delivery
+Structured-Prompt-Driven Development - a methodology treating prompts as versioned, reviewed delivery
 artifacts, structured by the seven-part REASONS Canvas. See
 [AI-Assisted Software Development](./ai-assisted-development.md#methodology-align-then-generate).
 
 ## Structured note-taking {#structured-note-taking}
 
-An agent writing to a persistent store outside the context window and reading it back -- external memory that
+An agent writing to a persistent store outside the context window and reading it back - external memory that
 conserves the attention budget. See [Context Engineering](./context-engineering.md#long-horizon-techniques).
 
 ## Structured output {#structured-output}
@@ -364,7 +364,7 @@ more varied output. See [LLMs](./llm.md#how-an-llm-produces-text).
 
 ## Token {#token}
 
-The atomic unit a model reads and writes -- a learned subword, not a whole word. Text is split into tokens
+The atomic unit a model reads and writes - a learned subword, not a whole word. Text is split into tokens
 before the model sees it. See [LLMs](./llm.md#how-an-llm-produces-text).
 
 ## Tool use {#tool-use}

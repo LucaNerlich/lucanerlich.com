@@ -1,7 +1,7 @@
 ---
 title: "Control Flow"
 sidebar_label: "Control Flow"
-description: Learn Java control flow -- if/else, switch expressions, for/while/do-while loops, enhanced for-each, break, continue, and common patterns.
+description: Learn Java control flow - if/else, switch expressions, for/while/do-while loops, enhanced for-each, break, continue, and common patterns.
 slug: /java/beginners-guide/control-flow
 tags: [java, beginners, control-flow, loops]
 keywords:

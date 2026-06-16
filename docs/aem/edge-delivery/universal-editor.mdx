@@ -10,7 +10,7 @@ The **Universal Editor (UE)** is Adobe's framework-agnostic visual editor. For E
 it replaces the classic AEM Page Editor and gives authors a true WYSIWYG experience
 on top of the same block-based pipeline that powers document-based authoring.
 
-This chapter is about the **block-side wiring** -- the three JSON config files plus the
+This chapter is about the **block-side wiring** - the three JSON config files plus the
 HTML attributes that tell UE what to make editable. Authoring concepts and
 when-to-pick-UE-vs-docs live in [Authoring models](./authoring.mdx).
 
@@ -140,7 +140,7 @@ Whitelists which components can be inserted inside which container.
 ```
 
 The `id` matches the `template.filter` value in `component-definition.json`. An empty
-list means "leaf" -- the block accepts no nested children.
+list means "leaf" - the block accepts no nested children.
 
 ## Instrumentation: `data-aue-*` attributes
 
@@ -154,7 +154,7 @@ can hover-highlight, edit, and re-order elements in place.
 | `data-aue-prop` | Which property of that resource is being shown |
 | `data-aue-type` | Field component (e.g. `text`, `richtext`, `image`, `reference`) |
 | `data-aue-label` | Label shown in the editor sidebar |
-| `data-aue-filter` | For container elements -- which filter applies here |
+| `data-aue-filter` | For container elements - which filter applies here |
 | `data-aue-behavior` | `component` for a whole block, `container` for a nested zone |
 
 For document-based authoring, EDS injects these attributes automatically based on the
@@ -183,7 +183,7 @@ export default function decorate(block) {
 ```
 
 `block.innerHTML = ''` then `block.append(...)` is safe because the children retained
-their original `data-aue-*` attributes -- you didn't clone, you re-parented.
+their original `data-aue-*` attributes - you didn't clone, you re-parented.
 
 ## Connecting to a content source
 
@@ -230,7 +230,7 @@ displays it inside an iframe.
 
 ## See also
 
-- [Blocks](./blocks.mdx) -- the rendering side of components
-- [Authoring models](./authoring.mdx) -- when to pick UE vs docs
-- [Customizing](./customizing.mdx) -- decoration overrides preserve `data-aue-*`
+- [Blocks](./blocks.mdx) - the rendering side of components
+- [Authoring models](./authoring.mdx) - when to pick UE vs docs
+- [Customizing](./customizing.mdx) - decoration overrides preserve `data-aue-*`
 - Adobe docs: [Universal Editor introduction](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/introduction)

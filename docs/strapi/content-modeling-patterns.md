@@ -38,11 +38,11 @@ flowchart TD
 ### Common single types
 
 ```
-Site Settings      -- logo, site title, social links, analytics ID
-Homepage           -- hero, featured articles, CTA blocks
-Footer             -- columns, links, copyright text
-Navigation         -- menu items (as a repeatable component)
-Global SEO         -- default meta tags, OG image fallback
+Site Settings      - logo, site title, social links, analytics ID
+Homepage           - hero, featured articles, CTA blocks
+Footer             - columns, links, copyright text
+Navigation         - menu items (as a repeatable component)
+Global SEO         - default meta tags, OG image fallback
 ```
 
 ### When NOT to use a single type

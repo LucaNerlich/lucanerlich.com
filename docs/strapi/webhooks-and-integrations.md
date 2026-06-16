@@ -69,7 +69,7 @@ module.exports = {
       const result = await next();
 
       if (['publish', 'unpublish', 'delete'].includes(context.action)) {
-        // Fire and forget -- don't block the response
+        // Fire and forget - don't block the response
         setImmediate(async () => {
           try {
             await fetch(process.env.DEPLOY_HOOK_URL, {

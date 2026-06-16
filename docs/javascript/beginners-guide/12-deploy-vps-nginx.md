@@ -1,7 +1,7 @@
 ---
 title: "Deploying to a VPS with Nginx"
 sidebar_label: "Deploy: VPS + Nginx"
-description: Deploy your website to a Virtual Private Server -- server setup, SSH, nginx configuration, HTTPS with Let's Encrypt, and basic security hardening.
+description: Deploy your website to a Virtual Private Server - server setup, SSH, nginx configuration, HTTPS with Let's Encrypt, and basic security hardening.
 slug: /javascript/beginners-guide/deploy-vps-nginx
 tags: [javascript, beginners, deployment, nginx, vps]
 keywords:

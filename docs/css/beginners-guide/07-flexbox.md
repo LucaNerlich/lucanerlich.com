@@ -1,7 +1,7 @@
 ---
 title: "Flexbox"
 sidebar_label: "Flexbox"
-description: CSS Flexbox layout -- flex containers and items, direction, wrapping, alignment, sizing with flex-grow/shrink/basis, gap, and common patterns.
+description: CSS Flexbox layout - flex containers and items, direction, wrapping, alignment, sizing with flex-grow/shrink/basis, gap, and common patterns.
 slug: /css/beginners-guide/flexbox
 tags: [css, beginners]
 keywords:

@@ -1,7 +1,7 @@
 ---
 title: "CSS Custom Properties"
 sidebar_label: "Custom Properties"
-description: CSS custom properties (variables) -- defining, using, scoping, fallback values, theming, building a dark mode toggle, and dynamic updates with JavaScript.
+description: CSS custom properties (variables) - defining, using, scoping, fallback values, theming, building a dark mode toggle, and dynamic updates with JavaScript.
 slug: /css/beginners-guide/css-custom-properties
 tags: [css, beginners]
 keywords:

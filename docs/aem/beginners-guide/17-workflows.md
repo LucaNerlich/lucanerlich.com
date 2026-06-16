@@ -1,7 +1,7 @@
 ---
 title: "Workflows"
 sidebar_label: "Workflows"
-description: Automating content operations with the Granite Workflow engine -- workflow models, launchers, process and participant steps, starting workflows, and when to use Sling Jobs instead.
+description: Automating content operations with the Granite Workflow engine - workflow models, launchers, process and participant steps, starting workflows, and when to use Sling Jobs instead.
 slug: /aem/beginners-guide/workflows
 tags: [aem, beginners]
 keywords:
@@ -15,7 +15,7 @@ sidebar_position: 17
 
 # Workflows
 
-A **workflow** automates a sequence of steps against a piece of content -- review and approval,
+A **workflow** automates a sequence of steps against a piece of content - review and approval,
 publishing, asset processing, or any custom business process. AEM's **Granite Workflow** engine runs
 these models, mixing automated steps with human tasks.
 
@@ -48,11 +48,11 @@ flowchart LR
 
 Create and edit models in **Tools > Workflow > Models**. A model is a flow of steps:
 
-- **Process step** -- runs a Java `WorkflowProcess` (e.g. "set a property", "call a service").
-- **Participant step** -- assigns a task to a user/group; the workflow pauses until they complete it.
-- **Dynamic Participant step** -- chooses the assignee at runtime via a `ParticipantStepChooser`.
-- **OR/AND split** -- branch or parallelize the flow.
-- **Goto / container** steps -- looping and reuse.
+- **Process step** - runs a Java `WorkflowProcess` (e.g. "set a property", "call a service").
+- **Participant step** - assigns a task to a user/group; the workflow pauses until they complete it.
+- **Dynamic Participant step** - chooses the assignee at runtime via a `ParticipantStepChooser`.
+- **OR/AND split** - branch or parallelize the flow.
+- **Goto / container** steps - looping and reuse.
 
 Common out-of-the-box models include **DAM Update Asset** (asset processing on 6.5), **Request for
 Activation** (approval before publish), and **Publish/Unpublish Example**.
@@ -97,10 +97,10 @@ public class StampApprovedDateProcess implements WorkflowProcess {
 The `process.label` property is what you select in the model's process-step dialog. Read step
 arguments from the `MetaDataMap` (`args`).
 
-## Launchers -- starting a workflow automatically
+## Launchers - starting a workflow automatically
 
 A **Workflow Launcher** (**Tools > Workflow > Launchers**) starts a model when a JCR change matches a
-rule -- for example, "when a `dam:Asset` is created under `/content/dam`, run DAM Update Asset". A
+rule - for example, "when a `dam:Asset` is created under `/content/dam`, run DAM Update Asset". A
 launcher specifies:
 
 - **Path** and **node type** to watch
@@ -141,7 +141,7 @@ processing, prefer Sling Jobs.
 ## Debugging workflows
 
 - **Workflow > Instances** shows running/completed/failed instances; open one to see where it stopped.
-- A failed step routes the instance to an **error** state -- inspect the step's exception in `error.log`.
+- A failed step routes the instance to an **error** state - inspect the step's exception in `error.log`.
 - **Stuck workflows** are usually a process step throwing, a participant task nobody actions, or thread
   pool exhaustion from too many concurrent instances. Terminate/retry from the Instances console.
 - On AEMaaCS, watch the workflow purge configuration so completed instances do not pile up.
@@ -164,7 +164,7 @@ You learned:
 
 - [Workflows (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/workflows/overview)
 - [Administering Workflows](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/operations/workflows)
-- [Workflows -- developer reference (this site)](../backend/workflows.mdx) - custom process steps, participant choosers, the `WorkflowSession` API
+- [Workflows - developer reference (this site)](../backend/workflows.mdx) - custom process steps, participant choosers, the `WorkflowSession` API
 
 Next up: [Dispatcher & Caching](./18-dispatcher-and-caching.md) - the caching layer in front of
 publish, cache rules, filters, and invalidation.

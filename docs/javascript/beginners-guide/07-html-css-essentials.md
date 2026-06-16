@@ -1,7 +1,7 @@
 ---
 title: "HTML & CSS Essentials"
 sidebar_label: "HTML & CSS Essentials"
-description: Learn enough HTML and CSS to build web pages -- document structure, semantic elements, forms, CSS selectors, the box model, flexbox, and responsive design.
+description: Learn enough HTML and CSS to build web pages - document structure, semantic elements, forms, CSS selectors, the box model, flexbox, and responsive design.
 slug: /javascript/beginners-guide/html-css-essentials
 tags: [javascript, beginners, html, css]
 keywords:
@@ -329,28 +329,28 @@ Always use external stylesheets for real projects. They can be cached, shared ac
 Selectors target which elements to style:
 
 ```css
-/* Element selector -- all <p> elements */
+/* Element selector - all <p> elements */
 p {
     color: #333;
 }
 
-/* Class selector -- elements with class="card" */
+/* Class selector - elements with class="card" */
 .card {
     border: 1px solid #ddd;
     padding: 16px;
 }
 
-/* ID selector -- the element with id="header" */
+/* ID selector - the element with id="header" */
 #header {
     background: #f0f0f0;
 }
 
-/* Descendant -- <a> inside <nav> */
+/* Descendant - <a> inside <nav> */
 nav a {
     text-decoration: none;
 }
 
-/* Direct child -- <li> that is a direct child of <ul> */
+/* Direct child - <li> that is a direct child of <ul> */
 ul > li {
     list-style: disc;
 }
@@ -422,7 +422,7 @@ Every HTML element is a rectangular box with four layers:
 By default, `width` sets only the **content** width. With `border-box`, `width` includes padding and border:
 
 ```css
-/* Apply to everything -- do this in every project */
+/* Apply to everything - do this in every project */
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -435,40 +435,40 @@ With `border-box`: a `width: 200px` element with `padding: 20px` and `border: 2p
 ### Display values
 
 ```css
-/* Block -- takes full width, stacks vertically */
+/* Block - takes full width, stacks vertically */
 div { display: block; }
 
-/* Inline -- flows with text, width/height ignored */
+/* Inline - flows with text, width/height ignored */
 span { display: inline; }
 
-/* Inline-block -- flows with text but respects width/height */
+/* Inline-block - flows with text but respects width/height */
 .badge { display: inline-block; }
 
-/* None -- removes from the page */
+/* None - removes from the page */
 .hidden { display: none; }
 ```
 
 ### Position
 
 ```css
-/* Static -- default, follows normal flow */
+/* Static - default, follows normal flow */
 .static { position: static; }
 
-/* Relative -- offset from its normal position */
+/* Relative - offset from its normal position */
 .relative {
     position: relative;
     top: 10px;
     left: 20px;
 }
 
-/* Absolute -- positioned relative to nearest positioned ancestor */
+/* Absolute - positioned relative to nearest positioned ancestor */
 .absolute {
     position: absolute;
     top: 0;
     right: 0;
 }
 
-/* Fixed -- positioned relative to the viewport (stays on scroll) */
+/* Fixed - positioned relative to the viewport (stays on scroll) */
 .fixed-header {
     position: fixed;
     top: 0;
@@ -476,7 +476,7 @@ span { display: inline; }
     width: 100%;
 }
 
-/* Sticky -- switches from relative to fixed at a threshold */
+/* Sticky - switches from relative to fixed at a threshold */
 .sticky-nav {
     position: sticky;
     top: 0;

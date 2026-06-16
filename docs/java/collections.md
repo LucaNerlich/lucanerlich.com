@@ -250,7 +250,7 @@ Map<String, Integer> large = Map.ofEntries(
 ```java
 List<String> mutable = new ArrayList<>(List.of("a", "b", "c"));
 
-// Unmodifiable view (shares backing data -- changes to original are visible)
+// Unmodifiable view (shares backing data - changes to original are visible)
 List<String> view = Collections.unmodifiableList(mutable);
 
 // True immutable copy (Java 10+)

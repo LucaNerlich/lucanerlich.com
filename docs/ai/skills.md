@@ -1,6 +1,6 @@
 ---
 title: Agent Skills
-description: Portable, on-demand workflow packages for coding agents -- what they are, how they differ from rules and project memory, how to use them across tools, and how to author your own with examples.
+description: Portable, on-demand workflow packages for coding agents - what they are, how they differ from rules and project memory, how to use them across tools, and how to author your own with examples.
 tags: [ai, skills, agents, context-engineering, ai-assisted-development]
 keywords:
     - agent skills
@@ -13,7 +13,7 @@ keywords:
 # Agent Skills
 
 **Agent Skills** are portable, version-controlled workflow packages that teach a coding agent *how* to
-perform a specific task -- deploy to staging, run a security audit, write commit messages in your team's
+perform a specific task - deploy to staging, run a security audit, write commit messages in your team's
 format, or follow a multi-step review ritual. They sit alongside [rules](./skills.md#skills-vs-related-mechanisms),
 project memory files, and [MCP](./agents.md#mcp-model-context-protocol) servers as one of the main ways you
 shape agent behavior without rewriting the base model.
@@ -35,7 +35,7 @@ The key architectural property is **progressive disclosure** applied to [context
 2. **On each task**, the agent checks whether any skill's description matches the user's request, open
    files, or workflow.
 3. **When a skill matches**, the agent loads the full `SKILL.md` (and any referenced scripts or docs).
-4. **When no skill matches**, nothing extra enters the context -- unlike always-on rules or project memory.
+4. **When no skill matches**, nothing extra enters the context - unlike always-on rules or project memory.
 
 ```mermaid
 flowchart TB
@@ -93,7 +93,7 @@ The `SKILL.md` format is shared; discovery paths and invocation differ by platfo
 
 Cursor also loads `.claude/skills/` and `.codex/skills/` for compatibility, so a skill checked into
 `.claude/skills/` may work in Cursor without duplication. Nested project directories (e.g.
-`apps/web/.cursor/skills/`) auto-scope skills to files under that subtree -- useful in monorepos.
+`apps/web/.cursor/skills/`) auto-scope skills to files under that subtree - useful in monorepos.
 
 External references: [Cursor Agent Skills docs](https://cursor.com/docs/skills), [Anthropic skills
 repository](https://github.com/anthropics/skills) (includes the `skill-creator` skill for guided authoring).
@@ -105,13 +105,13 @@ above it are organizational only):
 
 ```
 my-skill/
-├── SKILL.md              # Required -- instructions + frontmatter
-├── scripts/              # Optional -- executable helpers
-├── references/           # Optional -- docs loaded on demand
-└── assets/               # Optional -- templates, schemas, static files
+├── SKILL.md              # Required - instructions + frontmatter
+├── scripts/              # Optional - executable helpers
+├── references/           # Optional - docs loaded on demand
+└── assets/               # Optional - templates, schemas, static files
 ```
 
-Category grouping is supported -- tools walk skill roots recursively:
+Category grouping is supported - tools walk skill roots recursively:
 
 ```
 .cursor/skills/
@@ -127,7 +127,7 @@ Category grouping is supported -- tools walk skill roots recursively:
 
 Three mechanisms limit which tasks surface a skill:
 
-**`paths` frontmatter** -- glob patterns. The skill appears only when the agent works with matching files:
+**`paths` frontmatter** - glob patterns. The skill appears only when the agent works with matching files:
 
 ```markdown
 ---
@@ -139,10 +139,10 @@ paths:
 ---
 ```
 
-**Nested project directories** -- skills under `apps/web/.cursor/skills/` apply when working in `apps/web/`
+**Nested project directories** - skills under `apps/web/.cursor/skills/` apply when working in `apps/web/`
 (Cursor). Equivalent to `paths` scoping without setting frontmatter.
 
-**`disable-model-invocation: true`** -- the skill loads only when you explicitly invoke it (e.g. `/skill-name`).
+**`disable-model-invocation: true`** - the skill loads only when you explicitly invoke it (e.g. `/skill-name`).
 Use for workflows you want full control over, like destructive operations or optional rituals.
 
 ## SKILL.md format
@@ -187,9 +187,9 @@ descriptions like "helps with documents" rarely match reliably.
 - **Concise over exhaustive.** The agent is already capable; add only what it would not know (your team's
   conventions, your repo's scripts, your checklist).
 - **One job per skill.** If the description needs "and also", split into two skills.
-- **Scripts over embedded code** for deterministic or repetitive steps -- reference `scripts/foo.py` rather
+- **Scripts over embedded code** for deterministic or repetitive steps - reference `scripts/foo.py` rather
   than pasting the full script into markdown.
-- **Keep references one level deep** -- link from `SKILL.md` to `references/foo.md`, not chains of nested
+- **Keep references one level deep** - link from `SKILL.md` to `references/foo.md`, not chains of nested
   references.
 
 ## How to use skills
@@ -198,7 +198,7 @@ descriptions like "helps with documents" rarely match reliably.
 
 By default, agents read available skill metadata and decide whether a skill applies to the current task.
 Matching depends on the user's message, open files, and (where supported) `paths` scoping. Simple one-step
-requests may not trigger a skill even when the description fits -- complex, multi-step tasks match more
+requests may not trigger a skill even when the description fits - complex, multi-step tasks match more
 reliably.
 
 ### Explicit invocation
@@ -229,11 +229,11 @@ Rather than writing a skill from scratch:
 
 Before writing files, decide:
 
-1. **Purpose** -- what single workflow does this skill automate?
-2. **Scope** -- personal (`~/.cursor/skills/`) or project (`.cursor/skills/` in the repo)?
-3. **Triggers** -- what user phrases, file types, or situations should activate it?
-4. **Output** -- what does "done" look like? Any required format or template?
-5. **Dependencies** -- scripts, MCP tools, or reference docs needed?
+1. **Purpose** - what single workflow does this skill automate?
+2. **Scope** - personal (`~/.cursor/skills/`) or project (`.cursor/skills/` in the repo)?
+3. **Triggers** - what user phrases, file types, or situations should activate it?
+4. **Output** - what does "done" look like? Any required format or template?
+5. **Dependencies** - scripts, MCP tools, or reference docs needed?
 
 ### Phase 2: Design
 
@@ -251,7 +251,7 @@ Before writing files, decide:
 
 ### Phase 4: Verification
 
-Test with realistic prompts -- not toy one-liners:
+Test with realistic prompts - not toy one-liners:
 
 - [ ] Skill triggers on a representative user request
 - [ ] Skill does **not** trigger on unrelated tasks (avoid over-triggering)
@@ -314,9 +314,9 @@ Validate tokens in middleware; return 401 on expiry.
 
 **Using it:**
 
-- *Automatic:* "Help me write a commit message for my staged changes" -- the agent matches the description
+- *Automatic:* "Help me write a commit message for my staged changes" - the agent matches the description
   and follows the workflow.
-- *Explicit:* `/write-commit-message` -- loads the skill even if auto-matching would miss it (especially
+- *Explicit:* `/write-commit-message` - loads the skill even if auto-matching would miss it (especially
   useful with `disable-model-invocation: true`).
 
 ## Common patterns
@@ -387,19 +387,19 @@ Branch on task type:
 
 ## Anti-patterns
 
-- **Vague descriptions** -- "Helps with documents" will not trigger reliably; name file types and tasks.
-- **Overloaded skills** -- one skill for "deploy, review, and write docs" should be three skills.
-- **Time-sensitive instructions** without a deprecated section -- use "Current method" / "Legacy (deprecated)".
-- **Deep reference chains** -- `SKILL.md` → `a.md` → `b.md` → `c.md` leads to partial reads.
-- **Windows-style paths** -- use `scripts/helper.py`, not `scripts\helper.py`.
-- **Duplicating general knowledge** -- do not explain what PDFs are; say which library and command to use.
+- **Vague descriptions** - "Helps with documents" will not trigger reliably; name file types and tasks.
+- **Overloaded skills** - one skill for "deploy, review, and write docs" should be three skills.
+- **Time-sensitive instructions** without a deprecated section - use "Current method" / "Legacy (deprecated)".
+- **Deep reference chains** - `SKILL.md` → `a.md` → `b.md` → `c.md` leads to partial reads.
+- **Windows-style paths** - use `scripts/helper.py`, not `scripts\helper.py`.
+- **Duplicating general knowledge** - do not explain what PDFs are; say which library and command to use.
 
 ## Sharing and team adoption
 
-- **Project skills in git** -- commit `.cursor/skills/` or `.claude/skills/` so the whole team gets the same
+- **Project skills in git** - commit `.cursor/skills/` or `.claude/skills/` so the whole team gets the same
   workflows on clone.
-- **Import from GitHub** -- Cursor Settings → Rules → Add Rule → Remote Rule (GitHub URL).
-- **Migrate legacy rules** -- in Cursor 2.4+, run `/migrate-to-skills` to convert dynamic rules and slash
+- **Import from GitHub** - Cursor Settings → Rules → Add Rule → Remote Rule (GitHub URL).
+- **Migrate legacy rules** - in Cursor 2.4+, run `/migrate-to-skills` to convert dynamic rules and slash
   commands into skills. Rules with `alwaysApply: true` or specific globs are not migrated (they have explicit
   triggering that differs from skill behavior).
 
@@ -407,10 +407,10 @@ View discovered skills in Cursor via Settings → Rules → Agent Decides sectio
 
 ## See also
 
-- [Context & Prompt Engineering](./context-engineering.md) -- progressive disclosure and the context budget skills operate within
-- [Project Memory & Rules](./project-memory-and-rules.md) -- always-on AGENTS.md and Cursor rules vs on-demand skills
-- [AI-Assisted Development](./ai-assisted-development.md) -- alignment-before-generation methodologies that skills support
-- [Knowledge Management with LLMs](./knowledge-management.md) -- persistent synthesis vs on-demand workflow context
-- [AI Agents](./agents.md) -- the agent loops that execute skill workflows
-- [Tooling and Frameworks](./tooling.md) -- MCP, orchestration frameworks, and observability
-- [AI Glossary](./glossary.md) -- agent skill and related terms
+- [Context & Prompt Engineering](./context-engineering.md) - progressive disclosure and the context budget skills operate within
+- [Project Memory & Rules](./project-memory-and-rules.md) - always-on AGENTS.md and Cursor rules vs on-demand skills
+- [AI-Assisted Development](./ai-assisted-development.md) - alignment-before-generation methodologies that skills support
+- [Knowledge Management with LLMs](./knowledge-management.md) - persistent synthesis vs on-demand workflow context
+- [AI Agents](./agents.md) - the agent loops that execute skill workflows
+- [Tooling and Frameworks](./tooling.md) - MCP, orchestration frameworks, and observability
+- [AI Glossary](./glossary.md) - agent skill and related terms

@@ -76,7 +76,7 @@ log.error("Failed to connect to database", exception);
 ### Parameterised messages (important!)
 
 ```java
-// GOOD: parameterised -- string concatenation only happens if the level is enabled
+// GOOD: parameterised - string concatenation only happens if the level is enabled
 log.debug("Processing order {} for user {}", orderId, userId);
 
 // BAD: string concatenation happens regardless of log level

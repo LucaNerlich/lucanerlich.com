@@ -166,7 +166,7 @@ Every `cq:Page` node has the same structure:
         ├── jcr:title = "Home"
         ├── cq:template = "/conf/my-site/settings/wcm/templates/page"
         ├── sling:resourceType = "myproject/components/page"
-        └── root                      (nt:unstructured -- responsivegrid)
+        └── root                      (nt:unstructured - responsivegrid)
               └── container           (nt:unstructured)
                     ├── text          (nt:unstructured, sling:resourceType=myproject/components/text)
                     │     └── text = "<p>Hello World</p>"
@@ -308,7 +308,7 @@ Content enters AEM through several channels:
 - **`SlingPostServlet`** - AEM's built-in POST handler. A simple form POST to a resource path creates or updates properties:
 
 ```bash
-# Local SDK / dev only -- never use admin:admin credentials outside a local instance.
+# Local SDK / dev only - never use admin:admin credentials outside a local instance.
 curl -u admin:admin -d "title=Updated Title" \
   http://localhost:4502/content/my-site/en/home/jcr:content
 ```
@@ -634,12 +634,12 @@ A practical reference of issues that regularly trip up AEM developers:
 - **Not closing manually opened resolvers** - service resolvers obtained via `getServiceResourceResolver()` are **your** responsibility. Always use try-with-resources. A leaked resolver means a leaked JCR session
 
 ```java
-// WRONG -- resolver leaks if an exception occurs
+// WRONG - resolver leaks if an exception occurs
 ResourceResolver resolver = resolverFactory.getServiceResourceResolver(params);
 Resource r = resolver.getResource("/content/data");
 resolver.close();
 
-// CORRECT -- guaranteed cleanup
+// CORRECT - guaranteed cleanup
 try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(params)) {
     Resource r = resolver.getResource("/content/data");
 }

@@ -295,10 +295,10 @@ executed via the persisted query endpoint.
 ### Execute a persisted query
 
 ```bash
-# On Author (local SDK) -- authentication required
+# On Author (local SDK) - authentication required
 curl -u admin:admin http://localhost:4502/graphql/execute.json/mysite/article-list
 
-# On Publish -- no authentication needed for public persisted queries
+# On Publish - no authentication needed for public persisted queries
 curl http://localhost:4503/graphql/execute.json/mysite/article-list
 ```
 

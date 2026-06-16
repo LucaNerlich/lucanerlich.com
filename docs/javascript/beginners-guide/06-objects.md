@@ -1,7 +1,7 @@
 ---
 title: "Objects"
 sidebar_label: "Objects"
-description: Learn JavaScript objects -- literals, properties, methods, this, destructuring, spread, Object methods, and JSON.
+description: Learn JavaScript objects - literals, properties, methods, this, destructuring, spread, Object methods, and JSON.
 slug: /javascript/beginners-guide/objects
 tags: [javascript, beginners, objects, json]
 keywords:
@@ -247,11 +247,11 @@ Arrow functions do **not** have their own `this` - they inherit it from the surr
 ```js
 const person = {
     name: "Ada",
-    // Arrow function -- 'this' is NOT the object
+    // Arrow function - 'this' is NOT the object
     greetArrow: () => {
         return `Hello, I'm ${this.name}`;
     },
-    // Regular function -- 'this' IS the object
+    // Regular function - 'this' IS the object
     greetRegular() {
         return `Hello, I'm ${this.name}`;
     },
@@ -489,7 +489,7 @@ Very common pattern:
 
 ```js
 function createUser({ name, age, role = "user" }) {
-    return `${name} (${age}) -- ${role}`;
+    return `${name} (${age}) - ${role}`;
 }
 
 const result = createUser({ name: "Ada", age: 36, role: "admin" });
@@ -502,8 +502,8 @@ console.log(result2);
 Result:
 
 ```text
-Ada (36) -- admin
-Bob (25) -- user
+Ada (36) - admin
+Bob (25) - user
 ```
 
 ## Spread operator
@@ -514,7 +514,7 @@ Copy and merge objects:
 const defaults = { theme: "dark", language: "en", fontSize: 14 };
 const userPrefs = { theme: "light", fontSize: 16 };
 
-// Merge -- later properties overwrite earlier ones
+// Merge - later properties overwrite earlier ones
 const settings = { ...defaults, ...userPrefs };
 console.log(settings);
 

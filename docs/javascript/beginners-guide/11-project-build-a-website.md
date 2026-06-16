@@ -1,7 +1,7 @@
 ---
 title: "Project: Build a Complete Website"
 sidebar_label: "Project: Build a Website"
-description: Build a multi-page vanilla JavaScript website from scratch -- navigation, theme toggle, form validation, dynamic content, and local storage.
+description: Build a multi-page vanilla JavaScript website from scratch - navigation, theme toggle, form validation, dynamic content, and local storage.
 slug: /javascript/beginners-guide/project-build-a-website
 tags: [javascript, beginners, project, html, css]
 keywords:
@@ -425,7 +425,7 @@ img {
 Every page includes the same `<nav>` and `<footer>`. Here is the structure (you will repeat it in each HTML file):
 
 ```html
-<!-- Navigation -- same on every page -->
+<!-- Navigation - same on every page -->
 <nav class="site-nav">
     <div class="nav-inner">
         <a href="index.html" class="nav-logo">MyPortfolio</a>
@@ -440,7 +440,7 @@ Every page includes the same `<nav>` and `<footer>`. Here is the structure (you 
 
 <!-- Page content goes here -->
 
-<!-- Footer -- same on every page -->
+<!-- Footer - same on every page -->
 <footer class="site-footer">
     <p>&copy; 2025 MyPortfolio. Built with vanilla HTML, CSS, and JavaScript.</p>
 </footer>
@@ -505,7 +505,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPortfolio -- Home</title>
+    <title>MyPortfolio - Home</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -526,7 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <section class="hero">
         <h1>Hi, I'm a Web Developer</h1>
         <p>I build things for the web using HTML, CSS, and JavaScript.
-           Welcome to my portfolio -- have a look around.</p>
+           Welcome to my portfolio - have a look around.</p>
     </section>
 
     <section>
@@ -550,7 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="card">
                 <h3>Portfolio Site</h3>
-                <p>This very website -- a multi-page portfolio built entirely with vanilla technologies.</p>
+                <p>This very website - a multi-page portfolio built entirely with vanilla technologies.</p>
                 <div class="tags">
                     <span class="tag">HTML</span>
                     <span class="tag">CSS</span>
@@ -631,7 +631,7 @@ Store project data as JSON so we can load and filter it dynamically:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPortfolio -- Projects</title>
+    <title>MyPortfolio - Projects</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -797,7 +797,7 @@ document.addEventListener("DOMContentLoaded", initProjects);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPortfolio -- Contact</title>
+    <title>MyPortfolio - Contact</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -1268,7 +1268,7 @@ Now each page just has placeholder elements:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPortfolio -- About</title>
+    <title>MyPortfolio - About</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -1384,7 +1384,7 @@ Reuse logic by splitting it into focused files:
 
 ```text
 js/
-├── main.js          # Entry point -- loads everything
+├── main.js          # Entry point - loads everything
 ├── theme.js         # Theme toggle logic
 ├── nav.js           # Active nav highlighting
 ├── validation.js    # Form validation (reusable)
@@ -1553,7 +1553,7 @@ Now every page just uses the custom tag:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPortfolio -- About</title>
+    <title>MyPortfolio - About</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>

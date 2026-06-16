@@ -246,7 +246,7 @@ await strapi.documents('api::article.article').update(documentId, {
 ### Problem
 
 ```js
-// BAD: N+1 queries -- one query per article to fetch author
+// BAD: N+1 queries - one query per article to fetch author
 const articles = await strapi.documents('api::article.article').findMany({});
 for (const article of articles) {
   article.author = await strapi.documents('api::author.author').findOne(article.authorId);

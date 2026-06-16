@@ -26,7 +26,7 @@ in by the caller.
 Without generics, you have two bad choices when writing reusable code:
 
 ```typescript
-// Option 1: Use any -- loses all type safety
+// Option 1: Use any - loses all type safety
 function first(array: any[]): any {
     return array[0];
 }
@@ -34,7 +34,7 @@ function first(array: any[]): any {
 const value = first([1, 2, 3]);
 value.toUpperCase(); // No error! But crashes at runtime (number has no toUpperCase)
 
-// Option 2: Write a separate function for every type -- massive duplication
+// Option 2: Write a separate function for every type - massive duplication
 function firstString(array: string[]): string { return array[0]; }
 function firstNumber(array: number[]): number { return array[0]; }
 function firstUser(array: User[]): User { return array[0]; }
@@ -95,7 +95,7 @@ function zip<A, B>(a: A[], b: B[]): [A, B][] {
 }
 
 const pairs = zip([1, 2, 3], ["a", "b", "c"]);
-// Type: [number, string][] -- not [any, any][]
+// Type: [number, string][] - not [any, any][]
 
 function mapObject<K extends string, V, R>(
     obj: Record<K, V>,
@@ -458,7 +458,7 @@ async function typedFetch<T>(
     }
 }
 
-// Usage -- fully typed without any assertions at the call site
+// Usage - fully typed without any assertions at the call site
 const result = await typedFetch<User>("/api/users/1");
 if (result.success) {
     console.log(result.data.name); // TypeScript knows this is User

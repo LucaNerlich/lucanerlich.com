@@ -356,7 +356,7 @@ public class NotificationRolloutActionFactory implements LiveActionFactory<LiveA
             } catch (Exception e) {
                 LOG.error("Notification failed during rollout {} -> {}",
                     sourcePath, targetPath, e);
-                // Don't rethrow -- notification failure shouldn't block rollout
+                // Don't rethrow - notification failure shouldn't block rollout
             }
         }
     }

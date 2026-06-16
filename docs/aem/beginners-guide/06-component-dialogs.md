@@ -1,7 +1,7 @@
 ---
 title: "Component Dialogs"
 sidebar_label: "Component Dialogs"
-description: Touch UI dialogs with Granite/Coral -- field types, tabs, multifields, image upload, validation, and conditional visibility.
+description: Touch UI dialogs with Granite/Coral - field types, tabs, multifields, image upload, validation, and conditional visibility.
 slug: /aem/beginners-guide/component-dialogs
 tags: [aem, beginners]
 keywords:

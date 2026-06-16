@@ -177,7 +177,7 @@ import io.wcm.caconfig.extensions.contextpath.impl.AbsoluteParentContextPathStra
 @Model(adaptables = Resource.class)
 public class HeaderModel {
 
-    // Direct injection -- resolves from the resource's context
+    // Direct injection - resolves from the resource's context
     private SiteConfig siteConfig;
 
     @PostConstruct

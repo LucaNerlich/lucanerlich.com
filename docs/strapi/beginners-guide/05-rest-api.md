@@ -1,7 +1,7 @@
 ---
 title: "REST API"
 sidebar_label: "REST API"
-description: Strapi's auto-generated REST API -- endpoints, filtering, sorting, pagination, field selection, population, and testing with curl.
+description: Strapi's auto-generated REST API - endpoints, filtering, sorting, pagination, field selection, population, and testing with curl.
 slug: /strapi/beginners-guide/rest-api
 tags: [strapi, beginners]
 keywords:

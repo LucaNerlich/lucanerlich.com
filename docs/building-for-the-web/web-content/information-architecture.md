@@ -1,7 +1,7 @@
 ---
 title: "Information Architecture"
 sidebar_label: "Information architecture"
-description: Site-level wayfinding -- primary, utility, and footer navigation, breadcrumbs, taxonomies, search UX, and URL slug design that survive content growth.
+description: Site-level wayfinding - primary, utility, and footer navigation, breadcrumbs, taxonomies, search UX, and URL slug design that survive content growth.
 slug: /web-content/information-architecture
 tags: [ux, ia, navigation, taxonomy, search, urls]
 keywords:
@@ -186,7 +186,7 @@ When a category contains more than ~30 items, pure hierarchy stops scaling. Add 
 </aside>
 ```
 
-> Schema-level concerns -- which fields belong on a category, what relations connect a tag to its posts -- live in [Content Modeling](../content-modeling.md). IA is the user-facing layer on top of that schema.
+> Schema-level concerns - which fields belong on a category, what relations connect a tag to its posts - live in [Content Modeling](../content-modeling.md). IA is the user-facing layer on top of that schema.
 
 ## Search UX
 
@@ -307,7 +307,7 @@ When in doubt, ask these of any site you're shipping:
 
 | Question | Why |
 |---|---|
-| Can a user state the site's purpose from the homepage in one sentence? | If not, the IA can't help -- the message is unclear. |
+| Can a user state the site's purpose from the homepage in one sentence? | If not, the IA can't help - the message is unclear. |
 | Are there exactly **one** primary, **one** utility, and **one** footer nav? | More than that signals duplicate routes for the same goal. |
 | Does the active page have `aria-current="page"`? | Disorientation kills sessions. |
 | Do labels match URL slugs *and* page headings? | Synonym drift forces users to guess. |
@@ -317,7 +317,7 @@ When in doubt, ask these of any site you're shipping:
 
 ## Related
 
-- [Content Modeling](../content-modeling.md) -- the schema beneath the taxonomy.
-- [Semantic HTML](../semantic-html.mdx) -- `<nav>`, `<header>`, `<footer>`, and landmark semantics.
-- [Structure and hierarchy](./structure-and-hierarchy.md) -- IA's page-level counterpart.
-- [Forms and interactions](./forms-and-interactions.md) -- search inputs and link-text patterns.
+- [Content Modeling](../content-modeling.md) - the schema beneath the taxonomy.
+- [Semantic HTML](../semantic-html.mdx) - `<nav>`, `<header>`, `<footer>`, and landmark semantics.
+- [Structure and hierarchy](./structure-and-hierarchy.md) - IA's page-level counterpart.
+- [Forms and interactions](./forms-and-interactions.md) - search inputs and link-text patterns.

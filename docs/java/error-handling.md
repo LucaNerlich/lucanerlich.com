@@ -343,10 +343,10 @@ try {
     log.error("Operation failed for user {}", userId, e);
 }
 
-// BAD: toString() only -- loses the stack trace
+// BAD: toString() only - loses the stack trace
 log.error("Operation failed: " + e.toString());
 
-// BAD: getMessage() only -- loses the exception type and stack trace
+// BAD: getMessage() only - loses the exception type and stack trace
 log.error("Operation failed: {}", e.getMessage());
 
 // BAD: manual stack trace printing (use the logger instead)

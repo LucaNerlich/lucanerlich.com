@@ -249,11 +249,11 @@ Control what happens when the child node doesn't exist:
 @ChildResource
 private List<Product> products;
 
-// Explicitly optional -- returns null if "products" node is missing
+// Explicitly optional - returns null if "products" node is missing
 @ChildResource(injectionStrategy = InjectionStrategy.OPTIONAL)
 private List<Product> products;
 
-// Required -- model adaptation fails if "products" node is missing
+// Required - model adaptation fails if "products" node is missing
 @ChildResource(injectionStrategy = InjectionStrategy.REQUIRED)
 private List<Product> products;
 ```
@@ -368,7 +368,7 @@ When a multifield lives inside a dialog tab, the JCR structure stays the same - 
 attribute determines where the child nodes are stored, regardless of the dialog layout structure:
 
 ```xml
-<!-- Tab structure in dialog (layout only -- doesn't affect storage) -->
+<!-- Tab structure in dialog (layout only - doesn't affect storage) -->
 <tabs sling:resourceType="granite/ui/components/coral/foundation/tabs">
     <items>
         <productTab jcr:title="Products">
@@ -410,11 +410,11 @@ The child model class **must** declare `adaptables = Resource.class`. The `@Chil
 passes a `Resource` to `adaptTo()`, not a `SlingHttpServletRequest`.
 
 ```java
-// Correct -- child model adapts from Resource
+// Correct - child model adapts from Resource
 @Model(adaptables = Resource.class)
 public class Product { ... }
 
-// Wrong -- @ChildResource cannot adapt a request
+// Wrong - @ChildResource cannot adapt a request
 @Model(adaptables = SlingHttpServletRequest.class)
 public class Product { ... }
 ```

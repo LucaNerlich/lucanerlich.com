@@ -52,7 +52,7 @@ struct Tweet {
 
 impl Summary for Article {
     fn summarize(&self) -> String {
-        format!("{} by {} -- {}", self.title, self.author, &self.content[..50])
+        format!("{} by {} - {}", self.title, self.author, &self.content[..50])
     }
 }
 

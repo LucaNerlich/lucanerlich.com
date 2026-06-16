@@ -51,12 +51,12 @@ graph LR
 ### Before and after
 
 ```java
-// Without externalization -- raw JCR path
+// Without externalization - raw JCR path
 @ValueMapValue
 private String linkUrl;
 // Returns: /content/my-site/en/about
 
-// With externalization -- mapped URL
+// With externalization - mapped URL
 @ExternalizedValueMapValue
 private String linkUrl;
 // Returns: /en/about.html (or full URL depending on configuration)
@@ -78,11 +78,11 @@ For fully qualified URLs (including scheme and domain), AEM provides the
 `com.day.cq.commons.Externalizer` OSGi service:
 
 ```java
-// ResourceResolver.map() -- relative, context-aware
+// ResourceResolver.map() - relative, context-aware
 String relative = resolver.map(request, "/content/my-site/en/about");
 // → "/en/about.html"
 
-// Externalizer -- absolute URL with domain
+// Externalizer - absolute URL with domain
 String absolute = externalizer.publishLink(resolver, "/content/my-site/en/about");
 // → "https://www.my-site.com/en/about.html"
 ```
@@ -141,14 +141,14 @@ public class TeaserModel implements ComponentExporter {
 
     static final String RESOURCE_TYPE = "myproject/components/teaser";
 
-    // Regular property -- no path transformation needed
+    // Regular property - no path transformation needed
     @ValueMapValue
     private String title;
 
     @ValueMapValue
     private String description;
 
-    // Path property -- automatically externalized
+    // Path property - automatically externalized
     @ExternalizedValueMapValue
     private String linkUrl;
 

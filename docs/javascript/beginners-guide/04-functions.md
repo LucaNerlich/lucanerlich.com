@@ -1,7 +1,7 @@
 ---
 title: "Functions"
 sidebar_label: "Functions"
-description: Learn JavaScript functions -- declarations, expressions, arrow functions, parameters, scope, closures, and callbacks.
+description: Learn JavaScript functions - declarations, expressions, arrow functions, parameters, scope, closures, and callbacks.
 slug: /javascript/beginners-guide/functions
 tags: [javascript, beginners, functions, scope]
 keywords:
@@ -431,7 +431,7 @@ const counterB = createCounter();
 
 console.log(counterA()); // 1
 console.log(counterA()); // 2
-console.log(counterB()); // 1 -- independent from counterA
+console.log(counterB()); // 1 - independent from counterA
 ```
 
 Result:
@@ -564,12 +564,12 @@ next chapter) are all higher-order functions.
 A **pure function** always returns the same output for the same input and has no side effects:
 
 ```js
-// Pure -- same input always gives same output
+// Pure - same input always gives same output
 function add(a, b) {
     return a + b;
 }
 
-// Impure -- modifies external state
+// Impure - modifies external state
 let total = 0;
 function addToTotal(amount) {
     total += amount; // side effect
@@ -580,7 +580,7 @@ console.log(add(2, 3)); // always 5
 console.log(add(2, 3)); // always 5
 
 console.log(addToTotal(10)); // 10
-console.log(addToTotal(10)); // 20 -- different result for same input
+console.log(addToTotal(10)); // 20 - different result for same input
 ```
 
 Result:

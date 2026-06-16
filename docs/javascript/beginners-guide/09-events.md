@@ -1,7 +1,7 @@
 ---
 title: "Events & Interactivity"
 sidebar_label: "Events"
-description: Learn how to handle user interactions in JavaScript -- event listeners, the event object, bubbling, delegation, forms, and keyboard/mouse events.
+description: Learn how to handle user interactions in JavaScript - event listeners, the event object, bubbling, delegation, forms, and keyboard/mouse events.
 slug: /javascript/beginners-guide/events
 tags: [javascript, beginners, events, dom]
 keywords:
@@ -74,7 +74,7 @@ button.removeEventListener("click", handleClick);
 **Important:** you must pass the same function reference. Anonymous functions cannot be removed:
 
 ```js
-// This does NOT work -- each arrow function is a different reference
+// This does NOT work - each arrow function is a different reference
 button.addEventListener("click", () => console.log("A"));
 button.removeEventListener("click", () => console.log("A")); // does nothing
 ```
@@ -155,13 +155,13 @@ Common `event.key` values: `"Enter"`, `"Escape"`, `"ArrowUp"`, `"ArrowDown"`, `"
 ```js
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-        console.log("Escape pressed -- close the modal");
+        console.log("Escape pressed - close the modal");
     }
 
     // Check for modifier keys
     if (event.ctrlKey && event.key === "s") {
         event.preventDefault(); // prevent browser save dialog
-        console.log("Ctrl+S pressed -- saving...");
+        console.log("Ctrl+S pressed - saving...");
     }
 });
 ```
@@ -287,7 +287,7 @@ Prevent the event from reaching parent elements:
 ```js
 document.querySelector("#btn").addEventListener("click", (event) => {
     event.stopPropagation();
-    console.log("Button clicked -- stopped bubbling");
+    console.log("Button clicked - stopped bubbling");
 });
 
 // This will NOT fire when the button is clicked
@@ -299,7 +299,7 @@ document.querySelector("#outer").addEventListener("click", () => {
 Result (clicking the button):
 
 ```text
-Button clicked -- stopped bubbling
+Button clicked - stopped bubbling
 ```
 
 Use `stopPropagation` sparingly - it can break other listeners that rely on bubbling.
@@ -352,14 +352,14 @@ determine which child was clicked:
 ```
 
 ```js
-// Without delegation -- one listener per item (bad for many items)
+// Without delegation - one listener per item (bad for many items)
 document.querySelectorAll("#task-list li").forEach((li) => {
     li.addEventListener("click", () => {
         console.log(`Clicked: ${li.textContent}`);
     });
 });
 
-// With delegation -- one listener on the parent (good!)
+// With delegation - one listener on the parent (good!)
 document.querySelector("#task-list").addEventListener("click", (event) => {
     if (event.target.tagName === "LI") {
         console.log(`Clicked: ${event.target.textContent}`);

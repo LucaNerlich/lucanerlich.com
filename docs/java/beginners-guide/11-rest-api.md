@@ -1,7 +1,7 @@
 ---
 title: "Building a REST API"
 sidebar_label: "REST API"
-description: Build a REST API with Java's built-in HttpServer -- HTTP basics, request handling, JSON serialization, routing, and exposing the task manager over HTTP.
+description: Build a REST API with Java's built-in HttpServer - HTTP basics, request handling, JSON serialization, routing, and exposing the task manager over HTTP.
 slug: /java/beginners-guide/rest-api
 tags: [java, beginners, rest, api, http]
 keywords:
@@ -395,12 +395,12 @@ public class ApiServer {
         server.start();
         System.out.println("Task API running on http://localhost:" + PORT);
         System.out.println("Endpoints:");
-        System.out.println("  GET    /api/tasks       -- list all tasks");
-        System.out.println("  GET    /api/tasks/{id}   -- get a task");
-        System.out.println("  POST   /api/tasks       -- create a task");
-        System.out.println("  PUT    /api/tasks/{id}   -- complete a task");
-        System.out.println("  DELETE /api/tasks/{id}   -- delete a task");
-        System.out.println("  GET    /api/health      -- health check");
+        System.out.println("  GET    /api/tasks       - list all tasks");
+        System.out.println("  GET    /api/tasks/{id}   - get a task");
+        System.out.println("  POST   /api/tasks       - create a task");
+        System.out.println("  PUT    /api/tasks/{id}   - complete a task");
+        System.out.println("  DELETE /api/tasks/{id}   - delete a task");
+        System.out.println("  GET    /api/health      - health check");
         System.out.println();
         System.out.println("Press Ctrl+C to stop.");
     }
@@ -426,12 +426,12 @@ Result:
 ```text
 Task API running on http://localhost:8080
 Endpoints:
-  GET    /api/tasks       -- list all tasks
-  GET    /api/tasks/{id}   -- get a task
-  POST   /api/tasks       -- create a task
-  PUT    /api/tasks/{id}   -- complete a task
-  DELETE /api/tasks/{id}   -- delete a task
-  GET    /api/health      -- health check
+  GET    /api/tasks       - list all tasks
+  GET    /api/tasks/{id}   - get a task
+  POST   /api/tasks       - create a task
+  PUT    /api/tasks/{id}   - complete a task
+  DELETE /api/tasks/{id}   - delete a task
+  GET    /api/health      - health check
 
 Press Ctrl+C to stop.
 ```

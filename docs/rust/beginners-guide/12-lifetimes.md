@@ -76,7 +76,7 @@ fn main() {
         result = longest(&a, &b);
         println!("Longest: {result}");
     }
-    // Cannot use result here -- b was dropped
+    // Cannot use result here - b was dropped
 }
 ```
 
@@ -259,13 +259,13 @@ impl<'a> Parser<'a> {
 Often the simplest fix for lifetime complexity is to own the data:
 
 ```rust
-// Complex -- needs lifetimes
+// Complex - needs lifetimes
 struct Config<'a> {
     host: &'a str,
     port: u16,
 }
 
-// Simpler -- owns the data
+// Simpler - owns the data
 struct Config {
     host: String,
     port: u16,

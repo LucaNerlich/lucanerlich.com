@@ -18,9 +18,9 @@ patterns you actually need in a project.
 
 ```mermaid
 flowchart BT
-    A[Unit -- Sling Models, services, utilities<br/>mocked repository<br/><br/>~100 ms per class]
-    B[Integration-style -- repository + OSGi wiring<br/>in-memory JCR<br/><br/>~1 s per class]
-    C[UI -- authoring flows, rendering, Dispatcher<br/>real browser, real AEM<br/><br/>~30 s per test]
+    A[Unit - Sling Models, services, utilities<br/>mocked repository<br/><br/>~100 ms per class]
+    B[Integration-style - repository + OSGi wiring<br/>in-memory JCR<br/><br/>~1 s per class]
+    C[UI - authoring flows, rendering, Dispatcher<br/>real browser, real AEM<br/><br/>~30 s per test]
     A --> B --> C
 ```
 
@@ -181,7 +181,7 @@ class TeaserModelTest {
                 .getResource("/content/site/en/jcr:content/root/teaser");
         TeaserModel model = resource.adaptTo(TeaserModel.class);
 
-        assertNotNull(model, "Model should resolve -- if null, check @Model adaptables and addModelsForClasses");
+        assertNotNull(model, "Model should resolve - if null, check @Model adaptables and addModelsForClasses");
         assertEquals("My Teaser", model.getTitle());
         assertEquals("/content/site/en/page", model.getLink());
     }

@@ -1,7 +1,7 @@
 ---
 title: "Maven"
 sidebar_label: "Maven"
-description: Learn Apache Maven -- project structure, dependency management, building fat JARs, and improving the REST API project with Gson for JSON handling.
+description: Learn Apache Maven - project structure, dependency management, building fat JARs, and improving the REST API project with Gson for JSON handling.
 slug: /java/beginners-guide/maven
 tags: [java, beginners, maven, build-tools]
 keywords:
@@ -604,7 +604,7 @@ ssh "$SERVER" "sudo systemctl restart task-api"
 
 echo "Checking health..."
 sleep 3
-curl -sf https://yoursite.com/api/health && echo " -- OK" || echo " -- FAILED"
+curl -sf https://yoursite.com/api/health && echo " - OK" || echo " - FAILED"
 ```
 
 ## Summary

@@ -260,10 +260,10 @@ fn main() {
     let age = 25;
 
     match age {
-        n @ 0..=12 => println!("{n} -- child"),
-        n @ 13..=17 => println!("{n} -- teenager"),
-        n @ 18..=64 => println!("{n} -- adult"),
-        n @ 65.. => println!("{n} -- senior"),
+        n @ 0..=12 => println!("{n} - child"),
+        n @ 13..=17 => println!("{n} - teenager"),
+        n @ 18..=64 => println!("{n} - adult"),
+        n @ 65.. => println!("{n} - senior"),
         _ => unreachable!(),
     }
 }

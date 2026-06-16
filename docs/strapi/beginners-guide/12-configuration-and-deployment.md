@@ -67,7 +67,7 @@ Strapi loads the default config first, then merges environment-specific override
 All sensitive values go in `.env` (development) and environment variables on the server (production):
 
 ```bash
-# .env (development -- NEVER commit this file)
+# .env (development - NEVER commit this file)
 HOST=0.0.0.0
 PORT=1337
 APP_KEYS=key1,key2,key3,key4

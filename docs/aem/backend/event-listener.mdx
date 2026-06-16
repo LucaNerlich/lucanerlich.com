@@ -848,8 +848,8 @@ sequenceDiagram
     participant EventAdmin as Event Admin
 
     OSGi->>Handler: @Activate (register handler)
-    EventAdmin->>Handler: handleEvent(event) -- on matching topic
-    EventAdmin->>Handler: handleEvent(event) -- on matching topic
+    EventAdmin->>Handler: handleEvent(event) - on matching topic
+    EventAdmin->>Handler: handleEvent(event) - on matching topic
     Note right of Handler: Runs on the Event Admin thread pool
     OSGi->>Handler: @Modified (config changed)
     OSGi->>Handler: @Deactivate (unregister)
@@ -871,13 +871,13 @@ Key points about the lifecycle:
 processing in the system:
 
 ```java
-// ❌ Bad -- blocking HTTP call in the event handler thread
+// ❌ Bad - blocking HTTP call in the event handler thread
 @Override
 public void handleEvent(Event event) {
     httpClient.execute(new HttpGet(url)); // blocks the thread
 }
 
-// ✅ Good -- delegate heavy work to a Sling Job
+// ✅ Good - delegate heavy work to a Sling Job
 @Override
 public void handleEvent(Event event) {
     Map<String, Object> props = new HashMap<>();

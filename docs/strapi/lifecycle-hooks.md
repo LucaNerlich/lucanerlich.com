@@ -266,7 +266,7 @@ Middleware runs in the order it is registered. Each one wraps the next:
 ```js
 module.exports = {
   register({ strapi }) {
-    // Middleware 1 -- runs first (before) and last (after)
+    // Middleware 1 - runs first (before) and last (after)
     strapi.documents.use(async (context, next) => {
       strapi.log.debug('Middleware 1: before');
       const result = await next();
@@ -274,7 +274,7 @@ module.exports = {
       return result;
     });
 
-    // Middleware 2 -- runs second (before) and second-to-last (after)
+    // Middleware 2 - runs second (before) and second-to-last (after)
     strapi.documents.use(async (context, next) => {
       strapi.log.debug('Middleware 2: before');
       const result = await next();

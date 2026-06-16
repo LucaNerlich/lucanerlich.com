@@ -1,7 +1,7 @@
 ---
 title: "Architecture & Best Practices"
 sidebar_label: "Architecture"
-description: Organising CSS for maintainability -- BEM naming, file structure, CSS resets vs normalisers, utility classes, component-scoped styles, and preprocessor overview.
+description: Organising CSS for maintainability - BEM naming, file structure, CSS resets vs normalisers, utility classes, component-scoped styles, and preprocessor overview.
 slug: /css/beginners-guide/architecture-and-best-practices
 tags: [css, beginners]
 keywords:

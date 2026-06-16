@@ -2,7 +2,7 @@
 title: "SQL: A Complete Guide"
 sidebar_label: "SQL Guide"
 sidebar_position: 6
-description: "A comprehensive SQL guide -- from basic queries to joins, subqueries, indexes, transactions, and database design."
+description: "A comprehensive SQL guide - from basic queries to joins, subqueries, indexes, transactions, and database design."
 tags: [sql, database, guide]
 keywords:
   - sql guide
@@ -74,10 +74,10 @@ SQL commands fall into four categories:
 ```mermaid
 flowchart TD
     SQL["SQL Commands"]
-    SQL --> DQL["DQL -- Data Query Language<br/>SELECT"]
-    SQL --> DML["DML -- Data Manipulation Language<br/>INSERT, UPDATE, DELETE"]
-    SQL --> DDL["DDL -- Data Definition Language<br/>CREATE, ALTER, DROP"]
-    SQL --> DCL["DCL -- Data Control Language<br/>GRANT, REVOKE"]
+    SQL --> DQL["DQL - Data Query Language<br/>SELECT"]
+    SQL --> DML["DML - Data Manipulation Language<br/>INSERT, UPDATE, DELETE"]
+    SQL --> DDL["DDL - Data Definition Language<br/>CREATE, ALTER, DROP"]
+    SQL --> DCL["DCL - Data Control Language<br/>GRANT, REVOKE"]
 ```
 
 | Category | Purpose                          | Key statements              |
@@ -416,7 +416,7 @@ SELECT * FROM users WHERE age IS NOT NULL;
 
 -- Pattern matching
 SELECT * FROM users WHERE email LIKE '%example.com';
-SELECT * FROM users WHERE name LIKE 'A%'; -- starts with A
+SELECT * FROM users WHERE name LIKE 'A%'; - starts with A
 ```
 
 Result of `WHERE name LIKE 'A%'`:
@@ -1271,11 +1271,11 @@ CREATE INDEX idx_posts_user_published ON posts(user_id, published);
 -- Unique index (enforces uniqueness)
 CREATE UNIQUE INDEX idx_users_email_unique ON users(email);
 
--- Partial index (PostgreSQL) -- index only a subset of rows
+-- Partial index (PostgreSQL) - index only a subset of rows
 -- Smaller and faster than indexing the entire table
 CREATE INDEX idx_active_users_email ON users(email) WHERE active = TRUE;
 
--- Covering index -- includes extra columns to avoid table lookups
+-- Covering index - includes extra columns to avoid table lookups
 -- PostgreSQL uses INCLUDE, other databases vary
 CREATE INDEX idx_posts_user ON posts(user_id) INCLUDE (title, created_at);
 ```
@@ -1630,7 +1630,7 @@ ON DUPLICATE KEY UPDATE name = VALUES(name);
 INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
 ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
 
--- SQLite (older versions -- caution: deletes then re-inserts the row)
+-- SQLite (older versions - caution: deletes then re-inserts the row)
 -- This resets the rowid, fires DELETE triggers, and cascades foreign keys
 INSERT OR REPLACE INTO users (email, name) VALUES ('ada@example.com', 'Ada L.');
 ```
@@ -1691,13 +1691,13 @@ SELECT NULLIF(email, '') AS email FROM users;
 
 ```sql
 SELECT
-    UPPER('hello'),              -- HELLO
-    LOWER('HELLO'),              -- hello
-    LENGTH('hello'),             -- 5
-    TRIM('  hello  '),           -- hello
-    SUBSTRING('hello' FROM 2 FOR 3), -- ell (PostgreSQL)
-    REPLACE('hello', 'l', 'r'), -- herro
-    CONCAT('hello', ' ', 'world'); -- hello world
+    UPPER('hello'),              - HELLO
+    LOWER('HELLO'),              - hello
+    LENGTH('hello'),             - 5
+    TRIM('  hello  '),           - hello
+    SUBSTRING('hello' FROM 2 FOR 3), - ell (PostgreSQL)
+    REPLACE('hello', 'l', 'r'), - herro
+    CONCAT('hello', ' ', 'world'); - hello world
 ```
 
 Result:
@@ -1786,8 +1786,8 @@ END;
 -- Conditional price adjustment
 UPDATE products
 SET price = CASE
-    WHEN stock = 0 THEN price * 0.5    -- clearance for out-of-stock
-    WHEN stock < 10 THEN price * 1.1   -- premium for low stock
+    WHEN stock = 0 THEN price * 0.5    - clearance for out-of-stock
+    WHEN stock < 10 THEN price * 1.1   - premium for low stock
     ELSE price
 END;
 ```

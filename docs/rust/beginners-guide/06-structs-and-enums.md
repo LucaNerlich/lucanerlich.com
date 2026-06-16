@@ -480,18 +480,18 @@ fn main() {
     let some_number: Option<i32> = Some(42);
     let no_number: Option<i32> = None;
 
-    // unwrap -- get the value or panic
+    // unwrap - get the value or panic
     println!("{}", some_number.unwrap()); // 42
     // println!("{}", no_number.unwrap()); // PANICS!
 
-    // unwrap_or -- get the value or a default
+    // unwrap_or - get the value or a default
     println!("{}", no_number.unwrap_or(0)); // 0
 
     // is_some / is_none
     println!("{}", some_number.is_some()); // true
     println!("{}", no_number.is_none());   // true
 
-    // map -- transform the inner value
+    // map - transform the inner value
     let doubled = some_number.map(|n| n * 2);
     println!("{:?}", doubled); // Some(84)
 }

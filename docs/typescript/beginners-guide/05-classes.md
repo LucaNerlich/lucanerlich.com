@@ -143,7 +143,7 @@ class Product {
     }
 }
 
-// Shorthand -- equivalent, much less boilerplate
+// Shorthand - equivalent, much less boilerplate
 class Product {
     constructor(
         public name: string,

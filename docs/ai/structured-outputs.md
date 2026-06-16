@@ -1,6 +1,6 @@
 ---
 title: Structured Outputs
-description: Getting reliable JSON and schema-bound responses from LLMs -- native structured output modes, validation and repair loops, and when structure beats free-form prose.
+description: Getting reliable JSON and schema-bound responses from LLMs - native structured output modes, validation and repair loops, and when structure beats free-form prose.
 tags: [ai, structured-outputs, reliability, agents]
 keywords:
     - structured output llm
@@ -12,7 +12,7 @@ keywords:
 
 # Structured Outputs
 
-Most production [LLM](./llm.md) features do not need paragraphs -- they need **data**: a classification label,
+Most production [LLM](./llm.md) features do not need paragraphs - they need **data**: a classification label,
 a list of extracted fields, a tool argument object, or a config patch your code can parse and act on.
 **Structured outputs** are the discipline of making that contract explicit, validated, and recoverable when
 the model drifts. This is reliability engineering, not prompt trivia.
@@ -21,10 +21,10 @@ the model drifts. This is reliability engineering, not prompt trivia.
 
 Free-form text forces you to regex or hope. Structured output lets you:
 
-- **Parse deterministically** -- `JSON.parse` or schema validation instead of fragile string extraction.
-- **Compose in pipelines** -- downstream code, databases, and [agents](./agents.md) consume typed data.
-- **Evaluate objectively** -- schema validity and field-level checks are cheap [eval scorers](./evaluation-and-llmops.md).
-- **Reduce tokens** -- a compact object beats a verbose explanation when the consumer is code.
+- **Parse deterministically** - `JSON.parse` or schema validation instead of fragile string extraction.
+- **Compose in pipelines** - downstream code, databases, and [agents](./agents.md) consume typed data.
+- **Evaluate objectively** - schema validity and field-level checks are cheap [eval scorers](./evaluation-and-llmops.md).
+- **Reduce tokens** - a compact object beats a verbose explanation when the consumer is code.
 
 The failure mode you are designing against: the model returns almost-JSON, wraps output in markdown fences,
 adds a preamble ("Sure! Here is the JSON:"), or hallucinates a field your schema does not allow.
@@ -61,7 +61,7 @@ Design schemas for **machine consumption**:
 
 - Use `enum` where the set of values is fixed.
 - Set `additionalProperties: false` when stray keys indicate hallucination.
-- Keep required fields minimal -- optional fields reduce failure rate.
+- Keep required fields minimal - optional fields reduce failure rate.
 - Split large outputs into multiple calls or nested objects rather than one giant schema.
 
 ## Validation and repair loops
@@ -90,8 +90,8 @@ Cap retries (typically 1–2) to control [cost and latency](./cost-and-latency.m
 
 They overlap but serve different roles:
 
-- **Structured output** -- the *answer* is data (classification, extraction, generated config).
-- **Tool use** -- the model *requests an action*; your code runs it and may return structured results back.
+- **Structured output** - the *answer* is data (classification, extraction, generated config).
+- **Tool use** - the model *requests an action*; your code runs it and may return structured results back.
 
 Many agent frameworks implement "respond with this JSON schema" as a special tool. For a single-shot
 extraction task, structured output is simpler; for "search, then format," tool use is natural.
@@ -115,20 +115,20 @@ pairs well with [context compaction](./context-engineering.md).
 ### Generated UI or config
 
 Model outputs component props or feature-flag patches. Validate against schema **and** run a sandbox test
-before applying -- structure does not imply correctness.
+before applying - structure does not imply correctness.
 
 ## Common mistakes
 
-- **Huge schemas in one shot** -- split into stages (extract entities, then relations).
-- **No validation** -- trusting raw model output in SQL, shell, or payment flows.
-- **Unbounded strings** -- use `maxLength` or post-truncate with explicit handling.
-- **Mixing instructions and data** -- system prompt asks for JSON; user message also contains JSON examples
+- **Huge schemas in one shot** - split into stages (extract entities, then relations).
+- **No validation** - trusting raw model output in SQL, shell, or payment flows.
+- **Unbounded strings** - use `maxLength` or post-truncate with explicit handling.
+- **Mixing instructions and data** - system prompt asks for JSON; user message also contains JSON examples
   that confuse the parser. Separate concerns clearly.
 
 ## See also
 
-- [AI Agents](./agents.md) -- tool calling as structured action requests
-- [Evaluation & LLMOps](./evaluation-and-llmops.md) -- schema validity as an eval scorer
-- [Cost, Latency & Model Routing](./cost-and-latency.md) -- shorter structured responses save tokens
-- [AI in Products](./ai-in-products.md) -- error states when structure fails
-- [AI Glossary](./glossary.md) -- structured output and related terms
+- [AI Agents](./agents.md) - tool calling as structured action requests
+- [Evaluation & LLMOps](./evaluation-and-llmops.md) - schema validity as an eval scorer
+- [Cost, Latency & Model Routing](./cost-and-latency.md) - shorter structured responses save tokens
+- [AI in Products](./ai-in-products.md) - error states when structure fails
+- [AI Glossary](./glossary.md) - structured output and related terms

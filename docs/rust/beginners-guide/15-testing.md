@@ -155,8 +155,8 @@ fn expensive_test() {
 Run ignored tests explicitly:
 
 ```bash
-cargo test -- --ignored        # Run only ignored tests
-cargo test -- --include-ignored # Run all tests including ignored
+cargo test - --ignored        # Run only ignored tests
+cargo test - --include-ignored # Run all tests including ignored
 ```
 
 ## Test organization
@@ -286,9 +286,9 @@ Lines starting with `# ` are compiled but hidden in the generated documentation.
 |-------------------------------|-------------------------------------------|
 | `cargo test`                  | Run all tests                             |
 | `cargo test test_name`        | Run tests matching a name                 |
-| `cargo test -- --nocapture`   | Show `println!` output during tests       |
-| `cargo test -- --test-threads=1` | Run tests sequentially (not in parallel) |
-| `cargo test -- --ignored`     | Run only `#[ignore]` tests                |
+| `cargo test - --nocapture`   | Show `println!` output during tests       |
+| `cargo test - --test-threads=1` | Run tests sequentially (not in parallel) |
+| `cargo test - --ignored`     | Run only `#[ignore]` tests                |
 | `cargo test --lib`            | Run only unit tests                       |
 | `cargo test --test integration_test` | Run a specific integration test file |
 | `cargo test --doc`            | Run only doc tests                        |

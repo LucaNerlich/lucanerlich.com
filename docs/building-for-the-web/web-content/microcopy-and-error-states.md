@@ -17,7 +17,7 @@ sidebar_position: 5
 
 # Microcopy and error states
 
-Microcopy is the **small text around controls and status changes** -- buttons, helper text, validation messages, empty placeholders, loading indicators, success toasts, and error pages. Done well it's almost invisible. Done badly it stops the user cold. This chapter is the canonical reference for those tiny strings. Back to the [section overview](./overview.md).
+Microcopy is the **small text around controls and status changes** - buttons, helper text, validation messages, empty placeholders, loading indicators, success toasts, and error pages. Done well it's almost invisible. Done badly it stops the user cold. This chapter is the canonical reference for those tiny strings. Back to the [section overview](./overview.md).
 
 The rules are simple and they all fall out of one principle: tell the user **what just happened** and **what they can do next**. Never assume the user can see your screen, hear your sound, or trust the system.
 
@@ -95,7 +95,7 @@ A good error message names **what went wrong**, **why**, and **how to fix it**. 
     aria-describedby="email-error"
 >
 <p id="email-error" class="error" role="alert">
-    Enter an email address that includes "@" -- for example, you@company.com.
+    Enter an email address that includes "@" - for example, you@company.com.
 </p>
 ```
 
@@ -289,7 +289,7 @@ A "page not found" is still a page on your site. Tell the user **where they ende
 
 ## Voice and consistency
 
-Keep verbs consistent across the site -- pick "Delete" *or* "Remove" *or* "Trash" and use it everywhere for the same action. Same for status words ("Draft", "Pending", "Published") and time formats. A short style sheet kept in your repo is enough.
+Keep verbs consistent across the site - pick "Delete" *or* "Remove" *or* "Trash" and use it everywhere for the same action. Same for status words ("Draft", "Pending", "Published") and time formats. A short style sheet kept in your repo is enough.
 
 ### Do
 
@@ -321,6 +321,6 @@ Two destructive variants:
 
 ## Related
 
-- [Forms and interactions](./forms-and-interactions.md) -- where most of these strings actually live.
-- [Readability and typography](./readability-and-typography.md) -- voice, plain language, line measure.
-- [Color and contrast](./color-and-contrast.md) -- making error and success colour cues accessible.
+- [Forms and interactions](./forms-and-interactions.md) - where most of these strings actually live.
+- [Readability and typography](./readability-and-typography.md) - voice, plain language, line measure.
+- [Color and contrast](./color-and-contrast.md) - making error and success colour cues accessible.

@@ -170,12 +170,12 @@ public class AssetImportJobConsumer implements JobConsumer {
             return JobResult.OK;
 
         } catch (TransientException e) {
-            // Temporary failure (network issue, timeout) -- retry
+            // Temporary failure (network issue, timeout) - retry
             LOG.warn("Transient failure, will retry: {}", e.getMessage());
             return JobResult.FAILED;
 
         } catch (Exception e) {
-            // Permanent failure -- do not retry
+            // Permanent failure - do not retry
             LOG.error("Permanent failure, cancelling job: {}", e.getMessage(), e);
             return JobResult.CANCEL;
         }

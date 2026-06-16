@@ -1,6 +1,6 @@
 ---
 title: Blocks (the component model)
-description: How blocks work in EDS -- the decoration lifecycle, content keys and rows, variations, options, the block library, and common authoring patterns.
+description: How blocks work in EDS - the decoration lifecycle, content keys and rows, variations, options, the block library, and common authoring patterns.
 tags: [aem, edge-delivery, blocks, components, decorate]
 ---
 
@@ -89,7 +89,7 @@ sequenceDiagram
 | **Lazy** | After LCP, on viewport entry | Below-the-fold blocks |
 | **Delayed** | 3s after load or first user interaction | Analytics, chat, A/B testing |
 
-You don't usually pick the phase per block -- `aem.js` decides based on the block's
+You don't usually pick the phase per block - `aem.js` decides based on the block's
 position. You can override in `scripts/scripts.js` if needed.
 
 ## Writing a block
@@ -241,13 +241,13 @@ explicit `Option | value` rows and using `readBlockConfig`.
 
 ## Auto-blocks
 
-Some blocks aren't authored as tables -- they're synthesised from page metadata or
+Some blocks aren't authored as tables - they're synthesised from page metadata or
 specific markup. Examples:
 
-- `hero` -- automatically built from the first `<h1>` plus the `<picture>` that
+- `hero` - automatically built from the first `<h1>` plus the `<picture>` that
   precedes it
-- `breadcrumb` -- built from the URL path
-- `embed` -- built from a bare YouTube / Vimeo link in a paragraph
+- `breadcrumb` - built from the URL path
+- `embed` - built from a bare YouTube / Vimeo link in a paragraph
 
 Auto-blocks are wired in `scripts/scripts.js` via the `buildAutoBlocks` decoration
 hook. See [Customizing](./customizing.mdx#decoration-overrides).
@@ -265,7 +265,7 @@ Metadata" sub-table:
 ```
 
 The runtime applies `style` values as classes on the section, and exposes other keys
-on `document.querySelector('main > div').dataset.audience` -- handy for blocks that
+on `document.querySelector('main > div').dataset.audience` - handy for blocks that
 adapt to surrounding context.
 
 ## Common patterns
@@ -300,7 +300,7 @@ discipline:
 /* Good */
 .hero .hero-content { ... }
 
-/* Bad -- leaks to other blocks */
+/* Bad - leaks to other blocks */
 .hero-content { ... }
 h1 { ... }
 ```
@@ -338,7 +338,7 @@ production-ready reference implementations. Copy, don't fork.
 | Anti-pattern | Why it hurts | What to do instead |
 |--------------|--------------|--------------------|
 | One "super-block" with 10 layouts | Hard to author, hard to maintain | Split into focused blocks or use [variations](#block-variations) |
-| Decorating before the block is in DOM | `block.querySelector` returns nothing | The runtime calls `decorate` after insertion -- trust it |
+| Decorating before the block is in DOM | `block.querySelector` returns nothing | The runtime calls `decorate` after insertion - trust it |
 | Side-effects in module top-level | Runs even when the block is absent | Put work inside `decorate` |
 | Bundling everything into `scripts.js` | Inflates LCP-blocking JS | Each block owns its JS / CSS |
 | Global CSS rules in block files | Leaks to other blocks | Scope under the block class |
@@ -346,8 +346,8 @@ production-ready reference implementations. Copy, don't fork.
 
 ## See also
 
-- [Customizing](./customizing.mdx) -- decoration hooks (`decorateMain`,
+- [Customizing](./customizing.mdx) - decoration hooks (`decorateMain`,
   `buildAutoBlocks`, `decorateButtons`, `decorateIcons`)
-- [Universal Editor](./universal-editor.mdx) -- registering blocks for UE
-- [Performance](./performance.mdx) -- block loading phases
+- [Universal Editor](./universal-editor.mdx) - registering blocks for UE
+- [Performance](./performance.mdx) - block loading phases
 - aem.live: [Block Collection](https://www.aem.live/developer/block-collection)

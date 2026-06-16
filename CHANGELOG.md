@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 ## [1.23.0] - 2026-06-16
 
 ### Added
-- E-Mail guide: new step-by-step section on managing HTML e-mail templates with placeholders -- where to store templates (`ui.apps`, `ui.content`, or bundle resources), the `MailTemplate` header/placeholder format, deployment, rendering, and local testing
+- E-Mail guide: new step-by-step section on managing HTML e-mail templates with placeholders - where to store templates (`ui.apps`, `ui.content`, or bundle resources), the `MailTemplate` header/placeholder format, deployment, rendering, and local testing
 
 ### Fixed
 - Corrected the `MailTemplate` usage in the e-mail templating examples (the `Map`-based `getEmail` signature) and completed the reusable `EmailService.sendTemplated` implementation
@@ -56,14 +56,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Eight new [AI](/ai) section pages for product and operations topics, with cross-links and glossary entries:
-    - [Cost, Latency & Model Routing](/ai/cost-and-latency) -- token economics, model tiers, routing, and caching
-    - [Structured Outputs](/ai/structured-outputs) -- JSON schemas, validation, and repair loops
-    - [AI in Products](/ai/ai-in-products) -- UX patterns, streaming, when not to use AI, graceful degradation
-    - [Privacy & Data Handling](/ai/privacy-and-data) -- PII, logging, residency, and minimization
-    - [Project Memory & Rules](/ai/project-memory-and-rules) -- AGENTS.md, CLAUDE.md, and Cursor rules vs skills
-    - [Human-in-the-Loop](/ai/human-in-the-loop) -- approval gates, maker-checker, and audit trails
-    - [Which Pattern When?](/ai/which-pattern-when) -- capstone decision guide for RAG, agents, skills, and related patterns
-    - [Debugging LLM Apps](/ai/debugging-llm-apps) -- production troubleshooting runbook
+    - [Cost, Latency & Model Routing](/ai/cost-and-latency) - token economics, model tiers, routing, and caching
+    - [Structured Outputs](/ai/structured-outputs) - JSON schemas, validation, and repair loops
+    - [AI in Products](/ai/ai-in-products) - UX patterns, streaming, when not to use AI, graceful degradation
+    - [Privacy & Data Handling](/ai/privacy-and-data) - PII, logging, residency, and minimization
+    - [Project Memory & Rules](/ai/project-memory-and-rules) - AGENTS.md, CLAUDE.md, and Cursor rules vs skills
+    - [Human-in-the-Loop](/ai/human-in-the-loop) - approval gates, maker-checker, and audit trails
+    - [Which Pattern When?](/ai/which-pattern-when) - capstone decision guide for RAG, agents, skills, and related patterns
+    - [Debugging LLM Apps](/ai/debugging-llm-apps) - production troubleshooting runbook
 - New glossary terms: graceful degradation, human-in-the-loop, model routing, prompt caching, structured output, fallback chain, semantic cache
 
 ### Changed
@@ -72,7 +72,7 @@ All notable changes to this project will be documented in this file.
 ## [1.19.0] - 2026-06-05
 
 ### Added
-- New [Agent Skills](/ai/skills) page in the [AI](/ai) section -- multi-tool guide to the `SKILL.md` standard (Cursor, Claude Code, Claude.ai, Codex, Gemini CLI, Copilot CLI), including how skills differ from rules and project memory, how to use and author them, common patterns, and a worked commit-message example
+- New [Agent Skills](/ai/skills) page in the [AI](/ai) section - multi-tool guide to the `SKILL.md` standard (Cursor, Claude Code, Claude.ai, Codex, Gemini CLI, Copilot CLI), including how skills differ from rules and project memory, how to use and author them, common patterns, and a worked commit-message example
 - Added **Agent skill** to the [AI Glossary](/ai/glossary) and cross-linked the page from [AI-Assisted Development](/ai/ai-assisted-development), [Context & Prompt Engineering](/ai/context-engineering), and [Knowledge Management with LLMs](/ai/knowledge-management)
 
 ## [1.18.1] - 2026-06-05
@@ -279,7 +279,7 @@ All notable changes to this project will be documented in this file.
 - Build a Simple Blog Page - new Step 4 "Responsive header and footer" covering a mobile nav toggle with `aria-expanded` / `aria-controls` + `.visually-hidden` utility, a `@media (max-width: 40rem)` query, the adjacent-sibling combinator pattern (`[aria-expanded="true"] + nav`) for CSS-driven disclosure, and a multi-column footer that stacks via the same `repeat(auto-fit, minmax())` trick - plus a decision table contrasting `auto-fit` / `minmax()` against `@media` queries
 
 ### Changed
-- Build a Simple Blog Page - cross-reference links threaded through every step: Step 2 links to the CSS beginners' chapters on box model / colors & typography / Flexbox, plus CSS Grid / Responsive Design / CSS Custom Properties for the "two things worth understanding" notes; Step 3 links to DOM and Events chapters; the relative-dates row links to the Intl API Formatting guide; Step 5 (fetch) links to Working with Data and the Async/Await guide; Vite section links to the VPS deploy chapter; Next steps expanded with targeted chapter links plus Web Performance. Summary and "What you will build" updated to mention the responsive header and multi-column footer; previous "Step 4 -- load posts from a JSON file" renumbered to Step 5 (optional)
+- Build a Simple Blog Page - cross-reference links threaded through every step: Step 2 links to the CSS beginners' chapters on box model / colors & typography / Flexbox, plus CSS Grid / Responsive Design / CSS Custom Properties for the "two things worth understanding" notes; Step 3 links to DOM and Events chapters; the relative-dates row links to the Intl API Formatting guide; Step 5 (fetch) links to Working with Data and the Async/Await guide; Vite section links to the VPS deploy chapter; Next steps expanded with targeted chapter links plus Web Performance. Summary and "What you will build" updated to mention the responsive header and multi-column footer; previous "Step 4 - load posts from a JSON file" renumbered to Step 5 (optional)
 
 ## [1.7.0] - 2026-04-20
 

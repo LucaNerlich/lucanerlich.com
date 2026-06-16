@@ -280,7 +280,7 @@ For non-blocking JS loading, use the `loading` attribute:
 
 For best performance, split CSS and JS loading:
 
-```html title="page.html -- recommended placement"
+```html title="page.html - recommended placement"
 <!DOCTYPE html>
 <html>
 <head>
@@ -576,7 +576,7 @@ multi-tenancy setup, see [Multi-Tenancy UI Frontend Themes](./ui/multi-tenancy-s
 
 ### Missing #base= directive
 
-```text title="WRONG -- files won't be found"
+```text title="WRONG - files won't be found"
 main.js
 utils.js
 ```
@@ -605,7 +605,7 @@ time out. Detect this with the dump libs tool, which reports circular dependency
 
 ```text
 Author:  ✅ /apps/myproject/clientlibs/clientlib-site.css loads fine
-Publish: ❌ 404 -- /apps/ is blocked by Dispatcher
+Publish: ❌ 404 - /apps/ is blocked by Dispatcher
 ```
 
 Always add `allowProxy="{Boolean}true"` and reference the proxy URL in Dispatcher configs.

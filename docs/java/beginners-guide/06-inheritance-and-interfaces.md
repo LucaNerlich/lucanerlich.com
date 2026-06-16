@@ -179,10 +179,10 @@ abstract class Shape {
         this.color = color;
     }
 
-    // Abstract method -- subclasses MUST implement this
+    // Abstract method - subclasses MUST implement this
     abstract double area();
 
-    // Concrete method -- subclasses inherit this
+    // Concrete method - subclasses inherit this
     String describe() {
         return color + " shape with area " + String.format("%.2f", area());
     }
@@ -219,7 +219,7 @@ class Rectangle extends Shape {
 ```
 
 ```java
-// Shape s = new Shape("red"); // compile error -- cannot instantiate abstract class
+// Shape s = new Shape("red"); // compile error - cannot instantiate abstract class
 
 Circle circle = new Circle("red", 5);
 Rectangle rect = new Rectangle("blue", 4, 6);

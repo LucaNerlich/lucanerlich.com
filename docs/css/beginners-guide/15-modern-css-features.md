@@ -1,7 +1,7 @@
 ---
 title: "Modern CSS Features"
 sidebar_label: "Modern CSS"
-description: Recent CSS additions -- native nesting, the :has() selector, container queries, @layer, logical properties, color-mix(), accent-color, and subgrid.
+description: Recent CSS additions - native nesting, the :has() selector, container queries, @layer, logical properties, color-mix(), accent-color, and subgrid.
 slug: /css/beginners-guide/modern-css-features
 tags: [css, beginners]
 keywords:

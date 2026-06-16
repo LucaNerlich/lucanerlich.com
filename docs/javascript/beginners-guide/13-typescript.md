@@ -1,7 +1,7 @@
 ---
 title: "TypeScript"
 sidebar_label: "TypeScript"
-description: TypeScript adds static types to JavaScript -- learn type annotations, interfaces, generics, union types, and how to set up a TypeScript project.
+description: TypeScript adds static types to JavaScript - learn type annotations, interfaces, generics, union types, and how to set up a TypeScript project.
 slug: /javascript/beginners-guide/typescript
 tags: [javascript, beginners, typescript, types]
 keywords:
@@ -29,7 +29,7 @@ function add(a, b) {
 }
 
 add(2, 3);       // 5
-add("2", 3);     // "23" -- probably a bug
+add("2", 3);     // "23" - probably a bug
 ```
 
 JavaScript happily concatenates a string and a number. TypeScript catches this:
@@ -174,7 +174,7 @@ annotations when:
 // Inference is enough
 const count = 0;
 
-// Annotation needed -- no initial value
+// Annotation needed - no initial value
 let username: string;
 username = "ada";
 ```
@@ -921,7 +921,7 @@ TypeScript must be compiled to JavaScript before the browser can run it. Common 
 For new projects, **Vite** is the simplest choice:
 
 ```bash
-npm create vite@latest my-app -- --template vanilla-ts
+npm create vite@latest my-app - --template vanilla-ts
 cd my-app
 npm install
 npm run dev

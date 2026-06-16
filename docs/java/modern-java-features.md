@@ -44,7 +44,7 @@ record Point(int x, int y) {}
 
 // The compiler generates:
 // - Constructor: Point(int x, int y)
-// - Accessors:   x(), y()     (not getX() -- no "get" prefix)
+// - Accessors:   x(), y()     (not getX() - no "get" prefix)
 // - equals()     based on all fields
 // - hashCode()   based on all fields
 // - toString()   "Point[x=1, y=2]"
@@ -59,7 +59,7 @@ System.out.println(p.equals(new Point(1, 2))); // true
 
 ```java
 record Email(String address) {
-    // Compact constructor -- no parameter list, fields assigned automatically
+    // Compact constructor - no parameter list, fields assigned automatically
     Email {
         if (address == null || !address.contains("@")) {
             throw new IllegalArgumentException("Invalid email: " + address);
@@ -135,7 +135,7 @@ double area(Shape shape) {
         case Circle c    -> Math.PI * c.radius() * c.radius();
         case Rectangle r -> r.width() * r.height();
         case Triangle t  -> 0.5 * t.base() * t.height();
-        // No default needed -- compiler knows all cases are covered
+        // No default needed - compiler knows all cases are covered
     };
 }
 ```
@@ -145,7 +145,7 @@ double area(Shape shape) {
 ```java
 sealed abstract class Vehicle permits Car, Truck, Motorcycle {}
 
-final class Car extends Vehicle {        // final -- cannot be extended further
+final class Car extends Vehicle {        // final - cannot be extended further
     // ...
 }
 
@@ -156,7 +156,7 @@ final class PickupTruck extends Truck {}
 final class SemiTruck extends Truck {}
 
 non-sealed class Motorcycle extends Vehicle {}
-// non-sealed -- anyone can extend Motorcycle
+// non-sealed - anyone can extend Motorcycle
 ```
 
 | Modifier     | Meaning                                          |
@@ -180,7 +180,7 @@ if (obj instanceof String) {
     System.out.println(s.length());
 }
 
-// After -- binding variable 's' is in scope after the check
+// After - binding variable 's' is in scope after the check
 if (obj instanceof String s) {
     System.out.println(s.length());
 }

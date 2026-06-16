@@ -1,6 +1,6 @@
 ---
 title: AEM Recipes
-description: Task-oriented how-to recipes that stitch the AEM deep-dive pages into end-to-end workflows -- build a component, deliver headless content, make a query fast, publish, secure, and debug.
+description: Task-oriented how-to recipes that stitch the AEM deep-dive pages into end-to-end workflows - build a component, deliver headless content, make a query fast, publish, secure, and debug.
 sidebar_position: 3
 tags: [aem, recipes, how-to]
 keywords:
@@ -17,7 +17,7 @@ recipe is a short checklist with links to the detailed pages.
 
 ## Build a configurable component
 
-1. Scaffold the component and HTL -- [Your First Component](/aem/beginners-guide/your-first-component).
+1. Scaffold the component and HTL - [Your First Component](/aem/beginners-guide/your-first-component).
 2. Write the markup with [HTL](/aem/htl-templates) and a [Sling Model](/aem/beginners-guide/sling-models) for logic.
 3. Add an authoring [dialog](/aem/component-dialogs) with the fields authors need.
 4. Add [validation](/aem/components/dialog-validation) for any business rules (and re-check in the model).
@@ -25,7 +25,7 @@ recipe is a short checklist with links to the detailed pages.
 
 ## Add a dynamic dropdown to a dialog
 
-1. Add a `select` with a `datasource` resource type -- [Component Dialogs: datasource](/aem/component-dialogs#select-with-datasource).
+1. Add a `select` with a `datasource` resource type - [Component Dialogs: datasource](/aem/component-dialogs#select-with-datasource).
 2. Implement the [datasource servlet](/aem/beginners-guide/servlets-and-requests) that builds the options.
 3. Read the saved value in your [Sling Model](/aem/beginners-guide/sling-models).
 
@@ -34,12 +34,12 @@ recipe is a short checklist with links to the detailed pages.
 1. Model the content as a [Content Fragment Model](/aem/content/content-fragments).
 2. Author fragments in the Content Fragments Console.
 3. Enable the model and create a [GraphQL endpoint](/aem/content/graphql).
-4. Save a **persisted query** and fetch it from your frontend -- [headless end-to-end](/aem/content/content-fragments#headless-end-to-end-from-model-to-frontend).
+4. Save a **persisted query** and fetch it from your frontend - [headless end-to-end](/aem/content/content-fragments#headless-end-to-end-from-model-to-frontend).
 5. Configure CORS, the referrer filter, and caching for production.
 
 ## Make a slow query fast
 
-1. Run the query through the **Explain Query** tool to confirm whether it traverses -- [Search & Indexing](/aem/content/search-and-indexing).
+1. Run the query through the **Explain Query** tool to confirm whether it traverses - [Search & Indexing](/aem/content/search-and-indexing).
 2. Tighten the `path` and `type` constraints.
 3. Define an Oak [property or Lucene index](/aem/beginners-guide/search-and-indexing) that matches the filter + sort.
 4. Deploy the index under `/oak:index` (use the `-custom-N` convention on AEMaaCS) and reindex.

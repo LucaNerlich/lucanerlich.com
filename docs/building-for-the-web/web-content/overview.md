@@ -29,7 +29,7 @@ Throughout this section, **Do** blocks show patterns worth copying; **Don't** bl
 | **Scannable** | Headings, lists, and short paragraphs let people orient themselves before reading in depth. |
 | **Focused** | Each view has a clear primary purpose; secondary paths stay visible but subordinate. |
 | **Consistent** | Patterns for titles, buttons, and terminology repeat across the site so users learn the interface once. |
-| **Inclusive** | Color contrast, typography, and structure work for low vision, zoom users, and keyboard navigation -- not only mouse users with ideal monitors. |
+| **Inclusive** | Color contrast, typography, and structure work for low vision, zoom users, and keyboard navigation - not only mouse users with ideal monitors. |
 
 ```mermaid
 flowchart LR
@@ -46,13 +46,13 @@ flowchart LR
 
 ## Chapters in this section
 
-1. [**Readability and typography**](./readability-and-typography.md) -- plain language, microcopy basics, line measure, body type sizing.
-2. [**Structure and hierarchy**](./structure-and-hierarchy.md) -- headings, landmarks, lists, page hierarchy, visual focus, calls to action, whitespace.
-3. [**Forms and interactions**](./forms-and-interactions.md) -- link text, navigation, form field labels and errors, mobile-first DOM order.
-4. [**Microcopy and error states**](./microcopy-and-error-states.md) -- buttons, validation messages, empty states, loading, success, 404 pages.
-5. [**Color and contrast**](./color-and-contrast.md) -- WCAG targets, design tokens, dark mode, identifying links beyond colour.
-6. [**Images and media**](./images-and-media.md) -- meaningful alt text, decorative images, captions, video, audio.
-7. [**Information architecture**](./information-architecture.md) -- site navigation, breadcrumbs, taxonomies, search UX, URL design.
+1. [**Readability and typography**](./readability-and-typography.md) - plain language, microcopy basics, line measure, body type sizing.
+2. [**Structure and hierarchy**](./structure-and-hierarchy.md) - headings, landmarks, lists, page hierarchy, visual focus, calls to action, whitespace.
+3. [**Forms and interactions**](./forms-and-interactions.md) - link text, navigation, form field labels and errors, mobile-first DOM order.
+4. [**Microcopy and error states**](./microcopy-and-error-states.md) - buttons, validation messages, empty states, loading, success, 404 pages.
+5. [**Color and contrast**](./color-and-contrast.md) - WCAG targets, design tokens, dark mode, identifying links beyond colour.
+6. [**Images and media**](./images-and-media.md) - meaningful alt text, decorative images, captions, video, audio.
+7. [**Information architecture**](./information-architecture.md) - site navigation, breadcrumbs, taxonomies, search UX, URL design.
 
 ## Page-level checklist
 
@@ -69,7 +69,7 @@ Use this before shipping or when auditing an existing page.
 
 ## Related reading
 
-- [**Content Modeling**](../content-modeling.md) -- types, fields, and CMS-level structure
-- [**Semantic HTML**](../semantic-html.mdx) -- meaningful elements and accessibility hooks
-- [**Web Performance**](../web-performance.md) -- speed, images, and Core Web Vitals
-- [**CSS: Colors and Typography**](../../css/beginners-guide/04-colors-and-typography.md) -- fonts, units, and color in stylesheets
+- [**Content Modeling**](../content-modeling.md) - types, fields, and CMS-level structure
+- [**Semantic HTML**](../semantic-html.mdx) - meaningful elements and accessibility hooks
+- [**Web Performance**](../web-performance.md) - speed, images, and Core Web Vitals
+- [**CSS: Colors and Typography**](../../css/beginners-guide/04-colors-and-typography.md) - fonts, units, and color in stylesheets

@@ -1,7 +1,7 @@
 ---
 title: "The DOM"
 sidebar_label: "The DOM"
-description: Learn how JavaScript interacts with web pages through the DOM -- selecting elements, modifying content, creating and removing elements, and traversing the tree.
+description: Learn how JavaScript interacts with web pages through the DOM - selecting elements, modifying content, creating and removing elements, and traversing the tree.
 slug: /javascript/beginners-guide/the-dom
 tags: [javascript, beginners, dom]
 keywords:
@@ -193,11 +193,11 @@ div.innerHTML = "<h2>New Title</h2><p>New paragraph</p>";
 **Security warning:** Never use `innerHTML` with user input - it creates a Cross-Site Scripting (XSS) vulnerability:
 
 ```js
-// DANGEROUS -- never do this
+// DANGEROUS - never do this
 const userInput = '<img src=x onerror="alert(\'hacked\')">';
 div.innerHTML = userInput; // executes the attack
 
-// SAFE -- use textContent for user input
+// SAFE - use textContent for user input
 div.textContent = userInput; // displays as plain text
 ```
 
@@ -416,16 +416,16 @@ Insert HTML at specific positions:
 ```js
 const heading = document.querySelector("h1");
 
-// beforebegin -- before the element
+// beforebegin - before the element
 heading.insertAdjacentHTML("beforebegin", "<p>Before the heading</p>");
 
-// afterbegin -- inside, at the start
+// afterbegin - inside, at the start
 heading.insertAdjacentHTML("afterbegin", "<span>★ </span>");
 
-// beforeend -- inside, at the end
+// beforeend - inside, at the end
 heading.insertAdjacentHTML("beforeend", "<span> ★</span>");
 
-// afterend -- after the element
+// afterend - after the element
 heading.insertAdjacentHTML("afterend", "<p>After the heading</p>");
 ```
 
@@ -585,7 +585,7 @@ for (const user of users) {
     nameSpan.textContent = user.name;
 
     const roleSpan = document.createElement("span");
-    roleSpan.textContent = ` -- ${user.role}`;
+    roleSpan.textContent = ` - ${user.role}`;
 
     li.appendChild(nameSpan);
     li.appendChild(roleSpan);
@@ -596,10 +596,10 @@ for (const user of users) {
 This renders:
 
 ```text
-• Ada -- Admin
-• Bob -- User
-• Charlie -- User
-• Diana -- Moderator
+• Ada - Admin
+• Bob - User
+• Charlie - User
+• Diana - Moderator
 ```
 
 ## When to use which approach

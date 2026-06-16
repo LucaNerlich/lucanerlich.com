@@ -252,7 +252,7 @@ export const config = {
 ### Setup with Vite
 
 ```bash
-npm create vite@latest my-react-app -- --template react-ts
+npm create vite@latest my-react-app - --template react-ts
 cd my-react-app
 npm install
 ```
@@ -416,7 +416,7 @@ function AutoFocusInput() {
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        inputRef.current?.focus(); // optional chaining -- ref may not be attached yet
+        inputRef.current?.focus(); // optional chaining - ref may not be attached yet
     }, []);
 
     return <input ref={inputRef} type="text" />;
@@ -508,7 +508,7 @@ function useFetch<T>(url: string): FetchState<T> & { refetch: () => void } {
     return { ...state, refetch: fetch_ };
 }
 
-// Usage -- T is inferred as User
+// Usage - T is inferred as User
 interface User { id: number; name: string; }
 
 function UserProfile({ userId }: { userId: number }) {
@@ -623,7 +623,7 @@ then remove them:
 
 ```typescript
 // Temporary escape hatch while migrating
-// @ts-expect-error -- TODO: properly type this after the migration
+// @ts-expect-error - TODO: properly type this after the migration
 const result = legacyFunction(data);
 ```
 

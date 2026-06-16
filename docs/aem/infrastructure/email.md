@@ -35,7 +35,7 @@ The mail service is configured via the **Day CQ Mail Service** factory PID.
 ### Local development (with MailHog)
 
 [MailHog](https://github.com/mailhog/MailHog) is a lightweight SMTP test server that
-captures all outgoing mail in a web UI -- no real mail provider needed.
+captures all outgoing mail in a web UI - no real mail provider needed.
 
 Start MailHog with Docker:
 
@@ -43,8 +43,8 @@ Start MailHog with Docker:
 docker run -d --name mailhog -p 1025:1025 -p 8025:8025 mailhog/mailhog
 ```
 
-- **Port 1025** -- SMTP (for AEM to send to)
-- **Port 8025** -- Web UI (open in browser to see captured mails)
+- **Port 1025** - SMTP (for AEM to send to)
+- **Port 8025** - Web UI (open in browser to see captured mails)
 
 ```json title="ui.config/.../config.author/com.day.cq.mailer.DefaultMailService.cfg.json"
 {
@@ -106,7 +106,7 @@ mail server):
 
 ## Sending a Simple Plain-Text E-Mail
 
-The simplest case -- inject `MessageGatewayService`, build a `SimpleEmail`, and send it:
+The simplest case - inject `MessageGatewayService`, build a `SimpleEmail`, and send it:
 
 ```java
 import com.day.cq.mailer.MessageGateway;
@@ -139,7 +139,7 @@ public class SimpleMailSender {
             gateway.send(email);
         } else {
             throw new IllegalStateException(
-                "Mail gateway not available -- check DefaultMailService config");
+                "Mail gateway not available - check DefaultMailService config");
         }
     }
 }
@@ -271,7 +271,7 @@ public void sendTemplatedMail(ResourceResolver resolver,
     }
 
     // Replace ${placeholders} in the template (both headers and body) with the
-    // token values. Use the Map overload -- getEmail(StrLookup, Class) is deprecated.
+    // token values. Use the Map overload - getEmail(StrLookup, Class) is deprecated.
     HtmlEmail email = template.getEmail(tokens, HtmlEmail.class);
 
     email.setTo(Collections.singletonList(new InternetAddress(recipientEmail)));
@@ -367,7 +367,7 @@ public String renderPageToHtml(ResourceResolver resolver, String pagePath)
 ### Pattern 3: Properties-file template + StringSubstitutor
 
 `MailTemplate` is convenient but rigid: one header block, one body, and its own parsing
-rules. A more flexible approach -- and a common one in real projects -- is to store the
+rules. A more flexible approach - and a common one in real projects - is to store the
 template as a Java **`.properties`** file with named sections and do the token replacement
 yourself with Apache Commons `StringSubstitutor`. This keeps the subject, header, message,
 and footer as separate, independently reusable fields.
@@ -466,12 +466,12 @@ public Email buildEmail(String templatePath, Map<String, String> params,
 
 **When to prefer this over `MailTemplate`:** you want named, independently reusable sections
 (subject/header/message/footer), the subject to live inside the template, or full control over
-parsing and encoding. The cost is that you own the loader and the encoding handling -- which is
+parsing and encoding. The cost is that you own the loader and the encoding handling - which is
 exactly what the snippet above provides.
 
 #### Combining with a separate `.html` body in the JCR
 
-Rich HTML is awkward to keep inside a single `.properties` value -- the escaping and `\` line
+Rich HTML is awkward to keep inside a single `.properties` value - the escaping and `\` line
 continuations get unwieldy fast. A clean hybrid keeps the small metadata (subject, and a
 pointer to the body) in the properties file, while the **HTML body lives in its own `.html`
 file** in the JCR, carrying the same `${placeholder}` tokens. The body file is authorable and
@@ -525,7 +525,7 @@ private String loadText(String path, ResourceResolver resolver) throws Exception
 ```
 
 > Reading the `.html` file **directly as UTF-8** sidesteps the `Properties.load` ISO-8859-1
-> gotcha entirely -- it only applies to `.properties` parsing, not to a raw HTML stream. The
+> gotcha entirely - it only applies to `.properties` parsing, not to a raw HTML stream. The
 > placeholder mechanism is identical (`${...}` via `StringSubstitutor`), so the same `params`
 > map drives the subject, the metadata, and the HTML body. Authors then edit the HTML file in
 > the JCR without ever touching Java.
@@ -543,7 +543,7 @@ template from one of two sources:
 
 This section walks through both, end to end.
 
-### Step 1 -- Choose where the templates live
+### Step 1 - Choose where the templates live
 
 | Storage                          | Edit by         | Load with                          | Best for                                                   |
 |----------------------------------|-----------------|------------------------------------|------------------------------------------------------------|
@@ -555,11 +555,11 @@ This section walks through both, end to end.
 > read-only there. Put developer-owned templates under `/apps/<project>/templates/email/`
 > (immutable but readable at runtime) or ship them as bundle resources.
 
-### Step 2 -- Write the template (header block + body + placeholders)
+### Step 2 - Write the template (header block + body + placeholders)
 
 A template is a plain text/HTML file. An optional **header block** at the very top sets mail
 headers; a blank line separates it from the body. `${placeholder}` tokens are allowed
-anywhere -- including in the headers.
+anywhere - including in the headers.
 
 ```html title="welcome.html"
 Subject: Welcome to ${siteName}, ${firstName}!
@@ -590,10 +590,10 @@ Things worth knowing about the format:
 - **Charset:** `create()` honors the node's `jcr:encoding` (default `utf-8`); the
   `InputStream` constructor takes the charset as its second argument.
 
-### Step 3, Option A -- Store the template in the JCR (`ui.apps`)
+### Step 3, Option A - Store the template in the JCR (`ui.apps`)
 
 Drop the file into your content package's `jcr_root` tree. FileVault imports any plain file
-as an `nt:file` node automatically -- no `.content.xml` needed for the file itself.
+as an `nt:file` node automatically - no `.content.xml` needed for the file itself.
 
 ```text title="ui.apps module layout"
 ui.apps/src/main/content/jcr_root/apps/myproject/templates/email/
@@ -623,9 +623,9 @@ if (template == null) {
 ```
 
 > `MailTemplate.create()` returns `null` when the path does not resolve to an `nt:file`
-> node. Always null-check it -- a misspelled path fails silently otherwise.
+> node. Always null-check it - a misspelled path fails silently otherwise.
 
-### Step 3, Option B -- Ship the template as a bundle resource
+### Step 3, Option B - Ship the template as a bundle resource
 
 If authors never touch the templates, the simplest option is to keep them inside the bundle
 and load them from the classpath. No JCR lookup, no `Session`, and they are trivial to unit
@@ -648,7 +648,7 @@ public MailTemplate loadFromBundle(String resourceName) throws IOException {
 }
 ```
 
-### Step 4 -- Render the placeholders and send
+### Step 4 - Render the placeholders and send
 
 Build the token map, render the template into a typed `Email`, fill in any per-recipient
 details, and hand it to the gateway:
@@ -682,13 +682,13 @@ public void sendWelcome(ResourceResolver resolver, String recipient,
 }
 ```
 
-### Step 5 -- Wire it into the reusable service
+### Step 5 - Wire it into the reusable service
 
 In a real project, route everything through the `EmailService.sendTemplated(...)` method
 shown [below](#reusable-e-mail-service) so template loading, token replacement, and error
 handling live in one place.
 
-### Step 6 -- Verify the rendered output
+### Step 6 - Verify the rendered output
 
 - **Locally:** send against [MailHog / Mailpit](#local-testing-with-mailhog) and inspect the
   rendered HTML and headers in the web UI.
@@ -698,7 +698,7 @@ handling live in one place.
 
 > **Escape user input.** Tokens are substituted verbatim into the HTML, so any value that
 > originates from a user (names, free-text fields) must be HTML-escaped before it goes into
-> the token map -- otherwise the template is open to HTML/markup injection.
+> the token map - otherwise the template is open to HTML/markup injection.
 
 > **Localization:** keep one template file per language
 > (`welcome_de.html`, `welcome_en.html`, ...) and resolve the path from the recipient's
@@ -820,7 +820,7 @@ public class EmailServiceImpl implements EmailService {
 
         HtmlEmail email;
         // Build the e-mail inside the try-with-resources, then send after the resolver
-        // is closed -- the template is fully read by then.
+        // is closed - the template is fully read by then.
         try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(auth)) {
             Session session = resolver.adaptTo(Session.class);
 
@@ -878,14 +878,14 @@ public class EmailServiceImpl implements EmailService {
 > `myproject-mail-service` (with read access to your template path) via a
 > `org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended` config. See the
 > [OSGi configuration](../backend/osgi-configuration.mdx) page. Templates shipped as bundle
-> resources skip this entirely -- they need no resolver at all.
+> resources skip this entirely - they need no resolver at all.
 
 ---
 
 ## Sending to AEM Users and Groups
 
 So far recipients have been raw address strings. In practice you usually know the recipients
-as AEM **users and groups** (`Authorizable`s) -- a workflow participant, a project group, the
+as AEM **users and groups** (`Authorizable`s) - a workflow participant, a project group, the
 members of a role. It is cleaner to let the service resolve addresses from the user profile
 and expand groups itself, so callers pass principals rather than e-mail strings.
 
@@ -931,7 +931,7 @@ private List<Authorizable> resolveUsers(Authorizable principal) throws Exception
 
 With those helpers, send **one mail per recipient** rather than putting everyone on a single
 `To`. A per-recipient loop keeps addresses private, lets each message carry per-recipient
-tokens (e.g. `${participantId}`), and -- importantly -- means one bad address or send failure
+tokens (e.g. `${participantId}`), and - importantly - means one bad address or send failure
 is logged and skipped instead of aborting the whole batch:
 
 ```java title="Per-recipient send loop"
@@ -1174,7 +1174,7 @@ to MailHog (which is no longer maintained):
 docker run -d --name mailpit -p 1025:1025 -p 8025:8025 axllent/mailpit
 ```
 
-Same ports, same OSGi config -- just a different Docker image. Mailpit offers a more modern
+Same ports, same OSGi config - just a different Docker image. Mailpit offers a more modern
 UI, mobile-responsive views, and better performance.
 
 ---
@@ -1191,7 +1191,7 @@ import javax.mail.internet.InternetAddress
 
 def gatewayService = getService(MessageGatewayService.class)
 def gateway = gatewayService.getGateway(org.apache.commons.mail.Email.class)
-assert gateway != null : "Mail gateway not configured -- check DefaultMailService"
+assert gateway != null : "Mail gateway not configured - check DefaultMailService"
 
 def email = new SimpleEmail()
 email.setFrom("test@local.dev")
@@ -1237,7 +1237,7 @@ if (gw == null) {
     return;
 }
 
-// Bad -- NullPointerException if config is missing
+// Bad - NullPointerException if config is missing
 gatewayService.getGateway(Email.class).send(email);
 ```
 
@@ -1297,10 +1297,10 @@ block the calling thread. Consider:
 
 ## See also
 
-- [OSGi configuration](../backend/osgi-configuration.mdx) -- run-mode configs and secrets
-- [Workflows](../backend/workflows.mdx) -- triggering e-mails from workflow steps
-- [Groovy Console](../groovy-console.mdx) -- quick mail testing
-- [Deployment](./deployment.mdx) -- deploying OSGi configs
-- [AEM as a Cloud Service](./cloud-service.mdx) -- advanced networking
+- [OSGi configuration](../backend/osgi-configuration.mdx) - run-mode configs and secrets
+- [Workflows](../backend/workflows.mdx) - triggering e-mails from workflow steps
+- [Groovy Console](../groovy-console.mdx) - quick mail testing
+- [Deployment](./deployment.mdx) - deploying OSGi configs
+- [AEM as a Cloud Service](./cloud-service.mdx) - advanced networking
 - [Security basics](./security.mdx)
-- [Sling Models and Services](../backend/sling-models.mdx) -- OSGi service patterns
+- [Sling Models and Services](../backend/sling-models.mdx) - OSGi service patterns

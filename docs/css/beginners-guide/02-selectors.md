@@ -1,7 +1,7 @@
 ---
 title: "Selectors"
 sidebar_label: "Selectors"
-description: How CSS targets HTML elements -- element, class, ID, universal, grouping, descendant, child, sibling, and attribute selectors.
+description: How CSS targets HTML elements - element, class, ID, universal, grouping, descendant, child, sibling, and attribute selectors.
 slug: /css/beginners-guide/selectors
 tags: [css, beginners]
 keywords:
@@ -189,11 +189,11 @@ ul > li {
 
 ```html
 <ul>
-    <li>Direct child -- styled</li>
+    <li>Direct child - styled</li>
     <li>
-        Direct child -- styled
+        Direct child - styled
         <ul>
-            <li>Nested li -- NOT styled (not a direct child of the outer ul)</li>
+            <li>Nested li - NOT styled (not a direct child of the outer ul)</li>
         </ul>
     </li>
 </ul>

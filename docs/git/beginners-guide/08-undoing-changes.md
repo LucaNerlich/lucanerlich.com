@@ -47,7 +47,7 @@ Before reaching for an undo command, ask:
 ## git restore - Discarding Working Tree Changes
 
 `git restore` discards changes in the working tree, reverting a file to its last committed (or staged) state. This is
-the modern replacement for `git checkout -- <file>`.
+the modern replacement for `git checkout - <file>`.
 
 ### Discard unstaged changes in a file
 

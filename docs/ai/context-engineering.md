@@ -1,6 +1,6 @@
 ---
 title: Context & Prompt Engineering
-description: The context window as a finite budget, why prompt engineering grew into context engineering, context rot, and the long-horizon techniques -- compaction, structured note-taking, sub-agents, and just-in-time retrieval.
+description: The context window as a finite budget, why prompt engineering grew into context engineering, context rot, and the long-horizon techniques - compaction, structured note-taking, sub-agents, and just-in-time retrieval.
 tags: [ai, context-engineering, prompt-engineering, agents]
 keywords:
     - context engineering
@@ -22,23 +22,23 @@ a resource, how prompt engineering grew into context engineering, and the techni
 ## Context is a finite, engineered budget
 
 The **[context window](./glossary.md#context-window)** is the maximum block of [tokens](./glossary.md#token)
-a model can attend to at once. The defining property to internalize: **an LLM is stateless** -- it remembers
+a model can attend to at once. The defining property to internalize: **an LLM is stateless** - it remembers
 nothing between calls. The system prompt, the conversation so far, retrieved documents, and tool outputs all
 have to be placed inside the context of *each* call. A chatbot "remembers" earlier messages only because you
 resend them every turn.
 
 A typical production prompt assembles several pieces into one window:
 
-- **System prompt / instructions** -- who the model is and how it should behave.
-- **Conversation history** -- previous turns, re-sent every time.
-- **Retrieved data** -- chunks pulled in by [RAG](./rag.md) for grounding.
-- **Tool definitions and results** -- what the model may call and what it returned.
+- **System prompt / instructions** - who the model is and how it should behave.
+- **Conversation history** - previous turns, re-sent every time.
+- **Retrieved data** - chunks pulled in by [RAG](./rag.md) for grounding.
+- **Tool definitions and results** - what the model may call and what it returned.
 - **The user's current query.**
 
 Treating the window as a hard budget is the core insight, because:
 
 - **It costs money and time.** Every token is an input token you pay for and that adds latency on every call.
-- **More is not better.** Models recall less reliably as the window fills -- the "lost in the middle" effect.
+- **More is not better.** Models recall less reliably as the window fills - the "lost in the middle" effect.
 - **It fills up.** Long runs eventually exceed the window, forcing you to drop or summarize older content.
 
 So the engineering question is never "how much can I stuff in?" but "what is the *minimum, most relevant* set
@@ -59,15 +59,15 @@ pieces and place them in the context at inference time.
 ## From prompt engineering to context engineering
 
 **[Prompt engineering](./glossary.md#prompt-engineering)** is the original discipline: writing and organizing
-instructions -- especially system prompts -- for optimal output. Often declared "dead", it is in practice more
+instructions - especially system prompts - for optimal output. Often declared "dead", it is in practice more
 important than ever, just rebranded to capture a wider scope.
 
 **[Context engineering](./glossary.md#context-engineering)** is the successor for the agentic era: curating
 and maintaining the optimal set of tokens across *many turns* of inference, not just one. The progression:
 
-- **Blind prompting** -- a short task description typed into a chat box.
-- **Prompt engineering** -- thoughtful design of structure and context for a specific task.
-- **Context engineering** -- architecting the *full* context across all turns (system prompt, tools, MCP,
+- **Blind prompting** - a short task description typed into a chat box.
+- **Prompt engineering** - thoughtful design of structure and context for a specific task.
+- **Context engineering** - architecting the *full* context across all turns (system prompt, tools, MCP,
   retrieved data, message history, memory), with eval pipelines to measure whether tactics work.
 
 > Good context engineering means finding the smallest possible set of high-signal tokens that maximize the
@@ -75,16 +75,16 @@ and maintaining the optimal set of tokens across *many turns* of inference, not 
 
 ### Techniques
 
-- **System prompt at the "right altitude"** -- concrete enough to guide, flexible enough to allow heuristics.
+- **System prompt at the "right altitude"** - concrete enough to guide, flexible enough to allow heuristics.
   Avoid both brittle if/else logic and vague hand-waving.
-- **Token-efficient, unambiguous tools** -- bloated, overlapping tool sets are the most common failure mode.
-- **Curated few-shot examples** -- a few diverse canonical examples beat exhaustive edge-case enumeration.
-- **Structured I/O** -- delimiters, JSON schemas, and explicit field types reduce ambiguity.
+- **Token-efficient, unambiguous tools** - bloated, overlapping tool sets are the most common failure mode.
+- **Curated few-shot examples** - a few diverse canonical examples beat exhaustive edge-case enumeration.
+- **Structured I/O** - delimiters, JSON schemas, and explicit field types reduce ambiguity.
 
 ## Context rot: the constraint behind the techniques
 
 **[Context rot](./glossary.md#context-rot)** is the empirical phenomenon that as the number of tokens grows,
-the model's ability to accurately recall information from the context *decreases* -- "needle-in-a-haystack
+the model's ability to accurately recall information from the context *decreases* - "needle-in-a-haystack
 degradation". Two causes stack:
 
 1. **O(n^2) attention.** Every token attends to every other token, so the attention budget gets stretched
@@ -118,7 +118,7 @@ flowchart TB
 - **Compaction** keeps architectural decisions, unresolved bugs, and key details while discarding redundant
   tool outputs. Maximize recall first, then improve precision. Clearing stale tool results is its
   safest, lightest-touch form.
-- **Structured note-taking** is as simple as a `NOTES.md` scratchpad the agent reads and writes -- the
+- **Structured note-taking** is as simple as a `NOTES.md` scratchpad the agent reads and writes - the
   approach behind agents that sustain multi-hour tasks across context resets.
 - **Sub-agents** isolate detailed search context so the lead agent only synthesizes distilled results.
 - **Just-in-time retrieval** mirrors human cognition: we navigate file systems and bookmarks rather than
@@ -130,10 +130,10 @@ flowchart TB
 
 ## See also
 
-- [Large Language Models](./llm.md) -- statelessness is why everything must be in-context
-- [AI Agents](./agents.md) -- the systems these long-horizon techniques serve
-- [RAG](./rag.md) -- one technique within context engineering
-- [Knowledge Management with LLMs](./knowledge-management.md) -- persistent synthesis vs ephemeral retrieval
-- [Agent Skills](./skills.md) -- on-demand workflow packages that load only when relevant
-- [Evaluation and LLMOps](./evaluation-and-llmops.md) -- measuring whether context tactics actually work
-- [AI Glossary](./glossary.md) -- context window, context rot, compaction, sub-agents, and more
+- [Large Language Models](./llm.md) - statelessness is why everything must be in-context
+- [AI Agents](./agents.md) - the systems these long-horizon techniques serve
+- [RAG](./rag.md) - one technique within context engineering
+- [Knowledge Management with LLMs](./knowledge-management.md) - persistent synthesis vs ephemeral retrieval
+- [Agent Skills](./skills.md) - on-demand workflow packages that load only when relevant
+- [Evaluation and LLMOps](./evaluation-and-llmops.md) - measuring whether context tactics actually work
+- [AI Glossary](./glossary.md) - context window, context rot, compaction, sub-agents, and more

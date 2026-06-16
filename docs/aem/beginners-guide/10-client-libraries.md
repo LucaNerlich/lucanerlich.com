@@ -1,7 +1,7 @@
 ---
 title: "Client Libraries"
 sidebar_label: "Client Libraries"
-description: CSS and JS management in AEM -- clientlib structure, categories, dependencies, embedding, proxy serving, and the ui.frontend module.
+description: CSS and JS management in AEM - clientlib structure, categories, dependencies, embedding, proxy serving, and the ui.frontend module.
 slug: /aem/beginners-guide/client-libraries
 tags: [aem, beginners]
 keywords:

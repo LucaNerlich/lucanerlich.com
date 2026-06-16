@@ -302,7 +302,7 @@ HttpRequest request = HttpRequest.newBuilder()
             if (response.statusCode() < 500) {
                 return response; // success or client error (no retry)
             }
-            // Server error -- retry
+            // Server error - retry
             lastException = new IOException("Server error: " + response.statusCode());
         } catch (IOException e) {
             lastException = e;

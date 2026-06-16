@@ -1,7 +1,7 @@
 ---
 title: "Practice Projects"
 sidebar_label: "Practice Projects"
-description: Six hands-on projects -- from a simple component to a production Dispatcher config -- to reinforce everything covered in the guide.
+description: Six hands-on projects - from a simple component to a production Dispatcher config - to reinforce everything covered in the guide.
 slug: /aem/beginners-guide/practice-projects
 tags: [aem, beginners]
 keywords:
@@ -170,7 +170,7 @@ Build a headless content structure for events and consume it from a standalone f
 - The standalone frontend can be as simple as a single HTML file with a `fetch()` call:
 
 ```javascript
-// Local SDK only -- never hardcode credentials in production code.
+// Local SDK only - never hardcode credentials in production code.
 // On Publish, persisted queries are public GETs and need no auth header.
 const response = await fetch(
     'http://localhost:4502/graphql/execute.json/mysite/events-list',

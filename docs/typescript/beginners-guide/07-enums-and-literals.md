@@ -82,7 +82,7 @@ enum Direction {
     West,
 }
 
-const invalid: Direction = 99; // TypeScript allows this -- no error!
+const invalid: Direction = 99; // TypeScript allows this - no error!
 ```
 
 This is a known quirk. For most use cases, **string enums** or **const string unions** are safer choices.

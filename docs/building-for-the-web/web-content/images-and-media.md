@@ -16,7 +16,7 @@ sidebar_position: 7
 
 # Images and media
 
-Images, charts, and video carry meaning that visual readers absorb in a glance. Accessible alternatives -- `alt`, captions, transcripts -- carry that same meaning to anyone using assistive tech, anyone with images blocked, or anyone watching with the sound off. Back to the [section overview](./overview.md).
+Images, charts, and video carry meaning that visual readers absorb in a glance. Accessible alternatives - `alt`, captions, transcripts - carry that same meaning to anyone using assistive tech, anyone with images blocked, or anyone watching with the sound off. Back to the [section overview](./overview.md).
 
 ## Alternative text
 
@@ -76,5 +76,5 @@ Avoid **autoplay** with sound. Provide **captions** for speech and a **transcrip
 
 ## Related
 
-- [Web Performance -- Images](../web-performance.md) -- responsive image patterns with `srcset` and `sizes`.
-- [Semantic HTML](../semantic-html.mdx) -- `<figure>`, `<figcaption>`, `<picture>`, and media element references.
+- [Web Performance - Images](../web-performance.md) - responsive image patterns with `srcset` and `sizes`.
+- [Semantic HTML](../semantic-html.mdx) - `<figure>`, `<figcaption>`, `<picture>`, and media element references.

@@ -169,7 +169,7 @@ The same pattern works for scheduled unpublishing (e.g., time-limited promotions
 ```
 
 ```js
-// config/server.js -- extend the cron task
+// config/server.js - extend the cron task
 '*/5 * * * *': async ({ strapi }) => {
   await publishScheduled(strapi);
   await unpublishScheduled(strapi);

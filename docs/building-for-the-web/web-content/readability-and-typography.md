@@ -21,7 +21,7 @@ Comfortable reading is the floor for everything else on a page. If the line is t
 
 ## Language and tone
 
-Plain language is not "dumbing down" -- it reduces **cognitive load** so people can act on what you say. Front-load the meaning: first sentence answers the question; supporting detail follows.
+Plain language is not "dumbing down" - it reduces **cognitive load** so people can act on what you say. Front-load the meaning: first sentence answers the question; supporting detail follows.
 
 ### Do
 
@@ -35,7 +35,7 @@ seats any time; we prorate the difference on your next invoice.
 ```text
 Leveraging our synergistic enterprise-grade paradigm, stakeholders who opt into
 the cohort-oriented monetization stream will experience uplift across the
-value realization funnel -- consult your success partner for enablement.
+value realization funnel - consult your success partner for enablement.
 ```
 
 ### Do (define terms once)
@@ -54,7 +54,7 @@ Enable IdP-initiated SAML SP flows on the tenant for JIT SCIM provisioning.
 
 ## Microcopy basics
 
-Microcopy is the **small text** next to controls. It should say what happens next, not celebrate your brand. For a deeper reference -- buttons, validation, empty states, loading, success and error pages -- see [Microcopy and error states](./microcopy-and-error-states.md).
+Microcopy is the **small text** next to controls. It should say what happens next, not celebrate your brand. For a deeper reference - buttons, validation, empty states, loading, success and error pages - see [Microcopy and error states](./microcopy-and-error-states.md).
 
 ### Do
 
@@ -84,7 +84,7 @@ Empty state: Nothing to see here
 }
 
 .prose {
-    max-width: 65ch; /* "ch" ~= width of "0" -- line length tied to font */
+    max-width: 65ch; /* "ch" ~= width of "0" - line length tied to font */
     line-height: 1.55;
     font-size: 1rem;
 }
@@ -127,6 +127,6 @@ article p {
 
 ## Related
 
-- [Structure and hierarchy](./structure-and-hierarchy.md) -- where to put headings and how dense paragraphs should be.
-- [Color and contrast](./color-and-contrast.md) -- making the type you sized actually readable.
-- [CSS: Colors and Typography](../../css/beginners-guide/04-colors-and-typography.md) -- the underlying CSS reference.
+- [Structure and hierarchy](./structure-and-hierarchy.md) - where to put headings and how dense paragraphs should be.
+- [Color and contrast](./color-and-contrast.md) - making the type you sized actually readable.
+- [CSS: Colors and Typography](../../css/beginners-guide/04-colors-and-typography.md) - the underlying CSS reference.

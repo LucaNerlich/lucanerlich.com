@@ -12,7 +12,7 @@ keywords:
 
 # Search & Indexing
 
-Every non-trivial AEM feature -- navigation, lists, search results, dynamic teasers, content audits --
+Every non-trivial AEM feature - navigation, lists, search results, dynamic teasers, content audits --
 runs a **query** against the Oak repository. A query that is not backed by an **index** falls back to a
 full repository **traversal**, which is slow on author and dangerous on publish under load. This page
 covers how to query content and, more importantly, how to make those queries fast with the right Oak
@@ -43,11 +43,11 @@ flowchart LR
 | **JCR-SQL2** | SQL-like | Complex joins, precise control, scripts and the Groovy Console |
 | **XPath** | XPath 2.0 | Legacy; Oak still supports it but new code should prefer the above |
 
-All three compile down to the **same Oak query engine** and use the **same indexes** -- the choice is
+All three compile down to the **same Oak query engine** and use the **same indexes** - the choice is
 ergonomic, not performance. See [Modify and Query the JCR](./jcr.md) for QueryBuilder/SQL2 syntax and
 the [Groovy Console](../groovy-console.mdx) for ad-hoc querying.
 
-```java title="QueryBuilder -- the common case"
+```java title="QueryBuilder - the common case"
 Map<String, String> params = new HashMap<>();
 params.put("path", "/content/mysite");
 params.put("type", "cq:Page");
@@ -83,7 +83,7 @@ A traversal that is merely slow on author can take down a publish instance under
 | Type | Backed by | Best for |
 |------|-----------|----------|
 | **Property index** | Oak property index | Exact-match lookups on one/few properties (e.g. `cq:template`, an `sku`) |
-| **Lucene property index** | Lucene | The standard custom index in AEM -- property + full-text, ordering, aggregation |
+| **Lucene property index** | Lucene | The standard custom index in AEM - property + full-text, ordering, aggregation |
 | **Lucene full-text index** | Lucene | `CONTAINS()` / free-text search across content and binaries |
 
 In modern AEM (and exclusively on AEMaaCS) you almost always create a **Lucene** index; pure Oak
@@ -179,7 +179,7 @@ Deploy the `/oak:index` node via a content package, set `reindex=true` (or trigg
 Changing an index definition requires a **reindex** so existing content is covered:
 
 - Set `reindex="{Boolean}true"` on the index node (Oak flips it back to `false` when done).
-- Reindexing reads matching content -- it is I/O heavy; do it off-peak on large repositories.
+- Reindexing reads matching content - it is I/O heavy; do it off-peak on large repositories.
 - `async="[async]"` indexes update slightly behind writes (the norm for Lucene); pure property indexes
   are synchronous.
 
@@ -187,12 +187,12 @@ Changing an index definition requires a **reindex** so existing content is cover
 
 AEM ships tools to see whether a query is indexed and how it executes:
 
-- **Query Performance** -- `/libs/granite/operations/content/diagnosistools/queryPerformanceTool.html`
+- **Query Performance** - `/libs/granite/operations/content/diagnosistools/queryPerformanceTool.html`
   lists slow and popular queries.
-- **Explain Query** -- `/libs/granite/operations/content/diagnosistools/queryExplainTool.html` shows
+- **Explain Query** - `/libs/granite/operations/content/diagnosistools/queryExplainTool.html` shows
   which index a query uses (or reports a traversal) and the estimated cost. Run every new query through
   it before shipping.
-- **Index Manager** -- `/libs/granite/operations/content/diagnosistools/indexManager.html` lists index
+- **Index Manager** - `/libs/granite/operations/content/diagnosistools/indexManager.html` lists index
   definitions and their status.
 - Watch `error.log` for `Traversed ... nodes` warnings during development.
 
@@ -203,10 +203,10 @@ AEM ships tools to see whether a query is indexed and how it executes:
 - **Constrain by `path` and `type`.** A query scoped to `/content/mysite` and `cq:Page` is cheaper and
   easier to index than an unrestricted one.
 - **Prefer one well-designed Lucene index** over many tiny property indexes.
-- **Reindex off-peak** and never on a whim in production -- it is expensive.
+- **Reindex off-peak** and never on a whim in production - it is expensive.
 - **Commit index definitions to Git** under `ui.apps`; never hand-create them in CRXDE on a real
   environment (they will not survive deploys and will drift between tiers).
-- **Paginate** (`p.limit` / `guessTotal`) -- never load an unbounded result set into memory.
+- **Paginate** (`p.limit` / `guessTotal`) - never load an unbounded result set into memory.
 
 ## See also
 

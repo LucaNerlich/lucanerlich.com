@@ -1,7 +1,7 @@
 ---
 title: "Gradle"
 sidebar_label: "Gradle"
-description: Learn Gradle with Kotlin DSL -- project structure, dependency management, building fat JARs, and improving the REST API project with Jackson for JSON handling.
+description: Learn Gradle with Kotlin DSL - project structure, dependency management, building fat JARs, and improving the REST API project with Jackson for JSON handling.
 slug: /java/beginners-guide/gradle
 tags: [java, beginners, gradle, build-tools]
 keywords:
@@ -130,7 +130,7 @@ application {
     mainClass = "taskapi.ApiServer"
 }
 
-// Fat JAR task -- bundles all dependencies into one JAR
+// Fat JAR task - bundles all dependencies into one JAR
 tasks.register<Jar>("fatJar") {
     archiveClassifier = "all"
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -478,7 +478,7 @@ ssh "$SERVER" "sudo systemctl restart task-api"
 
 echo "Checking health..."
 sleep 3
-curl -sf https://yoursite.com/api/health && echo " -- OK" || echo " -- FAILED"
+curl -sf https://yoursite.com/api/health && echo " - OK" || echo " - FAILED"
 ```
 
 ## Which build tool should you use?

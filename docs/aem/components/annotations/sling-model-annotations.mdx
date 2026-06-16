@@ -82,7 +82,7 @@ If you use `Request` as the adaptable, you can still access the underlying resou
        defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class SafeModel {
     @ValueMapValue
-    private String title; // null if property doesn't exist -- model still works
+    private String title; // null if property doesn't exist - model still works
 }
 
 // REQUIRED (default): any missing field causes adaptTo() to return null
@@ -134,7 +134,7 @@ private Calendar publishDate;
 ```java
 // Field name matches JCR property name
 @ValueMapValue
-private String jcr:title; // Won't compile -- invalid Java identifier!
+private String jcr:title; // Won't compile - invalid Java identifier!
 
 // Use 'name' to map to JCR properties with special characters
 @ValueMapValue(name = "jcr:title")
@@ -556,11 +556,11 @@ Overrides the property/parameter name for `@Inject`. Only works with `@Inject`, 
 injector-specific annotations (which have their own `name` attribute).
 
 ```java
-// Without @Named -- field name "title" is used as the JCR property name
+// Without @Named - field name "title" is used as the JCR property name
 @Inject
 private String title;
 
-// With @Named -- reads the "jcr:title" property instead
+// With @Named - reads the "jcr:title" property instead
 @Inject @Named("jcr:title")
 private String pageTitle;
 ```

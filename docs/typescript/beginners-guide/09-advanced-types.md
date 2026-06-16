@@ -37,7 +37,7 @@ type C = IsString<"hello">; // true (string literals extend string)
 The power of conditional types comes from combining them with generics:
 
 ```typescript
-// Flatten arrays -- if T is an array, return the element type; otherwise return T
+// Flatten arrays - if T is an array, return the element type; otherwise return T
 type Flatten<T> = T extends (infer U)[] ? U : T;
 
 type Str = Flatten<string[]>;    // string
@@ -429,7 +429,7 @@ class TypedEventEmitter {
 const emitter = new TypedEventEmitter();
 
 emitter.on("user:login", ({ userId, timestamp }) => {
-    // userId: number, timestamp: Date -- fully typed
+    // userId: number, timestamp: Date - fully typed
     console.log(`User ${userId} logged in at ${timestamp}`);
 });
 

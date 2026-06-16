@@ -320,7 +320,7 @@ async function fetchUser(id: number): Promise<{ id: number; name: string }> {
 }
 
 type FetchResult = Awaited<ReturnType<typeof fetchUser>>;
-// { id: number; name: string } -- Awaited unwraps the Promise
+// { id: number; name: string } - Awaited unwraps the Promise
 
 // Extract the return type of a method
 class AuthService {

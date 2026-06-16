@@ -1,6 +1,6 @@
 ---
 title: Simplified Index Management
-description: A hands-on guide to diff-based custom Oak index management on AEM as a Cloud Service -- define one diff.json, let the platform merge it with the out-of-the-box index, and version it automatically.
+description: A hands-on guide to diff-based custom Oak index management on AEM as a Cloud Service - define one diff.json, let the platform merge it with the out-of-the-box index, and version it automatically.
 sidebar_position: 1.6
 tags: [aem, oak, indexing, search, diff-index]
 keywords:
@@ -20,11 +20,11 @@ underneath you.
 
 **Simplified Index Management** replaces the full copy with a single `diff.json` that describes *only*
 your changes. The platform merges that delta with the latest OOTB index and creates a new, versioned
-index for you -- but only when the merged result actually changes. This page walks through how it
+index for you - but only when the merged result actually changes. This page walks through how it
 works, how to set it up in both run modes, how to write a `diff.json`, and the merge rules that decide
 what your customization is allowed to do.
 
-If you are new to Oak indexes, read [Search & Indexing](./search-and-indexing.mdx) first -- it covers
+If you are new to Oak indexes, read [Search & Indexing](./search-and-indexing.mdx) first - it covers
 query types, index types, and why an unindexed query falls back to a slow traversal.
 
 ## How it works
@@ -70,7 +70,7 @@ repository and the pipeline applies it.
 ### 1. Create the diff.index node
 
 In your project's `ui.apps/src/main/content/jcr_root/_oak_index`, create a directory named `diff.index`.
-Inside it, add a `.content.xml` with the content below. You will not edit this file again -- it exists
+Inside it, add a `.content.xml` with the content below. You will not edit this file again - it exists
 for compatibility with the existing tooling. The `type` is `lucene` (otherwise the pipeline run fails),
 and `includedPaths` / `queryPaths` point at a non-existent path so the existing tooling does not build a
 large index here.
@@ -106,7 +106,7 @@ new version and reindexes.
 
 ## RDE and local Quickstart mode
 
-This mode applies changes immediately without a pipeline -- handy while you iterate locally or on a
+This mode applies changes immediately without a pipeline - handy while you iterate locally or on a
 Rapid Development Environment.
 
 1. Open **CRX/DE**.
@@ -120,7 +120,7 @@ Rapid Development Environment.
 :::warning Do not use immediate mode on large repositories
 In this mode every edit to `diff.index` / `diff.json` immediately creates a new index version and starts
 reindexing. On a large repository that is expensive and slow. Never use it for Cloud Service **DEV**
-environments -- use Pipeline Mode there instead.
+environments - use Pipeline Mode there instead.
 :::
 
 ## Writing a diff.json
@@ -187,7 +187,7 @@ when a property you added is dropped with a warning.
 ### Top-level properties
 
 - `includedPaths`, `queryPaths`, and `tags` are **merged as a union** with the existing values rather
-  than overwritten -- but `includedPaths` and `queryPaths` may **not be added** if they do not already
+  than overwritten - but `includedPaths` and `queryPaths` may **not be added** if they do not already
   exist, because adding them would make the index more restrictive.
 - These properties may **not be added** to an existing OOTB index and are dropped with a warning:
   `selectionPolicy`, `valueRegex`, `queryFilterRegex`, `excludedPaths`.
@@ -197,7 +197,7 @@ when a property you added is dropped with a warning.
 ### Indexed property rules
 
 - When you add a child under a `properties` node, the merger first matches **by the `name` value**: if
-  an existing child has the same `name`, your diff applies to that child -- even if the child node name
+  an existing child has the same `name`, your diff applies to that child - even if the child node name
   differs. It matches **by `function` value** the same way for function-based properties.
 - If no match is found, it creates a new child node.
 - These fields may **not be added or updated** on an existing child: `isRegexp`, `index`, `function`,
@@ -243,7 +243,7 @@ from your current state rather than writing it by hand.
 
 ## Troubleshooting
 
-- **A property I added was dropped with a warning.** You hit a merge rule -- most likely you tried to
+- **A property I added was dropped with a warning.** You hit a merge rule - most likely you tried to
   add `includedPaths`/`queryPaths` to an OOTB index, add a blocked top-level property, or change a
   protected field (`name`, `function`, `index`, `isRegexp`) on an existing property.
 - **My change did not produce a new version.** The normalized merge result was identical, so the
@@ -253,13 +253,13 @@ from your current state rather than writing it by hand.
 - **The pipeline run fails on the diff.index node.** Confirm the compatibility `.content.xml` sets
   `type="lucene"` and points `includedPaths`/`queryPaths` at a non-existent path.
 
-After any change, verify the resulting query actually uses your index with **Explain Query** -- see
+After any change, verify the resulting query actually uses your index with **Explain Query** - see
 [Diagnosing slow queries](./search-and-indexing.mdx#diagnosing-slow-queries).
 
 ## See also
 
-- [Search & Indexing](./search-and-indexing.mdx) -- query types, index types, deploying and reindexing
-- [Modify and Query the JCR](./jcr.md) -- QueryBuilder predicates and JCR-SQL2 syntax
-- [Cloud Service](../infrastructure/cloud-service.mdx) -- pipelines and environments
-- [Content Search and Indexing](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/indexing) -- official Adobe documentation
-- [oakTools](https://oak-indexing.github.io/oakTools/simplified.html) -- the Index Definition Analyzer and Diff Index Verifier
+- [Search & Indexing](./search-and-indexing.mdx) - query types, index types, deploying and reindexing
+- [Modify and Query the JCR](./jcr.md) - QueryBuilder predicates and JCR-SQL2 syntax
+- [Cloud Service](../infrastructure/cloud-service.mdx) - pipelines and environments
+- [Content Search and Indexing](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/indexing) - official Adobe documentation
+- [oakTools](https://oak-indexing.github.io/oakTools/simplified.html) - the Index Definition Analyzer and Diff Index Verifier

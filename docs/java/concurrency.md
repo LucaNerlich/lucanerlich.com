@@ -15,7 +15,7 @@ the practical patterns you need for everyday concurrent programming.
 ## Thread basics
 
 ```java
-// Option 1: Runnable (preferred -- does not return a value)
+// Option 1: Runnable (preferred - does not return a value)
 Runnable task = () -> System.out.println("Hello from " + Thread.currentThread().getName());
 Thread thread = new Thread(task);
 thread.start();   // starts a new OS thread
@@ -38,7 +38,7 @@ Callable<Integer> computation = () -> {
 Instead of managing threads manually, use an `ExecutorService` to manage a **thread pool**:
 
 ```java
-// Fixed thread pool -- good for CPU-bound work
+// Fixed thread pool - good for CPU-bound work
 ExecutorService executor = Executors.newFixedThreadPool(4);
 
 // Submit tasks

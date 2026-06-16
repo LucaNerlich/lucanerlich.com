@@ -23,9 +23,9 @@ Google's Core Web Vitals are the three metrics that define a good user experienc
 
 ```mermaid
 flowchart LR
-    LCP["LCP -- Largest Contentful Paint"]
-    INP["INP -- Interaction to Next Paint"]
-    CLS["CLS -- Cumulative Layout Shift"]
+    LCP["LCP - Largest Contentful Paint"]
+    INP["INP - Interaction to Next Paint"]
+    CLS["CLS - Cumulative Layout Shift"]
 
     LCP -->|"Loading"| Good1["Good: ≤ 2.5s"]
     INP -->|"Interactivity"| Good2["Good: ≤ 200ms"]
@@ -245,7 +245,7 @@ Using `font-display: optional` combined with preloading gives you the web font o
 Load only the JavaScript needed for the current page:
 
 ```javascript
-// Dynamic import -- loaded on demand
+// Dynamic import - loaded on demand
 const module = await import('./heavy-chart-library.js');
 ```
 

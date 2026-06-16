@@ -238,21 +238,21 @@ Created post: { title: 'My Title', body: 'My post content', userId: 1, id: 101 }
 ### Other HTTP methods
 
 ```js
-// PUT -- replace a resource
+// PUT - replace a resource
 await fetch("https://api.example.com/users/1", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name: "Updated Name" }),
 });
 
-// PATCH -- partially update a resource
+// PATCH - partially update a resource
 await fetch("https://api.example.com/users/1", {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name: "Updated Name" }),
 });
 
-// DELETE -- remove a resource
+// DELETE - remove a resource
 await fetch("https://api.example.com/users/1", {
     method: "DELETE",
 });
@@ -298,11 +298,11 @@ When fetching independent data, run requests in parallel:
 
 ```js
 async function getDashboardData() {
-    // Sequential -- slow (each waits for the previous)
+    // Sequential - slow (each waits for the previous)
     // const users = await fetchJSON("/api/users");
     // const posts = await fetchJSON("/api/posts");
 
-    // Parallel -- fast (both run at the same time)
+    // Parallel - fast (both run at the same time)
     const [users, posts] = await Promise.all([
         fetchJSON("https://jsonplaceholder.typicode.com/users"),
         fetchJSON("https://jsonplaceholder.typicode.com/posts"),
@@ -362,7 +362,7 @@ async function loadUsers() {
             name.textContent = user.name;
 
             const email = document.createElement("span");
-            email.textContent = ` -- ${user.email}`;
+            email.textContent = ` - ${user.email}`;
 
             li.appendChild(name);
             li.appendChild(email);

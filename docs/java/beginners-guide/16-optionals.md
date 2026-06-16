@@ -1,7 +1,7 @@
 ---
 title: "Optionals"
 sidebar_label: "Optionals"
-description: Avoid NullPointerException with Java's Optional -- creation, unwrapping, chaining, and best practices for handling missing values.
+description: Avoid NullPointerException with Java's Optional - creation, unwrapping, chaining, and best practices for handling missing values.
 slug: /java/beginners-guide/optionals
 tags: [java, beginners, optional, null-safety]
 keywords:
@@ -55,7 +55,7 @@ forget, and the crash happens somewhere far from the actual cause.
 Optional<String> name = Optional.of("Ada");
 System.out.println(name); // Optional[Ada]
 
-// Throws NullPointerException immediately -- fail fast
+// Throws NullPointerException immediately - fail fast
 Optional<String> bad = Optional.of(null); // NullPointerException
 ```
 
@@ -104,7 +104,7 @@ if (empty.isEmpty()) {
 
 ```java
 Optional<String> empty = Optional.empty();
-empty.get(); // NoSuchElementException -- just as bad as NullPointerException
+empty.get(); // NoSuchElementException - just as bad as NullPointerException
 ```
 
 **Never call `get()` without checking `isPresent()` first.** And if you are checking `isPresent()` before `get()`, there
@@ -184,7 +184,7 @@ Optional<String> empty = Optional.<String>empty().map(String::trim);
 `map()` is the most important Optional method. It lets you chain transformations without ever checking for null:
 
 ```java
-// Without Optional -- null checks everywhere
+// Without Optional - null checks everywhere
 String city = null;
 if (user != null) {
     Address address = user.getAddress();
@@ -193,7 +193,7 @@ if (user != null) {
     }
 }
 
-// With Optional -- clean pipeline
+// With Optional - clean pipeline
 String city = Optional.ofNullable(user)
     .map(User::getAddress)
     .map(Address::getCity)
@@ -269,7 +269,7 @@ public Optional<Task> findById(int id) {
         .findFirst();
 }
 
-// Caller -- must handle the empty case
+// Caller - must handle the empty case
 manager.findById(42).ifPresentOrElse(
     task -> System.out.println(task.description()),
     () -> System.out.println("Task not found")
@@ -306,11 +306,11 @@ String display = manager.findById(42)
 ```java
 Map<String, Integer> scores = Map.of("Ada", 95, "Grace", 88);
 
-// Unsafe -- get() returns null for missing keys
+// Unsafe - get() returns null for missing keys
 Integer score = scores.get("Alan"); // null
 score.intValue(); // NullPointerException
 
-// Safe -- wrap in Optional
+// Safe - wrap in Optional
 int safeScore = Optional.ofNullable(scores.get("Alan")).orElse(0);
 // 0
 ```
@@ -338,7 +338,7 @@ List<String> names = optionals.stream()
 ### Using `Optional.get()` without checking
 
 ```java
-// Bad -- defeats the purpose of Optional
+// Bad - defeats the purpose of Optional
 Optional<String> name = findName();
 String value = name.get(); // Might throw NoSuchElementException
 
@@ -349,12 +349,12 @@ String value = findName().orElse("Unknown");
 ### Using Optional as a field type
 
 ```java
-// Bad -- Optional is not meant for fields
+// Bad - Optional is not meant for fields
 class User {
     private Optional<String> nickname; // Don't do this
 }
 
-// Good -- use null for fields, Optional for return types
+// Good - use null for fields, Optional for return types
 class User {
     private String nickname; // Can be null
 
@@ -370,11 +370,11 @@ parameters, or collections adds overhead and complexity.
 ### Using Optional as a method parameter
 
 ```java
-// Bad -- forces callers to wrap their values
+// Bad - forces callers to wrap their values
 void greet(Optional<String> name) { ... }
 greet(Optional.of("Ada")); // Awkward
 
-// Good -- use overloading or a default parameter
+// Good - use overloading or a default parameter
 void greet(String name) { ... }
 void greet() { greet("World"); }
 ```
@@ -382,13 +382,13 @@ void greet() { greet("World"); }
 ### Wrapping everything in Optional
 
 ```java
-// Bad -- unnecessary wrapping
+// Bad - unnecessary wrapping
 Optional<String> name = Optional.of("Ada");
 if (name.isPresent()) {
     System.out.println(name.get());
 }
 
-// Good -- just use the value directly when you know it exists
+// Good - just use the value directly when you know it exists
 String name = "Ada";
 System.out.println(name);
 ```
@@ -398,14 +398,14 @@ Only use Optional when a value genuinely might be absent.
 ### `isPresent()` + `get()` instead of functional methods
 
 ```java
-// Bad -- imperative style defeats the purpose
+// Bad - imperative style defeats the purpose
 if (optional.isPresent()) {
     return optional.get().toUpperCase();
 } else {
     return "N/A";
 }
 
-// Good -- functional style
+// Good - functional style
 return optional.map(String::toUpperCase).orElse("N/A");
 ```
 

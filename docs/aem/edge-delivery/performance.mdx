@@ -1,6 +1,6 @@
 ---
 title: Performance
-description: How EDS achieves Lighthouse 100 -- LCP optimisation, three-phase loading, and the automatic optimisations the runtime performs.
+description: How EDS achieves Lighthouse 100 - LCP optimisation, three-phase loading, and the automatic optimisations the runtime performs.
 tags: [aem, edge-delivery, performance, lighthouse, core-web-vitals]
 ---
 
@@ -24,13 +24,13 @@ graph TD
     Lazy --> Delayed
 ```
 
-1. **LCP (Largest Contentful Paint)** -- critical CSS is inlined, hero images use
+1. **LCP (Largest Contentful Paint)** - critical CSS is inlined, hero images use
    `fetchpriority="high"` and `loading="eager"`, fonts use `font-display: swap`.
-2. **Eager blocks** -- blocks above the fold load immediately so first paint is
+2. **Eager blocks** - blocks above the fold load immediately so first paint is
    complete.
-3. **Lazy blocks** -- below-the-fold blocks load via `IntersectionObserver` only as the
+3. **Lazy blocks** - below-the-fold blocks load via `IntersectionObserver` only as the
    visitor scrolls.
-4. **Delayed scripts** -- analytics, chat widgets, A/B testing tags. Loaded only after
+4. **Delayed scripts** - analytics, chat widgets, A/B testing tags. Loaded only after
    user interaction (click, scroll, keydown) or after a 3-second timeout, whichever
    comes first.
 
@@ -41,14 +41,14 @@ to extend each phase.
 
 ## What EDS does automatically
 
-- **Image optimisation** -- format negotiation (WebP / AVIF), responsive `srcset`, lazy
+- **Image optimisation** - format negotiation (WebP / AVIF), responsive `srcset`, lazy
   loading below the fold, `decoding="async"`.
-- **CSS / JS code splitting** -- each block's styles and scripts load independently.
-- **No render-blocking resources** -- everything outside the inline CSS is async or
+- **CSS / JS code splitting** - each block's styles and scripts load independently.
+- **No render-blocking resources** - everything outside the inline CSS is async or
   deferred.
-- **Minimal DOM** -- clean semantic HTML with no framework overhead.
-- **Aggressive caching** -- long cache TTLs with instant purge on publish.
-- **Resource hints** -- the boilerplate `head.html` includes `preconnect` and
+- **Minimal DOM** - clean semantic HTML with no framework overhead.
+- **Aggressive caching** - long cache TTLs with instant purge on publish.
+- **Resource hints** - the boilerplate `head.html` includes `preconnect` and
   `dns-prefetch` for the live origin.
 
 ## LCP optimisation
@@ -85,7 +85,7 @@ Anything not needed for the first meaningful paint belongs in `delayed.js`:
 - Chat widgets (Intercom, Drift)
 - A/B testing scripts that run client-side
 - Social-share widgets
-- Cookie-consent bars (carefully -- some compliance regimes require these to render
+- Cookie-consent bars (carefully - some compliance regimes require these to render
   immediately)
 - Recommendations / personalisation that doesn't drive layout
 
@@ -101,9 +101,9 @@ Anything not needed for the first meaningful paint belongs in `delayed.js`:
 
 ## See also
 
-- [Blocks](./blocks.mdx) -- block lifecycle and the eager / lazy / delayed phases
-- [Customizing](./customizing.mdx) -- `head.html`, `scripts.js`, `delayed.js`
-- [Architecture](./architecture.mdx) -- pipeline-level optimisations
+- [Blocks](./blocks.mdx) - block lifecycle and the eager / lazy / delayed phases
+- [Customizing](./customizing.mdx) - `head.html`, `scripts.js`, `delayed.js`
+- [Architecture](./architecture.mdx) - pipeline-level optimisations
 - [EDS Performance (aem.live)](https://www.aem.live/developer/performance) - official performance guidance and Core Web Vitals targets
 - [web.dev Lighthouse](https://web.dev/measure/) - measure and analyse Lighthouse scores
 - [Core Web Vitals (web.dev)](https://web.dev/articles/vitals) - LCP, CLS, INP reference

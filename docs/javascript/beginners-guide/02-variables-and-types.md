@@ -522,11 +522,11 @@ false
 **Always use `===` (strict equality).** It checks both value and type:
 
 ```js
-console.log(5 === 5);    // true -- same value, same type
-console.log(5 === "5");  // false -- different types
-console.log(5 == "5");   // true -- coerces the string to a number
-console.log(null == undefined); // true -- special case
-console.log(null === undefined); // false -- different types
+console.log(5 === 5);    // true - same value, same type
+console.log(5 === "5");  // false - different types
+console.log(5 == "5");   // true - coerces the string to a number
+console.log(null == undefined); // true - special case
+console.log(null === undefined); // false - different types
 ```
 
 Result:
@@ -559,15 +559,15 @@ false
 ## Logical operators
 
 ```js
-// AND -- true only if both sides are true
+// AND - true only if both sides are true
 console.log(true && true);   // true
 console.log(true && false);  // false
 
-// OR -- true if either side is true
+// OR - true if either side is true
 console.log(false || true);  // true
 console.log(false || false); // false
 
-// NOT -- inverts the boolean
+// NOT - inverts the boolean
 console.log(!true);  // false
 console.log(!false); // true
 ```
@@ -628,8 +628,8 @@ Anonymous
 
 ```js
 const count = 0;
-console.log(count || 10);  // 10 -- 0 is falsy
-console.log(count ?? 10);  // 0 -- 0 is not null/undefined
+console.log(count || 10);  // 10 - 0 is falsy
+console.log(count ?? 10);  // 0 - 0 is not null/undefined
 ```
 
 Result:

@@ -537,7 +537,7 @@ checkTag(namespace)
 ### Bulk-rename tags
 
 ```groovy
-// DRY_RUN = true  -- set to false to execute
+// DRY_RUN = true  - set to false to execute
 def DRY_RUN = true
 
 import com.day.cq.tagging.TagManager

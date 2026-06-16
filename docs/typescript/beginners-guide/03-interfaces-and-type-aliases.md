@@ -117,10 +117,10 @@ function renderProfile(profile: UserProfile): string {
     return `<h1>${profile.name}</h1><p>${bio}</p>${website}`;
 }
 
-// Valid -- optional properties can be omitted
+// Valid - optional properties can be omitted
 const minimalProfile: UserProfile = { id: 1, name: "Alice" };
 
-// Valid -- with some optional properties
+// Valid - with some optional properties
 const fullProfile: UserProfile = {
     id: 2,
     name: "Bob",

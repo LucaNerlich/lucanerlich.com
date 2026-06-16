@@ -23,7 +23,7 @@ The following steps setup my shell (zsh + oh-my-zsh).
 
 :::warning Keep secrets out of your shell config
 The dotfiles below are sanitized examples. **Never commit real tokens, passwords, or API keys to a
-shell profile** -- they end up in your shell history, backups, and any synced dotfiles repo. Load
+shell profile** - they end up in your shell history, backups, and any synced dotfiles repo. Load
 secrets from an untracked file instead (see [Managing secrets](#managing-secrets) at the end of this
 page).
 :::
@@ -40,7 +40,7 @@ the [shell info for Ghostty](https://ghostty.org/docs/help/terminfo#copy-ghostty
 You can copy them with the following command
 
 ```bash
-infocmp -x | ssh YOUR-SERVER -- tic -x -
+infocmp -x | ssh YOUR-SERVER - tic -x -
 ```
 
 ## Ghostty Config
@@ -222,7 +222,7 @@ export PATH="$MAVEN_HOME/bin:$PATH"
 ## Ngrok
 export PATH="/Users/nerlich/tech/ngrok:$PATH"
 
-## Secrets (tokens, etc.) -- loaded from an untracked file, never hardcoded here.
+## Secrets (tokens, etc.) - loaded from an untracked file, never hardcoded here.
 # See "Managing secrets" below. Create ~/.zshrc.local (chmod 600, git-ignored) with:
 #   export GITHUB_TOKEN='ghp_...'
 #   export GITHUB_ACCESS_TOKEN_CLASSIC='ghp_...'
@@ -460,7 +460,7 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting \
   "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
 ```
 
-```bash title="~/.zshrc -- plugins"
+```bash title="~/.zshrc - plugins"
 plugins=(
   git
   zsh-autosuggestions
@@ -472,7 +472,7 @@ plugins=(
 
 Tokens and credentials must **never** live in a committed dotfile. Two safe patterns:
 
-**1. An untracked local file** -- keep machine-specific secrets in `~/.zshrc.local`, lock down its
+**1. An untracked local file** - keep machine-specific secrets in `~/.zshrc.local`, lock down its
 permissions, and source it from `~/.zshrc` (as shown in the `.zshrc` above):
 
 ```bash
@@ -487,7 +487,7 @@ EOF
 If you sync your dotfiles to a public/private git repo, add `.zshrc.local` to `.gitignore` so it is
 never committed.
 
-**2. `direnv` for per-project env** -- drop a `.envrc` in a project folder and `direnv` loads/unloads
+**2. `direnv` for per-project env** - drop a `.envrc` in a project folder and `direnv` loads/unloads
 the variables automatically as you `cd` in and out. Add `eval "$(direnv hook zsh)"` to your `.zshrc`,
 keep `.envrc` out of version control, and run `direnv allow` once per project.
 

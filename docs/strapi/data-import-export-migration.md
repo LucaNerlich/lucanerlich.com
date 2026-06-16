@@ -481,7 +481,7 @@ flowchart LR
 
 ```bash
 #!/bin/bash
-# backup.sh -- run daily via cron
+# backup.sh - run daily via cron
 DATE=$(date +%Y%m%d)
 BACKUP_DIR="/backups/strapi"
 

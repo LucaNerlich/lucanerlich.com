@@ -1,6 +1,6 @@
 ---
 title: Commerce Storefront
-description: EDS Commerce Storefront -- catalog, PLP, PDP, cart, and checkout blocks running on top of Adobe Commerce or third-party backends.
+description: EDS Commerce Storefront - catalog, PLP, PDP, cart, and checkout blocks running on top of Adobe Commerce or third-party backends.
 tags: [aem, edge-delivery, commerce, storefront, magento]
 ---
 
@@ -44,9 +44,9 @@ graph LR
 
 Two flows:
 
-- **Render-time** -- product list and detail pages are pre-rendered from the catalog
+- **Render-time** - product list and detail pages are pre-rendered from the catalog
   API and cached at the edge with surrogate keys per SKU.
-- **Run-time** -- cart, checkout, and account live in the browser, talking directly
+- **Run-time** - cart, checkout, and account live in the browser, talking directly
   to the commerce API. Edge caching does not apply.
 
 ## Block library
@@ -64,8 +64,8 @@ The Commerce Storefront ships a set of blocks under
 | `commerce-search` | Live search bar with autocomplete |
 | `recommendations` | "You may also like" widgets |
 
-These behave like normal blocks -- folder under `/blocks/`, decorate function, scoped
-CSS -- but most of them call the commerce API at decoration time.
+These behave like normal blocks - folder under `/blocks/`, decorate function, scoped
+CSS - but most of them call the commerce API at decoration time.
 
 ## Talking to the catalog
 
@@ -119,7 +119,7 @@ Surrogate keys are sent on the response and used by the [Admin API](./admin-api.
 
 ## Authentication
 
-Customer auth is **not** the EDS site's concern -- the commerce API issues tokens.
+Customer auth is **not** the EDS site's concern - the commerce API issues tokens.
 The storefront block stores the token in `sessionStorage` (or `localStorage` for
 "remember me") and adds it to subsequent calls.
 
@@ -142,10 +142,10 @@ Aim for the catalog to be fully crawlable without running JS.
 
 Two regressions to watch:
 
-1. **PLP page weight** -- a list of 24 products with full image carousels can blow
+1. **PLP page weight** - a list of 24 products with full image carousels can blow
    the Lighthouse budget. Use `loading="lazy"` on below-the-fold images and only
    render the first image of each product card.
-2. **GraphQL waterfall** -- if a block fetches data in `decorate()` and another
+2. **GraphQL waterfall** - if a block fetches data in `decorate()` and another
    block downstream needs the same data, hoist the fetch into `scripts.js` so it
    runs once.
 
@@ -172,7 +172,7 @@ thin enough to swap. Common substitutions:
 
 ## See also
 
-- [Blocks](./blocks.mdx) -- the storefront blocks follow standard conventions
-- [Customizing](./customizing.mdx) -- CSP for the commerce API origin
-- [Admin API](./admin-api.mdx) -- surrogate-key purges
+- [Blocks](./blocks.mdx) - the storefront blocks follow standard conventions
+- [Customizing](./customizing.mdx) - CSP for the commerce API origin
+- [Admin API](./admin-api.mdx) - surrogate-key purges
 - Adobe docs: [Commerce Storefront on EDS](https://experienceleague.adobe.com/developer/commerce/storefront/)

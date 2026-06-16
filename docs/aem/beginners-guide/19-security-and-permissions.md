@@ -88,7 +88,7 @@ end
 
 This is the supported way to manage permissions on AEM as a Cloud Service. See
 [OSGi Fundamentals](./03-osgi-fundamentals.md) for how `.cfg.json` configs are deployed and
-[Sling Models -- service users](./07-sling-models.md) for the service-user side.
+[Sling Models - service users](./07-sling-models.md) for the service-user side.
 
 ## Service users
 
@@ -114,7 +114,7 @@ configure the login page. Unauthorized visitors are redirected to login. CUGs ar
 
 ## Hardening the publish tier
 
-Security is defense-in-depth -- the repository ACLs are one layer; the edge is another:
+Security is defense-in-depth - the repository ACLs are one layer; the edge is another:
 
 - **The Dispatcher is a security layer.** Its filters should deny everything by default and allow only
   the paths/selectors/extensions your site needs (see [Dispatcher & Caching](./18-dispatcher-and-caching.md)).

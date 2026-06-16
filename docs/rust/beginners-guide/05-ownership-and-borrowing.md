@@ -92,7 +92,7 @@ Let's see each rule in action.
 fn main() {
     let s = String::from("hello"); // s owns the String
     println!("{s}");
-} // s goes out of scope -- Rust calls `drop` and frees the memory
+} // s goes out of scope - Rust calls `drop` and frees the memory
 ```
 
 `String::from("hello")` allocates a string on the heap. The variable `s` is its owner. When `s` goes out of scope at
@@ -116,9 +116,9 @@ error[E0382]: borrow of moved value: `s1`
  --> src/main.rs:4:16
   |
 2 |     let s1 = String::from("hello");
-  |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
+  |         - move occurs because `s1` has type `String`, which does not implement the `Copy` trait
 3 |     let s2 = s1;
-  |              -- value moved here
+  |              - value moved here
 4 |     println!("{s1}");
   |                ^^ value borrowed here after move
 ```
@@ -215,7 +215,7 @@ When you need a real copy of heap data, use `.clone()`:
 ```rust
 fn main() {
     let s1 = String::from("hello");
-    let s2 = s1.clone(); // Deep copy -- both are valid
+    let s2 = s1.clone(); // Deep copy - both are valid
 
     println!("s1 = {s1}, s2 = {s2}");
 }
@@ -308,8 +308,8 @@ fn main() {
     let mut s = String::from("hello");
 
     let r1 = &s;     // immutable borrow
-    let r2 = &s;     // immutable borrow -- ok, multiple immutable borrows are fine
-    let r3 = &mut s; // mutable borrow -- ERROR!
+    let r2 = &s;     // immutable borrow - ok, multiple immutable borrows are fine
+    let r3 = &mut s; // mutable borrow - ERROR!
 
     println!("{r1}, {r2}, {r3}");
 }
@@ -358,7 +358,7 @@ The fix is to return the owned value, not a reference to it:
 ```rust
 fn no_dangle() -> String {
     let s = String::from("hello");
-    s // Move the String out -- ownership is transferred to the caller
+    s // Move the String out - ownership is transferred to the caller
 }
 ```
 
@@ -389,7 +389,7 @@ fn main() {
 
 ```rust
 fn main() {
-    let s: &str = "Hello, world!"; // String literal -- stored in the binary
+    let s: &str = "Hello, world!"; // String literal - stored in the binary
     println!("{s}");
 }
 ```

@@ -1,7 +1,7 @@
 ---
 title: "Regular Expressions"
 sidebar_label: "Regular Expressions"
-description: Master JavaScript regular expressions -- patterns, character classes, quantifiers, groups, lookaheads, and practical validation examples.
+description: Master JavaScript regular expressions - patterns, character classes, quantifiers, groups, lookaheads, and practical validation examples.
 slug: /javascript/beginners-guide/regular-expressions
 tags: [javascript, beginners, regex, validation]
 keywords:
@@ -59,9 +59,9 @@ Returns an array of matches, or `null`:
 ```js
 const text = "The year 2025 and 2026";
 
-console.log(text.match(/\d+/));  // ["2025"] -- first match only
-console.log(text.match(/\d+/g)); // ["2025", "2026"] -- all matches (g flag)
-console.log(text.match(/xyz/));  // null -- no match
+console.log(text.match(/\d+/));  // ["2025"] - first match only
+console.log(text.match(/\d+/g)); // ["2025", "2026"] - all matches (g flag)
+console.log(text.match(/xyz/));  // null - no match
 ```
 
 ### `replace()` - find and replace
@@ -132,10 +132,10 @@ Character classes match **one character** from a set:
 /[^aeiou]/.test("hello"); // true
 
 // Ranges
-/[a-z]/.test("m");   // true -- lowercase letter
-/[A-Z]/.test("M");   // true -- uppercase letter
-/[0-9]/.test("5");   // true -- same as \d
-/[a-zA-Z]/.test("x"); // true -- any letter
+/[a-z]/.test("m");   // true - lowercase letter
+/[A-Z]/.test("M");   // true - uppercase letter
+/[0-9]/.test("5");   // true - same as \d
+/[a-zA-Z]/.test("x"); // true - any letter
 ```
 
 ## Quantifiers
@@ -190,7 +190,7 @@ Anchors match a **position**, not a character:
 /^\d+$/.test("12345");   // true
 /^\d+$/.test("123abc");  // false
 
-// Word boundary -- match whole words
+// Word boundary - match whole words
 /\bcat\b/.test("the cat sat");      // true
 /\bcat\b/.test("concatenate");      // false
 ```
@@ -205,10 +205,10 @@ Parentheses `()` create groups that capture matched text:
 const datePattern = /(\d{4})-(\d{2})-(\d{2})/;
 const match = "2025-01-15".match(datePattern);
 
-console.log(match[0]); // "2025-01-15" -- full match
-console.log(match[1]); // "2025" -- first group (year)
-console.log(match[2]); // "01" -- second group (month)
-console.log(match[3]); // "15" -- third group (day)
+console.log(match[0]); // "2025-01-15" - full match
+console.log(match[1]); // "2025" - first group (year)
+console.log(match[2]); // "01" - second group (month)
+console.log(match[3]); // "15" - third group (day)
 ```
 
 ### Named groups
@@ -231,11 +231,11 @@ Named groups make complex patterns much more readable.
 When you need grouping but do not need to capture the match, use `(?:...)`:
 
 ```js
-// Captures "http" or "https" -- but we do not need the captured value
+// Captures "http" or "https" - but we do not need the captured value
 const url = /(?:https?):\/\/(\S+)/;
 const match = "https://example.com".match(url);
 
-console.log(match[1]); // "example.com" -- only the host is captured
+console.log(match[1]); // "example.com" - only the host is captured
 ```
 
 ### Backreferences
@@ -288,11 +288,11 @@ Flags modify how the pattern is applied:
 // Global + case-insensitive
 "Hello hello HELLO".match(/hello/gi); // ["Hello", "hello", "HELLO"]
 
-// Multiline -- ^ matches each line start
+// Multiline - ^ matches each line start
 const text = "line one\nline two\nline three";
 text.match(/^line/gm); // ["line", "line", "line"]
 
-// Dotall -- . matches newlines
+// Dotall - . matches newlines
 /first.+last/s.test("first\nlast");  // true
 /first.+last/.test("first\nlast");   // false (without s flag)
 ```
@@ -521,10 +521,10 @@ These characters have special meaning in regex and must be escaped with `\` to m
 ```
 
 ```js
-// Bad -- . matches any character
+// Bad - . matches any character
 /1.1/.test("111"); // true (not what you want)
 
-// Good -- \. matches a literal dot
+// Good - \. matches a literal dot
 /1\.1/.test("111"); // false
 /1\.1/.test("1.1"); // true
 ```
@@ -537,8 +537,8 @@ A regex with the `g` flag maintains state between calls to `test()`:
 const pattern = /a/g;
 
 console.log(pattern.test("abc")); // true
-console.log(pattern.test("abc")); // false (!) -- starts searching after the first match
-console.log(pattern.test("abc")); // true -- wraps around
+console.log(pattern.test("abc")); // false (!) - starts searching after the first match
+console.log(pattern.test("abc")); // true - wraps around
 ```
 
 This is a common source of bugs. If you use `test()` in a loop or a function, either:
@@ -552,7 +552,7 @@ This is a common source of bugs. If you use `test()` in a loop or a function, ei
 Some patterns cause the regex engine to try an exponential number of paths:
 
 ```js
-// Dangerous -- exponential backtracking on non-matching input
+// Dangerous - exponential backtracking on non-matching input
 const bad = /^(a+)+$/;
 
 // This takes an extremely long time:

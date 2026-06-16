@@ -251,8 +251,8 @@ This is one of the biggest gotchas. When you populate a relation on a localized 
 exist in the **same locale**, or the relation appears empty.
 
 ```js
-// Article (locale: de) -> Author (locale: de) -- works
-// Article (locale: de) -> Author (locale: en) -- returns null!
+// Article (locale: de) -> Author (locale: de) - works
+// Article (locale: de) -> Author (locale: en) - returns null!
 ```
 
 ### Solutions

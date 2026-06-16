@@ -1,7 +1,7 @@
 ---
 title: "Error Handling"
 sidebar_label: "Error Handling"
-description: Handle errors gracefully in JavaScript -- try/catch/finally, error types, custom errors, async error handling, and common patterns.
+description: Handle errors gracefully in JavaScript - try/catch/finally, error types, custom errors, async error handling, and common patterns.
 slug: /javascript/beginners-guide/error-handling
 tags: [javascript, beginners, errors, debugging]
 keywords:
@@ -149,10 +149,10 @@ try {
 You can throw any value, but always throw `Error` objects (or subclasses) - they include the stack trace:
 
 ```js
-// Good -- includes stack trace
+// Good - includes stack trace
 throw new Error("Something failed");
 
-// Bad -- no stack trace, harder to debug
+// Bad - no stack trace, harder to debug
 throw "Something failed";
 ```
 
@@ -329,13 +329,13 @@ for (const result of results) {
 If you forget to handle a rejected promise, the browser logs a warning:
 
 ```js
-// Bad -- unhandled rejection
+// Bad - unhandled rejection
 async function loadData() {
     const response = await fetch("/api/missing-endpoint");
     return response.json(); // Throws if response is not ok
 }
 
-loadData(); // No .catch(), no try/catch -- unhandled rejection
+loadData(); // No .catch(), no try/catch - unhandled rejection
 ```
 
 Always handle errors in async code. A global safety net can catch anything you miss:
@@ -429,7 +429,7 @@ form.addEventListener("submit", (event) => {
 Check for invalid conditions at the top of a function and return or throw early:
 
 ```js
-// Without guard clauses -- deeply nested
+// Without guard clauses - deeply nested
 function processOrder(order) {
     if (order) {
         if (order.items.length > 0) {
@@ -447,7 +447,7 @@ function processOrder(order) {
     }
 }
 
-// With guard clauses -- flat and readable
+// With guard clauses - flat and readable
 function processOrder(order) {
     if (!order) throw new Error("No order provided");
     if (order.items.length === 0) throw new Error("No items in order");
@@ -530,14 +530,14 @@ This pattern avoids exceptions for expected failures (invalid user input is not 
 ### Empty catch blocks
 
 ```js
-// Bad -- errors are silently swallowed
+// Bad - errors are silently swallowed
 try {
     doSomething();
 } catch (error) {
     // nothing here
 }
 
-// Good -- at minimum, log the error
+// Good - at minimum, log the error
 try {
     doSomething();
 } catch (error) {
@@ -548,7 +548,7 @@ try {
 ### Catching too broadly
 
 ```js
-// Bad -- catches everything, including programming bugs
+// Bad - catches everything, including programming bugs
 try {
     const result = calculateTotal(items);
     const formatted = formatCurrency(result);
@@ -557,7 +557,7 @@ try {
     console.log("Something went wrong");
 }
 
-// Better -- catch only where the error can actually occur
+// Better - catch only where the error can actually occur
 let result;
 try {
     result = calculateTotal(items);
@@ -573,7 +573,7 @@ displayOnPage(formatted);
 ### Using exceptions for control flow
 
 ```js
-// Bad -- using try/catch as an if-statement
+// Bad - using try/catch as an if-statement
 try {
     const user = users.find(u => u.id === id);
     if (!user) throw new Error("not found");
@@ -582,7 +582,7 @@ try {
     return defaultUser;
 }
 
-// Good -- use normal control flow
+// Good - use normal control flow
 const user = users.find(u => u.id === id);
 return user ?? defaultUser;
 ```
@@ -590,14 +590,14 @@ return user ?? defaultUser;
 ### Catching and re-throwing without adding value
 
 ```js
-// Bad -- pointless catch
+// Bad - pointless catch
 try {
     return await loadData();
 } catch (error) {
     throw error; // Does nothing useful
 }
 
-// Good -- add context when re-throwing
+// Good - add context when re-throwing
 try {
     return await loadData();
 } catch (error) {

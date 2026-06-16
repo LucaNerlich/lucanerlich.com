@@ -1,7 +1,7 @@
 ---
 title: "CSS Grid"
 sidebar_label: "CSS Grid"
-description: CSS Grid layout -- defining rows and columns, the fr unit, grid areas, gap, auto-fit/auto-fill, minmax(), and implicit vs explicit grids.
+description: CSS Grid layout - defining rows and columns, the fr unit, grid areas, gap, auto-fit/auto-fill, minmax(), and implicit vs explicit grids.
 slug: /css/beginners-guide/css-grid
 tags: [css, beginners]
 keywords:

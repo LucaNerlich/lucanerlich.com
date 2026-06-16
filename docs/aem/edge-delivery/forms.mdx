@@ -1,6 +1,6 @@
 ---
 title: Forms
-description: EDS for Forms -- Adaptive Forms blocks, document-based form authoring, submission handling, and integration patterns.
+description: EDS for Forms - Adaptive Forms blocks, document-based form authoring, submission handling, and integration patterns.
 tags: [aem, edge-delivery, forms, adaptive-forms]
 ---
 
@@ -14,7 +14,7 @@ served from the CDN. The form runtime is just another block.
 
 ### Document-based forms
 
-Author a form as a table -- one row per field. The `form` block converts it into a
+Author a form as a table - one row per field. The `form` block converts it into a
 semantic `<form>`:
 
 ```
@@ -34,7 +34,7 @@ ships a working reference implementation.
 
 ### Adaptive Forms (AEM Forms)
 
-For complex forms -- multi-step flows, conditional fields, server-side validation --
+For complex forms - multi-step flows, conditional fields, server-side validation --
 authors use the **AEM Forms** authoring UI. The form definition is rendered into
 the EDS pipeline via the Adaptive Forms block. EDS handles delivery and accessibility;
 AEM Forms handles validation rules, drafts, and submission storage.
@@ -57,11 +57,11 @@ EDS block, it's a folder of JS + CSS:
 
 Responsibilities split across the helper modules:
 
-- `form.js` -- decoration entry point: read fields, build `<form>`, wire submit
-- `form-fields.js` -- render input types (text, email, select, radio, checkbox,
+- `form.js` - decoration entry point: read fields, build `<form>`, wire submit
+- `form-fields.js` - render input types (text, email, select, radio, checkbox,
   textarea, file, date)
-- `form-validation.js` -- client-side validation, ARIA error wiring
-- `form-submit.js` -- collect values, post to the configured endpoint, handle
+- `form-validation.js` - client-side validation, ARIA error wiring
+- `form-submit.js` - collect values, post to the configured endpoint, handle
   success / error UI
 
 ## Submission targets
@@ -71,7 +71,7 @@ The `form` block reads a target URL from a `submit` row or a meta tag. Common ta
 | Target | Use case |
 |--------|----------|
 | **AEM Forms endpoint** | Stores the submission in AEM, runs server-side validation, optionally fires a workflow |
-| **External REST API** | Anything else -- CRM, marketing automation, custom backend |
+| **External REST API** | Anything else - CRM, marketing automation, custom backend |
 | **SharePoint list** | For internal forms, store directly in a SharePoint list |
 | **Email** | Via a serverless function or `mailto:` action |
 | **Webhook** | For lightweight integrations (Slack, Teams, custom) |
@@ -111,16 +111,16 @@ a structured error response that the block displays inline.
 
 ## Spam and abuse
 
-Edge delivery means the form is *very* fast to load -- attackers will find it. Pick
+Edge delivery means the form is *very* fast to load - attackers will find it. Pick
 at least one of:
 
-- **CAPTCHA** -- reCAPTCHA, Cloudflare Turnstile, hCaptcha. Render in `delayed.js`
+- **CAPTCHA** - reCAPTCHA, Cloudflare Turnstile, hCaptcha. Render in `delayed.js`
   to keep LCP clean.
-- **Honeypot field** -- an `<input>` hidden with CSS that humans never fill but bots
+- **Honeypot field** - an `<input>` hidden with CSS that humans never fill but bots
   often do.
-- **Time check** -- record the load timestamp; reject submissions submitted faster
+- **Time check** - record the load timestamp; reject submissions submitted faster
   than a human plausibly could.
-- **Rate limit at the CDN** -- limit requests per IP at the edge.
+- **Rate limit at the CDN** - limit requests per IP at the edge.
 
 ## Accessibility
 
@@ -172,7 +172,7 @@ Clear the draft on successful submit.
 
 ## See also
 
-- [Blocks](./blocks.mdx) -- the form block follows normal block conventions
-- [Customizing](./customizing.mdx) -- response headers (CSP) for form submissions
+- [Blocks](./blocks.mdx) - the form block follows normal block conventions
+- [Customizing](./customizing.mdx) - response headers (CSP) for form submissions
 - aem.live: [forms documentation](https://www.aem.live/docs/forms)
 - Adobe docs: [EDS for Forms](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview)

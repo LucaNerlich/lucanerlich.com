@@ -473,7 +473,7 @@ async function upload({uploadURL, binaryData, logger = console}) {
     try {
         const response = await fetch(uploadURL, {
             method: 'PUT',
-            // No authentication needed -- URLs are presigned by AEM
+            // No authentication needed - URLs are presigned by AEM
             headers: { 'Content-Type': 'application/octet-stream' },
             body: binaryData
         });
@@ -489,7 +489,7 @@ async function upload({uploadURL, binaryData, logger = console}) {
 }
 
 /**
- * Step 3: Complete the upload -- AEM creates the dam:Asset node.
+ * Step 3: Complete the upload - AEM creates the dam:Asset node.
  * @see https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/admin/developer-reference-material-apis#complete-upload
  */
 async function completeUpload({completeURI, uploadToken, fileName, mimeType, auth, affinityCookie, logger = console}) {
@@ -650,7 +650,7 @@ async function streamAssetToAEM({sourceUrl, host, folderPath, fileName, auth, lo
         const headResponse = await fetch(sourceUrl, {method: 'HEAD'});
         const fileSize = parseInt(headResponse.headers.get('Content-Length'), 10);
 
-        // 2. Initiate upload -- AEM returns presigned URLs
+        // 2. Initiate upload - AEM returns presigned URLs
         const initResult = await initUpload({host, folderPath, fileName, fileSize, auth, logger});
         const {data, affinityCookie} = initResult;
         const fileInfo = data.files[0];
@@ -665,7 +665,7 @@ async function streamAssetToAEM({sourceUrl, host, folderPath, fileName, auth, lo
             logger
         });
 
-        // 4. Complete the upload -- AEM creates the asset
+        // 4. Complete the upload - AEM creates the asset
         const completeURL = createAbsoluteUrl(data.completeURI, host);
         const completeResult = await completeUpload({
             completeURI: completeURL,
@@ -809,8 +809,8 @@ const { worker } = require('@adobe/asset-compute-sdk');
 const { serializeXmp } = require('@adobe/asset-compute-xmp');
 
 exports.main = worker(async (source, rendition, params) => {
-    // source.url -- presigned URL to the original asset
-    // rendition.path -- local temp path for the output file
+    // source.url - presigned URL to the original asset
+    // rendition.path - local temp path for the output file
 
     // Example: generate a watermarked version using sharp
     const sharp = require('sharp');

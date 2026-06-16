@@ -1,7 +1,7 @@
 ---
 title: "Units & Sizing"
 sidebar_label: "Units & Sizing"
-description: CSS length units -- px, em, rem, percentages, viewport units, and when to use each one for font sizes, spacing, and layout.
+description: CSS length units - px, em, rem, percentages, viewport units, and when to use each one for font sizes, spacing, and layout.
 slug: /css/beginners-guide/units-and-sizing
 tags: [css, beginners]
 keywords:

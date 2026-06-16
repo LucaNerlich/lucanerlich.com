@@ -1,6 +1,6 @@
 ---
 title: Tooling and Frameworks
-description: A map of the AI application tooling landscape -- orchestration frameworks, connectivity protocols, vector databases, evaluation and observability, and the LLMOps discipline that ties them together.
+description: A map of the AI application tooling landscape - -orchestration frameworks, connectivity protocols, vector databases, evaluation and observability, and the LLMOps discipline that ties them together.
 tags: [ai, tooling, frameworks, llmops, agents]
 keywords:
     - ai frameworks
@@ -42,7 +42,7 @@ flowchart TB
 
 ## Orchestration frameworks
 
-Frameworks provide building blocks for [agents](./agents.md) and multi-agent systems -- they do **not**
+Frameworks provide building blocks for [agents](./agents.md) and multi-agent systems - they do **not**
 provide a production system. The gap from prototype to handling real traffic (integrations,
 observability, failure handling, evaluation) is typically 3--6 months of engineering regardless of
 framework.
@@ -64,28 +64,28 @@ A few rules of thumb:
 - **CrewAI is fastest to a demo** ("a working multi-agent system in under 20 lines") but rigid at scale.
 - **Google ADK is the only one with native A2A**, making it the pick for heterogeneous, multi-team agent
   ecosystems.
-- **AutoGen's conversational model is expensive** -- a 4-agent, 5-round debate is 20+ LLM calls minimum.
+- **AutoGen's conversational model is expensive** - a 4-agent, 5-round debate is 20+ LLM calls minimum.
 
 ## Connectivity protocols
 
 Two open standards (covered in detail under [Agents](./agents.md#protocols-connecting-agents-to-tools-and-to-each-other))
 form the connectivity stack:
 
-- **MCP (Model Context Protocol)** -- agent to tools/data. Build a tool server once; any MCP-compatible
+- **MCP (Model Context Protocol)** - agent to tools/data. Build a tool server once; any MCP-compatible
   client (Cursor, Claude, internal agents) can use it. Official Python and TypeScript SDKs.
-- **A2A (Agent2Agent)** -- agent to agent across frameworks and vendors, with Agent Cards for capability
+- **A2A (Agent2Agent)** - agent to agent across frameworks and vendors, with Agent Cards for capability
   discovery.
 
 ## Data and retrieval
 
 The [RAG](./rag.md) stack has its own tooling:
 
-- **Vector databases** -- Pinecone (hosted), pgvector (Postgres extension), OpenSearch, Weaviate, Milvus,
+- **Vector databases** - Pinecone (hosted), pgvector (Postgres extension), OpenSearch, Weaviate, Milvus,
   Chroma (lightweight prototyping). See [vector database](./glossary.md#vector-database).
-- **Embedding models** -- OpenAI `text-embedding-3-*`, Cohere `embed-v3`, Voyage `voyage-3`, and
+- **Embedding models** - OpenAI `text-embedding-3-*`, Cohere `embed-v3`, Voyage `voyage-3`, and
   open-source `bge-*` / `e5` families. The [MTEB](https://huggingface.co/spaces/mteb/leaderboard)
   leaderboard is a starting filter.
-- **Rerankers** -- cross-encoders (Cohere `rerank-3`, `bge-reranker-large`) that re-score the top
+- **Rerankers** - cross-encoders (Cohere `rerank-3`, `bge-reranker-large`) that re-score the top
   candidates and often beat swapping the embedding model.
 
 ## Evaluation and observability
@@ -93,11 +93,11 @@ The [RAG](./rag.md) stack has its own tooling:
 LLM output is non-deterministic, so you cannot ship it like ordinary code. You need a harness that scores
 outputs and traces every call.
 
-- **Tracing / observability** -- LangSmith, Langfuse, Arize Phoenix, or OpenTelemetry-based tracing.
+- **Tracing / observability** - LangSmith, Langfuse, Arize Phoenix, or OpenTelemetry-based tracing.
   Agent-level tracing (not just app monitoring) is required to debug reasoning failures across chains.
-- **Evaluation frameworks** -- LangSmith datasets, MLflow LLM Evaluate, Ragas (RAG-specific), DeepEval.
-  Score **groundedness / faithfulness**, helpfulness, and safety -- often with LLM-as-judge.
-- **Prompt registries** -- LangSmith prompt hub, MLflow prompt registry, or in-house. Treat prompts as
+- **Evaluation frameworks** - LangSmith datasets, MLflow LLM Evaluate, Ragas (RAG-specific), DeepEval.
+  Score **groundedness / faithfulness**, helpfulness, and safety - often with LLM-as-judge.
+- **Prompt registries** - LangSmith prompt hub, MLflow prompt registry, or in-house. Treat prompts as
   versioned, testable assets.
 
 ## Model serving
@@ -105,14 +105,14 @@ outputs and traces every call.
 How you run the model depends on whether you rent or self-host (see
 [Cloud vs Local Models](./cloud-vs-local.md)):
 
-- **Managed APIs** -- Anthropic, OpenAI, plus the cloud platforms (Bedrock, Azure / Microsoft Foundry,
+- **Managed APIs** - Anthropic, OpenAI, plus the cloud platforms (Bedrock, Azure / Microsoft Foundry,
   Vertex AI).
-- **Self-hosted, throughput-oriented** -- vLLM or NVIDIA Triton for high-concurrency GPU serving.
-- **Self-hosted, local / desktop** -- Ollama, LM Studio, llama.cpp for development and offline use.
+- **Self-hosted, throughput-oriented** - vLLM or NVIDIA Triton for high-concurrency GPU serving.
+- **Self-hosted, local / desktop** - Ollama, LM Studio, llama.cpp for development and offline use.
 
 ## LLMOps: tying it together
 
-**LLMOps** is the operational discipline of running LLM apps and agents in production -- the LLM-flavored
+**LLMOps** is the operational discipline of running LLM apps and agents in production - the LLM-flavored
 sibling of MLOps. The shift from classical MLOps is from *retraining* as the central loop to
 *prompt + retrieval + tool* changes as the central loop.
 
@@ -132,10 +132,10 @@ model and tool calls.
 
 ## See also
 
-- [Cost, Latency & Model Routing](./cost-and-latency.md) -- token economics, caching, and model routing
-- [Structured Outputs](./structured-outputs.md) -- schema validity as an eval scorer
-- [AI Agents](./agents.md) -- what these frameworks orchestrate
-- [RAG](./rag.md) -- the retrieval stack these data tools serve
-- [Cloud vs Local Models](./cloud-vs-local.md) -- managed platforms vs self-hosted serving
-- [Large Language Models](./llm.md) -- the model at the center
-- [AI Glossary](./glossary.md) -- LLMOps, MCP, vector database, reranking, and more
+- [Cost, Latency & Model Routing](./cost-and-latency.md) - token economics, caching, and model routing
+- [Structured Outputs](./structured-outputs.md) - schema validity as an eval scorer
+- [AI Agents](./agents.md) - what these frameworks orchestrate
+- [RAG](./rag.md) - the retrieval stack these data tools serve
+- [Cloud vs Local Models](./cloud-vs-local.md) - managed platforms vs self-hosted serving
+- [Large Language Models](./llm.md) - the model at the center
+- [AI Glossary](./glossary.md) - LLMOps, MCP, vector database, reranking, and more

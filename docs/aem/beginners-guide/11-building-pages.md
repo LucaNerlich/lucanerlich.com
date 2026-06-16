@@ -269,7 +269,7 @@ A proxy page component inherits the Core Components page properties dialog. To a
 matching dialog path in your page component and add only your field (the rest is inherited via
 `sling:resourceSuperType`):
 
-```xml title="apps/mysite/components/page/_cq_dialog/.content.xml -- add a Featured Image tab/field"
+```xml title="apps/mysite/components/page/_cq_dialog/.content.xml - add a Featured Image tab/field"
 <jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"

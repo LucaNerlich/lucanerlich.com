@@ -1,7 +1,7 @@
 ---
 title: "Practice Projects"
 sidebar_label: "Practice Projects"
-description: "Six hands-on project ideas -- from beginner to advanced -- to reinforce everything you learned in the PHP Beginners Guide."
+description: "Six hands-on project ideas - from beginner to advanced - to reinforce everything you learned in the PHP Beginners Guide."
 slug: /php/beginners-guide/practice-projects
 tags: [php, beginners, projects]
 keywords:

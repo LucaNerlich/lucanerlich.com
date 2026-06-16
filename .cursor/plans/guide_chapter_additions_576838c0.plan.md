@@ -28,7 +28,7 @@ isProject: false
 
 # Add New Chapters to JS and Java Beginners Guides
 
-## JavaScript Guide -- 2 new chapters
+## JavaScript Guide - 2 new chapters
 
 ### Chapter 14: Error Handling
 
@@ -38,12 +38,12 @@ isProject: false
 
 **Content outline:**
 
-- The `Error` object -- `message`, `name`, `stack`, `cause`
-- `try` / `catch` / `finally` -- basic syntax and flow
+- The `Error` object - `message`, `name`, `stack`, `cause`
+- `try` / `catch` / `finally` - basic syntax and flow
 - Common error types: `TypeError`, `RangeError`, `ReferenceError`, `SyntaxError`
-- Throwing custom errors -- `throw new Error("...")`, custom error classes
-- Error handling with async/await -- `try`/`catch` around `await`, `.catch()` on promises
-- Error handling in the DOM -- handling failed fetch, user input errors, showing UI feedback
+- Throwing custom errors - `throw new Error("...")`, custom error classes
+- Error handling with async/await - `try`/`catch` around `await`, `.catch()` on promises
+- Error handling in the DOM - handling failed fetch, user input errors, showing UI feedback
 - Patterns: guard clauses, fail-fast, error boundaries concept
 - Anti-patterns: empty catch blocks, swallowing errors, catching too broadly
 - Cross-link to the standalone [error handling reference](docs/javascript/javascript-error-handling.md) for TypeScript patterns and advanced topics
@@ -55,7 +55,7 @@ isProject: false
 **Content outline:**
 
 - What regex is and when to use it
-- Creating patterns -- literal (`/pattern/`) and `new RegExp()`
+- Creating patterns - literal (`/pattern/`) and `new RegExp()`
 - Core methods: `test()`, `match()`, `replace()`, `search()`, `split()`
 - Character classes: `\d`, `\w`, `\s`, `.`, `[abc]`, `[^abc]`, ranges
 - Quantifiers: `*`, `+`, `?`, `{n}`, `{n,m}`
@@ -75,7 +75,7 @@ isProject: false
 
 ---
 
-## Java Guide -- 3 new chapters
+## Java Guide - 3 new chapters
 
 ### Chapter 15: Streams & Lambdas
 
@@ -85,9 +85,9 @@ isProject: false
 
 **Content outline:**
 
-- Lambdas -- syntax, functional interfaces (`Predicate`, `Function`, `Consumer`, `Supplier`)
-- Method references -- `String::toUpperCase`, `System.out::println`
-- The Stream pipeline -- source, intermediate ops, terminal ops
+- Lambdas - syntax, functional interfaces (`Predicate`, `Function`, `Consumer`, `Supplier`)
+- Method references - `String::toUpperCase`, `System.out::println`
+- The Stream pipeline - source, intermediate ops, terminal ops
 - Key operations: `filter()`, `map()`, `flatMap()`, `sorted()`, `distinct()`
 - Terminal operations: `collect()`, `toList()`, `forEach()`, `reduce()`, `count()`
 - Collectors: `toList()`, `toSet()`, `toMap()`, `groupingBy()`, `joining()`
@@ -102,7 +102,7 @@ isProject: false
 
 **Content outline:**
 
-- The `null` problem -- `NullPointerException` and why it is Java's most common bug
+- The `null` problem - `NullPointerException` and why it is Java's most common bug
 - Creating Optionals: `Optional.of()`, `Optional.ofNullable()`, `Optional.empty()`
 - Consuming values: `isPresent()`, `ifPresent()`, `orElse()`, `orElseGet()`, `orElseThrow()`
 - Transforming: `map()`, `flatMap()`, `filter()`
@@ -118,14 +118,14 @@ isProject: false
 
 **Content outline:**
 
-- Why testing matters -- catching bugs early, refactoring confidence, documentation
+- Why testing matters - catching bugs early, refactoring confidence, documentation
 - Adding JUnit 5 to Maven/Gradle (building on ch 13-14)
 - First test: `@Test`, assertions (`assertEquals`, `assertTrue`, `assertThrows`)
 - Test structure: Arrange-Act-Assert pattern
 - Testing the Task Manager: CRUD operations, edge cases, file persistence
-- `@BeforeEach` / `@AfterEach` -- setup and teardown
-- `@ParameterizedTest` -- testing with multiple inputs
-- `@DisplayName` -- readable test names
+- `@BeforeEach` / `@AfterEach` - setup and teardown
+- `@ParameterizedTest` - testing with multiple inputs
+- `@DisplayName` - readable test names
 - Testing the REST API: starting the server in tests, sending HTTP requests
 - Assertions with AssertJ (brief intro, show the fluent style)
 - What makes a good test: fast, isolated, repeatable, self-validating
@@ -141,7 +141,7 @@ isProject: false
 
 ## Consistency checks
 
-- No em dashes -- use `--` throughout
+- No em dashes - use `--` throughout
 - Use same frontmatter format as existing chapters (title, sidebar_label, description, slug, tags, keywords, sidebar_position)
 - Cross-link to standalone reference docs where they exist for deeper reading
 

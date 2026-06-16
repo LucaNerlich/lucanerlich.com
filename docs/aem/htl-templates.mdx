@@ -569,7 +569,7 @@ public class SafeTextModel {
 
 ```html title="HTL template using the model"
 <sly data-sly-use.model="com.example.core.models.SafeTextModel">
-  <!-- Already sanitised in Java -- safe to render as html -->
+  <!-- Already sanitised in Java - safe to render as html -->
   <div>${model.safeRichText @ context='html'}</div>
   <a href="${model.safeLink @ context='uri'}">Read more</a>
 </sly>

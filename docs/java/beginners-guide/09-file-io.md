@@ -1,7 +1,7 @@
 ---
 title: "File I/O"
 sidebar_label: "File I/O"
-description: Learn Java file I/O -- Path, Files, reading and writing text files, directories, BufferedReader/Writer, and simple CSV parsing.
+description: Learn Java file I/O - Path, Files, reading and writing text files, directories, BufferedReader/Writer, and simple CSV parsing.
 slug: /java/beginners-guide/file-io
 tags: [java, beginners, file-io, nio]
 keywords:

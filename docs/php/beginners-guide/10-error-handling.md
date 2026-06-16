@@ -312,7 +312,7 @@ echo '<pre>';
 print_r($data);
 echo '</pre>';
 
-// Dump and die -- stop execution immediately after dumping
+// Dump and die - stop execution immediately after dumping
 var_dump($data);
 die();  // or exit();
 ```

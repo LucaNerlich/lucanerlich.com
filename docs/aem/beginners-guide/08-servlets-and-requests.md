@@ -1,7 +1,7 @@
 ---
 title: "Servlets & Request Handling"
 sidebar_label: "Servlets & Requests"
-description: Writing Sling servlets -- resource-type vs path binding, selectors and extensions, safe vs all methods, reading request input safely, and returning JSON to the client.
+description: Writing Sling servlets - resource-type vs path binding, selectors and extensions, safe vs all methods, reading request input safely, and returning JSON to the client.
 slug: /aem/beginners-guide/servlets-and-requests
 tags: [aem, beginners]
 keywords:
@@ -15,7 +15,7 @@ sidebar_position: 8
 
 # Servlets & Request Handling
 
-Sling Models render content into components. But sometimes you need a custom **endpoint** -- a URL that
+Sling Models render content into components. But sometimes you need a custom **endpoint** - a URL that
 returns JSON for a frontend, handles a form POST, or performs an action. That is what a **Sling
 servlet** is for. This chapter shows how requests are routed to servlets and how to write them safely.
 
@@ -23,7 +23,7 @@ servlet** is for. This chapter shows how requests are routed to servlets and how
 
 Recall from [The JCR & Sling](./02-jcr-and-sling.md) that Sling resolves a request to a **resource**,
 then picks a **script or servlet** based on the resource's `sling:resourceType`, the **selectors**, the
-**extension**, and the HTTP **method**. A servlet is just another way to render a resource -- bound
+**extension**, and the HTTP **method**. A servlet is just another way to render a resource - bound
 either to a resource type or to a fixed path.
 
 ```text
@@ -105,7 +105,7 @@ public class ChildPagesServlet extends SlingSafeMethodsServlet {
 | `SlingSafeMethodsServlet` | GET, HEAD (read-only) | Read endpoints, JSON APIs |
 | `SlingAllMethodsServlet` | GET, POST, PUT, DELETE | Endpoints that modify content or handle forms |
 
-Extend the **narrowest** base class that does the job -- a read endpoint should not accept POST.
+Extend the **narrowest** base class that does the job - a read endpoint should not accept POST.
 
 ## Handling a POST safely
 
@@ -151,7 +151,7 @@ raw parameter. See [Security & Permissions](./19-security-and-permissions.md).
 
 ## Servlet or Sling Model Exporter?
 
-If you only need to expose a component's data as JSON, you usually do **not** need a servlet -- a
+If you only need to expose a component's data as JSON, you usually do **not** need a servlet - a
 [Sling Model Exporter](./07-sling-models.md#sling-model-exporters) (`.model.json`) is simpler and
 cacheable. Reach for a servlet when you need custom routing, query logic, an action endpoint, or a
 response shape that does not map to a single component.
@@ -159,7 +159,7 @@ response shape that does not map to a single component.
 ## Selectors, extensions, and caching
 
 - **Selectors** (`page.children.json`) let one resource expose multiple representations. They are part
-  of the URL, so they are **cacheable** by the Dispatcher and CDN -- prefer them over query parameters
+  of the URL, so they are **cacheable** by the Dispatcher and CDN - prefer them over query parameters
   for cacheable reads.
 - **Extension** sets the response type convention (`.json`, `.csv`, `.xml`).
 - Keep GET endpoints **idempotent and cacheable**; put anything that mutates behind POST.

@@ -339,7 +339,7 @@ export const sidebarOrder: Record<string, string[]> = {
 // constants form one module. The Docusaurus config calls `sortSidebarItems`
 // as a thin adapter.
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Docusaurus sidebar types are complex internal generics
+// eslint-disable-next-line @typescript-eslint/no-explicit-any - Docusaurus sidebar types are complex internal generics
 type SidebarItem = any;
 type CategoriesMetadata = Record<string, {label?: string; [k: string]: unknown}>;
 

@@ -42,7 +42,7 @@ flowchart TD
 ### Static vs editable templates
 
 Older AEM projects used **static templates** (stored under `/apps/.../templates`, edited only in
-code). Modern projects -- and everything on AEM as a Cloud Service -- should use **editable
+code). Modern projects - and everything on AEM as a Cloud Service - should use **editable
 templates**. The difference matters when you inherit or migrate a project:
 
 | | Static template | Editable template |
@@ -55,7 +55,7 @@ templates**. The difference matters when you inherit or migrate a project:
 
 If you find `cq:template` pointing at an `/apps/...` path with a `cq:Template` node, you are looking
 at a static template. New components and chapters in this guide assume editable templates throughout.
-See Adobe's [Page Templates -- Editable](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates)
+See Adobe's [Page Templates - Editable](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates)
 and [Creating Page Templates](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/templates/page-templates-static).
 
 ### Template Types
@@ -181,7 +181,7 @@ page component to add your own includes:
 
 ```html
 <!-- apps/mysite/components/page/customheaderlibs.html -->
-<!-- Loaded in the <head> -- use for CSS and critical resources -->
+<!-- Loaded in the <head> - use for CSS and critical resources -->
 <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
     <sly data-sly-call="${clientlib.css @ categories='mysite.site'}"/>
 </sly>
@@ -192,7 +192,7 @@ page component to add your own includes:
 
 ```html
 <!-- apps/mysite/components/page/customfooterlibs.html -->
-<!-- Loaded before </body> -- use for JS -->
+<!-- Loaded before </body> - use for JS -->
 <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
     <sly data-sly-call="${clientlib.js @ categories='mysite.site'}"/>
 </sly>
@@ -400,7 +400,7 @@ You learned:
 - [Page Templates (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates) - editable templates, the template editor, and enabling templates
 - [Creating Page Templates (developer)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/templates/page-templates-static) - template types, structure vs initial content
 - [Style System](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/style-system) - author-applied CSS classes
-- [WKND tutorial -- Pages & Templates](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
+- [WKND tutorial - Pages & Templates](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
 
 Next up: [Client Libraries](./10-client-libraries.md) - CSS and JS management, clientlib categories, dependencies,
 embedding, proxy serving, and integration with the page component.

@@ -316,9 +316,9 @@ class BankAccount {
 
 $account = new BankAccount('Alice');
 $account->deposit(100.0);
-echo $account->owner;        // OK -- public
-echo $account->getBalance(); // OK -- public method exposes balance
-// $account->balance = 999;  // Error -- cannot access private property
+echo $account->owner;        // OK - public
+echo $account->getBalance(); // OK - public method exposes balance
+// $account->balance = 999;  // Error - cannot access private property
 ```
 
 By making `$balance` private, you prevent code outside the class from changing it directly. The only way to modify it is through `deposit()`, which can enforce rules (e.g., positive amounts only).

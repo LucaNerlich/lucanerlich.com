@@ -6,7 +6,7 @@
 
 **Docusaurus 3** static documentation site (lucanerlich.com).
 Content covers AEM, Java, JavaScript, Strapi, and software design patterns.
-There is almost no application code -- the repo is primarily Markdown/MDX docs
+There is almost no application code - the repo is primarily Markdown/MDX docs
 with minimal TypeScript/JS configuration and CSS.
 
 - **Framework:** Docusaurus 3.9.x (`@docusaurus/preset-classic`)
@@ -125,13 +125,13 @@ static/                # Static assets (images, favicon, manifest.json)
 
 ## Key Configuration Details
 
-- **Broken link checking is strict** -- `pnpm build` will fail on any broken
+- **Broken link checking is strict** - `pnpm build` will fail on any broken
   link, anchor, markdown link, or image reference. Always verify after edits.
 - **Blog is disabled** (`blog: false` in preset config).
 - **Client redirects** are configured in `docusaurus.config.ts` under the
   `@docusaurus/plugin-client-redirects` plugin. When moving/renaming docs, add
   a redirect from the old path to the new path.
-- **Algolia search** is configured -- no action needed from agents.
+- **Algolia search** is configured - no action needed from agents.
 - **Future flags:** `experimental_faster: true` (SWC) and `v4: true`.
 
 ## Cursor Rules (`.cursor/rules/`)
@@ -208,8 +208,8 @@ or config file triggers an automatic rebuild.
 
 There is no test suite. The verification steps are:
 
-1. `pnpm build` -- the only "test". Fails on broken links, anchors, or images.
-2. `pnpm start` -- visually confirm the site renders correctly in a browser.
+1. `pnpm build` - the only "test". Fails on broken links, anchors, or images.
+2. `pnpm start` - visually confirm the site renders correctly in a browser.
 
 ### Gotchas
 

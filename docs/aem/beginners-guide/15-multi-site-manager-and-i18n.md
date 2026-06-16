@@ -193,7 +193,7 @@ translate **custom** component properties, register them in the **translation ru
 (`/conf/global/settings/translation/rules/translation_rules.xml`, editable via **Tools > General >
 Translation Configuration**):
 
-```xml title="translation_rules.xml -- translate a custom property and a whole component"
+```xml title="translation_rules.xml - translate a custom property and a whole component"
 <nodelist>
     <!-- Translate the custom 'subtitle' property on any node -->
     <node path="/content">

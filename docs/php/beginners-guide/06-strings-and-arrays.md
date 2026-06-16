@@ -1,7 +1,7 @@
 ---
 title: "Strings & Arrays"
 sidebar_label: "Strings & Arrays"
-description: Master PHP strings -- concatenation, heredoc, common functions, and multibyte handling. Then dive into indexed and associative arrays, looping, essential functions, and practical examples.
+description: Master PHP strings - concatenation, heredoc, common functions, and multibyte handling. Then dive into indexed and associative arrays, looping, essential functions, and practical examples.
 slug: /php/beginners-guide/strings-and-arrays
 tags: [php, beginners]
 keywords:
@@ -196,7 +196,7 @@ Chinese), one character can use multiple bytes:
 <?php
 
 $emoji = '👋';
-echo strlen($emoji);  // 4 (bytes) -- not 1 character!
+echo strlen($emoji);  // 4 (bytes) - not 1 character!
 ```
 
 For Unicode-aware string handling, use the **mbstring** extension:

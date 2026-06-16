@@ -34,23 +34,23 @@ together in vector space.
 ## How embedding models are produced
 
 A transformer encoder maps tokenized input through several attention layers and produces a fixed-size
-vector per input -- often the pooled average over tokens, or a dedicated summary token. The model is
+vector per input - often the pooled average over tokens, or a dedicated summary token. The model is
 trained with **contrastive objectives**: pairs known to be similar (question + answer, query +
 click-through, sentence pairs) should produce close vectors; random pairs should be far apart. Hundreds of
 millions of such pairs teach the model a useful geometry.
 
 The two metrics that matter downstream:
 
-- **[Cosine similarity](./glossary.md#cosine-similarity)** -- the cosine of the angle between two vectors,
+- **[Cosine similarity](./glossary.md#cosine-similarity)** - the cosine of the angle between two vectors,
   measuring similarity regardless of length. The standard metric for text. Most LLM embeddings are
   normalized to unit length, so cosine and inner product rank identically (inner product is just faster).
-- **[Semantic search](./glossary.md#semantic-search)** -- the capability embeddings unlock: a query for
+- **[Semantic search](./glossary.md#semantic-search)** - the capability embeddings unlock: a query for
   "what's happening with a fast animal?" can retrieve "the quick brown fox jumps over the lazy dog" with no
   shared keywords.
 
 ## The 2026 model landscape
 
-A working snapshot -- names and prices change, so check vendor pages before committing.
+A working snapshot - names and prices change, so check vendor pages before committing.
 
 ### Proprietary
 
@@ -95,7 +95,7 @@ A good 2026 default for English RAG: `text-embedding-3-small` (cheap, well-behav
 
 ## Dimensions, Matryoshka, and quantization
 
-Higher dimensions are not always better -- for a fixed model, more dimensions means better quality but more
+Higher dimensions are not always better - for a fixed model, more dimensions means better quality but more
 storage and more ANN compute. Three production levers:
 
 - **Matryoshka Representation Learning (MRL).** Models trained so the first N dimensions are themselves a
@@ -105,7 +105,7 @@ storage and more ANN compute. Three production levers:
   `halfvec` instead of `float32` for 4x--32x storage reduction with minimal recall loss. Note this
   compresses the *embedding vectors*, distinct from [model weight quantization](./cloud-vs-local.md#quantization-and-qlora).
   A subtle trap: quantizers optimized purely for reconstruction error (MSE) can bias inner-product
-  estimates -- for retrieval, what matters is *unbiased similarity preservation*, not reconstruction.
+  estimates - for retrieval, what matters is *unbiased similarity preservation*, not reconstruction.
 - **Product Quantization (PQ / OPQ).** The classical ANN compression family in FAISS, OpenSearch, and
   Milvus, used when partitioning a very large index matters more than per-vector precision.
 
@@ -131,7 +131,7 @@ part that won't turn on" vs "ignition failure"). The 2026 answer is **[hybrid re
 embed the query for both dense (semantic) and sparse (BM25 / SPLADE) retrieval, then fuse with reciprocal
 rank fusion or weighted scoring, and rerank on top. Hybrid is first-class in Pinecone, OpenSearch,
 Weaviate, Qdrant, and Milvus. **If RAG quality is weak and you are embedding-only, add hybrid retrieval
-before anything else** -- it is the single highest-ROI lever in most enterprise deployments.
+before anything else** - it is the single highest-ROI lever in most enterprise deployments.
 
 ## Production pitfalls
 
@@ -149,8 +149,8 @@ before anything else** -- it is the single highest-ROI lever in most enterprise 
 
 ## See also
 
-- [RAG](./rag.md) -- the canonical embedding-driven application
-- [Tooling and Frameworks](./tooling.md) -- vector databases, rerankers, and the broader stack
-- [Evaluation and LLMOps](./evaluation-and-llmops.md) -- measuring retrieval and answer quality
-- [Knowledge Management with LLMs](./knowledge-management.md) -- where embeddings sit among retrieval strategies
-- [AI Glossary](./glossary.md) -- embedding, cosine similarity, vector quantization, reranking, and more
+- [RAG](./rag.md) - the canonical embedding-driven application
+- [Tooling and Frameworks](./tooling.md) - vector databases, rerankers, and the broader stack
+- [Evaluation and LLMOps](./evaluation-and-llmops.md) - measuring retrieval and answer quality
+- [Knowledge Management with LLMs](./knowledge-management.md) - where embeddings sit among retrieval strategies
+- [AI Glossary](./glossary.md) - embedding, cosine similarity, vector quantization, reranking, and more

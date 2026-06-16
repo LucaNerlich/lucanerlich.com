@@ -270,7 +270,7 @@ otherwise the condition never becomes false and you get an **infinite loop**:
 ```php
 <?php
 
-// DANGER -- infinite loop! $count never changes.
+// DANGER - infinite loop! $count never changes.
 $count = 0;
 while ($count < 5) {
     echo $count . "\n";

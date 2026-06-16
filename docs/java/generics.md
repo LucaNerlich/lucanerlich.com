@@ -15,12 +15,12 @@ and make APIs self-documenting.
 ## Quick start
 
 ```java
-// Without generics -- runtime ClassCastException risk
+// Without generics - runtime ClassCastException risk
 List rawList = new ArrayList();
 rawList.add("hello");
 Integer n = (Integer) rawList.get(0); // ClassCastException at runtime!
 
-// With generics -- compile-time safety
+// With generics - compile-time safety
 List<String> typedList = new ArrayList<>();
 typedList.add("hello");
 // typedList.add(42);       // Compile error!
@@ -151,8 +151,8 @@ double sum(List<? extends Number> numbers) {
     return total;
 }
 
-sum(List.of(1, 2, 3));         // List<Integer> -- works
-sum(List.of(1.5, 2.5));        // List<Double>  -- works
+sum(List.of(1, 2, 3));         // List<Integer> - works
+sum(List.of(1.5, 2.5));        // List<Double>  - works
 // numbers.add(42);             // Compile error! Can't add to ? extends
 ```
 
@@ -276,7 +276,7 @@ List<String> list = listFactory.create();
 ### Self-referencing generics (Comparable pattern)
 
 ```java
-// T extends Comparable<T> -- "T can compare with itself"
+// T extends Comparable<T> - "T can compare with itself"
 public class SortableList<T extends Comparable<T>> {
     private final List<T> items = new ArrayList<>();
 

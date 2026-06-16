@@ -1,7 +1,7 @@
 ---
 title: "Operators & Expressions"
 sidebar_label: "Operators & Expressions"
-description: Learn how PHP combines values with operators -- arithmetic, assignment, comparison, logical, and string concatenation. Understand loose vs strict comparison and operator precedence.
+description: Learn how PHP combines values with operators - arithmetic, assignment, comparison, logical, and string concatenation. Understand loose vs strict comparison and operator precedence.
 slug: /php/beginners-guide/operators-and-expressions
 tags: [php, beginners]
 keywords:
@@ -112,7 +112,7 @@ $name ??= 'Guest';   // $name is assigned 'Guest' only because it was null
 echo $name;          // Output: Guest
 
 $age = 25;
-$age ??= 99;   // $age stays 25 -- it was not null, so we do not assign
+$age ??= 99;   // $age stays 25 - it was not null, so we do not assign
 echo $age;     // Output: 25
 ```
 
@@ -142,10 +142,10 @@ The dot operator **glues** strings together. It does not add spaces for you - yo
 $firstName = 'Alice';
 $lastName = 'Smith';
 
-// Wrong -- no space between names:
+// Wrong - no space between names:
 echo $firstName . $lastName;   // 'AliceSmith'
 
-// Correct -- add a space:
+// Correct - add a space:
 echo $firstName . ' ' . $lastName;   // 'Alice Smith'
 ```
 
@@ -225,7 +225,7 @@ Loose comparison (`==`) can produce surprising results because PHP converts type
 ```php
 <?php
 
-var_dump(0 == 'hello');   // bool(true) in PHP 8 -- 'hello' is converted to 0
+var_dump(0 == 'hello');   // bool(true) in PHP 8 - 'hello' is converted to 0
 var_dump('' == false);    // bool(true)
 var_dump(0 == false);     // bool(true)
 var_dump('' == 0);        // bool(true) in PHP 8
@@ -252,10 +252,10 @@ With strict comparison, you avoid type juggling entirely:
 ```php
 <?php
 
-var_dump(0 === false);    // bool(false) -- different types
-var_dump('' === false);   // bool(false) -- different types
-var_dump(42 === 42);      // bool(true) -- same type and value
-var_dump(42 === '42');    // bool(false) -- int vs string
+var_dump(0 === false);    // bool(false) - different types
+var_dump('' === false);   // bool(false) - different types
+var_dump(42 === 42);      // bool(true) - same type and value
+var_dump(42 === '42');    // bool(false) - int vs string
 ```
 
 Your code behaves predictably. If you expect a string, you get a string. If you expect an integer, you get an integer.
@@ -284,7 +284,7 @@ Logical operators combine boolean values. They are used in conditions and loops.
 $age = 25;
 $hasTicket = true;
 
-var_dump($age >= 18 && $hasTicket);   // true -- both conditions are true
+var_dump($age >= 18 && $hasTicket);   // true - both conditions are true
 ```
 
 - **OR** (`||`): At least one side must be true for the result to be true.
@@ -295,7 +295,7 @@ var_dump($age >= 18 && $hasTicket);   // true -- both conditions are true
 $isWeekend = true;
 $isHoliday = false;
 
-var_dump($isWeekend || $isHoliday);   // true -- at least one is true
+var_dump($isWeekend || $isHoliday);   // true - at least one is true
 ```
 
 ### NOT
@@ -306,7 +306,7 @@ The `!` operator inverts a boolean:
 <?php
 
 $isActive = false;
-var_dump(!$isActive);   // true -- NOT false is true
+var_dump(!$isActive);   // true - NOT false is true
 ```
 
 ### and/or keywords vs &&/||
@@ -321,11 +321,11 @@ This matters when you mix them with assignment:
 ```php
 <?php
 
-// With && -- assignment happens first, then the condition
+// With && - assignment happens first, then the condition
 $result = false && $x = true;   // $result is false; $x is never assigned
 var_dump($x);   // undefined variable (or null in PHP 8+)
 
-// With and -- the whole expression is evaluated differently
+// With and - the whole expression is evaluated differently
 $result = false and $x = true;   // $result is false; $x IS assigned true
 var_dump($x);   // true
 ```
@@ -378,8 +378,8 @@ It is useful for optional values or missing array keys:
 <?php
 
 $config = ['theme' => 'dark'];
-$theme = $config['theme'] ?? 'light';        // 'dark' -- key exists
-$font = $config['font'] ?? 'sans-serif';     // 'sans-serif' -- key missing
+$theme = $config['theme'] ?? 'light';        // 'dark' - key exists
+$font = $config['font'] ?? 'sans-serif';     // 'sans-serif' - key missing
 
 $user = null;
 $username = $user?->name ?? 'Anonymous';   // Works with nullsafe operator (PHP 8+)
@@ -392,7 +392,7 @@ The `??=` operator assigns only when the variable is null:
 
 $options = [];
 $options['debug'] ??= false;   // Assigns false because key does not exist
-$options['debug'] ??= true;    // Does nothing -- key already exists
+$options['debug'] ??= true;    // Does nothing - key already exists
 ```
 
 ## Operator precedence

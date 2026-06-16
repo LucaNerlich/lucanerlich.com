@@ -1,7 +1,7 @@
 ---
 title: "Practice Projects"
 sidebar_label: "Practice Projects"
-description: Eight hands-on project ideas -- from beginner to advanced -- to reinforce everything you learned in the Rust Beginners Guide.
+description: Eight hands-on project ideas - from beginner to advanced - to reinforce everything you learned in the Rust Beginners Guide.
 slug: /rust/beginners-guide/practice-projects
 tags: [rust, beginners, projects]
 keywords:

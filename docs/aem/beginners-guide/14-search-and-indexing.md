@@ -16,7 +16,7 @@ sidebar_position: 14
 # Search & Indexing
 
 You now have pages, assets, and Content Fragments. The moment you build a navigation, a "related
-articles" list, or a search page, you run a **query** -- and a query that is not backed by an **index**
+articles" list, or a search page, you run a **query** - and a query that is not backed by an **index**
 can quietly bring an instance to its knees. This chapter is the beginner's view; the
 [Search & Indexing](../content/search-and-indexing.mdx) reference goes deeper.
 
@@ -24,7 +24,7 @@ can quietly bring an instance to its knees. This chapter is the beginner's view;
 
 | API | Looks like | Use it for |
 |-----|-----------|------------|
-| **QueryBuilder** | A map of predicates | Most application code -- readable, composable, paginated |
+| **QueryBuilder** | A map of predicates | Most application code - readable, composable, paginated |
 | **JCR-SQL2** | SQL-ish text | Complex conditions, scripts, the Groovy Console |
 | **XPath** | XPath 2.0 | Legacy; avoid in new code |
 
@@ -77,8 +77,8 @@ query is index-backed before you ship it.
 An Oak index is a definition under `/oak:index` that tells the query engine how to look up nodes by
 certain properties without scanning the tree. The two you will use:
 
-- **Property index** -- fast exact-match on one or few properties.
-- **Lucene index** -- the standard custom index in AEM; supports exact match, sorting, and full-text.
+- **Property index** - fast exact-match on one or few properties.
+- **Lucene index** - the standard custom index in AEM; supports exact match, sorting, and full-text.
 
 ### A simple property index
 
@@ -117,7 +117,7 @@ certain properties without scanning the tree. The two you will use:
 </jcr:root>
 ```
 
-Commit index definitions to Git under `ui.apps` and deploy them like any other code -- never
+Commit index definitions to Git under `ui.apps` and deploy them like any other code - never
 hand-create them in CRXDE on a real environment (they will drift and be lost on deploy). On AEM as a
 Cloud Service, custom indexes must follow the `<name>-custom-<N>` naming convention.
 
@@ -135,10 +135,10 @@ cost.
 
 ## Best practices
 
-- **Constrain by `path` and `type`** -- the tightest scope is the cheapest query.
+- **Constrain by `path` and `type`** - the tightest scope is the cheapest query.
 - **Index for the exact filter + sort** your code runs, then verify with Explain Query.
 - **Paginate** with `p.limit`; never load an unbounded result set.
-- **Reindex off-peak** -- it is I/O heavy.
+- **Reindex off-peak** - it is I/O heavy.
 - Prefer **one well-designed Lucene index** over many tiny property indexes.
 
 ## Summary

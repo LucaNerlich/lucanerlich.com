@@ -1,6 +1,6 @@
 ---
 title: Which Pattern When?
-description: A decision guide for the AI section -- pick the right combination of LLM, RAG, agents, skills, structured outputs, and human review for common goals without rereading every page.
+description: A decision guide for the AI section - pick the right combination of LLM, RAG, agents, skills, structured outputs, and human review for common goals without rereading every page.
 tags: [ai, architecture, decision-guide]
 keywords:
     - ai architecture decision
@@ -11,7 +11,7 @@ keywords:
 
 # Which Pattern When?
 
-The [AI section](./llm.md) covers many patterns. In production you combine them -- rarely "just an LLM" or "just
+The [AI section](./llm.md) covers many patterns. In production you combine them - rarely "just an LLM" or "just
 RAG." This page is a **capstone decision guide**: where to start, what to add next, and what to skip. It
 assumes you have skimmed [Large Language Models](./llm.md) and points to deep dives rather than repeating them.
 
@@ -45,13 +45,13 @@ flowchart TB
     chat --> product["Add AI in Products UX<br/>+ evals before launch"]
 ```
 
-**Knowledge problem** -- model does not know your facts → [RAG](./rag.md), [knowledge management](./knowledge-management.md) patterns, or tools that fetch live data.
+**Knowledge problem** - model does not know your facts → [RAG](./rag.md), [knowledge management](./knowledge-management.md) patterns, or tools that fetch live data.
 
-**Action problem** -- model must do things, not just text → [Agents](./agents.md) with narrow tools and [HITL](./human-in-the-loop.md) on destructive steps.
+**Action problem** - model must do things, not just text → [Agents](./agents.md) with narrow tools and [HITL](./human-in-the-loop.md) on destructive steps.
 
-**Format problem** -- downstream code needs JSON/fields → [Structured outputs](./structured-outputs.md), not "please return JSON."
+**Format problem** - downstream code needs JSON/fields → [Structured outputs](./structured-outputs.md), not "please return JSON."
 
-**Process problem** -- team repeats the same agent ritual → [Skills](./skills.md) or [project memory](./project-memory-and-rules.md), not a longer system prompt every time.
+**Process problem** - team repeats the same agent ritual → [Skills](./skills.md) or [project memory](./project-memory-and-rules.md), not a longer system prompt every time.
 
 ## RAG vs agent vs chat
 
@@ -67,13 +67,13 @@ per request ([cost & latency](./cost-and-latency.md#model-routing-patterns)).
 
 ## Adaptation ladder (cheapest first)
 
-From [LLMs](./llm.md#foundation-models-rent-dont-build) -- try in order; stop when quality is good enough:
+From [LLMs](./llm.md#foundation-models-rent-dont-build) - try in order; stop when quality is good enough:
 
-1. **Prompt / context** -- instructions, examples, [context engineering](./context-engineering.md)
-2. **[RAG](./rag.md)** -- fresh, private knowledge at inference
-3. **[Project memory / rules / skills](./project-memory-and-rules.md)** -- repeatable team conventions and workflows
-4. **Fine-tuning / LoRA** -- domain style or format the model resists via prompting (see [RAG vs fine-tuning](./rag.md#rag-vs-fine-tuning))
-5. **Pre-training** -- almost never
+1. **Prompt / context** - instructions, examples, [context engineering](./context-engineering.md)
+2. **[RAG](./rag.md)** - fresh, private knowledge at inference
+3. **[Project memory / rules / skills](./project-memory-and-rules.md)** - repeatable team conventions and workflows
+4. **Fine-tuning / LoRA** - domain style or format the model resists via prompting (see [RAG vs fine-tuning](./rag.md#rag-vs-fine-tuning))
+5. **Pre-training** - almost never
 
 For coding agents, (3) often beats (4).
 
@@ -86,26 +86,26 @@ For coding agents, (3) often beats (4).
 | Multi-step rituals (release, review) | [Agent skills](./skills.md) |
 | External systems (Jira, DB) | [MCP](./agents.md#mcp-model-context-protocol) servers |
 
-Do not duplicate the same checklist in memory, rules, *and* skills -- one source of truth per concern.
+Do not duplicate the same checklist in memory, rules, *and* skills - one source of truth per concern.
 
 ## Production checklist (any pattern)
 
 Before launch, you should have answers for:
 
-- [ ] **Eval or test set** -- representative inputs + pass criteria ([Evaluation & LLMOps](./evaluation-and-llmops.md))
-- [ ] **Cost/latency budget** -- model tier, max tokens, max agent rounds ([Cost & Latency](./cost-and-latency.md))
-- [ ] **Failure UX** -- API down, refusal, wrong answer ([AI in Products](./ai-in-products.md))
-- [ ] **Data handling** -- what leaves your network ([Privacy & Data](./privacy-and-data.md))
-- [ ] **Safety** -- injection surface, tool permissions ([Safety](./safety.md))
-- [ ] **Runbook** -- how to diagnose incidents ([Debugging LLM Apps](./debugging-llm-apps.md))
+- [ ] **Eval or test set** - representative inputs + pass criteria ([Evaluation & LLMOps](./evaluation-and-llmops.md))
+- [ ] **Cost/latency budget** - model tier, max tokens, max agent rounds ([Cost & Latency](./cost-and-latency.md))
+- [ ] **Failure UX** - API down, refusal, wrong answer ([AI in Products](./ai-in-products.md))
+- [ ] **Data handling** - what leaves your network ([Privacy & Data](./privacy-and-data.md))
+- [ ] **Safety** - injection surface, tool permissions ([Safety](./safety.md))
+- [ ] **Runbook** - how to diagnose incidents ([Debugging LLM Apps](./debugging-llm-apps.md))
 
 ## Common anti-patterns
 
-- **Agent first** -- jumping to agents before retrieval and prompts work
-- **Frontier everywhere** -- no routing; invoice surprises ([Cost & Latency](./cost-and-latency.md))
-- **Guardrails only** -- no HITL on money/deletes/publish ([Human-in-the-Loop](./human-in-the-loop.md))
-- **Eval never** -- shipping on vibes ([Evaluation & LLMOps](./evaluation-and-llmops.md))
-- **Giant system prompt** -- everything in one blob instead of skills, RAG, and tools ([Context Engineering](./context-engineering.md))
+- **Agent first** - jumping to agents before retrieval and prompts work
+- **Frontier everywhere** - no routing; invoice surprises ([Cost & Latency](./cost-and-latency.md))
+- **Guardrails only** - no HITL on money/deletes/publish ([Human-in-the-Loop](./human-in-the-loop.md))
+- **Eval never** - shipping on vibes ([Evaluation & LLMOps](./evaluation-and-llmops.md))
+- **Giant system prompt** - everything in one blob instead of skills, RAG, and tools ([Context Engineering](./context-engineering.md))
 
 ## Suggested reading order
 
@@ -119,7 +119,7 @@ Before launch, you should have answers for:
 
 ## See also
 
-- [Debugging LLM Apps](./debugging-llm-apps.md) -- when something breaks in prod
-- [Knowledge Management with LLMs](./knowledge-management.md) -- RAG vs wiki vs just-in-time
-- [Tooling and Frameworks](./tooling.md) -- frameworks and observability
-- [AI Glossary](./glossary.md) -- terms across all patterns
+- [Debugging LLM Apps](./debugging-llm-apps.md) - when something breaks in prod
+- [Knowledge Management with LLMs](./knowledge-management.md) - RAG vs wiki vs just-in-time
+- [Tooling and Frameworks](./tooling.md) - frameworks and observability
+- [AI Glossary](./glossary.md) - terms across all patterns

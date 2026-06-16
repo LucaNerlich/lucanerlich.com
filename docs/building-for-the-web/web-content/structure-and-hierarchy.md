@@ -1,7 +1,7 @@
 ---
 title: "Structure and Hierarchy"
 sidebar_label: "Structure & hierarchy"
-description: Headings, landmarks, lists, page hierarchy, progressive disclosure, emphasis, calls to action, and whitespace -- how to make a page scannable and focused.
+description: Headings, landmarks, lists, page hierarchy, progressive disclosure, emphasis, calls to action, and whitespace - how to make a page scannable and focused.
 slug: /web-content/structure-and-hierarchy
 tags: [ux, content-design, accessibility, visual-hierarchy]
 keywords:
@@ -168,7 +168,7 @@ Prefer **sections with descriptive `h2` headings** over kilometre-long paragraph
 ```html
 <h2>Configure webhooks</h2>
 <p>
-    Webhooks notify your server when events happen -- for example when a
+    Webhooks notify your server when events happen - for example when a
     payment succeeds.
 </p>
 <p>
@@ -297,7 +297,7 @@ Every **sticky bar**, modal, and sidebar competes with your content. Whitespace 
 ### Don't
 
 ```css
-/* Packing everything into one box -- headings, ads, and unrelated promos */
+/* Packing everything into one box - headings, ads, and unrelated promos */
 .cluster {
     padding: 0.25rem;
     border: 1px solid #ccc;
@@ -310,6 +310,6 @@ Every **sticky bar**, modal, and sidebar competes with your content. Whitespace 
 
 ## Related
 
-- [Forms and interactions](./forms-and-interactions.md) -- where users actually act on what you've structured.
-- [Information architecture](./information-architecture.md) -- structure across pages, not just within one.
-- [Semantic HTML](../semantic-html.mdx) -- the elements behind landmarks and headings.
+- [Forms and interactions](./forms-and-interactions.md) - where users actually act on what you've structured.
+- [Information architecture](./information-architecture.md) - structure across pages, not just within one.
+- [Semantic HTML](../semantic-html.mdx) - the elements behind landmarks and headings.

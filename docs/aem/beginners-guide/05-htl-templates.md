@@ -1,7 +1,7 @@
 ---
 title: "HTL Templates"
 sidebar_label: "HTL Templates"
-description: The HTML Template Language in depth -- expressions, block statements, global objects, the Use API, and best practices.
+description: The HTML Template Language in depth - expressions, block statements, global objects, the Use API, and best practices.
 slug: /aem/beginners-guide/htl-templates
 tags: [aem, beginners]
 keywords:

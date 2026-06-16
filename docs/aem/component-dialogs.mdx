@@ -217,7 +217,7 @@ This is an empty dialog structure and components can be placed in tabs (you can 
 - [Granite UI Server-side API](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
 - [Coral UI Icon List](https://developer.adobe.com/experience-manager/reference-materials/6-5/coral-ui/coralui3/Coral.Icon.html#availableIcons)
 - [Creating a New Granite UI Field Component (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65-lts/content/implementing/developing/platform/granite-ui-component)
-- [Adding Fields to an AEM Dialog -- WKND tutorial](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
+- [Adding Fields to an AEM Dialog - WKND tutorial](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
 - [Configuring the Rich Text Editor (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/configuring-and-extending/rich-text-editor)
 
 ![Empty dialog](/images/aem/dialogfields/empty.png)
@@ -494,7 +494,7 @@ You can also restrict to a predefined palette by providing custom swatches:
     jcr:primaryType="nt:unstructured"
     sling:resourceType="granite/ui/components/coral/foundation/form/password"
     fieldLabel="API Key"
-    fieldDescription="Stored as plain text in the JCR -- consider using OSGi configs for secrets"
+    fieldDescription="Stored as plain text in the JCR - consider using OSGi configs for secrets"
     name="./apiKey"/>
 ```
 
@@ -1885,7 +1885,7 @@ buttons appear, and in what order, for the inline, dialogFullScreen, and tableEd
 This example enables formatting, lists, links, paragraph formats, a Styles dropdown backed by
 component CSS, paste-as-plaintext, special characters, find/replace, and source editing.
 
-```xml title="components/mycomponent/_cq_dialog/.content.xml -- RTE field"
+```xml title="components/mycomponent/_cq_dialog/.content.xml - RTE field"
 <text
     jcr:primaryType="nt:unstructured"
     sling:resourceType="cq/gui/components/authoring/dialog/richtext"
@@ -2205,7 +2205,7 @@ Eyebrow + title + rich-text description + a CTA (label/URL/target) + a style sel
 A repeatable list of cards, each with an image, title, and link. Stored as ordered child nodes under
 `./cards`.
 
-```xml title="components/cardlist/_cq_dialog/.content.xml -- items fragment"
+```xml title="components/cardlist/_cq_dialog/.content.xml - items fragment"
 <cards jcr:primaryType="nt:unstructured"
        sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
        fieldLabel="Cards"
@@ -2244,7 +2244,7 @@ Read it in a Sling Model with `@ChildResource` + a `Card` interface/model (see
 A compact link group where a dropdown reveals the right field (internal path vs external URL vs
 email) using the native [show/hide script](#native-showhide-with-cq-dialog-dropdown-showhide):
 
-```xml title="components/cta/_cq_dialog/.content.xml -- items fragment"
+```xml title="components/cta/_cq_dialog/.content.xml - items fragment"
 <linkType jcr:primaryType="nt:unstructured"
           sling:resourceType="granite/ui/components/coral/foundation/form/select"
           fieldLabel="Link Type"

@@ -118,13 +118,13 @@ This distinction is fundamental in Rust.
 
 ```rust
 fn main() {
-    // This is a statement (let binding) -- it does not produce a value
+    // This is a statement (let binding) - it does not produce a value
     let x = 5;
 
-    // This is an expression -- it evaluates to 6
+    // This is an expression - it evaluates to 6
     let y = {
         let inner = x + 1;
-        inner // No semicolon -- this is the block's return value
+        inner // No semicolon - this is the block's return value
     };
 
     println!("x = {x}, y = {y}");
@@ -136,7 +136,7 @@ and the block returns `()` instead.
 
 ```rust
 fn add(a: i32, b: i32) -> i32 {
-    a + b; // Oops -- semicolon makes this a statement
+    a + b; // Oops - semicolon makes this a statement
 }
 ```
 

@@ -1,13 +1,13 @@
 ---
 title: Admin API (helix5)
-description: Full reference for the helix5 Admin API at admin.hlx.page -- authentication, endpoint groups (status, preview, live, code, index, cache, log, profile, sitemap, snapshot, job), webhooks, and common workflows with curl and JS examples.
+description: Full reference for the helix5 Admin API at admin.hlx.page - authentication, endpoint groups (status, preview, live, code, index, cache, log, profile, sitemap, snapshot, job), webhooks, and common workflows with curl and JS examples.
 tags: [aem, edge-delivery, admin-api, helix5, automation, webhooks]
 ---
 
 # Admin API (helix5)
 
 The **helix5 Admin API** is the programmable interface to your EDS site. Everything the
-Sidekick can do -- preview, publish, purge, list jobs, manage indexes, fetch logs --
+Sidekick can do - preview, publish, purge, list jobs, manage indexes, fetch logs --
 is available as an HTTP endpoint at `https://admin.hlx.page/`. The API powers CI
 integrations, scheduled republish jobs, content audits, and bespoke author tooling.
 
@@ -32,13 +32,13 @@ https://admin.hlx.page/{action}/{owner}/{repo}/{ref}/{path}
 
 Three auth modes are supported, picked in this order of preference:
 
-1. **API key (server-to-server)** -- a project API key issued via the Admin API itself.
+1. **API key (server-to-server)** - a project API key issued via the Admin API itself.
    Send it in the `Authorization: token <api-key>` header. This is the default for CI
    and scripts.
-2. **Sidekick session cookie** -- when the request comes from a logged-in author via
+2. **Sidekick session cookie** - when the request comes from a logged-in author via
    the Sidekick, the session cookie auths the call. You don't manage this; the
    extension does.
-3. **Anonymous** -- a small subset of read-only endpoints (e.g. `status` for public
+3. **Anonymous** - a small subset of read-only endpoints (e.g. `status` for public
    sites) is available without auth.
 
 ### Issuing an API key
@@ -57,7 +57,7 @@ curl -X POST https://admin.hlx.page/config/acme/acme-website/main/api-keys \
     }'
 ```
 
-Store the returned `apiKey` value -- it's only shown once.
+Store the returned `apiKey` value - it's only shown once.
 
 ### Using the key
 
@@ -84,14 +84,14 @@ const status = await res.json();
 | `/code` | `POST` | Trigger a code-bus refresh after a force push or branch switch |
 | `/index` | `POST`, `GET` | Rebuild or query indexes (sitemap, search) |
 | `/cache` | `POST` | Programmatic cache purge at the CDN edge |
-| `/log` | `GET` | Per-resource event log -- preview / publish / errors |
-| `/profile` | `GET` | Current user / token info -- scopes, expiry |
+| `/log` | `GET` | Per-resource event log - preview / publish / errors |
+| `/profile` | `GET` | Current user / token info - scopes, expiry |
 | `/sitemap` | `POST`, `GET` | Regenerate or fetch sitemap.xml |
 | `/snapshot` | `POST`, `GET`, `DELETE` | Point-in-time content snapshots for rollback |
 | `/job` | `GET`, `DELETE` | Inspect or cancel async bulk jobs |
 | `/config` | `GET`, `POST`, `DELETE` | Site config: API keys, headers, redirects |
 
-### `/status` -- inspect a resource
+### `/status` - inspect a resource
 
 ```bash
 curl -H "Authorization: token $EDS_API_KEY" \
@@ -121,10 +121,10 @@ curl -H "Authorization: token $EDS_API_KEY" \
 }
 ```
 
-Read this to detect drift between source, preview, and live -- the basis of any
+Read this to detect drift between source, preview, and live - the basis of any
 republish workflow.
 
-### `/preview` -- render to preview
+### `/preview` - render to preview
 
 `POST` triggers a preview render:
 
@@ -155,7 +155,7 @@ The bulk variant is async and returns a `jobId`:
 { "jobId": "abc123", "status": "pending", "self": "/job/acme/acme-website/main/abc123" }
 ```
 
-### `/live` -- promote to live
+### `/live` - promote to live
 
 Same shape as `/preview`. `POST` publishes, `DELETE` unpublishes:
 
@@ -171,7 +171,7 @@ curl -X POST -H "Authorization: token $EDS_API_KEY" \
     -d '{ "paths": ["/products/widget", "/products/gadget"] }'
 ```
 
-### `/code` -- refresh code-bus
+### `/code` - refresh code-bus
 
 After a force-push, branch switch, or large refactor, trigger a code-bus refresh so
 the pipeline pulls the latest blocks and scripts:
@@ -184,7 +184,7 @@ curl -X POST -H "Authorization: token $EDS_API_KEY" \
 Only needed in the unusual case where the repo state is ahead of what EDS has cached
 (for example, after `git push --force`). Normal pushes are auto-detected.
 
-### `/index` -- rebuild indexes
+### `/index` - rebuild indexes
 
 Indexes (defined in `helix-query.yaml`) feed sitemaps, search experiences, and
 auto-block sources. Force a rebuild:
@@ -201,7 +201,7 @@ curl -H "Authorization: token $EDS_API_KEY" \
     https://admin.hlx.page/index/acme/acme-website/main
 ```
 
-### `/cache` -- programmatic purge
+### `/cache` - programmatic purge
 
 Push-invalidation usually handles purges, but you can force one:
 
@@ -217,7 +217,7 @@ curl -X POST -H "Authorization: token $EDS_API_KEY" \
     -d '{ "keys": ["section:products"] }'
 ```
 
-### `/log` -- per-resource events
+### `/log` - per-resource events
 
 ```bash
 curl -H "Authorization: token $EDS_API_KEY" \
@@ -235,7 +235,7 @@ curl -H "Authorization: token $EDS_API_KEY" \
 
 Useful for auditing who published what and when.
 
-### `/profile` -- check your token
+### `/profile` - check your token
 
 ```bash
 curl -H "Authorization: token $EDS_API_KEY" https://admin.hlx.page/profile
@@ -250,10 +250,10 @@ curl -H "Authorization: token $EDS_API_KEY" https://admin.hlx.page/profile
 }
 ```
 
-Check this from CI on startup -- a 401 here is a friendlier failure mode than a 401
+Check this from CI on startup - a 401 here is a friendlier failure mode than a 401
 mid-job.
 
-### `/sitemap` -- regenerate sitemap.xml
+### `/sitemap` - regenerate sitemap.xml
 
 ```bash
 curl -X POST -H "Authorization: token $EDS_API_KEY" \
@@ -263,7 +263,7 @@ curl -X POST -H "Authorization: token $EDS_API_KEY" \
 Useful after bulk content changes. EDS regenerates sitemaps on a schedule, but a
 manual trigger is sometimes faster.
 
-### `/snapshot` -- rollback safety net
+### `/snapshot` - rollback safety net
 
 Snapshots capture the live state of a path (or path glob) at a moment in time. Restore
 later if a bad publish ships:
@@ -284,7 +284,7 @@ curl -X POST -H "Authorization: token $EDS_API_KEY" \
     https://admin.hlx.page/snapshot/acme/acme-website/main/pre-launch/restore
 ```
 
-### `/job` -- inspect bulk operations
+### `/job` - inspect bulk operations
 
 Bulk operations return a `jobId`. Poll for status:
 
@@ -306,7 +306,7 @@ curl -H "Authorization: token $EDS_API_KEY" \
 
 `status` values: `pending`, `running`, `done`, `failed`, `cancelled`.
 
-### `/config` -- site config and API keys
+### `/config` - site config and API keys
 
 Manage API keys (shown above) plus other site config (response headers, redirects)
 without touching the GitHub repo. Most teams keep config in `helix-config.yaml` so
@@ -439,26 +439,26 @@ curl -X POST -H "Authorization: token $EDS_API_KEY" \
     -d '{ "keys": ["section:products"] }'
 ```
 
-Surrogate keys are emitted as response headers by the pipeline -- inspect `Surrogate-Key`
+Surrogate keys are emitted as response headers by the pipeline - inspect `Surrogate-Key`
 on a live response to see what's available.
 
 ## Errors and rate limits
 
-- `401` -- token missing or expired (check `/profile`)
-- `403` -- token lacks the required scope
-- `404` -- path not found in the source for `/preview`, or not yet previewed for `/live`
-- `409` -- conflict (e.g. trying to publish an unpreviewed page)
-- `429` -- rate limited; back off (`Retry-After` header indicates wait time)
-- `5xx` -- pipeline error; usually transient, retry with exponential backoff
+- `401` - token missing or expired (check `/profile`)
+- `403` - token lacks the required scope
+- `404` - path not found in the source for `/preview`, or not yet previewed for `/live`
+- `409` - conflict (e.g. trying to publish an unpreviewed page)
+- `429` - rate limited; back off (`Retry-After` header indicates wait time)
+- `5xx` - pipeline error; usually transient, retry with exponential backoff
 
-Bulk operations are **idempotent** at the path level -- re-running a `POST /preview`
+Bulk operations are **idempotent** at the path level - re-running a `POST /preview`
 on an already-previewed path is safe.
 
 ## Security checklist
 
 - Store API keys in your secret manager (GitHub Actions secrets, Vault, AWS Secrets
   Manager). Never commit them.
-- Scope keys narrowly -- a republish bot doesn't need `cache:purge` if it never
+- Scope keys narrowly - a republish bot doesn't need `cache:purge` if it never
   purges.
 - Rotate keys quarterly; set `expiresAt` rather than relying on revocation.
 - Verify webhook HMAC signatures before acting on the payload.
@@ -467,7 +467,7 @@ on an already-previewed path is safe.
 
 ## See also
 
-- [Sidekick](./sidekick.mdx) -- the UI front-end for many of these endpoints
-- [Customizing](./customizing.mdx) -- `helix-config.yaml` for declarative site config
-- [Architecture](./architecture.mdx) -- how the API ties into the pipeline
+- [Sidekick](./sidekick.mdx) - the UI front-end for many of these endpoints
+- [Customizing](./customizing.mdx) - `helix-config.yaml` for declarative site config
+- [Architecture](./architecture.mdx) - how the API ties into the pipeline
 - aem.live: [Admin API](https://www.aem.live/docs/admin)

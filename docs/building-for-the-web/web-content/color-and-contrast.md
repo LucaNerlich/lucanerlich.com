@@ -17,7 +17,7 @@ sidebar_position: 6
 
 # Color and contrast
 
-Body text must meet **contrast** expectations against its background. WCAG 2.x commonly cites **4.5:1** for normal text and **3:1** for large text (roughly 18px+ regular or 14px+ bold). Interactive components and **focus indicators** also need visible contrast -- see WCAG 2.2. Back to the [section overview](./overview.md).
+Body text must meet **contrast** expectations against its background. WCAG 2.x commonly cites **4.5:1** for normal text and **3:1** for large text (roughly 18px+ regular or 14px+ bold). Interactive components and **focus indicators** also need visible contrast - see WCAG 2.2. Back to the [section overview](./overview.md).
 
 ## Text and UI colors
 
@@ -65,7 +65,7 @@ body {
 
 ## Dark mode
 
-When you offer **dark mode**, redefine tokens and **re-check** contrast. Pure white on pure black can create halation for some readers -- slightly off-white text on dark gray often reads better.
+When you offer **dark mode**, redefine tokens and **re-check** contrast. Pure white on pure black can create halation for some readers - slightly off-white text on dark gray often reads better.
 
 ### Do
 
@@ -112,5 +112,5 @@ Relying on **colour alone** fails WCAG **1.4.1 Use of Color**. Underline links i
 
 ## Related
 
-- [Readability and typography](./readability-and-typography.md) -- type sizing and measure that work alongside colour choices.
-- [CSS: Colors and Typography](../../css/beginners-guide/04-colors-and-typography.md) -- the underlying CSS reference for fonts, units, and color.
+- [Readability and typography](./readability-and-typography.md) - type sizing and measure that work alongside colour choices.
+- [CSS: Colors and Typography](../../css/beginners-guide/04-colors-and-typography.md) - the underlying CSS reference for fonts, units, and color.

@@ -137,7 +137,7 @@ let value: any = "hello";
 value = 42;          // OK
 value = true;        // OK
 value = { x: 1 };   // OK
-value.foo.bar.baz(); // OK -- but will crash at runtime!
+value.foo.bar.baz(); // OK - but will crash at runtime!
 ```
 
 Avoid `any` as much as possible. It defeats the purpose of TypeScript. Common situations where you might see it:
@@ -241,7 +241,7 @@ function logMessage(message: string): void {
     // no return statement (or return; with no value)
 }
 
-// void is different from undefined -- void means "I don't care about the return value"
+// void is different from undefined - void means "I don't care about the return value"
 // whereas undefined is a concrete value
 const result: void = logMessage("hello"); // result is void
 ```

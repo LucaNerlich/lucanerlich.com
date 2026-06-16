@@ -30,7 +30,7 @@ graph LR
 ```
 
 :::info Official documentation
-- [Content Fragments -- overview (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/content-fragments)
+- [Content Fragments - overview (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/content-fragments)
 - [Managing Content Fragments](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/managing)
 - [Content Fragment Models](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/content-fragments-models)
 - [AEM GraphQL API for Content Fragments](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/headless/graphql-api/content-fragments)
@@ -134,7 +134,7 @@ and [Managing Content Fragments](https://experienceleague.adobe.com/en/docs/expe
 ### Models as code
 
 Models you build in the console live under `/conf` in the JCR. Like templates and policies, they
-should be **exported and committed** so they deploy identically to every environment -- otherwise your
+should be **exported and committed** so they deploy identically to every environment - otherwise your
 GraphQL schema differs between Dev, Stage, and Prod.
 
 The model is stored as a `cq:Template`-style structure; export it via FileVault by adding a filter and
@@ -730,7 +730,7 @@ Persist the query above with the AEM GraphQL CLI or a PUT to the persistence end
 short name (`featured-articles`):
 
 ```bash
-# Local SDK / dev only -- real environments authenticate with a scoped token, not admin:admin.
+# Local SDK / dev only - real environments authenticate with a scoped token, not admin:admin.
 curl -u admin:admin -X PUT \
   -H "Content-Type: application/json" \
   --data-binary @featured-articles.json \
@@ -780,7 +780,7 @@ export function FeaturedArticles() {
             {articles.map((a) => (
                 <li key={a._path}>
                     <h3>{a.title}</h3>
-                    {/* body.html is sanitized AEM markup -- still review your XSS policy */}
+                    {/* body.html is sanitized AEM markup - still review your XSS policy */}
                     <div dangerouslySetInnerHTML={{ __html: a.body.html }} />
                 </li>
             ))}
@@ -937,7 +937,7 @@ For external systems that need to create or read fragments without Java. See the
 reference (AEMaaCS):
 
 ```bash
-# Local SDK / dev only -- real environments use a scoped service account, not admin:admin.
+# Local SDK / dev only - real environments use a scoped service account, not admin:admin.
 
 # Read a fragment
 curl -u admin:admin \
@@ -990,7 +990,7 @@ curl -u admin:admin \
   call
 - **Use persisted GraphQL queries** on Publish - they are cacheable by Dispatcher and CDN
 
-The model reference (`cq:model`) lives on the `jcr:content/data` node -- a **relative path two levels
+The model reference (`cq:model`) lives on the `jcr:content/data` node - a **relative path two levels
 deep**. A `type="property"` index cannot index that (its `propertyNames` is a single property *name*,
 and Oak only transforms the single `jcr:content` -> parent hop), so use a **Lucene** index with an
 `indexRule` on `dam:Asset`, deployed as a content package
@@ -1034,7 +1034,7 @@ documentation for AEMaaCS index deployment (`/oak:index` via `ui.apps`, using th
 | Slow fragment queries                | Add an Oak index for the `cq:model` property and your custom filter properties         |
 | Variation content is empty           | Variations inherit from `master`; only fields explicitly set on a variation are stored |
 | CORS errors on GraphQL               | Configure CORS and referrer filters; see [Headless GraphQL](./graphql.mdx)             |
-| Infinite loop / stack overflow resolving references | Fragment A references B which references A. GraphQL limits nesting depth, but custom Java traversal must guard against cycles -- track visited paths in a `Set` and stop on revisit |
+| Infinite loop / stack overflow resolving references | Fragment A references B which references A. GraphQL limits nesting depth, but custom Java traversal must guard against cycles - track visited paths in a `Set` and stop on revisit |
 | GraphQL field missing after model change | The schema is regenerated when a model is created/updated/deleted; a disabled model produces no schema. Re-enable and republish the model |
 
 ## See also

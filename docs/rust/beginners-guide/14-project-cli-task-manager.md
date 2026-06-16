@@ -324,12 +324,12 @@ flowchart TD
 cargo build
 
 # Or run directly
-cargo run -- add "Buy groceries"
-cargo run -- add "Write Rust guide"
-cargo run -- list
-cargo run -- done 1
-cargo run -- list
-cargo run -- remove 1
+cargo run - add "Buy groceries"
+cargo run - add "Write Rust guide"
+cargo run - list
+cargo run - done 1
+cargo run - list
+cargo run - remove 1
 ```
 
 The `--` separates cargo arguments from your program's arguments.

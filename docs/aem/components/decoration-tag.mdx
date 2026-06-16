@@ -22,11 +22,11 @@ The outer `<div class="text ...">` is **not** produced by your HTL. AEM's decora
 authoring UI (drag handles, the responsive grid, in-place editing) has a stable element to hook into, and so
 layout/grid classes have somewhere to live.
 
-`cq:htmlTag` is the component node that lets you control what that decoration element looks like -- which HTML
+`cq:htmlTag` is the component node that lets you control what that decoration element looks like - which HTML
 tag it uses and which attributes (most importantly `class`) it carries.
 
 :::info Official documentation
-- [Decoration Tag (Experience League, AEM 6.5)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/components/decoration-tag) -- the canonical reference for `cq:htmlTag` and decoration behaviour
+- [Decoration Tag (Experience League, AEM 6.5)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/components/decoration-tag) - the canonical reference for `cq:htmlTag` and decoration behaviour
 :::
 
 ## Where it lives: node structure
@@ -74,7 +74,7 @@ The class attribute on the decoration element is a **merge** of several sources:
 2. Responsive grid classes such as `aem-GridColumn` (when inside a layout container).
 3. The `class` property from `cq:htmlTag`.
 
-So a `cq:htmlTag` with `class="my-text-wrapper"` does not *replace* the component name -- it is **added**
+So a `cq:htmlTag` with `class="my-text-wrapper"` does not *replace* the component name - it is **added**
 alongside it. You end up with something like `class="text my-text-wrapper aem-GridColumn ..."`.
 
 :::note You cannot remove the component-name class via `cq:htmlTag`
@@ -88,7 +88,7 @@ rename the component (breaking existing content references) or suppress decorati
 ### Semantic HTML wrappers
 
 The default `div` is rarely the most meaningful element. Use `cq:tagName` to emit landmark or list elements
-so the rendered page is more semantic and accessible -- without polluting your HTL with the wrapper.
+so the rendered page is more semantic and accessible - without polluting your HTL with the wrapper.
 
 ```xml title="A component rendered as a list item"
 <?xml version="1.0" encoding="UTF-8"?>
@@ -116,7 +116,7 @@ the inner markup your HTL controls), `cq:htmlTag` gives you one place to declare
 
 This is the most common "gotcha" worth knowing. When a component sets
 `sling:resourceSuperType` to a core component, it **inherits that core component's `cq:htmlTag`**. The Core
-Components add their own classes this way -- for example the Experience Fragment component contributes an
+Components add their own classes this way - for example the Experience Fragment component contributes an
 `experiencefragment` class to the decoration element.
 
 If you extend such a component but want a different (or no) extra class, declare a **local** `_cq_htmlTag`.
@@ -169,7 +169,7 @@ useful when the same component should be wrapped differently in different contex
 ```
 
 :::tip Decoration only happens for "synthetic"/included resources
-A top-level resource rendered directly does not get a decoration tag -- the wrapper is added when a component
+A top-level resource rendered directly does not get a decoration tag - the wrapper is added when a component
 is **included** by a parent (a page, a layout container, or an explicit `data-sly-resource`). Empty
 decoration tags are also suppressed automatically when the component renders no output.
 :::
@@ -188,5 +188,5 @@ decoration tags are also suppressed automatically when the component renders no 
 ## References
 
 - [Decoration Tag (Experience League, AEM 6.5)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/components/decoration-tag)
-- [HTL Templates (Sightly)](../htl-templates.mdx) -- `data-sly-resource` and include options
-- [Templates and Policies](./templates-policies.md) -- the Style System and policy-driven CSS classes
+- [HTL Templates (Sightly)](../htl-templates.mdx) - `data-sly-resource` and include options
+- [Templates and Policies](./templates-policies.md) - the Style System and policy-driven CSS classes

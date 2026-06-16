@@ -1,7 +1,7 @@
 ---
 title: "Practice Projects"
 sidebar_label: "Practice Projects"
-description: Six hands-on project ideas -- from beginner to advanced -- to reinforce everything you learned in the Strapi 5 Beginners Guide.
+description: Six hands-on project ideas - from beginner to advanced - to reinforce everything you learned in the Strapi 5 Beginners Guide.
 slug: /strapi/beginners-guide/practice-projects
 tags: [strapi, beginners, projects]
 keywords:

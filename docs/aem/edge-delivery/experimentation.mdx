@@ -1,13 +1,13 @@
 ---
 title: Experimentation
-description: Built-in A/B and multivariate testing, audiences, and edge-side resolution -- no third-party tool required.
+description: Built-in A/B and multivariate testing, audiences, and edge-side resolution - no third-party tool required.
 tags: [aem, edge-delivery, experimentation, ab-testing, personalisation]
 ---
 
 # Experimentation
 
-EDS has **built-in experimentation** -- A/B and multivariate testing, plus audience
-targeting -- without any third-party tool. Variants are resolved at the **CDN edge**, so
+EDS has **built-in experimentation** - A/B and multivariate testing, plus audience
+targeting - without any third-party tool. Variants are resolved at the **CDN edge**, so
 visitors never see a flicker of the control before the variant takes over.
 
 ## How a test is set up
@@ -19,12 +19,12 @@ Define experiments in a spreadsheet (the "experiments" sheet in your content sou
 | hero-test | /home | /experiments/hero-v2 | 50 |
 | pricing-cta | /pricing | /experiments/pricing-cta-b | 50 |
 
-- **Page** -- the URL being tested
-- **Variant** -- an alternative page that replaces the original for the test group
-- **Split** -- percentage of traffic that sees the variant
+- **Page** - the URL being tested
+- **Variant** - an alternative page that replaces the original for the test group
+- **Split** - percentage of traffic that sees the variant
 
-Variant pages are authored exactly like the original page -- same blocks, same authoring
-flow -- just with different content.
+Variant pages are authored exactly like the original page - same blocks, same authoring
+flow - just with different content.
 
 ## Audiences
 
@@ -83,23 +83,23 @@ on subsequent visits until the experiment ends or the cookie is cleared.
 
 Two options:
 
-1. **Bake the winner in** -- replace the original page's content with the winning
+1. **Bake the winner in** - replace the original page's content with the winning
    variant, then remove the experiment row.
-2. **Promote the variant** -- delete the original page, redirect to the variant URL.
+2. **Promote the variant** - delete the original page, redirect to the variant URL.
 
 Option 1 keeps URLs stable and is the default.
 
 ## Limitations
 
-- Variant pages must live in the Content Bus -- you can't run an experiment against an
+- Variant pages must live in the Content Bus - you can't run an experiment against an
   external URL.
 - Splits are per-experiment, not stacked. If you run two experiments on the same page,
   visitors are assigned independently to each.
-- Server-side personalisation tied to authenticated identity is out of scope -- use
+- Server-side personalisation tied to authenticated identity is out of scope - use
   the [hybrid pattern](./best-practices.mdx#hybrid-routing) for those pages.
 
 ## See also
 
-- [Performance](./performance.mdx) -- edge resolution avoids the flicker that hurts CLS
-- [Customizing](./customizing.mdx) -- wiring analytics in `delayed.js`
+- [Performance](./performance.mdx) - edge resolution avoids the flicker that hurts CLS
+- [Customizing](./customizing.mdx) - wiring analytics in `delayed.js`
 - aem.live: [experimentation docs](https://www.aem.live/docs/experimentation)

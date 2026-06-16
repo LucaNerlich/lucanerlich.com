@@ -629,7 +629,7 @@ $emailNotifier = new EmailNotifier('user@example.com');
 $emailService = new NotificationService($emailNotifier);
 $emailService->sendAlert('Your order has shipped!');
 
-// SMS notifications -- same interface, different implementation
+// SMS notifications - same interface, different implementation
 $smsNotifier = new SmsNotifier('+1234567890');
 $smsService = new NotificationService($smsNotifier);
 $smsService->sendAlert('Your verification code is 12345.');

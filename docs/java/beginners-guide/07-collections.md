@@ -1,7 +1,7 @@
 ---
 title: "Collections"
 sidebar_label: "Collections"
-description: Learn Java collections -- ArrayList, HashMap, HashSet, iterating, generics, immutable collections, and choosing the right collection.
+description: Learn Java collections - ArrayList, HashMap, HashSet, iterating, generics, immutable collections, and choosing the right collection.
 slug: /java/beginners-guide/collections
 tags: [java, beginners, collections, generics]
 keywords:
@@ -55,7 +55,7 @@ import java.util.List;
 List<String> names = new ArrayList<>();  // only holds Strings
 names.add("Ada");
 names.add("Bob");
-// names.add(42); // compile error -- wrong type
+// names.add(42); // compile error - wrong type
 
 String first = names.get(0); // no cast needed
 System.out.println(first);
@@ -377,7 +377,7 @@ Set<String> tags = new HashSet<>();
 
 tags.add("java");
 tags.add("programming");
-tags.add("java");      // duplicate -- ignored
+tags.add("java");      // duplicate - ignored
 tags.add("tutorial");
 
 System.out.println(tags);

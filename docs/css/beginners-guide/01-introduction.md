@@ -126,7 +126,7 @@ You place CSS inside a `<style>` tag in the HTML `<head>`:
 </head>
 <body>
     <p>This text is red and large.</p>
-    <p>So is this one -- no need to repeat the style attribute.</p>
+    <p>So is this one - no need to repeat the style attribute.</p>
 </body>
 </html>
 ```

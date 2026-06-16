@@ -29,7 +29,7 @@ List<Integer> longNameLengths = names.stream()
     .filter(isLong)
     .map(toLength)
     .toList();
-// [7, 5]... wait -- "Charlie" (7) and "Diana" (5)? No, Diana is 5 which is not > 5.
+// [7, 5]... wait - "Charlie" (7) and "Diana" (5)? No, Diana is 5 which is not > 5.
 // Result: [7] (only "Charlie")
 ```
 
@@ -79,10 +79,10 @@ Java provides a rich set in `java.util.function`:
 // Inferred parameter type
 (s) -> { return s.length(); }
 
-// Single parameter -- parentheses optional
+// Single parameter - parentheses optional
 s -> { return s.length(); }
 
-// Single expression -- braces and return optional
+// Single expression - braces and return optional
 s -> s.length()
 
 // No parameters

@@ -1,7 +1,7 @@
 ---
 title: "The Box Model"
 sidebar_label: "Box Model"
-description: How browsers calculate element sizes using the CSS box model -- content, padding, border, margin, box-sizing, and debugging with DevTools.
+description: How browsers calculate element sizes using the CSS box model - content, padding, border, margin, box-sizing, and debugging with DevTools.
 slug: /css/beginners-guide/the-box-model
 tags: [css, beginners]
 keywords:

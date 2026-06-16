@@ -80,7 +80,7 @@ fn main() {
     match fs::read_to_string("config.txt") {
         Ok(text) => println!("{text}"),
         Err(error) => match error.kind() {
-            ErrorKind::NotFound => println!("File not found -- using defaults"),
+            ErrorKind::NotFound => println!("File not found - using defaults"),
             ErrorKind::PermissionDenied => println!("No permission to read file"),
             other => println!("Unexpected error: {other:?}"),
         },
@@ -94,10 +94,10 @@ For quick prototyping or when you are certain the operation will succeed:
 
 ```rust
 fn main() {
-    // unwrap -- get the value or panic
+    // unwrap - get the value or panic
     let number: i32 = "42".parse().unwrap();
 
-    // expect -- same as unwrap but with a custom panic message
+    // expect - same as unwrap but with a custom panic message
     let port: u16 = "8080".parse().expect("PORT must be a valid number");
 
     println!("{number}, {port}");
@@ -382,19 +382,19 @@ fn main() {
     let ok: Result<i32, String> = Ok(42);
     let err: Result<i32, String> = Err(String::from("oops"));
 
-    // map -- transform the Ok value
+    // map - transform the Ok value
     let doubled = ok.map(|n| n * 2); // Ok(84)
 
-    // map_err -- transform the Err value
+    // map_err - transform the Err value
     let prefixed = err.map_err(|e| format!("Error: {e}")); // Err("Error: oops")
 
-    // unwrap_or -- default on error
+    // unwrap_or - default on error
     let value = err.unwrap_or(0); // 0
 
-    // unwrap_or_else -- default with closure
+    // unwrap_or_else - default with closure
     let value2 = err.unwrap_or_else(|_| 99); // 99
 
-    // and_then -- chain Result-returning operations
+    // and_then - chain Result-returning operations
     let parsed: Result<i32, String> = Ok(String::from("42"))
         .and_then(|s| s.parse::<i32>().map_err(|e| e.to_string()));
 

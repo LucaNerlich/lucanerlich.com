@@ -238,7 +238,7 @@ Java enforces a strict rule: **each `.java` file can contain at most one `public
 that class name.
 
 ```java
-// File: Calculator.java -- the filename MUST be Calculator.java
+// File: Calculator.java - the filename MUST be Calculator.java
 public class Calculator {
     public static void main(String[] args) {
         System.out.println("Calculator");
@@ -301,7 +301,7 @@ project chapters.
  */
 
 /**
- * Javadoc comment -- used to generate documentation.
+ * Javadoc comment - used to generate documentation.
  * Placed before classes, methods, and fields.
  *
  * @param name the user's name
@@ -325,7 +325,7 @@ Whitespace (spaces, tabs, newlines) is ignored by the compiler, but consistent i
 The Java convention is **4 spaces per indent level** (not tabs).
 
 ```java
-// Good -- readable
+// Good - readable
 public class Example {
     public static void main(String[] args) {
         if (true) {
@@ -347,7 +347,7 @@ jshell
 ```
 
 ```text
-|  Welcome to JShell -- Version 21.0.2
+|  Welcome to JShell - Version 21.0.2
 |  For an introduction type: /help intro
 
 jshell> System.out.println("Hello from jshell!")

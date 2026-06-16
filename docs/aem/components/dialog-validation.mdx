@@ -14,12 +14,12 @@ This guide covers the built-in validation system, how to register custom validat
 of ready-to-use validation examples.
 
 :::info Official documentation
-- [Using Validation in Granite UI](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/validation/index.html) -- the `foundation.validation` API (`validator`, `selector`, `validate/show/clear`)
-- [Granite UI `field` component](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html) -- the `foundation-field` adapter the validators call
-- [TextField `validation` attribute](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html) -- how a field declares a validator
+- [Using Validation in Granite UI](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/validation/index.html) - the `foundation.validation` API (`validator`, `selector`, `validate/show/clear`)
+- [Granite UI `field` component](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html) - the `foundation-field` adapter the validators call
+- [TextField `validation` attribute](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html) - how a field declares a validator
 - [Creating a New Granite UI Field Component](https://experienceleague.adobe.com/en/docs/experience-manager-65-lts/content/implementing/developing/platform/granite-ui-component)
 
-The validation framework is **identical on AEM 6.5 and AEM as a Cloud Service** -- the same
+The validation framework is **identical on AEM 6.5 and AEM as a Cloud Service** - the same
 `foundation-registry` API, the same field attributes, and the same `cq.authoring.dialog` clientlib
 category. Nothing in this guide is platform-specific.
 :::
@@ -83,11 +83,11 @@ if (api && api.checkValidity) {
 
 Either works; mix is fine. The registered validator's selector needs to match both.
 
-```xml title="Shorthand -- for a single validator"
+```xml title="Shorthand - for a single validator"
 <myField ... validation="my-rule"/>
 ```
 
-```xml title="granite:data node -- multiple validators and custom data attributes"
+```xml title="granite:data node - multiple validators and custom data attributes"
 <myField ...>
     <granite:data
         jcr:primaryType="nt:unstructured"
@@ -145,7 +145,7 @@ conditionalRequiredValidation.js
 
 Every custom validator follows the same structure:
 
-```javascript title="Template -- copy and adapt"
+```javascript title="Template - copy and adapt"
 (function ($) {
     "use strict";
 
@@ -461,7 +461,7 @@ Restricts the number of items an author can add to a composite multifield.
     $(window)
         .adaptTo("foundation-registry")
         .register("foundation.validation.validator", {
-            // Match all multifields -- the logic checks for data attributes
+            // Match all multifields - the logic checks for data attributes
             selector: "coral-multifield",
 
             validate: function (el) {
@@ -778,7 +778,7 @@ Validating *individual* items in a composite multifield (e.g. "each link must ha
 a URL") needs a different selector than the multifield itself. Target the inner input fields and
 walk up to the enclosing `coral-multifield-item` to reach sibling fields.
 
-```xml title="Dialog field -- composite multifield with two inputs per row"
+```xml title="Dialog field - composite multifield with two inputs per row"
 <links
     jcr:primaryType="nt:unstructured"
     sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
@@ -824,7 +824,7 @@ walk up to the enclosing `coral-multifield-item` to reach sibling fields.
 
             validate: function (el) {
                 var $el = $(el);
-                // Scope lookups to THIS multifield row -- not the whole dialog.
+                // Scope lookups to THIS multifield row - not the whole dialog.
                 var $row = $el.closest("coral-multifield-item");
                 if ($row.length === 0) return;
 
@@ -914,7 +914,7 @@ SKU exist?", "is this URL reachable?". The Foundation API is synchronous, so the
                 }
 
                 scheduleCheck($el, el, value);
-                return; // no error yet -- optimistic pass; fetch re-validates
+                return; // no error yet - optimistic pass; fetch re-validates
             },
 
             show: function (el, message) { showError($(el), el, message); },
@@ -1176,7 +1176,7 @@ actually has content:
 ```javascript
 validate: function (el) {
     var value = $(el).val().toString().trim();
-    // Only validate non-empty values -- empty is OK for optional fields
+    // Only validate non-empty values - empty is OK for optional fields
     if (value.length > 0 && !isValid(value)) {
         return "Error message";
     }
@@ -1267,8 +1267,8 @@ clear: function (el) {
 ## Accessibility
 
 A validation error that is only communicated with a red border is invisible to screen-reader users.
-Calling `fieldAPI.setInvalid(true)` already does most of the work -- Coral sets `aria-invalid="true"`
-on the control -- but make the rest of the experience accessible too:
+Calling `fieldAPI.setInvalid(true)` already does most of the work - Coral sets `aria-invalid="true"`
+on the control - but make the rest of the experience accessible too:
 
 - **Always show a text message**, never colour alone. The Coral error `Tooltip` you create in `show()`
   carries the message text; keep it specific (the WCAG "error identification" success criterion).
@@ -1289,7 +1289,7 @@ clear: function (el) {
 
 - **Move focus to the first invalid field** on submit so keyboard users land on the problem rather
   than hunting for it. `checkValidity()` plus `el.focus()` on the first failure is enough.
-- **Don't disable the submit button** to "prevent" invalid saves -- a disabled control gives no
+- **Don't disable the submit button** to "prevent" invalid saves - a disabled control gives no
   feedback about *why*. Let validation run and report the error instead.
 
 See the [Granite UI `field` accessibility contract](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html)

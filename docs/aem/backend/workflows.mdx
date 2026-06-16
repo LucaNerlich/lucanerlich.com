@@ -490,7 +490,7 @@ public List<String> getRunningWorkflowIds(ResourceResolver resolver) throws Work
 ```java
 /**
  * Terminates all running workflow instances visible to the given resolver.
- * Use with caution -- this is typically an admin operation.
+ * Use with caution - this is typically an admin operation.
  */
 public int terminateAllRunningWorkflows(ResourceResolver resolver) {
     WorkflowSession workflowSession = resolver.adaptTo(WorkflowSession.class);
@@ -581,7 +581,7 @@ with `enabled="{Boolean}false"`:
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:cq="http://www.day.com/jcr/cq/1.0"
     jcr:primaryType="cq:WorkflowLauncher"
-    comment="Disabled -- we use Adobe Campaign for newsletters"
+    comment="Disabled - we use Adobe Campaign for newsletters"
     enabled="{Boolean}false"
     eventType="{Long}1"
     excludeList=""

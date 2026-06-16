@@ -52,10 +52,10 @@ The **Content Bus** is the central content store. When an author publishes from 
 SharePoint, or Google Drive, the content is normalised into a simple HTML + metadata
 representation and stored in the Content Bus. Two important properties:
 
-- **Source-agnostic shape** -- every authoring source converges on the same structure
+- **Source-agnostic shape** - every authoring source converges on the same structure
   before it reaches the pipeline. A `hero` block from a Word document and a `hero`
   component from Universal Editor produce the same intermediate HTML.
-- **Two states per resource** -- every URL has a **preview** and a **live** copy. The
+- **Two states per resource** - every URL has a **preview** and a **live** copy. The
   preview is what authors see immediately; the live copy only updates when they click
   Publish.
 
@@ -63,10 +63,10 @@ representation and stored in the Content Bus. Two important properties:
 
 The pipeline combines content from the Content Bus with frontend code from GitHub:
 
-1. **Content fetch** -- HTML fragments from the Content Bus
-2. **Block decoration** -- each block's JavaScript / CSS is loaded on demand
-3. **Optimisation** -- HTML minified, images lazy-loaded, CSS / JS inlined where useful
-4. **Caching** -- aggressive CDN caching with instant purge on publish
+1. **Content fetch** - HTML fragments from the Content Bus
+2. **Block decoration** - each block's JavaScript / CSS is loaded on demand
+3. **Optimisation** - HTML minified, images lazy-loaded, CSS / JS inlined where useful
+4. **Caching** - aggressive CDN caching with instant purge on publish
 
 The pipeline is stateless. There is no server state per visitor; personalisation happens
 either at the edge ([experimentation](./experimentation.mdx) audiences) or in the
@@ -93,7 +93,7 @@ Key behaviours:
 | **Production** | `https://www.example.com/` | Custom domain via CDN (Adobe or BYO) |
 
 The legacy `hlx.page` / `hlx.live` hostnames are still served and resolve to the same
-origin -- you'll see both in older repos and tooling.
+origin - you'll see both in older repos and tooling.
 
 The branch in the URL matters. `main` is the default; pushing to a feature branch gives
 you `https://feature--{repo}--{org}.aem.page/`, which is invaluable for review.
@@ -119,6 +119,6 @@ expiry. See [Customizing](./customizing.mdx#bring-your-own-cdn) for the configur
 ## See also
 
 - [Authoring models](./authoring.mdx)
-- [Development](./development.mdx) -- GitHub flow and local dev
-- [Performance](./performance.mdx) -- how the pipeline keeps Lighthouse at 100
-- [Admin API](./admin-api.mdx) -- programmatic preview / publish / purge
+- [Development](./development.mdx) - GitHub flow and local dev
+- [Performance](./performance.mdx) - how the pipeline keeps Lighthouse at 100
+- [Admin API](./admin-api.mdx) - programmatic preview / publish / purge

@@ -447,7 +447,7 @@ When consumers install your package, TypeScript automatically finds the types fr
 Say you have an existing JavaScript utility file you want to type without rewriting it:
 
 ```javascript
-// src/legacy/string-utils.js (JavaScript -- do not touch)
+// src/legacy/string-utils.js (JavaScript - do not touch)
 exports.truncate = function(str, maxLength, suffix) {
     suffix = suffix || '...';
     if (str.length <= maxLength) return str;

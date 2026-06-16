@@ -1,7 +1,7 @@
 ---
 title: "Assets & DAM"
 sidebar_label: "Assets & DAM"
-description: The Digital Asset Management repository -- uploading and organizing assets, metadata schemas and tagging, renditions and processing profiles, Smart Tags, Dynamic Media, and programmatic asset access.
+description: The Digital Asset Management repository - uploading and organizing assets, metadata schemas and tagging, renditions and processing profiles, Smart Tags, Dynamic Media, and programmatic asset access.
 slug: /aem/beginners-guide/assets-and-dam
 tags: [aem, beginners]
 keywords:
@@ -132,7 +132,7 @@ most projects the Core Components + adaptive image servlet are sufficient. See A
 
 Authors reference assets by path from component dialogs (a `pathfield` or `fileReference`), or by
 dragging an asset from the asset finder onto a drop target (see
-[Component Dialogs -- drop targets](../component-dialogs.mdx#drop-target-for-assets)). The stored value
+[Component Dialogs - drop targets](../component-dialogs.mdx#drop-target-for-assets)). The stored value
 is the asset path (e.g. `/content/dam/mysite/hero.jpg`), which the component resolves at render time.
 
 ## Programmatic access

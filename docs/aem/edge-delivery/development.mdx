@@ -7,7 +7,7 @@ tags: [aem, edge-delivery, development, aem-cli, github]
 # Development workflow
 
 EDS embraces a **GitHub-first** workflow. There are no Maven builds, no Cloud Manager
-pipelines, and no OSGi bundles -- pushing to `main` updates preview and live within
+pipelines, and no OSGi bundles - pushing to `main` updates preview and live within
 seconds.
 
 ## Project structure
@@ -45,7 +45,7 @@ my-eds-project/
 | `fstab.yaml` | Maps content sources (SharePoint URL, Google Drive ID, or AEM instance) to the project |
 | `paths.yaml` | URL rewriting and redirect rules |
 | `helix-query.yaml` | Defines indexes that feed sitemaps, search, and dynamic pages |
-| `helix-config.yaml` | helix5 site config -- response headers, redirects, CDN options |
+| `helix-config.yaml` | helix5 site config - response headers, redirects, CDN options |
 | `head.html` | Additional `<head>` tags (meta, preload, third-party scripts) |
 | `scripts/aem.js` | EDS runtime: block loading, lazy loading, LCP optimisation |
 | `scripts/scripts.js` | Your global initialisation code |
@@ -113,9 +113,9 @@ source. Live-reload is automatic on file save.
 
 Useful flags:
 
-- `aem up --port 4000` -- pick a different port
-- `aem up --no-open` -- don't open a browser
-- `aem import` -- bootstrap content for migration projects
+- `aem up --port 4000` - pick a different port
+- `aem up --no-open` - don't open a browser
+- `aem import` - bootstrap content for migration projects
 
 ## Deployment: git push to production
 
@@ -135,21 +135,21 @@ graph LR
 
 There is no build step for EDS itself. Pushing to `main` instantly updates preview and
 live; the CDN picks up changes within seconds. CI may still run lint, tests, or
-[Lighthouse checks](./performance.mdx), but those are convenience -- not gates that
+[Lighthouse checks](./performance.mdx), but those are convenience - not gates that
 block delivery.
 
 Feature branches give you a self-served preview at
-`https://{branch}--{repo}--{org}.aem.page/` -- ideal for PR review.
+`https://{branch}--{repo}--{org}.aem.page/` - ideal for PR review.
 
 ## Local block development tips
 
-- **Edit `blocks/<name>/<name>.css`** and refresh -- styles hot-reload.
-- **Edit `blocks/<name>/<name>.js`** and refresh -- decoration runs again.
+- **Edit `blocks/<name>/<name>.css`** and refresh - styles hot-reload.
+- **Edit `blocks/<name>/<name>.js`** and refresh - decoration runs again.
 - **Use `console.log(block)`** inside `decorate(block)` to inspect the table-derived DOM
   before deciding what to query.
 - **Run a separate browser profile** with the [Sidekick extension](./sidekick.mdx)
   installed, pointed at the live preview, so you can compare local and live side-by-side.
-- **Validate against [aem.live](https://www.aem.live/)** -- the boilerplate blocks are
+- **Validate against [aem.live](https://www.aem.live/)** - the boilerplate blocks are
   the canonical reference implementations.
 
 ## See also
@@ -157,4 +157,4 @@ Feature branches give you a self-served preview at
 - [Customizing](./customizing.mdx)
 - [Blocks](./blocks.mdx)
 - [Sidekick](./sidekick.mdx)
-- [Admin API](./admin-api.mdx) -- automating preview / publish in CI
+- [Admin API](./admin-api.mdx) - automating preview / publish in CI

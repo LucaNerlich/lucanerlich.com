@@ -447,7 +447,7 @@ Your `sitemap.xml` is the canonical list of URLs to warm. Pair it with `xargs` a
 
 ```bash
 #!/bin/sh
-# warm-cache.sh -- fetch every URL in the sitemap once
+# warm-cache.sh - fetch every URL in the sitemap once
 
 SITEMAP="https://www.mysite.com/sitemap.xml"
 DISPATCHER_HOST="https://dispatcher.internal"
@@ -679,7 +679,7 @@ Security headers (`Strict-Transport-Security`, `X-Content-Type-Options`, `Conten
 ### Recommended split
 
 ```apacheconf
-# conf.d/available_vhosts/default.vhost  -- static, cache-independent
+# conf.d/available_vhosts/default.vhost  - static, cache-independent
 Header always set X-Content-Type-Options "nosniff"
 Header always set X-Frame-Options        "SAMEORIGIN"
 Header always set Referrer-Policy        "strict-origin-when-cross-origin"
@@ -687,7 +687,7 @@ Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains
 ```
 
 ```java
-// Sling filter -- dynamic, per-request
+// Sling filter - dynamic, per-request
 response.setHeader("Content-Security-Policy",
     "default-src 'self'; script-src 'self' 'nonce-" + nonce + "'");
 ```

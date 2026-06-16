@@ -1,7 +1,7 @@
 ---
 title: "Deploying to a VPS with Nginx"
 sidebar_label: "Deploy: VPS + Nginx"
-description: Deploy your Java REST API to a VPS -- installing the JDK, running as a systemd service, configuring nginx as a reverse proxy, and HTTPS with Let's Encrypt.
+description: Deploy your Java REST API to a VPS - installing the JDK, running as a systemd service, configuring nginx as a reverse proxy, and HTTPS with Let's Encrypt.
 slug: /java/beginners-guide/deploy-vps-nginx
 tags: [java, beginners, deployment, nginx, vps]
 keywords:
@@ -26,7 +26,7 @@ Client (browser, curl, mobile app)
     │  HTTPS (port 443)
     ▼
 ┌──────────┐
-│  nginx   │  reverse proxy -- handles HTTPS, serves static files
+│  nginx   │  reverse proxy - handles HTTPS, serves static files
 └────┬─────┘
      │  HTTP (port 8080, localhost only)
      ▼
@@ -374,7 +374,7 @@ Since nginx handles all public traffic, the Java server should only accept conne
 `ApiServer.java`:
 
 ```java
-// Bind to localhost only -- nginx will proxy public traffic
+// Bind to localhost only - nginx will proxy public traffic
 HttpServer server = HttpServer.create(
     new InetSocketAddress("127.0.0.1", 8080), 0
 );
@@ -433,7 +433,7 @@ ssh "$SERVER" "sudo systemctl restart task-api"
 
 echo "Checking health..."
 sleep 3
-curl -sf https://yoursite.com/api/health && echo " -- OK" || echo " -- FAILED"
+curl -sf https://yoursite.com/api/health && echo " - OK" || echo " - FAILED"
 
 echo "Deployment complete!"
 ```

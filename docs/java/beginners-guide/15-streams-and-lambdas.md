@@ -1,7 +1,7 @@
 ---
 title: "Streams & Lambdas"
 sidebar_label: "Streams & Lambdas"
-description: Functional Java -- lambda expressions, method references, the Stream API, and practical data processing pipelines.
+description: Functional Java - lambda expressions, method references, the Stream API, and practical data processing pipelines.
 slug: /java/beginners-guide/streams-and-lambdas
 tags: [java, beginners, streams, lambdas, functional]
 keywords:
@@ -42,13 +42,13 @@ Comparator<String> byLength = (a, b) -> Integer.compare(a.length(), b.length());
 // Full syntax
 (String a, String b) -> { return Integer.compare(a.length(), b.length()); }
 
-// Type inference -- compiler knows the types
+// Type inference - compiler knows the types
 (a, b) -> { return Integer.compare(a.length(), b.length()); }
 
-// Single expression -- no braces, no return keyword
+// Single expression - no braces, no return keyword
 (a, b) -> Integer.compare(a.length(), b.length())
 
-// Single parameter -- no parentheses needed
+// Single parameter - no parentheses needed
 name -> name.toUpperCase()
 
 // No parameters
@@ -137,7 +137,7 @@ List<String> names = List.of("grace", "ada", "alan");
 // Lambda
 names.stream().map(s -> s.toUpperCase()).toList();
 
-// Method reference -- shorter, same result
+// Method reference - shorter, same result
 names.stream().map(String::toUpperCase).toList();
 // ["GRACE", "ADA", "ALAN"]
 ```
@@ -179,7 +179,7 @@ Intermediate operations are not executed until a terminal operation is called. T
 ```java
 Stream<String> stream = names.stream();
 stream.forEach(System.out::println); // Works
-stream.forEach(System.out::println); // IllegalStateException -- stream already consumed
+stream.forEach(System.out::println); // IllegalStateException - stream already consumed
 ```
 
 ## Intermediate operations
@@ -553,10 +553,10 @@ Streams are not always the best choice:
 ### Simple loops are clearer
 
 ```java
-// Stream -- overkill for a simple operation
+// Stream - overkill for a simple operation
 names.stream().forEach(System.out::println);
 
-// Simple loop -- clearer intent
+// Simple loop - clearer intent
 for (String name : names) {
     System.out.println(name);
 }
@@ -565,13 +565,13 @@ for (String name : names) {
 ### Side effects do not belong in streams
 
 ```java
-// Bad -- modifying external state inside a stream
+// Bad - modifying external state inside a stream
 List<String> results = new ArrayList<>();
 names.stream()
     .filter(n -> n.length() > 3)
     .forEach(results::add); // Side effect!
 
-// Good -- collect the result
+// Good - collect the result
 List<String> results = names.stream()
     .filter(n -> n.length() > 3)
     .toList();
@@ -587,7 +587,7 @@ where every nanosecond counts, a plain `for` loop may be faster. Profile before 
 Lambdas do not play well with checked exceptions:
 
 ```java
-// Does not compile -- lambda cannot throw checked exception
+// Does not compile - lambda cannot throw checked exception
 files.stream().map(Files::readString).toList();
 
 // Workaround: wrap in a try/catch

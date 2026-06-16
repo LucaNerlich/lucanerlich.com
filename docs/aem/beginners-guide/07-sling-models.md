@@ -1,7 +1,7 @@
 ---
 title: "Sling Models"
 sidebar_label: "Sling Models"
-description: Injecting JCR content into Java models -- annotations, adaptables, child resources, OSGi services, exporters, and best practices.
+description: Injecting JCR content into Java models - annotations, adaptables, child resources, OSGi services, exporters, and best practices.
 slug: /aem/beginners-guide/sling-models
 tags: [aem, beginners]
 keywords:

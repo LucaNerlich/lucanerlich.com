@@ -4,6 +4,6 @@
     "link": {
         "type": "generated-index",
         "slug": "/strapi/beginners-guide",
-        "description": "A step-by-step guide to building a blog CMS with Strapi 5 -- from installation to production deployment."
+        "description": "A step-by-step guide to building a blog CMS with Strapi 5 - from installation to production deployment."
     }
 }

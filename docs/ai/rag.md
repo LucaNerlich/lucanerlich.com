@@ -79,7 +79,7 @@ image, or audio, chosen so that semantically similar inputs end up close togethe
 output quality of a whole RAG system is bounded by the embedding model's ability to put related text near
 each other.
 
-- **Dense and semantic.** Unlike sparse keyword vectors, embeddings capture meaning -- the classic
+- **Dense and semantic.** Unlike sparse keyword vectors, embeddings capture meaning - the classic
   example is `king - man + woman ~= queen`.
 - **Context-dependent.** Modern transformer embeddings give "bank" a different vector in "river bank"
   versus "financial bank".
@@ -91,7 +91,7 @@ each other.
 
 A [vector database](./glossary.md#vector-database) stores, indexes, and efficiently searches
 high-dimensional embeddings. Where traditional databases excel at *exact* matches, vector DBs excel at
-**similarity** searches -- "give me the rows whose vector is closest to this one". The key efficiency
+**similarity** searches - "give me the rows whose vector is closest to this one". The key efficiency
 primitive is **approximate nearest neighbor (ANN)** search, which checks a carefully selected subset of
 candidates instead of all vectors, trading a small amount of accuracy for a large speedup. Common
 options: Pinecone (hosted), pgvector (Postgres extension), OpenSearch, Weaviate, Milvus, and Chroma
@@ -121,8 +121,8 @@ RAG is not going away, but "some data up front, exploration at runtime" is becom
 
 ## See also
 
-- [Large Language Models](./llm.md) -- the model RAG grounds
-- [AI Agents](./agents.md) -- retrieval as a tool; MCP vs RAG
-- [Tooling and Frameworks](./tooling.md) -- LangChain / LlamaIndex, vector DBs, evaluation
-- [Cloud vs Local Models](./cloud-vs-local.md) -- managed RAG (Bedrock Knowledge Bases) vs local RAG
-- [AI Glossary](./glossary.md) -- embedding, vector database, reranking, semantic search, and more
+- [Large Language Models](./llm.md) - the model RAG grounds
+- [AI Agents](./agents.md) - retrieval as a tool; MCP vs RAG
+- [Tooling and Frameworks](./tooling.md) - LangChain / LlamaIndex, vector DBs, evaluation
+- [Cloud vs Local Models](./cloud-vs-local.md) - managed RAG (Bedrock Knowledge Bases) vs local RAG
+- [AI Glossary](./glossary.md) - embedding, vector database, reranking, semantic search, and more

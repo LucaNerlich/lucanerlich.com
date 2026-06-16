@@ -128,7 +128,7 @@ function describe(string $name, int $age) {
 }
 
 describe('Alice', 30);  // Output: Alice is 30 years old.
-describe(30, 'Alice');  // Wrong! 30 goes to $name, 'Alice' to $age -- type error or confusing output
+describe(30, 'Alice');  // Wrong! 30 goes to $name, 'Alice' to $age - type error or confusing output
 ```
 
 ## Return values
@@ -162,12 +162,12 @@ There is an important distinction:
 ```php
 <?php
 
-// Less flexible -- always outputs
+// Less flexible - always outputs
 function addAndEcho(int $a, int $b): void {
     echo $a + $b;
 }
 
-// More flexible -- caller decides what to do
+// More flexible - caller decides what to do
 function add(int $a, int $b): int {
     return $a + $b;
 }
@@ -205,7 +205,7 @@ function greet(string $name, string $punctuation = '!') {
     echo "Hello, $name$punctuation";
 }
 
-// Invalid -- PHP will error
+// Invalid - PHP will error
 // function greet(string $punctuation = '!', string $name) { }
 ```
 
@@ -225,8 +225,8 @@ function add(int $a, int $b): int {
 }
 
 add(3, 5);     // OK
-add(3, '5');   // OK -- PHP coerces '5' to 5
-add(3.7, 5);   // OK -- PHP coerces 3.7 to 3 (truncates)
+add(3, '5');   // OK - PHP coerces '5' to 5
+add(3.7, 5);   // OK - PHP coerces 3.7 to 3 (truncates)
 add('hello', 5);  // TypeError in PHP 8+
 ```
 

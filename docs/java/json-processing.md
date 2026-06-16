@@ -69,7 +69,7 @@ User user = mapper.readValue(bytes, User.class);
 ### Deserialising generic types
 
 ```java
-// List<User> -- cannot use List<User>.class directly
+// List<User> - cannot use List<User>.class directly
 List<User> users = mapper.readValue(json, new TypeReference<List<User>>() {});
 
 // Map<String, Object>

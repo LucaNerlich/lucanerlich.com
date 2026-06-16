@@ -72,7 +72,7 @@ Rust automatically chooses the least restrictive mode needed:
 fn main() {
     let name = String::from("Alice");
 
-    // Captures by reference (Fn) -- only reads name
+    // Captures by reference (Fn) - only reads name
     let greet = || println!("Hello, {name}!");
     greet();
     greet(); // Can call multiple times
@@ -187,20 +187,20 @@ This is a common source of confusion:
 fn main() {
     let numbers = vec![1, 2, 3];
 
-    // .iter() -- borrows, collection stays valid
+    // .iter() - borrows, collection stays valid
     for n in numbers.iter() {
         println!("{n}"); // n is &i32
     }
     println!("Still valid: {:?}", numbers);
 
-    // .iter_mut() -- mutable borrow
+    // .iter_mut() - mutable borrow
     let mut numbers = vec![1, 2, 3];
     for n in numbers.iter_mut() {
         *n *= 10; // n is &mut i32
     }
     println!("Modified: {:?}", numbers);
 
-    // .into_iter() -- takes ownership
+    // .into_iter() - takes ownership
     let numbers = vec![1, 2, 3];
     for n in numbers.into_iter() {
         println!("{n}"); // n is i32 (owned)
@@ -346,7 +346,7 @@ Adaptors do not execute until a consumer drives the iterator. This means no inte
 fn main() {
     let numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-    // Nothing happens here -- the chain is lazy
+    // Nothing happens here - the chain is lazy
     let iter = numbers.iter().filter(|n| *n % 2 == 0).map(|n| n * 10);
 
     // Only now does the computation happen

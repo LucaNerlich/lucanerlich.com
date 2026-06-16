@@ -44,7 +44,7 @@ const { createCoreController } = require('@strapi/strapi').factories;
 
 module.exports = createCoreController('api::article.article', ({ strapi }) => ({
 
-  // Wrap the default find -- add custom logic before/after
+  // Wrap the default find - add custom logic before/after
   async find(ctx) {
     // Force a default locale filter
     ctx.query = { ...ctx.query, locale: ctx.query.locale || 'en' };

@@ -1,7 +1,7 @@
 ---
 title: "Methods"
 sidebar_label: "Methods"
-description: Learn Java methods -- defining and calling static methods, parameters, return types, overloading, varargs, scope, and recursion.
+description: Learn Java methods - defining and calling static methods, parameters, return types, overloading, varargs, scope, and recursion.
 slug: /java/beginners-guide/methods
 tags: [java, beginners, methods]
 keywords:

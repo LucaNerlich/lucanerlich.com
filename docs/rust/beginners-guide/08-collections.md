@@ -1,7 +1,7 @@
 ---
 title: "Collections"
 sidebar_label: "Collections"
-description: "Vec for dynamic arrays, String for owned UTF-8 text, and HashMap for key-value storage -- creating, accessing, iterating, and common patterns."
+description: "Vec for dynamic arrays, String for owned UTF-8 text, and HashMap for key-value storage - creating, accessing, iterating, and common patterns."
 slug: /rust/beginners-guide/collections
 tags: [rust, beginners]
 keywords:
@@ -55,11 +55,11 @@ fn main() {
 fn main() {
     let numbers = vec![10, 20, 30, 40, 50];
 
-    // Indexing -- panics if out of bounds
+    // Indexing - panics if out of bounds
     let third = numbers[2];
     println!("Third: {third}");
 
-    // .get() -- returns Option<&T>, safe
+    // .get() - returns Option<&T>, safe
     match numbers.get(10) {
         Some(n) => println!("Got {n}"),
         None => println!("Index out of bounds"),
@@ -190,7 +190,7 @@ fn main() {
     let greeting = String::from("Hello");
     let name = String::from("world");
 
-    // Using format! (recommended -- does not move anything)
+    // Using format! (recommended - does not move anything)
     let message = format!("{greeting}, {name}!");
 
     // Using + (moves the left operand)
@@ -314,7 +314,7 @@ fn main() {
         None => println!("Alice not found"),
     }
 
-    // Direct indexing -- panics if key does not exist
+    // Direct indexing - panics if key does not exist
     // let score = scores["Charlie"]; // PANICS
 
     // Check existence
@@ -338,7 +338,7 @@ fn main() {
 
     // Insert only if key does not exist
     scores.entry("Bob").or_insert(87);
-    scores.entry("Bob").or_insert(50); // Does nothing -- Bob already exists
+    scores.entry("Bob").or_insert(50); // Does nothing - Bob already exists
 
     // Update based on current value
     let text = "hello world wonderful world";
@@ -409,14 +409,14 @@ fn main() {
     let mut map = HashMap::new();
     map.insert(key, value);
 
-    // key and value are moved -- they are no longer valid here
+    // key and value are moved - they are no longer valid here
     // println!("{key}"); // Error: value moved
 
     // References (&str, &i32, etc.) are copied, not moved
     let mut ref_map = HashMap::new();
     let name = "Alice";
     ref_map.insert(name, 42);
-    println!("{name}"); // Still valid -- &str is Copy
+    println!("{name}"); // Still valid - &str is Copy
 }
 ```
 

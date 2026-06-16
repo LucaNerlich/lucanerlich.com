@@ -308,9 +308,9 @@ function createElement(tag: string): HTMLElement {
     return document.createElement(tag);
 }
 
-const div = createElement("div");       // HTMLDivElement -- has .innerHTML, etc.
-const input = createElement("input");   // HTMLInputElement -- has .value, .checked, etc.
-const canvas = createElement("canvas"); // HTMLCanvasElement -- has .getContext(), etc.
+const div = createElement("div");       // HTMLDivElement - has .innerHTML, etc.
+const input = createElement("input");   // HTMLInputElement - has .value, .checked, etc.
+const canvas = createElement("canvas"); // HTMLCanvasElement - has .getContext(), etc.
 ```
 
 ### Overloads with optional behaviour

@@ -12,7 +12,7 @@ keywords:
 
 # Privacy & Data Handling
 
-[safety.md](./safety.md) covers attacks and guardrails; this page covers **data stewardship** -- what you
+[safety.md](./safety.md) covers attacks and guardrails; this page covers **data stewardship** - what you
 send to [LLM](./llm.md) providers, what you log, where it is processed, and how to minimize exposure when
 shipping features to users. This is not legal advice; it is engineering hygiene that aligns with common
 privacy expectations (including GDPR-style requirements many European teams operate under).
@@ -45,7 +45,7 @@ Send the smallest context that still works:
 | **Separate system secrets** | Never put API keys or passwords in prompts; inject via secure server-side config |
 | **Use local models for sensitive paths** | When data must not leave the network, route to [local / self-hosted](./cloud-vs-local.md) tiers |
 
-Minimization pairs with [structured outputs](./structured-outputs.md) -- extract only required fields
+Minimization pairs with [structured outputs](./structured-outputs.md) - extract only required fields
 server-side instead of pasting raw user uploads into the model.
 
 ## Residency and subprocessors
@@ -66,10 +66,10 @@ infra and backups.
 [LLMOps](./evaluation-and-llmops.md) tools often log full prompts and completions for debugging. That is
 valuable and risky:
 
-- **Treat production logs like a database of user content** -- access control, retention limits, encryption at rest
-- **Avoid logging secrets** -- scrub Authorization headers, connection strings, session tokens in middleware
+- **Treat production logs like a database of user content** - access control, retention limits, encryption at rest
+- **Avoid logging secrets** - scrub Authorization headers, connection strings, session tokens in middleware
 - **Sample or hash** in high-volume paths; full trace only for opted-in debug sessions
-- **Separate dev and prod** -- never replay production prompts into shared staging without redaction
+- **Separate dev and prod** - never replay production prompts into shared staging without redaction
 
 If users can paste anything into chat, your logs are a liability without retention policy and deletion on
 account erasure requests.
@@ -97,7 +97,7 @@ Source code may contain secrets. Use secret scanners in CI; warn users not to pa
 
 ### Document Q&A
 
-Chunk and index with access control at retrieval time -- the model should only see chunks the user is
+Chunk and index with access control at retrieval time - the model should only see chunks the user is
 allowed to read. Log document IDs, not full text, where possible.
 
 ### Agents with broad tools
@@ -111,16 +111,16 @@ Before production:
 
 - [ ] Data flow diagram: user → your backend → model provider → observability
 - [ ] Classification: which fields are PII/sensitive and where they appear in prompts
-- [ ] Retention: logs, vector store, conversation history -- TTL and deletion hooks
+- [ ] Retention: logs, vector store, conversation history - TTL and deletion hooks
 - [ ] Contract: training opt-out, region, DPA/subprocessor list
 - [ ] Redaction layer on ingest and on log write
 - [ ] Incident plan: leaked prompt in ticket, accidental log export
 
 ## See also
 
-- [AI Safety & Guardrails](./safety.md) -- prompt injection and tool abuse (security, not privacy policy)
-- [Cloud vs Local Models](./cloud-vs-local.md) -- keeping inference on-prem
-- [Knowledge Management with LLMs](./knowledge-management.md) -- where synthesized data lives
-- [AI in Products](./ai-in-products.md) -- transparency and user trust
-- [RAG](./rag.md) -- retrieval access control
-- [AI Glossary](./glossary.md) -- PII minimization and related terms
+- [AI Safety & Guardrails](./safety.md) - prompt injection and tool abuse (security, not privacy policy)
+- [Cloud vs Local Models](./cloud-vs-local.md) - keeping inference on-prem
+- [Knowledge Management with LLMs](./knowledge-management.md) - where synthesized data lives
+- [AI in Products](./ai-in-products.md) - transparency and user trust
+- [RAG](./rag.md) - retrieval access control
+- [AI Glossary](./glossary.md) - PII minimization and related terms

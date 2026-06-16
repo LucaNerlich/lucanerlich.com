@@ -1,7 +1,7 @@
 ---
 title: "Responsive Design"
 sidebar_label: "Responsive Design"
-description: Building layouts that work on every screen size -- the viewport meta tag, media queries, mobile-first development, breakpoints, responsive images, and fluid typography.
+description: Building layouts that work on every screen size - the viewport meta tag, media queries, mobile-first development, breakpoints, responsive images, and fluid typography.
 slug: /css/beginners-guide/responsive-design
 tags: [css, beginners]
 keywords:

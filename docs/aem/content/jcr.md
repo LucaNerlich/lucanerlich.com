@@ -72,7 +72,7 @@ If you need to narrow by locale or another caller-supplied value, validate it ag
 allowlist first:
 
 ```java
-// Only accept known locales -- never concatenate raw request input.
+// Only accept known locales - never concatenate raw request input.
 private static final Set<String> ALLOWED_LOCALES = Set.of("en", "de", "fr");
 
 if (!ALLOWED_LOCALES.contains(locale)) {
@@ -143,7 +143,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import org.apache.jackrabbit.commons.JcrUtils;
 
-// Credentials come from environment / config -- never hardcode in committed code.
+// Credentials come from environment / config - never hardcode in committed code.
 Repository repository = JcrUtils.getRepository("http://localhost:4502/crx/server");
 Session session = repository.login(
         new SimpleCredentials(System.getenv("AEM_USER"), System.getenv("AEM_PASS").toCharArray()));

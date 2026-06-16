@@ -497,7 +497,7 @@ class User
     }
 }
 
-// Virtual property -- no backing storage, computed from other properties
+// Virtual property - no backing storage, computed from other properties
 class Rectangle
 {
     public function __construct(

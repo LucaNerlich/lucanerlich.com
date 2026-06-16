@@ -1,6 +1,6 @@
 ---
 title: AEMaaCS vs AEM 6.5
-description: A consolidated comparison of AEM as a Cloud Service and AEM 6.5 -- deployment, repository mutability, replication vs content distribution, asset processing, indexing, dispatcher, and the development workflow differences that actually affect your code.
+description: A consolidated comparison of AEM as a Cloud Service and AEM 6.5 - deployment, repository mutability, replication vs content distribution, asset processing, indexing, dispatcher, and the development workflow differences that actually affect your code.
 sidebar_position: 2.5
 tags: [aem, cloud-service, aem-65, comparison]
 keywords:
@@ -13,7 +13,7 @@ keywords:
 # AEMaaCS vs AEM 6.5
 
 Most of this site applies to **both** AEM as a Cloud Service (AEMaaCS) and AEM 6.5, because they share
-the same core stack -- JCR (Oak), Sling, OSGi, HTL, Sling Models, Core Components. But a handful of
+the same core stack - JCR (Oak), Sling, OSGi, HTL, Sling Models, Core Components. But a handful of
 operational and architectural differences genuinely change how you build, deploy, and debug. This page
 consolidates them so you do not have to rediscover them chapter by chapter.
 
@@ -44,9 +44,9 @@ If you deploy through **Cloud Manager** and there is no `crx-quickstart` folder 
 
 On AEMaaCS the repository is split:
 
-- **Immutable** -- `/apps` and `/libs` are read-only at runtime and replaced only by a deployment. You
+- **Immutable** - `/apps` and `/libs` are read-only at runtime and replaced only by a deployment. You
   cannot write to them from running code, and you cannot overlay `/libs`.
-- **Mutable** -- `/content`, `/conf`, `/home`, `/var` are writable at runtime.
+- **Mutable** - `/content`, `/conf`, `/home`, `/var` are writable at runtime.
 
 Consequences for your code:
 
@@ -57,7 +57,7 @@ Consequences for your code:
 - **`repoinit`** is the supported way to create service users, paths, and ACLs deterministically on
   every startup (see [Security & Permissions](/aem/beginners-guide/security-and-permissions)).
 
-On 6.5 the repository is a single mutable tree, so these restrictions do not apply -- which is exactly
+On 6.5 the repository is a single mutable tree, so these restrictions do not apply - which is exactly
 why migrated code often breaks on AEMaaCS.
 
 ## Deployment & development workflow
@@ -65,7 +65,7 @@ why migrated code often breaks on AEMaaCS.
 | | AEMaaCS | AEM 6.5 |
 |---|---|---|
 | Code path to prod | Git -> Cloud Manager pipeline (build, code quality, deploy) | Build package, install via Package Manager / Maven |
-| Fast iteration | **RDE** (Rapid Development Environment) -- push code in seconds | Local instance + `mvn -PautoInstallSinglePackage` |
+| Fast iteration | **RDE** (Rapid Development Environment) - push code in seconds | Local instance + `mvn -PautoInstallSinglePackage` |
 | Config & secrets | `.cfg.json` in Git; `$[env:VAR]` / `$[secret:VAR]` placeholders | Web console or `.cfg.json` |
 | Quality gate | Mandatory code-quality + security + (optional) UI tests in pipeline | Whatever your CI enforces |
 
@@ -76,7 +76,7 @@ See [Deployment & Cloud Manager](/aem/beginners-guide/deployment-and-cloud-manag
 
 - **AEM 6.5** uses **replication agents** under `/etc/replication` (Agent on author, Dispatcher Flush)
   that you configure and monitor.
-- **AEMaaCS** uses **Sling Content Distribution** through Adobe-managed infrastructure -- there are
+- **AEMaaCS** uses **Sling Content Distribution** through Adobe-managed infrastructure - there are
   **no replication agents to configure**, and CDN/Dispatcher invalidation is automatic.
 
 The authoring actions (Activate/Deactivate) and the `Replicator` API are the **same** on both. See
