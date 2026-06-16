@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.23.0] - 2026-06-16
+
+### Added
+- E-Mail guide: new step-by-step section on managing HTML e-mail templates with placeholders -- where to store templates (`ui.apps`, `ui.content`, or bundle resources), the `MailTemplate` header/placeholder format, deployment, rendering, and local testing
+
+### Fixed
+- Corrected the `MailTemplate` usage in the e-mail templating examples (the `Map`-based `getEmail` signature) and completed the reusable `EmailService.sendTemplated` implementation
+
 ## [1.22.0] - 2026-06-16
 
 ### Added

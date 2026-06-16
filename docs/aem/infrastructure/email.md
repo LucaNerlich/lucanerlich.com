@@ -264,12 +264,9 @@ public void sendTemplatedMail(ResourceResolver resolver,
         throw new IllegalArgumentException("Template not found: " + templatePath);
     }
 
-    // Replace ${placeholders} in the template with actual values
-    HtmlEmail email = template.getEmail(
-        MailTemplate.CHARSET_UTF8,
-        HtmlEmail.class,
-        tokens
-    );
+    // Replace ${placeholders} in the template (both headers and body) with the
+    // token values. Use the Map overload -- getEmail(StrLookup, Class) is deprecated.
+    HtmlEmail email = template.getEmail(tokens, HtmlEmail.class);
 
     email.setTo(Collections.singletonList(new InternetAddress(recipientEmail)));
 
@@ -281,10 +278,16 @@ public void sendTemplatedMail(ResourceResolver resolver,
 }
 ```
 
-The template file is a plain HTML file stored in the JCR (e.g., under
-`/etc/notification/email/myproject/`), with `${variable}` placeholders:
+The template file is a plain HTML file stored in the JCR with `${variable}`
+placeholders. It can start with an optional **header block** (`Subject`, `From`,
+`To`, `CC`, `BCC`, `Reply-To`, `Bounce-To`) separated from the body by a blank line --
+`MailTemplate` parses those headers and applies them to the `Email`, and placeholders
+work in the headers too:
 
-```html title="Template: /etc/notification/email/myproject/welcome.html"
+```html title="Template: /apps/myproject/templates/email/welcome.html"
+Subject: Welcome to ${siteName}
+From: ${siteName} <noreply@example.com>
+
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"/></head>
@@ -295,6 +298,10 @@ The template file is a plain HTML file stored in the JCR (e.g., under
 </body>
 </html>
 ```
+
+> Where should this file live, and how does it get into the JCR? See
+> [Managing HTML Templates with Placeholders](#managing-html-templates-with-placeholders)
+> below for the full step-by-step.
 
 Usage:
 
@@ -341,6 +348,178 @@ public String renderPageToHtml(ResourceResolver resolver, String pagePath)
 
 ---
 
+## Managing HTML Templates with Placeholders
+
+The `MailTemplate` pattern above hinges on two decisions: **where the HTML template files
+live** and **how they get to a place `MailTemplate` can read them**. `MailTemplate` reads a
+template from one of two sources:
+
+- a JCR `nt:file` node, via `MailTemplate.create(path, session)`
+- any `InputStream`, via `new MailTemplate(stream, charset)` (e.g. a bundle resource)
+
+This section walks through both, end to end.
+
+### Step 1 - Choose where the templates live
+
+| Storage                          | Edit by         | Load with                          | Best for                                                   |
+|----------------------------------|-----------------|------------------------------------|------------------------------------------------------------|
+| `ui.apps` (`/apps/...`)          | Developers      | `MailTemplate.create(path, ...)`   | Code-owned templates, deployed and versioned with the app  |
+| `ui.content` (`/content/...`)    | Authors         | `MailTemplate.create(path, ...)`   | Templates business users should tweak without a deployment |
+| Bundle resource (`src/main/resources`) | Developers | `new MailTemplate(stream, charset)` | Simplest, unit-testable, no JCR lookup at all              |
+
+> Avoid `/etc/notification/email/...` on AEM as a Cloud Service. `/etc` is deprecated and
+> read-only there. Put developer-owned templates under `/apps/<project>/templates/email/`
+> (immutable but readable at runtime) or ship them as bundle resources.
+
+### Step 2 - Write the template (header block + body + placeholders)
+
+A template is a plain text/HTML file. An optional **header block** at the very top sets mail
+headers; a blank line separates it from the body. `${placeholder}` tokens are allowed
+anywhere -- including in the headers.
+
+```html title="welcome.html"
+Subject: Welcome to ${siteName}, ${firstName}!
+From: ${siteName} <noreply@example.com>
+Reply-To: support@example.com
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"/></head>
+<body>
+  <h1>Welcome, ${firstName}!</h1>
+  <p>Your account on <strong>${siteName}</strong> is ready.</p>
+  <p><a href="${loginUrl}">Log in now</a></p>
+</body>
+</html>
+```
+
+Things worth knowing about the format:
+
+- **Recognised headers:** `Subject`, `From`, `To`, `CC`, `BCC`, `Reply-To`, `Bounce-To`.
+  Anything you set in the template you do not need to set again in code (and vice versa).
+- **HTML detection:** if the body contains an `<html>` tag, `MailTemplate` sends it as the
+  HTML part; otherwise it is treated as plain text.
+- **Missing tokens stay literal:** an unresolved `${foo}` is left in the output verbatim, so
+  always pass every token the template uses.
+- **Charset:** `create()` honours the node's `jcr:encoding` (default `utf-8`); the
+  `InputStream` constructor takes the charset as its second argument.
+
+### Step 3, Option A - Store the template in the JCR (`ui.apps`)
+
+Drop the file into your content package's `jcr_root` tree. FileVault imports any plain file
+as an `nt:file` node automatically -- no `.content.xml` needed for the file itself.
+
+```text title="ui.apps module layout"
+ui.apps/src/main/content/jcr_root/apps/myproject/templates/email/
+├── welcome.html
+├── password-reset.html
+└── order-confirmation.html
+```
+
+Make sure your filter covers the path so the file is actually deployed:
+
+```xml title="ui.apps/src/main/content/META-INF/vault/filter.xml"
+<filter root="/apps/myproject/templates/email"/>
+```
+
+After deployment the template is readable at
+`/apps/myproject/templates/email/welcome.html`. Load it with a `Session`:
+
+```java
+Session session = resolver.adaptTo(Session.class);
+MailTemplate template = MailTemplate.create(
+    "/apps/myproject/templates/email/welcome.html", session);
+
+if (template == null) {
+    // create() returns null if the path is missing or not an nt:file
+    throw new EmailException("Template not found or not an nt:file");
+}
+```
+
+> `MailTemplate.create()` returns `null` when the path does not resolve to an `nt:file`
+> node. Always null-check it -- a misspelled path fails silently otherwise.
+
+### Step 3, Option B - Ship the template as a bundle resource
+
+If authors never touch the templates, the simplest option is to keep them inside the bundle
+and load them from the classpath. No JCR lookup, no `Session`, and they are trivial to unit
+test.
+
+```text title="core module layout"
+core/src/main/resources/email-templates/
+└── welcome.html
+```
+
+```java
+public MailTemplate loadFromBundle(String resourceName) throws IOException {
+    try (InputStream in = getClass().getClassLoader()
+            .getResourceAsStream("email-templates/" + resourceName)) {
+        if (in == null) {
+            throw new IOException("Bundle template not found: " + resourceName);
+        }
+        return new MailTemplate(in, "utf-8");
+    }
+}
+```
+
+### Step 4 - Render the placeholders and send
+
+Build the token map, render the template into a typed `Email`, fill in any per-recipient
+details, and hand it to the gateway:
+
+```java
+public void sendWelcome(ResourceResolver resolver, String recipient,
+                        String firstName, String siteName) throws Exception {
+
+    Session session = resolver.adaptTo(Session.class);
+    MailTemplate template = MailTemplate.create(
+        "/apps/myproject/templates/email/welcome.html", session);
+    if (template == null) {
+        throw new EmailException("Template not found");
+    }
+
+    Map<String, String> tokens = Map.of(
+        "firstName", firstName,
+        "siteName", siteName,
+        "loginUrl", "https://example.com/login"
+    );
+
+    // Subject and From come from the template's header block; tokens fill the gaps
+    HtmlEmail email = template.getEmail(tokens, HtmlEmail.class);
+    email.setTo(Collections.singletonList(new InternetAddress(recipient)));
+
+    MessageGateway<HtmlEmail> gateway =
+        messageGatewayService.getGateway(HtmlEmail.class);
+    if (gateway != null) {
+        gateway.send(email);
+    }
+}
+```
+
+### Step 5 - Wire it into the reusable service
+
+In a real project, route everything through the `EmailService.sendTemplated(...)` method
+shown [below](#reusable-e-mail-service) so template loading, token replacement, and error
+handling live in one place.
+
+### Step 6 - Verify the rendered output
+
+- **Locally:** send against [MailHog / Mailpit](#local-testing-with-mailhog) and inspect the
+  rendered HTML and headers in the web UI.
+- **In a unit test:** load a bundle template with the `InputStream` constructor, call
+  `getEmail(tokens, HtmlEmail.class)`, and assert on `email.getSubject()` /
+  `getHtmlMsg()`. No running AEM required.
+
+> **Escape user input.** Tokens are substituted verbatim into the HTML, so any value that
+> originates from a user (names, free-text fields) must be HTML-escaped before it goes into
+> the token map -- otherwise the template is open to HTML/markup injection.
+
+> **Localisation:** keep one template file per language
+> (`welcome_de.html`, `welcome_en.html`, ...) and resolve the path from the recipient's
+> locale at send time, rather than branching inside a single template.
+
+---
+
 ## Reusable E-Mail Service
 
 In real projects, wrap the gateway logic into a dedicated OSGi service:
@@ -377,19 +556,25 @@ public interface EmailService {
 ```java
 package com.myproject.core.services.impl;
 
+import com.day.cq.commons.mail.MailTemplate;
 import com.day.cq.mailer.MessageGateway;
 import com.day.cq.mailer.MessageGatewayService;
 import com.myproject.core.services.EmailService;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.SimpleEmail;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Session;
 import javax.mail.internet.InternetAddress;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component(service = EmailService.class)
@@ -397,9 +582,13 @@ public class EmailServiceImpl implements EmailService {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmailServiceImpl.class);
     private static final String CHARSET = "utf-8";
+    private static final String MAIL_SERVICE_USER = "myproject-mail-service";
 
     @Reference
     private MessageGatewayService gatewayService;
+
+    @Reference
+    private ResourceResolverFactory resolverFactory;
 
     @Override
     public void sendPlainText(String from, List<String> to,
@@ -433,11 +622,34 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendTemplated(String templatePath,
-                              java.util.Map<String, String> tokens,
+    public void sendTemplated(String templatePath, Map<String, String> tokens,
                               List<String> to) throws EmailException {
-        // See the MailTemplate pattern above
-        // ...
+
+        Map<String, Object> auth =
+            Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, MAIL_SERVICE_USER);
+
+        HtmlEmail email;
+        // Build the e-mail inside the try-with-resources, then send after the resolver
+        // is closed -- the template is fully read by then.
+        try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(auth)) {
+            Session session = resolver.adaptTo(Session.class);
+
+            MailTemplate template = MailTemplate.create(templatePath, session);
+            if (template == null) {
+                throw new EmailException(
+                    "Template not found or not an nt:file: " + templatePath);
+            }
+
+            // Replaces ${placeholders}; Subject/From can come from the template headers
+            email = template.getEmail(tokens, HtmlEmail.class);
+            email.setTo(toAddresses(to));
+        } catch (EmailException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new EmailException("Failed to build templated e-mail: " + templatePath, e);
+        }
+
+        send(email, HtmlEmail.class);
     }
 
     private <T extends Email> void send(T email, Class<T> type) throws EmailException {
@@ -470,6 +682,13 @@ public class EmailServiceImpl implements EmailService {
     }
 }
 ```
+
+> `sendTemplated` reads the template from the JCR, so it needs a `ResourceResolver`. It uses
+> a **service user** rather than an administrative session. Map a subservice named
+> `myproject-mail-service` (with read access to your template path) via a
+> `org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended` config. See the
+> [OSGi configuration](../backend/osgi-configuration.mdx) page. Templates shipped as bundle
+> resources skip this entirely -- they need no resolver at all.
 
 ---
 
