@@ -4,6 +4,18 @@ This guide sets up a local **coding assistant** inside your editor. If you inste
 and call it from your own app, see [Build a Local LLM App](../ai/local-llm-app.md), and
 [Cloud vs Local Models](../ai/cloud-vs-local.md) for when local makes sense.
 
+## Local models are viable now
+
+As of mid-2026, local models have closed much of the gap with frontier APIs for day-to-day coding tasks.
+Vicki Boykis documents this well in [Running local models is good now](https://vickiboykis.com/2026/06/15/running-local-models-is-good-now/) (2026-06-15):
+on an M2 Mac with 64 GB RAM she runs agentic coding workflows — refactoring notebooks, generating unit tests,
+bootstrapping repos — at roughly **~75% the accuracy and speed of frontier models**, without a cloud API call.
+The models she found most capable: **Gemma 4 26B A4B**, **Gemma 4 12B QAT**, **Qwen 3 MOE**, and **Qwen 2.5 Coder**.
+
+The remaining limitations are real: inference is slower than a remote API, context windows are capped by your
+RAM, and results still warrant a second opinion on tricky problems. But for privacy-sensitive work or
+offline development, the tooling is now good enough to use daily.
+
 ## Ollama + Continue Dev
 
 1. Install ollama
@@ -31,13 +43,18 @@ and call it from your own app, see [Build a Local LLM App](../ai/local-llm-app.m
     ```
     - https://ollama.com/library/phi4
     - [MIT License](https://ollama.com/library/phi4/blobs/fa8235e5b48f)
-    - Alternatively use *Deepseek R1*
-        - https://ollama.com/library/deepseek-r1
-        - [MIt License](https://ollama.com/library/deepseek-r1:32b/blobs/6e4c38e1172f)
-        - Choose the largest b-Parameter Model that will fit into your VRAM
+    - Alternatively use *Gemma 4* (strong mid-2026 recommendation, especially on Apple Silicon with 32 GB+ RAM):
+        - https://ollama.com/library/gemma4
+        - `gemma4:26b` for the 26B variant, `gemma4:12b` for the lighter 12B variant
       ```bash
-      ollama pull deepseek-r1:32b
-      ollama run deepseek-r1:32b
+      ollama pull gemma4:26b
+      # or the lighter variant
+      ollama pull gemma4:12b
+      ```
+    - Or *Qwen 3 MOE* — mixture-of-experts, punches above its weight on coding:
+        - https://ollama.com/library/qwen3
+      ```bash
+      ollama pull qwen3:30b-a3b
       ```
 4. Reranking Model
    ```bash
@@ -118,23 +135,23 @@ or via the chat-sidebar tab
 {
     "models": [
         {
+            "title": "Gemma 4 26B",
+            "provider": "ollama",
+            "model": "gemma4:26b",
+            "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
+        },
+        {
+            "title": "Qwen 3 MOE",
+            "provider": "ollama",
+            "model": "qwen3:30b-a3b",
+            "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
+        },
+        {
             "title": "PHi-4",
             "provider": "ollama",
             "model": "phi4",
             "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
         },
-        {
-            "title": "Llama 3.3",
-            "provider": "ollama",
-            "model": "llama3.3",
-            "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
-        },
-        {
-            "title": "Deepseek R1",
-            "provider": "ollama",
-            "model": "deepseek-r1:32b",
-            "systemMessage": "You are a helpful assistant supporting a software developer. Your tasks may involve explaining technical concepts, assisting with code, offering best practices, and solving programming-related issues across various languages and frameworks. Always provide clear, concise, and accurate answers. Always respond in English."
-        }
     ],
     "tabAutocompleteModel": {
         "title": "Qwen2.5-Coder",

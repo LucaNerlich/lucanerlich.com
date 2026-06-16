@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.25.1] - 2026-06-16
+
+### Fixed
+- Local LLM guide: corrected Gemma model IDs to `gemma4:26b` / `gemma4:12b` (were incorrectly using `gemma3` tags)
+- Local LLM guide: removed outdated Deepseek R1 reasoning recommendation
+
 ## [1.25.0] - 2026-06-16
 
 ### Added
