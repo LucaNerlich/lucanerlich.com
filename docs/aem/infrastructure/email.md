@@ -35,7 +35,7 @@ The mail service is configured via the **Day CQ Mail Service** factory PID.
 ### Local development (with MailHog)
 
 [MailHog](https://github.com/mailhog/MailHog) is a lightweight SMTP test server that
-captures all outgoing mail in a web UI - no real mail provider needed.
+captures all outgoing mail in a web UI -- no real mail provider needed.
 
 Start MailHog with Docker:
 
@@ -43,8 +43,8 @@ Start MailHog with Docker:
 docker run -d --name mailhog -p 1025:1025 -p 8025:8025 mailhog/mailhog
 ```
 
-- **Port 1025** - SMTP (for AEM to send to)
-- **Port 8025** - Web UI (open in browser to see captured mails)
+- **Port 1025** -- SMTP (for AEM to send to)
+- **Port 8025** -- Web UI (open in browser to see captured mails)
 
 ```json title="ui.config/.../config.author/com.day.cq.mailer.DefaultMailService.cfg.json"
 {
@@ -106,7 +106,7 @@ mail server):
 
 ## Sending a Simple Plain-Text E-Mail
 
-The simplest case - inject `MessageGatewayService`, build a `SimpleEmail`, and send it:
+The simplest case -- inject `MessageGatewayService`, build a `SimpleEmail`, and send it:
 
 ```java
 import com.day.cq.mailer.MessageGateway;
@@ -239,15 +239,21 @@ email.attach(dataSource, "report.pdf", "Monthly report");
 
 Hardcoding HTML in Java is fragile. AEM supports two common patterns for templated mails.
 
-### Pattern 1: AEM page as e-mail template
+### Pattern 1: HTML file + MailTemplate
 
-Author the e-mail as a regular AEM page, then render it to HTML at send time:
+Store the e-mail as an HTML file with `${placeholder}` tokens, then load it and replace the
+tokens with real values at send time using `MailTemplate`:
 
 ```java
 import com.day.cq.commons.mail.MailTemplate;
+import com.day.cq.mailer.MessageGateway;
+import com.day.cq.mailer.MessageGatewayService;
+import org.apache.commons.mail.HtmlEmail;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import javax.jcr.Session;
+import javax.mail.internet.InternetAddress;
+import java.util.Collections;
 import java.util.Map;
 
 public void sendTemplatedMail(ResourceResolver resolver,
@@ -312,7 +318,7 @@ Map<String, String> tokens = Map.of(
     "loginUrl", "https://acme.com/login"
 );
 sendTemplatedMail(resolver,
-    "/etc/notification/email/myproject/welcome.html",
+    "/apps/myproject/templates/email/welcome.html",
     tokens,
     "jane@acme.com");
 ```
@@ -323,8 +329,12 @@ For richer templates, create an AEM component/page that renders the e-mail via H
 fetch the rendered HTML with Sling's `SlingRequestProcessor`:
 
 ```java
-import org.apache.sling.engine.SlingRequestProcessor;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.request.builder.Builders;
+import org.apache.sling.api.request.builder.SlingHttpServletResponseResult;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.engine.SlingRequestProcessor;
 
 @Reference
 private SlingRequestProcessor requestProcessor;
@@ -332,14 +342,22 @@ private SlingRequestProcessor requestProcessor;
 public String renderPageToHtml(ResourceResolver resolver, String pagePath)
         throws Exception {
 
-    // Build an internal request to the page
-    ContainerRequestWrapper request = new ContainerRequestWrapper(pagePath);
-    ByteArrayOutputStream output = new ByteArrayOutputStream();
-    ContainerResponseWrapper response = new ContainerResponseWrapper(output);
+    Resource page = resolver.getResource(pagePath);
+    if (page == null) {
+        throw new IllegalArgumentException("Page not found: " + pagePath);
+    }
+
+    // Build a synthetic internal request/response with the Sling request Builders API,
+    // run it through the engine, and read the captured output
+    SlingHttpServletRequest request = Builders.newRequestBuilder(page)
+        .withRequestMethod("GET")
+        .withExtension("html")
+        .build();
+    SlingHttpServletResponseResult response = Builders.newResponseBuilder().build();
 
     requestProcessor.processRequest(request, response, resolver);
 
-    return output.toString("utf-8");
+    return response.getOutputAsString();
 }
 ```
 
@@ -359,7 +377,7 @@ template from one of two sources:
 
 This section walks through both, end to end.
 
-### Step 1 - Choose where the templates live
+### Step 1 -- Choose where the templates live
 
 | Storage                          | Edit by         | Load with                          | Best for                                                   |
 |----------------------------------|-----------------|------------------------------------|------------------------------------------------------------|
@@ -371,7 +389,7 @@ This section walks through both, end to end.
 > read-only there. Put developer-owned templates under `/apps/<project>/templates/email/`
 > (immutable but readable at runtime) or ship them as bundle resources.
 
-### Step 2 - Write the template (header block + body + placeholders)
+### Step 2 -- Write the template (header block + body + placeholders)
 
 A template is a plain text/HTML file. An optional **header block** at the very top sets mail
 headers; a blank line separates it from the body. `${placeholder}` tokens are allowed
@@ -395,16 +413,18 @@ Reply-To: support@example.com
 
 Things worth knowing about the format:
 
-- **Recognised headers:** `Subject`, `From`, `To`, `CC`, `BCC`, `Reply-To`, `Bounce-To`.
+- **Recognized headers:** `Subject`, `From`, `To`, `CC`, `BCC`, `Reply-To`, `Bounce-To`.
   Anything you set in the template you do not need to set again in code (and vice versa).
+  Setting recipients in both the `To:` header and `email.setTo(...)` adds them twice, so
+  pick one place per header.
 - **HTML detection:** if the body contains an `<html>` tag, `MailTemplate` sends it as the
   HTML part; otherwise it is treated as plain text.
 - **Missing tokens stay literal:** an unresolved `${foo}` is left in the output verbatim, so
   always pass every token the template uses.
-- **Charset:** `create()` honours the node's `jcr:encoding` (default `utf-8`); the
+- **Charset:** `create()` honors the node's `jcr:encoding` (default `utf-8`); the
   `InputStream` constructor takes the charset as its second argument.
 
-### Step 3, Option A - Store the template in the JCR (`ui.apps`)
+### Step 3, Option A -- Store the template in the JCR (`ui.apps`)
 
 Drop the file into your content package's `jcr_root` tree. FileVault imports any plain file
 as an `nt:file` node automatically -- no `.content.xml` needed for the file itself.
@@ -439,7 +459,7 @@ if (template == null) {
 > `MailTemplate.create()` returns `null` when the path does not resolve to an `nt:file`
 > node. Always null-check it -- a misspelled path fails silently otherwise.
 
-### Step 3, Option B - Ship the template as a bundle resource
+### Step 3, Option B -- Ship the template as a bundle resource
 
 If authors never touch the templates, the simplest option is to keep them inside the bundle
 and load them from the classpath. No JCR lookup, no `Session`, and they are trivial to unit
@@ -462,7 +482,7 @@ public MailTemplate loadFromBundle(String resourceName) throws IOException {
 }
 ```
 
-### Step 4 - Render the placeholders and send
+### Step 4 -- Render the placeholders and send
 
 Build the token map, render the template into a typed `Email`, fill in any per-recipient
 details, and hand it to the gateway:
@@ -496,13 +516,13 @@ public void sendWelcome(ResourceResolver resolver, String recipient,
 }
 ```
 
-### Step 5 - Wire it into the reusable service
+### Step 5 -- Wire it into the reusable service
 
 In a real project, route everything through the `EmailService.sendTemplated(...)` method
 shown [below](#reusable-e-mail-service) so template loading, token replacement, and error
 handling live in one place.
 
-### Step 6 - Verify the rendered output
+### Step 6 -- Verify the rendered output
 
 - **Locally:** send against [MailHog / Mailpit](#local-testing-with-mailhog) and inspect the
   rendered HTML and headers in the web UI.
@@ -514,7 +534,7 @@ handling live in one place.
 > originates from a user (names, free-text fields) must be HTML-escaped before it goes into
 > the token map -- otherwise the template is open to HTML/markup injection.
 
-> **Localisation:** keep one template file per language
+> **Localization:** keep one template file per language
 > (`welcome_de.html`, `welcome_en.html`, ...) and resolve the path from the recipient's
 > locale at send time, rather than branching inside a single template.
 
@@ -527,7 +547,10 @@ In real projects, wrap the gateway logic into a dedicated OSGi service:
 ```java
 package com.myproject.core.services;
 
+import org.apache.commons.mail.EmailException;
+
 import java.util.List;
+import java.util.Map;
 
 public interface EmailService {
 
@@ -547,7 +570,7 @@ public interface EmailService {
     /**
      * Send a templated e-mail using an AEM mail template with token replacement.
      */
-    void sendTemplated(String templatePath, java.util.Map<String, String> tokens,
+    void sendTemplated(String templatePath, Map<String, String> tokens,
                        List<String> to)
         throws EmailException;
 }
@@ -561,6 +584,7 @@ import com.day.cq.mailer.MessageGateway;
 import com.day.cq.mailer.MessageGatewayService;
 import com.myproject.core.services.EmailService;
 import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.SimpleEmail;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -745,12 +769,12 @@ configure **Advanced Networking** to allow AEM to reach an external SMTP server.
 1. **Enable dedicated egress IP** in Cloud Manager (or flexible port egress)
 2. **Add a port forwarding rule** for your SMTP server:
 
-   | Name | Value |
-      |------|-------|
-   | Port forward name | `smtp_sendgrid` |
-   | Protocol | TCP |
-   | Port | 587 |
-   | Destination host | `smtp.sendgrid.net` |
+| Name              | Value              |
+|-------------------|--------------------|
+| Port forward name | `smtp_sendgrid`    |
+| Protocol          | TCP                |
+| Port              | 587                |
+| Destination host  | `smtp.sendgrid.net`|
 
 3. **Reference the forwarded port** in your OSGi config:
 
@@ -832,7 +856,7 @@ to MailHog (which is no longer maintained):
 docker run -d --name mailpit -p 1025:1025 -p 8025:8025 axllent/mailpit
 ```
 
-Same ports, same OSGi config - just a different Docker image. Mailpit offers a more modern
+Same ports, same OSGi config -- just a different Docker image. Mailpit offers a more modern
 UI, mobile-responsive views, and better performance.
 
 ---
@@ -849,6 +873,7 @@ import javax.mail.internet.InternetAddress
 
 def gatewayService = getService(MessageGatewayService.class)
 def gateway = gatewayService.getGateway(org.apache.commons.mail.Email.class)
+assert gateway != null : "Mail gateway not configured -- check DefaultMailService"
 
 def email = new SimpleEmail()
 email.setFrom("test@local.dev")
@@ -881,7 +906,7 @@ All classes are from the `org.apache.commons.mail` package, bundled with AEM.
 
 ### Use a dedicated `EmailService`
 
-Don't scatter `MessageGatewayService` calls throughout the codebase. Centralise them in one
+Don't scatter `MessageGatewayService` calls throughout the codebase. Centralize them in one
 service with proper error handling, logging, and a consistent "from" address.
 
 ### Always check the gateway for null
@@ -916,7 +941,7 @@ headers and content. Never enable it in production.
 ### Provide a plain-text fallback
 
 When sending `HtmlEmail`, always call `setTextMsg()` with a meaningful plain-text version.
-Some mail clients and spam filters penalise HTML-only mails.
+Some mail clients and spam filters penalize HTML-only mails.
 
 ### Handle bounces and failures gracefully
 
@@ -953,10 +978,10 @@ block the calling thread. Consider:
 
 ## See also
 
-- [OSGi configuration](../backend/osgi-configuration.mdx) - run-mode configs and secrets
-- [Workflows](../backend/workflows.mdx) - triggering e-mails from workflow steps
-- [Groovy Console](../groovy-console.mdx) - quick mail testing
-- [Deployment](./deployment.mdx) - deploying OSGi configs
-- [AEM as a Cloud Service](./cloud-service.mdx) - advanced networking
+- [OSGi configuration](../backend/osgi-configuration.mdx) -- run-mode configs and secrets
+- [Workflows](../backend/workflows.mdx) -- triggering e-mails from workflow steps
+- [Groovy Console](../groovy-console.mdx) -- quick mail testing
+- [Deployment](./deployment.mdx) -- deploying OSGi configs
+- [AEM as a Cloud Service](./cloud-service.mdx) -- advanced networking
 - [Security basics](./security.mdx)
-- [Sling Models and Services](../backend/sling-models.mdx) - OSGi service patterns
+- [Sling Models and Services](../backend/sling-models.mdx) -- OSGi service patterns

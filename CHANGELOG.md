@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.23.1] - 2026-06-16
+
+### Fixed
+- E-Mail guide: corrected the HTL-rendered template example to use the Sling request `Builders` API instead of the deprecated `RequestResponseFactory` and non-existent request/response wrappers
+- E-Mail guide: added the missing `EmailException` import, aligned the template path with the `/apps` recommendation, repaired the Advanced Networking table, and normalized dashes and spelling
+
 ## [1.23.0] - 2026-06-16
 
 ### Added
