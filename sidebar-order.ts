@@ -42,6 +42,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'embeddings',
         'context-engineering',
         'tooling',
+        'mdn-mcp-server',
         'evaluation-and-llmops',
         'safety',
         'knowledge-management',

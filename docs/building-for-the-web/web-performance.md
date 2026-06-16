@@ -533,6 +533,7 @@ These guides cover performance in the context of specific platforms used in this
 **JavaScript:**
 
 - [Performance Basics](/javascript/performance-basics) - client-side JavaScript performance patterns
+- [MDN MCP Server](../ai/mdn-mcp-server.md) - query live browser support for performance APIs (`PerformanceObserver`, `fetchpriority`, etc.) directly in your editor
 
 ## Summary
 

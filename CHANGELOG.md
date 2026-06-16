@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.25.0] - 2026-06-16
+
+### Added
+- New [MDN MCP Server](/ai/mdn-mcp-server) guide: explains Mozilla's official MCP server for live browser compatibility data and MDN documentation, with setup instructions for Claude Code, VS Code, Cursor, Zed, and Claude Desktop
+- Contextual MDN MCP server references added to the Semantic HTML, Modern CSS Features, Web Performance, and DOM guides so readers can check browser support without leaving their editor
+
+### Fixed
+- Removed stray double dashes in docs content
+
 ## [1.24.0] - 2026-06-16
 
 ### Added

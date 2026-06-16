@@ -613,6 +613,10 @@ This renders:
 | Change styles dynamically     | Prefer toggling classes; use `style` for computed values |
 | Add many elements at once     | `DocumentFragment`                                       |
 
+:::tip Browser support for DOM APIs
+Newer DOM APIs like `moveBefore()`, `getHTML()`, and `popover` have uneven browser support. The [MDN MCP server](../../ai/mdn-mcp-server.md) lets you check live compatibility tables without leaving your editor — add it to Claude Code or your IDE with one command.
+:::
+
 ## Summary
 
 - The DOM is the browser's tree representation of an HTML page.

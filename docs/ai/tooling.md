@@ -72,7 +72,9 @@ Two open standards (covered in detail under [Agents](./agents.md#protocols-conne
 form the connectivity stack:
 
 - **MCP (Model Context Protocol)** - agent to tools/data. Build a tool server once; any MCP-compatible
-  client (Cursor, Claude, internal agents) can use it. Official Python and TypeScript SDKs.
+  client (Cursor, Claude, internal agents) can use it. Official Python and TypeScript SDKs. For a
+  concrete, ready-to-use example see the [MDN MCP Server](./mdn-mcp-server.md) — Mozilla's official
+  server for live browser compatibility data and MDN documentation.
 - **A2A (Agent2Agent)** - agent to agent across frameworks and vendors, with Agent Cards for capability
   discovery.
 
@@ -132,6 +134,7 @@ model and tool calls.
 
 ## See also
 
+- [MDN MCP Server](./mdn-mcp-server.md) - setup guide for Mozilla's live browser compatibility MCP server
 - [Cost, Latency & Model Routing](./cost-and-latency.md) - token economics, caching, and model routing
 - [Structured Outputs](./structured-outputs.md) - schema validity as an eval scorer
 - [AI Agents](./agents.md) - what these frameworks orchestrate
