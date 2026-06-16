@@ -150,6 +150,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'core-components',
         'dialog-validation',
         'templates-policies',
+        'decoration-tag',
         'annotations',
     ],
 

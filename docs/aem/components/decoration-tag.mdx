@@ -1,0 +1,192 @@
+---
+title: Decoration Tag (cq:htmlTag)
+description: How AEM wraps components in a decoration element, and how to control its tag name and CSS classes with cq:htmlTag.
+sidebar_position: 8
+tags: [aem, components, cq-htmlTag, decoration-tag, htl]
+---
+
+# Decoration Tag (`cq:htmlTag`)
+
+When AEM includes a component on a page, it wraps the component's own output in an extra HTML element called
+the **decoration tag**. This is the element you see around your markup with a class that matches the
+component name, for example:
+
+```html
+<div class="text aem-GridColumn aem-GridColumn--default--12">
+  <!-- the component's own HTL output starts here -->
+  <div class="cmp-text">...</div>
+</div>
+```
+
+The outer `<div class="text ...">` is **not** produced by your HTL. AEM's decoration mechanism adds it so the
+authoring UI (drag handles, the responsive grid, in-place editing) has a stable element to hook into, and so
+layout/grid classes have somewhere to live.
+
+`cq:htmlTag` is the component node that lets you control what that decoration element looks like -- which HTML
+tag it uses and which attributes (most importantly `class`) it carries.
+
+:::info Official documentation
+- [Decoration Tag (Experience League, AEM 6.5)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/components/decoration-tag) -- the canonical reference for `cq:htmlTag` and decoration behaviour
+:::
+
+## Where it lives: node structure
+
+`cq:htmlTag` is a child node of your component. In a file/Vault representation it is a `_cq_htmlTag` folder
+containing a `.content.xml`. The properties on that node become attributes on the decoration element.
+
+```xml title="apps/myproject/components/text/_cq_htmlTag/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          jcr:primaryType="nt:unstructured"
+          cq:tagName="section"
+          class="my-text-wrapper"/>
+```
+
+The component node itself looks like this, with the `_cq_htmlTag` node sitting next to the dialog and HTL:
+
+```text title="Component node layout"
+text/
+├── .content.xml          # cq:Component
+├── _cq_dialog/
+│   └── .content.xml
+├── _cq_htmlTag/          # the decoration tag node
+│   └── .content.xml
+└── text.html             # HTL
+```
+
+Two properties do the heavy lifting:
+
+| Property      | Effect                                                                 |
+|---------------|------------------------------------------------------------------------|
+| `cq:tagName`  | The HTML element used for the decoration tag (default: `div`).         |
+| `class`       | CSS class(es) added to the decoration element.                         |
+
+Any other property you add is rendered as a literal attribute on the decoration element (for example
+`role="region"` or a `data-*` attribute), which makes `cq:htmlTag` a convenient place to attach static,
+component-wide attributes.
+
+## How the class list is assembled
+
+The class attribute on the decoration element is a **merge** of several sources:
+
+1. The component name (added automatically by the layout/grid include).
+2. Responsive grid classes such as `aem-GridColumn` (when inside a layout container).
+3. The `class` property from `cq:htmlTag`.
+
+So a `cq:htmlTag` with `class="my-text-wrapper"` does not *replace* the component name -- it is **added**
+alongside it. You end up with something like `class="text my-text-wrapper aem-GridColumn ..."`.
+
+:::note You cannot remove the component-name class via `cq:htmlTag`
+The component-name token comes from the include itself, not from `cq:htmlTag`. To change it you would have to
+rename the component (breaking existing content references) or suppress decoration entirely (see below).
+`cq:htmlTag` only lets you add classes/attributes and change the tag name.
+:::
+
+## When it is helpful
+
+### Semantic HTML wrappers
+
+The default `div` is rarely the most meaningful element. Use `cq:tagName` to emit landmark or list elements
+so the rendered page is more semantic and accessible -- without polluting your HTL with the wrapper.
+
+```xml title="A component rendered as a list item"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="nt:unstructured"
+          cq:tagName="li"
+          class="nav__item"/>
+```
+
+```xml title="A component rendered as a <section> landmark"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="nt:unstructured"
+          cq:tagName="section"
+          class="promo"
+          role="region"/>
+```
+
+### A stable styling hook
+
+When your CSS or BEM convention needs a reliable wrapper class on the decoration element (rather than only on
+the inner markup your HTL controls), `cq:htmlTag` gives you one place to declare it.
+
+### Overriding classes inherited from a supertype
+
+This is the most common "gotcha" worth knowing. When a component sets
+`sling:resourceSuperType` to a core component, it **inherits that core component's `cq:htmlTag`**. The Core
+Components add their own classes this way -- for example the Experience Fragment component contributes an
+`experiencefragment` class to the decoration element.
+
+If you extend such a component but want a different (or no) extra class, declare a **local** `_cq_htmlTag`.
+A local decoration-tag node **shadows** the inherited one entirely:
+
+```xml title="apps/myproject/components/richtext-xf-reference/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:Component"
+          jcr:title="Richtext XF Reference"
+          sling:resourceSuperType="core/wcm/components/experiencefragment/v2/experiencefragment"/>
+```
+
+```xml title="apps/myproject/components/richtext-xf-reference/_cq_htmlTag/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="nt:unstructured"
+          class="richtext"/>
+```
+
+Result: the inherited `experiencefragment` class is gone and `richtext` is used instead, so the wrapper lines
+up with a plain richtext component's wrapper for styling purposes:
+
+```html
+<!-- before: inherited class -->
+<div class="richtext-xf-reference experiencefragment">...</div>
+
+<!-- after: local _cq_htmlTag with class="richtext" -->
+<div class="richtext-xf-reference richtext">...</div>
+```
+
+## Disabling or overriding decoration at include time
+
+`cq:htmlTag` configures decoration *per component*. You can also control it *per include* from HTL, which is
+useful when the same component should be wrapped differently in different contexts (or not at all).
+
+```html title="Override the tag name and class for a single include"
+<sly data-sly-resource="${ 'content' @
+    resourceType='myproject/components/text',
+    decorationTagName='article',
+    cssClassName='featured' }"></sly>
+```
+
+```html title="Suppress the decoration element entirely"
+<sly data-sly-resource="${ 'content' @
+    resourceType='myproject/components/text',
+    decorationTagName='' }"></sly>
+```
+
+:::tip Decoration only happens for "synthetic"/included resources
+A top-level resource rendered directly does not get a decoration tag -- the wrapper is added when a component
+is **included** by a parent (a page, a layout container, or an explicit `data-sly-resource`). Empty
+decoration tags are also suppressed automatically when the component renders no output.
+:::
+
+## Gotchas
+
+- **It adds, it does not replace.** `class` on `cq:htmlTag` is merged with the component name and grid classes.
+- **Inheritance shadows, it does not merge.** A local `_cq_htmlTag` replaces the inherited one wholesale; you
+  do not get a union of inherited and local properties.
+- **`cssClassName` vs `cq:htmlTag`.** The `cssClassName` include option and the design-dialog Style System add
+  classes at a different layer than `cq:htmlTag`; reach for `cq:htmlTag` for static, code-owned defaults and
+  the Style System for author-selectable styles.
+- **Empty wrappers disappear.** If the component produces no markup, AEM drops the decoration element, so do
+  not rely on it always being present in the DOM.
+
+## References
+
+- [Decoration Tag (Experience League, AEM 6.5)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/components/decoration-tag)
+- [HTL Templates (Sightly)](../htl-templates.mdx) -- `data-sly-resource` and include options
+- [Templates and Policies](./templates-policies.md) -- the Style System and policy-driven CSS classes

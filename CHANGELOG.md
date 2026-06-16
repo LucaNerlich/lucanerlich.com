@@ -2,11 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.22.0] - 2026-06-16
+
+### Added
+- New [Decoration Tag (cq:htmlTag)](/aem/components/decoration-tag) page: explains the AEM component decoration wrapper, the `_cq_htmlTag` node structure, controlling the tag name and CSS classes, overriding classes inherited from a supertype, and per-include decoration overrides
+
+### Fixed
+- Broken changelog links to the Simplified Index Management and Search & Indexing pages now use absolute routes
+
 ## [1.21.0] - 2026-06-15
 
 ### Added
-- New [Simplified Index Management](./simplified-index-management.mdx) page: covers diff-based custom index definitions, `diff.json` deltas, and how to let the platform merge and version indexes without copying full OOTB definitions
-- Cross-reference and tip callout in [Search & Indexing](./search-and-indexing.mdx) pointing to Simplified Index Management
+- New [Simplified Index Management](/aem/content/simplified-index-management) page: covers diff-based custom index definitions, `diff.json` deltas, and how to let the platform merge and version indexes without copying full OOTB definitions
+- Cross-reference and tip callout in [Search & Indexing](/aem/content/search-and-indexing) pointing to Simplified Index Management
 
 ### Changed
 - Bumped React to 19.2.7 and `@types/react` to 19.2.17
