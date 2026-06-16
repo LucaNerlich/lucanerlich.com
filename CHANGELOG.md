@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.24.0] - 2026-06-16
+
+### Added
+- E-Mail guide: new "Properties-file template + StringSubstitutor" pattern, including loading templates from the JCR, the `Properties.load` ISO-8859-1/UTF-8 gotcha, and combining a metadata properties file with a separate `.html` body that carries placeholders
+- E-Mail guide: new "Sending to AEM Users and Groups" section covering `Authorizable` address resolution, group expansion, and the per-recipient send loop
+- E-Mail guide: config-driven, reusable workflow step parameterized via `PROCESS_ARGS`, plus a note on triggering e-mails from group-membership changes
+
 ## [1.23.1] - 2026-06-16
 
 ### Fixed

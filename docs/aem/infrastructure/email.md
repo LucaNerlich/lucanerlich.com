@@ -364,6 +364,172 @@ public String renderPageToHtml(ResourceResolver resolver, String pagePath)
 > This approach lets authors edit e-mail templates visually in AEM, using components and
 > the Style System.
 
+### Pattern 3: Properties-file template + StringSubstitutor
+
+`MailTemplate` is convenient but rigid: one header block, one body, and its own parsing
+rules. A more flexible approach -- and a common one in real projects -- is to store the
+template as a Java **`.properties`** file with named sections and do the token replacement
+yourself with Apache Commons `StringSubstitutor`. This keeps the subject, header, message,
+and footer as separate, independently reusable fields.
+
+```properties title="/apps/myproject/templates/email/task-assigned.txt"
+subject=A task is waiting for you: ${taskName}
+
+header=-----------------------------------------------------------\n\
+Project: ${projectTitle}\n\
+Assigned: ${eventTimestamp}\n\
+-----------------------------------------------------------\n
+
+message=\n\
+Hi ${firstName},\n\
+a new task has been assigned to you. Open it here:\n${host.prefix}${link.open}\n
+
+footer=\n\
+-----------------------------------------------------------\n\
+This is an automatically generated message. Please do not reply.
+```
+
+Each value is a `${placeholder}` host; `\` continues a line within a property. Load the file
+from its JCR `nt:file` node and substitute the tokens at send time:
+
+```java title="PropertiesMailBuilder.java"
+import com.day.cq.mailer.MessageGateway;
+import com.day.cq.mailer.MessageGatewayService;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail.SimpleEmail;
+import org.apache.commons.text.StringSubstitutor; // from org.apache.commons.text (provided by AEM)
+import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Node;
+import javax.jcr.Session;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
+
+/** Reads the template properties from a JCR nt:file. */
+private Properties loadTemplate(String path, ResourceResolver resolver) throws Exception {
+    Session session = resolver.adaptTo(Session.class);
+    if (session == null || !session.itemExists(path)) {
+        throw new IllegalArgumentException("Template not found: " + path);
+    }
+    Node node = (Node) session.getItem(path);
+    Properties props = new Properties();
+    try (InputStream is = node.getProperty("jcr:content/jcr:data").getBinary().getStream()) {
+        Properties raw = new Properties();
+        raw.load(is); // Properties.load ALWAYS decodes ISO-8859-1
+        Enumeration<?> keys = raw.propertyNames();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            // Re-encode ISO-8859-1 bytes as UTF-8 so umlauts/accents survive
+            String value = new String(
+                raw.getProperty(key).getBytes(StandardCharsets.ISO_8859_1),
+                StandardCharsets.UTF_8);
+            props.put(key, value);
+        }
+    }
+    return props;
+}
+
+/** Builds an Email from the template, substituting ${tokens} from params. */
+public Email buildEmail(String templatePath, Map<String, String> params,
+                        ResourceResolver resolver) throws Exception {
+
+    Properties template = loadTemplate(templatePath, resolver);
+    StringSubstitutor sub = new StringSubstitutor(params);
+
+    // .html templates render as HTML, everything else as plain text
+    boolean html = templatePath.endsWith(".html");
+    Email email = html ? new HtmlEmail() : new SimpleEmail();
+    email.setCharset("utf-8");
+    email.setSubject(sub.replace(template.getProperty("subject")));
+
+    String body = sub.replace(template.getProperty("header", ""))
+                + sub.replace(template.getProperty("message", ""))
+                + sub.replace(template.getProperty("footer", ""));
+
+    if (email instanceof HtmlEmail) {
+        ((HtmlEmail) email).setHtmlMsg(body);
+    } else {
+        email.setMsg(body);
+    }
+    return email;
+}
+```
+
+> **The encoding gotcha.** `java.util.Properties.load(InputStream)` always decodes the bytes
+> as ISO-8859-1, never UTF-8. Without the re-encoding step above, any umlaut or accented
+> character in the template comes out garbled. This is the single most common bug with
+> properties-based mail templates.
+
+**When to prefer this over `MailTemplate`:** you want named, independently reusable sections
+(subject/header/message/footer), the subject to live inside the template, or full control over
+parsing and encoding. The cost is that you own the loader and the encoding handling -- which is
+exactly what the snippet above provides.
+
+#### Combining with a separate `.html` body in the JCR
+
+Rich HTML is awkward to keep inside a single `.properties` value -- the escaping and `\` line
+continuations get unwieldy fast. A clean hybrid keeps the small metadata (subject, and a
+pointer to the body) in the properties file, while the **HTML body lives in its own `.html`
+file** in the JCR, carrying the same `${placeholder}` tokens. The body file is authorable and
+lintable on its own, and you can inline CSS the way e-mail clients expect.
+
+```properties title="/apps/myproject/templates/email/task-assigned.txt (metadata)"
+subject=A task is waiting for you: ${taskName}
+body=/apps/myproject/templates/email/task-assigned.html
+```
+
+```html title="/apps/myproject/templates/email/task-assigned.html (body with placeholders)"
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"/></head>
+<body style="font-family: Arial, sans-serif;">
+  <h1>Hi ${firstName},</h1>
+  <p>A new task is waiting in <strong>${projectTitle}</strong>.</p>
+  <p><a href="${host.prefix}${link.open}">Open the task</a></p>
+</body>
+</html>
+```
+
+Load the metadata with the Pattern 3 loader, load the HTML body as a UTF-8 string, and run the
+**same `StringSubstitutor`** over both:
+
+```java title="Combine: properties metadata + HTML body file"
+public Email buildHtmlEmail(String metaPath, Map<String, String> params,
+                            ResourceResolver resolver) throws Exception {
+
+    Properties meta = loadTemplate(metaPath, resolver);     // reuse the Pattern 3 loader
+    String htmlBody = loadText(meta.getProperty("body"), resolver);
+    StringSubstitutor sub = new StringSubstitutor(params);
+
+    HtmlEmail email = new HtmlEmail();
+    email.setCharset("utf-8");
+    email.setSubject(sub.replace(meta.getProperty("subject")));
+    email.setHtmlMsg(sub.replace(htmlBody));                // ${tokens} in the HTML are replaced
+    email.setTextMsg("Open the task: "                      // plain-text fallback
+        + params.get("host.prefix") + params.get("link.open"));
+    return email;
+}
+
+/** Reads a JCR nt:file as a UTF-8 string. */
+private String loadText(String path, ResourceResolver resolver) throws Exception {
+    Session session = resolver.adaptTo(Session.class);
+    Node node = (Node) session.getItem(path);
+    try (InputStream is = node.getProperty("jcr:content/jcr:data").getBinary().getStream()) {
+        return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+    }
+}
+```
+
+> Reading the `.html` file **directly as UTF-8** sidesteps the `Properties.load` ISO-8859-1
+> gotcha entirely -- it only applies to `.properties` parsing, not to a raw HTML stream. The
+> placeholder mechanism is identical (`${...}` via `StringSubstitutor`), so the same `params`
+> map drives the subject, the metadata, and the HTML body. Authors then edit the HTML file in
+> the JCR without ever touching Java.
+
 ---
 
 ## Managing HTML Templates with Placeholders
@@ -716,6 +882,91 @@ public class EmailServiceImpl implements EmailService {
 
 ---
 
+## Sending to AEM Users and Groups
+
+So far recipients have been raw address strings. In practice you usually know the recipients
+as AEM **users and groups** (`Authorizable`s) -- a workflow participant, a project group, the
+members of a role. It is cleaner to let the service resolve addresses from the user profile
+and expand groups itself, so callers pass principals rather than e-mail strings.
+
+```java title="Resolving an address from an Authorizable"
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.Group;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.jcr.Value;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/** Reads the e-mail address from the user's profile/email property. */
+private String emailOf(Authorizable user) throws Exception {
+    if (user == null || user.isGroup()) {
+        return null;
+    }
+    Value[] values = user.getProperty("profile/email");
+    return (values != null && values.length > 0) ? values[0].getString() : null;
+}
+
+/** Expands a group to its member users; a user resolves to itself. */
+private List<Authorizable> resolveUsers(Authorizable principal) throws Exception {
+    List<Authorizable> users = new ArrayList<>();
+    if (principal == null) {
+        return users;
+    }
+    if (principal.isGroup()) {
+        Iterator<Authorizable> members = ((Group) principal).getMembers(); // transitive members
+        while (members.hasNext()) {
+            Authorizable member = members.next();
+            if (!member.isGroup()) {
+                users.add(member);
+            }
+        }
+    } else {
+        users.add(principal);
+    }
+    return users;
+}
+```
+
+With those helpers, send **one mail per recipient** rather than putting everyone on a single
+`To`. A per-recipient loop keeps addresses private, lets each message carry per-recipient
+tokens (e.g. `${participantId}`), and -- importantly -- means one bad address or send failure
+is logged and skipped instead of aborting the whole batch:
+
+```java title="Per-recipient send loop"
+public void sendToAuthorizables(String templatePath, Map<String, String> params,
+                                List<Authorizable> recipients, ResourceResolver resolver) {
+    MessageGateway<Email> gateway = gatewayService.getGateway(
+        templatePath.endsWith(".html") ? HtmlEmail.class : SimpleEmail.class);
+    if (gateway == null) {
+        LOG.error("Mail gateway not configured");
+        return;
+    }
+    for (Authorizable user : recipients) {
+        try {
+            String address = emailOf(user);
+            if (StringUtils.isBlank(address)) {
+                LOG.warn("No address for {}, skipping", user.getID());
+                continue;
+            }
+            // per-recipient token, then build a fresh Email for this address
+            params.put("participantId", user.getID());
+            Email email = buildEmail(templatePath, params, resolver);
+            email.setTo(Collections.singleton(new InternetAddress(address)));
+            gateway.send(email);
+        } catch (Exception e) {
+            LOG.error("Failed to send to {}", user, e); // skip, do not abort the batch
+        }
+    }
+}
+```
+
+> Obtain the `ResourceResolver` (and a `UserManager` to look principals up by id) through the
+> `myproject-mail-service` service user described above, not an administrative session.
+
+---
+
 ## E-Mails in Workflow Steps
 
 Workflows are a common trigger for sending e-mails (e.g., approval notifications, publish
@@ -756,6 +1007,73 @@ public class NotificationEmailStep implements WorkflowProcess {
 ```
 
 See the [Workflows](../backend/workflows.mdx) page for more on custom workflow steps.
+
+### Config-driven, reusable step
+
+Hardcoding the template and recipients in Java means a new step (and a deployment) for every
+notification. A better pattern is **one generic step** whose template path and recipients come
+from the workflow model's `PROCESS_ARGS`. The same compiled step is then reused across many
+models, and authors change behaviour by editing the model.
+
+```java title="Generic, parameterized workflow step"
+@Component(
+    service = WorkflowProcess.class,
+    property = "process.label=Send Templated E-Mail"
+)
+public class TemplatedEmailStep implements WorkflowProcess {
+
+    @Reference private EmailService emailService;
+    @Reference private ResourceResolverFactory resolverFactory;
+    @Reference private Externalizer externalizer;
+
+    @Override
+    public void execute(WorkItem workItem, WorkflowSession session,
+                        MetaDataMap metaData) throws WorkflowException {
+
+        // PROCESS_ARGS = "sendTo:project.group.editor,emailTemplate:/apps/.../published.txt"
+        String args = metaData.get("PROCESS_ARGS", String.class);
+        Map<String, String> argMap = parseArgs(args);          // -> sendTo, emailTemplate
+        String templatePath = argMap.get("emailTemplate");
+        String payloadPath = workItem.getWorkflowData().getPayload().toString();
+
+        Map<String, Object> auth =
+            Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, "myproject-mail-service");
+        try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(auth)) {
+
+            Map<String, String> params = new HashMap<>();
+            params.put("link.open", "/editor.html" + payloadPath + ".html");
+            params.put("modelTitle", workItem.getWorkflow().getWorkflowModel().getTitle());
+            params.put("eventTimestamp", workItem.getTimeStarted().toString());
+            // absolute host prefix so links work in mail clients
+            params.put("host.prefix", externalizer.externalLink(resolver, Externalizer.LOCAL, ""));
+
+            List<Authorizable> recipients = resolveRecipients(argMap.get("sendTo"), resolver);
+            emailService.sendToAuthorizables(templatePath, params, recipients, resolver);
+        } catch (Exception e) {
+            throw new WorkflowException("Failed to send workflow e-mail", e);
+        }
+    }
+}
+```
+
+The matching step in the workflow model carries the configuration:
+
+```xml title="Workflow model step (PROCESS_ARGS)"
+<node
+    jcr:primaryType="cq:WorkflowNode"
+    jcr:title="Notify editors"
+    sling:resourceType="cq/workflow/components/model/process">
+    <metaData
+        jcr:primaryType="nt:unstructured"
+        PROCESS="com.myproject.core.workflows.TemplatedEmailStep"
+        PROCESS_ARGS="sendTo:project.group.editor,emailTemplate:/apps/myproject/templates/email/published.txt"
+        PROCESS_AUTO_ADVANCE="true"/>
+</node>
+```
+
+> Workflows are not the only trigger. To e-mail someone when they are added to a group, register
+> an Oak `AuthorizableActionProvider` and react in `AbstractGroupAction.onMemberAdded(...)` --
+> the same `EmailService` call, driven by a repository event instead of a workflow.
 
 ---
 
@@ -966,6 +1284,7 @@ block the calling thread. Consider:
 | Mails not arriving on publish              | Ensure the OSGi config exists for the publish run mode (`config.publish/`)            |
 | Attachment too large                       | Check your SMTP provider's size limits; consider linking to a download URL instead    |
 | Encoding issues in subject/body            | Always call `email.setCharset("utf-8")` before setting content                        |
+| Garbled umlauts from `.properties` templates | `Properties.load` decodes ISO-8859-1; re-encode each value to UTF-8 (see Pattern 3)  |
 
 ---
 
