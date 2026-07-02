@@ -96,6 +96,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'component-dialogs',
         'htl-templates',
         'client-libraries',
+        'aemvite',
         'groovy-console',
         'components',
         'backend',

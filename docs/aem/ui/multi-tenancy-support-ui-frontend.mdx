@@ -530,6 +530,14 @@ export default defineConfig({
 The `aem-clientlib-generator` configuration remains the same regardless of whether you use
 webpack or Vite - it only cares about the `/dist` output structure.
 
+:::tip Packaged alternative to hand-rolling this
+The hand-rolled `vite.config.js` above and the matching `aem-clientlib-generator` config both need to
+be kept in sync per tenant. [`@aemvite`](../aemvite.mdx) packages this exact pattern: declare
+one `clientlibs` entry per tenant in a typed `aem.config.mjs`, and both the Vite build and the
+byte-identical `.content.xml` / `js.txt` / `css.txt` emission are handled for you - see
+[Multiple clientlibs for multi-tenant setups](../aemvite.mdx#71-multiple-clientlibs-for-multi-tenant-setups).
+:::
+
 ## Common Shared Dependencies
 
 To avoid bundling large libraries (jQuery, polyfills, vendor code) into every tenant bundle, extract
@@ -633,6 +641,7 @@ multi-tenancy configuration works without changes. Ensure that:
 
 ## See also
 
+- [@aemvite: Migrate ui.frontend from Webpack to Vite](../aemvite.mdx) - packaged Vite toolchain covering the per-tenant clientlib pattern shown above
 - [Architecture](../architecture.mdx)
 - [Custom Component Guide](../custom-component.mdx)
 - [Client Libraries](../client-libraries.mdx) - full clientlib reference

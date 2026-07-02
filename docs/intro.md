@@ -51,6 +51,7 @@ Comprehensive Adobe Experience Manager documentation covering the full stack.
 - [Custom Component Guide](./aem/custom-component.mdx) - End-to-end walkthrough: Sling Model, dialog, HTL template, and clientlib
 - [Component Dialogs](./aem/component-dialogs.mdx) - Copy-paste reference for Granite UI dialog widgets
 - [Sling Models](./aem/backend/sling-models.mdx) - Annotations, injectors, exporters, and best practices
+- [@aemvite: Migrate ui.frontend from Webpack to Vite](./aem/aemvite.mdx) - Replace webpack, Babel, and aem-clientlib-generator with Vite while keeping clientlib output byte-identical
 
 ## Java
 

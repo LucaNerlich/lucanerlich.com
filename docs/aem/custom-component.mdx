@@ -1014,6 +1014,10 @@ components) and inline clientlibs only for dialog-specific authoring JS. This gi
 worlds: a modern build pipeline for production CSS/JS and simple inline scripts for authoring UX.
 :::
 
+Still on webpack? [`@aemvite`](./aemvite.mdx) is a drop-in Vite + esbuild toolchain for exactly
+this module - it replaces webpack, Babel, PostCSS, ESLint, and `aem-clientlib-generator` while keeping
+the emitted clientlib descriptors byte-identical to the archetype's historical output.
+
 ## Unit Testing the Sling Model
 
 Test your model with [wcm.io AEM Mocks](https://wcm.io/testing/aem-mock/) or the
@@ -1187,6 +1191,7 @@ ui.frontend/src/main/webpack/
 
 ## See also
 
+- [@aemvite: Migrate ui.frontend from Webpack to Vite](./aemvite.mdx) - replace webpack + `aem-clientlib-generator` with Vite for the ui.frontend module described above
 - [Architecture](./architecture.mdx)
 - [Components](./components/overview.mdx)
 - [Core Components](./components/core-components.mdx)

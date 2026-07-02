@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.26.0] - 2026-07-02
+
+### Added
+- New [@aemvite: Migrate ui.frontend from Webpack to Vite](/aem/aemvite) guide: a from-scratch walkthrough of replacing webpack, Babel, PostCSS, ESLint, and `aem-clientlib-generator` in an AEM Maven archetype `ui.frontend` with Vite, esbuild, and Sass, while keeping the emitted clientlib descriptors byte-identical
+- Cross-references to the new @aemvite guide added to the Client Libraries, Custom Component, Multi-Tenancy UI Frontend, and Beginners Guide docs, plus the docs homepage
+
 ## [1.25.1] - 2026-06-16
 
 ### Fixed
