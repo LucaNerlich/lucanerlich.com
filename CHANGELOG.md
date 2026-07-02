@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.26.1] - 2026-07-02
+
+### Fixed
+- @aemvite guide: corrected the required Node.js range to `^20.19.0 || ^22.18.0 || >=24.11.0` (Vite+ tightened Vite 8's range and drops the `22.12.0`-`22.17.x` band), updated across prerequisites, Maven `<nodeVersion>` guidance, and troubleshooting sections
+
 ## [1.26.0] - 2026-07-02
 
 ### Added

@@ -191,7 +191,7 @@ Because of this, dispatcher invalidation paths, Cloud Manager packagers, and any
 
 ## Requirements
 
-- **Node.js:** `^20.19.0 || >=22.12.0` (Vite 8's `engines` range).
+- **Node.js:** `^20.19.0 || ^22.18.0 || >=24.11.0`. As of `@aemvite/*` `0.7.0`, the packages themselves are built with [Vite+](https://viteplus.dev), which tightened this range - notably, it drops the `22.12.0`-`22.17.x` band that Vite 8 alone still accepted. `frontend-maven-plugin`'s pinned `<nodeVersion>` (see step 12) needs to satisfy this too.
 - **Vite:** `^7 || ^8` (peer dependency on the plugin packages).
 - **Sass:** required only when consuming `.scss`/`.sass` sources; not declared as a peer because plain CSS works without it.
 
@@ -233,7 +233,7 @@ The rest of this post walks through converting an actual AEM Maven archetype `ui
 
 ### 1. Prerequisites
 
-- **Node.js** `^20.19.0 || >=22.12.0`. Older Node fails `npm install` of `vite@^8` and also breaks `frontend-maven-plugin` invocations with `SyntaxError: ... does not provide an export named 'styleText'`.
+- **Node.js** `^20.19.0 || ^22.18.0 || >=24.11.0`. Older Node fails `npm install` of `@aemvite/aem-config` (whose own `engines` field enforces this range) and also breaks `frontend-maven-plugin` invocations with `SyntaxError: ... does not provide an export named 'styleText'`.
 - **npm** (Yarn / pnpm work too, but `frontend-maven-plugin` defaults to npm).
 - **An AEM Maven multi-module project** with a `ui.frontend/` module that feeds compiled assets into `ui.apps/` clientlibs - i.e. the standard AEM archetype layout.
 - **`frontend-maven-plugin`** in `ui.frontend/pom.xml` running `npm install` then `npm run prod` during `generate-resources`. Maven does not need to change when you migrate; only the npm scripts behind `run prod` / `run dev` swap from webpack to `aem-build`.
@@ -611,7 +611,7 @@ Add at least one real file before you expect a `resources/` folder to appear in 
 
 ### 12. Maven: bump the pinned Node version
 
-`ui.frontend/pom.xml` itself does not need to change - `frontend-maven-plugin` keeps running `npm run prod` / `npm run dev` exactly as before. But its `<nodeVersion>` almost certainly needs a bump: the AEM Maven archetype historically pins `v16.x`, and Vite 8 refuses to install on anything older than `^20.19.0 || >=22.12.0`. Find the `frontend-maven-plugin` `<configuration>` block (usually in the parent `pom.xml`, not `ui.frontend/pom.xml`) and update it:
+`ui.frontend/pom.xml` itself does not need to change - `frontend-maven-plugin` keeps running `npm run prod` / `npm run dev` exactly as before. But its `<nodeVersion>` almost certainly needs a bump: the AEM Maven archetype historically pins `v16.x`, and `@aemvite/*` refuses to install on anything outside `^20.19.0 || ^22.18.0 || >=24.11.0`. Find the `frontend-maven-plugin` `<configuration>` block (usually in the parent `pom.xml`, not `ui.frontend/pom.xml`) and update it:
 
 ```diff
  <plugin>
@@ -620,10 +620,12 @@ Add at least one real file before you expect a `resources/` folder to appear in 
    <configuration>
 -    <nodeVersion>v16.17.0</nodeVersion>
 -    <npmVersion>8.15.0</npmVersion>
-+    <nodeVersion>v22.12.0</nodeVersion>
++    <nodeVersion>v24.11.0</nodeVersion>
 +    <npmVersion>10.9.0</npmVersion>
    </configuration>
 ```
+
+Older pins like `v22.12.0` (a common choice with plain Vite 8) no longer satisfy this range - the `22.12.0`-`22.17.x` band was dropped, so it has to be either `^22.18.0` or, as above, `>=24.11.0`.
 
 Delete any locally cached `ui.frontend/node/` directory afterward so the new Node version downloads on the next Maven build, then sanity-check:
 
@@ -810,11 +812,11 @@ export default defineConfig({
 - **`Error: Cannot find package 'esbuild'`** during `npm run prod`. `esbuild` is a peer dependency of `@aemvite/aem-config` (range `^0.27.0 || ^0.28.0`), auto-installed by npm 7+ / pnpm 8+. Yarn classic (or pnpm with `auto-install-peers=false`) needs it added manually: `npm install --save-dev esbuild@^0.28.0`.
 - **`Error: Cannot find package 'vite'`** during `npm run prod`. Install it explicitly: `npm install --save-dev vite@^8`.
 - **`Unknown --mode 'release'` (or similar) from `aem-build`.** Only `dev`, `prod`, `development`, and `production` are accepted.
-- **`SyntaxError: ... does not provide an export named 'styleText'`** or an `EBADENGINE` warning. Your Node is too old for Vite 8 - bump to `^20.19.0 || >=22.12.0` and, in a Maven build, bump `<nodeVersion>` in `frontend-maven-plugin` (see step 12).
+- **`SyntaxError: ... does not provide an export named 'styleText'`** or an `EBADENGINE` warning. Your Node doesn't satisfy `@aemvite/*`'s required range - bump to `^20.19.0 || ^22.18.0 || >=24.11.0` and, in a Maven build, bump `<nodeVersion>` in `frontend-maven-plugin` (see step 12). Note the `22.12.0`-`22.17.x` band is specifically excluded, even though it satisfied plain Vite 8's older range.
 - **pnpm vs npm gotcha.** If Corepack and a parent repo's `"packageManager": "pnpm@…"` are in play, plain `npm` invocations can get silently rerouted through pnpm, which ignores npm's `-w` form. Prefix with `command npm` or `cd` into `ui.frontend/` first.
 - **`clientlib-site/resources/` directory unexpectedly missing.** By design when the source `resources/` tree contains only `.gitkeep` placeholders. Add a real file and re-run.
 - **CSS glob ordering changed.** `@aemvite/vite-plugin-glob` sorts matched files lexicographically by default; pass a custom `sort` comparator to override.
-- **Maven works locally, fails in CI.** Confirm CI Node satisfies `^20.19.0 || >=22.12.0` and that `frontend-maven-plugin`'s pinned Node version does too.
+- **Maven works locally, fails in CI.** Confirm CI Node satisfies `^20.19.0 || ^22.18.0 || >=24.11.0` and that `frontend-maven-plugin`'s pinned Node version does too.
 
 ## Status and scope
 
