@@ -118,8 +118,3 @@ Guides for building and extending a Strapi headless CMS.
 
 > All projects are self-hosted on a [Hetzner](https://www.hetzner.com/cloud) VPS using [Coolify](https://coolify.io/) and Docker. Lightweight, GDPR-friendly analytics via self-hosted [Umami](https://umami.is/).
 
----
-
-## Contact
-
-Questions, corrections, or content requests? Open a [GitHub Issue](https://github.com/LucaNerlich/lucanerlich.com/issues) or reach out at [luca.nerlich@gmail.com](mailto:luca.nerlich@gmail.com).

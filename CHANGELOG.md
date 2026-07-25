@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.27.1] - 2026-07-25
+
+### Changed
+- Removed the Contact section from the homepage
+
 ## [1.27.0] - 2026-07-25
 
 ### Added
