@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.27.0] - 2026-07-25
+
+### Added
+- Redesigned homepage with a "Most Popular" section featuring the top-visited pages (component dialogs, groovy console, custom component guide, architecture, recipes), restructured "By Topic" sections with curated links per category and scope lines, condensed AI section to key topics, and updated the AEM beginners guide chapter count from 14 to 22
+
+### Changed
+- Updated pnpm lockfile
+
 ## [1.26.1] - 2026-07-02
 
 ### Fixed
