@@ -176,6 +176,9 @@ Reduce the margin under an `<h2>` when it is immediately followed by a `.subtitl
 Media queries respond to the **viewport** size. Container queries respond to the size of a **specific container
 element**. This makes components truly self-contained - they adapt to wherever they are placed.
 
+> **Deep dive:** For interactive demos, container query units, and a full comparison with media queries, see
+> [CSS Container Queries](../container-queries.mdx).
+
 ### Defining a container
 
 ```css

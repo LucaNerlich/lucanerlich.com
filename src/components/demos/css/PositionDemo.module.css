@@ -1,0 +1,44 @@
+.frame {
+    height: 240px;
+    overflow: auto;
+    border: 1px dashed var(--ifm-color-emphasis-400);
+    border-radius: 8px;
+    background: var(--ifm-background-color);
+}
+
+.parent {
+    position: relative;
+    min-height: 420px;
+    padding: 1rem;
+}
+
+.sibling,
+.target,
+.filler {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.sibling {
+    background: var(--ifm-color-emphasis-200);
+}
+
+.siblingOverlap {
+    position: relative;
+    z-index: 2;
+    background: color-mix(in srgb, var(--custom-accent-green) 25%, var(--ifm-background-surface-color));
+}
+
+.target {
+    background: color-mix(in srgb, var(--custom-accent-red) 30%, var(--ifm-background-surface-color));
+    border: 2px solid var(--custom-accent-red);
+    width: fit-content;
+}
+
+.filler {
+    background: var(--ifm-color-emphasis-100);
+    color: var(--custom-muted);
+    min-height: 72px;
+}

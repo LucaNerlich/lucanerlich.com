@@ -1,0 +1,24 @@
+.card {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--ifm-color-emphasis-300);
+    background: var(--ifm-background-color);
+}
+
+.highlight {
+    border-color: var(--custom-accent-amber);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--custom-accent-amber) 35%, transparent);
+}
+
+.title {
+    margin: 0 0 0.75rem;
+}
+
+.list {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.list li + li {
+    margin-top: 0.35rem;
+}

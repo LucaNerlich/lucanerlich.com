@@ -74,8 +74,8 @@ Practical introductions to the building blocks of modern AI, from LLMs through a
 
 15+ pages of practical JS and TypeScript with code examples and browser compatibility notes.
 
-- [Async/Await Patterns](./javascript/async-await-guide.md) - Promises, error handling, concurrency control, pitfalls
-- [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) - Locale-aware number, date, currency formatting
+- [Async/Await Patterns](./javascript/async-await-guide.mdx) - Promises, error handling, concurrency control, pitfalls
+- [Intl API Formatting](./javascript/javascript-intl-api-formatting.mdx) - Locale-aware number, date, currency formatting
 - [Error Handling](./javascript/javascript-error-handling.md) - Custom error classes, global handlers, structured reporting
 - [Performance Basics](./javascript/javascript-performance-basics.md) - Big O, memoization, debouncing, profiling
 
@@ -100,6 +100,8 @@ Guides for building and extending a Strapi headless CMS.
 - [Content Modeling](./building-for-the-web/content-modeling.md) - CMS-agnostic guide to types, relations, and performance
 - [Web Performance](./building-for-the-web/web-performance.md) - Core Web Vitals, Lighthouse, caching, CDN
 - [Semantic HTML](./building-for-the-web/semantic-html.mdx) - Element reference, accessibility, anti-patterns
+- [CSS Container Queries](./css/container-queries.mdx) - Component-level responsive design with interactive demos
+- [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) - Selectors, Flexbox, Grid, responsive design, modern CSS
 - [Build a Simple Blog](./building-for-the-web/build-a-blog.md) - HTML, CSS, vanilla JS from scratch
 - [Git Beginners' Guide](./git/beginners-guide/01-introduction.md) - Branching, merging, rebasing, workflows
 - [Mermaid Diagrams](./other/mermaid-diagrams.mdx) - Flowcharts, sequence, class, and more

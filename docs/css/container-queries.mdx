@@ -1,0 +1,269 @@
+---
+title: "CSS Container Queries"
+sidebar_label: "Container Queries"
+description: Make components respond to their own slot size with CSS container queries. Interactive demos, the core API, and when to prefer them over media queries or device width.
+slug: /css/container-queries
+tags: [css, responsive, container-queries]
+keywords:
+    - css container queries
+    - '@container'
+    - container-type
+    - container queries vs media queries
+    - cqw cqi
+    - component responsive design
+---
+
+import CardContainerDemo from '@site/src/components/css/CardContainerDemo';
+import ContainerVsMediaDemo from '@site/src/components/css/ContainerVsMediaDemo';
+
+# CSS Container Queries
+
+Media queries ask: *how wide is the viewport?* Container queries ask: *how wide is this component's
+slot?* That shift is what makes reusable UI -- cards, widgets, sidebars -- adapt to where they are
+placed, not only to the device.
+
+This guide goes deeper than the short intro in the
+[Modern CSS Features](./beginners-guide/15-modern-css-features.md) chapter, with interactive demos and
+a clear comparison to media queries and device-width thinking.
+
+## The problem container queries solve
+
+A card that looks fine in a wide main column can break when you drop it into a narrow sidebar. With
+viewport media queries alone, both slots see the same `@media (min-width: 768px)` -- so the sidebar
+card still gets the "desktop" layout even though it only has 280px of space.
+
+Container queries fix that. The card styles itself based on **its container**, so the same component
+works in both places without extra modifier classes or JavaScript measuring.
+
+## Core API
+
+### Define a containment context
+
+A query only works against an ancestor that is a **container**. The usual choice is `inline-size`
+(track width / inline size):
+
+```css
+.card-slot {
+    container-type: inline-size;
+    container-name: card;
+}
+
+/* Shorthand: name + type */
+.card-slot {
+    container: card / inline-size;
+}
+```
+
+| Property / value | Meaning |
+|------------------|---------|
+| `container-type: inline-size` | Query against inline size (width in horizontal writing modes). Preferred default. |
+| `container-type: size` | Query against both inline and block size. Needs a definite block size; use sparingly. |
+| `container-type: normal` | No size containment for queries (default). |
+| `container-name` | Optional name so `@container` can target a specific ancestor. |
+
+### Query the container
+
+```css
+@container card (min-width: 400px) {
+    .card {
+        display: flex;
+        gap: 1rem;
+    }
+}
+
+/* Nearest size container, no name required */
+@container (max-width: 399px) {
+    .card {
+        display: block;
+    }
+}
+```
+
+Named queries are useful when containers nest. Unnamed queries use the nearest ancestor with a
+relevant `container-type`.
+
+### Container query units
+
+Each `cq*` unit resolves against an **eligible query container** for its axis (for example `cqw` /
+`cqi` need an inline-size container). If no eligible container exists for that axis, the unit falls
+back to the matching **small viewport** unit (`svw`, `svh`, `svi`, `svb`) -- the viewport is the
+last-resort reference, not the first.
+
+| Unit | Relative to |
+|------|-------------|
+| `cqw` | 1% of container width |
+| `cqh` | 1% of container height |
+| `cqi` | 1% of container inline size |
+| `cqb` | 1% of container block size |
+| `cqmin` / `cqmax` | Smaller / larger of `cqi` and `cqb` |
+
+```css
+.card-title {
+    font-size: clamp(1rem, 4cqi, 1.5rem);
+}
+```
+
+### Style queries (brief)
+
+Besides size, you can query custom properties on a container:
+
+```css
+.card-slot {
+    container-name: card;
+    --density: comfortable;
+}
+
+@container card style(--density: compact) {
+    .card {
+        padding: 0.5rem;
+    }
+}
+```
+
+Browser support for style queries is newer than size queries. Prefer size queries for core layout;
+treat style queries as progressive enhancement.
+
+## Interactive demos
+
+Resize the panels below. CSS `@container` rules select the layout. React only manages the demo
+controls (slider, labels) and synchronizes manual panel resizing from the measured panel width so
+the controls stay in sync.
+
+<CardContainerDemo />
+
+<ContainerVsMediaDemo />
+
+## Container queries vs media queries vs device width
+
+| Approach | Responds to | Best for | Weakness |
+|----------|-------------|----------|----------|
+| **Device-width mindset** | Assumed phone / tablet / desktop | Quick prototypes, marketing copy | Real devices blur; foldables and split-screen break the model |
+| **Media queries (`@media`)** | Viewport (and preference features) | Page chrome, global typography, `prefers-*`, print | Same breakpoint for every slot; bad for reusable components |
+| **Container queries (`@container`)** | A specific ancestor's size | Cards, widgets, modular layouts | Needs a defined container; different mental model and a few containment gotchas |
+
+### Pros of container queries
+
+- **Component-owned responsiveness** -- a card adapts in a sidebar and in the main column without
+  viewport hacks.
+- **Fewer layout bugs in complex pages** -- dashboards, multi-column CMS layouts, and design systems
+  stop fighting one global breakpoint list.
+- **Fluid type and spacing per slot** -- `cqi` / `cqw` scale with the component, not the whole window.
+- **Cleaner APIs for design systems** -- consumers place a component; the component owns its breakpoints.
+
+### Cons of container queries
+
+- **You must opt in** -- forgetting `container-type` means queries never match.
+- **Containment side effects** -- size containment can affect how percentages and overflowing content
+  behave; `inline-size` is usually safer than `size`.
+- **Not a full media-query replacement** -- dark mode, reduced motion, hover capability, and print
+  still belong in `@media`.
+- **Nested naming care** -- deep trees need clear `container-name`s or queries attach to the wrong
+  ancestor.
+
+### Pros of media queries (and when device width still helps)
+
+- **Page-level decisions** -- hide a global nav pattern, change the whole grid, or adjust root font
+  size.
+- **User preference features** -- `prefers-color-scheme`, `prefers-reduced-motion`, `hover`,
+  `orientation`.
+- **Simple mental model for whole-page work** -- one viewport, one set of breakpoints.
+- **Device-width framing** is still useful for **content strategy** ("what does a small screen need
+  first?") even if you should not hard-code "iPhone width" into CSS.
+
+### Cons of media queries for components
+
+- **Viewport ≠ available space** -- split view, sidebars, and embedded widgets lie to viewport-only
+  CSS.
+- **Modifier class explosion** -- `.card--compact`, `.card--sidebar` appear when the same component
+  must look different in different slots.
+- **Device breakpoints age poorly** -- yesterday's "tablet" width is today's desktop split-screen.
+
+### Practical rule of thumb
+
+- Use **media queries** for the **page shell** and **user preferences**.
+- Use **container queries** for **reusable pieces** that can appear in multiple widths.
+- Use **device-width language** in product discussions; implement with fluid layouts, container
+  queries, and a short list of viewport breakpoints -- not a catalogue of device models.
+
+## Practical patterns
+
+### Card in sidebar vs main column
+
+```css
+.card-slot {
+    container: card / inline-size;
+}
+
+.card {
+    display: grid;
+    gap: 0.75rem;
+}
+
+@container card (min-width: 360px) {
+    .card {
+        grid-template-columns: 140px 1fr;
+        align-items: center;
+    }
+}
+```
+
+Place `.card-slot` around the card in both the sidebar and the main column. No extra BEM modifiers.
+
+### Dashboard widgets
+
+Give each widget shell `container-type: inline-size`. Dense metrics can stack in a narrow column and
+expand to a horizontal strip when the widget is stretched -- independent of other widgets on the
+same page.
+
+### Progressive enhancement
+
+```css
+.card {
+    display: block;
+}
+
+@supports (container-type: inline-size) {
+    .card-slot {
+        container: card / inline-size;
+    }
+
+    @container card (min-width: 400px) {
+        .card {
+            display: flex;
+            gap: 1rem;
+        }
+    }
+}
+```
+
+Unsupported browsers keep the stacked layout. Supported browsers unlock the richer arrangement.
+
+## Gotchas
+
+1. **Queries look at an ancestor, not the element itself.** Put `container-type` on a wrapper around
+   the component you style inside `@container`.
+2. **`size` vs `inline-size`.** Prefer `inline-size` unless you truly need height-based queries and
+   can give the container a definite block size.
+3. **Percentage heights and overflow** can surprise you under stronger containment. If something
+   collapses oddly, check whether `container-type: size` is the culprit.
+4. **Nested containers.** Name them (`container-name` / `container` shorthand) when more than one
+   level can match.
+5. **Fallbacks still matter.** Pair with a sensible default layout and `@supports` when you support
+   older browsers.
+6. **Do not delete all media queries.** Accessibility and preference media features are not
+   container problems.
+
+## Browser support
+
+Size-based container queries are widely supported in current evergreen browsers. For production
+check [Can I use: CSS Container Queries](https://caniuse.com/css-container-queries) or MDN. Use
+`@supports (container-type: inline-size)` when you need an explicit feature gate.
+
+## Related reading
+
+- [Responsive Design](./beginners-guide/09-responsive-design.md) -- viewport meta tag, media queries,
+  mobile-first breakpoints
+- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) -- nesting, `:has()`, short
+  container-query intro, `@supports`
+- [CSS Grid](./beginners-guide/08-css-grid.mdx) -- `auto-fit` / `minmax()` layouts that pair well with
+  containers

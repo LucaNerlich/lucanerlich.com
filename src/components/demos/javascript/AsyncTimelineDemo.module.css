@@ -1,0 +1,35 @@
+.chart {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: var(--ifm-background-color);
+    border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.track {
+    height: 22px;
+    border-radius: 999px;
+    background: var(--ifm-color-emphasis-200);
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--custom-accent-purple), var(--custom-accent-green));
+    transition: width 120ms linear, margin-left 120ms linear;
+}

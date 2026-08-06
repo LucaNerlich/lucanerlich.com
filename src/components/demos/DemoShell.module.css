@@ -1,0 +1,131 @@
+.shell {
+    margin: 1.25rem 0 1.75rem;
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: 10px;
+    background: var(--ifm-background-surface-color);
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--ifm-color-emphasis-200);
+    background: var(--ifm-color-emphasis-100);
+}
+
+.title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.hint {
+    margin: 0;
+    color: var(--custom-muted);
+    font-size: 0.85rem;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 140px;
+    flex: 1 1 140px;
+}
+
+.controlLabel {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--custom-muted);
+}
+
+.controlRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.select,
+.input {
+    width: 100%;
+    min-height: 2rem;
+    border: 1px solid var(--ifm-color-emphasis-300);
+    border-radius: 6px;
+    background: var(--ifm-background-color);
+    color: var(--ifm-font-color-base);
+    padding: 0.25rem 0.5rem;
+    font: inherit;
+    font-size: 0.85rem;
+}
+
+.range {
+    width: 100%;
+    accent-color: var(--ifm-color-primary);
+}
+
+.value {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.body {
+    padding: 1rem;
+    background: var(--ifm-color-emphasis-100);
+}
+
+.footer {
+    margin: 0;
+    padding: 0.65rem 1rem 0.85rem;
+    font-size: 0.8rem;
+    color: var(--custom-muted);
+    border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.buttonRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.button {
+    appearance: none;
+    border: 1px solid var(--ifm-color-emphasis-300);
+    border-radius: 6px;
+    background: var(--ifm-background-color);
+    color: var(--ifm-font-color-base);
+    padding: 0.35rem 0.7rem;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.button:hover {
+    border-color: var(--ifm-color-primary);
+}
+
+.buttonPrimary {
+    background: var(--ifm-color-primary);
+    border-color: var(--ifm-color-primary);
+    color: var(--ifm-color-primary-contrast-background);
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    min-height: 2rem;
+}

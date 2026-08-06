@@ -13,6 +13,8 @@ keywords:
 sidebar_position: 9
 ---
 
+import EventBubblingDemo from '@site/src/components/demos/javascript/EventBubblingDemo';
+
 # Events & Interactivity
 
 Events are how JavaScript responds to user actions - clicks, key presses, form submissions, scrolling, and more. This
@@ -247,6 +249,12 @@ form.addEventListener("submit", (event) => {
 
 When you click a button inside a `<div>`, the event fires on the button **and** on every ancestor up to `document`. This
 is called **bubbling**.
+
+## Interactive demo
+
+Click the nested button and watch the bubble path. Toggle `stopPropagation` to cut it short:
+
+<EventBubblingDemo />
 
 ```html
 <div id="outer">
