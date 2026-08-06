@@ -865,4 +865,4 @@ behavior.
 - **Flexbox** handles layout: `display: flex`, `justify-content`, `align-items`, `gap`.
 - **Media queries** make pages responsive - design mobile-first, then add breakpoints.
 
-Next up: [The DOM](./08-the-dom.md) - using JavaScript to read and change the page.
+Next up: [The DOM](./08-the-dom.mdx) - using JavaScript to read and change the page.

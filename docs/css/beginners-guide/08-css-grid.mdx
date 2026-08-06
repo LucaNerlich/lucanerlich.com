@@ -13,6 +13,8 @@ keywords:
 sidebar_position: 8
 ---
 
+import GridDemo from '@site/src/components/demos/css/GridDemo';
+
 # CSS Grid
 
 CSS Grid is a **two-dimensional** layout system. While Flexbox handles rows **or** columns, Grid handles rows **and**
@@ -29,6 +31,12 @@ columns at the same time. It is the most powerful layout tool in CSS.
 | Both rows and columns matter          | Grid         |
 
 In practice, you often use both together: Grid for the overall page layout, Flexbox for smaller components inside it.
+
+## Interactive demo
+
+Try fixed tracks vs `auto-fit` + `minmax()`, then shrink the container width:
+
+<GridDemo />
 
 ## Grid container and grid items
 

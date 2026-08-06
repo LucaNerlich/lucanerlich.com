@@ -79,7 +79,7 @@ Request complete
 - `.catch()` runs when the promise rejects
 - `.finally()` runs either way
 
-For a deep dive into async patterns, see [Async/Await Guide](../async-await-guide.md).
+For a deep dive into async patterns, see [Async/Await Guide](../async-await-guide.mdx).
 
 ## `async` / `await`
 

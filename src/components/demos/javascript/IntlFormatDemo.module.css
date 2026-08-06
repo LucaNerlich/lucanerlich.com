@@ -1,0 +1,30 @@
+.results {
+    display: grid;
+    gap: 0.65rem;
+    margin: 0;
+}
+
+.results > div {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 8px;
+    background: var(--ifm-background-color);
+    border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.results dt {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--custom-muted);
+}
+
+.results dd {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    word-break: break-word;
+}

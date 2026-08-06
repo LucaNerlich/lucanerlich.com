@@ -13,6 +13,8 @@ keywords:
 sidebar_position: 4
 ---
 
+import AsyncTimelineDemo from '@site/src/components/demos/javascript/AsyncTimelineDemo';
+
 # Async/Await in JavaScript: Practical Patterns and Pitfalls
 
 `async/await` is the modern way to write asynchronous JavaScript. It reads like synchronous code but runs on promises.
@@ -71,6 +73,12 @@ true
 ## Sequential vs parallel
 
 If tasks are independent, run them in parallel with `Promise.all`. If they depend on each other, keep them sequential.
+
+## Interactive demo
+
+Run the same three tasks sequentially, with `Promise.all`, or with `Promise.race` and compare wall-clock time:
+
+<AsyncTimelineDemo />
 
 ```ts
 const task = async (id: number): Promise<string> => `task-${id}`;

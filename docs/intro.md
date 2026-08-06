@@ -74,8 +74,8 @@ Practical introductions to the building blocks of modern AI, from LLMs through a
 
 15+ pages of practical JS and TypeScript with code examples and browser compatibility notes.
 
-- [Async/Await Patterns](./javascript/async-await-guide.md) - Promises, error handling, concurrency control, pitfalls
-- [Intl API Formatting](./javascript/javascript-intl-api-formatting.md) - Locale-aware number, date, currency formatting
+- [Async/Await Patterns](./javascript/async-await-guide.mdx) - Promises, error handling, concurrency control, pitfalls
+- [Intl API Formatting](./javascript/javascript-intl-api-formatting.mdx) - Locale-aware number, date, currency formatting
 - [Error Handling](./javascript/javascript-error-handling.md) - Custom error classes, global handlers, structured reporting
 - [Performance Basics](./javascript/javascript-performance-basics.md) - Big O, memoization, debouncing, profiling
 

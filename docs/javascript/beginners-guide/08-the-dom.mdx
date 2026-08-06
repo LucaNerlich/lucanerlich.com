@@ -13,6 +13,8 @@ keywords:
 sidebar_position: 8
 ---
 
+import DomWorkshopDemo from '@site/src/components/demos/javascript/DomWorkshopDemo';
+
 # The DOM
 
 The **Document Object Model** (DOM) is the browser's representation of an HTML page as a tree of objects. JavaScript
@@ -52,6 +54,12 @@ document
 
 Every tag becomes a **node** (an object) in this tree. JavaScript can access and modify any node through the global
 `document` object.
+
+## Interactive demo
+
+Practice the core mutations -- `textContent`, `classList`, `createElement` / `append`, and `remove`:
+
+<DomWorkshopDemo />
 
 ## Selecting elements
 
@@ -628,4 +636,4 @@ Newer DOM APIs like `moveBefore()`, `getHTML()`, and `popover` have uneven brows
 - `parentElement`, `children`, `closest()` navigate the tree.
 - Use `DocumentFragment` for batch DOM updates.
 
-Next up: [Events & Interactivity](./09-events.md) - making your page respond to user actions.
+Next up: [Events & Interactivity](./09-events.mdx) - making your page respond to user actions.

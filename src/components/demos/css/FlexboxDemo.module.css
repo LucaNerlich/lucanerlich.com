@@ -1,0 +1,41 @@
+.container {
+    display: flex;
+    min-height: 180px;
+    padding: 0.75rem;
+    border: 1px dashed var(--ifm-color-emphasis-400);
+    border-radius: 8px;
+    background: var(--ifm-background-color);
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    min-height: 48px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 700;
+    color: white;
+    background: var(--custom-accent-purple);
+}
+
+.item:nth-child(2) {
+    background: var(--custom-accent-green);
+}
+
+.item:nth-child(3) {
+    background: var(--custom-accent-amber);
+}
+
+.item:nth-child(4) {
+    background: var(--custom-accent-red);
+}
+
+.itemTall {
+    min-height: 88px;
+}
+
+.itemWide {
+    min-width: 110px;
+}

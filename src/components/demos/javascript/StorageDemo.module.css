@@ -1,0 +1,41 @@
+.grid {
+    display: grid;
+    gap: 0.85rem;
+}
+
+@media (min-width: 720px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.85rem;
+    border-radius: 8px;
+    border: 1px solid var(--ifm-color-emphasis-200);
+    background: var(--ifm-background-color);
+}
+
+.label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--custom-muted);
+}
+
+.textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 84px;
+    border: 1px solid var(--ifm-color-emphasis-300);
+    border-radius: 6px;
+    background: var(--ifm-background-surface-color);
+    color: var(--ifm-font-color-base);
+    padding: 0.5rem 0.65rem;
+    font: inherit;
+    font-size: 0.9rem;
+}

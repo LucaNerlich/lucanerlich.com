@@ -1,0 +1,40 @@
+.stage {
+    overflow: auto;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background: var(--ifm-background-color);
+}
+
+.marginLayer {
+    display: inline-block;
+    background: color-mix(in srgb, var(--custom-accent-amber) 22%, transparent);
+    border-radius: 4px;
+    position: relative;
+}
+
+.legend {
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--custom-accent-amber);
+}
+
+.box {
+    border-style: solid;
+    border-color: var(--custom-accent-purple);
+    background: color-mix(in srgb, var(--custom-accent-green) 28%, var(--ifm-background-surface-color));
+    color: var(--ifm-font-color-base);
+}
+
+.content {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    background: color-mix(in srgb, var(--ifm-color-primary) 18%, var(--ifm-background-surface-color));
+}

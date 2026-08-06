@@ -1,0 +1,31 @@
+.stage {
+    overflow: auto;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: var(--ifm-background-color);
+    border: 1px dashed var(--ifm-color-emphasis-400);
+}
+
+.grid {
+    display: grid;
+    transition: width 120ms ease;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 64px;
+    border-radius: 6px;
+    font-weight: 700;
+    color: white;
+    background: var(--custom-accent-purple);
+}
+
+.item:nth-child(2n) {
+    background: var(--custom-accent-green);
+}
+
+.item:nth-child(3n) {
+    background: var(--custom-accent-amber);
+}

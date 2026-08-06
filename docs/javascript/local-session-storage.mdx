@@ -13,6 +13,8 @@ keywords:
 sidebar_position: 7
 ---
 
+import StorageDemo from '@site/src/components/demos/javascript/StorageDemo';
+
 # LocalStorage and SessionStorage in JavaScript: Save, Load, and Remove Data
 
 The Web Storage API gives you two simple key/value stores: **localStorage** (persistent) and **sessionStorage** (cleared
@@ -46,6 +48,12 @@ dark
 
 **localStorage** persists across browser restarts.  
 **sessionStorage** is scoped to the current tab and cleared on close.
+
+## Interactive demo
+
+Save a note in each store, then reload the page or open a new tab to compare persistence:
+
+<StorageDemo />
 
 ```ts
 localStorage.setItem("persisted", "yes");
