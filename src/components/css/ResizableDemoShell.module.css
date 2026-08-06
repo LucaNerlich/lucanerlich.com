@@ -75,7 +75,7 @@
 
 .panel {
     max-width: 100%;
-    min-width: 180px;
+    min-width: var(--demo-min-width, 180px);
     resize: horizontal;
     overflow: auto;
     box-sizing: border-box;

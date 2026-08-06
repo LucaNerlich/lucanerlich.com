@@ -84,7 +84,10 @@ relevant `container-type`.
 
 ### Container query units
 
-These units resolve against the **query container**, not the viewport:
+Each `cq*` unit resolves against an **eligible query container** for its axis (for example `cqw` /
+`cqi` need an inline-size container). If no eligible container exists for that axis, the unit falls
+back to the matching **small viewport** unit (`svw`, `svh`, `svi`, `svb`) -- the viewport is the
+last-resort reference, not the first.
 
 | Unit | Relative to |
 |------|-------------|
@@ -122,8 +125,9 @@ treat style queries as progressive enhancement.
 
 ## Interactive demos
 
-Resize the panels below. Layout changes come from CSS `@container` rules -- not from React measuring
-the DOM.
+Resize the panels below. CSS `@container` rules select the layout. React only manages the demo
+controls (slider, labels) and synchronizes manual panel resizing from the measured panel width so
+the controls stay in sync.
 
 <CardContainerDemo />
 

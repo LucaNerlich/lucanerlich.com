@@ -1,8 +1,16 @@
+// ------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------
+
 import type {CSSProperties, ReactNode} from 'react';
 import {useId, useState} from 'react';
 
 import shellStyles from './ResizableDemoShell.module.css';
 import styles from './ContainerVsMediaDemo.module.css';
+
+// ------------------------------------------------------------------
+// Component
+// ------------------------------------------------------------------
 
 export default function ContainerVsMediaDemo(): ReactNode {
     const sliderId = useId();
@@ -10,6 +18,7 @@ export default function ContainerVsMediaDemo(): ReactNode {
 
     const panelStyle = {
         width: `${width}px`,
+        '--demo-min-width': '200px',
     } as CSSProperties;
 
     return (

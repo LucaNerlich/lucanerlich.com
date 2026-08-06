@@ -1,7 +1,15 @@
+// ------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------
+
 import type {ReactNode} from 'react';
 
 import ResizableDemoShell from './ResizableDemoShell';
 import styles from './CardContainerDemo.module.css';
+
+// ------------------------------------------------------------------
+// Component
+// ------------------------------------------------------------------
 
 export default function CardContainerDemo(): ReactNode {
     return (
