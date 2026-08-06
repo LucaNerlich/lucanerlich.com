@@ -1,0 +1,93 @@
+.shell {
+    margin: 1.25rem 0 1.75rem;
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: 10px;
+    background: var(--ifm-background-surface-color);
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--ifm-color-emphasis-200);
+    background: var(--ifm-color-emphasis-100);
+}
+
+.title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.hint {
+    margin: 0;
+    color: var(--custom-muted);
+    font-size: 0.85rem;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    width: 100%;
+}
+
+.sliderLabel {
+    display: flex;
+    flex: 1 1 220px;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+    font-size: 0.85rem;
+    color: var(--custom-muted);
+}
+
+.slider {
+    flex: 1 1 auto;
+    min-width: 120px;
+    accent-color: var(--ifm-color-primary);
+}
+
+.widthBadge {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ifm-font-color-base);
+    background: var(--ifm-background-surface-color);
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    white-space: nowrap;
+}
+
+.body {
+    padding: 1rem;
+    background:
+        linear-gradient(90deg, color-mix(in srgb, var(--ifm-color-emphasis-200) 55%, transparent) 1px, transparent 1px),
+        linear-gradient(var(--ifm-color-emphasis-100), var(--ifm-color-emphasis-100));
+    background-size: 24px 100%, auto;
+}
+
+.panel {
+    width: var(--demo-width, 100%);
+    max-width: 100%;
+    min-width: 180px;
+    resize: horizontal;
+    overflow: auto;
+    box-sizing: border-box;
+    border: 1px dashed var(--ifm-color-emphasis-400);
+    border-radius: 8px;
+    background: var(--ifm-background-color);
+    padding: 0.85rem;
+}
+
+.footer {
+    margin: 0.65rem 0 0;
+    font-size: 0.8rem;
+    color: var(--custom-muted);
+}

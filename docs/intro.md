@@ -100,6 +100,8 @@ Guides for building and extending a Strapi headless CMS.
 - [Content Modeling](./building-for-the-web/content-modeling.md) - CMS-agnostic guide to types, relations, and performance
 - [Web Performance](./building-for-the-web/web-performance.md) - Core Web Vitals, Lighthouse, caching, CDN
 - [Semantic HTML](./building-for-the-web/semantic-html.mdx) - Element reference, accessibility, anti-patterns
+- [CSS Container Queries](./css/container-queries.mdx) - Component-level responsive design with interactive demos
+- [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) - Selectors, Flexbox, Grid, responsive design, modern CSS
 - [Build a Simple Blog](./building-for-the-web/build-a-blog.md) - HTML, CSS, vanilla JS from scratch
 - [Git Beginners' Guide](./git/beginners-guide/01-introduction.md) - Branching, merging, rebasing, workflows
 - [Mermaid Diagrams](./other/mermaid-diagrams.mdx) - Flowcharts, sequence, class, and more

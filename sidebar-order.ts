@@ -179,10 +179,11 @@ export const sidebarOrder: Record<string, string[]> = {
     ],
 
     // ------------------------------------------------------------------
-    // CSS – beginners guide first
+    // CSS – beginners guide first, then individual topics
     // ------------------------------------------------------------------
     'css': [
         'beginners-guide',
+        'container-queries',
     ],
 
     'css/beginners-guide': [

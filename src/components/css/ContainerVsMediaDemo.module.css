@@ -1,0 +1,137 @@
+.grid {
+    display: grid;
+    gap: 1rem;
+}
+
+@media (min-width: 700px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.column {
+    min-width: 0;
+}
+
+.label {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.shell {
+    margin: 0;
+}
+
+.panel {
+    container-type: inline-size;
+    container-name: compare-slot;
+}
+
+.widget {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0.85rem;
+    border-radius: 8px;
+    border: 1px solid var(--ifm-color-emphasis-300);
+    background: var(--ifm-background-surface-color);
+}
+
+.badge {
+    align-self: flex-start;
+    margin: 0;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.title {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.3;
+}
+
+.copy {
+    margin: 0;
+    color: var(--custom-muted);
+    font-size: 0.88rem;
+    line-height: 1.4;
+}
+
+/* Media-query widget: reacts to the viewport, not the demo panel. */
+.mediaWidget .badge {
+    background: color-mix(in srgb, var(--custom-accent-red) 18%, transparent);
+    color: var(--custom-accent-red);
+}
+
+.mediaWidget .badge::before {
+    content: 'Narrow viewport styles';
+}
+
+.mediaWidget {
+    background: color-mix(in srgb, var(--custom-accent-red) 6%, var(--ifm-background-surface-color));
+}
+
+@media (min-width: 768px) {
+    .mediaWidget {
+        flex-direction: row;
+        align-items: center;
+        background: color-mix(in srgb, var(--custom-accent-green) 8%, var(--ifm-background-surface-color));
+    }
+
+    .mediaWidget .badge {
+        background: color-mix(in srgb, var(--custom-accent-green) 18%, transparent);
+        color: var(--custom-accent-green);
+    }
+
+    .mediaWidget .badge::before {
+        content: 'Wide viewport styles';
+    }
+}
+
+/* Container-query widget: reacts to the resizable panel. */
+.containerWidget .badge {
+    background: color-mix(in srgb, var(--custom-accent-amber) 20%, transparent);
+    color: var(--custom-accent-amber);
+}
+
+.containerWidget .badge::before {
+    content: 'Narrow container';
+}
+
+.containerWidget {
+    background: color-mix(in srgb, var(--custom-accent-amber) 8%, var(--ifm-background-surface-color));
+}
+
+@container compare-slot (min-width: 320px) {
+    .containerWidget {
+        flex-direction: row;
+        align-items: center;
+        background: color-mix(in srgb, var(--custom-accent-purple) 10%, var(--ifm-background-surface-color));
+    }
+
+    .containerWidget .badge {
+        background: color-mix(in srgb, var(--custom-accent-purple) 18%, transparent);
+        color: var(--custom-accent-purple);
+    }
+
+    .containerWidget .badge::before {
+        content: 'Wide container';
+    }
+}

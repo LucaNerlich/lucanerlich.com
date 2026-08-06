@@ -421,6 +421,15 @@ body {
 }
 ```
 
+## Beyond the viewport - container queries
+
+Media queries are ideal for page-level layout. When a **reusable component** must adapt to the width of its
+slot (for example a card in a sidebar versus the main column), use **container queries** instead of assuming
+the viewport width matches the available space.
+
+You will meet them briefly in [Modern CSS Features](./15-modern-css-features.md). For interactive demos and a
+full comparison with media queries, see [CSS Container Queries](../container-queries.mdx).
+
 ## What you learned
 
 - The `<meta name="viewport">` tag is required for responsive pages
@@ -430,6 +439,7 @@ body {
 - `max-width: 100%` and `height: auto` make images responsive
 - `clamp()` creates fluid typography that scales smoothly
 - Use a `.container` with `max-width` and `margin: 0 auto` to constrain content width
+- **Container queries** (covered later) let components respond to their own slot size, not only the viewport
 
 ## Next step
 
