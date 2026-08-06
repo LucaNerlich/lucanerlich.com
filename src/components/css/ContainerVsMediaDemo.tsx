@@ -8,13 +8,18 @@ export default function ContainerVsMediaDemo(): ReactNode {
     const sliderId = useId();
     const [width, setWidth] = useState(360);
 
+    const panelStyle = {
+        width: `${width}px`,
+    } as CSSProperties;
+
     return (
         <section className={shellStyles.shell} aria-label="Container queries vs media queries">
             <div className={shellStyles.header}>
                 <h3 className={shellStyles.title}>Same slot width, different query type</h3>
                 <p className={shellStyles.hint}>
-                    Resize the shared slot. The media-query widget only changes when the viewport
-                    crosses 768px. The container-query widget changes with the slot.
+                    Use the slider to resize the shared slot. The media-query widget only changes
+                    when the viewport crosses 768px. The container-query widget changes with the
+                    slot.
                 </p>
                 <div className={shellStyles.controls}>
                     <label className={shellStyles.sliderLabel} htmlFor={sliderId}>
@@ -38,8 +43,8 @@ export default function ContainerVsMediaDemo(): ReactNode {
                     <div className={styles.column}>
                         <p className={styles.label}>@media (viewport)</p>
                         <div
-                            className={shellStyles.panel}
-                            style={{'--demo-width': `${width}px`} as CSSProperties}
+                            className={`${shellStyles.panel} ${shellStyles.panelLocked}`}
+                            style={panelStyle}
                         >
                             <article className={`${styles.widget} ${styles.mediaWidget}`}>
                                 <p className={styles.badge}>
@@ -58,8 +63,8 @@ export default function ContainerVsMediaDemo(): ReactNode {
                     <div className={styles.column}>
                         <p className={styles.label}>@container (slot)</p>
                         <div
-                            className={`${shellStyles.panel} ${styles.panel}`}
-                            style={{'--demo-width': `${width}px`} as CSSProperties}
+                            className={`${shellStyles.panel} ${shellStyles.panelLocked} ${styles.panel}`}
+                            style={panelStyle}
                         >
                             <article className={`${styles.widget} ${styles.containerWidget}`}>
                                 <p className={styles.badge}>

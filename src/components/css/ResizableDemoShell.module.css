@@ -74,7 +74,6 @@
 }
 
 .panel {
-    width: var(--demo-width, 100%);
     max-width: 100%;
     min-width: 180px;
     resize: horizontal;
@@ -84,6 +83,11 @@
     border-radius: 8px;
     background: var(--ifm-background-color);
     padding: 0.85rem;
+}
+
+/* Slider-only panels (no native resize handle). */
+.panelLocked {
+    resize: none;
 }
 
 .footer {
