@@ -100,8 +100,23 @@ export default async function decorate(block) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, variables: { sku } }),
     });
-    const { data } = await res.json();
-    renderPriceAndStock(block, data.products.items[0]);
+
+    let payload;
+    try {
+        payload = res.ok ? await res.json() : null;
+    } catch {
+        payload = null;
+    }
+
+    const product = payload && !payload.errors
+        ? payload.data?.products?.items?.[0]
+        : null;
+
+    if (!product) {
+        renderUnavailable(block);
+        return;
+    }
+    renderPriceAndStock(block, product);
 }
 ```
 

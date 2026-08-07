@@ -269,6 +269,15 @@ module.exports = {
       pageSize: Number(pageSize),
     });
 
+    // Sanitize each type's items against its own content-type schema and the
+    // caller's auth context before returning - findMany() does not do this for you.
+    for (const group of Object.values(results.data)) {
+      const schema = strapi.contentType(group.uid);
+      group.items = await strapi.contentAPI.sanitize.output(group.items, schema, {
+        auth: ctx.state.auth,
+      });
+    }
+
     return results;
   },
 };
@@ -320,6 +329,7 @@ module.exports = ({ strapi }) => ({
       ]);
 
       results[key] = {
+        uid,
         items,
         pagination: {
           page: safePage,

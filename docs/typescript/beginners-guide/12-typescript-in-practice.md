@@ -489,14 +489,15 @@ function useFetch<T>(url: string): FetchState<T> & { refetch: () => void } {
         error: null,
     });
 
-    const load = useCallback(async () => {
+    const load = useCallback(async (signal?: AbortSignal) => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, { signal });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data: T = await response.json();
             setState({ data, loading: false, error: null });
         } catch (err) {
+            if (err instanceof DOMException && err.name === "AbortError") return;
             setState(prev => ({
                 ...prev,
                 loading: false,
@@ -506,10 +507,14 @@ function useFetch<T>(url: string): FetchState<T> & { refetch: () => void } {
     }, [url]);
 
     useEffect(() => {
-        load();
+        // Abort the in-flight request if `url` changes (or on unmount) so a
+        // slow, superseded response cannot overwrite state for the new url.
+        const controller = new AbortController();
+        load(controller.signal);
+        return () => controller.abort();
     }, [load]);
 
-    return { ...state, refetch: load };
+    return { ...state, refetch: () => load() };
 }
 
 // Usage - T is inferred as User

@@ -253,14 +253,22 @@ Use `on-failure:3` for batch jobs that should retry on transient errors but stop
 
 ### Drop Linux capabilities
 
-Containers inherit many Linux capabilities they rarely need. Drop all and re-add only what is required:
+Containers inherit many Linux capabilities they rarely need. Drop all and re-add only what is required. Most apps
+(including ones listening on port 3000 like the examples in this guide) need nothing added back:
 
 ```bash
-# NET_BIND_SERVICE allows binding to ports < 1024 if needed
+docker run -d \
+  --cap-drop ALL \
+  my-app
+```
+
+Only add `NET_BIND_SERVICE` back if the process inside the container binds directly to a port below 1024:
+
+```bash
 docker run -d \
   --cap-drop ALL \
   --cap-add NET_BIND_SERVICE \
-  my-app
+  my-privileged-port-app
 ```
 
 ### Limit syscalls with seccomp
@@ -524,9 +532,9 @@ docker compose logs -f api
 # Connect to the database
 docker compose exec db psql -U myapp -d myapp
 
-# Check health (Compose v2 names containers <project>-<service>-<index>)
+# Check health (resolve the container ID instead of guessing the generated name)
 docker compose ps
-docker inspect my-api-api-1 --format '{{.State.Health.Status}}'
+docker inspect "$(docker compose ps -q api)" --format '{{.State.Health.Status}}'
 ```
 
 Scaling a service works only if it has no fixed host-port binding (change the

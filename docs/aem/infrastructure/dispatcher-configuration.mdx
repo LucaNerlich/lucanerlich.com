@@ -735,11 +735,11 @@ An end-to-end check verifies that the Dispatcher can reach the publish tier and 
 ```apacheconf
 # conf.d/available_vhosts/default.vhost
 <Location /libs/granite/core/content/login.html>
-    Require ip 10.0.0.0/8   # load-balancer / internal subnet only
+    Require ip 10.20.30.0/24   # the load balancer's actual subnet, not a broad RFC1918 block
 </Location>
 ```
 
-Without the `<Location>` restriction, this filter rule alone makes the probe reachable from the public internet. If your load balancer's source IPs are not stable (e.g. a managed CDN), allowlist the CDN's published IP ranges instead, or move the check behind a private/internal listener.
+Without the `<Location>` restriction, this filter rule alone makes the probe reachable from the public internet. A broad private range like `10.0.0.0/8` is not a real restriction on most networks - scope `Require ip` to the load balancer's actual, narrow subnet. If health checks share the same public listener as normal traffic and you cannot pin down a stable source IP (e.g. a managed CDN with rotating edge IPs), do not rely on IP allow-listing alone: allowlist the CDN's published IP ranges *and* require an exact, secret health-check header the CDN adds for these requests, or terminate the check on a private/dedicated listener that never faces the public internet, or put strict authentication in front of it.
 
 ```bash
 # From the load balancer:

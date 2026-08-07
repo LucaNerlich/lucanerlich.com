@@ -268,7 +268,10 @@ export const FilledForm: Story = {
 };
 ```
 
-These play functions run in the browser and can be executed as part of a CI pipeline with the Storybook test runner (`test-storybook`, see below).
+These play functions run in the browser and can be executed as part of a CI pipeline. As of Storybook 9, Vite-powered
+projects (React/Vue/Svelte with the Vite builder) should use `@storybook/addon-vitest` instead of the runner below;
+the Storybook test runner (`test-storybook`, see below) remains the supported path for non-Vite builders like Webpack
+or Angular.
 
 ### Storybook Test Runner
 

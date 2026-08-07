@@ -133,7 +133,8 @@ TypeScript resolves modules using the `moduleResolution` strategy in `tsconfig.j
 
 | Strategy    | When to use                                                                    |
 |-------------|--------------------------------------------------------------------------------|
-| `nodenext`  | Modern Node.js (16+) with ESM or CJS - required with `module: "NodeNext"`      |
+| `nodenext`  | Modern Node.js (16+) with ESM or CJS - tracks Node's resolution algorithm as it evolves; required with `module: "NodeNext"` |
+| `node16`    | Same ESM/CJS resolution rules, frozen to how Node 16 behaved - stable but does not pick up newer Node resolution changes |
 | `bundler`   | Bundler-based projects (Vite, webpack, esbuild, Rollup) - recommended for apps |
 | `node10`    | Legacy Node.js CommonJS projects (formerly named `node`)                       |
 | `classic`   | Old TypeScript projects - avoid for new work                                   |

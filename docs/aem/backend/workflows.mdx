@@ -406,6 +406,7 @@ import com.adobe.granite.workflow.WorkflowException;
 import com.adobe.granite.workflow.WorkflowSession;
 import com.adobe.granite.workflow.exec.WorkItem;
 import com.adobe.granite.workflow.exec.WorkflowProcess;
+import com.adobe.granite.workflow.exec.WorkflowData;
 import com.adobe.granite.workflow.metadata.MetaDataMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -424,7 +425,13 @@ public class PublishReadyCheckStep implements WorkflowProcess {
     public void execute(WorkItem workItem, WorkflowSession session, MetaDataMap args)
             throws WorkflowException {
 
-        String payloadPath = workItem.getWorkflowData().getPayload().toString();
+        WorkflowData workflowData = workItem.getWorkflowData();
+        Object payload = workflowData != null ? workflowData.getPayload() : null;
+        if (payload == null || !"JCR_PATH".equals(workflowData.getPayloadType())) {
+            throw new WorkflowException("Expected a JCR_PATH payload");
+        }
+        String payloadPath = payload.toString();
+
         ResourceResolver resolver = session.adaptTo(ResourceResolver.class);
         if (resolver == null) {
             throw new WorkflowException("Could not obtain ResourceResolver");

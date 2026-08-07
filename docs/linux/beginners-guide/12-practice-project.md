@@ -470,6 +470,8 @@ EOF
 
 `copytruncate` copies the current log then truncates the original in place, so systemd's open file descriptor (from `StandardOutput=append:`) keeps writing to the same file without needing to reopen it. This avoids the usual `postrotate` reload dance for apps that don't handle a log-reopen signal.
 
+There is a small race between the copy and the truncate: anything the app writes in that window is lost, since it lands after the copy but is then truncated away. For critical or high-volume logs, prefer routing through journald (which has no such gap) or a logging setup where the app itself reopens the file on rotation.
+
 Test the logrotate config:
 
 ```bash

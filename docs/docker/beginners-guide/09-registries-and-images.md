@@ -326,7 +326,7 @@ docker buildx build \
   .
 ```
 
-When a user pulls `myusername/my-app:1.0.0`, Docker automatically selects the image variant that matches their CPU architecture. This is how all official Docker Hub images work.
+When a user pulls `myusername/my-app:1.0.0`, Docker automatically selects the image variant that matches their platform (OS, CPU architecture, and variant - e.g. `linux/amd64` vs `linux/arm64` vs `linux/arm/v7`). This is how official Docker Hub images that publish a multi-platform manifest work - not every official image does.
 
 ---
 

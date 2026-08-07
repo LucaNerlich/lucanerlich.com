@@ -38,7 +38,7 @@ The vast majority of development and single-host production work uses `bridge` n
 
 ## The Default Bridge Network
 
-When you start a container without specifying a network, it is attached to the **default bridge network** (named `bridge`, backed by the `docker0` Linux bridge interface on the host). This is the network Docker creates automatically.
+When you start a container without specifying a network, it is attached to the **default bridge network** (named `bridge`, backed by the `docker0` Linux bridge interface). This is the network Docker creates automatically. The `docker0` interface lives on the machine actually running the Docker Engine - on Linux that is your host; on macOS and Windows, Docker Desktop runs the Engine inside a Linux VM, so `docker0` is inside that VM, not on the host itself.
 
 ```bash
 # List networks
