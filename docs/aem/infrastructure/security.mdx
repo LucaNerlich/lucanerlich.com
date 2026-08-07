@@ -377,6 +377,11 @@ These paths must **never** be accessible on a public-facing publish instance:
 
 Note that `/etc.clientlibs/*` should be **explicitly allowed**, not blocked -- it serves the versioned, proxied client-side JS and CSS bundles that the site depends on.
 
+`/libs/granite/csrf/token.json` is per-session and must be excluded from Dispatcher, CDN, and
+browser caching (deny it in your [cache rules](./dispatcher-configuration.mdx#cache-rules) and/or
+send `Cache-Control: no-store`) - a cached token would be handed out to unrelated visitors and
+break CSRF validation for all of them.
+
 ### Deny-by-default filter pattern
 
 Always start with a deny-all rule and selectively allow only what is needed:

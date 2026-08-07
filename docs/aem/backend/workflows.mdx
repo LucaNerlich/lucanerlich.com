@@ -393,11 +393,11 @@ The `chooser.label` appears in the Dynamic Participant Step configuration in the
 An OR Split routes execution to one of several branches based on a condition. The typical pattern is:
 
 1. A **Process Step** before the OR Split writes a boolean variable into the workflow's
-   \`MetaDataMap\`.
-2. Each OR Split branch has a **Script Path** (or **Rule**) expression that reads the variable
-   and returns \`true\` / \`false\`.
+   `MetaDataMap`.
+2. Each OR Split branch has a **Script** (or **Rule**) expression that reads the variable
+   and returns `true` / `false`.
 
-The Process Step is a normal \`WorkflowProcess\`:
+The Process Step is a normal `WorkflowProcess`:
 
 ```java title="core/.../workflow/PublishReadyCheckStep.java"
 package com.myproject.core.workflow;
@@ -446,11 +446,15 @@ public class PublishReadyCheckStep implements WorkflowProcess {
 }
 ```
 
-In the OR Split, each branch's **Script Path** references the variable:
+In the OR Split, set each branch's routing expression type to **Script**, with the language set
+to **ECMA Script**, and paste the function into the inline script field:
 
 ```text
 function check() { return workflowData.getMetaDataMap().get("publishReady", false); }
 ```
+
+**Script Path** is a separate option that points at a repository node holding the same code as
+an external `.ecma` file, rather than accepting inline text.
 
 ---
 

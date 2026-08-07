@@ -815,8 +815,9 @@ public class IndexUpdateJobConsumer implements JobConsumer {
 
         } catch (Exception e) {
             LOG.error("Index update failed for {}", path, e);
-            // Return FAILED to retry, or CANCEL to give up
-            return job.getRetryCount() < 3 ? JobResult.FAILED : JobResult.CANCEL;
+            // Return FAILED to let the queue retry (see queue.retries below), or
+            // CANCEL for errors you know are not worth retrying (e.g. bad input).
+            return JobResult.FAILED;
         }
     }
 }

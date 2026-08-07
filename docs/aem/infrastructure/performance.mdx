@@ -174,13 +174,21 @@ private SearchService searchService;
 
 // GOOD - resolve only when the search path is actually taken
 public List<Result> search(String term) {
-    BundleContext ctx = FrameworkUtil.getBundle(getClass()).getBundleContext();
+    Bundle bundle = FrameworkUtil.getBundle(getClass());
+    BundleContext ctx = bundle != null ? bundle.getBundleContext() : null;
+    if (ctx == null) {
+        return List.of();
+    }
     ServiceReference<SearchService> ref = ctx.getServiceReference(SearchService.class);
     if (ref == null) {
         return List.of();
     }
+    SearchService service = ctx.getService(ref);
+    if (service == null) {
+        return List.of();
+    }
     try {
-        return ctx.getService(ref).search(term);
+        return service.search(term);
     } finally {
         ctx.ungetService(ref);
     }

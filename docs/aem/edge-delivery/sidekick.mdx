@@ -147,8 +147,12 @@ the Sidekick opens it in a panel and passes the current page context via
         <button id="capture">Screenshot this page</button>
         <script type="module">
             document.getElementById('capture').addEventListener('click', async () => {
-                // Sidekick plugins run inside an iframe; window.parent is the host page.
-                const path = new URL(window.parent.location.href).pathname;
+                // Sidekick plugins run in a separate, often cross-origin context, so
+                // window.parent.location is not readable directly. Register the plugin
+                // with passReferrer: true instead - Sidekick appends the host page's URL
+                // as a ?referrer= query param.
+                const referrer = new URLSearchParams(location.search).get('referrer');
+                const path = referrer ? new URL(referrer).pathname : '';
                 const res = await fetch(`/api/screenshot?path=${encodeURIComponent(path)}`);
                 const blob = await res.blob();
                 const a = document.createElement('a');
@@ -161,8 +165,8 @@ the Sidekick opens it in a panel and passes the current page context via
 </html>
 ```
 
-Register it in `config.json` with `"url": "/tools/sidekick/screenshot.html"` and an
-appropriate `environments` list.
+Register it in `config.json` with `"url": "/tools/sidekick/screenshot.html"`, `"passReferrer": true`,
+and an appropriate `environments` list.
 
 ## Tips
 

@@ -538,7 +538,7 @@ This is equivalent to `@ChildResource` but uses the generic mechanism.
 
 When using `@Inject`, Sling Models runs every registered injector in order of its OSGi
 `service.ranking`. For historical reasons, **lower** service ranking values are treated as
-**higher** priority - see [SLING-12578](https://issues.apache.org/jira/browse/SLING-12578).
+**higher** priority - see [SLING-5035](https://issues.apache.org/jira/browse/SLING-5035).
 The first injector that returns a non-`null` value wins.
 
 The exact order depends on which injectors are installed (including custom ones) and their

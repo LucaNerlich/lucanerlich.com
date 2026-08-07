@@ -146,11 +146,18 @@ To be able to attach a Java debugger locally, the startup scripts need to be ext
 In each (author, publish) start script, find the `CQ_JVM_OPTS` assignment (on Unix `if [ -z "$CQ_JVM_OPTS" ]; then CQ_JVM_OPTS=...`; on Windows `if not defined CQ_JVM_OPTS set CQ_JVM_OPTS=...`) and extend it with the JDWP agent:
 
 ```bash
-CQ_JVM_OPTS='-server -Xmx8192m -Djava.awt.headless=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:30303'
+CQ_JVM_OPTS='-server -Xmx8192m -Djava.awt.headless=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=localhost:30303'
 ```
 
-`-Xdebug`/`-Xrunjdwp` are legacy JDK 5/6 flags and are no-ops on modern JDKs -- use `-agentlib:jdwp` on JDK 11 and JDK 21.
-The `address=*:30303` needs to be different for author and publish (for example `30303` for author, `30304` for publish).
+```bat title="Windows"
+set "CQ_JVM_OPTS=-server -Xmx8192m -Djava.awt.headless=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=localhost:30303"
+```
+
+`-Xdebug` has been a no-op since JDK 6. Its companion `-Xrunjdwp` still works but is deprecated;
+prefer `-agentlib:jdwp` on JDK 11 and JDK 21. Binding to `localhost` keeps the debug port off the
+network - only bind to `*:30303` if you are debugging a remote/containerized instance and understand
+the exposure. The port needs to be different for author and publish (for example `30303` for author,
+`30304` for publish).
 
 A debug run config in IntelliJ IDEA looks like this:
 

@@ -168,7 +168,7 @@ public class HeaderModel {
 
 ### Adapting from a Resource
 
-`ConfigurationResolver` can also be obtained by adapting from the current `Resource`, avoiding an
+`ConfigurationBuilder` can also be obtained by adapting from the current `Resource`, avoiding an
 explicit `@OSGiService` injection:
 
 ```java
@@ -194,6 +194,10 @@ public class HeaderModel {
 
     public String getAnalyticsId() {
         return siteConfig != null ? siteConfig.analyticsId() : "";
+    }
+
+    public boolean isNewHeaderEnabled() {
+        return siteConfig != null && siteConfig.enableNewHeader();
     }
 }
 ```

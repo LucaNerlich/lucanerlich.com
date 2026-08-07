@@ -46,8 +46,9 @@ Two flows:
   as cached HTML from the edge, then product data is hydrated from the catalog API.
   Edge responses carry surrogate keys per SKU / category so a price or inventory
   change purges only the affected pages.
-- **Cart and checkout** - live in the browser, talking directly to the commerce API.
-  Never cached.
+- **Cart and checkout** - the surrounding page shell (nav, footer, layout) is served from the
+  same cached edge HTML as any other page. The cart/checkout state itself - items, totals,
+  payment - lives in the browser and talks directly to the commerce API. Never cached.
 
 ## Block library
 
@@ -78,10 +79,8 @@ const query = `
         products(filter: { sku: { eq: $sku } }) {
             items {
                 sku
-                name
                 price_range { minimum_price { final_price { value currency } } }
-                description { html }
-                media_gallery { url label }
+                stock_status
             }
         }
     }
@@ -89,13 +88,16 @@ const query = `
 
 export default async function decorate(block) {
     const sku = block.dataset.sku;
+    // name, description, and images are SEO-critical and already present in the
+    // pre-rendered HTML (see below) - this call only refreshes genuinely dynamic
+    // state: live price and stock.
     const res = await fetch(`https://commerce.example.com/graphql`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, variables: { sku } }),
     });
     const { data } = await res.json();
-    renderProduct(block, data.products.items[0]);
+    renderPriceAndStock(block, data.products.items[0]);
 }
 ```
 

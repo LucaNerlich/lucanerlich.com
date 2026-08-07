@@ -471,6 +471,12 @@ FileVault XML it lives at `.../restricted-node/_rep_cugPolicy/.content.xml`:
     rep:principalNames="[premium-members]"/>
 ```
 
+FileVault ignores access-control content by default. The containing package's
+`META-INF/vault/properties.xml` needs `acHandling` set to `merge` (or the Maven
+equivalent, `<accessControlHandling>merge</accessControlHandling>` - see the
+[filevault-package-maven-plugin config above](../components/core-components.mdx)) or the
+`rep:cugPolicy` node will be skipped on install.
+
 ### Via repoinit
 
 ```text
