@@ -26,7 +26,6 @@ introduced in Java 11 through 21 - the features that change how you write everyd
 | Record patterns                       | 21           | Final   |
 | Virtual threads                       | 21           | Final   |
 | Sequenced collections                 | 21           | Final   |
-| String templates                      | 22 (preview) | Preview |
 
 ---
 

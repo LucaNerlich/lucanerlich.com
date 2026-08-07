@@ -29,8 +29,8 @@ the [JavaScript Beginners Guide](/javascript/beginners-guide/introduction) first
 | **2 - Working with Data**       | 4-6     | Admin panel, REST API, authentication & permissions                            |
 | **3 - Customizing the Backend** | 7-9     | Controllers, services, routes, policies, middleware, lifecycle hooks, webhooks |
 | **4 - Production Features**     | 10-11   | File uploads, media providers, TypeScript integration                          |
-| **5 - Deploy**                  | 12-14   | Environment config, PostgreSQL, nginx, HTTPS, Docker, CI/CD                    |
-| **6 - Production Quality**      | 15-16   | Testing, performance optimization, troubleshooting, Strapi 4 migration         |
+| **5 - Deploy**                  | 12, 14  | Environment config, PostgreSQL, nginx, HTTPS, Docker, CI/CD                    |
+| **6 - Production Quality**      | 13, 15-17 | Testing, performance optimization, troubleshooting, practice projects        |
 
 By the end you will have a blog CMS with authors, posts, categories, and tags - fully customized and running in
 production.

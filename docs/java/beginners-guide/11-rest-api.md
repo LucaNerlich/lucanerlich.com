@@ -145,6 +145,14 @@ public class JsonHelper {
                 {"error":"%s"}""".formatted(escapeJson(message));
     }
 
+    /**
+     * Create a plain message JSON response (used for success messages).
+     */
+    public static String messageJson(String message) {
+        return """
+                {"message":"%s"}""".formatted(escapeJson(message));
+    }
+
     // ── Internal helpers ──────────────────────────────────────
 
     private static String escapeJson(String s) {
@@ -322,7 +330,7 @@ public class TaskHandler implements HttpHandler {
 
         store.save(tasks);
         sendResponse(exchange, 200,
-                JsonHelper.errorJson("Deleted task " + id));
+                JsonHelper.messageJson("Deleted task " + id));
     }
 
     // ── Utilities ─────────────────────────────────────────────
@@ -523,7 +531,7 @@ curl -X DELETE http://localhost:8080/api/tasks/2
 Result:
 
 ```json
-{"error":"Deleted task 2"}
+{"message":"Deleted task 2"}
 ```
 
 ### Error handling

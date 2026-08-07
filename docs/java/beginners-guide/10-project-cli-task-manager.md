@@ -297,6 +297,8 @@ public class TaskApp {
                     printUsage();
                 }
             }
+        } catch (IllegalArgumentException e) {
+            System.err.println("Error: " + e.getMessage());
         } catch (IOException e) {
             System.err.println("File error: " + e.getMessage());
         }

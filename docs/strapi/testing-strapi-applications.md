@@ -108,7 +108,7 @@ module.exports = {
   // ...
   globalSetup: './tests/setup.js',
   globalTeardown: './tests/teardown.js',
-  setupFilesAfterFramework: ['./tests/setup-after.js'],
+  setupFilesAfterEnv: ['./tests/setup-after.js'],
 };
 ```
 

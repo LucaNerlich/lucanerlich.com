@@ -250,8 +250,8 @@ This creates a join table linking posts to other posts.
 
 ## Polymorphic relations
 
-Strapi also supports **polymorphic relations** where a field can relate to multiple content types. For example, a *
-*Comment** might belong to either a Post or a Page:
+Strapi also supports **polymorphic relations** where a field can relate to multiple content types. For example, a
+**Comment** might belong to either a Post or a Page:
 
 ```json
 {

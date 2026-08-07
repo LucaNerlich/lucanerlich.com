@@ -26,11 +26,10 @@ Function<String, Integer> toLength = String::length;
 List<String> names = List.of("Alice", "Bob", "Charlie", "Diana");
 
 List<Integer> longNameLengths = names.stream()
-    .filter(isLong)
+    .filter(isLong)               // keep names with length > 5
     .map(toLength)
     .toList();
-// [7, 5]... wait - "Charlie" (7) and "Diana" (5)? No, Diana is 5 which is not > 5.
-// Result: [7] (only "Charlie")
+// Result: [7] (only "Charlie" - "Diana" is length 5, which is not > 5)
 ```
 
 ---
@@ -129,8 +128,8 @@ List<String> upper = words.stream()
 words.stream().forEach(System.out::println);
 
 // Constructor reference
-List<List<String>> lists = words.stream()
-    .map(w -> List.of(w.split("")))
+List<StringBuilder> builders = words.stream()
+    .map(StringBuilder::new)          // equivalent to: w -> new StringBuilder(w)
     .toList();
 ```
 

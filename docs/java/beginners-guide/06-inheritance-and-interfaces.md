@@ -470,7 +470,7 @@ implementation between related classes ("what is it?").
 Inheritance creates tight coupling. Prefer **composition** - having an object contain another object - when possible:
 
 ```java
-// Instead of: class EmailNotifier extends Logger
+// Instead of: class EmailNotifier extends SomeLoggerBase
 // Prefer: class EmailNotifier that HAS a Logger
 
 class EmailNotifier {

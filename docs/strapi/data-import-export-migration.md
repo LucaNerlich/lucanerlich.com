@@ -107,10 +107,13 @@ module.exports = ({ strapi }) => ({
       onProgress,
       dryRun = false,
       locale = 'en',
+      items: preloadedItems,
     } = options;
 
-    const raw = fs.readFileSync(path.resolve(filePath), 'utf-8');
-    const items = JSON.parse(raw);
+    // Accept either a filePath or a preloaded items array
+    const items = preloadedItems ?? JSON.parse(
+      fs.readFileSync(path.resolve(filePath), 'utf-8')
+    );
 
     const results = { created: 0, errors: 0, skipped: 0 };
 
@@ -216,9 +219,9 @@ module.exports = ({ strapi }) => ({
     strapi.log.info(`[csv-import] Parsed ${items.length} rows from ${filePath}`);
 
     return strapi.service('api::import.import').importFromJSON(
-      null,  // We pass items directly
+      null,  // We pass items directly via options.items
       uid,
-      { ...options, _items: items }
+      { ...options, items }
     );
   },
 });

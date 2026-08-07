@@ -356,10 +356,10 @@ GET /api/upload/folders
 POST /api/upload/folders
 { "name": "Blog Images", "parent": null }
 
-# Upload to a specific folder
-const formData = new FormData();
-formData.append('files', file);
-formData.append('path', '/Blog Images');  # or folder ID
+# Upload to a specific folder (JS shown for illustration)
+# const formData = new FormData();
+# formData.append('files', file);
+# formData.append('path', '/Blog Images');  // or folder ID
 ```
 
 ---

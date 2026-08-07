@@ -291,24 +291,23 @@ module.exports = ({ strapi }) => ({
       : searchableTypes;
 
     const results = {};
+    const start = (page - 1) * pageSize;
 
     for (const [key, uid] of Object.entries(typesToSearch)) {
-      const { results: items, pagination } = await strapi
-        .documents(uid)
-        .findMany({
-          filters: {
-            $or: [
-              { title: { $containsi: query } },
-              { description: { $containsi: query } },
-            ],
-          },
-          fields: ['title', 'slug', 'description'],
-          status: 'published',
-          page,
-          pageSize,
-        });
+      const items = await strapi.documents(uid).findMany({
+        filters: {
+          $or: [
+            { title: { $containsi: query } },
+            { description: { $containsi: query } },
+          ],
+        },
+        fields: ['title', 'slug', 'description'],
+        status: 'published',
+        start,
+        limit: pageSize,
+      });
 
-      results[key] = { items, pagination };
+      results[key] = { items, pagination: { page, pageSize } };
     }
 
     return { data: results, query };

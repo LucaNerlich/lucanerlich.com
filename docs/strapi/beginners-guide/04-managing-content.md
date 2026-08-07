@@ -278,11 +278,10 @@ Each content type has configurable views:
 
 To configure the edit view:
 
-1. Go to **Content-Type Builder**
-2. Select a content type
-3. Click **Configure the view**
-4. Drag fields to reorder them
-5. Choose layout (1 column, 2 columns)
+1. Go to **Content Manager** and open a content type
+2. Click **Configure the view** (top-right)
+3. Drag fields to reorder them
+4. Choose layout (1 column, 2 columns)
 
 ### Field-level settings
 

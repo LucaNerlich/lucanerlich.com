@@ -542,7 +542,7 @@ void shouldWriteToFile(@TempDir Path tempDir) throws IOException {
 | Not verifying interactions                            | Mock is set up but never checked       | Use `verify()` to confirm expected calls                                  |
 | Shared mutable state between tests                    | Tests pass individually, fail together | Use `@BeforeEach` for fresh state per test                                |
 | Ignoring test names                                   | Hard to understand failures            | Use `@DisplayName` and descriptive method names                           |
-| Mocking final classes/methods                         | Mockito throws errors                  | Add `mockito-inline` or use interfaces                                    |
+| Mocking final classes/methods (Mockito < 5)           | Mockito throws errors                  | Upgrade to Mockito 5+ (inline mock maker is the default) or use interfaces |
 | `@Mock` without `@ExtendWith(MockitoExtension.class)` | Mocks are null                         | Always add the extension                                                  |
 
 ---
