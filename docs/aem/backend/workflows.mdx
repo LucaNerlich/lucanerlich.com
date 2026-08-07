@@ -446,12 +446,17 @@ public class PublishReadyCheckStep implements WorkflowProcess {
 }
 ```
 
-In the OR Split, set each branch's routing expression type to **Script**, with the language set
-to **ECMA Script**, and paste the function into the inline script field:
+In the OR Split, the branches must be complementary, not identical. Give the "ready" branch a
+routing expression type of **Script**, with the language set to **ECMA Script**, and paste the
+function into the inline script field:
 
 ```text
 function check() { return workflowData.getMetaDataMap().get("publishReady", false); }
 ```
+
+Mark the other branch as the **Default** route (taken when no other branch's condition matches),
+so exactly one branch fires. If you need an explicit condition on both sides instead of a default,
+negate the check on the second branch: `return !workflowData.getMetaDataMap().get("publishReady", false);`
 
 **Script Path** is a separate option that points at a repository node holding the same code as
 an external `.ecma` file, rather than accepting inline text.

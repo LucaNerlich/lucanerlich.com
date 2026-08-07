@@ -535,6 +535,10 @@ export default {
   },
   "main": "./dist/server/index.js",
   "types": "./dist/server/index.d.ts",
+  "scripts": {
+    "build": "strapi-plugin build",
+    "watch": "strapi-plugin watch"
+  },
   "exports": {
     "./package.json": "./package.json",
     "./strapi-admin": {

@@ -272,7 +272,9 @@ Result (in another open tab that registered the listener):
 theme changed to light
 ```
 
-To react to storage changes within the same tab, dispatch a custom event after `setItem`, or use `BroadcastChannel`.
+To react to storage changes within the same tab (document), dispatch a custom event after `setItem`
+- `BroadcastChannel` does not help here either, since a channel never receives its own messages; it is
+useful for synchronizing with *other* same-origin tabs, windows, frames, or workers.
 
 ## Common pitfalls
 

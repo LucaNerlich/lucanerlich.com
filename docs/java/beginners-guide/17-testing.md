@@ -693,6 +693,8 @@ class ApiServerTest {
             HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
+        assertTrue(response.body().contains("\"message\""));
+        assertTrue(response.body().contains("Deleted task 1"));
     }
 }
 ```

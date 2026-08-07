@@ -152,7 +152,7 @@ JS hides steps after the current one and wires Next / Previous buttons.
 ### File upload to AEM Assets
 
 For document upload forms, post the file to a backend that then forwards to AEM
-Assets via the [Assets Upload API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/apis/upload-assets)
+Assets via [direct binary upload](https://experienceleague.adobe.com/en/docs/experience-manager-learn/assets/advanced/programmatic-asset-upload)
 (AEM's own direct-binary upload flow is meant for authenticated author-side clients,
 not anonymous public forms). Never expose your Assets API credentials in the browser -
 have the backend either proxy the upload itself, or issue an application-owned upload

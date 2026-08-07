@@ -176,6 +176,8 @@ tagManager.setTags(resource, new Tag[]{ campaignTag, channelTag }, true);
 #### Finding tagged resources
 
 ```java
+import com.day.cq.commons.RangeIterator;
+
 // Find all resources under a search root that are tagged with ALL of the given tag IDs.
 // Use the find(path, tagIds, oneMatchIsEnough) overload with oneMatchIsEnough=true for an
 // any-match (OR) search instead. Returns null if a given tag ID does not resolve to a tag.

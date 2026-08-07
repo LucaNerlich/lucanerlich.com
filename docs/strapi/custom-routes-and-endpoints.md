@@ -278,6 +278,8 @@ module.exports = {
 
 ```js
 // src/api/search/services/search.js
+const MAX_PAGE_SIZE = 100;
+
 module.exports = ({ strapi }) => ({
   async search({ query, type, page, pageSize }) {
     const searchableTypes = {
@@ -290,24 +292,42 @@ module.exports = ({ strapi }) => ({
       ? { [type]: searchableTypes[type] }
       : searchableTypes;
 
+    // Reject/clamp untrusted page and pageSize input before it reaches the query.
+    const safePage = Number.isInteger(page) && page > 0 ? page : 1;
+    const safePageSize = Number.isInteger(pageSize) && pageSize > 0
+      ? Math.min(pageSize, MAX_PAGE_SIZE)
+      : 25;
+
     const results = {};
-    const start = (page - 1) * pageSize;
+    const start = (safePage - 1) * safePageSize;
+    const filters = {
+      $or: [
+        { title: { $containsi: query } },
+        { description: { $containsi: query } },
+      ],
+    };
 
     for (const [key, uid] of Object.entries(typesToSearch)) {
-      const items = await strapi.documents(uid).findMany({
-        filters: {
-          $or: [
-            { title: { $containsi: query } },
-            { description: { $containsi: query } },
-          ],
-        },
-        fields: ['title', 'slug', 'description'],
-        status: 'published',
-        start,
-        limit: pageSize,
-      });
+      const [items, total] = await Promise.all([
+        strapi.documents(uid).findMany({
+          filters,
+          fields: ['title', 'slug', 'description'],
+          status: 'published',
+          start,
+          limit: safePageSize,
+        }),
+        strapi.documents(uid).count({ filters, status: 'published' }),
+      ]);
 
-      results[key] = { items, pagination: { page, pageSize } };
+      results[key] = {
+        items,
+        pagination: {
+          page: safePage,
+          pageSize: safePageSize,
+          pageCount: Math.ceil(total / safePageSize),
+          total,
+        },
+      };
     }
 
     return { data: results, query };

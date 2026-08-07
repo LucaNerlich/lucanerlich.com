@@ -662,7 +662,7 @@ curl http://localhost:1337/api/posts/document-id
 | Task | Status |
 |------|--------|
 | Backup database and files | ☐ |
-| Update Node.js to v20 or v22 | ☐ |
+| Update Node.js to a supported LTS release (v22, v24, or v26) | ☐ |
 | Update Strapi dependencies to v5 | ☐ |
 | Convert Entity Service to Document Service | ☐ |
 | Update lifecycle hooks to middleware | ☐ |
@@ -751,8 +751,15 @@ When reporting issues, include the following in your report:
 - **Expected Behavior** - what should happen
 - **Actual Behavior** - what actually happens
 - **Code Examples** - the smallest snippet that reproduces the issue
-- **Error Messages** - the full error stack trace, verbatim
-- **Additional Context** - anything else that might be relevant (logs, screenshots, related PRs)
+- **Error Messages** - the full error stack trace, verbatim, with credentials, tokens, and other
+  secrets redacted
+- **Additional Context** - anything else that might be relevant (logs, screenshots, related PRs),
+  redacted of credentials, tokens, and personal data
+
+Never post unredacted credentials, tokens, or personal data to a public GitHub issue. If a report
+can only be made useful by including data you cannot safely redact, or if the issue itself is a
+security vulnerability, report it through Strapi's private security channel instead (see
+[strapi.io/security](https://strapi.io/security)) rather than a public issue or forum post.
 
 ## Summary
 

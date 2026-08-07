@@ -208,7 +208,8 @@ Result:
 ## Retry with backoff (when safe)
 
 Retries make sense for flaky networks, not for validation or logic errors. Keep retries bounded, add a delay between
-attempts to avoid retry storms, and consider jitter for high-traffic services.
+attempts to avoid retry storms, consider jitter for high-traffic services, and only retry `task` if it is idempotent -
+it may run more than once.
 
 ```ts
 const sleep = (ms: number): Promise<void> =>
@@ -217,17 +218,19 @@ const sleep = (ms: number): Promise<void> =>
 async function retry<T>(
     task: () => Promise<T>,
     retries: number,
-    baseDelayMs = 100
+    baseDelayMs = 100,
+    shouldRetry: (err: unknown) => boolean = () => true
 ): Promise<T> {
     let lastError: Error | null = null;
     for (let attempt = 1; attempt <= retries; attempt += 1) {
         try {
             return await task();
         } catch (err) {
-            lastError = err instanceof Error ? err : new Error("Unknown error");
-            if (attempt < retries) {
-                await sleep(baseDelayMs * 2 ** (attempt - 1));
+            lastError = err instanceof Error ? err : new Error("Unknown error", { cause: err });
+            if (!shouldRetry(err) || attempt === retries) {
+                throw lastError;
             }
+            await sleep(baseDelayMs * 2 ** (attempt - 1));
         }
     }
     throw lastError ?? new Error("Retry failed");

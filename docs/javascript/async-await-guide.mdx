@@ -251,6 +251,9 @@ When working with browser APIs like `fetch`, use `AbortController` to cancel req
 improve UX.
 
 ```ts
+// `ms` only bounds the time to get a response (headers) - clearTimeout runs as
+// soon as fetch() resolves, so a slow response *body* is not covered here. Keep
+// the timer running until you finish reading the body if you need that covered too.
 async function fetchWithAbort(url: string, ms: number): Promise<Response> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), ms);

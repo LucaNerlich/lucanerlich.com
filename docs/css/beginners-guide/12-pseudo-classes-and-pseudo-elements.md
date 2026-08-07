@@ -179,9 +179,12 @@ input:focus:invalid {
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
 }
 
-/* Add a "*" to labels whose associated input is required.
-   `::after` does not work on <input> itself (see the note further down),
-   so we style the label instead. */
+/* Add a "*" to labels immediately followed by their required input, e.g.
+   <label>Name</label><input required>. `::after` does not work on <input>
+   itself (see the note further down), so we style the label instead.
+   This does not match a for="..." association or a wrapped input
+   (<label>Name <input required></label>) - use label:has(input:required)
+   for the wrapped case, or add the marker manually for for="..." pairs. */
 label:has(+ input:required)::after {
     content: " *";
     color: red;

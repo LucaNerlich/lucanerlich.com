@@ -48,7 +48,11 @@ Two flows:
   change purges only the affected pages.
 - **Cart and checkout** - the surrounding page shell (nav, footer, layout) is served from the
   same cached edge HTML as any other page. The cart/checkout state itself - items, totals,
-  payment - lives in the browser and talks directly to the commerce API. Never cached.
+  and provider-issued payment tokens - lives in the browser and talks directly to the commerce
+  API. Raw card details should never touch your own JS or browser storage - collect them through
+  provider-hosted fields (e.g. Adobe Commerce/Stripe Elements-style iframes) that tokenize directly
+  with the payment provider. Any personalized cart/checkout response must be sent with
+  `Cache-Control: private, no-store` and never cached at the edge.
 
 ## Block library
 

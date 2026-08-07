@@ -178,6 +178,8 @@ import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 
+import com.myproject.core.config.SiteConfig;
+
 @Model(adaptables = Resource.class)
 public class HeaderModel {
 

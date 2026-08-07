@@ -721,7 +721,7 @@ echo "ok" > /var/www/healthcheck.html
 
 ### End-to-end check
 
-An end-to-end check verifies that the Dispatcher can reach the publish tier and that the publish tier responds. AEM ships a lightweight probe at `/libs/granite/core/content/login.html` -- allow it through the filter:
+An end-to-end check verifies that the Dispatcher can reach the publish tier and that the publish tier responds. AEM ships a lightweight probe at `/libs/granite/core/content/login.html`, but per the `/libs/*` deny-by-default rule above, do not expose it publicly. Allow it through the filter only for this specific path, and restrict *who* can reach it at the Apache level - filter rules have no client-header/IP condition, so that restriction has to live in a `<Location>` block:
 
 ```apacheconf
 # filters.any
@@ -732,7 +732,14 @@ An end-to-end check verifies that the Dispatcher can reach the publish tier and 
 }
 ```
 
-Filter rules do not have a client-header condition, so if you want to restrict the probe to the load-balancer subnet do it at the Apache `<Location>` level (`Require ip ...`) or block the path from the CDN.
+```apacheconf
+# conf.d/available_vhosts/default.vhost
+<Location /libs/granite/core/content/login.html>
+    Require ip 10.0.0.0/8   # load-balancer / internal subnet only
+</Location>
+```
+
+Without the `<Location>` restriction, this filter rule alone makes the probe reachable from the public internet. If your load balancer's source IPs are not stable (e.g. a managed CDN), allowlist the CDN's published IP ranges instead, or move the check behind a private/internal listener.
 
 ```bash
 # From the load balancer:
