@@ -34,7 +34,7 @@ Update `jest.config.ts`:
 ```typescript
 const config: Config = {
     testEnvironment: 'jsdom',
-    setupFilesAfterFramework: ['<rootDir>/src/setupTests.ts'],
+    setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
 };
 ```
 
@@ -232,7 +232,7 @@ describe('LoginForm', () => {
         await user.type(screen.getByLabelText('Password'), 'secret123');
         await user.click(screen.getByRole('button', { name: 'Log in' }));
 
-        expect(mockSubmit).toHaveBeenCalledOnce();
+        expect(mockSubmit).toHaveBeenCalledTimes(1);
         expect(mockSubmit).toHaveBeenCalledWith('alice@example.com', 'secret123');
     });
 

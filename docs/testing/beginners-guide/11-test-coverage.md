@@ -80,7 +80,7 @@ const config: Config = {
     ],
     coverageDirectory: 'coverage',
     coverageReporters: ['text', 'lcov', 'html'],
-    coverageThresholds: {
+    coverageThreshold: {
         global: {
             lines: 80,
             branches: 75,
@@ -157,7 +157,7 @@ The HTML report is written to `coverage/index.html` and shows exactly which line
 Istanbul and c8 support per-file thresholds to enforce stricter coverage on critical files:
 
 ```typescript
-coverageThresholds: {
+coverageThreshold: {
     global: {
         lines: 80,
         branches: 75,

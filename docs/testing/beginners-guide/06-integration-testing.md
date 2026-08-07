@@ -242,13 +242,13 @@ public class UserController {
 
 ### MockMvc Slice Test (@WebMvcTest)
 
-`@WebMvcTest` loads only the web layer (controllers, filters, converters). The service layer is mocked:
+`@WebMvcTest` loads only the web layer (controllers, filters, converters). The service layer is mocked. `@MockitoBean` (Spring Framework 6.2 / Spring Boot 3.4+) replaces the older `@MockBean` from `org.springframework.boot.test.mock.mockito`, which is deprecated. On older Spring Boot versions, use `@MockBean` instead:
 
 ```java
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -267,7 +267,7 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
     @Test
@@ -463,7 +463,7 @@ describe('UserRepository (Postgres)', () => {
     let pool: Pool;
 
     beforeAll(async () => {
-        const container = await new PostgreSqlContainer()
+        const container = await new PostgreSqlContainer('postgres:16-alpine')
             .withDatabase('testdb')
             .start();
 

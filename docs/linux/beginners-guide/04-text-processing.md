@@ -380,7 +380,7 @@ awk '{print $1}' /var/log/nginx/access.log
 awk '$9 == 500' /var/log/nginx/access.log
 
 # Count requests per IP (top 10)
-awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head 10
+awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head -n 10
 
 # Total bytes transferred
 awk '{sum += $10} END {print sum}' /var/log/nginx/access.log
@@ -475,7 +475,7 @@ This is one of the most frequently used pipelines in log analysis:
 
 ```bash
 # Top 10 most frequent values in a column
-awk '{print $1}' access.log | sort | uniq -c | sort -rn | head 10
+awk '{print $1}' access.log | sort | uniq -c | sort -rn | head -n 10
 
 # Count HTTP methods in nginx log
 awk '{print $6}' access.log | tr -d '"' | sort | uniq -c | sort -rn
@@ -515,7 +515,7 @@ wc -l /var/log/*.log
 tail -n 50000 /var/log/nginx/access.log \
   | awk '$9 == 500 {print $7}' \
   | sort | uniq -c | sort -rn \
-  | head 10
+  | head -n 10
 ```
 
 ### Extract Unique IP Addresses That Hit the Login Endpoint
@@ -532,7 +532,7 @@ grep "POST /api/login" /var/log/nginx/access.log \
 find /var/log -name "*.log" -type f -size +1M \
   | xargs wc -l \
   | sort -rn \
-  | head 20
+  | head -n 20
 ```
 
 ### Replace a Config Value Across Multiple Files

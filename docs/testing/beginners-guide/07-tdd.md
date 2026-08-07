@@ -260,7 +260,6 @@ The same exercise in Java, abbreviated to show the pattern without repeating eve
 
 ```java
 // src/test/java/com/example/cart/ShoppingCartTest.java
-@ExtendWith(MockitoExtension.class)
 class ShoppingCartTest {
 
     private ShoppingCart cart;

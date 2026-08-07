@@ -111,7 +111,7 @@ it('calls the sender with the correct arguments', async () => {
 
     await sendWelcomeEmail(mockSender, 'alice@example.com');
 
-    expect(mockSender).toHaveBeenCalledOnce();
+    expect(mockSender).toHaveBeenCalledTimes(1);
     expect(mockSender).toHaveBeenCalledWith(
         'alice@example.com',
         'Welcome to our platform!'
@@ -385,7 +385,7 @@ describe('debounce', () => {
 
         jest.advanceTimersByTime(300);
 
-        expect(fn).toHaveBeenCalledOnce();
+        expect(fn).toHaveBeenCalledTimes(1);
     });
 });
 ```

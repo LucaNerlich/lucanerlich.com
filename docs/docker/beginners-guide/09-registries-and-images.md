@@ -326,7 +326,7 @@ docker buildx build \
   .
 ```
 
-When a user pulls `myusername/my-app:1.0.0`, Docker automatically selects the layer that matches their CPU architecture. This is how all official Docker Hub images work.
+When a user pulls `myusername/my-app:1.0.0`, Docker automatically selects the image variant that matches their CPU architecture. This is how all official Docker Hub images work.
 
 ---
 

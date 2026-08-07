@@ -372,6 +372,8 @@ sudo tee /etc/systemd/system/myapp.service > /dev/null << 'EOF'
 Description=My Node.js Practice Application
 Documentation=https://lucanerlich.com/linux
 After=network.target
+StartLimitIntervalSec=60s
+StartLimitBurst=3
 
 [Service]
 Type=simple
@@ -382,8 +384,6 @@ ExecStart=/usr/bin/node server.js
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartSec=5s
-StartLimitInterval=60s
-StartLimitBurst=3
 
 # Output handling
 StandardOutput=append:/var/log/myapp/app.log
@@ -463,15 +463,12 @@ sudo tee /etc/logrotate.d/myapp > /dev/null << 'EOF'
     compress
     delaycompress
     notifempty
-    create 0644 deploy deploy
-    sharedscripts
-    postrotate
-        # Signal the service to reopen log file handles
-        systemctl kill -s USR1 myapp.service 2>/dev/null || true
-    endscript
+    copytruncate
 }
 EOF
 ```
+
+`copytruncate` copies the current log then truncates the original in place, so systemd's open file descriptor (from `StandardOutput=append:`) keeps writing to the same file without needing to reopen it. This avoids the usual `postrotate` reload dance for apps that don't handle a log-reopen signal.
 
 Test the logrotate config:
 

@@ -252,7 +252,7 @@ export const config = {
 ### Setup with Vite
 
 ```bash
-npm create vite@latest my-react-app - --template react-ts
+npm create vite@latest my-react-app -- --template react-ts
 cd my-react-app
 npm install
 ```
@@ -474,7 +474,7 @@ function Counter() {
 **Custom hooks:**
 
 ```typescript
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 interface FetchState<T> {
     data: T | null;
@@ -485,11 +485,11 @@ interface FetchState<T> {
 function useFetch<T>(url: string): FetchState<T> & { refetch: () => void } {
     const [state, setState] = useState<FetchState<T>>({
         data: null,
-        loading: false,
+        loading: true,
         error: null,
     });
 
-    const fetch_ = useCallback(async () => {
+    const load = useCallback(async () => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         try {
             const response = await fetch(url);
@@ -505,7 +505,11 @@ function useFetch<T>(url: string): FetchState<T> & { refetch: () => void } {
         }
     }, [url]);
 
-    return { ...state, refetch: fetch_ };
+    useEffect(() => {
+        load();
+    }, [load]);
+
+    return { ...state, refetch: load };
 }
 
 // Usage - T is inferred as User

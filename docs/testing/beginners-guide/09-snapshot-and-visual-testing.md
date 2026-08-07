@@ -94,20 +94,23 @@ Inline snapshots are self-updating: `jest -u` rewrites the string in the source 
 Snapshots are not limited to React output. They work on any serialisable JavaScript value:
 
 ```typescript
-// Snapshot an API response shape
+// Snapshot an API response shape, ignoring the volatile timestamp field
 it('API response has the expected shape', () => {
     const response = buildApiResponse({ status: 'ok', count: 3 });
-    expect(response).toMatchInlineSnapshot(`
+    expect(response).toMatchInlineSnapshot(
+        { timestamp: expect.any(String) },
+        `
         {
           "count": 3,
           "status": "ok",
           "timestamp": Any<String>,
         }
-    `);
+    `,
+    );
 });
 ```
 
-For dynamic values (timestamps, generated IDs), use asymmetric matchers:
+Property matchers are passed as the first argument; each matched field is serialised in the snapshot as e.g. `Any<String>`. The same form works with `toMatchSnapshot`:
 
 ```typescript
 expect(response).toMatchSnapshot({
@@ -265,7 +268,7 @@ export const FilledForm: Story = {
 };
 ```
 
-These play functions run in the browser and can be executed as part of a CI pipeline with `storybook test`.
+These play functions run in the browser and can be executed as part of a CI pipeline with the Storybook test runner (`test-storybook`, see below).
 
 ### Storybook Test Runner
 

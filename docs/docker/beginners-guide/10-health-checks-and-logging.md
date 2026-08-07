@@ -22,7 +22,7 @@ A running container is not necessarily a healthy container. Your web server migh
 
 ## The HEALTHCHECK Instruction
 
-The `HEALTHCHECK` instruction in a Dockerfile defines a command Docker runs periodically to probe whether the container is working correctly. If the command exits with status `0`, the container is healthy. If it exits with `1`, the container is unhealthy.
+The `HEALTHCHECK` instruction in a Dockerfile defines a command Docker runs periodically to probe whether the container is working correctly. If the command exits with status `0`, the container is healthy. If it exits with a non-zero status (`1` is the convention for unhealthy; exit code `2` is reserved), the container is unhealthy.
 
 ### Syntax
 
