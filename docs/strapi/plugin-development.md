@@ -273,11 +273,26 @@ Plugin routes are prefixed with `/my-plugin/`, so the endpoints become `/my-plug
 
 ### Entry file
 
+In Strapi 5 the legacy `@strapi/helper-plugin` package has been removed. Import admin panel utilities from
+`@strapi/strapi/admin` (or `@strapi/design-system` for UI primitives). The `prefixPluginTranslations` helper is no
+longer exported; define it inline in your plugin.
+
 ```ts
 // admin/src/index.ts
-import { prefixPluginTranslations } from '@strapi/helper-plugin';
 import pluginId from './pluginId';
 import BookmarkIcon from './components/BookmarkIcon';
+
+// prefixPluginTranslations was removed from @strapi/helper-plugin; inline the util.
+type Translations = Record<string, string>;
+const prefixPluginTranslations = (trad: Translations, pluginId: string): Translations => {
+  if (!pluginId) {
+    throw new TypeError("pluginId can't be empty");
+  }
+  return Object.keys(trad).reduce((acc, current) => {
+    acc[`${pluginId}.${current}`] = trad[current];
+    return acc;
+  }, {} as Translations);
+};
 
 export default {
   register(app) {
@@ -342,7 +357,7 @@ export default {
 // admin/src/pages/App.tsx
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Table, Thead, Tbody, Tr, Th, Td, Button } from '@strapi/design-system';
-import { useFetchClient } from '@strapi/helper-plugin';
+import { useFetchClient } from '@strapi/strapi/admin';
 import pluginId from '../pluginId';
 
 const App = () => {
@@ -518,13 +533,39 @@ export default {
     "description": "Save and manage bookmarks",
     "kind": "plugin"
   },
-  "main": "server/src/index.ts",
+  "main": "./dist/server/index.js",
+  "types": "./dist/server/index.d.ts",
+  "scripts": {
+    "build": "strapi-plugin build",
+    "watch": "strapi-plugin watch"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    "./strapi-admin": {
+      "types": "./dist/admin/src/index.d.ts",
+      "source": "./admin/src/index.ts",
+      "import": "./dist/admin/index.mjs",
+      "require": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./strapi-server": {
+      "types": "./dist/server/src/index.d.ts",
+      "source": "./server/src/index.ts",
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
+    }
+  },
+  "files": ["dist"],
   "keywords": ["strapi", "plugin", "bookmarks"],
   "license": "MIT"
 }
 ```
 
-2. **Build the admin**:
+`main` must point to a compiled JavaScript file, not the TypeScript source. The `@strapi/sdk-plugin` build
+step generates the `dist/` directory used above.
+
+2. **Build the plugin**:
 
 ```bash
 yarn build

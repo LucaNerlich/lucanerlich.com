@@ -252,7 +252,7 @@ export const config = {
 ### Setup with Vite
 
 ```bash
-npm create vite@latest my-react-app - --template react-ts
+npm create vite@latest my-react-app -- --template react-ts
 cd my-react-app
 npm install
 ```
@@ -474,7 +474,7 @@ function Counter() {
 **Custom hooks:**
 
 ```typescript
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 interface FetchState<T> {
     data: T | null;
@@ -485,18 +485,19 @@ interface FetchState<T> {
 function useFetch<T>(url: string): FetchState<T> & { refetch: () => void } {
     const [state, setState] = useState<FetchState<T>>({
         data: null,
-        loading: false,
+        loading: true,
         error: null,
     });
 
-    const fetch_ = useCallback(async () => {
+    const load = useCallback(async (signal?: AbortSignal) => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, { signal });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data: T = await response.json();
             setState({ data, loading: false, error: null });
         } catch (err) {
+            if (err instanceof DOMException && err.name === "AbortError") return;
             setState(prev => ({
                 ...prev,
                 loading: false,
@@ -505,7 +506,15 @@ function useFetch<T>(url: string): FetchState<T> & { refetch: () => void } {
         }
     }, [url]);
 
-    return { ...state, refetch: fetch_ };
+    useEffect(() => {
+        // Abort the in-flight request if `url` changes (or on unmount) so a
+        // slow, superseded response cannot overwrite state for the new url.
+        const controller = new AbortController();
+        load(controller.signal);
+        return () => controller.abort();
+    }, [load]);
+
+    return { ...state, refetch: () => load() };
 }
 
 // Usage - T is inferred as User

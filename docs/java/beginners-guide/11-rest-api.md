@@ -145,22 +145,65 @@ public class JsonHelper {
                 {"error":"%s"}""".formatted(escapeJson(message));
     }
 
+    /**
+     * Create a plain message JSON response (used for success messages).
+     */
+    public static String messageJson(String message) {
+        return """
+                {"message":"%s"}""".formatted(escapeJson(message));
+    }
+
     // ── Internal helpers ──────────────────────────────────────
 
     private static String escapeJson(String s) {
-        return s.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            switch (c) {
+                case '\\' -> sb.append("\\\\");
+                case '"' -> sb.append("\\\"");
+                case '\n' -> sb.append("\\n");
+                case '\r' -> sb.append("\\r");
+                case '\t' -> sb.append("\\t");
+                case '\b' -> sb.append("\\b");
+                case '\f' -> sb.append("\\f");
+                default -> {
+                    if (c <= '\u001F') {
+                        sb.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        sb.append(c);
+                    }
+                }
+            }
+        }
+        return sb.toString();
     }
 
     private static String unescapeJson(String s) {
-        return s.replace("\\\"", "\"")
-                .replace("\\\\", "\\")
-                .replace("\\n", "\n")
-                .replace("\\r", "\r")
-                .replace("\\t", "\t");
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '\\' && i + 1 < s.length()) {
+                char next = s.charAt(++i);
+                switch (next) {
+                    case '"' -> sb.append('"');
+                    case '\\' -> sb.append('\\');
+                    case 'n' -> sb.append('\n');
+                    case 'r' -> sb.append('\r');
+                    case 't' -> sb.append('\t');
+                    case 'b' -> sb.append('\b');
+                    case 'f' -> sb.append('\f');
+                    case 'u' -> {
+                        sb.append((char) Integer.parseInt(s.substring(i + 1, i + 5), 16));
+                        i += 4;
+                    }
+                    default -> sb.append(next);
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     private static int findClosingQuote(String s, int start) {
@@ -322,7 +365,7 @@ public class TaskHandler implements HttpHandler {
 
         store.save(tasks);
         sendResponse(exchange, 200,
-                JsonHelper.errorJson("Deleted task " + id));
+                JsonHelper.messageJson("Deleted task " + id));
     }
 
     // ── Utilities ─────────────────────────────────────────────
@@ -523,7 +566,7 @@ curl -X DELETE http://localhost:8080/api/tasks/2
 Result:
 
 ```json
-{"error":"Deleted task 2"}
+{"message":"Deleted task 2"}
 ```
 
 ### Error handling

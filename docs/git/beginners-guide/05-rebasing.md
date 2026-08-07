@@ -262,7 +262,7 @@ git commit -m "feat(auth): add password reset flow"
 
 # Oops, fix a bug in that feature
 git add src/auth.js
-git commit --fixup HEAD~1
+git commit --fixup HEAD
 # Creates: "fixup! feat(auth): add password reset flow"
 
 # At the end, autosquash all fixup commits

@@ -165,7 +165,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void divideReturnCorrectQuotient() {
+    void divideReturnsCorrectQuotient() {
         assertEquals(5.0, math.divide(10.0, 2.0));
     }
 
@@ -427,13 +427,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 @ParameterizedTest(name = "slugify(''{0}'') == ''{1}''")
 @CsvSource({
-    "Hello World,  hello-world",
-    "My Blog Post, my-blog-post",
-    "Hello, World!, hello-world",
-    "foo  bar,      foo-bar"
+    "Hello World,      hello-world",
+    "My Blog Post,     my-blog-post",
+    "'Hello, World!',  hello-world",
+    "foo  bar,         foo-bar"
 })
 void slugifyConvertsToSlug(String input, String expected) {
-    assertEquals(expected.trim(), StringUtils.slugify(input));
+    assertEquals(expected, StringUtils.slugify(input));
 }
 ```
 

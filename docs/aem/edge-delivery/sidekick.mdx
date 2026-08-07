@@ -146,11 +146,24 @@ the Sidekick opens it in a panel and passes the current page context via
     <body>
         <button id="capture">Screenshot this page</button>
         <script type="module">
-            const sidekick = document.querySelector('helix-sidekick') || window.parent;
-
             document.getElementById('capture').addEventListener('click', async () => {
-                const url = new URL(window.parent.location.href).pathname;
-                const res = await fetch(`/api/screenshot?path=${encodeURIComponent(url)}`);
+                // Sidekick plugins run in a separate, often cross-origin context, so
+                // window.parent.location is not readable directly. Register the plugin
+                // with passReferrer: true instead - Sidekick appends the host page's URL
+                // as a ?referrer= query param. Treat it as untrusted input: it is only
+                // ever read here, never used for redirects or filesystem paths, and the
+                // backend must independently validate the path it receives.
+                let path = '';
+                try {
+                    const referrer = new URLSearchParams(location.search).get('referrer');
+                    const referrerUrl = new URL(referrer);
+                    if (referrerUrl.protocol === 'https:' && referrerUrl.hostname === location.hostname) {
+                        path = referrerUrl.pathname;
+                    }
+                } catch {
+                    // Malformed or missing referrer - fall back to no path
+                }
+                const res = await fetch(`/api/screenshot?path=${encodeURIComponent(path)}`);
                 const blob = await res.blob();
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
@@ -162,8 +175,10 @@ the Sidekick opens it in a panel and passes the current page context via
 </html>
 ```
 
-Register it in `config.json` with `"url": "/tools/sidekick/screenshot.html"` and an
-appropriate `environments` list.
+Register it in `config.json` with `"url": "/tools/sidekick/screenshot.html"`, `"passReferrer": true`,
+`"isPalette": true` (so it opens in a panel instead of a new tab), and an appropriate `environments`
+list. On the backend, `/api/screenshot` must independently validate the `path` query parameter
+(reject anything that is not a same-site path) rather than trusting the client.
 
 ## Tips
 

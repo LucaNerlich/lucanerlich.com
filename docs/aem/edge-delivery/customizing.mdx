@@ -18,11 +18,8 @@ the three lifecycle phases from `aem.js`:
 
 ```javascript title="scripts/scripts.js"
 import {
-    decorateBlocks,
-    decorateButtons,
-    decorateIcons,
     decorateMain,
-    decorateSections,
+    decorateTemplateAndTheme,
     loadBlocks,
     loadCSS,
     loadFooter,
@@ -285,7 +282,7 @@ create a CNAME to `*.aem.live`, TLS is provisioned automatically.
 ## /plugins - shared utilities
 
 The `/plugins/` directory hosts shared utilities consumed by multiple blocks. Common
-tenants:
+examples:
 
 - **`/plugins/experimentation/`** - the experimentation runtime (already used by
   `aem.js`)

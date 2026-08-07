@@ -272,7 +272,7 @@ corresponds to, making `git push` and `git pull` work without explicit arguments
 git branch -vv
 # * main          a1b2c3d [origin/main] Update README
 #   feature/auth  9f8e7d6 [origin/feature/auth: ahead 2] Add JWT support
-#   feature/old   3d2c1b0 No upstream configured
+#   feature/local 3d2c1b0 Draft implementation
 ```
 
 | Indicator              | Meaning                                                        |

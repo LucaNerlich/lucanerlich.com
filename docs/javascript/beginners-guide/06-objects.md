@@ -784,7 +784,9 @@ Result:
 { a: 1, b: 2, c: 3 }
 ```
 
-In modern code, the spread operator `{...target, ...source}` is preferred over `Object.assign`.
+Note the difference: `Object.assign(target, source)` **mutates** `target` and returns it, while the spread
+form `{ ...target, ...source }` creates a **new** object and leaves the originals untouched. In modern code, the
+spread form is preferred when you want a new object.
 
 ## Summary
 

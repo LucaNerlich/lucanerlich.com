@@ -70,7 +70,7 @@ The six characters represent three pairs: **red**, **green**, **blue** (RR GG BB
 
 **Shorthand:** When each pair has identical characters, you can shorten to three characters:
 
-```css
+```text
 #ff0000 → #f00
 #336699 → #369
 #ffffff → #fff

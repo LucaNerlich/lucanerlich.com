@@ -131,11 +131,10 @@ private Calendar publishDate;
 
 ### Property name mapping
 
-```java
-// Field name matches JCR property name
-@ValueMapValue
-private String jcr:title; // Won't compile - invalid Java identifier!
+Java field names cannot contain `:`, so JCR properties with namespaces (like `jcr:title` or
+`cq:lastModified`) must be mapped via the `name` attribute:
 
+```java
 // Use 'name' to map to JCR properties with special characters
 @ValueMapValue(name = "jcr:title")
 private String pageTitle;
@@ -537,16 +536,15 @@ This is equivalent to `@ChildResource` but uses the generic mechanism.
 
 ### Injector priority order
 
-When using `@Inject`, Sling tries injectors in this order:
+When using `@Inject`, Sling Models runs every registered injector in order of its OSGi
+`service.ranking`. For historical reasons, **lower** service ranking values are treated as
+**higher** priority - see [SLING-5035](https://issues.apache.org/jira/browse/SLING-5035).
+The first injector that returns a non-`null` value wins.
 
-| Priority | Injector | What it provides |
-|----------|----------|------------------|
-| Highest | Script Bindings | HTL scripting variables |
-| High | ValueMap | JCR node properties |
-| Medium | Child Resources | Child nodes |
-| Medium | Request Attributes | Request attributes |
-| Low | OSGi Services | OSGi service references |
-| Lowest | Sling Object | Sling framework objects |
+The exact order depends on which injectors are installed (including custom ones) and their
+configured service rankings, so it is not fixed. This ambiguity is precisely why the
+injector-specific annotations (`@ValueMapValue`, `@OSGiService`, `@SlingObject`, etc.) are
+preferred - they bypass the priority chain entirely and target one injector directly.
 
 ---
 

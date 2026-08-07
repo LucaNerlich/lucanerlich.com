@@ -921,7 +921,7 @@ TypeScript must be compiled to JavaScript before the browser can run it. Common 
 For new projects, **Vite** is the simplest choice:
 
 ```bash
-npm create vite@latest my-app - --template vanilla-ts
+npm create vite@latest my-app -- --template vanilla-ts
 cd my-app
 npm install
 npm run dev

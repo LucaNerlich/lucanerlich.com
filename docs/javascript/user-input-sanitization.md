@@ -15,8 +15,8 @@ sidebar_position: 6
 
 # User Input Sanitization in JavaScript: Practical and Safe Patterns
 
-User input is untrusted by default. Whether it comes from a form, URL parameters, or an API request, it must be *
-*validated** and **sanitized** before you use it. This post explains safe, practical patterns for both frontend and
+User input is untrusted by default. Whether it comes from a form, URL parameters, or an API request, it must be
+**validated** and **sanitized** before you use it. This post explains safe, practical patterns for both frontend and
 backend scenarios using TypeScript examples and expected output.
 
 ## Quick start

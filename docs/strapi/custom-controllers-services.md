@@ -217,7 +217,7 @@ async create(ctx) {
   await strapi.service('api::notification.notification').sendPushNotification({
     userId: ctx.state.user.id,
     title: 'Article Published',
-    body: `Your article "${response.data.attributes.title}" is live!`,
+    body: `Your article "${response.data.title}" is live!`,
   });
 
   return response;

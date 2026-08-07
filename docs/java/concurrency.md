@@ -49,7 +49,8 @@ Future<Integer> future = executor.submit(() -> {
 
 // Get result (blocks until done)
 Integer result = future.get();              // 42
-Integer result = future.get(5, TimeUnit.SECONDS); // with timeout
+// Or with a timeout (throws TimeoutException if it doesn't complete in time)
+Integer resultWithTimeout = future.get(5, TimeUnit.SECONDS);
 
 // Shut down when done
 executor.shutdown();

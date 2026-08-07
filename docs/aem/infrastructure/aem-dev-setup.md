@@ -10,7 +10,7 @@ This post describes the steps and software requirements you need to create and s
 It also walks through bootstrapping a new project with the official Maven Archetype and shows common day-to-day
 commands you will likely run during development.
 
-## TL:DR
+## TL;DR
 
 1. Install Java (JDK)
     1. [Download JDK](https://adoptopenjdk.net/) or use SDKMAN
@@ -143,13 +143,21 @@ environment-specific configuration:
 
 To be able to attach a Java debugger locally, the startup scripts need to be extended by a couple of arguments.
 
-In each (author, publish) start script, find the following line
+In each (author, publish) start script, find the `CQ_JVM_OPTS` assignment (on Unix `if [ -z "$CQ_JVM_OPTS" ]; then CQ_JVM_OPTS=...`; on Windows `if not defined CQ_JVM_OPTS set CQ_JVM_OPTS=...`) and extend it with the JDWP agent:
 
-`if not defined CQ_JVM_OPTS set CQ_JVM_OPTS=[...]` and add the following arguments:
+```bash
+CQ_JVM_OPTS='-server -Xmx8192m -Djava.awt.headless=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=localhost:30303'
+```
 
-`CQ_JVM_OPTS='-server -Xmx8024m -Djava.awt.headless=true -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=30303,suspend=n'`
-.
-Note, that the `address=30303` needs to be different for author and publish.
+```bat title="Windows"
+set "CQ_JVM_OPTS=-server -Xmx8192m -Djava.awt.headless=true -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=localhost:30303"
+```
+
+`-Xdebug` has been a no-op since JDK 6. Its companion `-Xrunjdwp` still works but is deprecated;
+prefer `-agentlib:jdwp` on JDK 11 and JDK 21. Binding to `localhost` keeps the debug port off the
+network - only bind to `*:30303` if you are debugging a remote/containerized instance and understand
+the exposure. The port needs to be different for author and publish (for example `30303` for author,
+`30304` for publish).
 
 A debug run config in IntelliJ IDEA looks like this:
 
@@ -456,8 +464,8 @@ here: [local-development-environment-set-up/dispatcher-tools](https://experience
 
 On Windows, the `docker_run.cmd` file will need to be slightly modified. Remove the following lines:
 
-- Line: 41 + 41
-- Line 179 - 181
+- Lines 40 - 41
+- Lines 179 - 181
 
 ![Dispatcher Windows changes 1](/images/aem/dispatcher-windows1.png)
 ![Dispatcher Windows changes 2](/images/aem/dispatcher-windows2.png)

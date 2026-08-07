@@ -324,7 +324,7 @@ queue.put("task1"); // blocks if queue is full
 String task = queue.take(); // blocks if queue is empty
 
 // With timeout
-String task = queue.poll(5, TimeUnit.SECONDS);
+String taskOrNull = queue.poll(5, TimeUnit.SECONDS); // returns null on timeout
 ```
 
 ### Choosing the right concurrent collection

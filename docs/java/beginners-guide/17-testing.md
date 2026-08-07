@@ -220,7 +220,7 @@ void completingATaskMarksItDone() {
     Task task = new Task(1, "Write tests", false);
 
     // Act - perform the action being tested
-    Task completed = task.withDone(true);
+    Task completed = task.complete();
 
     // Assert - verify the result
     assertTrue(completed.done());
@@ -292,7 +292,9 @@ static void tearDownOnce() {
 
 ## Testing the Task Manager
 
-Let us write tests for the Task Manager from chapter 10. Assume we have:
+The examples below assume a slightly richer `TaskStore` than the one built in chapter 10 - one that owns
+ID generation and exposes CRUD methods directly. This makes it easier to focus on the tests. The techniques
+apply equally to the original design:
 
 ```java
 record Task(int id, String description, boolean done) {}
@@ -574,23 +576,31 @@ static Stream<Arguments> invalidDescriptions() {
 Testing the HTTP server from chapter 11 requires starting it in the test and sending real HTTP requests:
 
 ```java
-import java.net.http.*;
+import com.sun.net.httpserver.HttpServer;
+
+import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 class ApiServerTest {
 
-    private static HttpServer server;
-    private static final int PORT = 0; // Random available port
-
+    private HttpServer server;
+    private Path dataFile;
     private HttpClient client;
     private String baseUrl;
 
     @BeforeEach
     void setUp() throws Exception {
-        // Start a fresh server for each test
-        TaskStore store = new TaskStore();
-        server = HttpServer.create(new InetSocketAddress(PORT), 0);
-        server.createContext("/api/", new TaskHandler(store));
+        // Fresh data file per test so tests are isolated
+        dataFile = Files.createTempFile("tasks-test", ".dat");
+
+        // Bind to port 0 - the OS assigns a free port automatically
+        server = HttpServer.create(new InetSocketAddress(0), 0);
+        server.createContext("/api/", new TaskHandler(dataFile));
         server.start();
 
         int actualPort = server.getAddress().getPort();
@@ -599,8 +609,9 @@ class ApiServerTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
         server.stop(0);
+        Files.deleteIfExists(dataFile);
     }
 
     @Test
@@ -682,6 +693,8 @@ class ApiServerTest {
             HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
+        assertTrue(response.body().contains("\"message\""));
+        assertTrue(response.body().contains("Deleted task 1"));
     }
 }
 ```

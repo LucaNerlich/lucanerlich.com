@@ -15,9 +15,9 @@ sidebar_position: 21
 
 # Deployment & Cloud Manager
 
-In AEM as a Cloud Service, you do not deploy by copying files to a server. Instead, you push code to a **Git repository
-** and **Cloud Manager** builds, tests, and deploys it through a pipeline. This chapter covers the entire path from code
-to production.
+In AEM as a Cloud Service, you do not deploy by copying files to a server. Instead, you push code to a
+**Git repository** and **Cloud Manager** builds, tests, and deploys it through a pipeline. This chapter covers the
+entire path from code to production.
 
 ## The deployment model
 

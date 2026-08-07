@@ -453,9 +453,12 @@ list.removeChild(firstItem);
 
 // Remove all children
 const container = document.querySelector(".container");
-container.innerHTML = ""; // quick but creates XSS risk if mixed with user content
+container.replaceChildren(); // modern, clean way to remove all children
 
-// Safer way to clear children
+// Also works, but re-parses HTML and drops event listeners on children
+container.innerHTML = "";
+
+// Older loop equivalent
 while (container.firstChild) {
     container.removeChild(container.firstChild);
 }

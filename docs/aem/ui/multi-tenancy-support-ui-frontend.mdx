@@ -121,19 +121,21 @@ ui.frontend/
 Each tenant overrides shared design tokens. The shared file defines defaults; tenants override selectively:
 
 ```scss title="src/main/webpack/shared/_variables.scss"
-// Default design tokens (can be overridden per tenant)
-$color-primary: #0066cc;
-$color-secondary: #333333;
-$color-background: #ffffff;
-$color-text: #1a1a1a;
+// Default design tokens (can be overridden per tenant).
+// The !default flag lets tenant SCSS files override these values by defining
+// them before this file is imported.
+$color-primary: #0066cc !default;
+$color-secondary: #333333 !default;
+$color-background: #ffffff !default;
+$color-text: #1a1a1a !default;
 
-$font-family-base: 'Helvetica Neue', Arial, sans-serif;
-$font-size-base: 16px;
-$line-height-base: 1.5;
+$font-family-base: 'Helvetica Neue', Arial, sans-serif !default;
+$font-size-base: 16px !default;
+$line-height-base: 1.5 !default;
 
-$spacing-unit: 8px;
-$border-radius: 4px;
-$max-content-width: 1200px;
+$spacing-unit: 8px !default;
+$border-radius: 4px !default;
+$max-content-width: 1200px !default;
 ```
 
 ```scss title="src/main/webpack/site-X/_variables.scss"
@@ -571,10 +573,13 @@ In the page template, load the dependencies clientlib before the tenant clientli
 
 Or use the `dependencies` property in the tenant clientlib definition so AEM loads them automatically:
 
-```javascript
-// In clientlib.config.js
-['site-X.site'],
-dependencies: ['myproject.dependencies'],
+```javascript title="clientlib.config.js (excerpt)"
+{
+    name: 'clientlib-site-X',
+    categories: ['site-X.site'],
+    dependencies: ['myproject.dependencies'],
+    // ...
+}
 ```
 
 ## Best Practices and Common Pitfalls

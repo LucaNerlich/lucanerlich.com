@@ -65,7 +65,7 @@ deploy_version "myapp" "1.2.3"
 deploy_version "myapp" "1.2.3" "staging"
 ```
 
-The script's own positional arguments are still accessible via `$BASH_ARGV` inside functions, but it is cleaner to pass them explicitly.
+If you need the script's own positional arguments from inside a function, save them into an array at the top of the script (`SCRIPT_ARGS=("$@")`) and reference `"${SCRIPT_ARGS[@]}"` inside the function. Even better, pass them explicitly as function arguments.
 
 ---
 

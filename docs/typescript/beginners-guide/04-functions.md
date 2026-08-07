@@ -294,7 +294,7 @@ function formatValue(value: string | number | boolean | Date): string {
 formatValue("hello");           // "hello"
 formatValue(1234567);           // "1,234,567"
 formatValue(true);              // "Yes"
-formatValue(new Date());        // "4/18/2026"
+formatValue(new Date());        // e.g. "4/18/2026" (locale-dependent)
 ```
 
 A more practical example - a function that returns different types based on input:
@@ -316,7 +316,7 @@ const canvas = createElement("canvas"); // HTMLCanvasElement - has .getContext()
 ### Overloads with optional behaviour
 
 ```typescript
-// parseJSON returns T when a reviver is provided, or unknown without one
+// parseJSON returns T when a validator is provided, or unknown without one
 function parseJSON(text: string): unknown;
 function parseJSON<T>(text: string, validate: (v: unknown) => v is T): T;
 function parseJSON<T>(text: string, validate?: (v: unknown) => v is T): unknown | T {

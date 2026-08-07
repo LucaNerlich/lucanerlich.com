@@ -269,6 +269,15 @@ module.exports = {
       pageSize: Number(pageSize),
     });
 
+    // Sanitize each type's items against its own content-type schema and the
+    // caller's auth context before returning - findMany() does not do this for you.
+    for (const group of Object.values(results.data)) {
+      const schema = strapi.contentType(group.uid);
+      group.items = await strapi.contentAPI.sanitize.output(group.items, schema, {
+        auth: ctx.state.auth,
+      });
+    }
+
     return results;
   },
 };
@@ -278,6 +287,8 @@ module.exports = {
 
 ```js
 // src/api/search/services/search.js
+const MAX_PAGE_SIZE = 100;
+
 module.exports = ({ strapi }) => ({
   async search({ query, type, page, pageSize }) {
     const searchableTypes = {
@@ -290,25 +301,43 @@ module.exports = ({ strapi }) => ({
       ? { [type]: searchableTypes[type] }
       : searchableTypes;
 
+    // Reject/clamp untrusted page and pageSize input before it reaches the query.
+    const safePage = Number.isInteger(page) && page > 0 ? page : 1;
+    const safePageSize = Number.isInteger(pageSize) && pageSize > 0
+      ? Math.min(pageSize, MAX_PAGE_SIZE)
+      : 25;
+
     const results = {};
+    const start = (safePage - 1) * safePageSize;
+    const filters = {
+      $or: [
+        { title: { $containsi: query } },
+        { description: { $containsi: query } },
+      ],
+    };
 
     for (const [key, uid] of Object.entries(typesToSearch)) {
-      const { results: items, pagination } = await strapi
-        .documents(uid)
-        .findMany({
-          filters: {
-            $or: [
-              { title: { $containsi: query } },
-              { description: { $containsi: query } },
-            ],
-          },
+      const [items, total] = await Promise.all([
+        strapi.documents(uid).findMany({
+          filters,
           fields: ['title', 'slug', 'description'],
           status: 'published',
-          page,
-          pageSize,
-        });
+          start,
+          limit: safePageSize,
+        }),
+        strapi.documents(uid).count({ filters, status: 'published' }),
+      ]);
 
-      results[key] = { items, pagination };
+      results[key] = {
+        uid,
+        items,
+        pagination: {
+          page: safePage,
+          pageSize: safePageSize,
+          pageCount: Math.ceil(total / safePageSize),
+          total,
+        },
+      };
     }
 
     return { data: results, query };

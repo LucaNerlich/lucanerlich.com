@@ -410,7 +410,9 @@ Key points:
 
 ## Draft & Publish System in Strapi 5
 
-Strapi 5 introduces a new draft/publish system where drafts and published versions are separate document instances:
+In Strapi 5, a document can exist in a **draft** and a **published** version. Both versions share the same
+`documentId` and are managed through the Document Service API. Use the `status` query parameter to select which
+version the REST API should return:
 
 ```bash
 # Get only published posts (default for public API)

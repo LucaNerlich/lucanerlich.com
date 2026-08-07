@@ -42,7 +42,7 @@ becomes dangerous when you cannot know at a glance what type a variable holds.
 
 TypeScript solves this by adding **optional static types** to JavaScript:
 
-```typescript
+```javascript
 // JavaScript - no type safety
 function add(a, b) {
     return a + b;
@@ -50,7 +50,9 @@ function add(a, b) {
 
 add(2, 3);        // 5  (as expected)
 add("2", 3);      // "23"  (string concatenation - a bug you won't notice until runtime)
+```
 
+```typescript
 // TypeScript - type-safe
 function add(a: number, b: number): number {
     return a + b;

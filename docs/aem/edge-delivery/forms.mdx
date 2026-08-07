@@ -151,10 +151,18 @@ JS hides steps after the current one and wires Next / Previous buttons.
 
 ### File upload to AEM Assets
 
-For document upload forms, post the file directly to an AEM Assets endpoint via the
-[Asset Upload API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview).
-Get a one-time upload token from your backend so the API key never lands in the
-browser.
+For document upload forms, post the file to a backend that then forwards to AEM
+Assets via [direct binary upload](https://experienceleague.adobe.com/en/docs/experience-manager-learn/assets/advanced/programmatic-asset-upload)
+(AEM's own direct-binary upload flow is meant for authenticated author-side clients,
+not anonymous public forms). Never expose your Assets API credentials in the browser -
+have the backend either proxy the upload itself, or issue an application-owned upload
+URL that is authenticated, authorized, single-use, restricted to an allow-listed
+asset root, bound to the authenticated principal and the specific target asset/upload
+constraints (size, MIME type) it was issued for, and short-lived (a TTL of minutes,
+not hours). Either way, the backend must independently validate file size, MIME type,
+actual content, and filename/path before forwarding to AEM, apply rate limiting and
+malware scanning, and use an AEM service credential scoped to the minimum permissions
+needed (write access to the target DAM folder only).
 
 ### Save draft
 

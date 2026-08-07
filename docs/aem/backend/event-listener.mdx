@@ -815,8 +815,9 @@ public class IndexUpdateJobConsumer implements JobConsumer {
 
         } catch (Exception e) {
             LOG.error("Index update failed for {}", path, e);
-            // Return FAILED to retry, or CANCEL to give up
-            return job.getRetryCount() < 3 ? JobResult.FAILED : JobResult.CANCEL;
+            // Return FAILED to let the queue retry (see queue.retries below), or
+            // CANCEL for errors you know are not worth retrying (e.g. bad input).
+            return JobResult.FAILED;
         }
     }
 }
@@ -824,18 +825,20 @@ public class IndexUpdateJobConsumer implements JobConsumer {
 
 ### Job configuration
 
-Configure retry behaviour via OSGi properties:
+Retry behaviour is **not** configured on the consumer - it lives on the **queue** that processes
+the topic. Deploy a `QueueConfiguration` factory config that matches your topic:
 
-```java
-@Component(
-    service = JobConsumer.class,
-    property = {
-        JobConsumer.PROPERTY_TOPICS + "=com/myproject/job/INDEX_UPDATE",
-        "job.retries=5",
-        "job.retryDelay=30"  // seconds between retries
-    }
-)
+```json title="ui.config/.../config/org.apache.sling.event.jobs.QueueConfiguration~index-update.cfg.json"
+{
+    "queue.name": "Index Update Queue",
+    "queue.topics": ["com/myproject/job/INDEX_UPDATE"],
+    "queue.type": "UNORDERED",
+    "queue.retries": 5,
+    "queue.retrydelay": 30000
+}
 ```
+
+See [Sling Jobs and Schedulers](./sling-jobs.md) for the full list of queue properties.
 
 ---
 

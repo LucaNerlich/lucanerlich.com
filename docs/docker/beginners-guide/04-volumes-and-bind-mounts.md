@@ -220,14 +220,12 @@ docker run -d \
 
 ## Volume Drivers
 
-The default `local` driver stores volumes on the host filesystem. Docker supports third-party **volume drivers** that store data elsewhere:
+The default `local` driver stores volumes on the host filesystem. Docker also supports third-party **volume driver plugins** that store data elsewhere (cloud block storage, network shares, cluster-aware filesystems). Browse the [Docker Hub volume plugin list](https://hub.docker.com/search?category=volume) for what is currently maintained.
 
-- `convoy` - AWS EBS, NFS
-- `rexray` - Multi-cloud (AWS, GCE, Azure)
-- `nfs` - Network File System shares
+The built-in `local` driver can already mount NFS shares directly - no plugin required - by passing driver options:
 
 ```bash
-# Create a volume using an NFS driver (plugin must be installed)
+# Create a volume backed by an NFS share (uses the built-in local driver)
 docker volume create \
   --driver local \
   --opt type=nfs \
@@ -236,7 +234,7 @@ docker volume create \
   nfs-data
 ```
 
-For most developers, the local driver is all you need. Volume drivers become relevant when running Docker on multiple nodes (Swarm) or mounting cloud storage.
+For most developers, the local driver is all you need. Third-party plugins become relevant when running Docker on multiple nodes (Swarm) or when you need cloud storage backends with lifecycle features the local driver does not provide.
 
 ---
 

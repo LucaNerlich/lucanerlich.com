@@ -47,10 +47,10 @@ ps aux
 ps -ef
 
 # Sort by CPU usage
-ps aux --sort=-%cpu | head 20
+ps aux --sort=-%cpu | head -n 20
 
 # Sort by memory usage
-ps aux --sort=-%mem | head 20
+ps aux --sort=-%mem | head -n 20
 
 # Show a specific process by name
 ps aux | grep nginx

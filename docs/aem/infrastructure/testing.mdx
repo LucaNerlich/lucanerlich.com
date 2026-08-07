@@ -443,12 +443,13 @@ Dispatcher configs regress easily - a misplaced `/allow` in `filters.any` can si
 set -euo pipefail
 
 DIS_SDK=${DISPATCHER_SDK_HOME:?set DISPATCHER_SDK_HOME to the extracted SDK path}
-"$DIS_SDK/bin/validate.sh" dispatcher/src
+"$DIS_SDK/bin/validator" full dispatcher/src
 ```
 
-Wire it into CI as a pre-merge gate. See the dedicated
-[Dispatcher Configuration](./dispatcher-configuration.mdx) page for authoring guidance and
-auto-invalidation rules.
+Wire it into CI as a pre-merge gate. The SDK ships the `validator` binary under `bin/`;
+`full` runs the same combined checks that Cloud Manager runs on every deployment. See the
+dedicated [Dispatcher Configuration](./dispatcher-configuration.mdx) page for authoring
+guidance and auto-invalidation rules.
 
 ## Code coverage
 

@@ -133,8 +133,8 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            # Tag with short commit SHA on every push
-            type=sha,prefix=sha-
+            # Tag with full commit SHA on every push (matches ${{ github.sha }})
+            type=sha,prefix=sha-,format=long
             # Tag branch name on branch pushes
             type=ref,event=branch
             # Tag PR number on pull requests

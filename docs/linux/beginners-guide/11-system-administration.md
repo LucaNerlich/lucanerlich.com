@@ -60,11 +60,11 @@ du -sh *
 # Show size of all subdirectories under /var (sorted by size)
 du -sh /var/*/ | sort -h
 
-# Find the top 10 largest directories anywhere
-du -h --max-depth=3 / 2>/dev/null | sort -h | tail 20
+# Find the top 20 largest directories anywhere (up to 3 levels deep)
+du -h --max-depth=3 / 2>/dev/null | sort -h | tail -n 20
 
 # Show individual files (not just directories)
-du -ah /var/log/ | sort -h | tail 20
+du -ah /var/log/ | sort -h | tail -n 20
 
 # Exclude certain paths
 du -sh /var/log/* --exclude="*.gz"
@@ -81,7 +81,7 @@ find / -type f -size +500M -exec ls -lh {} \; 2>/dev/null
 # Find the 20 largest files in /var
 find /var -type f -printf '%s %p\n' 2>/dev/null \
   | sort -rn \
-  | head 20 \
+  | head -n 20 \
   | awk '{printf "%.1f MB  %s\n", $1/1048576, $2}'
 
 # Files larger than 100 MB in /var/log
@@ -311,9 +311,9 @@ grep "Failed password" /var/log/auth.log | tail -20
 # View logs for a specific date range
 grep "Apr 10" /var/log/syslog
 
-# Count errors per hour (nginx example)
+# Count requests per hour (nginx example)
 awk '{print substr($4, 2, 14)}' /var/log/nginx/access.log \
-  | sort | uniq -c | sort -rn | head 24
+  | sort | uniq -c | sort -rn | head -n 24
 ```
 
 ---

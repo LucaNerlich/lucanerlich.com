@@ -90,8 +90,7 @@ Vitest reads your `vite.config.ts` automatically and picks up TypeScript, path a
 ### vite.config.ts (with test config inline)
 
 ```typescript
-import { defineConfig } from 'vite';
-import { defineConfig as defineTestConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
     test: {
@@ -104,6 +103,8 @@ export default defineConfig({
     },
 });
 ```
+
+Import `defineConfig` from `vitest/config` (not `vite`) so the `test` field is typed correctly.
 
 ### package.json scripts
 
@@ -369,11 +370,11 @@ it.skip('not ready yet', () => { /* ... */ });
 // Only run this test (dangerous - do not commit)
 it.only('focus here', () => { /* ... */ });
 
-// Conditional skip
+// Conditional skip (Vitest only)
 it.skipIf(process.env.CI === 'true')('skipped in CI', () => { /* ... */ });
 ```
 
-`it.only` (or `test.only`) will cause all other tests in the file to be skipped. Never commit a `.only` - most teams have a lint rule (`no-only-tests`) to catch it.
+`it.only` (or `test.only`) will cause all other tests in the file to be skipped. Never commit a `.only` - most teams have a lint rule (`no-only-tests`) to catch it. `it.skipIf` and `it.runIf` are Vitest-only; in Jest, wrap the test with `(condition ? it.skip : it)(...)` instead.
 
 ## Testing Async Code
 

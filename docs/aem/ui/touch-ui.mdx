@@ -7,29 +7,22 @@ tags: [aem, ui, authoring]
 
 # Touch UI / Author UI
 
-<div class="alert alert-info" role="alert">
-    Being called TouchUI previously, the official name for the 'modern' / post classic Ui is 'AuthorUI'.️
-</div>
+:::info
+The modern AEM authoring interface is officially called the **Touch UI** (also referred to as the
+Author UI). It replaced the legacy Classic UI and is the interface used across AEM 6.5 LTS and
+AEM as a Cloud Service.
+:::
 
 ## Add the Styles Plugin to the RTE
 
-The RTE Styles plugin allows an author to add a specific css class to a text selection.
-AEM will wrap the selection with a tag.
+The RTE Styles plugin allows an author to add a specific CSS class to a text selection.
+AEM wraps the selection with a tag:
 
 ```html
 <span class="your-defined-class">
 your text selection
 </span>
 ```
-
-## See also
-
-- [Coral UI](./coral-ui.mdx)
-- [Overlays](./overlays.mdx)
-- [Render conditions](./render-conditions.mdx)
-- [Component dialogs](../component-dialogs.mdx)
-- [Custom Component Guide](../custom-component.mdx)
-- [Client libraries](../client-libraries.mdx)
 
 ### Result
 
@@ -104,8 +97,8 @@ You need to add specific nodes to your components dialog RTE configuration (`/ap
 
 ### Full Example
 
-Note, that the [Sling Resource Merger](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/sling-resource-merger) pulls in additional nodes from the parents Text Core Component dialog.
-sTherefore we are able to (mostly) add only our new Styles Plugin related nodes.
+Note that the [Sling Resource Merger](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/sling-resource-merger) pulls in additional nodes from the parent Text Core Component dialog.
+Therefore we can (mostly) add only our new Styles Plugin-related nodes.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -214,3 +207,13 @@ sTherefore we are able to (mostly) add only our new Styles Plugin related nodes.
 </jcr:root>
 
 ```
+
+
+## See also
+
+- [Coral UI](./coral-ui.mdx)
+- [Overlays](./overlays.mdx)
+- [Render conditions](./render-conditions.mdx)
+- [Component dialogs](../component-dialogs.mdx)
+- [Custom Component Guide](../custom-component.mdx)
+- [Client libraries](../client-libraries.mdx)

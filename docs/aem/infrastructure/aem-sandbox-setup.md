@@ -6,9 +6,9 @@ tags: [ aem, setup, cloud-development, sandbox ]
 
 # Cloud Sandbox Setup
 
-This post describes how to setup a Cloud Sandbox development environment.
-It is required, that your company or organization has assigned you a Cloud Sandbox environment.
-In most cases, these are not _self-service_ and need to be payed for.
+This post describes how to set up a Cloud Sandbox development environment.
+It requires that your company or organization has assigned you a Cloud Sandbox environment.
+In most cases, these are not _self-service_ and need to be paid for.
 
 <div class="alert alert-warning" role="alert">
 This guide assumes you have access to a Cloud Sandbox environment and are familiar with AEM development.
@@ -29,7 +29,7 @@ This guide additionally assumes, that you have Maven 3 and Java JDK 21 installed
     - You will need the URL and Password, to setup the Cloud Git as a second origin later.
     - I suggest to also setup a personal repository (in GitHub etc) to store your code, in case your Sandbox gets
       archived.
-4. Create a new local AEM project, buy using the Maven AEM Archetype.
+4. Create a new local AEM project by using the Maven AEM Archetype.
     - For a more in-depth guide, read my [local development setup post](./aem-dev-setup.md).
     - https://github.com/adobe/aem-project-archetype
     - https://experienceleague.adobe.com/en/docs/experience-manager-core-components/using/developing/archetype/overview
@@ -49,7 +49,7 @@ This guide additionally assumes, that you have Maven 3 and Java JDK 21 installed
 mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.3.1:generate \
  -D archetypeGroupId=com.adobe.aem \
  -D archetypeArtifactId=aem-project-archetype \
- -D archetypeVersion=56\
+ -D archetypeVersion=56 \
  -D appTitle="My Site" \
  -D appId="mysite" \
  -D groupId="com.mysite" \

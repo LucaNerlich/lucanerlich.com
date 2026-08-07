@@ -131,11 +131,13 @@ With `verbatimModuleSyntax: true` in tsconfig (recommended for new projects), Ty
 
 TypeScript resolves modules using the `moduleResolution` strategy in `tsconfig.json`:
 
-| Strategy          | When to use                                                  |
-|-------------------|--------------------------------------------------------------|
-| `node16` / `bundler` | Modern Node.js 16+ or bundlers (Vite, webpack) - recommended |
-| `node`            | Legacy Node.js CommonJS projects                            |
-| `classic`         | Old TypeScript projects - avoid for new work               |
+| Strategy    | When to use                                                                    |
+|-------------|--------------------------------------------------------------------------------|
+| `nodenext`  | Modern Node.js (16+) with ESM or CJS - tracks Node's resolution algorithm as it evolves; required with `module: "NodeNext"` |
+| `node16`    | Same ESM/CJS resolution rules, frozen to how Node 16 behaved - stable but does not pick up newer Node resolution changes |
+| `bundler`   | Bundler-based projects (Vite, webpack, esbuild, Rollup) - recommended for apps |
+| `node10`    | Legacy Node.js CommonJS projects (formerly named `node`)                       |
+| `classic`   | Old TypeScript projects - avoid for new work                                   |
 
 With `moduleResolution: "bundler"`, TypeScript resolves imports the same way modern bundlers do - supporting path
 aliases and package exports.

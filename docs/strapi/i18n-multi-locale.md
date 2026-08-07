@@ -164,7 +164,7 @@ module.exports = createCoreService('api::article.article', ({ strapi }) => ({
     return null;
   },
 
-  async findManyWithFallback({ locale, filters, populate, fields, sort, page, pageSize } = {}) {
+  async findManyWithFallback({ locale, filters, populate, fields, sort, start, limit } = {}) {
     // First try the requested locale
     let results = await strapi.documents('api::article.article').findMany({
       locale: locale || FALLBACK_CHAIN[0],
@@ -173,8 +173,8 @@ module.exports = createCoreService('api::article.article', ({ strapi }) => ({
       populate,
       fields,
       sort,
-      page,
-      pageSize,
+      start,
+      limit,
     });
 
     // If no results, try fallback locales
@@ -189,8 +189,8 @@ module.exports = createCoreService('api::article.article', ({ strapi }) => ({
           populate,
           fields,
           sort,
-          page,
-          pageSize,
+          start,
+          limit,
         });
 
         if (results.length > 0) break;
@@ -270,12 +270,13 @@ Create the related entry in every locale. This is tedious but correct for fully 
 
 ```js
 // src/api/article/middlewares/populate-locale-fallback.js
+// Strapi 5 REST responses are flat: { data: { id, documentId, ...fields } }
 module.exports = (config, { strapi }) => {
   return async (ctx, next) => {
     await next();
 
     // After the response is built, check for empty relations
-    if (ctx.body?.data?.attributes?.author?.data === null) {
+    if (ctx.body?.data && ctx.body.data.author == null) {
       const articleLocale = ctx.query.locale || 'en';
       const fallbackLocale = 'en';
 
@@ -290,10 +291,8 @@ module.exports = (config, { strapi }) => {
         );
 
         if (fallbackArticle?.author) {
-          ctx.body.data.attributes.author = {
-            data: fallbackArticle.author,
-            _fallbackLocale: fallbackLocale,
-          };
+          ctx.body.data.author = fallbackArticle.author;
+          ctx.body.data._fallbackLocale = fallbackLocale;
         }
       }
     }

@@ -19,9 +19,10 @@ side focused.
 
 ```mermaid
 graph LR
-    subgraph "Author"
+    subgraph "Backend"
         Catalog["Adobe Commerce<br/>(catalog, prices, inventory)"]
         Content["AEM / Docs<br/>(marketing copy, banners)"]
+        Cart["Cart / Checkout API"]
     end
 
     subgraph "Edge Delivery"
@@ -29,10 +30,7 @@ graph LR
         CDN["Adobe CDN"]
     end
 
-    subgraph "Customer"
-        Browser["Browser"]
-        Cart["Cart / Checkout API"]
-    end
+    Browser["Customer browser"]
 
     Catalog -->|"GraphQL / REST"| Pipeline
     Content -->|"Content Bus"| Pipeline
@@ -44,10 +42,17 @@ graph LR
 
 Two flows:
 
-- **Render-time** - product list and detail pages are pre-rendered from the catalog
-  API and cached at the edge with surrogate keys per SKU.
-- **Run-time** - cart, checkout, and account live in the browser, talking directly
-  to the commerce API. Edge caching does not apply.
+- **Catalog reads** - PLP and PDP shells (marketing copy, layout, imagery) are served
+  as cached HTML from the edge, then product data is hydrated from the catalog API.
+  Edge responses carry surrogate keys per SKU / category so a price or inventory
+  change purges only the affected pages.
+- **Cart and checkout** - the surrounding page shell (nav, footer, layout) is served from the
+  same cached edge HTML as any other page. The cart/checkout state itself - items, totals,
+  and provider-issued payment tokens - lives in the browser and talks directly to the commerce
+  API. Raw card details should never touch your own JS or browser storage - collect them through
+  provider-hosted fields (e.g. Adobe Commerce/Stripe Elements-style iframes) that tokenize directly
+  with the payment provider. Any personalized cart/checkout response must be sent with
+  `Cache-Control: private, no-store` and never cached at the edge.
 
 ## Block library
 
@@ -78,10 +83,8 @@ const query = `
         products(filter: { sku: { eq: $sku } }) {
             items {
                 sku
-                name
                 price_range { minimum_price { final_price { value currency } } }
-                description { html }
-                media_gallery { url label }
+                stock_status
             }
         }
     }
@@ -89,20 +92,38 @@ const query = `
 
 export default async function decorate(block) {
     const sku = block.dataset.sku;
+    // name, description, and images are SEO-critical and already present in the
+    // pre-rendered HTML (see below) - this call only refreshes genuinely dynamic
+    // state: live price and stock.
     const res = await fetch(`https://commerce.example.com/graphql`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, variables: { sku } }),
     });
-    const { data } = await res.json();
-    renderProduct(block, data.products.items[0]);
+
+    let payload;
+    try {
+        payload = res.ok ? await res.json() : null;
+    } catch {
+        payload = null;
+    }
+
+    const product = payload && !payload.errors
+        ? payload.data?.products?.items?.[0]
+        : null;
+
+    if (!product) {
+        renderUnavailable(block);
+        return;
+    }
+    renderPriceAndStock(block, product);
 }
 ```
 
-For PLPs and PDPs, render server-side via the EDS pipeline by including the GraphQL
-result in the source content fragment, so the catalog is **part of the cached HTML**.
-The API call only fires when the block needs live state (current cart, dynamic
-price overrides).
+For SEO-critical fields (title, description, canonical URL, JSON-LD), render them
+into the cached HTML at author time rather than fetching client-side. Reserve the
+runtime GraphQL call for genuinely dynamic state - live inventory, per-user pricing,
+or personalised recommendations.
 
 ## Caching strategy
 

@@ -38,7 +38,7 @@ The vast majority of development and single-host production work uses `bridge` n
 
 ## The Default Bridge Network
 
-When you start a container without specifying a network, it is attached to the **default bridge** (`bridge` network, named `docker0`). This is the network Docker creates automatically.
+When you start a container without specifying a network, it is attached to the **default bridge network** (named `bridge`, backed by the `docker0` Linux bridge interface). This is the network Docker creates automatically. The `docker0` interface lives on the machine actually running the Docker Engine - on Linux that is your host; on macOS and Windows, Docker Desktop runs the Engine inside a Linux VM, so `docker0` is inside that VM, not on the host itself.
 
 ```bash
 # List networks
@@ -89,8 +89,10 @@ docker network create \
 ```bash
 # Start containers on the custom network
 docker run -d --name web --network my-app-net nginx
-docker run -d --name db  --network my-app-net postgres:16 \
-  -e POSTGRES_PASSWORD=secret
+docker run -d --name db \
+  --network my-app-net \
+  -e POSTGRES_PASSWORD=secret \
+  postgres:16
 
 # From 'web', ping 'db' by name - this WORKS on a custom bridge
 docker exec web ping db
@@ -207,8 +209,8 @@ docker run -d \
   --name postgres-prod \
   --network my-app-net \
   --network-alias database \
-  postgres:16 \
-  -e POSTGRES_PASSWORD=secret
+  -e POSTGRES_PASSWORD=secret \
+  postgres:16
 
 # The app can connect using either 'postgres-prod' or 'database' as the hostname
 docker run -d \
@@ -236,7 +238,7 @@ docker run -d --name web --network frontend-net nginx
 docker network connect backend-net web
 
 # Database is only on the backend network (web can reach it, the internet cannot)
-docker run -d --name db --network backend-net postgres:16 -e POSTGRES_PASSWORD=secret
+docker run -d --name db --network backend-net -e POSTGRES_PASSWORD=secret postgres:16
 
 # External traffic goes through 'web', which can reach 'db' via backend-net
 ```

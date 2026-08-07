@@ -131,12 +131,19 @@ behave as if the transform did not happen.
 
 ### translate
 
-Moves an element:
+Moves an element. `translateX` shifts along the x-axis, `translateY` along the y-axis, and `translate(x, y)` moves in
+both directions at once:
 
 ```css
-.box:hover {
+.box-a:hover {
     transform: translateX(20px);
+}
+
+.box-b:hover {
     transform: translateY(-10px);
+}
+
+.box-c:hover {
     transform: translate(20px, -10px);
 }
 ```

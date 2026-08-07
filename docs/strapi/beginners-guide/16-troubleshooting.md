@@ -662,7 +662,7 @@ curl http://localhost:1337/api/posts/document-id
 | Task | Status |
 |------|--------|
 | Backup database and files | ☐ |
-| Update Node.js to v18 or v20 | ☐ |
+| Update Node.js to a supported LTS release (v22, v24, or v26) | ☐ |
 | Update Strapi dependencies to v5 | ☐ |
 | Convert Entity Service to Document Service | ☐ |
 | Update lifecycle hooks to middleware | ☐ |
@@ -743,42 +743,23 @@ setInterval(() => {
 
 ### Creating good bug reports
 
-When reporting issues:
+When reporting issues, include the following in your report:
 
-```markdown
-## Environment
-- Strapi Version: 5.0.0
-- Node.js Version: 20.10.0
-- Database: PostgreSQL 15
-- Operating System: Ubuntu 22.04
+- **Environment** - Strapi version, Node.js version, database, and operating system
+- **Description** - a clear description of the issue
+- **Steps to Reproduce** - a numbered list of steps that consistently triggers the problem
+- **Expected Behavior** - what should happen
+- **Actual Behavior** - what actually happens
+- **Code Examples** - the smallest snippet that reproduces the issue
+- **Error Messages** - the full error stack trace, verbatim, with credentials, tokens, and other
+  secrets redacted
+- **Additional Context** - anything else that might be relevant (logs, screenshots, related PRs),
+  redacted of credentials, tokens, and personal data
 
-## Description
-Clear description of the issue
-
-## Steps to Reproduce
-1. Step one
-2. Step two
-3. Step three
-
-## Expected Behavior
-What should happen
-
-## Actual Behavior
-What actually happens
-
-## Code Examples
-```javascript
-// Relevant code
-```
-
-## Error Messages
-```
-Full error stack trace
-```
-
-## Additional Context
-Any other relevant information
-```
+Never post unredacted credentials, tokens, or personal data to a public GitHub issue. If a report
+can only be made useful by including data you cannot safely redact, or if the issue itself is a
+security vulnerability, report it through Strapi's private security channel instead (see
+[strapi.io/security](https://strapi.io/security)) rather than a public issue or forum post.
 
 ## Summary
 

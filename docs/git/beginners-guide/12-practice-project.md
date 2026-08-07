@@ -104,7 +104,7 @@ EOF
 
 ### Step 5: Create a README
 
-```bash
+````bash
 cat > README.md << 'EOF'
 # tasker
 
@@ -118,7 +118,7 @@ node tasker.js list
 node tasker.js done 1
 ```
 EOF
-```
+````
 
 ### Step 6: Initial commit
 

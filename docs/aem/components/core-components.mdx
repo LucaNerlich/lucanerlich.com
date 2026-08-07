@@ -31,7 +31,8 @@ to create and layout content pages without having to program 'the same things al
 The latest Core Component Release can be downloaded from
 their [GitHub Release page](https://github.com/adobe/aem-core-wcm-components/releases).
 
-Each GitHub Release produces the following artefacts
+Each GitHub Release produces the following artefacts:
+
 ![Core Components release artifacts](/images/aem/core-components/github-release.jpg)
 
 In general, downloading the `core.wcm.components.all-<version>.zip` and installing it via
@@ -41,11 +42,11 @@ If you are running an AEM Cloud SDK, the Core Components are bundled with the SD
 
 #### Core Components - Manual Installation
 
-If you want to add the Core Components to your development environment and install via maven / pom.xml, a couple of
-additions have to be made. First of, we should add a version variable, then add the required pom dependencies. These
-need to be added to the root pom, the 'all' pom, 'core' pom and the 'ui.apps' pom file.
+If you want to add the Core Components to your development environment and install them via Maven / `pom.xml`, a few
+additions are required. First, add a version variable, then add the required POM dependencies. These
+need to be added to the root POM, the `all` POM, the `core` POM, and the `ui.apps` POM.
 
-If you bootstrap your development environment via the maven AEM Project Archetype, this will have been done for you.
+If you bootstrap your development environment via the Maven AEM Project Archetype, this will have already been done for you.
 
 :::tip Check for the latest version
 Always verify the current release at the [Core Components GitHub Releases](https://github.com/adobe/aem-core-wcm-components/releases) page before pinning a version - the examples below use a recent release but a newer one may be available.
@@ -151,7 +152,7 @@ Always verify the current release at the [Core Components GitHub Releases](https
 
 ##### core POM
 
-```xml title=""/core/pom.xml
+```xml title="/core/pom.xml"
 <!-- [...] -->
 <dependency>
     <groupId>com.adobe.cq</groupId>
@@ -223,7 +224,7 @@ this mini series.
 
 #### Option 1 - slingResourceSuperType
 
-Extending via resourceSuperType is as easy as refernecing the parent in the components .content.xml defintion
+Extending via `sling:resourceSuperType` is as simple as referencing the parent in the component's `.content.xml` definition.
 
 ```xml
 
@@ -237,10 +238,10 @@ Extending via resourceSuperType is as easy as refernecing the parent in the comp
           componentGroup="MySite - Content"/>
 ```
 
-You then need to take a look at the original dialog structure, which can be found
-here `/libs/core/wcm/components/image/v2/image/cq:dialog`. Copy/Paste this, remove the 'asset' and 'metadata' tab, since
+You then need to look at the original dialog structure, which can be found
+at `/libs/core/wcm/components/image/v2/image/cq:dialog`. Copy/paste this and remove the 'asset' and 'metadata' tabs, since
 these will be served from the inherited parent. You can now add your own dialog tab instead. The resulting dialog will
-merge all tabs togther. Single tabs can be hidden via `sling:hideChilden` on the tabs 'items' node.
+merge all tabs together. Individual tabs can be hidden via `sling:hideChildren` on the tabs 'items' node.
 
 ```xml
 
@@ -254,8 +255,8 @@ merge all tabs togther. Single tabs can be hidden via `sling:hideChilden` on the
 </tabs>
 ```
 
-Using this method, all properties will be written directly to the components jcr:content node and need to be handeled
-manually in your sling model. As of now, no reusable OSGi Service exists to delegate logic to.
+Using this method, all properties will be written directly to the component's `jcr:content` node and need to be handled
+manually in your Sling Model. As of now, no reusable OSGi service exists to delegate the logic to.
 
 #### Option 2 - Parameterized Namespace Granite Include
 
@@ -395,16 +396,16 @@ via [Child Resource From Request Injector](https://adobe-consulting-services.git
 
 ### Reuse Core Component Sling Model
 
-We use the Child Resource From Request Injector to enable the injected Object to access a Sling Request. Therefore, the
-Image Core Component can correclty populate all its fields.
+We use the Child Resource From Request Injector to enable the injected object to access a Sling request. This lets the
+Image Core Component correctly populate all its fields.
 
 The ACS Commons website describes the injector as follows
 
 > This injector is similar to the standard @ChildResource injector provided by sling, but with a key difference in that it uses a mock request object pointed to the resource path as the adaptable, allowing the sling model to reference the request and other sling bindings not otherwise accessible when adapting a resource directly. This is particularly useful when injecting instances of WCM Core components, which are generally not adaptable from Resource and thus fail to inject via the standard @ChildResource injector.
 
-This functionality enables us to create custom components, while reusing the core components at the same time. Usually
-in projects, an author would like to create complex components, consisting out of images, text, checkbox etc. This can
-now be done easily, while minimized code repetition.
+This lets us build custom components while reusing existing Core Components. Projects often need complex
+components that combine images, text, checkboxes, and other fields - this pattern makes that possible while
+minimizing code repetition.
 
 ```java
 @ChildResourceFromRequest
@@ -413,11 +414,11 @@ private com.adobe.cq.wcm.core.components.models.Image image;
 
 #### Complete Class Example
 
-This examples uses Lombok Annotations to avoid 'getter/setter' spam in simple Java pojo classes.
+This example uses Lombok annotations to avoid getter/setter boilerplate in simple Java POJOs.
 
-By injecting our 'image' object with the aformentioned acs injector, we levarge the full Core Components Image Component
-Sling Model and (whatever) logic it uses itself. We can inject the 'ctaLinks' (check Part 1 for the dialog.xml) via a
-regular `@ChildResource`, since we are passing untouched json data from the jcr to the .model.json.
+By injecting our `image` object with the aforementioned ACS injector, we leverage the full Core Components
+Image Sling Model and any logic it applies. We can inject `ctaLinks` (see Part 1 for the dialog XML) via a
+regular `@ChildResource`, since we are passing the untouched JSON data from the JCR to the `.model.json` output.
 
 ```java
 // core/src/main/java/com/mysite/core/models/image/ExtendedImage.java
@@ -455,10 +456,6 @@ public class ExtendedImage implements ComponentExporter {
     @ChildResource
     private Resource ctaLinks;
 
-    public com.adobe.cq.wcm.core.components.models.Image getImage() {
-        return image;
-    }
-
     @Override
     public String getExportedType() {
         return RESOURCE_TYPE;
@@ -466,11 +463,11 @@ public class ExtendedImage implements ComponentExporter {
 }
 ```
 
-#### Example Json Export
+#### Example JSON Export
 
-Implementing above Sling Model and the Component from Part enables us to create a custom Image component, '
-extendedImage', which exportes all Core Components Image Component properties under the namespace 'image', as well as
-own additional properties.
+Implementing the Sling Model above together with the component from Part 1 gives us a custom `extendedImage`
+component that exports all Core Components Image properties under the `image` namespace, along with our own
+additional properties.
 
 ```json title="/content/mysite/fr/en/home.model.json"
 {

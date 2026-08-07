@@ -65,10 +65,13 @@ module.exports = {
 };
 ```
 
-Run the migration:
+Save the file under `database/migrations/`. Strapi runs pending migrations automatically on startup, so restart the
+server to apply them:
 
 ```bash
-npm run strapi database:migrate
+npm run develop
+# or, in production
+pm2 restart strapi
 ```
 
 ### Query optimization
@@ -414,8 +417,10 @@ export default ({ env }) => ({
       providerOptions: {
         baseUrl: env('CDN_URL', 'https://cdn.yourdomain.com'),
         s3Options: {
-          accessKeyId: env('AWS_ACCESS_KEY_ID'),
-          secretAccessKey: env('AWS_ACCESS_SECRET'),
+          credentials: {
+            accessKeyId: env('AWS_ACCESS_KEY_ID'),
+            secretAccessKey: env('AWS_ACCESS_SECRET'),
+          },
           region: env('AWS_REGION'),
           params: {
             Bucket: env('AWS_BUCKET'),

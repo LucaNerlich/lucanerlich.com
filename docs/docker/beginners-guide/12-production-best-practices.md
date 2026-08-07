@@ -142,8 +142,10 @@ CMD ["node", "src/index.js"]
 Google's distroless images contain only the language runtime and your application. No shell, no package manager, no utilities. This dramatically reduces the attack surface.
 
 ```dockerfile
-# Multi-stage: build with a full image, run with distroless
-FROM node:20-alpine AS builder
+# Multi-stage: build with a full image, run with distroless.
+# Use a Debian-based builder (glibc) so native modules match the
+# distroless runtime, which is also glibc-based (debian12).
+FROM node:20-slim AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
@@ -251,13 +253,22 @@ Use `on-failure:3` for batch jobs that should retry on transient errors but stop
 
 ### Drop Linux capabilities
 
-Containers inherit many Linux capabilities they rarely need. Drop all and re-add only what is required:
+Containers inherit many Linux capabilities they rarely need. Drop all and re-add only what is required. Most apps
+(including ones listening on port 3000 like the examples in this guide) need nothing added back:
 
 ```bash
 docker run -d \
   --cap-drop ALL \
-  --cap-add NET_BIND_SERVICE \   # Allow binding to ports < 1024 if needed
   my-app
+```
+
+Only add `NET_BIND_SERVICE` back if the process inside the container binds directly to a port below 1024:
+
+```bash
+docker run -d \
+  --cap-drop ALL \
+  --cap-add NET_BIND_SERVICE \
+  my-privileged-port-app
 ```
 
 ### Limit syscalls with seccomp
@@ -521,12 +532,16 @@ docker compose logs -f api
 # Connect to the database
 docker compose exec db psql -U myapp -d myapp
 
-# Check health
-docker inspect my-api_api_1 --format '{{.State.Health.Status}}'
-
-# Scale the API (stateless, so this is safe)
-docker compose up -d --scale api=3
+# Check health (resolve the container ID instead of guessing the generated name)
+docker compose ps
+docker inspect "$(docker compose ps -q api)" --format '{{.State.Health.Status}}'
 ```
+
+Scaling a service works only if it has no fixed host-port binding (change the
+`ports:` mapping to a range like `"3000-3010:3000"` or drop it and put a load
+balancer in front). With the fixed `127.0.0.1:${APP_PORT:-3000}:3000` above,
+`docker compose up -d --scale api=3` will fail because all replicas try to
+bind the same host port.
 
 ---
 

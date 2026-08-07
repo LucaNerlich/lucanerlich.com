@@ -132,7 +132,7 @@ export default {
 
 > **Important:** Custom route files must be placed in the `routes/` directory of your content type API. The filename can
 > be anything except `post.js` (which is reserved for the core router). A common convention is `custom-post.js` or
-`01-custom-post.js`.
+> `01-custom-post.js`.
 
 ### Route order matters
 

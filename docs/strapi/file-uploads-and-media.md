@@ -346,21 +346,11 @@ await fetch(`/api/upload?id=${fileId}`, {
 
 ## Folder management
 
-Strapi 5 supports media folders for organization:
-
-```bash
-# List folders
-GET /api/upload/folders
-
-# Create a folder
-POST /api/upload/folders
-{ "name": "Blog Images", "parent": null }
-
-# Upload to a specific folder
-const formData = new FormData();
-formData.append('files', file);
-formData.append('path', '/Blog Images');  # or folder ID
-```
+Strapi 5's Media Library folders are an **admin panel feature only** - they are not part of the
+public REST or GraphQL API. Files uploaded programmatically via `POST /api/upload` always land in
+the auto-created "API Uploads" folder; there is no `path` or folder-ID field on that endpoint to
+redirect them elsewhere. To organize uploaded files into folders, move them afterward through the
+admin panel's Media Library UI, or use a community plugin that adds folder-aware upload endpoints.
 
 ---
 

@@ -166,24 +166,40 @@ public class HeaderModel {
 }
 ```
 
-### Using the CA Config injector (shorter)
+### Adapting from a Resource
 
-With the `@ContextAwareConfiguration` injector (provided by wcm.io or a custom injector):
+`ConfigurationBuilder` can also be obtained by adapting from the current `Resource`, avoiding an
+explicit `@OSGiService` injection:
 
 ```java
-import io.wcm.caconfig.extensions.contextpath.impl.AbsoluteParentContextPathStrategy;
+import javax.annotation.PostConstruct;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.caconfig.ConfigurationBuilder;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
 
-// If using wcm.io CA Config extensions
+import com.myproject.core.config.SiteConfig;
+
 @Model(adaptables = Resource.class)
 public class HeaderModel {
 
-    // Direct injection - resolves from the resource's context
+    @Self
+    private Resource resource;
+
     private SiteConfig siteConfig;
 
     @PostConstruct
     protected void init() {
-        ConfigurationResolver resolver = resource.adaptTo(ConfigurationResolver.class);
-        // ...
+        ConfigurationBuilder builder = resource.adaptTo(ConfigurationBuilder.class);
+        siteConfig = builder != null ? builder.as(SiteConfig.class) : null;
+    }
+
+    public String getAnalyticsId() {
+        return siteConfig != null ? siteConfig.analyticsId() : "";
+    }
+
+    public boolean isNewHeaderEnabled() {
+        return siteConfig != null && siteConfig.enableNewHeader();
     }
 }
 ```
@@ -470,5 +486,4 @@ belong in OSGi configurations.
 - [Architecture](../architecture.mdx) - how configuration fits into AEM's layers
 - [Templates and Policies](../components/templates-policies.md) - template-level configuration
 - [Apache Sling Context-Aware Configuration](https://sling.apache.org/documentation/bundles/context-aware-configuration/context-aware-configuration.html) - official CA Config reference
-- [AEM Context-Aware Configuration (Experience League)](https://sling.apache.org/documentation/bundles/context-aware-configuration/context-aware-configuration.html) - AEM 6.5 implementation guide
 - [wcm.io Context-Aware Configuration Extensions](https://wcm.io/caconfig/) - editor UI and advanced features

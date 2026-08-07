@@ -316,12 +316,11 @@ public class ImageModel {
 
 ### Using `currentStyle` in HTL
 
-The `currentStyle` binding gives direct access to the component's policy values:
+`currentStyle` is a global HTL binding of type `com.day.cq.wcm.api.designer.Style` that is
+available automatically in every component. It exposes the properties from the component's
+content policy, so no `data-sly-use` is needed:
 
 ```html
-<sly data-sly-use.style="${'com.day.cq.wcm.foundation.model.CurrentStyle'}"/>
-
-<!-- Or directly via the global binding -->
 <div class="text ${currentStyle.cssClass}"
      data-max-length="${currentStyle.maxLength}">
     ${properties.text @ context='html'}
@@ -348,7 +347,7 @@ Template authors control which components are available per container:
     jcr:primaryType="nt:unstructured"
     jcr:title="Content Container Policy"
     sling:resourceType="wcm/core/components/policy/policy"
-    components="group:mysite - Content,group:mysite - Media"/>
+    components="[group:mysite - Content,group:mysite - Media]"/>
 ```
 
 ### Per-container configuration
@@ -376,8 +375,7 @@ developer intervention. It builds on top of component policies:
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
     jcr:primaryType="nt:unstructured"
     jcr:title="Button Policy"
-    sling:resourceType="wcm/core/components/policy/policy"
-    cq:styleGroups="[group1,group2]">
+    sling:resourceType="wcm/core/components/policy/policy">
     <cq:styleGroups jcr:primaryType="nt:unstructured">
         <group1
             jcr:primaryType="nt:unstructured"
@@ -580,6 +578,6 @@ content repository.
 - [Extending the Responsive Grid](../ui/extending-responsive-grid.md) - container components
 - [SPA Editor](../ui/spa-editor.md) - SPA page templates
 - [Experience Fragments](../content/experience-fragments.md) - XF templates
-- [Editable Templates - AEM 6.5 (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/components-templates/templates) - comprehensive editable template reference
+- [Editable Templates (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/components-templates/templates) - comprehensive editable template reference
 - [Style System (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/style-system) - CSS class policies via dialogs
 - [Editable Templates - AEMaaCS (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates) - cloud-specific template authoring

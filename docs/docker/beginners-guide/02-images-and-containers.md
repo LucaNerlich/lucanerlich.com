@@ -239,7 +239,7 @@ docker rmi nginx:1.27-alpine
 # Remove all unused images (not referenced by any container)
 docker image prune
 
-# Remove ALL images, including those used by stopped containers
+# Remove all images not currently referenced by any container (running or stopped)
 docker image prune -a
 ```
 

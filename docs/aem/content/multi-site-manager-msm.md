@@ -57,15 +57,17 @@ Blueprint configuration location: `/libs/msm/wcm/blueprintconfigs/` (product) or
 ### Live Copy
 
 A **Live Copy** is a copy of a Blueprint that maintains a live relationship to its source. The
-relationship is tracked per-component via `cq:LiveSyncConfig` and `cq:LiveRelationship` nodes in
-the JCR.
+relationship is marked by the `cq:LiveSync` (and `cq:LiveRelationship`) mixins on the Live Copy
+root's `jcr:content` node, with the actual configuration stored on a `cq:LiveSyncConfig` child
+node of type `cq:LiveCopy` - properties like `cq:master`, `cq:rolloutConfigs`, and `cq:isDeep`
+live there. Cancelled inheritance on a specific component adds the `cq:LiveSyncCancelled` mixin.
 
-```text title="Live Copy relationship in JCR"
-/content/myproject/en-gb/jcr:content
-├── cq:LiveSyncConfig
-│   ├── cq:master = "/content/myproject/master"
-│   ├── cq:rolloutConfigs = ["/libs/msm/wcm/rolloutconfigs/default"]
-│   └── cq:isDeep = true
+```text title="Live Copy relationship in JCR (root page of the Live Copy)"
+/content/myproject/en-gb/jcr:content   (mixin: cq:LiveSync, cq:LiveRelationship)
+└── cq:LiveSyncConfig   (jcr:primaryType: cq:LiveCopy)
+    ├── cq:master = "/content/myproject/master"
+    ├── cq:rolloutConfigs = ["/libs/msm/wcm/rolloutconfigs/default"]
+    └── cq:isDeep = true
 ```
 
 ### Rollout vs Synchronize

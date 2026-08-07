@@ -176,14 +176,20 @@ tagManager.setTags(resource, new Tag[]{ campaignTag, channelTag }, true);
 #### Finding tagged resources
 
 ```java
-// Find all resources with a specific tag (under a search root)
-TagManager.FindResults results = tagManager.findByTitle("Summer 2025");
+import com.day.cq.commons.RangeIterator;
 
-// Iterate
-Iterator<Resource> resources = tagManager.find("/content/site", "marketing:campaigns/2025");
-while (resources.hasNext()) {
-    Resource taggedResource = resources.next();
-    // ...
+// Find all resources under a search root that are tagged with ALL of the given tag IDs.
+// Use the find(path, tagIds, oneMatchIsEnough) overload with oneMatchIsEnough=true for an
+// any-match (OR) search instead. Returns null if a given tag ID does not resolve to a tag.
+RangeIterator<Resource> resources = tagManager.find(
+        "/content/site",
+        new String[] { "marketing:campaigns/2025" });
+
+if (resources != null) {
+    while (resources.hasNext()) {
+        Resource taggedResource = resources.next();
+        // ...
+    }
 }
 ```
 
@@ -195,8 +201,9 @@ while (resources.hasNext()) {
 | `createTag(tagId, title, desc, autoSave)` | Create a new tag                           |
 | `getTags(resource)`                       | Get all tags on a resource                 |
 | `setTags(resource, tags, autoSave)`       | Set tags on a resource                     |
-| `find(rootPath, tagIds...)`               | Find resources with specific tags          |
-| `findByTitle(title)`                      | Find tags by title                         |
+| `find(rootPath, tagIds)`                  | Find resources tagged with **all** of the given IDs (`oneMatchIsEnough` overload for any-match) |
+| `findByTitle(title)`                      | Find content tagged with a tag whose title matches (`*` wildcard supported); returns a `TagManager.FindResults` |
+| `findTagsByTitle(keyword, locale)`        | Find `Tag[]` whose title matches a keyword          |
 | `deleteTag(tag, autoSave)`                | Delete a tag                               |
 | `moveTag(tag, newPath)`                   | Move/rename a tag                          |
 | `mergeTag(sourceTag, targetTag)`          | Merge two tags                             |

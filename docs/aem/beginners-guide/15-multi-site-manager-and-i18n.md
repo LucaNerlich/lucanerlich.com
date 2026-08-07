@@ -15,8 +15,8 @@ sidebar_position: 15
 
 # Multi-Site Manager & i18n
 
-Enterprise websites often span multiple countries, languages, and brands. AEM provides two complementary systems: *
-*Multi-Site Manager (MSM)** for content reuse across sites, and **i18n** for language translation.
+Enterprise websites often span multiple countries, languages, and brands. AEM provides two complementary systems:
+**Multi-Site Manager (MSM)** for content reuse across sites, and **i18n** for language translation.
 
 ## Multi-Site Manager (MSM)
 
@@ -355,8 +355,8 @@ You learned:
 - [Configuring the Translation Integration Framework](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/reusing-content/translation/integration-framework) - connectors and rules
 - [Identifying Content to Translate (Translation Rules)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/reusing-content/translation/rules) - registering translatable properties
 
-The content side is complete. The final two chapters cover production concerns: Dispatcher caching and Cloud Manager
-deployment.
+The content side is complete. The remaining chapters cover operations and delivery: publishing, workflows, Dispatcher
+caching, security, testing, and Cloud Manager deployment.
 
 Next up: [Publishing & Replication](./16-publishing-and-replication.md) - activation/deactivation, the
 replication queue, Sling Content Distribution, and publishing assets and references.
