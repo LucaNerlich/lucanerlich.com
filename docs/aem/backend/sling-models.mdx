@@ -644,14 +644,26 @@ public interface DateFormatterService {
 
 ```java title="core/.../services/impl/DateFormatterServiceImpl.java"
 @Component(service = DateFormatterService.class)
+@Designate(ocd = DateFormatterServiceImpl.Config.class)
 public class DateFormatterServiceImpl implements DateFormatterService {
 
+    @ObjectClassDefinition(name = "Date Formatter Configuration")
+    @interface Config {
+        @AttributeDefinition(name = "Default Pattern")
+        String defaultPattern() default "MMMM d, yyyy";
+    }
+
+    private String defaultPattern;
+
     @Activate
-    private DateFormatterConfig config;
+    @Modified
+    protected void activate(Config config) {
+        this.defaultPattern = config.defaultPattern();
+    }
 
     @Override
     public String format(Calendar date) {
-        return format(date, config.defaultPattern());
+        return format(date, defaultPattern);
     }
 
     @Override
@@ -659,12 +671,6 @@ public class DateFormatterServiceImpl implements DateFormatterService {
         if (date == null) return "";
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(date.getTime());
-    }
-
-    @ObjectClassDefinition(name = "Date Formatter Configuration")
-    @interface DateFormatterConfig {
-        @AttributeDefinition(name = "Default Pattern")
-        String defaultPattern() default "MMMM d, yyyy";
     }
 }
 ```

@@ -461,9 +461,13 @@ for premium content, member-only sections, or intranets:
 
 ### Setting up a CUG
 
-```xml title="CUG policy on a page"
-<jcr:root xmlns:rep="internal"
-    rep:cugPolicy="rep:CugPolicy"
+The CUG policy is stored as a `rep:cugPolicy` child node of the restricted subtree root. In
+FileVault XML it lives at `.../restricted-node/_rep_cugPolicy/.content.xml`:
+
+```xml title="_rep_cugPolicy/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
+    jcr:primaryType="rep:CugPolicy"
     rep:principalNames="[premium-members]"/>
 ```
 

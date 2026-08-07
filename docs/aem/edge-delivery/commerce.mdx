@@ -19,9 +19,10 @@ side focused.
 
 ```mermaid
 graph LR
-    subgraph "Author"
+    subgraph "Backend"
         Catalog["Adobe Commerce<br/>(catalog, prices, inventory)"]
         Content["AEM / Docs<br/>(marketing copy, banners)"]
+        Cart["Cart / Checkout API"]
     end
 
     subgraph "Edge Delivery"
@@ -29,10 +30,7 @@ graph LR
         CDN["Adobe CDN"]
     end
 
-    subgraph "Customer"
-        Browser["Browser"]
-        Cart["Cart / Checkout API"]
-    end
+    Browser["Customer browser"]
 
     Catalog -->|"GraphQL / REST"| Pipeline
     Content -->|"Content Bus"| Pipeline
@@ -44,10 +42,12 @@ graph LR
 
 Two flows:
 
-- **Render-time** - product list and detail pages are pre-rendered from the catalog
-  API and cached at the edge with surrogate keys per SKU.
-- **Run-time** - cart, checkout, and account live in the browser, talking directly
-  to the commerce API. Edge caching does not apply.
+- **Catalog reads** - PLP and PDP shells (marketing copy, layout, imagery) are served
+  as cached HTML from the edge, then product data is hydrated from the catalog API.
+  Edge responses carry surrogate keys per SKU / category so a price or inventory
+  change purges only the affected pages.
+- **Cart and checkout** - live in the browser, talking directly to the commerce API.
+  Never cached.
 
 ## Block library
 
@@ -99,10 +99,10 @@ export default async function decorate(block) {
 }
 ```
 
-For PLPs and PDPs, render server-side via the EDS pipeline by including the GraphQL
-result in the source content fragment, so the catalog is **part of the cached HTML**.
-The API call only fires when the block needs live state (current cart, dynamic
-price overrides).
+For SEO-critical fields (title, description, canonical URL, JSON-LD), render them
+into the cached HTML at author time rather than fetching client-side. Reserve the
+runtime GraphQL call for genuinely dynamic state - live inventory, per-user pricing,
+or personalised recommendations.
 
 ## Caching strategy
 

@@ -241,7 +241,8 @@ GET /content/myproject/en.search.json?q=news&limit=5
 
 ### POST Servlet: Form submission
 
-A servlet that handles contact form submissions with CSRF protection:
+A servlet that handles contact form submissions. See [CSRF Protection](#csrf-protection) below for
+the token handling AEM adds on top:
 
 ```java title="core/.../servlets/ContactFormServlet.java"
 package com.myproject.core.servlets;

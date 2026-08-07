@@ -143,7 +143,7 @@ public List<Resource> findPagesByTitle(ResourceResolver resolver, String rootPat
     Constraint pathConstraint = qom.descendantNode("p", rootPath);
     Constraint titleConstraint = qom.comparison(
         qom.propertyValue("p", "jcr:title"),
-        QueryObjectModelFactory.JCR_OPERATOR_LIKE,
+        QueryObjectModelConstants.JCR_OPERATOR_LIKE,
         qom.literal(vf.createValue(title))
     );
 

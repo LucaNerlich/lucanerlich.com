@@ -258,15 +258,22 @@ Blocks can be enriched with metadata authored in a "Section Metadata" or "Page
 Metadata" sub-table:
 
 ```
-| Section Metadata |          |
-|------------------|----------|
-| style            | dark, hero|
-| audience         | mobile   |
+| Section Metadata |               |
+|------------------|---------------|
+| style            | dark, centered|
+| audience         | mobile        |
 ```
 
-The runtime applies `style` values as classes on the section, and exposes other keys
-on `document.querySelector('main > div').dataset.audience` - handy for blocks that
-adapt to surrounding context.
+The runtime applies `style` values as space-separated classes on the containing
+section element, and exposes any other keys as `dataset` on that same section. From a
+block inside the section:
+
+```javascript
+const section = block.closest('div.section');
+const audience = section?.dataset.audience; // "mobile"
+```
+
+Handy for blocks that need to adapt to surrounding context.
 
 ## Common patterns
 

@@ -203,9 +203,10 @@ content:
     url: https://author-p12345-e67890.adobeaemcloud.com/
 ```
 
-UE itself opens at `https://experience.adobe.com/aem/editor` and points at the same
-AEM instance. The editor then fetches the EDS preview of the page being edited and
-displays it inside an iframe.
+UE is launched from the AEM Sites console (or via a deep link) at
+`https://experience.adobe.com/#/@{tenant}/aem/editor/canvas/{path}` and points at the
+same AEM author instance. The editor then loads the EDS preview of the page being
+edited inside an iframe and layers the authoring UI on top.
 
 ## Tradeoffs vs document-based authoring
 

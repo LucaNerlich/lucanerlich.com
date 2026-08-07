@@ -182,20 +182,23 @@ structure is essential for programmatic access.
 │   ├── jcr:primaryType = "dam:AssetContent"
 │   ├── data
 │   │   ├── cq:model = "/conf/myproject/settings/dam/cfm/models/article"
-│   │   ├── title = "My Article Title"
-│   │   ├── body = "<p>The article body in HTML...</p>"
-│   │   ├── publishDate = "2025-06-15T10:00:00.000+02:00"
-│   │   ├── category = "technology"
-│   │   ├── featuredImage = "/content/dam/myproject/images/hero.jpg"
-│   │   └── author = ["/content/dam/myproject/authors/john-doe"]
+│   │   └── master                    (default variation - field values live here)
+│   │       ├── title = "My Article Title"
+│   │       ├── body = "<p>The article body in HTML...</p>"
+│   │       ├── publishDate = "2025-06-15T10:00:00.000+02:00"
+│   │       ├── category = "technology"
+│   │       ├── featuredImage = "/content/dam/myproject/images/hero.jpg"
+│   │       └── author = ["/content/dam/myproject/authors/john-doe"]
 │   └── metadata
 │       ├── dc:title = "My Article Title"
 │       └── dc:description = "..."
 ```
 
 :::info
-Content Fragment data lives under `jcr:content/data`. The element names match the field names
-defined in the model. Fragment references are stored as **String arrays of paths**.
+Content Fragment data lives under `jcr:content/data`. The `cq:model` reference sits on `data`, while
+field values sit on the variation node underneath (`master` by default, plus any custom variations).
+The element names match the field names defined in the model. Fragment references are stored as
+**String arrays of paths**.
 :::
 
 ### Variations

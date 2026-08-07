@@ -390,13 +390,22 @@ The `chooser.label` appears in the Dynamic Participant Step configuration in the
 
 ### Custom OR Split logic
 
-An OR Split evaluates conditions on each outgoing route. You can implement custom rules:
+An OR Split routes execution to one of several branches based on a condition. The typical pattern is:
 
-```java title="core/.../workflow/PublishReadyRule.java"
+1. A **Process Step** before the OR Split writes a boolean variable into the workflow's
+   \`MetaDataMap\`.
+2. Each OR Split branch has a **Script Path** (or **Rule**) expression that reads the variable
+   and returns \`true\` / \`false\`.
+
+The Process Step is a normal \`WorkflowProcess\`:
+
+```java title="core/.../workflow/PublishReadyCheckStep.java"
 package com.myproject.core.workflow;
 
+import com.adobe.granite.workflow.WorkflowException;
 import com.adobe.granite.workflow.WorkflowSession;
 import com.adobe.granite.workflow.exec.WorkItem;
+import com.adobe.granite.workflow.exec.WorkflowProcess;
 import com.adobe.granite.workflow.metadata.MetaDataMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -404,38 +413,44 @@ import org.apache.sling.api.resource.ValueMap;
 import org.osgi.service.component.annotations.Component;
 
 @Component(
-    service = com.day.cq.workflow.exec.WorkflowProcess.class,
+    service = WorkflowProcess.class,
     property = {
-        "process.label=My Project - Is Publish Ready"
+        "process.label=My Project - Set Publish Ready Flag"
     }
 )
-public class PublishReadyRule {
+public class PublishReadyCheckStep implements WorkflowProcess {
 
-    /**
-     * Called by the OR Split to evaluate a route condition.
-     * Return true if this route should be followed.
-     */
-    public boolean evaluate(WorkItem workItem, WorkflowSession session, MetaDataMap args) {
+    @Override
+    public void execute(WorkItem workItem, WorkflowSession session, MetaDataMap args)
+            throws WorkflowException {
+
         String payloadPath = workItem.getWorkflowData().getPayload().toString();
         ResourceResolver resolver = session.adaptTo(ResourceResolver.class);
-        if (resolver == null) return false;
+        if (resolver == null) {
+            throw new WorkflowException("Could not obtain ResourceResolver");
+        }
 
         Resource jcrContent = resolver.getResource(payloadPath + "/jcr:content");
-        if (jcrContent == null) return false;
+        boolean publishReady = false;
+        if (jcrContent != null) {
+            ValueMap props = jcrContent.getValueMap();
+            publishReady = props.containsKey("jcr:title")
+                && props.containsKey("jcr:description")
+                && props.containsKey("featuredImage");
+        }
 
-        ValueMap props = jcrContent.getValueMap();
-
-        // Check if the page has all required fields
-        boolean hasTitle = props.containsKey("jcr:title");
-        boolean hasDescription = props.containsKey("jcr:description");
-        boolean hasImage = props.containsKey("featuredImage");
-
-        return hasTitle && hasDescription && hasImage;
+        // Store the result so the OR Split branches can read it
+        workItem.getWorkflow().getWorkflowData().getMetaDataMap()
+            .put("publishReady", publishReady);
     }
 }
 ```
 
-In the OR Split configuration, you reference this class as a **Rule** on one of the branches.
+In the OR Split, each branch's **Script Path** references the variable:
+
+```text
+function check() { return workflowData.getMetaDataMap().get("publishReady", false); }
+```
 
 ---
 
@@ -803,7 +818,7 @@ class AutoTagProcessStepTest {
         // Verify
         Resource jcrContent = context.resourceResolver()
             .getResource("/content/test/jcr:content");
-        String[] tags = jcrContent.getValueMap().get("cq:tags", String[0]);
+        String[] tags = jcrContent.getValueMap().get("cq:tags", new String[0]);
         assertTrue(Arrays.asList(tags).contains("myproject:content-type/news"));
     }
 }

@@ -176,13 +176,14 @@ tagManager.setTags(resource, new Tag[]{ campaignTag, channelTag }, true);
 #### Finding tagged resources
 
 ```java
-// Find all resources with a specific tag (under a search root)
-TagManager.FindResults results = tagManager.findByTitle("Summer 2025");
+// Find all resources tagged with one or more tag IDs under a search root.
+// The result is a RangeIterator that yields the matching Resources.
+RangeIterator resources = tagManager.find(
+        "/content/site",
+        new String[] { "marketing:campaigns/2025" });
 
-// Iterate
-Iterator<Resource> resources = tagManager.find("/content/site", "marketing:campaigns/2025");
 while (resources.hasNext()) {
-    Resource taggedResource = resources.next();
+    Resource taggedResource = (Resource) resources.next();
     // ...
 }
 ```
@@ -195,8 +196,8 @@ while (resources.hasNext()) {
 | `createTag(tagId, title, desc, autoSave)` | Create a new tag                           |
 | `getTags(resource)`                       | Get all tags on a resource                 |
 | `setTags(resource, tags, autoSave)`       | Set tags on a resource                     |
-| `find(rootPath, tagIds...)`               | Find resources with specific tags          |
-| `findByTitle(title)`                      | Find tags by title                         |
+| `find(rootPath, tagIds)`                  | Find resources tagged with the given IDs   |
+| `findByTitle(title)`                      | Find tags whose title matches the argument |
 | `deleteTag(tag, autoSave)`                | Delete a tag                               |
 | `moveTag(tag, newPath)`                   | Move/rename a tag                          |
 | `mergeTag(sourceTag, targetTag)`          | Merge two tags                             |

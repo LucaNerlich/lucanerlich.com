@@ -36,7 +36,7 @@ No manual schema writing is needed.
 | CF Model Field Type | GraphQL Type | Notes |
 |-------------------|-------------|-------|
 | Single-line text | `String` | |
-| Multi-line text | `String` (with `html`, `plaintext`, `markdown` sub-fields) | Access format via sub-selection |
+| Multi-line text | Object with `html`, `plaintext`, `markdown`, `json` sub-fields | Choose the format via sub-selection |
 | Number (Integer) | `Int` | |
 | Number (Float) | `Float` | |
 | Boolean | `Boolean` | |
@@ -58,11 +58,12 @@ No manual schema writing is needed.
 - **Name**: e.g., `myproject`
 - **Configuration**: Select the site configuration that holds your CF Models (e.g., `/conf/myproject`)
 3. The endpoint becomes available at:
+
 ```text
 /content/cq:graphql/myproject/endpoint.json
 # or (JCR-safe encoding):
 /content/_cq_graphql/myproject/endpoint.json
-   ```
+```
 
 ### Global vs site-specific endpoints
 

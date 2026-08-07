@@ -228,7 +228,7 @@ Forgetting `"localhost"` in `virtualhosts.any` is a classic cause of local SDK r
 
 ## Filter Rules
 
-Filter rules are evaluated **top-to-bottom**. The first matching rule wins. Always start with a global deny and then selectively allow known paths.
+Filter rules are evaluated **top-to-bottom**, but the **last matching rule wins**. That is why the deny-by-default pattern below works: the initial `deny *` matches everything, and later, more specific `allow` rules override it for the paths you want to expose.
 
 ```apacheconf
 # conf.dispatcher.d/filters/filters.any
@@ -721,20 +721,21 @@ echo "ok" > /var/www/healthcheck.html
 
 ### End-to-end check
 
-An end-to-end check verifies that the Dispatcher can reach the publish tier and that the publish tier responds. The AEM out-of-the-box endpoint is `/libs/granite/core/content/login.html` - allow it through the filter for the health-check source IP only:
+An end-to-end check verifies that the Dispatcher can reach the publish tier and that the publish tier responds. AEM ships a lightweight probe at `/libs/granite/core/content/login.html` -- allow it through the filter:
 
 ```apacheconf
 # filters.any
 /0400 {
     /type "allow"
     /url  "/libs/granite/core/content/login.html"
-    /clientheaders { "X-Health-Check" "dispatcher" }
 }
 ```
 
+Filter rules do not have a client-header condition, so if you want to restrict the probe to the load-balancer subnet do it at the Apache `<Location>` level (`Require ip ...`) or block the path from the CDN.
+
 ```bash
 # From the load balancer:
-curl -H "X-Health-Check: dispatcher" http://dispatcher/libs/granite/core/content/login.html
+curl http://dispatcher/libs/granite/core/content/login.html
 ```
 
 ### Kubernetes probe example

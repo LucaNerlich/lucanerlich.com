@@ -274,21 +274,21 @@ This is useful when you need to find an inherited configuration node (e.g. metad
 private Resource currentResource;
 
 /**
-Loops over all parents to find 'customNode' e.g meta tags set via dialog multi
-*/
+ * Walk up the page hierarchy from the current page and return the first
+ * `jcr:content/customNode` that exists, or null if none is found.
+ * Useful for reading inherited configuration set via a dialog on an ancestor page.
+ */
 private Resource getCustomNodeResource(Page page) {
-	String childPath = "/jcr:content/customNode";
-	Resource resource = null;
-	int currentPageDepth = page.getDepth();
-	for (int i=1; i < currentPageDepth; i++) {
-		resource = currentResource.getChild(page.getPath() + childPath);
-		if (resource != null) {
-			break;
-		} else {
-			page = page.getParent();
-		}
-	}
-	return resource;
+    String childPath = "/jcr:content/customNode";
+    ResourceResolver resolver = currentResource.getResourceResolver();
+    while (page != null) {
+        Resource resource = resolver.getResource(page.getPath() + childPath);
+        if (resource != null) {
+            return resource;
+        }
+        page = page.getParent();
+    }
+    return null;
 }
 ```
 

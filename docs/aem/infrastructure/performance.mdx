@@ -165,21 +165,25 @@ public class NavigationModel {
 
 ### Avoid Injecting Heavy Services You Don't Always Use
 
-If a service is only needed in one code path, obtain it programmatically instead of injecting it at model construction time.
+If a service is only needed in one code path, look it up lazily via the OSGi `BundleContext` instead of injecting it at model construction time. This avoids the cost of the service's `@Reference` chain being resolved on every model adaptation, even when the code path is never taken.
 
 ```java
-// BAD - SearchService is injected (and potentially initialised) on every adaptation
+// BAD - SearchService is injected (and its @Reference chain resolved) on every adaptation
 @OSGiService
 private SearchService searchService;
 
-// GOOD - obtain only when needed
-@SlingObject
-private ResourceResolver resolver;
-
+// GOOD - resolve only when the search path is actually taken
 public List<Result> search(String term) {
-    SearchService svc = resolver.adaptTo(SearchService.class);
-    // or use the BundleContext / SlingScriptHelper
-    return svc.search(term);
+    BundleContext ctx = FrameworkUtil.getBundle(getClass()).getBundleContext();
+    ServiceReference<SearchService> ref = ctx.getServiceReference(SearchService.class);
+    if (ref == null) {
+        return List.of();
+    }
+    try {
+        return ctx.getService(ref).search(term);
+    } finally {
+        ctx.ungetService(ref);
+    }
 }
 ```
 

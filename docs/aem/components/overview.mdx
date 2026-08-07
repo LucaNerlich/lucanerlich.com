@@ -84,7 +84,7 @@ If you need to vary server-side logic based on the applied style (not just CSS),
 current style programmatically:
 
 ```java
-import com.day.cq.wcm.api.components.ComponentStyleInfo;
+import com.adobe.cq.wcm.style.ComponentStyleInfo;
 
 // Adapt the component's resource to ComponentStyleInfo
 ComponentStyleInfo styleInfo = request.getResource().adaptTo(ComponentStyleInfo.class);
@@ -103,7 +103,8 @@ if (styleInfo != null) {
 | Method | Returns |
 |--------|---------|
 | `getAppliedCssClasses()` | The CSS classes currently selected by the author (space-separated string) |
-| `getContentPolicy()` | The content policy associated with the component |
+| `getAppliedStyles()` | The list of `StyleInfo` objects currently applied to the component |
+| `getAppliedHtmlElement()` | The HTML element name selected via the Style System (if configured) |
 
 ### BEM naming convention
 

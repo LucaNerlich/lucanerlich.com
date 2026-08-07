@@ -22,14 +22,14 @@ introduced.
 None of these projects provide full solutions. They give you the goal, the skills you will practice, and enough hints
 to get started. Figuring out the details is where the real learning happens.
 
-| Difficulty       | Project                        | Time estimate | Key chapters |
-|------------------|--------------------------------|---------------|--------------|
-| **Beginner**     | FAQ Accordion Component        | 2-4 hours    | 4, 5, 6, 7   |
-| **Beginner**     | Author Bio Card                | 2-4 hours    | 4, 5, 6, 7   |
-| **Intermediate** | Blog Section with Listing Page | 4-8 hours    | 8, 9, 10     |
-| **Intermediate** | Headless Event Calendar        | 4-8 hours    | 11           |
-| **Advanced**     | Multi-Language Mini-Site       | 6-10 hours   | 12           |
-| **Advanced**     | Production Dispatcher Config   | 4-6 hours    | 13           |
+| Difficulty       | Project                        | Time estimate | Key chapters   |
+|------------------|--------------------------------|---------------|----------------|
+| **Beginner**     | FAQ Accordion Component        | 2-4 hours     | 4, 5, 6, 7     |
+| **Beginner**     | Author Bio Card                | 2-4 hours     | 4, 5, 6, 7     |
+| **Intermediate** | Blog Section with Listing Page | 4-8 hours     | 9, 10, 11, 14  |
+| **Intermediate** | Headless Event Calendar        | 4-8 hours     | 13             |
+| **Advanced**     | Multi-Language Mini-Site       | 6-10 hours    | 15             |
+| **Advanced**     | Production Dispatcher Config   | 4-6 hours     | 18             |
 
 ---
 
@@ -126,7 +126,7 @@ articles.
 - Editable templates and template types (chapter 9)
 - Component policies and allowed components (chapter 9)
 - Page properties in Sling Models (chapter 11)
-- QueryBuilder for finding child pages (chapter 2)
+- QueryBuilder for finding child pages (chapter 14)
 - The Style System for card variants (chapter 9)
 - Client libraries for the blog layout (chapter 10)
 
@@ -284,7 +284,7 @@ After completing these projects:
 
 ## Congratulations
 
-You have completed the **AEM Beginners Guide**. Across 20 chapters you learned to:
+You have completed the **AEM Beginners Guide**. Across 22 chapters you learned to:
 
 - Work with the **AEM technology stack** - JCR, Sling, and OSGi
 - **Build components** with HTL, Touch UI dialogs, and Sling Models

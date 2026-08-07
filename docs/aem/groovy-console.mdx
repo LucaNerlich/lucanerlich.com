@@ -304,7 +304,9 @@ while (true) {
         out.println("Found: ${path}${title ? " | title='${title}'" : ''}")
 
         if (!DRY_RUN) {
-            node.setProperty('demo:lastScanned', java.time.Instant.now().toString())
+            // Use an unprefixed property name; a prefix like 'demo:' requires
+            // the namespace to be registered on the JCR NamespaceRegistry first.
+            node.setProperty('lastScanned', java.time.Instant.now().toString())
             mutated++
         }
     }

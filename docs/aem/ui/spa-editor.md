@@ -1,6 +1,6 @@
 ---
 title: SPA Editor
-sidebar_position: 8
+sidebar_position: 9
 tags: [aem, spa, react, angular, frontend]
 ---
 
@@ -224,8 +224,7 @@ Container components (like the Responsive Grid) hold child components. They rece
 
 ```jsx title="ui.frontend/src/components/Container/Container.js"
 import React from 'react';
-import { MapTo, withComponentMappingContext } from '@adobe/aem-react-editable-components';
-import { ResponsiveGrid } from '@adobe/aem-react-editable-components';
+import { MapTo, ResponsiveGrid } from '@adobe/aem-react-editable-components';
 
 // Use the built-in ResponsiveGrid for layout container
 MapTo('wcm/foundation/components/responsivegrid')(ResponsiveGrid);

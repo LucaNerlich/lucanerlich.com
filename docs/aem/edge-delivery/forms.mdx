@@ -151,10 +151,10 @@ JS hides steps after the current one and wires Next / Previous buttons.
 
 ### File upload to AEM Assets
 
-For document upload forms, post the file directly to an AEM Assets endpoint via the
-[Asset Upload API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview).
-Get a one-time upload token from your backend so the API key never lands in the
-browser.
+For document upload forms, post the file to a backend that then forwards to AEM
+Assets via the [Assets Upload API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/apis/upload-assets).
+Never expose your Assets API credentials in the browser - the backend should hold
+the token and act as a proxy, or issue a short-lived one-time upload URL.
 
 ### Save draft
 

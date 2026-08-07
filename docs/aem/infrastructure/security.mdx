@@ -370,11 +370,12 @@ These paths must **never** be accessible on a public-facing publish instance:
 | `/crx/*` | CRX/DE and repository browser |
 | `/system/console/*` | Felix OSGi console |
 | `/apps/*` | Application code and component definitions |
-| `/libs/*` | AEM platform code |
+| `/libs/*` | AEM platform code (except explicitly allow-listed paths, e.g. `/libs/granite/csrf/token.json`) |
 | `/bin/*` | Sling servlets (allow specific exceptions only) |
-| `/etc.clientlibs/*` | Allow this - proxied clientlibs are safe |
 | `/services/*` | Internal service endpoints |
 | `/content/dam/*.json` | Prevents JSON enumeration of DAM assets |
+
+Note that `/etc.clientlibs/*` should be **explicitly allowed**, not blocked -- it serves the versioned, proxied client-side JS and CSS bundles that the site depends on.
 
 ### Deny-by-default filter pattern
 

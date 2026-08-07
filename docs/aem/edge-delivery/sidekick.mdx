@@ -146,11 +146,10 @@ the Sidekick opens it in a panel and passes the current page context via
     <body>
         <button id="capture">Screenshot this page</button>
         <script type="module">
-            const sidekick = document.querySelector('helix-sidekick') || window.parent;
-
             document.getElementById('capture').addEventListener('click', async () => {
-                const url = new URL(window.parent.location.href).pathname;
-                const res = await fetch(`/api/screenshot?path=${encodeURIComponent(url)}`);
+                // Sidekick plugins run inside an iframe; window.parent is the host page.
+                const path = new URL(window.parent.location.href).pathname;
+                const res = await fetch(`/api/screenshot?path=${encodeURIComponent(path)}`);
                 const blob = await res.blob();
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
