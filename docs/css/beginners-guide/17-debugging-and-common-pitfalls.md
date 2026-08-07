@@ -124,7 +124,6 @@ img {
 /* Long words/URLs */
 .text {
     overflow-wrap: break-word;
-    word-break: break-word;
 }
 
 /* Containers */
@@ -143,7 +142,7 @@ Use `max-width` instead of `width` and `min-height` instead of `height` to let c
 | `hidden`  | Content is clipped                           |
 | `scroll`  | Always shows scrollbars                      |
 | `auto`    | Shows scrollbars only when content overflows |
-| `clip`    | Like `hidden` but prevents scrolling via JS  |
+| `clip`    | Like `hidden` but blocks all scrolling (no scroll container is created) |
 
 > **Note:** `overflow: hidden` on a parent can break `position: sticky` on children. If your sticky element is not
 > working, check ancestors for `overflow: hidden` or `overflow: auto`.
@@ -199,9 +198,9 @@ cross axis has no effect because the parent is only as tall as its content.
 **Causes:**
 
 1. The element does not have `position` set. `z-index` only works on positioned elements (`relative`, `absolute`,
-   `fixed`, `sticky`).
-2. **Stacking contexts.** Each element with a `z-index` and `position` creates a stacking context. An element cannot
-   escape its parent's stacking context, no matter how high its `z-index`.
+   `fixed`, `sticky`) and on flex or grid items.
+2. **Stacking contexts.** Several properties (listed under "Fixes" below) create a new stacking context. An element
+   cannot escape its parent's stacking context, no matter how high its `z-index`.
 
 **Fixes:**
 

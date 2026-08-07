@@ -167,7 +167,9 @@ Request failed
 
 ## Avoid async in forEach
 
-`Array.forEach` does not await async callbacks. Use `for...of` instead when order matters.
+`Array.forEach` ignores the promise returned by an async callback: the outer function does not wait, and any rejection
+becomes an **unhandled promise rejection**. Use `for...of` when order matters, or `Promise.all(array.map(...))` when
+you want parallel work.
 
 ```ts
 async function logIds(ids: number[]): Promise<void> {
@@ -249,15 +251,20 @@ When working with browser APIs like `fetch`, use `AbortController` to cancel req
 improve UX.
 
 ```ts
-const controller = new AbortController();
-const { signal } = controller;
-
-async function run(): Promise<void> {
-    controller.abort();
-    console.log(signal.aborted);
+async function fetchWithAbort(url: string, ms: number): Promise<Response> {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    try {
+        return await fetch(url, { signal: controller.signal });
+    } finally {
+        clearTimeout(timer);
+    }
 }
 
-run();
+// The signal's `aborted` flag flips to true once abort() is called:
+const controller = new AbortController();
+controller.abort();
+console.log(controller.signal.aborted);
 ```
 
 Result:

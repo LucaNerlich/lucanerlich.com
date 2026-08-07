@@ -17,8 +17,8 @@ sidebar_position: 2
 # JavaScript Error Handling: Patterns, Types, and Best Practices
 
 Modern JavaScript runs in browsers, Node.js, and edge runtimes, but error handling fundamentals stay the same: detect
-failures early, report them clearly, and recover when possible. This post focuses on **practical error handling** with *
-*TypeScript examples** and the output you can expect. The goal is to build reliable systems without hiding the real
+failures early, report them clearly, and recover when possible. This post focuses on **practical error handling** with
+**TypeScript examples** and the output you can expect. The goal is to build reliable systems without hiding the real
 cause of failures.
 
 ## Quick start
@@ -62,13 +62,9 @@ errors are useful when you need to distinguish **expected failures** from **unex
 ```ts
 class NotFoundError extends Error {
     readonly status = 404;
-    constructor(message: string, options?: { cause?: unknown }) {
-        super(message);
+    constructor(message: string, options?: ErrorOptions) {
+        super(message, options);
         this.name = "NotFoundError";
-        if (options?.cause) {
-            // @ts-expect-error - cause is available at runtime in modern JS
-            this.cause = options.cause;
-        }
     }
 }
 
@@ -103,10 +99,7 @@ function readConfig(jsonText: string): { port: number } {
         return JSON.parse(jsonText) as { port: number };
     } catch (err) {
         const cause = err instanceof Error ? err : undefined;
-        const wrapped = new Error("Config JSON is invalid");
-        // @ts-expect-error - cause is available at runtime in modern JS
-        wrapped.cause = cause;
-        throw wrapped;
+        throw new Error("Config JSON is invalid", { cause });
     }
 }
 
@@ -158,8 +151,8 @@ User not found
 
 ## Result objects for expected failures
 
-Some failures are expected (e.g., "user not found"). Throwing exceptions in those cases can make control flow noisy. A *
-*Result object** keeps the error explicit and avoids catch blocks for common cases.
+Some failures are expected (e.g., "user not found"). Throwing exceptions in those cases can make control flow noisy. A
+**Result object** keeps the error explicit and avoids catch blocks for common cases.
 
 ```ts
 type Result<T> = { ok: true; value: T } | { ok: false; error: string };
@@ -214,12 +207,17 @@ Result:
 
 ## Retry with backoff (when safe)
 
-Retries make sense for flaky networks, not for validation or logic errors. Keep retries bounded and avoid retry storms.
+Retries make sense for flaky networks, not for validation or logic errors. Keep retries bounded, add a delay between
+attempts to avoid retry storms, and consider jitter for high-traffic services.
 
 ```ts
+const sleep = (ms: number): Promise<void> =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
 async function retry<T>(
     task: () => Promise<T>,
-    retries: number
+    retries: number,
+    baseDelayMs = 100
 ): Promise<T> {
     let lastError: Error | null = null;
     for (let attempt = 1; attempt <= retries; attempt += 1) {
@@ -227,6 +225,9 @@ async function retry<T>(
             return await task();
         } catch (err) {
             lastError = err instanceof Error ? err : new Error("Unknown error");
+            if (attempt < retries) {
+                await sleep(baseDelayMs * 2 ** (attempt - 1));
+            }
         }
     }
     throw lastError ?? new Error("Retry failed");
@@ -382,10 +383,10 @@ try {
 }
 ```
 
-Result:
+Result (message text varies by runtime):
 
 ```text
-Unexpected token b in JSON at position 1
+Unexpected token 'b', "{bad json}" is not valid JSON
 ```
 
 ### How do I handle async errors with await?

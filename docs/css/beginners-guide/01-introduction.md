@@ -28,7 +28,7 @@ know basic HTML (tags, attributes, nesting). If not, work through the
 |---------------------------------|----------|------------------------------------------------------------------------------|
 | **1 - Foundations**            | 1-5     | How CSS works, selectors, the box model, colours, fonts, units               |
 | **2 - Layout**                 | 6-9     | Display, positioning, Flexbox, CSS Grid, responsive design                   |
-| **3 - Visual Design**         | 10-12   | Backgrounds, shadows, transitions, animations, pseudo-classes/elements       |
+| **3 - Visual Design**         | 10-12   | Backgrounds, borders, shadows, transitions, animations, pseudo-classes/elements |
 | **4 - Intermediate Concepts** | 13-15   | Custom properties, specificity & cascade, modern CSS features                |
 | **5 - Professional CSS**      | 16-17   | Architecture, best practices, debugging, common pitfalls                     |
 | **6 - Practice**              | 18       | Six hands-on projects from beginner to advanced                              |

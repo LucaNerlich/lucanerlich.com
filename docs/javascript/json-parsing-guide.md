@@ -235,7 +235,15 @@ Result:
 
 ## JSON limitations to remember
 
-JSON does not support `undefined`, functions, or `BigInt`. Dates are serialized as strings. Plan for these conversions.
+JSON does not support `undefined`, functions, `Symbol`, or `BigInt`.
+
+- `undefined`, functions, and symbols in objects are **dropped** from `JSON.stringify` output; in arrays they become
+  `null`.
+- `BigInt` values **throw** a `TypeError` on `JSON.stringify` -- convert to a string first.
+- `Date` instances are serialized via `Date.prototype.toJSON()`, so they become ISO strings and do not round-trip back
+  to `Date` on parse.
+
+Plan for these conversions.
 
 ```ts
 const payload = { id: 1, createdAt: new Date("2026-02-02T14:30:00Z") };

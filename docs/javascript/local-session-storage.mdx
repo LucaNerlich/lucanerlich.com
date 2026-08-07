@@ -252,7 +252,8 @@ hello
 
 ## Cross-tab synchronization (storage event)
 
-The `storage` event fires in other tabs when a value changes. Use it to keep UI in sync.
+The `storage` event fires in **other tabs** when a value changes -- not in the tab that made the change. Use it to keep
+UI in sync across tabs.
 
 ```ts
 window.addEventListener("storage", (event) => {
@@ -261,16 +262,17 @@ window.addEventListener("storage", (event) => {
     }
 });
 
+// Trigger this from another tab or window:
 localStorage.setItem("theme", "light");
 ```
 
-Result:
+Result (in another open tab that registered the listener):
 
 ```text
 theme changed to light
 ```
 
-Note: the event fires in **other tabs**, not the same tab.
+To react to storage changes within the same tab, dispatch a custom event after `setItem`, or use `BroadcastChannel`.
 
 ## Common pitfalls
 

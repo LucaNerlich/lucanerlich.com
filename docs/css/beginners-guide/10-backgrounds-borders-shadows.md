@@ -99,11 +99,11 @@ Controls tiling behaviour:
 
 Controls whether the background scrolls with the page:
 
-| Value    | Behaviour                                 |
-|----------|-------------------------------------------|
-| `scroll` | Background scrolls with the element       |
-| `fixed`  | Background stays fixed (parallax effect)  |
-| `local`  | Background scrolls with the element content |
+| Value    | Behaviour                                                                    |
+|----------|------------------------------------------------------------------------------|
+| `scroll` | Background is fixed to the element itself; does not scroll with its contents (default) |
+| `fixed`  | Background is fixed to the viewport (parallax effect)                        |
+| `local`  | Background scrolls with the element's contents (visible when the element is scrollable) |
 
 ```css
 .hero {
