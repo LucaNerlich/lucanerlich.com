@@ -1,0 +1,8 @@
+{
+    "label": "Standalone ACS Commons",
+    "link": {
+        "type": "generated-index",
+        "slug": "/aem/standalone-acs-commons",
+        "description": "Standalone AEM as a Cloud Service modules that replace individual ACS AEM Commons features -- copy one folder, not the whole library."
+    }
+}

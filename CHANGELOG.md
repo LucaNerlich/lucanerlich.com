@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.28.0] - 2026-08-11
+
+### Added
+
+- New [Standalone ACS Commons](/aem/standalone-acs-commons/) guide series covering five drop-in AEMaaCS modules from [standalone-acs-commons](https://github.com/LucaNerlich/standalone-acs-commons): [acs.email](/aem/standalone-acs-commons/acs-email/), [acs.environment-indicator](/aem/standalone-acs-commons/acs-environment-indicator/), [acs.genericlists](/aem/standalone-acs-commons/acs-genericlists/), [acs.include](/aem/standalone-acs-commons/acs-include/), and [acs.workflow](/aem/standalone-acs-commons/acs-workflow/)
+- Cross-links from the AEM email, Core Components, and Workflows docs, plus the homepage AEM section
+
 ## [1.27.1] - 2026-07-25
 
 ### Changed

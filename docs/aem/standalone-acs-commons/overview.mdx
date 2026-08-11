@@ -1,0 +1,56 @@
+---
+title: "Standalone ACS Commons - Overview"
+description: An introduction to standalone-acs-commons - five independent AEM as a Cloud Service modules that replace individual ACS AEM Commons features without dragging in the whole library.
+tags: [aem, acs-commons, osgi, open-source, aemaacs]
+keywords:
+  - standalone acs commons
+  - acs aem commons alternative
+  - aem as a cloud service modules
+  - adobe consulting services commons
+---
+
+# Standalone ACS Commons
+
+[GitHub Repository](https://github.com/LucaNerlich/standalone-acs-commons)
+
+[ACS AEM Commons](https://adobe-consulting-services.github.io/acs-aem-commons/) is the de-facto utility library for AEM teams. It is also a large dependency: dozens of features, shared OSGi wiring, and more surface area than most projects need for the one or two helpers they actually use.
+
+**[standalone-acs-commons](https://github.com/LucaNerlich/standalone-acs-commons)** is a collection of **standalone** AEM as a Cloud Service modules. Each top-level folder is an in-house replacement for a single ACS Commons feature. Modules do **not** depend on each other or on a shared parent POM -- you copy one folder into your project (or grab a release zip) and move on.
+
+## Modules
+
+| Module | Replaces | Post |
+| --- | --- | --- |
+| [`acs.email`](https://github.com/LucaNerlich/standalone-acs-commons/tree/main/acs.email) | ACS Commons `EmailService` | [Templated Email Service](./acs-email.mdx) |
+| [`acs.environment-indicator`](https://github.com/LucaNerlich/standalone-acs-commons/tree/main/acs.environment-indicator) | Show Author Environment Indicator | [Author Environment Indicator](./acs-environment-indicator.mdx) |
+| [`acs.genericlists`](https://github.com/LucaNerlich/standalone-acs-commons/tree/main/acs.genericlists) | Generic Lists | [Generic Lists](./acs-genericlists.mdx) |
+| [`acs.include`](https://github.com/LucaNerlich/standalone-acs-commons/tree/main/acs.include) | Parameterized Include for Dialog Widgets | [Parameterized Dialog Include](./acs-include.mdx) |
+| [`acs.workflow`](https://github.com/LucaNerlich/standalone-acs-commons/tree/main/acs.workflow) | `WorkflowPackageManager` | [Workflow Package Manager](./acs-workflow.mdx) |
+
+## When to use this instead of ACS Commons
+
+Reach for a standalone module when:
+
+- You need **one** ACS Commons capability (templated email, dialog includes, generic lists, ...) and not the rest of the library.
+- You want a **smaller dependency footprint** and a clearer ownership story for Cloud Service deployments.
+- You prefer a copy-in module you can fork and harden for your project, rather than tracking ACS Commons upgrades for unused features.
+
+Stick with full ACS Commons when you already depend on many of its features, or when a capability you need is not ported here yet.
+
+## How to consume a module
+
+Copy the module folder (for example `acs.include/`) into your repository and add it to your root `pom.xml` `<modules>` list. Nothing inside a module folder references the aggregator repo.
+
+Alternatively, download a pre-packaged zip from the [Releases page](https://github.com/LucaNerlich/standalone-acs-commons/releases).
+
+```bash
+mvn clean install                  # builds every module in the aggregator
+```
+
+Each module README documents its own `-PautoInstallBundle` / `-PautoInstallPackage` profiles.
+
+## Related reading
+
+- Repo root README: [standalone-acs-commons](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/README.md)
+- Upstream project: [ACS AEM Commons](https://adobe-consulting-services.github.io/acs-aem-commons/)
+- Frontend companion for AEMaaCS: [@aemvite](../aemvite.mdx)

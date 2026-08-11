@@ -1,0 +1,148 @@
+---
+title: "acs.include - Parameterized Granite Dialog Include"
+description: Standalone AEM parameterized dialog include - reuse Granite UI field snippets with ${{key:default}} placeholders, optional namespacing, hide conditions, and typed casting.
+tags: [aem, dialogs, granite-ui, touch-ui, acs-commons]
+keywords:
+  - aem parameterized include
+  - granite ui include
+  - acs commons parameterized namespace include
+  - dialog widget reuse aem
+---
+
+# acs.include: Parameterized Granite Dialog Include
+
+[Module README](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.include/README.md) ·
+[Repository](https://github.com/LucaNerlich/standalone-acs-commons) ·
+[Original ACS Commons Parameterized Include](https://adobe-consulting-services.github.io/acs-aem-commons/features/parameterized-namespace-include/index.html)
+
+`acs.include` lets a Granite UI dialog `path`-include a reusable field snippet and substitute
+`${{key:default}}` placeholders via a `parameters` child node. It replaces ACS Commons'
+[Parameterized Namespace Granite Include](https://adobe-consulting-services.github.io/acs-aem-commons/features/parameterized-namespace-include/index.html)
+(`acs-commons/granite/ui/components/include`) and adds three opt-in capabilities: namespace cascading, conditional
+`hide`, and typed casting.
+
+## Authoring contract
+
+At the include site:
+
+```xml
+<caption
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="acs-include/granite/ui/components/include"
+        path="myapp/widgets/textarea/textarea">
+    <parameters
+            jcr:primaryType="nt:unstructured"
+            fieldLabel="Caption"
+            propertyName="./caption"/>
+</caption>
+```
+
+`path` is a relative, search-path-style reference (`/apps` then `/libs`) -- no leading slash. The included snippet
+uses `${{key:default}}` placeholders:
+
+```xml
+<textarea
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+        fieldLabel="${{fieldLabel:Text}}"
+        name="${{propertyName:./text}}"/>
+```
+
+If `parameters` supplies a key, that value is used; otherwise the literal text after `:` is used (or an empty
+string if there is no `:`).
+
+## When to use it
+
+Use `acs.include` when:
+
+- Several components share the **same dialog field group** (title + link, image crop options, CTA block) and you
+  want one snippet to maintain.
+- You need **per-include overrides** for labels, property names, or defaults without copying XML.
+- You include the **same snippet twice** in one dialog and need namespaced `name` properties to avoid collisions.
+
+Stick with a plain `granite/ui/components/coral/foundation/include` when the snippet has no parameters. Prefer
+copy-paste only for one-off dialogs that will never be reused.
+
+Also covered on this site under [Core Components dialog composition](../components/core-components.mdx#option-2---parameterized-namespace-granite-include).
+
+## Opt-in: namespace cascading
+
+Include the same snippet more than once without colliding `name` / `fileNameParameter` /
+`fileReferenceParameter` values:
+
+```xml
+<block1
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="acs-include/granite/ui/components/include"
+        namespace="block1"
+        path="myapp/widgets/textwithlink/textWithLink"/>
+<block2
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="acs-include/granite/ui/components/include"
+        namespace="block2"
+        path="myapp/widgets/textwithlink/textWithLink"/>
+```
+
+If the snippet stores `./text`, `block1` writes `./block1/text` and `block2` writes `./block2/text`. Namespacing
+cascades into nested includes (`ambient/own`) but **not** into multifield rows -- multifield indexing already
+guarantees uniqueness.
+
+## Opt-in: conditional visibility (`hide`)
+
+Skip a (possibly nested) child of an included snippet based on a placeholder-resolved boolean:
+
+```xml
+<!-- inside the included snippet -->
+<advancedOptions
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/container"
+        hide="${{hideAdvanced:true}}">
+    <items jcr:primaryType="nt:unstructured">
+        <!-- ... -->
+    </items>
+</advancedOptions>
+```
+
+```xml
+<!-- at the include site -->
+<caption
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="acs-include/granite/ui/components/include"
+        path="myapp/widgets/something/something">
+    <parameters
+            jcr:primaryType="nt:unstructured"
+            hideAdvanced="false"/>
+</caption>
+```
+
+`hide="true"` after substitution skips that resource and its subtree. A `hide` on the snippet root skips the
+whole include.
+
+## Opt-in: typed casting
+
+Normalize substituted values to canonical `Boolean` / `Long` / `Double` string forms:
+
+```xml
+<properties
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/tabs"
+        maximized="${{(Boolean)maximized:false}}"/>
+```
+
+With `maximized="TRUE"` in `parameters`, the `(Boolean)` hint canonicalizes the property to `"true"` instead of
+leaving the literal `"TRUE"`. Unsupported parse results keep the original value rather than failing the include.
+
+## Building and deploying
+
+```bash
+mvn clean install                                   # build
+mvn clean install -PautoInstallBundle               # deploy core
+mvn clean install -PautoInstallPackage              # deploy ui.apps packages
+```
+
+## Links
+
+- Module README: [acs.include/README.md](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.include/README.md)
+- Collection overview: [Standalone ACS Commons](./overview.mdx)
+- Upstream feature: [Parameterized Namespace Granite Include](https://adobe-consulting-services.github.io/acs-aem-commons/features/parameterized-namespace-include/index.html)
+- Related on this site: [Core Components](../components/core-components.mdx)

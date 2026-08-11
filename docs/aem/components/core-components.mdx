@@ -267,6 +267,14 @@ namespace / jcr node name. Due to this, we are able to include the same widget m
 properties in a single child resource and use this to automatically inject based on the inherited sling model. For us,
 the latter is the important part. But more on this in Part 2.
 
+Prefer a standalone module instead of full ACS Commons? Use
+[acs.include](../standalone-acs-commons/acs-include.mdx) from
+[standalone-acs-commons](https://github.com/LucaNerlich/standalone-acs-commons). Migration from ACS Commons
+requires replacing `acs-commons/granite/ui/components/include` with
+`acs-include/granite/ui/components/include` and removing the leading slash from every `path` value (for example
+`path="/libs/..."` becomes `path="libs/..."`). After that, placeholder/parameter authoring matches ACS Commons,
+with optional `hide` and typed casting on top.
+
 ```xml
 <!-- ui.apps/src/main/content/jcr_root/apps/mysite/components/extendedimage/_cq_dialog/.content.xml -->
 

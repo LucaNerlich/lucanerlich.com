@@ -708,7 +708,12 @@ handling live in one place.
 
 ## Reusable E-Mail Service
 
-In real projects, wrap the gateway logic into a dedicated OSGi service:
+In real projects, wrap the gateway logic into a dedicated OSGi service. If you want a ready-made,
+ACS Commons-compatible templated sender without installing the full ACS Commons library, see
+[acs.email](../standalone-acs-commons/acs-email.mdx) in
+[standalone-acs-commons](https://github.com/LucaNerlich/standalone-acs-commons).
+
+Otherwise, a minimal in-project service looks like this:
 
 ```java
 package com.myproject.core.services;

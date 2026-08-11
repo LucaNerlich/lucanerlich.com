@@ -1,0 +1,110 @@
+---
+title: "acs.workflow - Workflow Package Manager"
+description: Standalone AEM WorkflowPackageManager - create and read multi-path workflow packages under /var/workflow/packages without ACS Commons or a dedicated service user.
+tags: [aem, workflow, osgi, acs-commons, aemaacs]
+keywords:
+  - aem workflow package manager
+  - acs commons workflowpackagemanager
+  - bulk workflow payload
+  - resource collection aem
+---
+
+# acs.workflow: Workflow Package Manager
+
+[Module README](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.workflow/README.md) ·
+[Repository](https://github.com/LucaNerlich/standalone-acs-commons) ·
+[Original ACS Commons source](https://github.com/Adobe-Consulting-Services/acs-aem-commons/blob/master/bundle/src/main/java/com/adobe/acs/commons/workflow/WorkflowPackageManager.java)
+
+`acs.workflow` creates and reads AEM Workflow "packages" -- `cq:Page`s under `/var/workflow/packages` that hold a
+multi-path payload (for example the set of pages a bulk publish, lock, or delete workflow acts on). It replaces ACS
+Commons'
+[`WorkflowPackageManager`](https://github.com/Adobe-Consulting-Services/acs-aem-commons/blob/master/bundle/src/main/java/com/adobe/acs/commons/workflow/WorkflowPackageManager.java)
+and is built directly on native AEM Workflow collection APIs.
+
+There is no dedicated ACS Commons feature page for this API; the upstream contract lives in the Java interface linked
+above.
+
+## How it works
+
+A workflow package is a `cq:Page` (template `/libs/cq/workflow/templates/collectionpage`) with a `vlt:definition`
+node describing which paths it contains -- the same structure the AEM Workflow console creates when you multi-select
+items and start a workflow.
+
+Calling `create(resourceResolver, bucketSegment, name, paths...)`:
+
+1. Resolves the bucket root from the **caller's** `ResourceResolver` -- `/var/workflow/packages` if it exists,
+   otherwise the legacy `/etc/workflow/packages`. No service-user lookup is required.
+2. Creates the package under that root (optionally nested under `bucketSegment`) with a `vlt:definition/filter`
+   listing one `resource_N` child per path, with `root` and glob `rules` covering that path and its
+   `jcr:content` subtree.
+3. Sets `sling:resourceType` to `cq/workflow/components/collection/page` so `isWorkflowPackage()` stays
+   deterministic.
+
+There is also a shorter `create(resourceResolver, name, paths...)` overload with no bucket segment.
+
+Calling `getPaths(resourceResolver, path)`:
+
+1. Missing resource → empty list.
+2. Not a workflow package → single-item list containing `path` itself.
+3. Otherwise → delegates to AEM's `ResourceCollectionUtil` / `ResourceCollection` to enumerate matching paths.
+
+## When to use it
+
+Use `acs.workflow` when:
+
+- A custom workflow (or servlet that starts one) must act on **many paths as a single payload**.
+- You need to **create, inspect, or delete** workflow packages programmatically.
+- You want ACS Commons' `WorkflowPackageManager` behavior without the rest of ACS Commons.
+
+You do not need this module for single-path workflows -- pass the page/asset path as the payload directly. See also
+[AEM Workflows](../backend/workflows.mdx) on this site.
+
+## Example usage
+
+```java
+@Reference
+private WorkflowPackageManager workflowPackageManager;
+
+// create(resourceResolver, bucketSegment, name, paths...)
+// -> /var/workflow/packages/bulk-publish/my-package (bucketSegment may be null/blank)
+Page pkg = workflowPackageManager.create(
+        resourceResolver,
+        "bulk-publish",
+        "my-package",
+        "/content/site/page-a",
+        "/content/site/page-b");
+
+// ... start a workflow with pkg.getPath() as the payload ...
+
+List<String> paths = workflowPackageManager.getPaths(resourceResolver, pkg.getPath());
+workflowPackageManager.delete(resourceResolver, pkg.getPath());
+```
+
+API surface: `create` (with and without `bucketSegment`), `getPaths`, `delete`, `isWorkflowPackage`.
+
+## No service user required
+
+Unlike upstream ACS Commons (and unlike this repo's [`acs.email`](./acs-email.mdx) module), every method takes the
+caller's own `ResourceResolver`. There is no dedicated system user or ACL bootstrap for this module -- the caller
+must already be allowed to write under `/var/workflow/packages` (or the legacy `/etc` fallback).
+
+## Not ported: configurable `wf-package.types`
+
+Upstream exposes an OSGi property (`wf-package.types`, default `cq:Page,cq:PageContent,dam:Asset`) for the default
+node types filtered by the 2-arg `getPaths`. This module hardcodes that same default. Callers who need different
+types use the explicit 3-arg `getPaths(resourceResolver, path, nodeTypes)` overload instead of a second,
+config-driven default.
+
+## Building and deploying
+
+```bash
+mvn clean install                       # build
+mvn clean install -PautoInstallBundle   # build + deploy the bundle (default: localhost:4502)
+```
+
+## Links
+
+- Module README: [acs.workflow/README.md](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.workflow/README.md)
+- Collection overview: [Standalone ACS Commons](./overview.mdx)
+- Upstream interface: [`WorkflowPackageManager.java`](https://github.com/Adobe-Consulting-Services/acs-aem-commons/blob/master/bundle/src/main/java/com/adobe/acs/commons/workflow/WorkflowPackageManager.java)
+- Related on this site: [AEM Workflows](../backend/workflows.mdx)
