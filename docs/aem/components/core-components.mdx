@@ -267,6 +267,11 @@ namespace / jcr node name. Due to this, we are able to include the same widget m
 properties in a single child resource and use this to automatically inject based on the inherited sling model. For us,
 the latter is the important part. But more on this in Part 2.
 
+Prefer a standalone module instead of full ACS Commons? Use
+[acs.include](../standalone-acs-commons/acs-include.mdx) from
+[standalone-acs-commons](https://github.com/LucaNerlich/standalone-acs-commons) -- same authoring contract, plus
+optional `hide` and typed casting.
+
 ```xml
 <!-- ui.apps/src/main/content/jcr_root/apps/mysite/components/extendedimage/_cq_dialog/.content.xml -->
 

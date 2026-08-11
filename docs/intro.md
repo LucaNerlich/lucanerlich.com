@@ -47,6 +47,7 @@ Multi-chapter guided introductions, from zero to working knowledge:
 - [Groovy Console](./aem/groovy-console.mdx) - Script templates and API reference
 - [Client Libraries](./aem/client-libraries.mdx) - CSS/JS bundling, aggregation, caching
 - [AEM Recipes](./aem/recipes.mdx) - How-tos that stitch the deep-dives into workflows
+- [Standalone ACS Commons](./aem/standalone-acs-commons/overview.mdx) - Drop-in replacements for individual ACS Commons features
 - [Edge Delivery Services](./aem/edge-delivery/overview.mdx) - Blocks, authoring, Universal Editor, Admin API
 
 ### AI

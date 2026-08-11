@@ -1,0 +1,126 @@
+---
+title: "acs.email - Templated Email Service for AEM"
+description: Standalone AEM EmailService built on MessageGatewayService and MailTemplate - send parameterized HTML or plain-text emails from JCR templates without depending on the full ACS Commons library.
+tags: [aem, email, osgi, acs-commons, aemaacs]
+keywords:
+  - aem email service
+  - acs commons emailservice
+  - mailtemplate aem
+  - messagegatewayservice
+  - templated email aem
+---
+
+# acs.email: Templated Email Service for AEM
+
+[Module README](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.email/README.md) ·
+[Repository](https://github.com/LucaNerlich/standalone-acs-commons) ·
+[Original ACS Commons Email API](https://adobe-consulting-services.github.io/acs-aem-commons/features/e-mail/email-api/index.html)
+
+`acs.email` is a slim, template-based email sender for AEM as a Cloud Service. It replaces ACS AEM Commons'
+[`EmailService`](https://adobe-consulting-services.github.io/acs-aem-commons/features/e-mail/email-api/index.html)
+with a focused OSGi service built directly on AEM's native `MessageGatewayService` and `MailTemplate` APIs -- no ACS Commons dependency required.
+
+## What it does
+
+A mail template is a JCR file (typically under `/apps/.../emailTemplates/`) whose first line is a `Subject: ...`
+header, followed by a blank line and a plain-text or HTML body. The body may contain `${placeholder}` tokens.
+
+Calling `sendEmail(templatePath, emailParams, recipients...)`:
+
+1. Resolves `templatePath` via a service resource resolver and parses it with `MailTemplate`.
+2. Merges `emailParams` into the template, substituting `${key}` tokens in the body.
+3. Applies reserved keys (sender, subject, bounce address) as headers instead of body substitutions.
+4. Sends one email per recipient through `MessageGatewayService`, which uses the SMTP settings from AEM's
+   `com.day.cq.mailer.DefaultMailService` OSGi config.
+
+HTML vs plain text is inferred from the template file extension (`.html` → HTML), unless attachments are supplied,
+which force a multipart HTML message.
+
+## When to use it
+
+Use `acs.email` when you need:
+
+- **Order confirmations, password resets, workflow notifications**, or any other templated transactional email from AEM.
+- A **central OSGi service** so every servlet, workflow step, and event listener sends mail the same way.
+- A drop-in replacement for ACS Commons `EmailService` without installing the rest of ACS Commons.
+
+Prefer AEM's raw `MessageGatewayService` only for one-off, non-templated messages. Prefer a full ESP (SendGrid,
+Adobe Campaign, etc.) when you need marketing journeys, deliverability analytics, or non-AEM senders.
+
+For SMTP and local testing background, see [E-Mail Service in AEM](../infrastructure/email.md).
+
+## Example usage
+
+```java
+@Reference
+private EmailService emailService;
+
+Map<String, String> params = new HashMap<>();
+params.put(EmailConstants.SUBJECT, "Your order has shipped");
+params.put("orderNumber", "12345"); // substituted into the template body as ${orderNumber}
+
+List<String> failures = emailService.sendEmail(
+        "/apps/myapp/emailTemplates/orderShipped.html",
+        params,
+        "customer@example.com");
+```
+
+Reserved keys in `emailParams` (`EmailConstants.SENDER_EMAIL_ADDRESS`, `SENDER_NAME`, `SUBJECT`, `BOUNCE_ADDRESS`)
+override headers. Everything else is merged into the template as a `${key}` placeholder.
+
+Attachments (optional -- forces HTML multipart):
+
+```java
+MailAttachment attachment = new MailAttachment("invoice.pdf", myDataSource);
+emailService.sendEmail(templatePath, params, List.of(attachment), "customer@example.com");
+```
+
+### Example template
+
+```text title="/apps/myapp/emailTemplates/orderShipped.html"
+Subject: Your order has shipped
+
+<html>
+  <body>
+    <p>Hello,</p>
+    <p>Order <strong>${orderNumber}</strong> is on its way.</p>
+  </body>
+</html>
+```
+
+## Required setup: service user mapping
+
+`EmailServiceImpl` resolves templates via a service resource resolver, not the calling user's session. Map a system
+user for it:
+
+```text
+acsemail.core:emailService=[<your-system-user>]
+```
+
+via the Apache Sling Service User Mapper OSGi config, and grant that system user `jcr:read` on your template paths.
+Without this mapping, template resolution fails and every recipient is returned as a failure.
+
+## Building and deploying
+
+```bash
+mvn clean install                       # build
+mvn clean install -PautoInstallBundle   # build + deploy the bundle (default: localhost:4502)
+```
+
+## Local testing with Mailpit
+
+Point AEM's `DefaultMailService` at [Mailpit](../infrastructure/email.md#alternative-mailpit) so messages land in a
+local UI instead of a real SMTP server:
+
+```bash
+docker run -d --name mailpit -p 1025:1025 -p 8025:8025 axllent/mailpit
+```
+
+Then configure `com.day.cq.mailer.DefaultMailService` with `smtp.host=localhost` and `smtp.port=1025`. Open
+`http://localhost:8025` to inspect sent mail.
+
+## Links
+
+- Module README: [acs.email/README.md](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.email/README.md)
+- Collection overview: [Standalone ACS Commons](./overview.mdx)
+- Upstream feature: [ACS Commons Email API](https://adobe-consulting-services.github.io/acs-aem-commons/features/e-mail/email-api/index.html)

@@ -1,0 +1,89 @@
+---
+title: "acs.environment-indicator - Author Environment Badge"
+description: Standalone AEM author environment indicator that labels DEV, STAGE, PROD, and LOCAL in the admin UI - works with Unified Shell and falls back when it is absent.
+tags: [aem, author, clientlib, acs-commons, aemaacs]
+keywords:
+  - aem environment indicator
+  - acs commons environment indicator
+  - aem author badge
+  - unified shell environment label
+---
+
+# acs.environment-indicator: Author Environment Badge
+
+[Module README](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.environment-indicator/README.md) ·
+[Repository](https://github.com/LucaNerlich/standalone-acs-commons) ·
+[Original ACS Commons Environment Indicator](https://adobe-consulting-services.github.io/acs-aem-commons/features/environment-indicator/index.html)
+
+`acs.environment-indicator` renders a small, colored badge in the AEM author admin UI so authors can tell
+environments apart (`DEV` vs `STAGE` vs `PROD`) at a glance. It is an in-house replacement for ACS Commons'
+[Show Author Environment Indicator](https://adobe-consulting-services.github.io/acs-aem-commons/features/environment-indicator/index.html),
+updated for AEM as a Cloud Service and Adobe's Unified Shell.
+
+Upstream ACS Commons marks its classic indicator as **not AEM as a Cloud Service compatible**. This module takes a
+different approach: reuse Unified Shell's badge when present, and render a fallback badge when it is not.
+
+## How it works
+
+Adobe's Unified Shell already renders a generic environment badge (`span.colorBadge` inside `#env-labels`) next to
+the AEM logo. The clientlib (`env-indicator.js`) looks that badge up in `window.parent.document` and overwrites its
+text with a friendly label derived from the current author hostname.
+
+When Unified Shell is absent -- a local AEM author, or an AEMaaCS author opened directly at its Cloud Manager URL --
+there is no badge to reuse. The script then inserts its **own** badge after the classic shell home-anchor label
+(`<coral-shell-homeanchor-label>Adobe Experience Manager</coral-shell-homeanchor-label>`).
+
+No HTL or component wiring is required. The clientlib registers under the standard Granite admin shell categories
+(`granite.ui.foundation`, `granite.ui.foundation.admin`, `granite.ui.coral.foundation`,
+`granite.ui.coral.foundation.addon.coral2`), which AEM already includes on Sites, Assets, CRXDE Lite, `start.html`,
+and the page editor chrome. Deploying the package is the only setup step.
+
+## When to use it
+
+Use this module when:
+
+- Authors jump between **local, DEV, STAGE, and PROD** author instances and need a persistent visual cue.
+- Unified Shell's generic badge is not enough (or not present), and you want **hostname-mapped labels**.
+- You want the environment indicator without installing the full ACS Commons package.
+
+Skip it if your team only ever works in one author environment, or if Unified Shell's built-in badge already meets
+your needs.
+
+## Customizing labels
+
+Edit `DOMAIN_LABELS` and `KNOWN_LABELS` at the top of
+[`env-indicator.js`](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.environment-indicator/ui.apps/src/main/content/jcr_root/apps/acs-environment-indicator/clientlibs/clientlib-env-indicator/js/env-indicator.js):
+
+```js
+const DOMAIN_LABELS = {
+    'author-p12345-e123456.adobeaemcloud.com': 'DEV',
+    'author-p12345-e123457.adobeaemcloud.com': 'STAGE',
+    'author-p12345-e123458.adobeaemcloud.com': 'PROD',
+    'localhost': 'LOCAL',
+};
+
+const KNOWN_LABELS = ['DEV', 'STAGE', 'PROD', 'LOCAL'];
+```
+
+Hostnames are each environment's Author URL from Cloud Manager → Environments. Unknown hosts render as `Unknown`
+(gray). `localhost` is included by default so the fallback badge shows on local author too.
+
+Badge colors live in
+[`env-indicator.css`](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.environment-indicator/ui.apps/src/main/content/jcr_root/apps/acs-environment-indicator/clientlibs/clientlib-env-indicator/css/env-indicator.css)
+as `.is-<label>` modifiers under `.acs-env-indicator-badge` (for example `.is-dev`, `.is-stage`). If you add a label
+to `DOMAIN_LABELS` / `KNOWN_LABELS`, add a matching CSS rule as well.
+
+## Building and deploying
+
+```bash
+mvn clean install                                   # build
+mvn clean install -PautoInstallPackage              # build + deploy ui.apps packages
+```
+
+Override `aem.host` / `aem.port` (and vault credentials) via `-D` when your instance differs from the defaults.
+
+## Links
+
+- Module README: [acs.environment-indicator/README.md](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.environment-indicator/README.md)
+- Collection overview: [Standalone ACS Commons](./overview.mdx)
+- Upstream feature: [AEM Environment Indicator](https://adobe-consulting-services.github.io/acs-aem-commons/features/environment-indicator/index.html)

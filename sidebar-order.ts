@@ -97,12 +97,22 @@ export const sidebarOrder: Record<string, string[]> = {
         'htl-templates',
         'client-libraries',
         'aemvite',
+        'standalone-acs-commons',
         'groovy-console',
         'components',
         'backend',
         'content',
         'ui',
         'infrastructure',
+    ],
+
+    'aem/standalone-acs-commons': [
+        'overview',
+        'acs-email',
+        'acs-environment-indicator',
+        'acs-genericlists',
+        'acs-include',
+        'acs-workflow',
     ],
 
     'aem/edge-delivery': [

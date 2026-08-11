@@ -1,0 +1,105 @@
+---
+title: "acs.genericlists - Authorable Title/Value Lists"
+description: Standalone AEM Generic Lists module - authors maintain ordered title/value pairs via Touch UI, and code reads them with Page#adaptTo(GenericList.class) or a Granite datasource.
+tags: [aem, dialogs, touch-ui, acs-commons, aemaacs]
+keywords:
+  - aem generic lists
+  - acs commons generic lists
+  - granite ui datasource
+  - title value list aem
+---
+
+# acs.genericlists: Authorable Title/Value Lists
+
+[Module README](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.genericlists/README.md) ·
+[Repository](https://github.com/LucaNerlich/standalone-acs-commons) ·
+[Original ACS Commons Generic Lists](https://adobe-consulting-services.github.io/acs-aem-commons/features/generic-lists/index.html)
+
+`acs.genericlists` lets authors maintain a page of ordered title/value pairs (shared dropdown options, country
+codes, status labels, ...) through a normal Touch UI dialog, and lets any other code read that list back via
+`Page#adaptTo(GenericList.class)`. It replaces ACS Commons'
+[Generic Lists](https://adobe-consulting-services.github.io/acs-aem-commons/features/generic-lists/index.html)
+with a Cloud Service-friendly layout under `/content/generic-lists` instead of the legacy `/etc/acs-commons/lists`
+root.
+
+## What you get
+
+- **`core`** -- `GenericList` / `GenericListImpl` / `GenericListAdapterFactory`: adapt a `Page` whose content
+  resource type is `acs-genericlists/components/utilities/genericlist` and call `getItems()` or
+  `lookupTitle(value[, locale])`.
+- **`ui.apps`** -- Touch UI dialog (composite multifield), page template restricted to
+  `/content/generic-lists(/.*)?`, and a datasource JSP that feeds Granite `select` / `radiogroup` options from an
+  existing list page.
+
+Storage matches the ACS Commons shape: child nodes under `./list/`, each with `jcr:title` and `value`. Authoring
+uses a modern Touch UI dialog instead of the MCP-generated classic UI form.
+
+## When to use it
+
+Use generic lists when:
+
+- Multiple dialogs need the **same option set** and authors should maintain it without a code deploy.
+- Backend code needs to **resolve a stored value to a display title** (optionally localized).
+- You want shared dropdown data without hardcoding options in every `_cq_dialog`.
+
+Prefer Tags / taxonomies for hierarchical, multilingual content classification. Prefer a plain dialog select when
+the option set is tiny and never changes outside releases.
+
+## Example: read a list in Java
+
+```java
+Page listPage = pageManager.getPage("/content/generic-lists/countries");
+GenericList list = listPage.adaptTo(GenericList.class);
+
+for (GenericList.Item item : list.getItems()) {
+    // item.getTitle(), item.getTitle(locale), item.getValue()
+}
+
+String title = list.lookupTitle("de"); // e.g. "Germany"
+```
+
+## Example: feed a dialog select
+
+```xml
+<country
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/form/select"
+        fieldLabel="Country"
+        name="./country">
+    <datasource
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="acs-genericlists/components/utilities/genericlist/datasource"
+            path="/content/generic-lists/countries"/>
+</country>
+```
+
+## Authoring flow
+
+1. Deploy the module (`core` + `ui.apps`).
+2. Create pages under `/content/generic-lists` with the `genericlist` template.
+3. Open the page properties dialog and add title/value rows in the multifield.
+4. Point dialog datasources (or Java adapters) at those list page paths.
+
+## What was not ported
+
+- MCP-generated classic-UI dialog and `/generic-lists.html` bulk-properties console.
+- Legacy `list.json.jsp` JSON export (deprecated `org.apache.sling.commons.json`).
+- A page render script -- a list page is a pure data container.
+- The `/etc/acs-commons/lists` default root -- this module uses `/content/generic-lists(/.*)?` for AEMaaCS.
+
+See the [module README](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.genericlists/README.md)
+for the full rationale.
+
+## Building and deploying
+
+```bash
+mvn clean install                                   # build
+mvn clean install -PautoInstallBundle               # deploy core
+mvn clean install -PautoInstallPackage              # deploy ui.apps packages
+```
+
+## Links
+
+- Module README: [acs.genericlists/README.md](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.genericlists/README.md)
+- Collection overview: [Standalone ACS Commons](./overview.mdx)
+- Upstream feature: [Generic Lists](https://adobe-consulting-services.github.io/acs-aem-commons/features/generic-lists/index.html)
