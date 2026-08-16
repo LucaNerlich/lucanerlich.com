@@ -20,7 +20,7 @@ Maven dependency:
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-databind</artifactId>
-    <version>2.17.0</version>
+    <version>2.22.1</version>
 </dependency>
 ```
 
