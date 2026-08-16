@@ -54,7 +54,7 @@ Every Maven project is defined by a `pom.xml`:
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependency versions (centralised) -->
-        <jackson.version>2.17.0</jackson.version>
+        <jackson.version>2.22.1</jackson.version>
         <junit.version>5.11.0</junit.version>
     </properties>
 
@@ -147,7 +147,7 @@ Import a BOM to manage an entire library's versions:
         <dependency>
             <groupId>com.fasterxml.jackson</groupId>
             <artifactId>jackson-bom</artifactId>
-            <version>2.17.0</version>
+            <version>2.22.1</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>

@@ -689,6 +689,14 @@ await loadPosts();
 initPosts();
 ```
 
+:::warning Interpolating into innerHTML
+`innerHTML` interprets strings as HTML. In this tutorial the content comes
+from your own `posts.json`, but never interpolate untrusted or user-generated
+content (titles, bodies, tags, comments) this way - it allows stored XSS. For
+data that could contain user input, build elements with `textContent` or
+escape HTML before interpolating.
+:::
+
 Because this uses top-level `await`, change the script tag in `index.html` to a module. "Module" just means a
 JavaScript file that can use `import` and top-level `await`; the browser treats modules slightly more strictly than
 regular scripts.

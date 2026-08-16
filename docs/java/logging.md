@@ -104,10 +104,16 @@ Logback is the default SLF4J implementation (written by the same author).
 <dependency>
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>
-    <version>1.5.6</version>
+    <version>1.6.3</version>
 </dependency>
 <!-- This transitively includes slf4j-api and logback-core -->
 ```
+
+:::tip Version management
+Keep logging dependencies current and managed via a BOM (e.g. Spring Boot's
+dependency management) rather than pinning manually. Check the vendor security
+pages (Logback and Apache Log4j) before picking a version.
+:::
 
 ### logback.xml (basic)
 
@@ -196,7 +202,7 @@ Use `logback-spring.xml` (Spring Boot) or system properties:
 <dependency>
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-slf4j2-impl</artifactId>
-    <version>2.23.0</version>
+    <version>2.26.1</version>
 </dependency>
 <!-- Bridges SLF4J to Log4j2 -->
 ```

@@ -191,11 +191,14 @@ HOST=0.0.0.0
 PORT=1337
 PUBLIC_URL=https://cms.example.com
 
-APP_KEYS=key1,key2,key3,key4
-API_TOKEN_SALT=random-salt-value
-ADMIN_JWT_SECRET=random-jwt-secret
-TRANSFER_TOKEN_SALT=random-transfer-salt
-JWT_SECRET=random-user-jwt-secret
+# Generate real values with: openssl rand -base64 48
+# Never deploy with Strapi's shipped defaults - anyone can forge
+# session/JWT tokens when APP_KEYS is unchanged.
+APP_KEYS=<generated-key-1>,<generated-key-2>,<generated-key-3>,<generated-key-4>
+API_TOKEN_SALT=<generated-salt>
+ADMIN_JWT_SECRET=<generated-secret>
+TRANSFER_TOKEN_SALT=<generated-salt>
+JWT_SECRET=<generated-secret>
 
 DATABASE_HOST=localhost
 DATABASE_PORT=5432

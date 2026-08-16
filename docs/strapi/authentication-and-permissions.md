@@ -44,7 +44,7 @@ const response = await fetch('/api/auth/local/register', {
   body: JSON.stringify({
     username: 'johndoe',
     email: 'john@example.com',
-    password: 'SecureP@ss123',
+    password: '<your-password>',
   }),
 });
 
@@ -60,7 +60,7 @@ const response = await fetch('/api/auth/local', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     identifier: 'john@example.com', // email or username
-    password: 'SecureP@ss123',
+    password: '<your-password>',
   }),
 });
 
