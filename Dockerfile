@@ -12,8 +12,11 @@ RUN corepack enable
 
 WORKDIR /app
 
-# Copy dependency files first - this layer is cached until these files change
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Copy dependency files first - this layer is cached until these files change.
+# .npmrc carries the supply-chain protections (7-day minimum release age,
+# exotic-subdependency block, ignored lifecycle scripts) and must be in place
+# before pnpm install so the install layer honors them.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 # Install all dependencies (dev + prod, needed for the build).
 # The cache mount keeps the pnpm store warm across builds.
@@ -37,14 +40,18 @@ FROM node:22-alpine
 
 # curl: required by Coolify's container healthcheck (alpine has no curl, and
 # busybox wget does not fall back from IPv6 ::1 to IPv4). serve: static host.
-RUN apk add --no-cache curl && npm install -g serve@14.2.6
+# app: unprivileged runtime user (no root in the runtime container).
+RUN apk add --no-cache curl && npm install -g serve@14.2.6 \
+    && addgroup -S app && adduser -S app -G app
 
 WORKDIR /app
-COPY --from=builder /app/build ./build
-COPY serve.json ./build/serve.json
+COPY --chown=app:app --from=builder /app/build ./build
+COPY --chown=app:app serve.json ./build/serve.json
 
 ENV NODE_ENV=production
 
 EXPOSE 3000
+
+USER app
 
 CMD ["serve", "build", "-l", "tcp://0.0.0.0:3000"]
