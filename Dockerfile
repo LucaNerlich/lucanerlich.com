@@ -3,7 +3,7 @@
 # -------------------------
 # 1) Build stage
 # -------------------------
-FROM node:22-alpine AS builder
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS builder
 
 # Use pnpm via corepack; the packageManager field in package.json pins the version
 ENV PNPM_HOME="/pnpm"
@@ -12,8 +12,11 @@ RUN corepack enable
 
 WORKDIR /app
 
-# Copy dependency files first - this layer is cached until these files change
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Copy dependency files first - this layer is cached until these files change.
+# .npmrc carries the supply-chain protections (7-day minimum release age,
+# exotic-subdependency block, ignored lifecycle scripts) and must be in place
+# before pnpm install so the install layer honors them.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 # Install all dependencies (dev + prod, needed for the build).
 # The cache mount keeps the pnpm store warm across builds.
@@ -33,18 +36,22 @@ RUN pnpm build
 # enforces trailingSlash to match the Docusaurus config. Only `serve` and the
 # static build/ are present - none of the ~1.5GB build toolchain.
 # -------------------------
-FROM node:22-alpine
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
 
 # curl: required by Coolify's container healthcheck (alpine has no curl, and
 # busybox wget does not fall back from IPv6 ::1 to IPv4). serve: static host.
-RUN apk add --no-cache curl && npm install -g serve@14.2.6
+# app: unprivileged runtime user (no root in the runtime container).
+RUN apk add --no-cache curl && npm install -g serve@14.2.6 \
+    && addgroup -S app && adduser -S app -G app
 
 WORKDIR /app
-COPY --from=builder /app/build ./build
-COPY serve.json ./build/serve.json
+COPY --chown=app:app --from=builder /app/build ./build
+COPY --chown=app:app serve.json ./build/serve.json
 
 ENV NODE_ENV=production
 
 EXPOSE 3000
+
+USER app
 
 CMD ["serve", "build", "-l", "tcp://0.0.0.0:3000"]
