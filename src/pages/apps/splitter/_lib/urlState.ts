@@ -17,17 +17,29 @@ const toWire = (state: AppState): Wire => ({
     e: state.expenses.map(e => [e.id, e.description, e.cents, e.paidBy]),
 });
 
-const fromWire = (w: Wire): AppState => ({
-    v: 1,
-    currency: 'EUR',
-    people: w.p.map(([id, name]): Person => ({id: String(id), name: String(name)})),
-    expenses: w.e.map(([id, description, cents, paidBy]): Expense => ({
-        id: String(id),
-        description: String(description),
-        cents: Number(cents) | 0,
-        paidBy: String(paidBy),
-    })),
-});
+const fromWire = (w: Wire): AppState => {
+    const seen = new Set<string>();
+    const people = w.p
+        .map(([id, name]): Person => ({id: String(id), name: String(name)}))
+        .filter(p => {
+            if (seen.has(p.id)) return false;
+            seen.add(p.id);
+            return true;
+        });
+    const personIds = new Set(people.map(p => p.id));
+    // Drop anything that would break the settlement math: expenses paid by an
+    // unknown person and non-positive or non-safe cent values. Validating here
+    // keeps `computeBalances` and `summarize` seeing the same expense set.
+    const expenses = w.e
+        .filter(([, , cents, paidBy]) => Number.isSafeInteger(cents) && cents > 0 && personIds.has(String(paidBy)))
+        .map(([id, description, cents, paidBy]): Expense => ({
+            id: String(id),
+            description: String(description),
+            cents,
+            paidBy: String(paidBy),
+        }));
+    return {v: 1, currency: 'EUR', people, expenses};
+};
 
 const toBase64Url = (bytes: Uint8Array): string => {
     let binary = '';

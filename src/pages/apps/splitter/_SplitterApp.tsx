@@ -37,7 +37,12 @@ const SplitterApp: React.FC = () => {
 
     const handleCopyLink = async () => {
         try {
-            await navigator.clipboard.writeText(window.location.href);
+            // Build the URL from current state instead of location.href: state
+            // changes are written to the hash after a 150 ms debounce, so the
+            // location could lag behind the just-edited session.
+            const url = new URL(window.location.href);
+            url.hash = encodeState(state);
+            await navigator.clipboard.writeText(url.toString());
             setCopied(true);
             window.setTimeout(() => setCopied(false), 1500);
         } catch {
