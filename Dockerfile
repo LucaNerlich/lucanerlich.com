@@ -36,7 +36,7 @@ RUN pnpm build
 # enforces trailingSlash to match the Docusaurus config. Only `serve` and the
 # static build/ are present - none of the ~1.5GB build toolchain.
 # -------------------------
-FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+FROM node:22-alpine
 
 # curl: required by Coolify's container healthcheck (alpine has no curl, and
 # busybox wget does not fall back from IPv6 ::1 to IPv4). serve: static host.
