@@ -343,6 +343,17 @@ export const sidebarOrder: Record<string, string[]> = {
     'other': [
         'link-collections',
     ],
+
+    // ------------------------------------------------------------------
+    // Projects – newest first
+    // ------------------------------------------------------------------
+    'projects': [
+        'wireview-pro2-qs',
+        'discordanalyzer',
+        'go-access-page-visits',
+        'rss-feed-gen',
+        'download-gog-library',
+    ],
 };
 
 // ------------------------------------------------------------------
