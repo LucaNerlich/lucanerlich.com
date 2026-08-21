@@ -349,6 +349,7 @@ export const sidebarOrder: Record<string, string[]> = {
     // ------------------------------------------------------------------
     'projects': [
         'omastonk',
+        'coolify-qs',
         'obsidian-daily-qs',
         'wireview-pro2-qs',
         'discordanalyzer',
