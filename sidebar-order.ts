@@ -348,6 +348,7 @@ export const sidebarOrder: Record<string, string[]> = {
     // Projects – newest first
     // ------------------------------------------------------------------
     'projects': [
+        'omastonk',
         'obsidian-daily-qs',
         'wireview-pro2-qs',
         'discordanalyzer',
