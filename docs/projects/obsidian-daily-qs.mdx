@@ -15,7 +15,7 @@ keywords:
 
 [GitHub Repository](https://github.com/LucaNerlich/obsidian-daily-qs) · [Omarchy marketplace](https://omarchyplugins.com/plugin.html?id=luca.obsidian-daily) · [Releases](https://github.com/LucaNerlich/obsidian-daily-qs/releases)
 
-An [Omarchy](https://omarchy.org/) Quattro bar widget for today's [Obsidian](https://obsidian.md) daily note todos. The bar shows done/total (for example `☐ 2/5`), and left-click opens a panel to check items off, add new ones, search, and carry over leftovers from yesterday -- without leaving the desktop.
+An [Omarchy](https://omarchy.org/) Quattro bar widget for today's [Obsidian](https://obsidian.md) daily note todos. The bar shows done/total (for example `☐ 2/5`), and left-click opens a panel to check items off, add new ones, search, and roll over leftovers from yesterday -- without leaving the desktop. The first write of a new day creates the note and automatically moves the previous day's open todos into it, so yesterday's note is left with only its done items.
 
 ![Obsidian Daily QS panel showing today's todos](/images/projects/obsidian-daily-qs/preview.png)
 
@@ -95,7 +95,7 @@ The plugin bundles a statically linked x86_64 musl build of the backend (`omarch
     - Add with Enter / `+`.
     - **Open only** / **All todos** toggles completed visibility (default from `openOnly` setting).
     - **◀ / ● / ▶** move to previous day, today, or next day.
-    - **Carry over N** (when viewing today) copies yesterday's still-open todos (preserving nesting).
+    - **Carry over N** (when viewing today) moves yesterday's still-open todos into today (preserving nesting); the previous note keeps only its done todos.
     - Open-in-Obsidian launches `obsidian://open?path=…` via `xdg-open`.
 - **Shell**: `omarchy-shell shell summon luca.obsidian-daily '{}'` opens the panel; `omarchy-shell shell hide luca.obsidian-daily` closes it.
 
@@ -121,7 +121,7 @@ obsidian-daily-qs watch                   # stream snapshots, one per change
 obsidian-daily-qs add --text "Ship plugin"
 obsidian-daily-qs add --date 2026-08-19 --text "Backfill"
 obsidian-daily-qs toggle --line 12
-obsidian-daily-qs carry-over              # copy yesterday's open todos into today
+obsidian-daily-qs carry-over              # move yesterday's open todos into today
 obsidian-daily-qs open                    # open the viewed note in Obsidian
 ```
 
