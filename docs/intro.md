@@ -118,6 +118,7 @@ Guides for building and extending a Strapi headless CMS.
 - [First Class Performance](https://first-class-performance.com/) - Design, development, and hosting. *Strapi, Next.js, Material UI*
 - [Complete Motion CrossFit](https://complete-motion-crossfit.de/) - Design, development, and hosting. *Next.js, SCSS*
 - [Nerlich / Puls GbR](https://pnn-it.de/) - Business website. *Next.js, SCSS*
+- [Omarchy Plugins](https://omarchyplugins.com/?author=LucaNerlich) - Published plugins for the Omarchy Linux desktop. *Omarchy, Hyprland*
 
 > All projects are self-hosted on a [Hetzner](https://www.hetzner.com/cloud) VPS using [Coolify](https://coolify.io/) and Docker. Lightweight, GDPR-friendly analytics via self-hosted [Umami](https://umami.is/).
 
