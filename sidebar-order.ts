@@ -166,6 +166,19 @@ export const sidebarOrder: Record<string, string[]> = {
         'annotations',
     ],
 
+    'aem/ui': [
+        'touch-ui',
+        'coral-ui',
+        'overlays',
+        'render-conditions',
+        'custom-dialog-widgets',
+        'content-advisor-integration',
+        'omnisearch-selection-bar-actions',
+        'multi-tenancy-support-ui-frontend',
+        'extending-responsive-grid',
+        'spa-editor',
+    ],
+
     // ------------------------------------------------------------------
     // Strapi – beginners guide first, then individual topics
     // ------------------------------------------------------------------
