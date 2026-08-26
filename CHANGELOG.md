@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.29.0] - 2026-08-26
 
 ### Added
 - Sidebar and navigation overhaul to guide visitors better:
