@@ -13,7 +13,8 @@ with minimal TypeScript/JS configuration and CSS.
 - **Package manager:** pnpm 10.x (see `packageManager` in `package.json`)
 - **Node version:** ^22 (ignore the outdated `.nvmrc` which says v16)
 - **React:** 19.x
-- **TypeScript:** ~5.9.x
+- **TypeScript:** ^7 (dev dependency; no tsconfig in the repo - Docusaurus
+  transpiles config files with SWC, `tsc` is not part of the build)
 - **Deployment:** Docker multi-stage build, served via Coolify on port 3000
 
 ## Build / Dev / Serve Commands

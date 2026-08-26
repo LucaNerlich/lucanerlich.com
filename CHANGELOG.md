@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- Upgraded TypeScript from 5.9.3 to 7.0.2 (dev dependency; the site build itself is unaffected as Docusaurus transpiles with SWC)
+
 ## [1.29.0] - 2026-08-26
 
 ### Added
