@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- Sidebar and navigation overhaul to guide visitors better:
+    - Top-level sidebar order now covers all sections; Docker, Linux, Testing, and TypeScript no longer sink below Projects
+    - Visual-only sidebar groups in Java (Core Language, Concurrency, Data & I/O, Robustness, Design & Tooling), JavaScript (Async & Performance, Error Handling & Security, Data & Formatting), and Strapi (Content & Data, API Development, Media & Headless, Extensibility, Operations) - doc URLs are unchanged
+    - Curated topic order for Strapi, Java, and JavaScript instead of alphabetical sorting
+    - "Building for the Web" added to the navbar Guides dropdown and the footer Docs column; footer now links all main sections
+    - Sidebar categories auto-collapse outside the active section
+    - Homepage "Start Here" now lists all 12 beginners' guides, grouped by Web Fundamentals, Languages, Platforms & CMS, and Tooling & Ops
+- Moved docs into logical sections: local-llm-for-coding to [AI](/ai/local-llm-for-coding/), Docusaurus and Mermaid guides to [Building for the Web](/building-for-the-web/) (redirects added for the old `/other/` URLs, including the older `/other/tech/` paths)
+- Renamed the "ideal working environment" note to a stable URL (redirect added)
+
+### Changed
+- Updated Docusaurus from 3.10.0 to 3.10.2
+
 ## [1.28.0] - 2026-08-11
 
 ### Added
@@ -133,7 +149,7 @@ All notable changes to this project will be documented in this file.
 - New [Build a Local LLM App](/ai/local-llm-app) guide - run a model locally with Ollama or LM Studio and connect a simple app you write yourself, with copy-paste examples for a zero-dependency Node.js CLI, a single-file browser app, and the OpenAI SDK, plus streaming, CORS guidance, and troubleshooting
 
 ### Changed
-- Cross-linked the new local-app guide from [Cloud vs Local Models](/ai/cloud-vs-local) and the [local coding-assistant guide](/other/local-llm-for-coding), and fixed the coding-assistant page title
+- Cross-linked the new local-app guide from [Cloud vs Local Models](/ai/cloud-vs-local) and the [local coding-assistant guide](/ai/local-llm-for-coding), and fixed the coding-assistant page title
 
 ## [1.17.0] - 2026-06-05
 

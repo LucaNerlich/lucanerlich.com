@@ -1,6 +1,7 @@
 {
     "label": "Interesting Links",
     "link": {
-        "type": "generated-index"
+        "type": "generated-index",
+        "description": "Curated collections of interesting links, tools, and resources."
     }
 }

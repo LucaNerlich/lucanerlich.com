@@ -291,7 +291,7 @@ exact origin, rather than opening the file directly.
 ## See also
 
 - [Cloud vs Local Models](./cloud-vs-local.md) - when to run locally vs in the cloud, and how to size a model
-- [Local & offline Copilot alternative](../other/local-llm-for-coding.md) - a local coding assistant (Ollama + Continue.dev)
+- [Local & offline Copilot alternative](./local-llm-for-coding.md) - a local coding assistant (Ollama + Continue.dev)
 - [Large Language Models](./llm.md) - what the model is doing under the hood
 - [RAG](./rag.md) - add your own documents to a local app
 - [AI Glossary](./glossary.md) - open-weights, quantization, inference, and more

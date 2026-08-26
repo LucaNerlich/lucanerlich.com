@@ -129,6 +129,7 @@ const config: Config = {
         docs: {
             sidebar: {
                 hideable: true,
+                autoCollapseCategories: true,
             },
         },
         colorMode: {
@@ -186,6 +187,7 @@ const config: Config = {
                     label: 'Guides',
                     position: 'left',
                     items: [
+                        {to: '/building-for-the-web', label: 'Building for the Web'},
                         {to: '/docker', label: 'Docker'},
                         {to: '/linux', label: 'Linux'},
                         {to: '/git', label: 'Git'},
@@ -214,8 +216,13 @@ const config: Config = {
                         {label: 'AI', to: '/ai'},
                         {label: 'AEM', to: '/aem'},
                         {label: 'Strapi', to: '/strapi'},
+                        {label: 'Building for the Web', to: '/building-for-the-web'},
                         {label: 'JavaScript', to: '/javascript'},
+                        {label: 'TypeScript', to: '/typescript'},
                         {label: 'Java', to: '/java'},
+                        {label: 'CSS', to: '/css'},
+                        {label: 'PHP', to: '/php'},
+                        {label: 'Rust', to: '/rust'},
                         {label: 'Design Patterns', to: '/design-patterns'},
                     ],
                 },

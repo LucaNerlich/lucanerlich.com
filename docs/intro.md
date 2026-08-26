@@ -26,10 +26,29 @@ Built around real-world examples and the pitfalls that actually trip you up.
 
 Multi-chapter guided introductions, from zero to working knowledge:
 
-- [**AEM Beginners' Guide**](./aem/beginners-guide/01-introduction.md) - 22 chapters covering JCR, Sling, OSGi, components, HTL, Sling Models, templates, clientlibs, and deployment
+### Web Fundamentals
+
+- [**JavaScript Beginners' Guide**](./javascript/beginners-guide/01-introduction.md) - 15 chapters covering fundamentals, the DOM, events, error handling, and deployment
+- [**TypeScript Beginners' Guide**](./typescript/beginners-guide/01-introduction.md) - 12 chapters from basic types to advanced generics and real-world project setup
+- [**CSS Beginners' Guide**](./css/beginners-guide/01-introduction.md) - 18 chapters from selectors to Flexbox, Grid, responsive design, and modern CSS
+
+### Languages
+
 - [**Java Beginners' Guide**](./java/beginners-guide/01-introduction.md) - 17 chapters from variables and control flow through streams, testing, and build tools
-- [**JavaScript Beginners' Guide**](./javascript/beginners-guide/01-introduction.md) - 15 chapters covering fundamentals, the DOM, events, TypeScript, error handling, and deployment
-- [**Strapi Beginners' Guide**](./strapi/beginners-guide/01-introduction.md) - 12 chapters on content modeling, REST API, authentication, lifecycle hooks, and deployment
+- [**PHP Beginners' Guide**](./php/beginners-guide/01-introduction.md) - 17 chapters from your first script to OOP and a complete web application
+- [**Rust Beginners' Guide**](./rust/beginners-guide/01-introduction.md) - 19 chapters covering ownership, traits, and a CLI + REST API project
+
+### Platforms & CMS
+
+- [**AEM Beginners' Guide**](./aem/beginners-guide/01-introduction.md) - 22 chapters covering JCR, Sling, OSGi, components, HTL, Sling Models, templates, clientlibs, and deployment
+- [**Strapi Beginners' Guide**](./strapi/beginners-guide/01-introduction.md) - 17 chapters on content modeling, the REST API, authentication, lifecycle hooks, and deployment
+
+### Tooling & Ops
+
+- [**Git Beginners' Guide**](./git/beginners-guide/01-introduction.md) - 12 chapters on branching, merging, rebasing, and team workflows
+- [**Docker Beginners' Guide**](./docker/beginners-guide/01-introduction.md) - 12 chapters from your first container to multi-service Compose deployments
+- [**Linux Beginners' Guide**](./linux/beginners-guide/01-introduction.md) - 12 chapters from filesystem navigation to server administration
+- [**Testing Beginners' Guide**](./testing/beginners-guide/01-introduction.md) - 12 chapters from your first unit test to CI integration and TDD
 
 ---
 
@@ -58,7 +77,20 @@ Practical introductions to the building blocks of modern AI, from LLMs through a
 - [AI Agents](./ai/agents.md) - Tool use, multi-agent patterns, MCP and A2A protocols
 - [RAG](./ai/rag.md) - Grounding LLMs with embeddings, vector databases, and hybrid retrieval
 - [Build a Local LLM App](./ai/local-llm-app.md) - Run Ollama or LM Studio and connect a simple app
+- [Local & Offline Copilot Alternative](./ai/local-llm-for-coding.md) - Ollama + Continue.dev in your editor
 - [Glossary](./ai/glossary.md) - Quick definitions for all AI terms on the site
+
+### Building for the Web
+
+Practical guides for building good websites end-to-end.
+
+- [Content Modeling](./building-for-the-web/content-modeling.md) - CMS-agnostic guide to types, relations, and performance
+- [Semantic HTML](./building-for-the-web/semantic-html.mdx) - Element reference, accessibility, anti-patterns
+- [Web Performance](./building-for-the-web/web-performance.md) - Core Web Vitals, Lighthouse, caching, CDN
+- [Web Content](./building-for-the-web/web-content/overview.md) - 8-part series on readability, structure, forms, microcopy, color, images, and information architecture
+- [Build a Simple Blog](./building-for-the-web/build-a-blog.md) - HTML, CSS, vanilla JS from scratch
+- [Docusaurus](./building-for-the-web/docusaurus.md) - Notes on building docs sites with Docusaurus
+- [Mermaid Diagrams](./building-for-the-web/mermaid-diagrams.mdx) - Flowcharts, sequence, class, and more
 
 ### Java
 
@@ -98,27 +130,17 @@ Guides for building and extending a Strapi headless CMS.
 
 ### More Topics
 
-- [Content Modeling](./building-for-the-web/content-modeling.md) - CMS-agnostic guide to types, relations, and performance
-- [Web Performance](./building-for-the-web/web-performance.md) - Core Web Vitals, Lighthouse, caching, CDN
-- [Semantic HTML](./building-for-the-web/semantic-html.mdx) - Element reference, accessibility, anti-patterns
 - [CSS Container Queries](./css/container-queries.mdx) - Component-level responsive design with interactive demos
-- [CSS Beginners' Guide](./css/beginners-guide/01-introduction.md) - Selectors, Flexbox, Grid, responsive design, modern CSS
-- [Build a Simple Blog](./building-for-the-web/build-a-blog.md) - HTML, CSS, vanilla JS from scratch
-- [Git Beginners' Guide](./git/beginners-guide/01-introduction.md) - Branching, merging, rebasing, workflows
-- [Mermaid Diagrams](./other/mermaid-diagrams.mdx) - Flowcharts, sequence, class, and more
+- [SQL Guide](./other/sql-guide.md) - Complete guide to querying and designing SQL databases
+- [My Shell Setup](./other/my-shell-setup.md) - Terminal workflow, aliases, and tooling
+- [Ideal Working Environment](./other/the-ideal-working-environment.md) - Notes on the five DevOps ideals from The Unicorn Project
 
 ---
 
 ## Projects
 
-- [Steam5](https://steam5.org) - Steam review guessing game. *Spring Boot, Next.js, PostgreSQL*
-- [RSS-Analyzer](https://rssanalyzer.org) - Audio RSS feed parser with aggregated release stats. *Java, Next.js*
-- [EZ-Budget](https://ez-budget.lucanerlich.com) - Monthly and yearly budget tracker. *Next.js, Bootstrap CSS*
-- [Mindestens 10 Zeichen](https://m10z.de) - Community gaming and media blog. *Docusaurus 3*
-- [First Class Performance](https://first-class-performance.com/) - Design, development, and hosting. *Strapi, Next.js, Material UI*
-- [Complete Motion CrossFit](https://complete-motion-crossfit.de/) - Design, development, and hosting. *Next.js, SCSS*
-- [Nerlich / Puls GbR](https://pnn-it.de/) - Business website. *Next.js, SCSS*
-- [Omarchy Plugins](https://omarchyplugins.com/?author=LucaNerlich) - Published plugins for the Omarchy Linux desktop. *Omarchy, Hyprland*
+- [**Browse all project docs**](/projects) - Quickstarts and write-ups for Omarchy widgets, Coolify, RSS tooling, and more
+- **Live projects**: [Steam5](https://steam5.org), [RSS-Analyzer](https://rssanalyzer.org), [EZ-Budget](https://ez-budget.lucanerlich.com), [Mindestens 10 Zeichen](https://m10z.de), [First Class Performance](https://first-class-performance.com/), [Complete Motion CrossFit](https://complete-motion-crossfit.de/), [Nerlich / Puls GbR](https://pnn-it.de/), and [Omarchy Plugins](https://omarchyplugins.com/?author=LucaNerlich)
 
 > All projects are self-hosted on a [Hetzner](https://www.hetzner.com/cloud) VPS using [Coolify](https://coolify.io/) and Docker. Lightweight, GDPR-friendly analytics via self-hosted [Umami](https://umami.is/).
 

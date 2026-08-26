@@ -1,3 +1,8 @@
+---
+title: Docusaurus
+description: "Notes on building documentation sites with Docusaurus: setup, hosting, and useful plugins."
+---
+
 # Docusaurus
 
 ## Page Setup

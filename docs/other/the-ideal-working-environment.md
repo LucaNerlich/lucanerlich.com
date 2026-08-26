@@ -1,3 +1,9 @@
+---
+title: "Key Principles for an Optimal Work Environment"
+sidebar_label: "Ideal Working Environment"
+description: "Notes on the five DevOps ideals from The Unicorn Project and how they apply to setting up a focused, joyful work environment."
+---
+
 # Key Principles for an Optimal Work Environment
 
 ## The Five Ideals

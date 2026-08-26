@@ -24,9 +24,13 @@ export const sidebarOrder: Record<string, string[]> = {
         'git',
         'css',
         'javascript',
+        'typescript',
         'java',
         'php',
         'rust',
+        'docker',
+        'linux',
+        'testing',
         'design-patterns',
         'other',
         'projects',
@@ -58,6 +62,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'debugging-llm-apps',
         'cloud-vs-local',
         'local-llm-app',
+        'local-llm-for-coding',
         'glossary',
     ],
 
@@ -70,6 +75,8 @@ export const sidebarOrder: Record<string, string[]> = {
         'semantic-html',
         'web-performance',
         'build-a-blog',
+        'docusaurus',
+        'mermaid-diagrams',
     ],
 
     'building-for-the-web/web-content': [
@@ -180,10 +187,31 @@ export const sidebarOrder: Record<string, string[]> = {
     ],
 
     // ------------------------------------------------------------------
-    // Strapi – beginners guide first, then individual topics
+    // Strapi – beginners guide first, then a curated topic flow:
+    // content modeling -> API development -> media/headless ->
+    // extensibility -> operations
     // ------------------------------------------------------------------
     'strapi': [
         'beginners-guide',
+        'content-modeling-patterns',
+        'relations-and-population',
+        'data-import-export-migration',
+        'authentication-and-permissions',
+        'custom-controllers-services',
+        'custom-routes-and-endpoints',
+        'middleware-and-policies',
+        'lifecycle-hooks',
+        'webhooks-and-integrations',
+        'file-uploads-and-media',
+        'graphql-customization',
+        'i18n-multi-locale',
+        'admin-panel-customization',
+        'plugin-development',
+        'typescript-integration',
+        'scheduled-publishing',
+        'performance-and-caching',
+        'testing-strapi-applications',
+        'configuration-and-deployment',
     ],
 
     'strapi/beginners-guide': [
@@ -199,6 +227,11 @@ export const sidebarOrder: Record<string, string[]> = {
         '10-media-and-file-uploads',
         '11-typescript-integration',
         '12-configuration-and-deployment',
+        '13-testing',
+        '14-docker-deployment',
+        '15-performance-optimization',
+        '16-troubleshooting',
+        '17-practice-projects',
     ],
 
     // ------------------------------------------------------------------
@@ -231,10 +264,18 @@ export const sidebarOrder: Record<string, string[]> = {
     ],
 
     // ------------------------------------------------------------------
-    // JavaScript – beginners guide first, then individual topics
+    // JavaScript – beginners guide first, then a curated topic flow:
+    // async & performance -> error handling & security -> data & formatting
     // ------------------------------------------------------------------
     'javascript': [
         'beginners-guide',
+        'async-await-guide',
+        'javascript-performance-basics',
+        'javascript-error-handling',
+        'json-parsing-guide',
+        'local-session-storage',
+        'javascript-intl-api-formatting',
+        'user-input-sanitization',
     ],
 
     'javascript/beginners-guide': [
@@ -283,10 +324,26 @@ export const sidebarOrder: Record<string, string[]> = {
     ],
 
     // ------------------------------------------------------------------
-    // Java – beginners guide first, then individual topics
+    // Java – beginners guide first, then a curated topic flow:
+    // core language -> concurrency -> data & I/O -> robustness ->
+    // design & tooling
     // ------------------------------------------------------------------
     'java': [
         'beginners-guide',
+        'java-streams',
+        'collections',
+        'optionals',
+        'functional-interfaces',
+        'generics',
+        'concurrency',
+        'http-clients',
+        'json-processing',
+        'error-handling',
+        'logging',
+        'testing',
+        'dependency-injection',
+        'maven',
+        'modern-java-features',
     ],
 
     'java/beginners-guide': [
@@ -355,6 +412,9 @@ export const sidebarOrder: Record<string, string[]> = {
     // ------------------------------------------------------------------
     'other': [
         'link-collections',
+        'sql-guide',
+        'my-shell-setup',
+        'the-ideal-working-environment',
     ],
 
     // ------------------------------------------------------------------
@@ -369,6 +429,40 @@ export const sidebarOrder: Record<string, string[]> = {
         'go-access-page-visits',
         'rss-feed-gen',
         'download-gog-library',
+    ],
+};
+
+// ------------------------------------------------------------------
+// Sidebar groups
+// ------------------------------------------------------------------
+// Visual-only groupings of top-level docs inside a category. Unlike
+// real categories these have no directory, no URL, and no index page -
+// they only structure the sidebar. Moving a doc into or out of a group
+// never changes its URL, so no redirects are needed.
+//
+// Each entry: {label: <group label>, items: [doc ids in display order]}.
+// The group is rendered at the position of its first member.
+export const sidebarGroups: Record<string, {label: string; items: string[]}[]> = {
+    'java': [
+        {label: 'Core Language', items: ['java-streams', 'collections', 'optionals', 'functional-interfaces', 'generics']},
+        {label: 'Concurrency', items: ['concurrency']},
+        {label: 'Data & I/O', items: ['http-clients', 'json-processing']},
+        {label: 'Robustness', items: ['error-handling', 'logging', 'testing']},
+        {label: 'Design & Tooling', items: ['dependency-injection', 'maven', 'modern-java-features']},
+    ],
+
+    'javascript': [
+        {label: 'Async & Performance', items: ['async-await-guide', 'javascript-performance-basics']},
+        {label: 'Error Handling & Security', items: ['javascript-error-handling', 'user-input-sanitization']},
+        {label: 'Data & Formatting', items: ['json-parsing-guide', 'local-session-storage', 'javascript-intl-api-formatting']},
+    ],
+
+    'strapi': [
+        {label: 'Content & Data', items: ['content-modeling-patterns', 'relations-and-population', 'data-import-export-migration']},
+        {label: 'API Development', items: ['authentication-and-permissions', 'custom-controllers-services', 'custom-routes-and-endpoints', 'middleware-and-policies', 'lifecycle-hooks', 'webhooks-and-integrations']},
+        {label: 'Media & Headless', items: ['file-uploads-and-media', 'graphql-customization', 'i18n-multi-locale']},
+        {label: 'Extensibility', items: ['admin-panel-customization', 'plugin-development', 'typescript-integration']},
+        {label: 'Operations', items: ['scheduled-publishing', 'performance-and-caching', 'testing-strapi-applications', 'configuration-and-deployment']},
     ],
 };
 
@@ -417,7 +511,7 @@ export function sortSidebarItems(
 
     // If no explicit order is defined for this directory, keep default order
     const order = sidebarOrder[currentDir];
-    if (!order) return processed;
+    if (!order) return applySidebarGroups(processed, currentDir);
 
     // Resolve each item to a key so we can match against the order array
     const getKey = (item: SidebarItem): string | null => {
@@ -442,5 +536,82 @@ export function sortSidebarItems(
         }
     }
 
-    return [...ordered, ...remaining];
+    return applySidebarGroups([...ordered, ...remaining], currentDir);
+}
+
+/**
+ * Wraps doc items into visual-only category groups (see `sidebarGroups`).
+ * A group is rendered at the position of its first member in the sorted
+ * list; its other members are removed from their original positions.
+ * Items that are not part of any group keep their position. This changes
+ * sidebar presentation only - doc URLs are untouched.
+ */
+function applySidebarGroups(items: SidebarItem[], currentDir: string): SidebarItem[] {
+    const groups = sidebarGroups[currentDir];
+    if (!groups || groups.length === 0) return items;
+
+    // Map doc key (last path segment) -> item, for resolving group members
+    const docKeyToItem: Record<string, SidebarItem> = {};
+    for (const item of items) {
+        if (item.type === 'doc' && item.id) {
+            const parts = item.id.split('/');
+            docKeyToItem[parts[parts.length - 1]] = item;
+        }
+    }
+
+    const consumed = new Set<string>();
+    const emittedLabels = new Set<string>();
+    const result: SidebarItem[] = [];
+
+    for (const item of items) {
+        let key: string | null = null;
+        if (item.type === 'doc' && item.id) {
+            const parts = item.id.split('/');
+            key = parts[parts.length - 1];
+        }
+        if (key === null || consumed.has(key)) {
+            result.push(item);
+            continue;
+        }
+
+        const group = groups.find((g) => g.items.includes(key!));
+        if (!group) {
+            result.push(item);
+            continue;
+        }
+
+        // First member of this group: emit the whole group here
+        const groupItems = group.items
+            .map((memberKey) => docKeyToItem[memberKey])
+            .filter((member): member is SidebarItem => Boolean(member));
+        result.push({
+            type: 'category',
+            label: group.label,
+            collapsible: true,
+            collapsed: false,
+            items: groupItems,
+        });
+        group.items.forEach((memberKey) => consumed.add(memberKey));
+        emittedLabels.add(group.label);
+    }
+
+    // Safety net: emit any configured group that never appeared in the
+    // sorted list (e.g. every member is missing from the sidebar).
+    for (const group of groups) {
+        if (emittedLabels.has(group.label)) continue;
+        const groupItems = group.items
+            .map((memberKey) => docKeyToItem[memberKey])
+            .filter((member): member is SidebarItem => Boolean(member));
+        if (groupItems.length > 0) {
+            result.push({
+                type: 'category',
+                label: group.label,
+                collapsible: true,
+                collapsed: false,
+                items: groupItems,
+            });
+        }
+    }
+
+    return result;
 }

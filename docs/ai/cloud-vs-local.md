@@ -109,7 +109,7 @@ RAG for facts, fine-tune for style).
 - **Build your own app** - run a model with Ollama or LM Studio and call it from a tiny app you write:
   [Build a Local LLM App](./local-llm-app.md).
 - **Local coding assistant** - an offline, self-hosted GitHub Copilot alternative (Ollama + Continue.dev):
-  [How to set up a local and offline Copilot alternative](../other/local-llm-for-coding.md).
+  [How to set up a local and offline Copilot alternative](./local-llm-for-coding.md).
 
 ## A practical default
 
@@ -130,5 +130,5 @@ RAG for facts, fine-tune for style).
 - [RAG](./rag.md) - managed (Bedrock Knowledge Bases) vs self-hosted retrieval
 - [Tooling and Frameworks](./tooling.md) - model serving and LLMOps
 - [Build a Local LLM App](./local-llm-app.md) - run Ollama/LM Studio and call it from your own app
-- [Local & offline Copilot alternative](../other/local-llm-for-coding.md) - a hands-on Ollama setup
+- [Local & offline Copilot alternative](./local-llm-for-coding.md) - a hands-on Ollama setup
 - [AI Glossary](./glossary.md) - open-weights, quantization, QLoRA, foundation model, and more

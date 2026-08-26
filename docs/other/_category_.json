@@ -2,6 +2,7 @@
     "label": "Other",
     "link": {
         "type": "generated-index",
-        "slug": "/other"
+        "slug": "/other",
+        "description": "Miscellaneous topics: SQL, shell setups, and personal notes."
     }
 }

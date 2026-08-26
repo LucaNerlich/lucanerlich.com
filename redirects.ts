@@ -61,11 +61,19 @@ const entries: Redirect[] = [
     // Flattened other/tech/ into other/
     {from: '/other/tech/commands/', to: '/git/'},
     {from: '/other/commands/', to: '/git/'},
-    {from: '/other/tech/docusaurus/', to: '/other/docusaurus/'},
-    {from: '/other/tech/local-llm-for-coding/', to: '/other/local-llm-for-coding/'},
-    {from: '/other/tech/mermaid-diagrams/', to: '/other/mermaid-diagrams/'},
+    {from: '/other/tech/docusaurus/', to: '/building-for-the-web/docusaurus/'},
+    {from: '/other/tech/local-llm-for-coding/', to: '/ai/local-llm-for-coding/'},
+    {from: '/other/tech/mermaid-diagrams/', to: '/building-for-the-web/mermaid-diagrams/'},
     {from: '/other/tech/my-shell-setup/', to: '/other/my-shell-setup/'},
     {from: '/other/tech/sql-guide/', to: '/other/sql-guide/'},
+
+    // Content reorganization: misc 'other' docs moved into logical sections
+    {from: '/other/docusaurus/', to: '/building-for-the-web/docusaurus/'},
+    {from: '/other/mermaid-diagrams/', to: '/building-for-the-web/mermaid-diagrams/'},
+    {from: '/other/local-llm-for-coding/', to: '/ai/local-llm-for-coding/'},
+
+    // Renamed: dated blog-style filename -> clean, stable name
+    {from: '/other/2025-01-15-the-ideal-working-environment/', to: '/other/the-ideal-working-environment/'},
 
     // Building for the Web group: defensive redirects from the new
     // file-path-implied URLs back to the canonical slug URLs (which
