@@ -78,6 +78,7 @@ Practical introductions to the building blocks of modern AI, from LLMs through a
 - [RAG](./ai/rag.md) - Grounding LLMs with embeddings, vector databases, and hybrid retrieval
 - [Build a Local LLM App](./ai/local-llm-app.md) - Run Ollama or LM Studio and connect a simple app
 - [Local & Offline Copilot Alternative](./ai/local-llm-for-coding.md) - Ollama + Continue.dev in your editor
+- [AI Agent Harnesses](./ai/agent-harnesses.md) - opencode, pi, and herdr in the terminal
 - [Glossary](./ai/glossary.md) - Quick definitions for all AI terms on the site
 
 ### Building for the Web
@@ -132,7 +133,8 @@ Guides for building and extending a Strapi headless CMS.
 
 - [CSS Container Queries](./css/container-queries.mdx) - Component-level responsive design with interactive demos
 - [SQL Guide](./other/sql-guide.md) - Complete guide to querying and designing SQL databases
-- [My Shell Setup](./other/my-shell-setup.md) - Terminal workflow, aliases, and tooling
+- [My Shell Setup](./other/my-shell-setup.md) - Terminal workflow, aliases, and dotfiles
+- [Local Version Management with mise](./other/mise.md) - One tool for node, java, python, and CLI tool versions, per project
 - [Ideal Working Environment](./other/the-ideal-working-environment.md) - Notes on the five DevOps ideals from The Unicorn Project
 
 ---

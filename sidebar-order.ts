@@ -63,6 +63,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'cloud-vs-local',
         'local-llm-app',
         'local-llm-for-coding',
+        'agent-harnesses',
         'glossary',
     ],
 
@@ -414,6 +415,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'link-collections',
         'sql-guide',
         'my-shell-setup',
+        'mise',
         'the-ideal-working-environment',
     ],
 

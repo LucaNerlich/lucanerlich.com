@@ -3,6 +3,6 @@
     "link": {
         "type": "generated-index",
         "slug": "/other",
-        "description": "Miscellaneous topics: SQL, shell setups, and personal notes."
+        "description": "Miscellaneous topics: SQL, shell setups, version management with mise, and personal notes."
     }
 }

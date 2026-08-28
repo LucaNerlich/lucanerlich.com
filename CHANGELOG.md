@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.31.0] - 2026-08-28
+
+### Added
+- Two new posts, split out of the shell setup guide (all existing URLs and anchors unchanged):
+    - [Local Version Management with mise](/other/mise/) - global vs. per-project tool pinning in `mise.toml`, config resolution rules, tool backends (npm, pipx, GitHub releases, mise registry incl. opencode), per-directory env vars, task runner, and nvm migration
+    - [AI Agent Harnesses](/ai/agent-harnesses/) - opencode, pi, and herdr, now in the AI section with cross-links to the AI Agents and local LLM guides
+- The shell setup post keeps short pointer stubs at the old section headings (`#ai-harness`, `#local-version-management-mise`), so inbound anchor links still resolve to the new content
+
+### Changed
+- Shell setup post narrowed to terminal config (Ghostty, zsh, starship, dotfiles, daily CLI tools); frontmatter, homepage "Start Here" lists, sidebar ordering, and the Other category description updated for the split
+
 ## [1.30.1] - 2026-08-28
 
 ### Added
