@@ -15,7 +15,7 @@ The result: one Maven build produces multiple tenant-specific clientlibs (`clien
 `clientlib-site-y`, ...) that are loaded by the corresponding page templates. Backend components and
 HTL templates remain shared.
 
-:::info Prerequisites
+:::info[Prerequisites]
 This guide assumes familiarity with [AEM Client Libraries](../client-libraries.mdx) and basic
 webpack/Node.js tooling. If you're new to clientlibs, read the clientlibs page first.
 :::
@@ -180,7 +180,7 @@ first, then the tenant-specific overrides.
 @import '../components/teaser/site-X/teaser';
 ```
 
-:::tip SCSS import order
+:::tip[SCSS import order]
 Import **tenant variables first**, then shared code. This way, the shared stylesheets use the
 tenant's overridden `$color-primary` etc. If a tenant doesn't override a variable, the shared
 default applies.
@@ -361,7 +361,7 @@ module.exports = {
 };
 ```
 
-:::info Flatten resources
+:::info[Flatten resources]
 Setting `flatten: true` on the resources section copies all static files (fonts, images, favicons)
 into the clientlib's root `resources/` folder. This ensures that relative paths like
 `url('../resources/fonts/roboto.woff2')` work the same across all tenant clientlibs.
@@ -532,7 +532,7 @@ export default defineConfig({
 The `aem-clientlib-generator` configuration remains the same regardless of whether you use
 webpack or Vite - it only cares about the `/dist` output structure.
 
-:::tip Packaged alternative to hand-rolling this
+:::tip[Packaged alternative to hand-rolling this]
 The hand-rolled `vite.config.js` above and the matching `aem-clientlib-generator` config both need to
 be kept in sync per tenant. [`@aemvite`](../aemvite.mdx) packages this exact pattern: declare
 one `clientlibs` entry per tenant in a typed `aem.config.mjs`, and both the Vite build and the

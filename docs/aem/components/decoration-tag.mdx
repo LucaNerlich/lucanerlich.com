@@ -25,7 +25,7 @@ layout/grid classes have somewhere to live.
 `cq:htmlTag` is the component node that lets you control what that decoration element looks like - which HTML
 tag it uses and which attributes (most importantly `class`) it carries.
 
-:::info Official documentation
+:::info[Official documentation]
 - [Decoration Tag (Experience League, AEM 6.5)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/components/decoration-tag) - the canonical reference for `cq:htmlTag` and decoration behaviour
 :::
 
@@ -77,7 +77,7 @@ The class attribute on the decoration element is a **merge** of several sources:
 So a `cq:htmlTag` with `class="my-text-wrapper"` does not *replace* the component name - it is **added**
 alongside it. You end up with something like `class="text my-text-wrapper aem-GridColumn ..."`.
 
-:::note You cannot remove the component-name class via `cq:htmlTag`
+:::note[You cannot remove the component-name class via `cq:htmlTag`]
 The component-name token comes from the include itself, not from `cq:htmlTag`. To change it you would have to
 rename the component (breaking existing content references) or suppress decoration entirely (see below).
 `cq:htmlTag` only lets you add classes/attributes and change the tag name.
@@ -168,7 +168,7 @@ useful when the same component should be wrapped differently in different contex
     decorationTagName='' }"></sly>
 ```
 
-:::tip Decoration only happens for "synthetic"/included resources
+:::tip[Decoration only happens for "synthetic"/included resources]
 A top-level resource rendered directly does not get a decoration tag - the wrapper is added when a component
 is **included** by a parent (a page, a layout container, or an explicit `data-sly-resource`). Empty
 decoration tags are also suppressed automatically when the component renders no output.

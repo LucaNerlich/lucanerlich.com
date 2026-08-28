@@ -14,7 +14,7 @@ This page covers the most critical security topics every AEM developer and archi
 The sections progress from repository-level controls (service users, ACLs, CUGs) through request-level
 defences (CSRF, referrer filter, XSS) to infrastructure-level hardening (Dispatcher, production-ready mode).
 
-:::tip Core principles
+:::tip[Core principles]
 - **Least privilege** for every user, service account, and Dispatcher rule.
 - **Validate all input** and never execute dynamic code.
 - **Defence in depth** - never rely on a single layer.
@@ -28,7 +28,7 @@ defences (CSRF, referrer filter, XSS) to infrastructure-level hardening (Dispatc
 AEM code that accesses the JCR must authenticate. In older versions, `loginAdministrative()` was commonly
 used to obtain a session with full admin rights. This is **deprecated and dangerous**.
 
-:::danger Never use `loginAdministrative()`
+:::danger[Never use `loginAdministrative()`]
 `loginAdministrative()` grants unrestricted repository access to your code. If an attacker can trigger
 your servlet or workflow, they inherit those permissions. Always use a dedicated service user with
 minimal privileges instead.
@@ -51,7 +51,7 @@ Service user mappings are defined as OSGi factory configurations for
 The format is `<bundle-symbolic-name>:<sub-service-name>=<service-user-id>`. Always scope to a
 **sub-service name** so different parts of your code can use different privilege levels.
 
-:::info AEMaaCS vs AEM 6.5
+:::info[AEMaaCS vs AEM 6.5]
 The factory PID and JSON shape are identical on both runtimes - only the delivery differs.
 
 - **AEMaaCS:** ship the `.cfg.json` in `ui.config` and create the service users plus their ACLs
@@ -96,7 +96,7 @@ public String readTitle(String path) {
 }
 ```
 
-:::warning Always close service resolvers
+:::warning[Always close service resolvers]
 A leaked `ResourceResolver` holds an open JCR session, consuming heap memory and repository
 connections. In high-traffic scenarios this leads to memory exhaustion and instance instability.
 Always use try-with-resources.

@@ -126,7 +126,7 @@ public void writeMessage() {
 }
 ```
 
-:::danger Never use `admin:admin` or `loginAdministrative()`
+:::danger[Never use `admin:admin` or `loginAdministrative()`]
 Hardcoded `admin` credentials and `loginAdministrative()` both grant unrestricted repository
 access. Always route access through a sub-service scoped to the minimum privileges it needs.
 :::
@@ -153,7 +153,7 @@ Session session = repository.login(
 
 [Groovy Console Github](https://github.com/orbinson/aem-groovy-console)
 
-:::warning Dev / ops only
+:::warning[Dev / ops only]
 The Groovy Console runs arbitrary code as the admin user. Never expose it on Publish, and restrict
 access on Author to trusted operators. These examples are written for ad-hoc debugging and
 maintenance - don't copy their string-concatenation shape into production servlets.

@@ -41,7 +41,7 @@ end-to-end.
 | UI tests | **Selenium / WebDriver** via the AEM Archetype `ui.tests` module, **Cypress**, or **Playwright** | Hobbes.js is deprecated - avoid starting new tests on it |
 | Dispatcher config | **`dispatcher-cloud-optimized`** CLI | Validates `dispatcher.any` structure offline |
 
-:::info AEM Mocks vs Sling Mocks - what's the difference?
+:::info[AEM Mocks vs Sling Mocks - what's the difference?]
 **Sling Mocks** is the upstream Apache project. It gives you a Sling-aware in-memory environment
 (`SlingContext`, resource resolution, adaptable, OSGi service registry).
 
@@ -199,7 +199,7 @@ class TeaserModelTest {
 }
 ```
 
-:::tip `adaptTo` returned `null`? Run this checklist.
+:::tip[`adaptTo` returned `null`? Run this checklist.]
 - `addModelsForClasses(Foo.class)` - Sling Models aren't auto-scanned in tests.
 - `@Model(adaptables = ...)` - a test adapting from `Resource` won't match a model declared
   `adaptables = SlingHttpServletRequest.class`.
@@ -335,7 +335,7 @@ class FragmentFinderTest {
 }
 ```
 
-:::warning Oak mocks are slow to boot
+:::warning[Oak mocks are slow to boot]
 Each `AemContext(JCR_OAK)` class pays a 200-500 ms startup cost. Batch query-dependent tests into
 one class rather than sprinkling them across your suite.
 :::

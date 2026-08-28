@@ -67,7 +67,7 @@ Traversed 10000 nodes ... consider creating an index or changing the query
 On a large repository this is slow on author and can **take down publish** under traffic. Treat the
 warning as a bug to fix, not noise.
 
-:::danger Never ship a traversal to production
+:::danger[Never ship a traversal to production]
 A query that traverses thousands of nodes per request will not survive real traffic. Always confirm a
 query is index-backed before you ship it.
 :::

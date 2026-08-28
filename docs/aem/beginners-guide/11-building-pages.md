@@ -125,7 +125,7 @@ Select an asset and open **Properties** to edit metadata (title, description, `d
 Good metadata powers search, accessibility (alt text), and dynamic lists. Metadata lives under
 `jcr:content/metadata` on the `dam:Asset` node.
 
-:::tip Alt text and accessibility
+:::tip[Alt text and accessibility]
 The Image Core Component can pull its `alt` text from the asset's description metadata. Encourage
 authors to fill in descriptions on upload so images are accessible by default.
 :::

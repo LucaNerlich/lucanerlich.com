@@ -10,7 +10,7 @@ OSGi configuration is the primary mechanism for controlling the behavior of AEM 
 In a modern AEM project, configurations are stored as **JSON files** inside the code repository and
 deployed alongside the application - ensuring that every environment receives consistent, version-controlled settings.
 
-:::tip Why code-deployed configs matter
+:::tip[Why code-deployed configs matter]
 Storing OSGi configs in the repository means they are reviewed in pull requests, tracked in Git history, and
 automatically applied during deployments. This removes the risk of manual drift that comes from editing configs
 through the Felix Web Console.
@@ -61,7 +61,7 @@ multiple folders, the most specific match wins.
 instance running in the *dev* environment will use the `config.author.dev/` version because it is more
 specific.
 
-:::warning Run mode folder names are case-sensitive
+:::warning[Run mode folder names are case-sensitive]
 `config.Author/` will **not** be recognized. Always use lowercase: `config.author/`.
 :::
 
@@ -91,7 +91,7 @@ com.example.core.services.impl.MyServiceImpl~site-b.cfg.json
 
 The text after `~` is an arbitrary label - it does not affect behavior but should be descriptive.
 
-:::danger PID must match the class name exactly
+:::danger[PID must match the class name exactly]
 A single typo in the PID means the configuration will be silently ignored. Copy-paste the fully qualified
 class name from the Java source to avoid mistakes.
 :::
@@ -230,7 +230,7 @@ public class AssetSyncServiceImpl implements AssetSyncService {
 }
 ```
 
-:::tip @Modified for live updates
+:::tip[@Modified for live updates]
 Adding `@Modified` alongside `@Activate` lets AEM push configuration changes into a running service
 **without restarting the bundle**. Always use both unless the service requires a full restart on config change.
 :::
@@ -255,7 +255,7 @@ Use **Cloud Manager environment variables** and reference them with the `$[env:.
 Set the actual values in **Cloud Manager > Environments > Environment Variables**. AEM resolves the
 placeholders at runtime.
 
-:::danger Never commit real secrets
+:::danger[Never commit real secrets]
 Even if the repository is private, secrets in Git are a liability. Use environment variables or a secrets
 manager without exception.
 :::
@@ -284,7 +284,7 @@ The OSGi Web Console is available on local and non-production AEM instances at:
 | `/system/console/components` | List Declarative Services components and their status |
 | `/system/console/services` | View registered OSGi services |
 
-:::warning Console changes are lost on deployment
+:::warning[Console changes are lost on deployment]
 Any configuration change made through the Felix Console is stored in the JCR at
 `/apps/system/config` and will be **overwritten** by the next code deployment. Use the console
 for **debugging only** - never as a substitute for repository-deployed configs.
@@ -332,7 +332,7 @@ OSGi installer.
 7. **Using legacy formats in new projects** - `.config` and `.cfg` files still work but lack JSON
 tooling support and are harder to read. Prefer `.cfg.json` for all new configs.
 
-:::tip Validate configs in CI
+:::tip[Validate configs in CI]
 Add a build step that checks OSGi config filenames against the codebase's Java PIDs. A simple script
 that compares filenames to `@Component` annotations catches typos before they reach an environment.
 :::

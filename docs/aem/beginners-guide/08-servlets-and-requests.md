@@ -143,7 +143,7 @@ public class ContactFormServlet extends SlingAllMethodsServlet {
 }
 ```
 
-:::warning Validate every request parameter
+:::warning[Validate every request parameter]
 Request parameters, headers, and selectors are **untrusted input**. Validate and constrain them
 before using them in a query, a path, or a service call. Never build a JCR path by concatenating a
 raw parameter. See [Security & Permissions](./19-security-and-permissions.md).

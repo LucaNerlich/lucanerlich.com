@@ -109,7 +109,7 @@ Logback is the default SLF4J implementation (written by the same author).
 <!-- This transitively includes slf4j-api and logback-core -->
 ```
 
-:::tip Version management
+:::tip[Version management]
 Keep logging dependencies current and managed via a BOM (e.g. Spring Boot's
 dependency management) rather than pinning manually. Check the vendor security
 pages (Logback and Apache Log4j) before picking a version.

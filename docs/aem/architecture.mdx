@@ -285,7 +285,7 @@ Always prefer Sling Models. They are the recommended approach by Adobe and the c
 [Sling Models page](./backend/sling-models.mdx) for detailed annotation reference and patterns.
 :::
 
-:::note Legacy: WCMUsePojo
+:::note[Legacy: WCMUsePojo]
 Older codebases may still use `WCMUsePojo` (extend the class, override `activate()`, look up
 properties manually). It predates Sling Models, has no dependency injection, is harder to unit
 test, and should not be used in new code. If you inherit a project that uses it, migrate to Sling

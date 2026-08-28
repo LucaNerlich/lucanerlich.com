@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.30.0] - 2026-08-28
+
+### Added
+- Shell setup guide extended with daily tooling:
+    - fzf and zoxide with `.zshrc` setup snippets and usage tables (including a `cd`-to-`z` alias)
+    - lazygit and lazydocker terminal UIs with install and keybinding basics
+    - New "AI harness" section introducing OpenCode v2, the pi agent harness, and herdr
+    - macshot for macOS screenshots, annotation, and screen recording
+- Added `mise.toml` tool config (installs pi via mise)
+
+### Fixed
+- Fixed 75 admonitions across 33 posts that rendered as plain text; titles now use the supported `:::note[Title]` bracket syntax
 
 ### Changed
 - Upgraded TypeScript from 5.9.3 to 7.0.2 (dev dependency; the site build itself is unaffected as Docusaurus transpiles with SWC)

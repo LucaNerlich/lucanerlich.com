@@ -1,8 +1,8 @@
 ---
 title: My Shell Setup
-description: My zsh + oh-my-zsh + starship terminal setup, Ghostty config, and the .zshrc / PowerShell profiles I use day to day.
-tags: [shell, zsh, terminal, tooling, productivity]
-keywords: [zsh, oh-my-zsh, starship, ghostty, zshrc, powershell profile, terminal setup]
+description: My zsh + oh-my-zsh + starship terminal setup, Ghostty config, daily CLI tools (fzf, zoxide, lazygit, lazydocker), AI agent harnesses, and the .zshrc / PowerShell profiles I use day to day.
+tags: [shell, zsh, terminal, tooling, productivity, ai-agents]
+keywords: [zsh, oh-my-zsh, starship, ghostty, zshrc, powershell profile, terminal setup, fzf, zoxide, lazygit, lazydocker, opencode, pi, herdr, macshot]
 ---
 
 # My zsh Shell setup
@@ -21,7 +21,7 @@ The following steps setup my shell (zsh + oh-my-zsh).
     - https://starship.rs/presets/tokyo-night
     - `starship preset tokyo-night -o ~/.config/starship.toml`
 
-:::warning Keep secrets out of your shell config
+:::warning[Keep secrets out of your shell config]
 The dotfiles below are sanitized examples. **Never commit real tokens, passwords, or API keys to a
 shell profile** - they end up in your shell history, backups, and any synced dotfiles repo. Load
 secrets from an untracked file instead (see [Managing secrets](#managing-secrets) at the end of this
@@ -468,6 +468,226 @@ plugins=(
 )
 ```
 
+## Daily tools: fzf and zoxide
+
+The two tools I use in literally every terminal session. Both install with one
+Homebrew command and need a two-line addition to `~/.zshrc`.
+
+### fzf
+
+[Fuzzy finder](https://github.com/junegunn/fzf) for your history, files, and
+command output. Once you have used `Ctrl-R` with fzf you never go back.
+
+Install:
+
+```bash
+brew install fzf
+```
+
+Add to `~/.zshrc` (requires fzf 0.48+, which ships the built-in zsh
+integration -- key bindings and fuzzy completion in one line):
+
+```bash title="~/.zshrc - fzf"
+# fzf: enables Ctrl-R (history), Ctrl-T (insert file paths), Alt-C (cd into dir)
+source <(fzf --zsh)
+```
+
+Usage highlights:
+
+| Keys / command | What it does |
+|----------------|--------------|
+| `Ctrl-R` | Fuzzy search through shell history |
+| `Ctrl-T` | Fuzzy-find files and paste the path into the current command |
+| `Alt-C` | Fuzzy-find a directory and `cd` into it |
+| `vim **<TAB>` | Fuzzy completion after `**` (works with `cd`, `kill`, `ssh`, ...) |
+| `fzf` | Standalone fuzzy finder over stdin, e.g. `git branch \| fzf` |
+
+### zoxide
+
+A smarter `cd` that [learns which directories you visit
+often](https://github.com/ajeetdsouza/zoxide). `z` jumps straight to the best
+match -- this fully replaces my old `cd2` ... `cd6` alias pile.
+
+Install:
+
+```bash
+brew install zoxide
+```
+
+Add to `~/.zshrc` (put it at the very end, after everything else):
+
+```bash title="~/.zshrc - zoxide"
+eval "$(zoxide init zsh)"
+
+# Make plain `cd` behave like `z` (fuzzy directory jumping).
+# Note: use "builtin cd" where you need the real cd, e.g. inside scripts/functions.
+alias cd='z'
+```
+
+If you prefer zoxide to own `cd` natively instead of an alias, init it with the
+`--cmd` flag -- `eval "$(zoxide init zsh --cmd cd)"` -- which registers `cd`
+(and `cdi` for interactive mode) directly and needs no alias.
+
+Usage highlights:
+
+| Command | What it does |
+|---------|--------------|
+| `z foo` | Jump to the most-frequently/most-recently visited directory matching `foo` |
+| `z foo bar` | Multiple keywords refine the match |
+| `zi foo` | Interactive pick with fzf when several directories match |
+| `z -` | Not needed -- plain `cd -` still works, zoxide only adds commands |
+
+## Git and Docker TUIs: lazygit and lazydocker
+
+Full terminal UIs for the two things I stare at all day. Both are single Go
+binaries from the same author.
+
+### lazygit
+
+A [terminal UI for git](https://github.com/jesseduffield/lazygit): stage
+hunks interactively, rebase, cherry-pick, resolve conflicts, and browse refs
+without typing porcelain commands.
+
+Install:
+
+```bash
+brew install lazygit
+```
+
+```bash title="~/.zshrc - lazygit"
+alias lg='lazygit'
+```
+
+Usage: run `lg` inside a repository. Navigate with `j`/`k`, `space` to stage
+files or hunks, `c` to commit, `p` to push, `shift+P` to force-push, `?` shows
+all keybindings for the focused panel.
+
+### lazydocker
+
+The [same idea for Docker](https://github.com/jesseduffield/lazydocker):
+watch container state, logs, and resource usage in one screen, restart or
+remove containers, and prune dangling images.
+
+Install:
+
+```bash
+brew install lazydocker
+```
+
+```bash title="~/.zshrc - lazydocker"
+alias lzd='lazydocker'
+```
+
+Usage: run `lzd`. Left panel switches between containers / images / volumes
+with `[` and `]`, `enter` shows logs, `r` restarts a container, `x` opens the
+context menu (stop, remove, prune), `?` for help.
+
+## AI harness
+
+AI coding agents are converging on a common shape: a **harness** is the
+program that wraps the model -- it runs the agent loop, gives the model tools
+(shell, file edits, search), manages sessions and context, and renders the
+terminal UI. These are the three harnesses I currently run.
+
+### opencode
+
+[OpenCode](https://opencode.ai/v2/) ([GitHub](https://github.com/sst/opencode))
+is an open-source terminal coding agent with a client-server architecture: a
+background service owns sessions, providers, and tool execution, while the TUI,
+scripts, and HTTP clients all attach to it.
+
+- **V2 highlights:** client/server split with an [HTTP
+  API](https://opencode.ai/v2/docs/api), background service that survives
+  terminal restarts, 75+ providers, agents, commands, plugins, skills, and MCP
+  support.
+- **Install:** follow the [V2 docs](https://opencode.ai/v2/docs/); the V2 CLI
+  binary is `opencode2`.
+- **Usage:**
+  - `opencode2` -- start the TUI in the current project
+  - `opencode2 run "explain this repo"` -- one-shot print mode
+  - `opencode2 service status` / `opencode2 service restart` -- manage the
+    background service
+  - Configuration lives in `~/.config/opencode/opencode.json` (global) and
+    `opencode.json` per project; see the [config
+    guide](https://opencode.ai/v2/docs/config).
+
+No `.zshrc` additions required -- it is fully self-contained.
+
+### pi
+
+[pi](https://pi.dev) ([GitHub](https://github.com/earendil-works/pi)) is a
+minimal agent harness by Mario Zechner. Its philosophy: ship a small, solid
+core (agent loop, tools, sessions, provider auth) and let you **extend the
+harness instead of adapting to it** -- with TypeScript extensions, skills,
+prompt templates, and themes bundled as shareable packages.
+
+- **Highlights:** no MCP, sub-agents, or plan mode built in -- you add exactly
+  what you want; tree-structured sessions with compaction; 15+ providers;
+  four runtime modes (interactive, print/JSON, RPC, SDK).
+- **Install:**
+
+  ```bash
+  npm install -g @earendil-works/pi-coding-agent
+  ```
+
+- **Usage:**
+  - `pi` -- interactive TUI in the current project
+  - `pi "fix the failing test"` -- one-shot prompt
+  - `/reload` -- pick up extension changes mid-session; ask pi to modify its
+    own extensions and it will
+  - Press `Enter` to steer the current run, `Alt+Enter` to queue a follow-up
+
+### herdr
+
+[herdr](https://herdr.dev) ([GitHub](https://github.com/herdrdev/herdr)) is an
+agent-aware terminal multiplexer -- tmux rebuilt for running several AI coding
+agents at once. A background server owns the terminals, so your agents keep
+working when you close the lid, drop the network, or restart the machine.
+
+- **Highlights:**
+  - Every pane is classified as `working`, `blocked`, `idle`, or `done` --
+    the sidebar tells you which agent is waiting for you instead of you
+    polling panes
+  - Runs Claude Code, Codex, Cursor, OpenCode, pi, Grok, and 20+ others out
+    of the box -- it does not wrap or replace them, it owns their terminals
+  - Mouse-first (click, drag, right-click to split) plus tmux-style `ctrl+b`
+    prefix keys
+  - A CLI and socket API let scripts and agents spawn panes, prompt each
+    other, and wait until another agent is genuinely blocked
+- **Install:** one binary for macOS, Linux, and Windows -- see the [quick
+  start](https://herdr.dev/docs/quick-start/).
+- **Usage:**
+  - `herdr` -- start or reattach to your workspace
+  - Start any supported agent (e.g. `claude`, `opencode2`, `pi`) in a pane;
+    herdr detects it automatically
+  - `ctrl+b q` -- detach; everything keeps running
+  - `herdr` again -- reattach, sessions are restored
+  - `herdr agent list` / `herdr agent explain` -- inspect what herdr sees
+
+## macshot
+
+[macshot](https://macshot.io)
+([GitHub](https://github.com/sw33tLie/macshot)) is the screenshot and screen
+recording tool macOS forgot to make: annotate, blur/redact (with automatic
+PII detection), beautify, scroll capture, OCR, translate, and record MP4/GIF.
+Free, open source, pure Swift -- no Electron.
+
+Install:
+
+```bash
+brew install --cask macshot
+```
+
+Usage (defaults, all configurable):
+
+| Keys | What it does |
+|------|--------------|
+| `Cmd+Shift+X` | Capture an area, then annotate |
+| `Cmd+Shift+S` | Quick save |
+| `Cmd+Shift+T` | Quick OCR -- copy text from the screen |
+| `Cmd+Shift+R` | Record an area as MP4 or GIF |
+| `Cmd+Shift+H` | Screenshot history panel |
+
 ## Managing secrets
 
 Tokens and credentials must **never** live in a committed dotfile. Two safe patterns:
@@ -494,7 +714,7 @@ keep `.envrc` out of version control, and run `direnv allow` once per project.
 For shared machines or CI, prefer a real secrets manager (1Password CLI, `pass`, Vault, or your
 CI provider's secret store) over plaintext files.
 
-:::danger Rotate leaked tokens
+:::danger[Rotate leaked tokens]
 If a real token has ever been committed or pasted somewhere public, **revoke and regenerate it** --
 removing it from the file is not enough, because it remains in git history. Rotate
 [GitHub tokens](https://github.com/settings/tokens) and SonarQube tokens from their respective

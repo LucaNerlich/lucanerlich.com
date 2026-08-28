@@ -75,7 +75,7 @@ invalidation flows to the CDN automatically.
 | Cache flush | Dispatcher Flush agent | Automatic CDN/Dispatcher invalidation |
 | API | `Replicator` | `Replicator` (still works) |
 
-:::note Terminology
+:::note[Terminology]
 "Replication agent" is 6.5/AMS vocabulary. On AEMaaCS you will hear "content distribution". The
 authoring actions (Activate/Deactivate) and the `Replicator` API are the same on both.
 :::

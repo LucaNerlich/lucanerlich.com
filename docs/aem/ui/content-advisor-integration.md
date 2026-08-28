@@ -18,7 +18,7 @@ A useful integration separates three concerns:
 
 This article walks through that architecture, including IMS authentication, a reusable Granite include, author-tier previews, delivery availability feedback, local HTTPS, and the configuration needed in AEM as a Cloud Service.
 
-:::note Naming
+:::note[Naming]
 Adobe renamed Asset Selector to Content Advisor. The package and CDN locations still contain `assets-selectors`, and older API names remain available as aliases. New integrations should prefer `ContentAdvisor` API names.
 :::
 

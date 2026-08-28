@@ -8,7 +8,7 @@ tags: [aem, performance, optimization]
 
 Performance in AEM spans multiple layers: content queries against the Oak repository, server-side rendering through Sling Models and HTL, caching at the Dispatcher level, and frontend delivery to the browser. Optimising only one layer while ignoring the others will leave bottlenecks on the table. This page walks through each layer with concrete techniques, code examples, and the most common pitfalls.
 
-:::tip Rule of thumb
+:::tip[Rule of thumb]
 Measure first, optimise second. Use `request.log`, the query performance tool, and browser DevTools to find the real bottleneck before changing code.
 :::
 
@@ -61,7 +61,7 @@ AND node.[sling:resourceType] = 'mysite/components/article'
 
 If the plan says **traverse**, your query has no suitable index and must be fixed.
 
-:::warning Traversal queries
+:::warning[Traversal queries]
 A traversal warning in `error.log` - `*WARN* org.apache.jackrabbit.oak.plugins.index.Cursors$TraversingCursor Traversal query ... ; consider creating an index` - means Oak is walking the tree node by node. In production this can time out or bring the instance to its knees. **Never ignore traversal warnings.**
 :::
 
@@ -86,7 +86,7 @@ SearchResult result = query.getResult();
 long approxTotal = result.getTotalMatches();
 ```
 
-:::warning Never use `p.limit=-1`
+:::warning[Never use `p.limit=-1`]
 Setting `p.limit=-1` fetches **every** matching node in a single call. On a large repository this can return hundreds of thousands of results, exhaust heap memory, and crash the instance. Always paginate.
 :::
 
@@ -298,7 +298,7 @@ Load non-critical JavaScript asynchronously so it does not block the initial ren
 <script src="/etc.clientlibs/mysite/clientlibs/interactions.js" defer></script>
 ```
 
-:::tip Critical render path
+:::tip[Critical render path]
 Only the CSS and JS required for above-the-fold content should be render-blocking. Everything else should be `defer` or `async`.
 :::
 
@@ -346,7 +346,7 @@ The Dispatcher is the first line of defence against unnecessary load on AEM publ
 
 ### Cache Hit Ratio Target
 
-:::tip Aim for > 95 % cache hit ratio
+:::tip[Aim for > 95 % cache hit ratio]
 Monitor the Dispatcher `access.log` and `dispatcher.log`. If fewer than 95 % of requests are served from cache, investigate your invalidation rules and cache filter configuration.
 :::
 
@@ -440,7 +440,7 @@ try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(para
 }
 ```
 
-:::warning Resolver leaks
+:::warning[Resolver leaks]
 A leaked `ResourceResolver` keeps an open JCR session, which holds repository state in memory. Over time this causes `OutOfMemoryError` and forces a restart. **Always** use try-with-resources.
 :::
 
@@ -517,7 +517,7 @@ Or set a threshold via OSGi:
 }
 ```
 
-:::tip `queryFailTraversal`
+:::tip[`queryFailTraversal`]
 Setting `queryFailTraversal=true` causes traversal queries to **fail immediately** rather than running slowly. This is highly recommended in production to prevent runaway queries.
 :::
 
@@ -559,7 +559,7 @@ lets you run `EXPLAIN` queries, see which index is selected, and view the query 
 
 ## Common Pitfalls
 
-:::warning Avoid these frequent mistakes
+:::warning[Avoid these frequent mistakes]
 
 1. **Queries without indexes** - Every custom query must have a matching Oak index. Check with `EXPLAIN` before deploying.
 2. **ResourceResolver leaks** - Always close resolvers with try-with-resources. A single leaked resolver per request will eventually crash the instance.

@@ -68,7 +68,7 @@ flowchart TD
 A clean folder structure matters: it is the unit for **permissions**, **metadata profiles**, and
 **processing profiles**, and it keeps search and reuse manageable.
 
-:::tip Folder metadata and policies
+:::tip[Folder metadata and policies]
 Select a folder and open **Properties** to apply a **metadata schema**, a **processing profile**, and
 (on AEMaaCS) allowed Content Fragment Models. Settings applied at the folder level cascade to assets
 inside it.

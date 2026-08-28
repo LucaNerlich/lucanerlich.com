@@ -29,7 +29,7 @@ graph LR
     Fragment -->|API| Email
 ```
 
-:::info Official documentation
+:::info[Official documentation]
 - [Content Fragments - overview (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/content-fragments)
 - [Managing Content Fragments](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/managing)
 - [Content Fragment Models](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/content-fragments/content-fragments-models)
@@ -121,7 +121,7 @@ console plus **Tools > General > Content Fragment Models**.
    versions.
 3. Use **Associated Content** to attach related DAM assets (collections) to the fragment.
 
-:::tip Allow models on a folder
+:::tip[Allow models on a folder]
 A model only appears in the **Create** dialog for folders where it is permitted. Configure this on
 the DAM folder's **Properties > Policies / Cloud Configuration** (or via the model's *Allowed Content
 Fragment Models* policy). See
@@ -163,7 +163,7 @@ The exported `.content.xml` for a model field carries the field type and validat
     mimeType="text/html"/>
 ```
 
-:::tip Treat model changes like schema migrations
+:::tip[Treat model changes like schema migrations]
 Because the GraphQL schema is generated from the model, **adding** a field is backwards-compatible but
 **renaming or removing** one is a breaking change for every headless consumer. Version models
 deliberately and coordinate changes with client teams.

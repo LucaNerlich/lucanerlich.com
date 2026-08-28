@@ -13,7 +13,7 @@ content errors, and improves the authoring experience by providing immediate, in
 This guide covers the built-in validation system, how to register custom validators, and a collection
 of ready-to-use validation examples.
 
-:::info Official documentation
+:::info[Official documentation]
 - [Using Validation in Granite UI](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/validation/index.html) - the `foundation.validation` API (`validator`, `selector`, `validate/show/clear`)
 - [Granite UI `field` component](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html) - the `foundation-field` adapter the validators call
 - [TextField `validation` attribute](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html) - how a field declares a validator
@@ -248,7 +248,7 @@ There are two ways to attach a validator to a dialog field:
 </myField>
 ```
 
-:::info Two selectors, two declaration paths
+:::info[Two selectors, two declaration paths]
 A common misconception is that `data-validation` and `data-foundation-validation` are
 AEMaaCS-vs-6.5. They are not - **both attributes work on both platforms**, and they map to the
 two different ways you can declare a validator on a field:
@@ -405,7 +405,7 @@ Restricts a path field to only accept files with specific extensions (e.g. SVG i
 })(Granite.$);
 ```
 
-:::tip Generic extension validator
+:::tip[Generic extension validator]
 For a reusable validator that works with any extension, use a `granite:data` attribute to pass the
 allowed extensions:
 
@@ -850,7 +850,7 @@ walk up to the enclosing `coral-multifield-item` to reach sibling fields.
 })(Granite.$);
 ```
 
-:::tip Partner-field revalidation
+:::tip[Partner-field revalidation]
 Changing the "URL" input doesn't automatically re-run validation on the "Label" input. After the
 author edits one side, trigger a `checkValidity()` on the partner so a previously-invalid state
 clears:
@@ -952,7 +952,7 @@ SKU exist?", "is this URL reachable?". The Foundation API is synchronous, so the
 })(Granite.$);
 ```
 
-:::warning Server-side validation is still required
+:::warning[Server-side validation is still required]
 Client-side async checks are a UX optimisation, not a security boundary. The servlet that handles
 the save (or a `@PostConstruct` hook in the Sling Model) must re-validate uniqueness - a malicious
 or stale client can submit whatever it wants. See [Server-Side Validation](#server-side-validation)
@@ -1012,7 +1012,7 @@ Use these as the value of the `validation` attribute - they are pre-registered b
     validation="foundation.jcr.name"/>
 ```
 
-:::note Validator names are not load-bearing
+:::note[Validator names are not load-bearing]
 The exact `foundation.*` keys shipped by Granite UI are an implementation detail of the platform
 and occasionally get added to or renamed between versions. If a key above doesn't exist in your
 release, grep the `granite/ui/components/coral/foundation/clientlibs/foundation/js/validations`
@@ -1248,7 +1248,7 @@ Add a `css.txt` next to `js.txt` in the clientlib folder and list `css/validatio
 `css` in the `.content.xml` categories / dependencies as needed. Remember: this CSS only runs inside
 dialogs, so it can't leak onto published pages.
 
-:::tip Show which validator is failing
+:::tip[Show which validator is failing]
 When debugging dialogs with many overlapping validators, surface the rule name on the wrapper -
 it survives re-renders and is easy to spot in the inspector:
 

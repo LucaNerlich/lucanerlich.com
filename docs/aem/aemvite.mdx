@@ -100,7 +100,7 @@ This post covers the architecture and a complete step-by-step migration of a sto
 
 If you are new to AEM clientlibs themselves - categories, dependencies, embedding, the `.content.xml` descriptor - start with [Client Libraries](./client-libraries.mdx) (or the beginner-friendly [Client Libraries walkthrough](./beginners-guide/10-client-libraries.md)) first. This post assumes that background and focuses purely on swapping the build tooling behind an existing `ui.frontend` module.
 
-:::info Scope: classic AEM `ui.frontend`, not Edge Delivery Services
+:::info[Scope: classic AEM `ui.frontend`, not Edge Delivery Services]
 This applies to AEM projects built on the classic Maven archetype (`ui.frontend` → `ui.apps` clientlibs) - AEM 6.5, AMS, or AEM as a Cloud Service run in "full stack" mode. If your site runs on [Edge Delivery Services](./edge-delivery/overview.mdx) instead, there is no `ui.frontend` module, no webpack, and no clientlibs to migrate - EDS blocks are plain JS/CSS served directly from a GitHub repo, so `@aemvite` does not apply there.
 :::
 

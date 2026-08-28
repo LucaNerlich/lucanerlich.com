@@ -674,7 +674,7 @@ How Adobe's script resolves it:
 With the checkbox variant, the target is simply shown when checked and hidden when unchecked -
 there's no `showhidetargetvalue` needed.
 
-:::tip Scope the selector inside multifields
+:::tip[Scope the selector inside multifields]
 Adobe's script queries the **whole document** by default. Inside a composite multifield every item
 has its own controller and target, so a global `.cmp-link-type-target` selector matches rows other
 than the one the author is editing and toggles them all together. For per-row behaviour, use the
@@ -951,7 +951,7 @@ public class CategoryDatasourceServlet extends org.apache.sling.api.servlets.Sli
 }
 ```
 
-:::tip Preselect the saved value
+:::tip[Preselect the saved value]
 A datasource select does not automatically mark the currently-stored value as selected the way static
 `items` do. To preselect, read the component's saved value from the request
 (`request.getRequestPathInfo()` / the `value` request attribute that Granite sets on the field
@@ -1135,7 +1135,7 @@ public String getTwitter() {
 }
 ```
 
-:::tip Fieldset vs Well vs Multifield
+:::tip[Fieldset vs Well vs Multifield]
 - **Well** - visual grouping only. No name prefix, no subnode.
 - **Fieldset** - visual grouping *and* persistence into a subnode (`name="./social"`).
 - **Multifield** - use only when authors can add *n* repeating items. A fieldset is almost always
@@ -1570,7 +1570,7 @@ By default, AEM refreshes only the edited component. If a component's HTML depen
 | `REFRESH_PAGE` | Reload the whole page |
 | Custom JS function name | Called with the edit event - use for targeted DOM updates |
 
-:::warning `REFRESH_PAGE` is a sledgehammer
+:::warning[`REFRESH_PAGE` is a sledgehammer]
 Every change forces a full page reload, which is slow and loses any unsaved edits in other
 components. Reach for `REFRESH_SELF` or `REFRESH_PARENT` first; only escalate to `REFRESH_PAGE`
 when siblings genuinely depend on each other.

@@ -689,7 +689,7 @@ await loadPosts();
 initPosts();
 ```
 
-:::warning Interpolating into innerHTML
+:::warning[Interpolating into innerHTML]
 `innerHTML` interprets strings as HTML. In this tutorial the content comes
 from your own `posts.json`, but never interpolate untrusted or user-generated
 content (titles, bodies, tags, comments) this way - it allows stored XSS. For
@@ -771,7 +771,7 @@ Because your blog is just HTML, CSS, and JavaScript (no database, no backend cod
 are two paths: the quickest way (drop your files into a cloud bucket) and the more hands-on way (run your own tiny
 server with nginx).
 
-:::tip What do I actually upload?
+:::tip[What do I actually upload?]
 
 - If you stayed with plain files, upload `index.html`, `styles.css`, `app.js`, and `posts.json` (if you did Step 5).
 - If you used the Vite bonus, run `npm run build`. It creates a `dist/` folder - upload the **contents** of that
@@ -819,7 +819,7 @@ website. For a small blog you will pay cents per month.
    `http://my-first-blog-1234.s3-website-eu-central-1.amazonaws.com`) and open it in a new tab. That is your blog,
    live on the internet.
 
-:::caution A few honest caveats
+:::caution[A few honest caveats]
 
 - The S3 website endpoint is **HTTP only**. To get HTTPS (the padlock) and a real domain like `blog.example.com`, you
   put **CloudFront** in front of the bucket and point your DNS at it. That is a whole separate guide.

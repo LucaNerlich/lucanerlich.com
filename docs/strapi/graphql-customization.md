@@ -10,7 +10,7 @@ tags: [strapi, graphql, api, resolvers, schema]
 Strapi auto-generates a full GraphQL schema from your content types. This page covers how to extend that schema, add
 custom resolvers, apply middleware, secure queries, and avoid performance traps.
 
-:::danger Mutations are exposed by default
+:::danger[Mutations are exposed by default]
 
 When you install `@strapi/plugin-graphql`, Strapi generates **full CRUD mutations** (`create`, `update`, `delete`) for *
 *every** content type. If you only configure the Public role's REST permissions in the admin panel, the GraphQL

@@ -298,7 +298,7 @@ public class AutoTagProcessStep implements WorkflowProcess {
 The `process.label` OSGi property is the name that appears in the workflow model editor's step
 configuration dropdown.
 
-:::info Process Step Arguments
+:::info[Process Step Arguments]
 You can pass arguments to a Process Step in the model editor. They are available via
 `metaDataMap.get("PROCESS_ARGS", String.class)`. For multiple arguments, use a delimiter
 (e.g. comma-separated) and parse them in your code.
@@ -693,7 +693,7 @@ public class WatermarkRenditionStep implements WorkflowProcess {
 
 ### AEM as a Cloud Service: Asset microservices
 
-:::warning AEMaaCS
+:::warning[AEMaaCS]
 On AEM as a Cloud Service, the DAM Update Asset workflow has been replaced by **Asset microservices**.
 Custom Java workflow steps for rendition generation **do not run** on AEMaaCS. Instead:
 

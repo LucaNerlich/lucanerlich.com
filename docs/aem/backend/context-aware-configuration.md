@@ -224,7 +224,7 @@ Expose the config values through your Sling Model and use them in HTL:
 </script>
 ```
 
-:::tip Always set `@ context` inside `<script>`
+:::tip[Always set `@ context` inside `<script>`]
 HTL's auto-context detection usually picks `scriptString` inside `<script>` tags, but set it
 explicitly to be safe - a value that slips through unescaped can break out of the string literal
 and execute arbitrary JavaScript. For JSON payloads use `@ context="scriptToken"` or render the

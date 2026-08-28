@@ -16,7 +16,7 @@ author and publish instances.
 **Access the console** at [/groovyconsole](http://localhost:4502/groovyconsole) (or the legacy
 path `/apps/groovyconsole.html`).
 
-:::note Community tool - not an Adobe product
+:::note[Community tool - not an Adobe product]
 The Groovy Console is an open-source, community-maintained tool, **not** part of AEM and **not**
 supported by Adobe Customer Care. On AEM as a Cloud Service it must be added as a project dependency
 and is intended for **author / RDE / local SDK** use; do not ship it to production publish tiers.
@@ -765,7 +765,7 @@ out.println("Exported ${count} rows")
 return count
 ```
 
-:::tip The `table` binding
+:::tip[The `table` binding]
 The Groovy Console exposes a `table` binding (a list of maps) that renders as a sortable,
 exportable grid in the **Data** tab of the result panel - often nicer than printing CSV to the
 output. Populate it with `table = rows.collect { [path: it.getPath('p'), title: ...] }`.
@@ -863,7 +863,7 @@ out.println("Possible orphans (no full-text reference found): ${orphans}")
 return orphans
 ```
 
-:::warning "Unreferenced" is not "safe to delete"
+:::warning["Unreferenced" is not "safe to delete"]
 This is a **full-text heuristic**: it can miss references (external systems, hardcoded URLs, rich-text
 HTML, paths split across properties) and is only as good as the search index. For an authoritative
 answer, enumerate the known reference properties or use `com.day.cq.wcm.api.reference.ReferenceSearch`.

@@ -73,7 +73,7 @@ Traversed 10000 nodes with filter Filter(query=...) ; consider creating an index
 On a large repository this can take seconds to minutes and consume heap. The fix is almost always an
 index, occasionally a narrower query (tighter `path`, a `type` that is already indexed).
 
-:::warning Never ship a traversal query to publish
+:::warning[Never ship a traversal query to publish]
 A traversal that is merely slow on author can take down a publish instance under traffic. Treat the
 "consider creating an index" warning as a build blocker, not a suggestion.
 :::
@@ -163,7 +163,7 @@ with out-of-the-box (OOTB) ones without downtime:
 Validate locally with the **Index Converter / oak-run** tooling and the
 [Content Search & Indexing](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/indexing) docs.
 
-:::tip Skip the full copy with Simplified Index Management
+:::tip[Skip the full copy with Simplified Index Management]
 On recent releases you can define just a `diff.json` delta and let the platform merge and version the
 index for you, instead of copying the whole OOTB definition and tracking `-custom-<N>` by hand. See
 [Simplified Index Management](./simplified-index-management.mdx).
