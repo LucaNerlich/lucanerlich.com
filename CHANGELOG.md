@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.30.1] - 2026-08-28
+
+### Added
+- Shell setup guide: new "Local version management" section covering mise (mise-en-place)
+    - Global vs. per-project tool pinning with `mise use -g` and `mise.toml`, including how the config hierarchy resolves (closest file wins) and the "mise use writes where you stand" gotcha
+    - Installing CLI tools (npm, pipx, GitHub releases, mise registry - including opencode) via backends instead of Homebrew
+    - Per-directory env vars with `[env]` and `.env` loading as a direnv replacement, plus a task runner primer
+    - Migration notes for replacing nvm and hand-pinned `JAVA_HOME`/`MAVEN_HOME` exports
+
+### Changed
+- The example `.zshrc` in the shell setup guide now uses mise for node/java/maven instead of nvm and hardcoded version paths
+
 ## [1.30.0] - 2026-08-28
 
 ### Added
