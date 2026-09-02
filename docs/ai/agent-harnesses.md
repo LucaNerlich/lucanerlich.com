@@ -151,6 +151,88 @@ Custom OpenAI-compatible providers (Ollama, LM Studio, vLLM) go in
 - Switch to it with `/model` inside a session, or set it as the default in
   `~/.pi/agent/settings.json` (`defaultProvider` / `defaultModel`).
 
+### Tokens/sec footer
+
+There's no built-in setting for this -- `settings.json` has no
+`showTokensPerSecond` toggle -- but it's exactly the documented extension
+pattern (`ctx.ui.setFooter()`, same one used for the git-branch example in
+pi's own docs). Drop this in `~/.pi/agent/extensions/tps-footer.ts` (global,
+auto-discovered, hot-reloadable with `/reload`):
+
+```typescript title="~/.pi/agent/extensions/tps-footer.ts"
+import type { AssistantMessage } from "@earendil-works/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
+
+export default function (pi: ExtensionAPI) {
+  // message_start/message_end fire back-to-back once the response is
+  // finalized -- they don't bracket the real streaming duration. Time
+  // from the first streamed chunk (message_update) instead.
+  let assistantPending = false;
+  let firstTokenAt = 0;
+  let lastTps: number | null = null;
+  let requestRender: (() => void) | null = null;
+  let enabled = false;
+
+  pi.on("message_start", async (event) => {
+    if (event.message.role === "assistant") {
+      assistantPending = true;
+      firstTokenAt = 0;
+    }
+  });
+
+  pi.on("message_update", async (event) => {
+    if (assistantPending && event.message.role === "assistant" && !firstTokenAt) {
+      firstTokenAt = Date.now();
+    }
+  });
+
+  pi.on("message_end", async (event) => {
+    if (event.message.role !== "assistant") return;
+    assistantPending = false;
+    if (!firstTokenAt) return;
+    const message = event.message as AssistantMessage;
+    const outputTokens = message.usage?.output ?? 0;
+    const elapsedSec = (Date.now() - firstTokenAt) / 1000;
+    if (elapsedSec > 0 && outputTokens > 0) lastTps = outputTokens / elapsedSec;
+    firstTokenAt = 0;
+    requestRender?.();
+  });
+
+  pi.registerCommand("tps", {
+    description: "Toggle tokens/sec footer",
+    handler: async (_args, ctx) => {
+      enabled = !enabled;
+      if (enabled) {
+        ctx.ui.setFooter((tui, theme, footerData) => {
+          requestRender = () => tui.requestRender();
+          const unsub = footerData.onBranchChange(() => tui.requestRender());
+          return {
+            dispose: () => { unsub(); requestRender = null; },
+            invalidate() {},
+            render(width: number): string[] {
+              const tpsStr = lastTps != null ? `${lastTps.toFixed(1)} tok/s` : "-- tok/s";
+              const left = theme.fg("dim", tpsStr);
+              const right = theme.fg("dim", ctx.model?.id || "no-model");
+              const pad = " ".repeat(Math.max(1, width - visibleWidth(left) - visibleWidth(right)));
+              return [truncateToWidth(left + pad + right, width)];
+            },
+          };
+        });
+        ctx.ui.notify("tok/s footer enabled", "info");
+      } else {
+        ctx.ui.setFooter(undefined);
+        ctx.ui.notify("Default footer restored", "info");
+      }
+    },
+  });
+}
+```
+
+Run `/tps` inside a session to toggle it on. Especially useful against a
+local [LM Studio](#adding-a-local-provider-lm-studio) provider, where
+throughput varies a lot by model size and quantization.
+
 ## herdr
 
 [herdr](https://herdr.dev) ([GitHub](https://github.com/herdrdev/herdr)) is an
