@@ -95,7 +95,21 @@ prompt templates, and themes bundled as shareable packages.
 
   ```bash
   npm install -g @earendil-works/pi-coding-agent
+  # or, version-pinned with mise
+  mise use --global pi
   ```
+
+  If `pi` (or any mise-installed tool) reports `command not found`, mise
+  itself isn't hooked into the shell yet. Confirm with `mise doctor` --
+  `activated: no` / `shims_on_path: no` means the activation line is
+  missing -- then add it:
+
+  ```bash title="~/.zshrc - mise"
+  eval "$(mise activate zsh)"
+  ```
+
+  See [Local Version Management with mise](../other/mise.md#install-and-activate)
+  for the full setup and per-shell variants.
 
 - **Usage:**
   - `pi` -- interactive TUI in the current project
@@ -103,6 +117,39 @@ prompt templates, and themes bundled as shareable packages.
   - `/reload` -- pick up extension changes mid-session; ask pi to modify its
     own extensions and it will
   - Press `Enter` to steer the current run, `Alt+Enter` to queue a follow-up
+
+### Adding a local provider (LM Studio)
+
+Custom OpenAI-compatible providers (Ollama, LM Studio, vLLM) go in
+`~/.pi/agent/models.json`, which pi re-reads live -- no restart needed:
+
+```json title="~/.pi/agent/models.json"
+{
+  "providers": {
+    "lmstudio": {
+      "api": "openai-completions",
+      "baseUrl": "http://127.0.0.1:1234/v1",
+      "apiKey": "lm-studio",
+      "models": [
+        {
+          "id": "qwen/qwen3.8-27b",
+          "name": "Qwen 3.8 27B (LM Studio)"
+        }
+      ]
+    }
+  }
+}
+```
+
+- `baseUrl` needs the `/v1` suffix -- pi's OpenAI-compatible client expects
+  it, unlike some other harnesses.
+- The `id` must match exactly what LM Studio serves. Confirm with `curl
+  http://127.0.0.1:1234/v1/models` -- LM Studio often prefixes ids with the
+  publisher (e.g. `qwen/qwen3.8-27b`, not `qwen3.8-27b`).
+- `apiKey` is optional for local servers but a harmless placeholder avoids
+  clients that reject requests with no key at all.
+- Switch to it with `/model` inside a session, or set it as the default in
+  `~/.pi/agent/settings.json` (`defaultProvider` / `defaultModel`).
 
 ## herdr
 
