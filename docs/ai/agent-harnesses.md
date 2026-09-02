@@ -43,6 +43,43 @@ scripts, and HTTP clients all attach to it.
 
 No `.zshrc` additions required -- it is fully self-contained.
 
+### Adding a local provider (LM Studio)
+
+opencode treats any OpenAI-compatible server as a custom provider. To wire up
+a local [LM Studio](https://lmstudio.ai/) instance, add a provider entry to
+`~/.config/opencode/opencode.json`:
+
+```json title="~/.config/opencode/opencode.json"
+{
+  "provider": {
+    "lmstudio": {
+      "name": "LM Studio (local)",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://127.0.0.1:1234/v1"
+      },
+      "models": {
+        "qwen/qwen3.8-27b": {
+          "name": "Qwen 3.8 27B"
+        }
+      }
+    }
+  }
+}
+```
+
+Two gotchas that produce confusing errors:
+
+- `name` and `options` belong directly under the provider id (`lmstudio`), as
+  siblings of `models` -- not nested inside `models`. Nesting them inside
+  `models` makes the schema validator treat `"name"` as a model id whose
+  value should be an object, failing with something like `Expected object,
+  got "LM Studio (local)"`.
+- The key under `models` must match the model id LM Studio actually serves.
+  Confirm with `curl http://127.0.0.1:1234/v1/models` -- a provider-prefixed
+  alias like `lmstudio/qwen` will validate fine but fail at request time if
+  LM Studio doesn't recognize that id.
+
 ## pi
 
 [pi](https://pi.dev) ([GitHub](https://github.com/earendil-works/pi)) is a
