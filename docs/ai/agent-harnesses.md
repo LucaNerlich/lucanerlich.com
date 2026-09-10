@@ -80,6 +80,63 @@ Two gotchas that produce confusing errors:
   alias like `lmstudio/qwen` will validate fine but fail at request time if
   LM Studio doesn't recognize that id.
 
+### Adding a local provider (oMLX)
+
+oMLX is a local inference server for Mac that exposes an OpenAI-compatible API
+at `http://127.0.0.1:8000/v1` by default. The setup mirrors LM Studio, with one
+important difference: **oMLX requires a real API key** -- Ollama/LM Studio
+accept any non-empty string, oMLX answers `API key required` without one.
+
+1. **Find your key** in `~/.omlx/settings.json` under `auth.api_key`
+   (it starts with `sk-omlx-`).
+2. **Confirm the served model id** (authenticated -- unauthenticated requests
+   are rejected):
+
+```bash
+curl http://127.0.0.1:8000/v1/models -H "Authorization: Bearer <your-omlx-api-key>"
+```
+
+3. **Add the provider** to `~/.config/opencode/opencode.json`:
+
+```json title="~/.config/opencode/opencode.json"
+{
+  "provider": {
+    "omlx-local": {
+      "name": "oMLX (local)",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://127.0.0.1:8000/v1",
+        "apiKey": "<your-omlx-api-key>"
+      },
+      "models": {
+        "Qwen3.8-27B-4bit": {
+          "name": "Qwen3.8-27B-4bit (local)",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+4. **Verify** with `opencode models omlx-local`, then restart the TUI and pick
+   it via `/models`.
+
+Gotchas learned the hard way:
+
+- `options.apiKey` is required -- an `auth.json` entry alone is not enough for
+  custom `openai-compatible` providers. If you prefer not to keep the secret in
+  the config file, use `"apiKey": "{env:OMLX_API_KEY}"` and
+  `export OMLX_API_KEY=<your-omlx-api-key>` before starting opencode.
+- If you set `limit`, it needs **both** `context` and `output` -- a lone
+  `context` fails config validation and blocks `/models` entirely (the error
+  names the missing `limit.output` key).
+- As with LM Studio, the key under `models` must exactly match the `id` from
+  `GET /v1/models`.
+
 ## pi
 
 [pi](https://pi.dev) ([GitHub](https://github.com/earendil-works/pi)) is a
