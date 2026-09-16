@@ -29,6 +29,14 @@ html[data-theme='dark'] {
     navigation: auto;
 }
 
+* {
+    corner-shape: squircle;
+}
+
+p img {
+    border-radius: var(--ifm-code-border-radius);
+}
+
 
 /* ------------------------------------------------------------------ */
 /* Navbar colour accents                                              */
