@@ -165,13 +165,15 @@ Result:
 
 ## Filter unknown fields
 
-If you need a strict schema, discard unknown keys so extra fields do not leak into your domain model.
+If you need a strict schema, validate required fields and discard unknown keys so extra fields do not leak into your
+domain model.
 
 ```ts
 type PublicUser = { id: number; name: string };
 
-function toPublicUser(value: Record<string, unknown>): PublicUser {
-    return { id: Number(value.id), name: String(value.name) };
+function toPublicUser(value: Record<string, unknown>): PublicUser | null {
+    if (typeof value.id !== "number" || typeof value.name !== "string") return null;
+    return { id: value.id, name: value.name };
 }
 
 const raw = JSON.parse('{"id":1,"name":"Ada","role":"admin"}') as Record<string, unknown>;
@@ -187,7 +189,7 @@ Result:
 ## Stable JSON for comparisons
 
 JSON output is not stable if key order varies. If you compare JSON strings (for caching or hashing), normalize key
-order.
+order. This small helper only sorts top-level keys; use a recursive version for nested objects.
 
 ```ts
 function stableStringify(value: Record<string, unknown>): string {
@@ -320,8 +322,8 @@ Result:
 Use `try/catch` or a helper that returns a result object.
 
 ```ts
-const parsed = safeParse<{ ok: boolean }>('{"ok": true}');
-console.log(parsed.ok);
+const result = safeParse<{ ok: boolean }>('{"ok": true}');
+console.log(result.ok ? result.value.ok : false);
 ```
 
 Result:

@@ -59,9 +59,13 @@ console.log(dateTime.format(createdAt));
 Result:
 
 ```text
-USD 1,234.56
+USD 1,234.56
 Feb 2, 2026, 2:30 PM
 ```
+
+Note that `Intl` output often contains non-breaking spaces (U+00A0) or narrow no-break spaces (U+202F) instead of
+regular spaces. They look identical, but a string comparison such as `formatted === "USD 1,234.56"` with a typed space
+fails. Avoid asserting exact formatted strings in tests, or normalize whitespace first.
 
 ## Intl.NumberFormat: numbers, currency, units, percent
 
@@ -118,7 +122,7 @@ Result:
 
 ```text
 $20.00
-EUR 20.00
+EUR 20.00
 ```
 
 ### Unit and percent formatting
@@ -253,7 +257,7 @@ console.log(range.formatRange(start, end));
 Result:
 
 ```text
-Feb 2, 2026, 8:00 AM - 10:30 AM
+Feb 2, 2026, 8:00 – 10:30 AM
 ```
 
 ### Format to parts for dates

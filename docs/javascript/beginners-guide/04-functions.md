@@ -83,7 +83,8 @@ Result:
 7
 ```
 
-The difference from a declaration: function expressions are **not hoisted** (explained below).
+The difference from a declaration: this function expression cannot be called before the `const` line runs (explained
+below).
 
 ## Arrow functions
 
@@ -375,7 +376,7 @@ Result:
 Hello, Ada!
 ```
 
-**Function expressions and arrow functions are NOT hoisted:**
+**Function expressions and arrow functions stored in `let` or `const` cannot be called before initialization:**
 
 ```js
 // console.log(add(1, 2)); // ReferenceError: Cannot access 'add' before initialization
@@ -390,8 +391,9 @@ Result:
 3
 ```
 
-`var` declarations are hoisted too, but only the declaration - not the assignment. This is another reason to avoid
-`var`.
+The `add` binding exists before that line, but it is in the **temporal dead zone (TDZ)** until initialization finishes.
+`var` declarations are hoisted too, but only the declaration - not the assignment - so calling a `var` function
+expression early fails differently. This is another reason to avoid `var`.
 
 ## Closures
 

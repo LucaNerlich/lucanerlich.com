@@ -88,6 +88,40 @@ Result:
 404
 ```
 
+### AggregateError for grouped failures
+
+`AggregateError` represents several errors at once. You most often see it from `Promise.any` when every input promise
+rejects; the `errors` property contains the individual rejection reasons.
+
+```ts
+async function firstWorkingSource(): Promise<void> {
+    try {
+        await Promise.any([
+            Promise.reject(new Error("Cache failed")),
+            Promise.reject(new Error("API failed")),
+        ]);
+    } catch (err) {
+        if (err instanceof AggregateError) {
+            console.log(err.name);
+            console.log(
+                err.errors
+                    .map((error: unknown) => error instanceof Error ? error.message : String(error))
+                    .join(", ")
+            );
+        }
+    }
+}
+
+firstWorkingSource();
+```
+
+Result:
+
+```text
+AggregateError
+Cache failed, API failed
+```
+
 ## Wrapping errors with context
 
 Wrapping errors lets you add higher-level context while preserving the original cause. This is especially useful across
@@ -147,6 +181,65 @@ Result:
 
 ```text
 User not found
+```
+
+## Global error handlers
+
+Global handlers are a last-resort safety net for logging and reporting errors that escaped local handling. They are not
+a replacement for `try/catch`, `.catch()`, validation, or explicit recovery close to the code that can fail.
+
+In browsers, listen for synchronous errors with `error` and missed promise rejections with `unhandledrejection`. The
+rejection value is available as `event.reason`; calling `event.preventDefault()` suppresses the browser's default
+console report for that rejection. For `error`, prefer `event.error` (the thrown value) over `event.message`, because
+browsers format the message differently (Chrome reports `"Uncaught Error: Widget failed"`).
+
+```ts
+window.addEventListener("error", (event) => {
+    const message = event.error instanceof Error ? event.error.message : event.message;
+    console.log(`Global error: ${message}`);
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+    const reason = event.reason instanceof Error ? event.reason.message : String(event.reason);
+    console.log(`Unhandled rejection: ${reason}`);
+    event.preventDefault();
+});
+```
+
+If a click handler throws `new Error("Widget failed")` and a promise rejects with `new Error("Upload failed")`, the
+handler output would be:
+
+Result:
+
+```text
+Global error: Widget failed
+Unhandled rejection: Upload failed
+```
+
+In Node.js, `uncaughtException` and `unhandledRejection` give you one final chance to log. Since Node 15, the default
+for unhandled rejections is `--unhandled-rejections=throw`, which turns an unhandled rejection into an uncaught
+exception and crashes the process. After `uncaughtException`, the process is in an undefined state, so log and exit
+instead of continuing to serve requests.
+
+```ts
+process.on("uncaughtException", (err) => {
+    console.error(`Uncaught exception: ${err.message}`);
+    process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+    const message = reason instanceof Error ? reason.message : String(reason);
+    console.error(`Unhandled rejection: ${message}`);
+    process.exitCode = 1;
+});
+
+Promise.reject(new Error("Database unavailable"));
+```
+
+Result:
+
+```text
+Unhandled rejection: Database unavailable
 ```
 
 ## Result objects for expected failures
@@ -327,8 +420,8 @@ Unknown error
 
 ## Error handling at UI boundaries
 
-UI code should be defensive because user events can be unpredictable. Wrap event handlers to ensure errors are reported
-and don't break the rest of the page.
+UI code should be defensive because user events can be unpredictable. Wrap synchronous event handlers to ensure errors
+are reported and don't break the rest of the page. For async handlers, `await` inside `try/catch` or attach `.catch()`.
 
 ```ts
 function runSafely<T>(fn: () => T): T | null {
@@ -365,7 +458,7 @@ null
 
 ## Best practices
 
-- **Use built-in errors first**: `Error`, `TypeError`, `RangeError`.
+- **Use built-in errors first**: `Error`, `TypeError`, `RangeError`, `AggregateError`.
 - **Wrap with context** when crossing boundaries (IO -> business -> UI).
 - **Preserve causes** to make debugging easier.
 - **Handle async errors explicitly** with `await` in `try/catch`.

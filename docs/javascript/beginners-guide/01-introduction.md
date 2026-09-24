@@ -21,8 +21,8 @@ required.
 
 ## What is JavaScript?
 
-JavaScript is a **high-level, interpreted programming language**. That means you write human-readable code and the
-computer executes it directly - no separate compilation step needed.
+JavaScript is a **high-level programming language** usually run by a JavaScript engine as your program executes. That
+means you write human-readable code and do not run a separate compilation command first.
 
 Three facts to remember:
 
@@ -46,8 +46,8 @@ Every web browser (Chrome, Firefox, Safari, Edge) has a built-in **JavaScript en
 | Safari  | JavaScriptCore |
 | Edge    | V8             |
 
-When you load a web page, the browser reads the HTML, applies the CSS, and executes any JavaScript it finds. This is *
-*client-side** JavaScript.
+When you load a web page, the browser reads the HTML, applies the CSS, and executes any JavaScript it finds. This is
+**client-side** JavaScript.
 
 ### Node.js
 
@@ -301,7 +301,7 @@ Always use strict mode. In modern JavaScript modules (which we will cover later)
 | **2 - The Browser**    | 7-10    | HTML/CSS basics, DOM manipulation, events, fetching data     |
 | **3 - Build & Deploy** | 11-12   | Build a complete website, deploy it to a VPS with nginx      |
 | **4 - TypeScript**     | 13       | Static types, interfaces, generics, utility types, migration |
-| **5 - Going Deeper**   | 14-15   | Error handling, regular expressions                          |
+| **5 - Going Deeper**   | 14-19   | Error handling, regex, classes, modules, Map/Set, generators |
 
 Each chapter builds on the previous one. Code examples include expected output so you can verify your work. By chapter
 12, you will have a website live on the internet.

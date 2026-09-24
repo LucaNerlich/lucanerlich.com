@@ -16,8 +16,11 @@ sidebar_position: 13
 # TypeScript
 
 TypeScript is JavaScript with **static types**. It catches bugs at compile time instead of at runtime, provides better
-editor autocompletion, and makes large codebases easier to maintain. Every valid JavaScript file is also valid
-TypeScript - you can adopt it gradually.
+editor autocompletion, and makes large codebases easier to maintain. TypeScript can parse JavaScript syntax, so you can
+adopt it gradually, although strict type checking may still report errors in existing JavaScript.
+
+**Tip:** This chapter is a high-level overview. For a deeper path through the language, continue with the
+[full TypeScript beginners guide](../../typescript/beginners-guide/01-introduction.md).
 
 ## Why TypeScript?
 
@@ -99,6 +102,9 @@ This creates a `tsconfig.json` with sensible defaults. Here is a minimal configu
 | `outDir`  | Where compiled `.js` files go                   |
 | `rootDir` | Where your `.ts` source files live              |
 
+This configuration fits browser or bundler-based projects. For a Node-only project that imports other files directly,
+prefer `"module": "NodeNext"` and `"moduleResolution": "NodeNext"` so TypeScript matches Node's module rules.
+
 ### Your first TypeScript file
 
 Create `src/hello.ts`:
@@ -123,6 +129,20 @@ Hello, TypeScript!
 
 `tsc` compiles `.ts` files into `.js` files in the `dist/` folder. You run the `.js` output with Node.
 
+### Running TypeScript with Node's built-in type stripping
+
+Modern Node can run many `.ts` files by stripping type annotations. Node 22.6 introduced this behind an experimental
+flag; Node 23.6 and Node 22.18 enabled type stripping by default:
+
+```bash
+node --experimental-strip-types src/hello.ts  # Node 22.6 - 22.17
+node src/hello.ts                             # Node 22.18+ and 23.6+
+```
+
+This is not a replacement for type checking: it only removes erasable type syntax. Features that need JavaScript output
+generation, such as enums and constructor parameter properties, still need a compiler or runner such as `tsc`, `tsx`, or
+`ts-node`. Run `npx tsc --noEmit` in CI to catch type errors.
+
 ### Using `ts-node` for development
 
 Compiling before every run is tedious. `ts-node` runs TypeScript directly:
@@ -146,7 +166,7 @@ or return value.
 ### Primitive types
 
 ```ts
-const name: string = "Ada";
+const personName: string = "Ada";
 const age: number = 36;
 const active: boolean = true;
 const nothing: null = null;
@@ -158,7 +178,7 @@ const missing: undefined = undefined;
 TypeScript can often figure out the type automatically:
 
 ```ts
-const name = "Ada";      // TypeScript infers: string
+const personName = "Ada"; // TypeScript infers: string
 const age = 36;           // TypeScript infers: number
 const active = true;      // TypeScript infers: boolean
 ```
@@ -248,8 +268,8 @@ Tuples are fixed-length arrays where each position has a specific type:
 ```ts
 const user: [string, number] = ["Ada", 36];
 
-const name = user[0]; // string
-const age = user[1];  // number
+const userName = user[0]; // string
+const age = user[1];      // number
 
 // Error: Type 'boolean' is not assignable to type 'string'
 // user[0] = true;
@@ -262,7 +282,7 @@ function getUser(): [string, number] {
     return ["Ada", 36];
 }
 
-const [name, age] = getUser();
+const [userName, age] = getUser();
 ```
 
 ## Objects and interfaces
@@ -662,7 +682,7 @@ const enum Color {
     Blue = "BLUE",
 }
 
-const c = Color.Red; // compiled to: const c = "RED"
+const c = Color.Red; // with tsc defaults, compiled to: const c = "RED"
 ```
 
 **Tip:** Many TypeScript developers prefer union types (`type Direction = "up" | "down" | "left" | "right"`) over enums.
@@ -690,7 +710,8 @@ The `!` operator tells TypeScript a value is not null or undefined:
 const element = document.getElementById("app")!;
 ```
 
-This is equivalent to `as HTMLElement` but shorter. Again, use it only when you are certain the value exists.
+For this expression, `element` becomes `HTMLElement` instead of `HTMLElement | null`. It does not prove the element is a
+specific subtype, such as `HTMLInputElement`. Again, use it only when you are certain the value exists.
 
 ## Working with modules
 
@@ -771,7 +792,7 @@ The `"strict": true` flag in `tsconfig.json` enables several checks at once:
 | Flag                           | What it catches                                                       |
 |--------------------------------|-----------------------------------------------------------------------|
 | `strictNullChecks`             | `null` and `undefined` are not assignable to other types              |
-| `noImplicitAny`                | Variables and parameters must have explicit types (no implicit `any`) |
+| `noImplicitAny`                | Reports declarations, especially parameters, that would otherwise become `any` |
 | `strictFunctionTypes`          | Stricter checks on function parameter types                           |
 | `strictPropertyInitialization` | Class properties must be initialized in the constructor               |
 | `noImplicitThis`               | `this` must have an explicit type in functions                        |
@@ -816,6 +837,44 @@ fetchPosts().then(posts => {
     posts.forEach(post => console.log(post.title));
 });
 ```
+
+The annotation tells TypeScript what you expect, but it does not validate the JSON at runtime. Validate untrusted API
+responses before relying on their shape in production code. For small shapes, a hand-written type guard is enough:
+
+```ts
+interface Post {
+    id: number;
+    title: string;
+    body: string;
+}
+
+function isPost(value: unknown): value is Post {
+    if (typeof value !== "object" || value === null) return false;
+
+    const post = value as Record<string, unknown>;
+    return typeof post.id === "number"
+        && typeof post.title === "string"
+        && typeof post.body === "string";
+}
+
+function isPostArray(value: unknown): value is Post[] {
+    return Array.isArray(value) && value.every(isPost);
+}
+
+async function fetchPosts(): Promise<Post[]> {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data: unknown = await response.json();
+
+    if (!isPostArray(data)) {
+        throw new Error("API returned invalid posts");
+    }
+
+    return data;
+}
+```
+
+For larger API contracts, schema libraries such as Zod or Valibot can define the runtime validation and TypeScript type
+from one schema.
 
 ### Typing an object map
 
@@ -862,6 +921,9 @@ console.log(user.name);       // Ada
 
 TypeScript's `public`, `private`, `protected`, and `readonly` modifiers in the constructor automatically create and
 assign class properties - no separate field declarations needed.
+
+Constructor parameter properties require a TypeScript transform. They work when you compile with `tsc`, but not in
+Node's strip-only TypeScript mode.
 
 ## Migrating JavaScript to TypeScript
 
@@ -931,7 +993,8 @@ This gives you a TypeScript project with hot reloading, ready to develop in the 
 
 ## Summary
 
-- TypeScript is JavaScript with **static types** - every `.js` file is valid `.ts`.
+- TypeScript is JavaScript with **static types** - JavaScript syntax is valid TypeScript syntax, but strict checking may
+  still report type errors.
 - **Type annotations** (`: string`, `: number`) tell TypeScript what types to expect.
 - **Type inference** means you do not need to annotate everything - TypeScript is smart.
 - **Interfaces** describe object shapes; **type aliases** name any type.
@@ -940,6 +1003,7 @@ This gives you a TypeScript project with hot reloading, ready to develop in the 
 - **Utility types** (`Partial`, `Pick`, `Omit`, `Record`) transform existing types.
 - **`strict: true`** in `tsconfig.json` catches the most bugs - always use it.
 - Migrate gradually: add TypeScript to an existing project one file at a time.
+- For a deeper sequence, continue with the [full TypeScript beginners guide](../../typescript/beginners-guide/01-introduction.md).
 
 TypeScript is used by most modern JavaScript frameworks (Angular, Next.js, SvelteKit) and is the de facto standard for
 professional JavaScript development. The investment in learning it pays off immediately through fewer bugs and better

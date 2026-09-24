@@ -112,8 +112,8 @@ Sincere@april.biz
 
 ## Error handling with fetch
 
-`fetch` only rejects on **network errors** (no internet, DNS failure). HTTP errors like 404 or 500 are **not**
-rejections - you must check `response.ok`:
+`fetch` rejects for **network-level failures** (no internet, DNS failure), aborted requests, or blocked requests (for
+example, CORS). HTTP errors like 404 or 500 are **not** rejections - you must check `response.ok`:
 
 ```js
 async function getUser(id) {
@@ -593,10 +593,14 @@ Here is a complete example that fetches user data, displays it, and caches resul
             if (useCache) {
                 const cached = localStorage.getItem(CACHE_KEY);
                 if (cached) {
-                    statusDiv.textContent = "Loaded from cache";
-                    statusDiv.className = "";
-                    renderUsers(JSON.parse(cached));
-                    return;
+                    try {
+                        statusDiv.textContent = "Loaded from cache";
+                        statusDiv.className = "";
+                        renderUsers(JSON.parse(cached));
+                        return;
+                    } catch {
+                        localStorage.removeItem(CACHE_KEY);
+                    }
                 }
             }
 

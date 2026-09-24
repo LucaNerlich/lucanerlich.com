@@ -111,8 +111,12 @@ The syntax is `condition ? valueIfTrue : valueIfFalse`. Use it for simple assign
 become unreadable:
 
 ```js
+const a = 10;
+const b = 20;
+const c = 15;
+
 // Don't do this
-const result = a > b ? (a > c ? "a" : "c") : (b > c ? "b" : "c");
+const nestedResult = a > b ? (a > c ? "a" : "c") : (b > c ? "b" : "c");
 
 // Do this instead
 let result;
@@ -335,7 +339,7 @@ Result:
 Attempt 1: got "valid"
 ```
 
-The body ran once even though the condition was immediately satisfied.
+The body ran once even though the loop condition was false as soon as it was checked.
 
 ## `for...of` - iterating over values
 

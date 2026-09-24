@@ -50,6 +50,7 @@ Ada
 - **Limit concurrency** when tasks are heavy.
 - **Add timeouts** for external calls.
 - **Avoid top-level unhandled promises**.
+- **Choose the right Promise combinator** for the result shape you need.
 
 ## Async functions always return promises
 
@@ -69,6 +70,52 @@ Result:
 ```text
 true
 ```
+
+## The event loop: tasks and microtasks
+
+JavaScript runs synchronous code to completion before it handles queued work. After the current task finishes, the
+microtask queue drains fully, then the browser or runtime moves to the next task, such as a timer.
+
+```ts
+console.log("sync 1");
+
+setTimeout(() => {
+    console.log("timer task");
+}, 0);
+
+Promise.resolve().then(() => {
+    console.log("promise microtask");
+});
+
+queueMicrotask(() => {
+    console.log("queued microtask");
+});
+
+async function example(): Promise<void> {
+    console.log("async start");
+    await null;
+    console.log("after await");
+}
+
+void example();
+console.log("sync 2");
+```
+
+Result:
+
+```text
+sync 1
+async start
+sync 2
+promise microtask
+queued microtask
+after await
+timer task
+```
+
+The code before `await` runs synchronously. The code after `await` resumes in a microtask, so it runs after the
+already-queued promise and `queueMicrotask` callbacks but before the timer task. Browsers can render between tasks,
+not while JavaScript is still draining microtasks, so endless microtask chains can block rendering and user input.
 
 ## Sequential vs parallel
 
@@ -137,6 +184,10 @@ Result:
 ```text
 [ "user-1", "user-2", "user-3" ]
 ```
+
+`Promise.all` is fail-fast: it rejects with the first rejection from the input promises. The other promises keep
+running; they are not cancelled automatically. Use `AbortController` or an API-specific cancellation mechanism when
+you need to stop the underlying work.
 
 ## Error handling with try/catch
 
@@ -217,6 +268,67 @@ Result:
 [ "ok-1", "error: Timeout", "ok-3" ]
 ```
 
+## Promise.any for first success
+
+Use `Promise.any` when several alternatives can produce the same answer and the first successful one is enough. It
+ignores rejected promises until every promise has rejected.
+
+```ts
+const mirrors = [
+    Promise.reject(new Error("cdn-a failed")),
+    Promise.resolve("cdn-b"),
+    Promise.reject(new Error("cdn-c failed")),
+];
+
+async function firstSuccess(): Promise<void> {
+    const value = await Promise.any(mirrors);
+    console.log(value);
+}
+
+void firstSuccess();
+```
+
+Result:
+
+```text
+cdn-b
+```
+
+If every promise rejects, `Promise.any` rejects with an `AggregateError`. Its `errors` property contains all rejection
+reasons in input order.
+
+```ts
+async function noneSucceeded(): Promise<void> {
+    try {
+        await Promise.any([
+            Promise.reject(new Error("cache failed")),
+            Promise.reject(new Error("network failed")),
+        ]);
+    } catch (err) {
+        if (err instanceof AggregateError) {
+            console.log(err.message);
+            console.log(err.errors.map((error: Error) => error.message).join(", "));
+        }
+    }
+}
+
+void noneSucceeded();
+```
+
+Result:
+
+```text
+All promises were rejected
+cache failed, network failed
+```
+
+| Method | Resolves when | Rejects when |
+|--------|---------------|--------------|
+| `Promise.all` | Every promise fulfills; values preserve input order | The first promise rejects; the rest keep running |
+| `Promise.allSettled` | Every promise settles | Never rejects because of input promises |
+| `Promise.race` | The first settled promise fulfills | The first settled promise rejects |
+| `Promise.any` | The first promise fulfills | Every promise rejects, with `AggregateError.errors` |
+
 ## Timeouts with Promise.race
 
 Timeouts are essential for external calls. A simple pattern is to race your task against a timeout promise.
@@ -285,13 +397,14 @@ async function runWithLimit<T>(
     tasks: Array<() => Promise<T>>,
     limit: number
 ): Promise<T[]> {
-    const results: T[] = [];
-    const queue = [...tasks];
-    const workers = Array.from({ length: limit }, async () => {
-        while (queue.length > 0) {
-            const task = queue.shift();
-            if (!task) break;
-            results.push(await task());
+    const results: T[] = new Array(tasks.length);
+    let nextIndex = 0;
+    const workerCount = Math.max(1, Math.min(limit, tasks.length));
+    const workers = Array.from({ length: workerCount }, async () => {
+        while (nextIndex < tasks.length) {
+            const currentIndex = nextIndex;
+            nextIndex += 1;
+            results[currentIndex] = await tasks[currentIndex]();
         }
     });
     await Promise.all(workers);
@@ -310,10 +423,10 @@ Result:
 
 ## Avoiding unhandled rejections
 
-If you start a promise and do not `await` or `catch` it, errors can be dropped.
+If you start a promise and do not `await` or `catch` it, errors become unhandled rejections.
 
 ```ts
-async function safeFireAndForget(task: Promise<void>): Promise<void> {
+function safeFireAndForget(task: Promise<void>): void {
     task.catch((err) => {
         const message = err instanceof Error ? err.message : "Unknown error";
         console.log(`Unhandled: ${message}`);
@@ -386,7 +499,7 @@ Result:
 ## Best practices
 
 - **Be explicit about parallelism**: `Promise.all` vs sequential `await`.
-- **Use `allSettled` for partial success**.
+- **Use `allSettled` for partial success** and `any` when the first success wins.
 - **Prefer small async functions** for easier reasoning.
 - **Document timeouts and retry policy**.
 - **Return typed results** to avoid ambiguous promises.
@@ -413,7 +526,7 @@ Result:
 
 ### How do I run multiple async tasks in parallel?
 
-Use `Promise.all` for independent tasks.
+Use `Promise.all` for independent tasks. It rejects on the first failure, but it does not cancel the remaining work.
 
 ```ts
 const a = Promise.resolve("A");
@@ -452,5 +565,6 @@ Bad
 
 ## Summary
 
-`async/await` makes async code readable, but you still need to be explicit about parallelism, timeouts, and error
-handling. Use `Promise.all` where possible, `allSettled` for partial success, and always make errors observable.
+`async/await` makes async code readable, but you still need to be explicit about parallelism, microtask timing,
+timeouts, and error handling. Use `Promise.all` for all-or-nothing parallel work, `allSettled` for partial success,
+`any` for first success, and always make errors observable.

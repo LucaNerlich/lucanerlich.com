@@ -73,7 +73,14 @@ button.addEventListener("click", handleClick);
 button.removeEventListener("click", handleClick);
 ```
 
-**Important:** you must pass the same function reference. Anonymous functions cannot be removed:
+**Important:** you must pass the same function reference. If you used capture mode, the capture setting must match too:
+
+```js
+button.addEventListener("click", handleClick, { capture: true });
+button.removeEventListener("click", handleClick, { capture: true });
+```
+
+Anonymous functions cannot be removed:
 
 ```js
 // This does NOT work - each arrow function is a different reference
@@ -207,6 +214,8 @@ window.addEventListener("scroll", () => {
 ```
 
 **Performance tip:** scroll events fire very rapidly. Use throttling or `requestAnimationFrame` for heavy handlers.
+If a scroll or touch handler never calls `preventDefault()`, use `{ passive: true }` so the browser can keep scrolling
+smoothly. Do not use passive listeners when you need to cancel the event.
 
 ### Page load events
 
@@ -546,6 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
         document.body.classList.add("dark-theme");
+        themeBtn.textContent = "Light Mode";
     }
 });
 ```

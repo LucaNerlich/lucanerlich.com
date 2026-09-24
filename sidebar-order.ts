@@ -279,6 +279,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'json-parsing-guide',
         'local-session-storage',
         'javascript-intl-api-formatting',
+        'javascript-dates-and-time',
         'user-input-sanitization',
     ],
 
@@ -298,6 +299,10 @@ export const sidebarOrder: Record<string, string[]> = {
         '13-typescript',
         '14-error-handling',
         '15-regular-expressions',
+        '16-classes',
+        '17-modules',
+        '18-maps-and-sets',
+        '19-iterators-and-generators',
     ],
 
     // ------------------------------------------------------------------

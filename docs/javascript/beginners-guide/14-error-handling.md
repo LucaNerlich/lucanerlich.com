@@ -21,7 +21,8 @@ page.
 
 ## The `Error` object
 
-JavaScript has a built-in `Error` class. Every error has three key properties:
+JavaScript has a built-in `Error` class. Every error has `message` and `name` properties, and most runtimes also
+provide a `stack` property:
 
 ```js
 const error = new Error("Something went wrong");
@@ -37,8 +38,8 @@ console.log(error.stack);   // Stack trace showing where the error was created
 | `name`    | The error type (e.g., `"TypeError"`, `"RangeError"`) |
 | `stack`   | A trace showing the call chain that led to the error |
 
-The `stack` property is invaluable for debugging - it tells you exactly which function, file, and line number created
-the error.
+The non-standard but widely supported `stack` property is invaluable for debugging - it tells you which function,
+file, and line number created the error.
 
 ## `try` / `catch` / `finally`
 
@@ -72,6 +73,9 @@ Done.
 4. The `finally` block always runs - whether there was an error or not. Use it for cleanup (closing files, hiding
    loaders, resetting state).
 
+Avoid `return` or `throw` inside `finally` unless you mean to override a value or error from the `try` or `catch`
+block.
+
 ### `catch` without `finally`
 
 ```js
@@ -88,11 +92,13 @@ try {
 Rare, but valid - useful when you want cleanup but want the error to propagate:
 
 ```js
-try {
-    return riskyOperation();
-} finally {
-    // Cleanup runs even though there is no catch
-    console.log("Cleanup complete");
+function runWithCleanup() {
+    try {
+        return riskyOperation();
+    } finally {
+        // Cleanup runs even though there is no catch
+        console.log("Cleanup complete");
+    }
 }
 ```
 
@@ -107,6 +113,7 @@ JavaScript has several specific error types that inherit from `Error`:
 | `SyntaxError`    | Code cannot be parsed                | `JSON.parse("{invalid}")`                 |
 | `RangeError`     | A value is outside the allowed range | `new Array(-1)`                           |
 | `URIError`       | Invalid use of URI functions         | `decodeURIComponent("%")`                 |
+| `AggregateError` | Several errors grouped together      | `Promise.any()` when every promise rejects |
 
 ### Checking the error type
 
@@ -125,6 +132,34 @@ try {
         console.log("Unknown error:", error.message);
     }
 }
+```
+
+### `AggregateError`
+
+`AggregateError` means several operations failed together. A common place to see it is `Promise.any()`: it returns the
+first successful promise, but throws `AggregateError` if every promise rejects.
+
+```js
+const sources = [
+    Promise.reject(new Error("Cache failed")),
+    Promise.reject(new Error("Network failed")),
+];
+
+try {
+    await Promise.any(sources);
+} catch (error) {
+    if (error instanceof AggregateError) {
+        console.log("All options failed");
+        console.log(error.errors.map((err) => err.message).join(", "));
+    }
+}
+```
+
+Result:
+
+```text
+All options failed
+Cache failed, Network failed
 ```
 
 ## Throwing errors
@@ -332,7 +367,10 @@ If you forget to handle a rejected promise, the browser logs a warning:
 // Bad - unhandled rejection
 async function loadData() {
     const response = await fetch("/api/missing-endpoint");
-    return response.json(); // Throws if response is not ok
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+    return response.json(); // Can also reject if the body is not valid JSON
 }
 
 loadData(); // No .catch(), no try/catch - unhandled rejection
@@ -346,6 +384,37 @@ window.addEventListener("unhandledrejection", (event) => {
     // Log to an error reporting service
 });
 ```
+
+### Catching errors you missed
+
+Browser-level handlers can report errors that slipped through local handling. Treat them as a last safety net, not as
+the main way to handle errors. Use local `try`/`catch` or `.catch()` when you know what can fail.
+
+```js
+window.addEventListener("error", (event) => {
+    // event.error is the thrown value; event.message is browser-formatted text
+    const message = event.error instanceof Error ? event.error.message : event.message;
+    console.error("Uncaught error:", message);
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+    const message = event.reason instanceof Error ? event.reason.message : String(event.reason);
+    console.error("Unhandled promise rejection:", message);
+    event.preventDefault();
+});
+```
+
+If code throws `new Error("Button failed")` and a promise rejects with `new Error("Request failed")`, the handler
+output would be:
+
+Result:
+
+```text
+Uncaught error: Button failed
+Unhandled promise rejection: Request failed
+```
+
+See the [Error Handling reference](../javascript-error-handling.md) for Node.js global handlers and more details.
 
 ## Error handling in the DOM
 
@@ -574,42 +643,50 @@ displayOnPage(formatted);
 
 ```js
 // Bad - using try/catch as an if-statement
-try {
+function findUserWithException(id) {
     const user = users.find(u => u.id === id);
-    if (!user) throw new Error("not found");
-    return user;
-} catch {
-    return defaultUser;
+    try {
+        if (!user) throw new Error("not found");
+        return user;
+    } catch {
+        return defaultUser;
+    }
 }
 
 // Good - use normal control flow
-const user = users.find(u => u.id === id);
-return user ?? defaultUser;
+function findUser(id) {
+    const user = users.find(u => u.id === id);
+    return user ?? defaultUser;
+}
 ```
 
 ### Catching and re-throwing without adding value
 
 ```js
 // Bad - pointless catch
-try {
-    return await loadData();
-} catch (error) {
-    throw error; // Does nothing useful
+async function initializeDashboardBad() {
+    try {
+        return await loadData();
+    } catch (error) {
+        throw error; // Does nothing useful
+    }
 }
 
 // Good - add context when re-throwing
-try {
-    return await loadData();
-} catch (error) {
-    throw new Error("Failed to initialize dashboard", { cause: error });
+async function initializeDashboard() {
+    try {
+        return await loadData();
+    } catch (error) {
+        throw new Error("Failed to initialize dashboard", { cause: error });
+    }
 }
 ```
 
 ## Summary
 
 - **`try`/`catch`/`finally`** is the core error handling mechanism - `finally` always runs.
-- JavaScript has built-in error types (`TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`) - use `instanceof`
-  to distinguish them.
+- JavaScript has built-in error types (`TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`,
+  `AggregateError`) - use `instanceof` to distinguish them.
 - **Always throw `Error` objects** (not strings) to get stack traces.
 - **Custom error classes** let you add properties and handle errors by category.
 - **Error `cause`** (ES2022) chains errors to preserve the original failure.
