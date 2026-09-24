@@ -128,7 +128,7 @@ Character classes match **one character** from a set:
 // Matches one vowel
 /[aeiou]/.test("hello"); // true
 
-// Matches one consonant (negated class)
+// Matches one non-vowel character (including consonants)
 /[^aeiou]/.test("hello"); // true
 
 // Ranges
@@ -231,11 +231,11 @@ Named groups make complex patterns much more readable.
 When you need grouping but do not need to capture the match, use `(?:...)`:
 
 ```js
-// Captures "http" or "https" - but we do not need the captured value
+// Groups "http" or "https" - but we do not need to capture that value
 const url = /(?:https?):\/\/(\S+)/;
 const match = "https://example.com".match(url);
 
-console.log(match[1]); // "example.com" - only the host is captured
+console.log(match[1]); // "example.com" - the text after // is captured
 ```
 
 ### Backreferences
@@ -363,6 +363,8 @@ Breaking it down:
 | `[a-zA-Z]{2,}`      | Top-level domain (at least 2 letters) |
 | `$`                 | End of string                         |
 
+This is a simple pattern for examples and basic forms, not a complete RFC-compliant email parser.
+
 ### URL extraction
 
 ```js
@@ -372,6 +374,9 @@ const urlPattern = /https?:\/\/[^\s]+/g;
 console.log(text.match(urlPattern));
 // ["https://example.com", "http://docs.test.org/page"]
 ```
+
+This simple extractor also captures trailing punctuation, such as the period in `https://example.com.`. Use `URL` or a
+dedicated parser when correctness matters.
 
 ### Password strength check
 
@@ -459,13 +464,15 @@ function normalizeWhitespace(text) {
 
 console.log(normalizeWhitespace("  hello   world  \n\n ")); // "hello world"
 
-// Strip HTML tags
+// Strip simple HTML tags from trusted text
 function stripTags(html) {
     return html.replace(/<[^>]*>/g, "");
 }
 
 console.log(stripTags("<p>Hello <b>world</b></p>")); // "Hello world"
 ```
+
+Do not use this as an XSS sanitizer for untrusted HTML. Use a real HTML sanitizer or render text with `textContent`.
 
 ### Form validation (tying back to chapter 11)
 
@@ -559,8 +566,8 @@ const bad = /^(a+)+$/;
 // bad.test("aaaaaaaaaaaaaaaaaaaaaaaaaaab");
 ```
 
-Avoid nested quantifiers like `(a+)+`, `(a*)*`, or `(a|b)*` when possible. If you need them, use atomic groups or
-possessive quantifiers (available in some engines, not in JavaScript).
+Avoid nested quantifiers like `(a+)+`, `(a*)*`, or `(.+)+` when possible. JavaScript does not support atomic groups or
+possessive quantifiers, so refactor the pattern or add input limits instead.
 
 ## Quick reference
 
@@ -580,7 +587,7 @@ possessive quantifiers (available in some engines, not in JavaScript).
 | `(?:...)`               | Non-capturing group                 |
 | `(?<name>...)`          | Named group                         |
 | `\1`                    | Backreference to group 1            |
-| `a\|b`                  | a or b                              |
+| `a|b`                   | a or b                              |
 | `(?=...)` / `(?!...)`   | Positive / negative lookahead       |
 | `(?<=...)` / `(?<!...)` | Positive / negative lookbehind      |
 

@@ -285,13 +285,14 @@ async function runWithLimit<T>(
     tasks: Array<() => Promise<T>>,
     limit: number
 ): Promise<T[]> {
-    const results: T[] = [];
-    const queue = [...tasks];
-    const workers = Array.from({ length: limit }, async () => {
-        while (queue.length > 0) {
-            const task = queue.shift();
-            if (!task) break;
-            results.push(await task());
+    const results: T[] = new Array(tasks.length);
+    let nextIndex = 0;
+    const workerCount = Math.max(1, Math.min(limit, tasks.length));
+    const workers = Array.from({ length: workerCount }, async () => {
+        while (nextIndex < tasks.length) {
+            const currentIndex = nextIndex;
+            nextIndex += 1;
+            results[currentIndex] = await tasks[currentIndex]();
         }
     });
     await Promise.all(workers);
@@ -310,10 +311,10 @@ Result:
 
 ## Avoiding unhandled rejections
 
-If you start a promise and do not `await` or `catch` it, errors can be dropped.
+If you start a promise and do not `await` or `catch` it, errors become unhandled rejections.
 
 ```ts
-async function safeFireAndForget(task: Promise<void>): Promise<void> {
+function safeFireAndForget(task: Promise<void>): void {
     task.catch((err) => {
         const message = err instanceof Error ? err.message : "Unknown error";
         console.log(`Unhandled: ${message}`);

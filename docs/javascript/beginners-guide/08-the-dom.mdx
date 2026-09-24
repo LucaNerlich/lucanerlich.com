@@ -121,6 +121,9 @@ paragraphs.forEach((p, index) => {
 });
 ```
 
+The NodeList returned by `querySelectorAll` is **static**: it does not update if matching elements are added or removed
+later. Older methods like `getElementsByClassName` return live collections that update automatically.
+
 A NodeList is **not** an array. It supports `forEach` and `for...of`, but not `map`, `filter`, etc. To use array
 methods, convert it:
 
@@ -252,7 +255,7 @@ Many attributes are available as properties:
 ```js
 const link = document.querySelector("#link");
 
-// These are equivalent:
+// Related, but not always identical:
 console.log(link.href);
 console.log(link.getAttribute("href"));
 
@@ -266,6 +269,9 @@ const textInput = document.querySelector('input[type="text"]');
 textInput.value = "New value";
 console.log(textInput.value);
 ```
+
+For URLs, the property (`link.href`) resolves to an absolute URL, while `getAttribute("href")` returns the literal
+attribute value from the HTML.
 
 ### `dataset` - custom data attributes
 
@@ -530,15 +536,15 @@ menu
 | Element property     | Node property | Difference                                    |
 |----------------------|---------------|-----------------------------------------------|
 | `children`           | `childNodes`  | `childNodes` includes text nodes and comments |
-| `firstElementChild`  | `firstChild`  | Same                                          |
-| `parentElement`      | `parentNode`  | Same                                          |
-| `nextElementSibling` | `nextSibling` | Same                                          |
+| `firstElementChild`  | `firstChild`  | `firstChild` can be a text node or comment    |
+| `parentElement`      | `parentNode`  | `parentNode` can be a non-element node        |
+| `nextElementSibling` | `nextSibling` | `nextSibling` can be a text node or comment   |
 
 Use the **Element** versions (left column) unless you specifically need to work with text nodes.
 
 ## Document fragments
 
-When adding many elements, using a `DocumentFragment` avoids repeated reflows:
+When adding many elements, using a `DocumentFragment` reduces repeated DOM insertions:
 
 ```js
 const fragment = document.createDocumentFragment();

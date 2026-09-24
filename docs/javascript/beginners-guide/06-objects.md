@@ -38,8 +38,8 @@ Result:
 { name: 'Ada', age: 36, city: 'London' }
 ```
 
-Keys (also called **properties**) are strings. Values can be anything - strings, numbers, booleans, arrays, other
-objects, functions.
+Keys (also called **properties**) are usually strings; symbols can also be property keys. Values can be anything -
+strings, numbers, booleans, arrays, other objects, functions.
 
 ## Accessing properties
 
@@ -112,7 +112,7 @@ No error - just `undefined`.
 
 ### Optional chaining (`?.`)
 
-Safely access deeply nested properties without errors:
+Safely access properties when a value might be `null` or `undefined`:
 
 ```js
 const user = {
@@ -176,8 +176,8 @@ const user = { name: "Ada", age: 36 };
 console.log("name" in user);
 console.log("email" in user);
 
-// hasOwnProperty
-console.log(user.hasOwnProperty("age"));
+// Own property check
+console.log(Object.hasOwn(user, "age"));
 
 // Compare to undefined (less reliable)
 console.log(user.name !== undefined);
@@ -191,6 +191,8 @@ false
 true
 true
 ```
+
+`in` also checks inherited properties. `Object.hasOwn` checks only properties directly on the object.
 
 ## Methods
 
@@ -267,6 +269,9 @@ Result:
 Hello, I'm Ada
 Hello, I'm undefined
 ```
+
+The exact `greetArrow()` result depends on the surrounding scope. The important point is that it does **not** use
+`person.name`.
 
 **Rule:** Use regular functions (shorthand syntax) for object methods. Use arrow functions for callbacks and standalone
 functions.
@@ -724,7 +729,7 @@ Ada
 [ 90, 85, 92, 100 ]
 ```
 
-For a **deep** copy, use `structuredClone`:
+For a **deep** copy of data that the structured clone algorithm supports, use `structuredClone`:
 
 ```js
 const original = {
@@ -792,12 +797,12 @@ spread form is preferred when you want a new object.
 
 - Objects are key-value pairs created with `{}`.
 - Access properties with dot notation (`obj.key`) or brackets (`obj["key"]`).
-- Optional chaining `?.` prevents errors on nested access.
+- Optional chaining `?.` prevents errors when the value before `?.` is `null` or `undefined`.
 - Methods are functions on objects; use regular functions (not arrows) for methods that need `this`.
 - `Object.keys()`, `.values()`, `.entries()` iterate over objects.
 - Destructuring extracts properties; spread `...` copies and merges objects.
 - JSON is the standard text format for data exchange - use `JSON.stringify` and `JSON.parse`.
-- Shallow copies share nested references; use `structuredClone` for deep copies.
+- Shallow copies share nested references; use `structuredClone` for supported deep copies.
 
 Next up: [HTML & CSS Essentials](./07-html-css-essentials.md) - the building blocks of web pages, just enough to start
 using JavaScript in the browser.

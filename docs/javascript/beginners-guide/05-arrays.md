@@ -485,7 +485,7 @@ Read this as: "Take the people, keep only those 18 or older, extract their names
 
 ## Sorting
 
-### Default sort (alphabetical)
+### Default sort (string order)
 
 ```js
 const fruits = ["cherry", "apple", "banana"];
@@ -499,10 +499,10 @@ Result:
 [ 'apple', 'banana', 'cherry' ]
 ```
 
-**Warning:** the default sort converts elements to strings, which breaks numeric sorting:
+**Warning:** the default sort converts elements to strings and compares those strings, which breaks numeric sorting:
 
 ```js
-const numbers = [10, 2, 30, 4, 5];
+const numbers = [80, 9, 100, 12];
 numbers.sort();
 console.log(numbers);
 ```
@@ -510,7 +510,7 @@ console.log(numbers);
 Result:
 
 ```text
-[ 10, 2, 30, 4, 5 ]
+[ 100, 12, 80, 9 ]
 ```
 
 ### Numeric sort
@@ -518,7 +518,7 @@ Result:
 Provide a compare function:
 
 ```js
-const numbers = [10, 2, 30, 4, 5];
+const numbers = [80, 9, 100, 12];
 
 numbers.sort((a, b) => a - b); // ascending
 console.log(numbers);
@@ -530,8 +530,8 @@ console.log(numbers);
 Result:
 
 ```text
-[ 2, 4, 5, 10, 30 ]
-[ 30, 10, 5, 4, 2 ]
+[ 9, 12, 80, 100 ]
+[ 100, 80, 12, 9 ]
 ```
 
 The compare function returns:
@@ -783,7 +783,10 @@ Result:
 [ 1, 2, 3, 4, 5, 6 ]
 [ 1, 2, 3 ]
 [ 1, 2, 3, 99 ]
-[ 1, 2, 4, 5, 6, 9, 10 ]
+[
+  1, 2,  4, 5,
+  6, 9, 10
+]
 ```
 
 ## Summary
@@ -793,7 +796,7 @@ Result:
 - `map` transforms, `filter` selects, `reduce` accumulates, `find` searches.
 - `some`/`every` check conditions across all elements.
 - Chain methods for expressive data pipelines.
-- `sort()` mutates and does alphabetical sorting by default - provide a compare function for numbers.
+- `sort()` mutates and sorts string representations by default - provide a compare function for numbers.
 - Destructuring extracts values; spread `...` copies and merges arrays.
 
 Next up: [Objects](./06-objects.md) - key-value data structures that model real-world entities.

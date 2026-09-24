@@ -73,10 +73,10 @@ Result:
 
 The string is treated as text, not HTML.
 
-## When you must output HTML, escape it
+## When you must insert text into HTML, escape it
 
-If you absolutely must output HTML from user input, escape it first. This prevents scripts or tags from being
-interpreted by the browser.
+If you cannot use `textContent` and need to build HTML markup with user-provided text, escape that text first. Escaping
+displays the input as text; it is not a way to allow rich HTML.
 
 ```ts
 function escapeHtml(input: string): string {
@@ -100,7 +100,9 @@ Result:
 
 ## Context-aware encoding
 
-Always encode based on the output context. HTML text, HTML attributes, URLs, and JSON each have different rules.
+Always encode based on the output context. HTML text, HTML attributes, URLs, and JSON each have different rules. The
+attribute helper below is only for quoted text attributes; do not put user input in event handler attributes, style
+attributes, or `javascript:` URLs.
 
 ```ts
 function escapeAttribute(input: string): string {
@@ -200,7 +202,8 @@ Result:
 
 ## Encode for URLs
 
-When user input ends up in URLs, use `encodeURIComponent` to prevent broken URLs or injection.
+When user input ends up in a URL component, such as a query value, use `encodeURIComponent` to prevent broken URLs or
+injection. Do not use it to validate or encode a whole URL; validate protocols and hosts separately.
 
 ```ts
 const query = "cats & dogs";
@@ -222,9 +225,10 @@ Some APIs interpret strings as code or HTML. Avoid passing user input into these
 
 ## Handling rich text safely
 
-If you allow rich text, use a **well-maintained sanitizer** on the backend to allow only a small subset of tags and
-attributes. Keep the allow-list tight and explicitly defined. Avoid writing a custom HTML parser unless you have a
-strong reason.
+If you allow rich text, use a **well-maintained HTML sanitizer** such as DOMPurify, or a server-side equivalent, at the
+rendering boundary or before storing/serving it. Keep the allow-list tight and explicitly defined. Sanitized HTML is
+only safe for an HTML context -- do not concatenate it into scripts, styles, or URLs. Avoid writing a custom HTML parser
+unless you have a strong reason.
 
 ## Common pitfalls
 
@@ -238,7 +242,8 @@ strong reason.
 
 - **Validate on every boundary** (client and server).
 - **Use allow-lists** for IDs, usernames, and tags.
-- **Escape output based on context** (HTML, URL, SQL, JSON).
+- **Escape output based on context** (HTML text, quoted attributes, URL components, JSON strings); use parameterized
+  queries for SQL.
 - **Keep validation rules centralized** to avoid drift.
 - **Test with malicious-looking inputs**.
 

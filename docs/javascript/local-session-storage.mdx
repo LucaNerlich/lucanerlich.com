@@ -188,8 +188,8 @@ Result:
 Avoid collisions by using a prefix like `app:`.
 
 ```ts
-const key = "app:auth:token";
-localStorage.setItem(key, "token-value");
+const key = "app:ui:theme";
+localStorage.setItem(key, "dark");
 
 console.log(localStorage.getItem(key));
 ```
@@ -197,7 +197,7 @@ console.log(localStorage.getItem(key));
 Result:
 
 ```text
-token-value
+dark
 ```
 
 ## Storing numbers and booleans

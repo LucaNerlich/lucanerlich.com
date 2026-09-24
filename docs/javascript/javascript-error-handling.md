@@ -327,8 +327,8 @@ Unknown error
 
 ## Error handling at UI boundaries
 
-UI code should be defensive because user events can be unpredictable. Wrap event handlers to ensure errors are reported
-and don't break the rest of the page.
+UI code should be defensive because user events can be unpredictable. Wrap synchronous event handlers to ensure errors
+are reported and don't break the rest of the page. For async handlers, `await` inside `try/catch` or attach `.catch()`.
 
 ```ts
 function runSafely<T>(fn: () => T): T | null {

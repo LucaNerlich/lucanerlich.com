@@ -63,7 +63,7 @@ An HTML element has an **opening tag**, optional **content**, and a **closing ta
 - `This is a paragraph.` - content
 - `</p>` - closing tag
 
-Some elements are **self-closing** (no content):
+Some elements are **void elements** (no content and no closing tag):
 
 ```html
 <img src="photo.jpg" alt="A photo">
@@ -84,7 +84,8 @@ Six levels, `<h1>` (most important) through `<h6>` (least):
 <h3>Subsection</h3>
 ```
 
-Use headings in order - do not skip levels. A page should have exactly one `<h1>`.
+Use headings to describe the page hierarchy - avoid skipping levels. Most pages should have one `<h1>` for the main
+title.
 
 ### Paragraphs and text
 
@@ -115,8 +116,8 @@ your page's `window.opener`.
 <img src="photo.jpg" alt="Description of the photo" width="400" height="300">
 ```
 
-The `alt` attribute is required for accessibility - it describes the image to screen readers and displays if the image
-fails to load.
+The `alt` attribute is required for accessibility. Use meaningful text for informative images, or `alt=""` for
+decorative images that screen readers should skip. The text also displays if the image fails to load.
 
 ### Lists
 
@@ -215,8 +216,8 @@ Generic containers:
 | `<aside>`   | Sidebar, related content                         |
 | `<footer>`  | Page or section footer                           |
 
-Semantic HTML improves accessibility (screen readers understand the structure), SEO (search engines rank it better), and
-maintainability.
+Semantic HTML improves accessibility (screen readers understand the structure), can help search engines understand the
+content, and improves maintainability.
 
 ## Forms
 
@@ -254,11 +255,11 @@ Forms collect user input. They are essential for interactive web pages:
         </label>
     </div>
 
-    <div>
-        <label>Preference:</label>
+    <fieldset>
+        <legend>Preference:</legend>
         <label><input type="radio" name="pref" value="light"> Light</label>
         <label><input type="radio" name="pref" value="dark" checked> Dark</label>
-    </div>
+    </fieldset>
 
     <div>
         <label for="bio">Bio:</label>
@@ -272,6 +273,7 @@ Forms collect user input. They are essential for interactive web pages:
 Key points:
 
 - `<label for="id">` links a label to an input - clicking the label focuses the input.
+- `<fieldset>` and `<legend>` group related controls, such as radio buttons.
 - `required`, `minlength`, `type="email"` provide **built-in validation**.
 - `name` attributes identify form data when submitted.
 - We will handle form submission with JavaScript in the Events chapter.
@@ -646,7 +648,7 @@ Apply CSS rules based on screen size:
 | `vw` / `vh` | Percentage of viewport width / height  |
 | `fr`        | Fraction of available space (CSS Grid) |
 
-Prefer `rem` for font sizes and spacing - it respects user zoom preferences.
+Prefer `rem` for font sizes and spacing - it respects the user's root font-size preferences.
 
 ### Responsive images
 

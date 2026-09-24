@@ -35,12 +35,12 @@ Popular VPS providers:
 | **Linode (Akamai)** | $5/month       | Solid reliability, good support         |
 | **Vultr**           | $6/month       | Many locations worldwide                |
 
-For a simple static website, the cheapest plan from any provider is more than enough. This guide uses **Ubuntu 22.04 LTS
-** as the operating system - choose it when creating your server.
+For a simple static website, the cheapest plan from any provider is more than enough. This guide uses **Ubuntu 24.04 LTS**
+as the operating system - choose it when creating your server.
 
 ### What you need before starting
 
-1. A VPS running **Ubuntu 22.04 LTS** (or newer)
+1. A VPS running **Ubuntu 24.04 LTS** (or newer)
 2. A **domain name** (optional but recommended - e.g., `yoursite.com`)
 3. The **website files** from the previous chapter
 4. A terminal on your local machine
@@ -108,24 +108,33 @@ You should log in without being asked for a password.
 
 ### Disable password authentication
 
-Once SSH keys work, disable password login for security. On the server, edit the SSH configuration:
+Once SSH keys work, disable password login for security. On the server, create a hardening snippet:
 
 ```bash
-sudo nano /etc/ssh/sshd_config
+sudo nano /etc/ssh/sshd_config.d/00-hardening.conf
 ```
 
-Find and change these lines:
+For each setting, `sshd` uses the **first** value it reads, and files in `sshd_config.d/` are read in alphabetical order
+before the rest of `sshd_config`. The `00-` prefix makes sure your settings win over files such as
+`50-cloud-init.conf`, which many VPS images ship with `PasswordAuthentication yes`.
+
+Add these lines:
 
 ```text
 PasswordAuthentication no
+KbdInteractiveAuthentication no
 PermitRootLogin no
 ```
 
-Restart the SSH service:
+Test the configuration and reload the SSH service:
 
 ```bash
-sudo systemctl restart sshd
+sudo sshd -t
+sudo systemctl reload ssh
+sudo sshd -T | grep -Ei 'passwordauthentication|permitrootlogin'
 ```
+
+The last command prints the effective settings -- both should say `no`.
 
 **Warning:** Make sure your SSH key login works before doing this. If you lock yourself out, you will need to use the
 provider's console access.
@@ -139,7 +148,8 @@ Ubuntu comes with `ufw` (Uncomplicated Firewall):
 sudo ufw allow OpenSSH
 
 # Allow HTTP and HTTPS
-sudo ufw allow 'Nginx Full'
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
 
 # Enable the firewall
 sudo ufw enable
@@ -156,9 +166,11 @@ Status: active
 To                         Action      From
 --                         ------      ----
 OpenSSH                    ALLOW       Anywhere
-Nginx Full                 ALLOW       Anywhere
+80/tcp                     ALLOW       Anywhere
+443/tcp                    ALLOW       Anywhere
 OpenSSH (v6)               ALLOW       Anywhere (v6)
-Nginx Full (v6)            ALLOW       Anywhere (v6)
+80/tcp (v6)                ALLOW       Anywhere (v6)
+443/tcp (v6)               ALLOW       Anywhere (v6)
 ```
 
 ## Step 3: install nginx
@@ -273,8 +285,8 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 
-    # Deny access to hidden files
-    location ~ /\. {
+    # Deny access to hidden files, but allow Let's Encrypt challenges
+    location ~ /\.(?!well-known(?:/|$)) {
         deny all;
     }
 
@@ -368,6 +380,16 @@ Certbot will:
 
 Follow the prompts - enter your email and agree to the terms.
 
+If you manually enable HTTP/2 on a generated HTTPS server block with nginx 1.25.1 or newer, use a separate directive:
+
+```nginx
+listen 443 ssl;
+listen [::]:443 ssl;
+http2 on;
+```
+
+The older `listen 443 ssl http2;` syntax still works in many installations, but nginx now marks it as deprecated.
+
 ### Verify HTTPS
 
 Open `https://yoursite.com` in your browser. You should see the lock icon.
@@ -422,7 +444,7 @@ maxretry = 5
 enabled = true
 port = ssh
 filter = sshd
-logpath = /var/log/auth.log
+backend = systemd
 ```
 
 Start and enable:
@@ -437,27 +459,43 @@ sudo systemctl start fail2ban
 Changing the default SSH port (22) reduces automated login attempts:
 
 ```bash
-sudo nano /etc/ssh/sshd_config
+sudo nano /etc/ssh/sshd_config.d/00-hardening.conf
 ```
 
-Change `Port 22` to another port (e.g., `Port 2222`):
+Add a `Port` line (e.g., `Port 2222`):
 
 ```text
 Port 2222
 ```
 
-Update the firewall:
+If you created the Fail2Ban jail above, update its SSH port too:
+
+```ini
+[sshd]
+port = 2222
+```
+
+Test the SSH configuration, allow the new port, and apply the change. Ubuntu 24.04 starts SSH through systemd socket
+activation, so the listening port is controlled by `ssh.socket` and a plain reload is not enough:
 
 ```bash
 sudo ufw allow 2222/tcp
-sudo ufw delete allow OpenSSH
-sudo systemctl restart sshd
+sudo sshd -t
+sudo systemctl daemon-reload
+sudo systemctl restart ssh.socket
 ```
 
-Now connect with:
+Open a new terminal and test the new port before closing your existing SSH session:
 
 ```bash
 ssh -p 2222 deploy@YOUR_SERVER_IP
+```
+
+After the new connection works, remove the old firewall rule and reload Fail2Ban:
+
+```bash
+sudo ufw delete allow OpenSSH
+sudo fail2ban-client reload
 ```
 
 ## Deploying updates
@@ -526,7 +564,7 @@ curl -I https://yoursite.com 2>&1 | grep -i "x-frame\|x-content\|referrer"
 
 Here is everything we did, in order:
 
-- [ ] Created a VPS with Ubuntu 22.04 LTS
+- [ ] Created a VPS with Ubuntu 24.04 LTS
 - [ ] Updated the system (`apt update && apt upgrade`)
 - [ ] Created a non-root user with sudo
 - [ ] Set up SSH key authentication

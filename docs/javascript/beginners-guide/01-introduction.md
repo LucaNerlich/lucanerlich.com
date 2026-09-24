@@ -21,8 +21,8 @@ required.
 
 ## What is JavaScript?
 
-JavaScript is a **high-level, interpreted programming language**. That means you write human-readable code and the
-computer executes it directly - no separate compilation step needed.
+JavaScript is a **high-level programming language** usually run by a JavaScript engine as your program executes. That
+means you write human-readable code and do not run a separate compilation command first.
 
 Three facts to remember:
 
@@ -46,8 +46,8 @@ Every web browser (Chrome, Firefox, Safari, Edge) has a built-in **JavaScript en
 | Safari  | JavaScriptCore |
 | Edge    | V8             |
 
-When you load a web page, the browser reads the HTML, applies the CSS, and executes any JavaScript it finds. This is *
-*client-side** JavaScript.
+When you load a web page, the browser reads the HTML, applies the CSS, and executes any JavaScript it finds. This is
+**client-side** JavaScript.
 
 ### Node.js
 

@@ -433,7 +433,7 @@ Every page includes the same `<nav>` and `<footer>`. Here is the structure (you 
             <li><a href="index.html">Home</a></li>
             <li><a href="projects.html">Projects</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><button class="theme-toggle" id="theme-toggle">Dark Mode</button></li>
+            <li><button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Dark Mode</button></li>
         </ul>
     </div>
 </nav>
@@ -461,16 +461,19 @@ function initTheme() {
     if (!toggle) return;
 
     const savedTheme = localStorage.getItem("theme");
+    toggle.setAttribute("aria-pressed", "false");
 
     if (savedTheme === "dark") {
         document.body.classList.add("dark-theme");
         toggle.textContent = "Light Mode";
+        toggle.setAttribute("aria-pressed", "true");
     }
 
     toggle.addEventListener("click", () => {
         document.body.classList.toggle("dark-theme");
         const isDark = document.body.classList.contains("dark-theme");
         toggle.textContent = isDark ? "Light Mode" : "Dark Mode";
+        toggle.setAttribute("aria-pressed", String(isDark));
         localStorage.setItem("theme", isDark ? "dark" : "light");
     });
 }
@@ -517,7 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <li><a href="index.html">Home</a></li>
             <li><a href="projects.html">Projects</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><button class="theme-toggle" id="theme-toggle">Dark Mode</button></li>
+            <li><button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Dark Mode</button></li>
         </ul>
     </div>
 </nav>
@@ -643,7 +646,7 @@ Store project data as JSON so we can load and filter it dynamically:
             <li><a href="index.html">Home</a></li>
             <li><a href="projects.html">Projects</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><button class="theme-toggle" id="theme-toggle">Dark Mode</button></li>
+            <li><button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Dark Mode</button></li>
         </ul>
     </div>
 </nav>
@@ -707,8 +710,10 @@ async function initProjects() {
 
     function createFilterButton(label, isActive) {
         const btn = document.createElement("button");
+        btn.type = "button";
         btn.classList.add("filter-btn");
         if (isActive) btn.classList.add("active");
+        btn.setAttribute("aria-pressed", String(isActive));
         btn.textContent = label;
         return btn;
     }
@@ -773,7 +778,9 @@ async function initProjects() {
 
         // Update active state
         for (const btn of filtersContainer.querySelectorAll(".filter-btn")) {
-            btn.classList.toggle("active", btn.textContent === activeFilter);
+            const isActive = btn.textContent === activeFilter;
+            btn.classList.toggle("active", isActive);
+            btn.setAttribute("aria-pressed", String(isActive));
         }
 
         renderProjects(activeFilter);
@@ -809,7 +816,7 @@ document.addEventListener("DOMContentLoaded", initProjects);
             <li><a href="index.html">Home</a></li>
             <li><a href="projects.html">Projects</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><button class="theme-toggle" id="theme-toggle">Dark Mode</button></li>
+            <li><button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Dark Mode</button></li>
         </ul>
     </div>
 </nav>
@@ -821,32 +828,32 @@ document.addEventListener("DOMContentLoaded", initProjects);
     <form id="contact-form" style="max-width: 500px; margin-top: 32px;" novalidate>
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" id="name" name="name" required minlength="2">
-            <div class="error-text">Please enter your name (at least 2 characters).</div>
+            <input type="text" id="name" name="name" required minlength="2" aria-describedby="name-error" aria-invalid="false">
+            <div class="error-text" id="name-error">Please enter your name (at least 2 characters).</div>
         </div>
 
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-            <div class="error-text">Please enter a valid email address.</div>
+            <input type="email" id="email" name="email" required aria-describedby="email-error" aria-invalid="false">
+            <div class="error-text" id="email-error">Please enter a valid email address.</div>
         </div>
 
         <div class="form-group">
             <label for="subject">Subject</label>
-            <input type="text" id="subject" name="subject" required minlength="3">
-            <div class="error-text">Please enter a subject (at least 3 characters).</div>
+            <input type="text" id="subject" name="subject" required minlength="3" aria-describedby="subject-error" aria-invalid="false">
+            <div class="error-text" id="subject-error">Please enter a subject (at least 3 characters).</div>
         </div>
 
         <div class="form-group">
             <label for="message">Message</label>
-            <textarea id="message" name="message" rows="5" required minlength="10"></textarea>
-            <div class="error-text">Please enter a message (at least 10 characters).</div>
+            <textarea id="message" name="message" rows="5" required minlength="10" aria-describedby="message-error" aria-invalid="false"></textarea>
+            <div class="error-text" id="message-error">Please enter a message (at least 10 characters).</div>
         </div>
 
         <button type="submit" class="submit-btn">Send Message</button>
     </form>
 
-    <div class="form-success" id="success-message">
+    <div class="form-success" id="success-message" role="status" aria-live="polite">
         Thank you! Your message has been sent successfully.
     </div>
 </main>
@@ -899,6 +906,7 @@ function initContactForm() {
         }
 
         // Update UI
+        input.setAttribute("aria-invalid", String(!isValid));
         if (isValid) {
             group.classList.remove("has-error");
         } else {
@@ -952,9 +960,9 @@ function initContactForm() {
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        // In a real app, you would send this to a server.
-        // For this demo, we log it and show a success message.
-        console.log("Form submitted:", data);
+        // In a real app, you would send `data` to a server.
+        // For this demo, avoid logging personal form contents and show a success message.
+        console.log("Form submitted successfully.");
 
         // Show success message
         form.style.display = "none";
@@ -969,6 +977,8 @@ function initContactForm() {
             // Clear any error states
             for (const group of form.querySelectorAll(".form-group")) {
                 group.classList.remove("has-error");
+                const input = group.querySelector("input, textarea");
+                if (input) input.setAttribute("aria-invalid", "false");
             }
         }, 5000);
     });
@@ -1117,13 +1127,13 @@ of pages - just add more `<li>` entries.
 
 #### External links
 
-Always use the full URL and open in a new tab:
+Use the full URL for external links. If you choose to open one in a new tab, include `rel`:
 
 ```html
 <a href="https://github.com/username" target="_blank" rel="noopener noreferrer">GitHub</a>
 ```
 
-`rel="noopener noreferrer"` is a security best practice - it prevents the linked page from accessing your
+`rel="noopener noreferrer"` is a security best practice for new-tab links - it prevents the linked page from accessing your
 `window.opener` object.
 
 ### Structuring a larger site
@@ -1229,7 +1239,7 @@ Create `components/nav.html`:
             <li><a href="/projects.html">Projects</a></li>
             <li><a href="/blog/index.html">Blog</a></li>
             <li><a href="/contact.html">Contact</a></li>
-            <li><button class="theme-toggle" id="theme-toggle">Dark Mode</button></li>
+            <li><button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Dark Mode</button></li>
         </ul>
     </div>
 </nav>
@@ -1534,7 +1544,7 @@ class SiteNav extends HTMLElement {
                         <li><a href="index.html">Home</a></li>
                         <li><a href="projects.html">Projects</a></li>
                         <li><a href="contact.html">Contact</a></li>
-                        <li><button class="theme-toggle" id="theme-toggle">Dark Mode</button></li>
+                        <li><button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Dark Mode</button></li>
                     </ul>
                 </div>
             </nav>
@@ -1545,7 +1555,25 @@ class SiteNav extends HTMLElement {
 customElements.define("site-nav", SiteNav);
 ```
 
-Now every page just uses the custom tag:
+Create `js/components/site-footer.js` the same way:
+
+```js
+// js/components/site-footer.js
+
+class SiteFooter extends HTMLElement {
+    connectedCallback() {
+        this.innerHTML = `
+            <footer class="site-footer">
+                <p>&copy; 2025 MyPortfolio. Built with vanilla HTML, CSS, and JavaScript.</p>
+            </footer>
+        `;
+    }
+}
+
+customElements.define("site-footer", SiteFooter);
+```
+
+Now every page just uses the custom tags:
 
 ```html
 <!DOCTYPE html>
@@ -1622,8 +1650,10 @@ class AlertBanner extends HTMLElement {
                     margin: 8px 0;
                 }
             </style>
-            <div class="banner">${message}</div>
+            <div class="banner"></div>
         `;
+
+        this.shadowRoot.querySelector(".banner").textContent = message;
     }
 }
 
@@ -1648,6 +1678,15 @@ Components become truly reusable when they accept configuration through attribut
 ```js
 // js/components/project-card.js
 
+function isSafeUrl(value) {
+    return value.startsWith("http://")
+        || value.startsWith("https://")
+        || value.startsWith("./")
+        || value.startsWith("../")
+        || value.startsWith("#")
+        || !value.includes(":");
+}
+
 class ProjectCard extends HTMLElement {
     connectedCallback() {
         const title = this.getAttribute("title") || "Untitled";
@@ -1657,13 +1696,25 @@ class ProjectCard extends HTMLElement {
 
         this.innerHTML = `
             <div class="card">
-                <h3><a href="${url}">${title}</a></h3>
-                <p>${description}</p>
-                <div class="tags">
-                    ${tags.map(tag => `<span class="tag">${tag.trim()}</span>`).join("")}
-                </div>
+                <h3><a></a></h3>
+                <p></p>
+                <div class="tags"></div>
             </div>
         `;
+
+        const link = this.querySelector("a");
+        link.textContent = title;
+        link.href = isSafeUrl(url) ? url : "#";
+
+        this.querySelector("p").textContent = description;
+
+        const tagsContainer = this.querySelector(".tags");
+        for (const tag of tags) {
+            const span = document.createElement("span");
+            span.classList.add("tag");
+            span.textContent = tag.trim();
+            tagsContainer.appendChild(span);
+        }
     }
 }
 
@@ -1735,10 +1786,13 @@ class UserBadge extends HTMLElement {
                 }
             </style>
             <span class="badge">
-                <span>${name}</span>
-                <span class="role">${role}</span>
+                <span class="name"></span>
+                <span class="role"></span>
             </span>
         `;
+
+        this.shadowRoot.querySelector(".name").textContent = name;
+        this.shadowRoot.querySelector(".role").textContent = role;
     }
 }
 
@@ -1863,7 +1917,7 @@ without framework lock-in.
 You now have a complete, working multi-page website built entirely with vanilla HTML, CSS, and JavaScript. The site is:
 
 - **Responsive** - works on phones, tablets, and desktops
-- **Accessible** - semantic HTML, proper labels, keyboard-navigable forms
+- **Accessibility-minded** - semantic HTML, proper labels, keyboard-navigable forms, and ARIA state for custom validation and filters
 - **Interactive** - theme toggle, filterable projects, form validation
 - **Persistent** - theme preference saved in localStorage
 

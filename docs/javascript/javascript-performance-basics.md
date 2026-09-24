@@ -72,7 +72,7 @@ measure("sum", () => {
 Result:
 
 ```text
-sum: 0ms
+sum: <duration>ms
 ```
 
 The exact number will vary, but the **relative change** is what matters.
@@ -136,8 +136,8 @@ Result:
 
 ## Build strings efficiently
 
-Repeated string concatenation in loops can create many intermediate strings. When you are assembling a known list of
-parts, `Array.join` is often cleaner and faster.
+Repeated string concatenation in loops can create many intermediate strings. When you already have a known list of
+parts, `Array.join` is often cleaner and can be easier to benchmark.
 
 ```ts
 const parts = ["JavaScript", "performance", "matters"];
@@ -386,7 +386,7 @@ console.log(`${end - start}ms`);
 Result:
 
 ```text
-0ms
+<duration>ms
 ```
 
 ### What is the biggest performance win in JavaScript?
