@@ -29,10 +29,10 @@ top-to-bottom for a full tour, or jump straight to the chapter you need.
 | [Blocks](./blocks.mdx) | The component model: decoration lifecycle, content keys, variations, options, library |
 | [Customizing](./customizing.mdx) | `scripts.js`, `aem.js` overrides, `head.html`, fonts, plugins, response headers |
 | [Universal Editor](./universal-editor.mdx) | `component-definition.json`, models, filters, `data-aue-*` instrumentation |
-| [Development](./development.mdx) | Project bootstrap, `aem-cli`, `fstab.yaml`, `paths.yaml`, GitHub flow |
+| [Development](./development.mdx) | Project bootstrap, `aem-cli`, `fstab.yaml`, `paths.json`, GitHub flow |
 | [Sidekick](./sidekick.mdx) | Sidekick browser extension + the Sidekick Library plugin model |
-| [Admin API (helix5)](./admin-api.mdx) | `admin.hlx.page` reference - auth, endpoints, webhooks, workflows |
-| [Experimentation](./experimentation.mdx) | Built-in A/B testing, audiences, edge-side resolution |
+| [Admin API (helix5)](./admin-api.mdx) | `admin.hlx.page` reference - auth, endpoints, Configuration Service, workflows |
+| [Experimentation](./experimentation.mdx) | Experiment variants, page metadata, RUM measurement |
 | [Performance](./performance.mdx) | LCP, eager / lazy / delayed loading, automatic optimisations |
 | [Forms](./forms.mdx) | EDS for Forms - Adaptive Forms block, document-based form authoring |
 | [Commerce](./commerce.mdx) | EDS Commerce Storefront - catalog, PDP, cart, checkout |
@@ -111,7 +111,7 @@ and smart crop - all at the CDN edge, without a traditional Dispatcher.
 | **Frontend** | HTL + Clientlibs or `ui.frontend` (webpack) | Vanilla JS + CSS in GitHub |
 | **Deployment** | Cloud Manager pipeline | Git push - live in seconds |
 | **Component model** | AEM Components (JCR + Sling) | Blocks (HTML tables - semantic HTML) |
-| **Personalisation** | Target / ContextHub | Built-in experimentation (A/B, multivariate) |
+| **Personalisation** | Target / ContextHub | Experimentation plugin / decisioning integrations |
 | **Complexity** | High (OSGi, Sling, JCR, Dispatcher) | Low (HTML, CSS, JS, GitHub) |
 | **Best for** | Complex enterprise sites, SPAs, portals | Marketing sites, landing pages, docs, storefronts |
 

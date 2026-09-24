@@ -37,6 +37,13 @@ Reach for a standalone module when:
 
 Stick with full ACS Commons when you already depend on many of its features, or when a capability you need is not ported here yet.
 
+:::note
+For full ACS AEM Commons on AEM as a Cloud Service, use the upstream `acs-aem-commons-all`
+package with the `cloud` classifier (the ACS Maven docs currently show version `6.17.4`) and
+check the compatibility matrix. The package is deployable to AEMaaCS, but individual ACS Commons
+features can still be marked incompatible, replaced, or warn-only.
+:::
+
 ## How to consume a module
 
 Copy the module folder (for example `acs.include/`) into your repository and add it to your root `pom.xml` `<modules>` list. Nothing inside a module folder references the aggregator repo.

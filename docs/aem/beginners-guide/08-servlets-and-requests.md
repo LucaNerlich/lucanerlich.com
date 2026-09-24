@@ -42,8 +42,8 @@ GET /content/mysite/en/products.list.json
 | **Path** | `@SlingServletPaths` | A standalone utility endpoint not tied to content (use sparingly) |
 
 **Prefer resource-type binding.** Path-bound servlets bypass Sling's resource resolution and access
-control, are harder to cache, and must be explicitly allowed through the Dispatcher. Adobe discourages
-them for anything content-related.
+control checks for a content resource, are harder to cache, and must be explicitly allowed through
+the Dispatcher. Adobe discourages them for anything content-related.
 
 ### Resource-type-bound servlet (returns JSON)
 

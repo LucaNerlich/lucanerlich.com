@@ -142,14 +142,18 @@ The `com.day.cq.dam.api` package exposes `Asset` and `Rendition`. Adapt a resour
 ```java
 import com.day.cq.dam.api.Asset;
 import com.day.cq.dam.api.Rendition;
+import org.apache.sling.api.resource.Resource;
 
-Resource assetResource = resolver.getResource("/content/dam/mysite/hero.jpg");
-Asset asset = assetResource.adaptTo(Asset.class);
+Resource assetResource = resourceResolver.getResource("/content/dam/mysite/hero.jpg");
 
-if (asset != null) {
-    String mimeType = asset.getMimeType();
-    Rendition web = asset.getRendition("cq5dam.web.1280.1280.jpeg");
-    String title = asset.getMetadataValue("dc:title");
+if (assetResource != null) {
+    Asset asset = assetResource.adaptTo(Asset.class);
+
+    if (asset != null) {
+        String mimeType = asset.getMimeType();
+        Rendition web = asset.getRendition("cq5dam.web.1280.1280.jpeg");
+        String title = asset.getMetadataValue("dc:title");
+    }
 }
 ```
 

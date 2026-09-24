@@ -69,7 +69,7 @@ A template type is the blueprint for editable templates. It defines:
 
 Template types live under your site configuration in `/conf` (often seeded by code packages and then managed in the UI):
 
-```
+```text
 conf/mysite/settings/wcm/template-types/
 └── page/
     ├── .content.xml           # Template type definition
@@ -344,7 +344,7 @@ Templates must be enabled for a specific site configuration:
 
 The link between a site and its templates is in the site's `jcr:content`:
 
-```
+```text
 /content/mysite/jcr:content
 ├── cq:conf = "/conf/mysite"           # Points to the configuration
 ├── cq:allowedTemplates = [            # Regex(es) for templates authors may use here
@@ -374,7 +374,7 @@ sequenceDiagram
     Author->>Sites: Select "Article Page"
     Sites->>Author: Enter title and name
     Author->>Sites: "My First Article" / "my-first-article"
-    Sites->>Template: Copy structure + initial content
+    Sites->>Template: Apply live structure + copy initial content
     Template->>Page: /content/mysite/en/my-first-article
     Page-->>Author: Page created, open in editor
 ```

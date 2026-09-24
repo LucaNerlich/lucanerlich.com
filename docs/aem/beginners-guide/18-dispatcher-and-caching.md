@@ -58,7 +58,7 @@ Most requests should be served from CDN or Dispatcher cache, never reaching Publ
 
 The Dispatcher config lives in the `dispatcher/` module:
 
-```
+```text
 dispatcher/
 └── src/
     ├── conf.d/
@@ -89,7 +89,7 @@ dispatcher/
 
 Cache rules define which responses the Dispatcher stores:
 
-```
+```apache
 # cache/rules.any
 
 # Cache HTML pages
@@ -139,7 +139,7 @@ The Dispatcher only caches responses that:
 
 Filters control which requests reach AEM:
 
-```
+```apache
 # filters/filters.any
 
 # Start from deny-by-default and allow only what is required
@@ -205,7 +205,8 @@ AEM supports vanity URLs in page properties. An author can set `/products` as a 
 
 ## Cache invalidation
 
-When content is published, the Dispatcher cache must be updated. AEM handles this automatically.
+When content is published, the Dispatcher cache must be updated. AEM handles this through configured Dispatcher Flush
+agents on 6.5/AMS and through Adobe-managed invalidation on AEMaaCS.
 
 ### Auto-invalidation
 
@@ -219,8 +220,8 @@ sequenceDiagram
     participant Dispatcher
     participant Cache["Cache on Disk"]
 
-    Author->>AEM: Publish page /en/about
-    AEM->>Dispatcher: Flush /content/mysite/en/about.html
+    Author->>AEM: Distribute page /en/about to Publish
+    Author->>Dispatcher: Send flush /content/mysite/en/about.html
     Dispatcher->>Cache: Mark about.html as stale
     Note over Cache: Next request fetches fresh copy
 ```
@@ -229,9 +230,8 @@ sequenceDiagram
 
 The Dispatcher uses a `.stat` file mechanism for age-based invalidation:
 
-1. When a page is published, AEM's **flush agent** on the Publish instance sends an HTTP invalidation request to the
-   Dispatcher (the flush agent is configured in AEM's replication settings - in AEMaaCS, Adobe manages this
-   automatically)
+1. When a page is published on AEM 6.5, a **Dispatcher Flush agent** (typically configured on Author) sends an HTTP
+   invalidation request to the Dispatcher. In AEMaaCS, Adobe manages the distribution and invalidation flow.
 2. The Dispatcher **touches** (updates the timestamp of) the `.stat` file in the relevant cache directory
 3. On the next request, the Dispatcher compares the cached file's timestamp against the `.stat` file
 4. If the cached file is **older** than `.stat`, it is considered stale and re-fetched from Publish
@@ -249,7 +249,7 @@ The `statfileslevel` setting controls how broadly invalidation spreads:
 
 Higher levels = more granular invalidation = better cache hit ratio.
 
-```
+```apache
 # In the farm config
 /statfileslevel "2"
 ```

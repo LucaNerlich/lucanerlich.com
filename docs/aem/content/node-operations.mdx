@@ -214,7 +214,7 @@ resolver.commit();
 
 ## Move and Copy
 
-### Move (atomic)
+### Move with JCR `Session` (transient)
 
 ```java
 import javax.jcr.Session;
@@ -225,7 +225,7 @@ public void moveNode(Session session) throws Exception {
 }
 ```
 
-### Copy (duplicates the subtree)
+### Copy with JCR `Workspace` (immediate)
 
 ```java
 import javax.jcr.Session;
@@ -237,8 +237,22 @@ public void copyNode(Session session) throws Exception {
 }
 ```
 
+### Move or copy with Sling `ResourceResolver`
+
+```java
+import org.apache.sling.api.resource.ResourceResolver;
+
+public void moveOrCopyResource(ResourceResolver resolver) throws Exception {
+    resolver.move("/content/mysite/en/old-page", "/content/mysite/en/new-page");
+    resolver.copy("/content/mysite/en/source-page", "/content/mysite/en/copy-of-source");
+    resolver.commit();
+}
+```
+
 :::tip
-`session.move()` is transient - it requires `session.save()` to persist. `workspace.copy()` is immediate and does not require a save. Move is atomic; copy duplicates the entire subtree including all child nodes and properties.
+`session.move()` is transient - it requires `session.save()` to persist. `workspace.copy()` is
+immediate and does not require a save. Sling `resolver.move()` and `resolver.copy()` are persisted
+with `resolver.commit()`. Copy duplicates the entire subtree including child nodes and properties.
 :::
 
 ---
@@ -418,7 +432,7 @@ A batch size of **1000** is a good starting point. For nodes with large binary p
 | **Node ordering**        | Not supported                    | `node.orderBefore()`             |
 | **Versioning**           | Not supported                    | `VersionManager`                 |
 | **Move**                 | `resolver.move()`                | `session.move()`                 |
-| **Copy**                 | Not natively supported           | `workspace.copy()`               |
+| **Copy**                 | `resolver.copy()`                | `workspace.copy()`               |
 | **Testability**          | Easy to mock                     | Harder to mock                   |
 | **Recommended**          | Yes - default choice             | When Sling API is insufficient   |
 

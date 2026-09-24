@@ -23,7 +23,8 @@ This guide additionally assumes, that you have Maven 3 and Java JDK 21 installed
     - At the time of writing, the latest version is `AEM SDK for AEM v2026.2.24288.20260204T121510Z-260100`
 2. Ensure you have access or are able to create a new sandbox via
    the [Experience Cloud](https://experience.adobe.com/) - Cloud Manager.
-    - Note, when unused, it is possible that the sandbox might get deleted automatically.
+    - Sandbox programs and RDEs can hibernate after inactivity; do not treat them as
+      durable storage for your source code.
 3. In your Cloud Manager Program, note down your Git Repository information, via 'Program -> Overview -> Pipelines ->
    `{} Access Repo Info`'.
     - You will need the URL and Password, to setup the Cloud Git as a second origin later.
@@ -46,16 +47,16 @@ This guide additionally assumes, that you have Maven 3 and Java JDK 21 installed
 ### Example Maven Archetype Command
 
 ```bash
-mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.3.1:generate \
+mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.2.1:generate \
  -D archetypeGroupId=com.adobe.aem \
  -D archetypeArtifactId=aem-project-archetype \
- -D archetypeVersion=56 \
+ -D archetypeVersion=58 \
  -D appTitle="My Site" \
  -D appId="mysite" \
  -D groupId="com.mysite" \
+ -D aemVersion=cloud \
  -D includeExamples="y" \
  -D includeErrorHandler="y" \
  -D datalayer="n"
 ```
-
 

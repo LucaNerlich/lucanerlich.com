@@ -237,14 +237,39 @@ invalid tokens.
 
 ### Adding CSRF tokens to forms
 
-In HTL templates, use the `@csrf-token` expression:
+HTL does not provide a magic `@csrf-token` expression. For server-rendered forms, expose the
+token from Java (for example a Sling Model using `com.adobe.granite.csrf.CSRFTokenProvider`) and
+render it as an escaped attribute:
 
 ```html
+<sly data-sly-use.form="com.myproject.core.models.CsrfFormModel" />
 <form method="POST" action="/content/my-project/submit">
-    <input type="hidden" name=":cq_csrf_token" value="${@csrf-token}" />
+    <input type="hidden" name=":cq_csrf_token" value="${form.token @ context='attribute'}" />
     <input type="text" name="message" />
     <button type="submit">Send</button>
 </form>
+```
+
+```java
+import com.adobe.granite.csrf.CSRFTokenProvider;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.OSGiService;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+
+@Model(adaptables = SlingHttpServletRequest.class)
+public class CsrfFormModel {
+
+    @Self
+    private SlingHttpServletRequest request;
+
+    @OSGiService
+    private CSRFTokenProvider csrfTokenProvider;
+
+    public String getToken() {
+        return csrfTokenProvider.getToken(request);
+    }
+}
 ```
 
 For JavaScript-driven requests, fetch the token from the granite CSRF servlet:
@@ -268,6 +293,10 @@ async function submitData(payload) {
     });
 }
 ```
+
+Anonymous publish requests may not receive a CSRF token. If a public form needs to POST from
+publish, test that flow explicitly and combine CSRF with an appropriate authentication or anti-abuse
+mechanism for the endpoint.
 
 ### Configuring exempt paths
 

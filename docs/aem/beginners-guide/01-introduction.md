@@ -81,7 +81,8 @@ AEM comes in several flavors:
 This guide targets **AEM as a Cloud Service** (AEMaaCS). It is the current standard for new projects. Key differences
 from older versions:
 
-- **No CRXDE Lite in production** - content changes go through Git and Cloud Manager
+- **No CRXDE Lite in production** - content changes use the authoring UI; code and configuration go through Git and
+  Cloud Manager
 - **Immutable infrastructure** - you cannot modify the runtime at deploy time
 - **Auto-updates** - Adobe pushes updates continuously
 - **Cloud Manager** - CI/CD pipeline for deployment
@@ -194,7 +195,7 @@ flowchart LR
     User["Website Visitor"]
 
     Editor -->|"Edit content"| Author
-    Author -->|"Replicate"| Publish
+    Author -->|"Publish / distribute"| Publish
     Publish --> Dispatcher
     Dispatcher --> User
 ```
@@ -204,8 +205,8 @@ flowchart LR
 | **Author**  | Content editing, authoring UI, workflows | 4502           |
 | **Publish** | Content delivery, public-facing website  | 4503           |
 
-Content authors work on the **Author** instance. When content is ready, it is **replicated** (published) to the *
-*Publish** instance, where visitors access it. The **Dispatcher** sits in front of Publish and caches pages for
+Content authors work on the **Author** instance. When content is ready, it is **published** to the
+**Publish** instance, where visitors access it. The **Dispatcher** sits in front of Publish and caches pages for
 performance.
 
 ## Generate a project with the Maven Archetype
@@ -216,14 +217,14 @@ Adobe provides a Maven Archetype that scaffolds a complete AEM project:
 mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.2.1:generate \
   -D archetypeGroupId=com.adobe.aem \
   -D archetypeArtifactId=aem-project-archetype \
-  -D archetypeVersion=56 \
+  -D archetypeVersion=58 \
   -D appTitle="My Site" \
   -D appId="mysite" \
   -D groupId="com.mysite" \
   -D aemVersion="cloud"
 ```
 
-> **Tip:** The archetype version above (`56`) was the latest at the time of writing. Always check
+> **Tip:** The archetype version above (`58`) was the latest at the time of writing. Always check
 > the [releases page](https://github.com/adobe/aem-project-archetype/releases) for the current version before generating
 > your project.
 
@@ -245,7 +246,7 @@ Official documentation:
 
 The archetype creates a multi-module Maven project:
 
-```
+```text
 mysite/
 ├── pom.xml                    # Parent POM (reactor)
 ├── all/                       # Aggregates all packages for deployment
@@ -327,7 +328,7 @@ flowchart TD
 Each content package module (`ui.apps`, `ui.content`, `ui.config`) has a `filter.xml` file that defines which JCR paths
 are included in the package:
 
-```
+```text
 ui.apps/src/main/content/META-INF/vault/filter.xml
 ```
 
@@ -418,7 +419,7 @@ and infrastructure ownership) differs.
 | Concept                       | What it means in AEM                                                                                    |
 |-------------------------------|---------------------------------------------------------------------------------------------------------|
 | **Everything is content**     | Pages, components, templates, configs - all stored as nodes in the JCR                                 |
-| **Content vs code**           | Content lives in `/content/`, code lives in `/apps/` and `/libs/`                                       |
+| **Content vs code**           | Content lives in `/content/`, project code in `/apps/`, Adobe product code in `/libs/`                  |
 | **Sling resource resolution** | URLs map to JCR nodes, not files on disk                                                                |
 | **Author + Publish**          | Content is edited on Author, delivered from Publish                                                     |
 | **Immutable + Mutable**       | In AEMaaCS: `/apps` and `/libs` are immutable (code); `/content`, `/conf`, `/var` are mutable (content) |

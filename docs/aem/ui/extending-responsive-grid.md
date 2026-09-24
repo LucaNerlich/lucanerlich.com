@@ -466,7 +466,7 @@ class SectionContainer extends ResponsiveGrid {
                     )}
 
                     {/* Render the responsive grid children */}
-                    <div {...this.containerProps}>
+                    <div {...this.containerAttrs}>
                         {this.childComponents}
                         {this.placeholderComponent}
                     </div>
@@ -607,7 +607,7 @@ grid.css
 ```
 
 ```css title="grid.css"
-@import url('/etc.clientlibs/wcm/foundation/clientlibs/grid/grid.css');
+@import url('/etc.clientlibs/wcm/foundation/clientlibs/grid.css');
 ```
 
 ---

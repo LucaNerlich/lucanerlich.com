@@ -191,14 +191,17 @@ Replaces the tag name of the host element.
 ```
 
 :::caution
-For security, `data-sly-element` only allows the following elements:
-`h1`-`h6`, `section`, `header`, `footer`, `nav`, `aside`, `article`, `main`,
-`div`, `span`, `p`, `ul`, `ol`, `li`, `small`, `pre`, `blockquote`.
+For security, validate the element name in your Sling Model and expose only a small allowlist
+(for example `h2` through `h4`). HTL also filters invalid element names through the XSS protection
+service, but your model should not pass arbitrary author input to `data-sly-element`.
 :::
 
 ### data-sly-include
 
-Includes the output of another HTL file (or server-side script) into the current markup. The included file does **not** have access to the current HTL context.
+Includes the output of another HTL file (or server-side script) into the current markup. The included
+script runs in the same Sling request/bindings context, but it does not receive typed template
+parameters. Use `requestAttributes` for small include-time values, or `data-sly-template` /
+`data-sly-call` when you need explicit parameters.
 
 ```html
 <!-- Include a header partial -->
@@ -387,8 +390,11 @@ with `@ context='...'`. Always use the most restrictive context that works for y
 <!-- Attribute context -->
 <div title="${model.tooltip @ context='attribute'}">Hover me</div>
 
-<!-- Script context (for inline JS values) -->
-<script>var config = ${model.jsonConfig @ context='scriptString'}</script>
+<!-- Script string context (inside quoted inline JS strings) -->
+<script>var label = "${model.label @ context='scriptString'}";</script>
+
+<!-- Script token context (for pre-serialized JSON from trusted model code) -->
+<script>var config = ${model.jsonConfig @ context='scriptToken'};</script>
 
 <!-- Style context -->
 <div style="${model.inlineStyles @ context='styleString'}">Styled</div>
@@ -407,7 +413,10 @@ with `@ context='...'`. Always use the most restrictive context that works for y
 | `text`         | Default for content inside elements (HTML-encoded) |
 | `html`         | Allows safe HTML (filters dangerous tags)         |
 | `attribute`    | For HTML attribute values                         |
+| `attributeName`| For dynamic attribute names                       |
+| `elementName`  | For dynamic element names                         |
 | `uri`          | For `href` and `src` attribute values             |
+| `scriptToken`  | For JavaScript tokens, such as trusted serialized JSON |
 | `scriptString` | Inside JavaScript strings                         |
 | `scriptComment`| Inside JavaScript comments                       |
 | `styleString`  | Inside CSS property values                        |
@@ -427,19 +436,16 @@ Under the hood, AEM's XSS filtering (especially for `context='html'`) is powered
 [OWASP AntiSamy library](https://owasp.org/www-project-antisamy/). AntiSamy applies a policy that defines
 which HTML tags, attributes, and CSS properties are allowed through the filter and which are stripped or sanitised.
 
-#### Configuration file locations
+#### Configuration file location
 
-AEM ships with **two** AntiSamy configuration files:
+In AEM, Adobe documents the default AntiSamy policy at:
 
 | Path | Used by |
 |------|---------|
-| `/libs/cq/xssprotection/config.xml` | JSP-based components and the general CQ/Granite XSS API |
-| `/libs/sling/xss/config.xml` | HTL (Sightly) templates via the Sling XSS Protection API |
+| `/libs/cq/xssprotection/config.xml` | AEM XSS filtering, including the CQ/Granite XSS API and HTL output filtering in AEM projects |
 
-Both files follow the same AntiSamy policy XML schema. In practice the two files are kept in sync by Adobe,
-but if you need to customise rules, you must identify which path is evaluated for your rendering technology.
-For most modern AEM projects using HTL, changes to `/libs/cq/xssprotection/config.xml` are picked up after a
-restart and apply across the board.
+Apache Sling runtimes can also provide Sling-level XSS configuration, but for AEM component projects
+follow Adobe's AEM guidance and overlay `/libs/cq/xssprotection/config.xml`.
 
 #### Overlaying the configuration
 
@@ -521,20 +527,24 @@ for any value that will be rendered in HTML.
 ```java title="core/src/main/java/com/example/core/models/SafeTextModel.java"
 import com.adobe.granite.xss.XSSAPI;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
-@Model(adaptables = SlingHttpServletRequest.class)
+@Model(
+    adaptables = SlingHttpServletRequest.class,
+    defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)
 public class SafeTextModel {
 
     @OSGiService
     private XSSAPI xssAPI;
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue
     private String richText;
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue
     private String linkUrl;
 
     /**
@@ -603,21 +613,29 @@ Move the `tel:` scheme out of the user-controlled value entirely. Let the Sling 
 number and expose a boolean flag:
 
 ```java title="PhoneLinkModel.java"
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
 import java.util.regex.Pattern;
 
-@Model(adaptables = SlingHttpServletRequest.class)
+@Model(
+    adaptables = SlingHttpServletRequest.class,
+    defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)
 public class PhoneLinkModel {
 
     private static final Pattern PHONE_PATTERN =
         Pattern.compile("^\\+?[0-9\\s\\-().]+$");
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue
     private String phoneNumber;
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue
     private String phoneExtension;
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue
     private String url;
 
     public boolean isPhoneLink() {
@@ -834,6 +852,18 @@ several Use Providers, each with a different priority (highest first):
 The most common and recommended approach. Sling Models are the standard way to provide component logic.
 
 ```java title="core/src/main/java/com/example/core/models/ArticleModel.java"
+package com.example.core.models;
+
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+
 @Model(
     adaptables = SlingHttpServletRequest.class,
     adapters = ArticleModel.class,
@@ -853,9 +883,6 @@ public class ArticleModel {
 
     @ValueMapValue
     private String[] tags;
-
-    @Inject @Source("child-resources")
-    private List<Resource> relatedArticles;
 
     public String getTitle() {
         return title;
@@ -898,13 +925,19 @@ Parameters passed via HTL become request attributes that can be injected:
 ```
 
 ```java title="ProductCard.java"
+package com.example.core.models;
+
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.RequestAttribute;
+
 @Model(adaptables = SlingHttpServletRequest.class)
 public class ProductCard {
 
-    @Inject
+    @RequestAttribute
     private String colour;
 
-    @Inject
+    @RequestAttribute
     private Integer year;
 
     // getters...

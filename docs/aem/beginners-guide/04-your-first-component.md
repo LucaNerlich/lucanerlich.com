@@ -52,7 +52,7 @@ all three.
 
 Components live in the `ui.apps` module under `/apps/mysite/components/`:
 
-```
+```text
 ui.apps/src/main/content/jcr_root/apps/mysite/components/
 └── hello/
     ├── .content.xml           # Component definition (cq:Component node)
@@ -63,7 +63,7 @@ ui.apps/src/main/content/jcr_root/apps/mysite/components/
 
 The Sling Model lives in the `core` module:
 
-```
+```text
 core/src/main/java/com/mysite/core/models/
 └── HelloModel.java
 ```
@@ -290,7 +290,7 @@ You should see your component rendered on the page with the values you entered.
 Open CRXDE Lite and navigate to the page's `jcr:content` node (e.g.,
 `/content/mysite/en/jcr:content/root/container/hello`). You will see:
 
-```
+```text
 hello
 ├── jcr:primaryType = "nt:unstructured"
 ├── sling:resourceType = "mysite/components/hello"
@@ -353,6 +353,7 @@ Your project uses them through **proxy components** - lightweight wrappers that 
 <!-- apps/mysite/components/text/.content.xml -->
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           jcr:primaryType="cq:Component"
           jcr:title="Text"
           componentGroup="My Site - Content"

@@ -32,7 +32,7 @@ root.
   existing list page.
 
 Storage matches the ACS Commons shape: child nodes under `./list/`, each with `jcr:title` and `value`. Authoring
-uses a modern Touch UI dialog instead of the MCP-generated classic UI form.
+uses a modern Touch UI dialog instead of the legacy Classic UI widgets from ACS Commons.
 
 ## When to use it
 
@@ -82,7 +82,7 @@ String title = list.lookupTitle("de"); // e.g. "Germany"
 
 ## What was not ported
 
-- MCP-generated classic-UI dialog and `/generic-lists.html` bulk-properties console.
+- Legacy Classic UI dialog and `/generic-lists.html` bulk-properties console.
 - Legacy `list.json.jsp` JSON export (deprecated `org.apache.sling.commons.json`).
 - A page render script -- a list page is a pure data container.
 - The `/etc/acs-commons/lists` default root -- this module uses `/content/generic-lists(/.*)?` for AEMaaCS.

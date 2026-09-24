@@ -13,6 +13,12 @@ Author UI). It replaced the legacy Classic UI and is the interface used across A
 AEM as a Cloud Service.
 :::
 
+:::note
+Classic UI is deprecated in AEM 6.5 and is not available in AEM as a Cloud Service. Authoring
+customisations should target the Touch-enabled authoring UI and load through authoring clientlib
+categories such as `cq.authoring.editor`, `cq.authoring.editor.hook`, or `cq.authoring.dialog`.
+:::
+
 ## Add the Styles Plugin to the RTE
 
 The RTE Styles plugin allows an author to add a specific CSS class to a text selection.

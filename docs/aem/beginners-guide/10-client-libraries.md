@@ -43,7 +43,7 @@ A client library:
 
 A clientlib is a JCR node of type `cq:ClientLibraryFolder`:
 
-```
+```text
 apps/mysite/clientlibs/
 └── clientlib-base/
     ├── .content.xml          # Clientlib definition
@@ -80,7 +80,7 @@ apps/mysite/clientlibs/
 
 These files define the inclusion order:
 
-```
+```text
 # css.txt
 #base=css
 reset.css
@@ -88,7 +88,7 @@ variables.css
 base.css
 ```
 
-```
+```text
 # js.txt
 #base=js
 utils.js
@@ -160,13 +160,13 @@ every clientlib.
 
 Without proxy:
 
-```
+```text
 /apps/mysite/clientlibs/clientlib-base.css  (blocked in production)
 ```
 
 With proxy:
 
-```
+```text
 /etc.clientlibs/mysite/clientlibs/clientlib-base.css  (accessible)
 ```
 
@@ -176,7 +176,7 @@ The proxy path is automatically resolved by AEM when you use the clientlib HTL t
 
 Each component can have its own clientlib:
 
-```
+```text
 apps/mysite/components/hero/
 ├── .content.xml          # Component definition
 ├── hero.html             # HTL template
@@ -206,7 +206,7 @@ By sharing the same category (`mysite.components`), all component clientlibs are
 
 Modern AEM projects use the `ui.frontend` module for frontend build tooling (webpack, Vite, etc.):
 
-```
+```text
 ui.frontend/
 ├── package.json
 ├── webpack.config.js
@@ -261,7 +261,7 @@ Add `?debugClientLibs=true` to any page URL to see which clientlibs are loaded a
 
 If CSS/JS changes are not appearing:
 
-```
+```text
 http://localhost:4502/libs/granite/ui/content/dumplibs.rebuild.html
 ```
 
@@ -269,7 +269,7 @@ Click **Invalidate Caches** and then **Rebuild Libraries**.
 
 ### View a specific clientlib
 
-```
+```text
 http://localhost:4502/etc.clientlibs/mysite/clientlibs/clientlib-base.css
 http://localhost:4502/etc.clientlibs/mysite/clientlibs/clientlib-base.js
 ```

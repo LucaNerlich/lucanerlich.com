@@ -56,22 +56,22 @@ Options modify how values are rendered:
 
 HTL automatically picks an escaping context, but you can override it - here are some of the often used context options:
 
-| Context          | Use for         | Example                                                      |
-|------------------|-----------------|--------------------------------------------------------------|
-| `html` (default) | HTML content    | `<p>${text}</p>`                                             |
-| `text`           | Plain text      | `<title>${title @ context='text'}</title>`                   |
-| `attribute`      | HTML attributes | `<div class="${cssClass @ context='attribute'}">`            |
-| `uri`            | URLs            | `<a href="${url @ context='uri'}">`                          |
-| `scriptString`   | JS strings      | `var x = "${val @ context='scriptString'}"`                  |
-| `unsafe`         | No escaping     | `${richText @ context='unsafe'}` - use with extreme caution |
+| Context        | Use for              | Example                                                      |
+|----------------|----------------------|--------------------------------------------------------------|
+| `text`         | Plain text           | `<title>${title @ context='text'}</title>`                   |
+| `html`         | Sanitized rich HTML  | `${richText @ context='html'}`                               |
+| `attribute`    | HTML attributes      | `<div class="${cssClass @ context='attribute'}">`            |
+| `uri`          | URLs                 | `<a href="${url @ context='uri'}">`                          |
+| `scriptString` | JS strings           | `var x = "${val @ context='scriptString'}"`                  |
+| `unsafe`       | No escaping          | `${richText @ context='unsafe'}` - use with extreme caution |
 
 > **Security:** Never use `context='unsafe'` unless you are absolutely sure the content is safe. HTL's automatic
 > escaping is one of its strongest features.
 >
-> **Rich text from the RTE:** The Rich Text Editor sanitizes content **on save** (stripping dangerous tags/attributes),
-> and HTL's `html` context provides an **additional** escaping layer on render. Together these two layers make
-> `${model.richText}` safe without `context='unsafe'`. If you want to be explicit, use
-> `${model.richText @ context='html'}` - this is the default and does not change behavior.
+> **Rich text from the RTE:** The Rich Text Editor sanitizes content **on save** (stripping dangerous tags/attributes).
+> Render stored rich text with `${model.richText @ context='html'}` so safe markup remains markup. Plain
+> `${model.richText}` is escaped as text in normal element content and may show tags literally. Do not use
+> `context='unsafe'` for RTE output.
 
 ## Block statements
 
@@ -125,7 +125,7 @@ The `data-sly-test` attribute doubles as a variable assignment when you add an i
     <li>
         <h3>${item.title}</h3>
         <p>${item.excerpt}</p>
-        <span>Item ${itemList.index + 1} of ${itemList.count}</span>
+        <span>Item ${itemList.count}</span>
     </li>
 </ul>
 ```
@@ -135,21 +135,22 @@ List helper variables:
 | Variable          | Description               |
 |-------------------|---------------------------|
 | `itemList.index`  | Zero-based index          |
-| `itemList.count`  | Total items               |
+| `itemList.count`  | One-based counter         |
 | `itemList.first`  | True if first item        |
 | `itemList.last`   | True if last item         |
 | `itemList.middle` | True if not first or last |
-| `itemList.odd`    | True if index is odd      |
-| `itemList.even`   | True if index is even     |
+| `itemList.odd`    | True if count is odd      |
+| `itemList.even`   | True if count is even     |
 
-### data-sly-repeat - iterate and keep the host element
+### data-sly-repeat - iterate and repeat the host element
 
-Unlike `data-sly-list` (which removes the host element), `data-sly-repeat` keeps it:
+`data-sly-list` renders the host element once and repeats its content. `data-sly-repeat` repeats the host element
+itself:
 
 ```html
-<!-- data-sly-list: <ul> rendered once, <li> repeated -->
-<ul>
-    <li data-sly-list="${model.items}">${item.name}</li>
+<!-- data-sly-list: <ul> rendered once, <li> repeated as its content -->
+<ul data-sly-list.item="${model.items}">
+    <li>${item.name}</li>
 </ul>
 
 <!-- data-sly-repeat: <div> itself is repeated -->
@@ -296,10 +297,10 @@ HTL provides several global objects available in every template:
 <div data-sly-test="${wcmmode.edit || wcmmode.preview}">
     <p>Editing placeholder: configure this component.</p>
 </div>
-
-<!-- Logging (output goes to AEM logs, not HTML) -->
-${'Debug: rendering article' @ log}
 ```
+
+Do application logging in Sling Models or OSGi services, not in HTL templates. Templates should stay side-effect-free
+and focused on rendering.
 
 ## The Use API
 

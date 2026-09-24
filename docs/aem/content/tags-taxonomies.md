@@ -48,7 +48,7 @@ graph TD
 Every tag belongs to a **namespace** - a top-level container that groups related tags.
 Namespaces are the direct children of `/content/cq:tags/`:
 
-```
+```text
 /content/cq:tags/
 ├── marketing/           ← namespace
 │   ├── campaigns/
@@ -86,7 +86,7 @@ Tags use the `cq:Tag` node type with these key properties:
 Tags are identified by their **tag ID**, which is the path relative to `/content/cq:tags/`
 using a colon (`:`) to separate the namespace from the path:
 
-```
+```text
 marketing:campaigns/2025
 products:shoes/running
 regions:emea
@@ -94,7 +94,7 @@ regions:emea
 
 The `cq:tags` property on a resource stores an array of these tag IDs:
 
-```
+```text
 cq:tags = ["marketing:campaigns/2025", "products:shoes/running"]
 ```
 
@@ -304,6 +304,10 @@ public class LocalisedTagModel {
 
         Locale pageLocale = request.getLocale();
         TagManager tagManager = request.getResourceResolver().adaptTo(TagManager.class);
+        if (tagManager == null) {
+            return Collections.emptyList();
+        }
+
         List<String> titles = new ArrayList<>();
 
         for (String id : tagIds) {
@@ -399,7 +403,7 @@ For a single tag (no multi-select):
 
 ### Find pages with a specific tag
 
-```
+```text
 path=/content/site/en
 type=cq:Page
 1_property=jcr:content/cq:tags
@@ -409,7 +413,7 @@ p.limit=20
 
 ### Find pages with ANY of several tags (OR)
 
-```
+```text
 path=/content/site/en
 type=cq:Page
 group.p.or=true
@@ -423,7 +427,7 @@ group.2_property.value=marketing:channels/social
 
 The dedicated `tagid` predicate simplifies tag queries and supports inheritance:
 
-```
+```text
 path=/content/site/en
 type=cq:Page
 tagid=marketing:campaigns/2025
@@ -434,7 +438,7 @@ tagid.property=jcr:content/cq:tags
 
 The `tagid` predicate can match child tags automatically:
 
-```
+```text
 path=/content/site/en
 type=cq:Page
 tagid=marketing:campaigns
@@ -472,13 +476,16 @@ In multi-site projects, decide where tags live:
 | **Per-site namespace** | `/content/cq:tags/brand-a/`, `/content/cq:tags/brand-b/` | Each site has its own tags             |
 | **Hybrid**             | `/content/cq:tags/shared/` + `/content/cq:tags/brand-a/` | Shared base + site-specific extensions |
 
-### Closed tag namespaces
+### Controlled tag namespaces
 
 To prevent authors from creating new tags (enforcing a controlled vocabulary):
 
-1. Set the namespace to **closed** in the Tagging Console
-2. Or set the property `cq:isContainer = false` on the namespace node
-3. Only users with `tag-administrators` group membership can create tags in closed namespaces
+1. Restrict create/modify/delete permissions on the namespace under `/content/cq:tags/<namespace>`
+2. Grant those permissions only to taxonomy owners (for example a `tag-administrators` group)
+3. Scope tag picker fields with `rootPath` so authors select from the approved namespace
+
+There is no supported `cq:isContainer = false` switch that makes a namespace read-only. Enforce a
+controlled vocabulary through repository permissions and workflow/governance.
 
 ---
 
@@ -487,7 +494,7 @@ To prevent authors from creating new tags (enforcing a controlled vocabulary):
 Tag titles can be translated for multi-language sites by adding locale-specific
 `jcr:title` properties:
 
-```
+```text
 /content/cq:tags/products/shoes
 ├── jcr:title = "Shoes"
 ├── jcr:title.de = "Schuhe"
@@ -567,10 +574,11 @@ if (oldTag != null) {
 
 ## AEMaaCS Considerations
 
-- Tags are stored under `/content/cq:tags/` and are part of the content package (`ui.content`)
+- Tags are stored under `/content/cq:tags/` and are usually packaged with content (`ui.content`)
 - Tag namespaces can be created in the **project code** and deployed via Cloud Manager
 - Tags created by authors at runtime need to be **replicated** to publish instances
-- The Tagging Console is available on both author and publish (but authoring should happen on author)
+- Manage tags on author; publish tiers should receive tags through publication/distribution, not
+  direct authoring
 - For headless delivery, tags can be exposed via the **Assets HTTP API** or **GraphQL**
 
 ---
@@ -582,10 +590,10 @@ if (oldTag != null) {
 Plan namespaces, hierarchy depth, and governance rules before creating tags. Restructuring
 a taxonomy after content is tagged is painful.
 
-### Use closed namespaces for controlled vocabularies
+### Use permissions for controlled vocabularies
 
-Prevent tag sprawl by closing namespaces and assigning `tag-administrators` only to
-taxonomy owners.
+Prevent tag sprawl by restricting write permissions on taxonomy namespaces and assigning tag
+administration rights only to taxonomy owners.
 
 ### Keep tag hierarchies shallow
 
@@ -595,7 +603,8 @@ and rarely provide meaningful classification value.
 ### Always use tag IDs, never paths
 
 Store and reference tags by their tag ID (`namespace:path`) not the JCR path
-(`/content/cq:tags/namespace/path`). Tag IDs are stable across moves and exports.
+(`/content/cq:tags/namespace/path`). The TagManager APIs understand tag IDs and update content
+references during move/merge operations; hard-coded repository paths are more brittle.
 
 ### Localise tag titles
 
@@ -614,7 +623,7 @@ handles locale resolution automatically.
 | Duplicate tags across namespaces | Establish clear namespace ownership; use a shared namespace for cross-cutting concerns                  |
 | Performance with large tag trees | Use `tagid` QueryBuilder predicate instead of property-based queries; consider Oak indexes on `cq:tags` |
 | Tags lost during content copy    | Include `/content/cq:tags/` in your content package filter when migrating content                       |
-| Authors creating ad-hoc tags     | Close the namespace and restrict tag creation to administrators                                         |
+| Authors creating ad-hoc tags     | Restrict namespace write permissions and tag creation to administrators                                  |
 
 ## See also
 

@@ -42,10 +42,12 @@ graph LR
 
 Two flows:
 
-- **Catalog reads** - PLP and PDP shells (marketing copy, layout, imagery) are served
-  as cached HTML from the edge, then product data is hydrated from the catalog API.
-  Edge responses carry surrogate keys per SKU / category so a price or inventory
-  change purges only the affected pages.
+- **Catalog reads** - PLP and PDP pages are regular EDS documents (marketing copy, layout,
+  a `product-details` or `product-list-page` block) served as cached HTML from the edge.
+  The product data itself is fetched in the browser from the catalog API (Adobe Commerce
+  Catalog Service). Because the price and stock come from the API at runtime, a price change
+  does not require purging the page. If you pre-render product pages for SEO, republish
+  those pages when the product data changes.
 - **Cart and checkout** - the surrounding page shell (nav, footer, layout) is served from the
   same cached edge HTML as any other page. The cart/checkout state itself - items, totals,
   and provider-issued payment tokens - lives in the browser and talks directly to the commerce
@@ -54,28 +56,39 @@ Two flows:
   with the payment provider. Any personalized cart/checkout response must be sent with
   `Cache-Control: private, no-store` and never cached at the edge.
 
-## Block library
+## Blocks and drop-ins
 
-The Commerce Storefront ships a set of blocks under
-[adobe-commerce/storefront-eds](https://github.com/adobe-commerce/storefront-eds):
+Adobe's storefront starter is the
+[aem-boilerplate-commerce](https://github.com/hlxsites/aem-boilerplate-commerce) repository.
+It is a normal EDS project whose commerce blocks are thin wrappers around **drop-in
+components** - prebuilt UI packages published on npm under `@dropins/storefront-*`
+(for example `@dropins/storefront-cart`, `@dropins/storefront-checkout`,
+`@dropins/storefront-pdp`, `@dropins/storefront-auth`, `@dropins/storefront-account`, and
+`@dropins/storefront-order`).
+
+Typical blocks in the boilerplate include:
 
 | Block | Purpose |
 |-------|---------|
 | `product-list-page` | Category / search results page (PLP) |
 | `product-details` | Product detail page (PDP) |
-| `cart` | Mini-cart and full cart |
-| `checkout` | Multi-step checkout (shipping, payment, review) |
-| `account` | Customer account, addresses, orders |
-| `commerce-search` | Live search bar with autocomplete |
-| `recommendations` | "You may also like" widgets |
+| `commerce-cart` / `commerce-mini-cart` | Full cart and mini-cart |
+| `commerce-checkout` | Checkout (shipping, payment, review) |
+| `commerce-login`, `commerce-create-account`, `commerce-account-*` | Customer auth and account pages |
+| `product-recommendations` | "You may also like" widgets |
 
-These behave like normal blocks - folder under `/blocks/`, decorate function, scoped
-CSS - but most of them call the commerce API at decoration time.
+Block names change between boilerplate releases, so check the repository's `blocks/`
+folder for the version you start from. These behave like normal blocks - folder under
+`/blocks/`, decorate function, scoped CSS - but they mount a drop-in and call the commerce
+APIs at decoration time. Endpoints, the environment ID, API key, and store view codes live
+in the project's commerce configuration rather than in block code.
 
 ## Talking to the catalog
 
-Adobe Commerce exposes catalog data via **GraphQL**. The storefront blocks issue
-GraphQL queries from the browser:
+Adobe Commerce exposes catalog data via **GraphQL** (the Catalog Service for storefront
+reads, the core Commerce GraphQL API for cart, checkout, and customer operations). The
+drop-ins issue these queries from the browser. A hand-written block that refreshes live
+price and stock looks like this:
 
 ```javascript title="blocks/product-details/product-details.js"
 const query = `
@@ -129,35 +142,38 @@ or personalised recommendations.
 
 | Data | Cached where | Invalidation |
 |------|--------------|--------------|
-| PDP HTML | Edge (long TTL) | Surrogate key per SKU; commerce events purge on change |
-| PLP HTML | Edge (medium TTL) | Surrogate key per category |
-| Cart state | Browser (sessionStorage) + commerce API | Live |
+| PDP / PLP page HTML | Edge (EDS CDN) | Republish the page; with push invalidation the CDN is purged on publish |
+| Product price, stock | Not in the page HTML - fetched from the Catalog Service at runtime | Live |
+| Cart state | Browser storage + commerce API | Live |
 | Customer account | Commerce API only (never cached) | Live |
-| Recommendations | Edge (short TTL or async) | Time-based |
+| Recommendations | Fetched at runtime | Live / service-side |
 
-Surrogate keys are sent on the response and used by the [Admin API](./admin-api.mdx)
-`/cache` endpoint to purge precisely when inventory or price changes.
+EDS purges by **path** when content is published (or through the
+[Admin API](./admin-api.mdx) `/cache` endpoint); there is no per-SKU surrogate-key purge you
+drive from Commerce. Keep volatile data out of the cached HTML and fetch it at runtime
+instead.
 
 ## Authentication
 
 Customer auth is **not** the EDS site's concern - the commerce API issues tokens.
-The storefront block stores the token in `sessionStorage` (or `localStorage` for
-"remember me") and adds it to subsequent calls.
+The auth drop-in stores the customer token client-side and adds it to subsequent calls.
 
 Sensitive operations (order history, address book) must run client-side against the
 commerce API; never embed customer-specific data in cached HTML.
 
 ## SEO
 
-Commerce sites live and die by SEO. The storefront blocks emit:
+Commerce sites live and die by SEO. Aim for:
 
 - Per-product `<title>`, meta description, canonical URL
 - JSON-LD structured data (`Product`, `Offer`, `AggregateRating`)
 - OG tags for social sharing
 - A real `<h1>` per page (not built from JS)
-- Sitemap entries via `helix-query.yaml`
+- Sitemap entries for every product and category URL
 
-Aim for the catalog to be fully crawlable without running JS.
+Client-rendered PDPs are not fully crawlable without JS. If SEO matters, pre-render product
+pages (Adobe provides an App Builder-based pre-rendering approach for the storefront) so the
+product name, description, and structured data are in the delivered HTML.
 
 ## Performance
 
@@ -186,14 +202,14 @@ thin enough to swap. Common substitutions:
 
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
-| PDP shows stale price | Surrogate key not configured | Set `Surrogate-Key: sku-{sku}` from the upstream and purge on price change |
-| Cart icon shows wrong count | sessionStorage out of sync with API | Reconcile from API on every page load |
-| PLP "out of stock" missing | Inventory not in cached HTML | Either render inventory in HTML and purge on change, or hide it client-side |
-| GraphQL errors on every page | API origin not in CSP | Add the commerce origin to `Content-Security-Policy.connect-src` in `helix-config.yaml` |
+| PDP shows stale price | Price rendered into cached HTML | Fetch price/stock at runtime, or republish (and purge) the page when it changes |
+| Cart icon shows wrong count | Client cache out of sync with API | Reconcile from API on every page load |
+| PLP "out of stock" missing | Inventory not in cached HTML | Either render inventory in HTML and republish on change, or fetch it client-side |
+| GraphQL errors on every page | API origin blocked by your CSP | Add the commerce origins to `connect-src` in the `Content-Security-Policy` custom header of the site configuration |
 
 ## See also
 
 - [Blocks](./blocks.mdx) - the storefront blocks follow standard conventions
-- [Customizing](./customizing.mdx) - CSP for the commerce API origin
-- [Admin API](./admin-api.mdx) - surrogate-key purges
+- [Customizing](./customizing.mdx) - custom response headers such as a CSP for the commerce API origins
+- [Admin API](./admin-api.mdx) - publishing and cache purges
 - Adobe docs: [Commerce Storefront on EDS](https://experienceleague.adobe.com/developer/commerce/storefront/)

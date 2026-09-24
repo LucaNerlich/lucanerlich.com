@@ -20,7 +20,8 @@ consolidates them so you do not have to rediscover them chapter by chapter.
 :::note[Which one am I on?]
 If you deploy through **Cloud Manager** and there is no `crx-quickstart` folder you control, you are on
 **AEMaaCS**. If you run a JAR / installed instance you administer yourself (on-prem or AMS), you are on
-**6.5**. AEM 6.5 also has an **LTS** track with extended support.
+**6.5**. AEM 6.5 also has a 2025 **LTS** track with Java 17/21 support and
+extended support.
 :::
 
 ## At a glance
@@ -35,8 +36,8 @@ If you deploy through **Cloud Manager** and there is no `crx-quickstart` folder 
 | **Dev environment** | Local **SDK** + **RDE**; no prod filesystem | Full local install; filesystem access |
 | **Replication** | **Sling Content Distribution** (managed) | **Replication agents** (`/etc/replication`) |
 | **Asset processing** | **Asset Compute** microservices | **DAM Update Asset** workflow |
-| **Java** | Adobe-managed JDK (Java 11/17/21 class support) | You choose the JDK |
-| **CRXDE Lite** | Local SDK only; blocked in cloud envs | Available everywhere |
+| **Java** | Adobe-managed runtime; Java 21 preferred, Java 17 supported, Java 11 only for older/compile-compatible code | Classic 6.5 uses Java 8/11; 6.5 LTS supports Java 17/21 |
+| **CRXDE Lite** | Local SDK and author-side development environments; not stage/prod | Available where you allow it |
 | **Custom OSGi config** | Git-deployed `.cfg.json`; secrets via `$[secret:...]` | Web console or `.cfg.json` |
 | **Dispatcher** | Flexible mode, validated in pipeline | Classic config, manually managed |
 
@@ -116,7 +117,8 @@ See [Dispatcher & Caching](/aem/beginners-guide/dispatcher-and-caching).
 
 - **AEMaaCS:** author login is via **Adobe IMS / Admin Console** (you do not manage author passwords in
   AEM); in-repository **authorization** (ACLs, groups) is still defined as usual, ideally via
-  `repoinit`. CRXDE Lite and `/system/console` are not available in cloud environments.
+  `repoinit`. CRXDE Lite is limited to local SDK and author development environments, and the
+  Web Console is replaced by the Developer Console in cloud environments.
 - **6.5:** you manage users/passwords in AEM (or via LDAP/SAML), with full console access.
 
 See [Security & Permissions](/aem/beginners-guide/security-and-permissions).

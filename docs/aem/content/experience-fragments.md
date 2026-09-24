@@ -17,18 +17,18 @@ graph TD
     WebVar["Web Variation"]
     EmailVar["Email Variation"]
     SocialVar["Social Variation"]
-    PlainVar["Plain Text Variation"]
+    PlainHtml["Plain HTML rendition (.plain.html)"]
 
     XF --> WebVar
     XF --> EmailVar
     XF --> SocialVar
-    XF --> PlainVar
 
     WebVar --> Page["AEM Page (XF component)"]
     WebVar --> Target["Adobe Target Offer"]
     EmailVar --> Email["Email Campaign"]
     SocialVar --> Social["Social Platforms"]
-    PlainVar --> API["Headless API"]
+    WebVar --> PlainHtml
+    PlainHtml --> API["Headless / external consumers"]
 ```
 
 ---
@@ -40,9 +40,9 @@ graph TD
 | **What it stores**  | Rendered content (components + layout)         | Structured data (fields)                     |
 | **Authoring**       | Visual editor (like a page)                    | Form-based editor (model fields)             |
 | **Rendering**       | Has its own HTML rendering                     | No rendering - data only                    |
-| **Variations**      | Web, email, social, plain text                 | Named content variations                     |
+| **Variations**      | Master plus channel/test variations            | Named content variations                     |
 | **Personalisation** | Adobe Target integration                       | Not directly (via GraphQL)                   |
-| **Headless**        | JSON export (limited)                          | GraphQL, Assets HTTP API                     |
+| **Headless**        | JSON model export and `.plain.html` rendition  | GraphQL, Assets/OpenAPI delivery             |
 | **Use case**        | Reusable page sections (headers, promos, CTAs) | Structured content (articles, products, FAQ) |
 | **Storage**         | `/content/experience-fragments/`               | `/content/dam/`                              |
 
@@ -54,7 +54,7 @@ graph TD
 
 ### Anatomy of an Experience Fragment
 
-```
+```text
 /content/experience-fragments/mysite/en/
 ├── site-header/                         ← XF folder
 │   ├── jcr:content
@@ -72,8 +72,6 @@ graph TD
 │   │   └── jcr:content
 │   │       └── root/
 │   │           └── ...
-│   └── plain-text/                      ← Plain text variation
-│       └── jcr:content
 ├── promo-banner/
 │   ├── master/
 │   ├── variant-a/                       ← A/B test variant
@@ -92,7 +90,7 @@ different channels or test scenarios:
 | **Web**          | Regular web page inclusion | Full HTML with all components   |
 | **Email** (HTML) | Email campaigns            | Inlined CSS, table-based layout |
 | **Social**       | Social media platforms     | Simplified HTML                 |
-| **Plain Text**   | Headless or fallback       | Text-only rendering             |
+| **Plain HTML**   | External channels/fallback | Rendered via the `.plain.html` selector on a variation |
 | **Custom**       | Any custom channel         | Developer-defined rendering     |
 
 ---
@@ -114,15 +112,15 @@ different channels or test scenarios:
 import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.api.Page;
 
-@Reference
-private PageManager pageManager;
-
 public Page createExperienceFragment(ResourceResolver resolver,
                                       String parentPath,
                                       String name,
                                       String title) throws Exception {
 
     PageManager pm = resolver.adaptTo(PageManager.class);
+    if (pm == null) {
+        throw new IllegalStateException("Cannot adapt resolver to PageManager");
+    }
 
     // Create the XF root
     Page xfRoot = pm.create(
@@ -157,7 +155,7 @@ inside a page:
 ```xml title="Component dialog usage"
 <experienceFragment
     jcr:primaryType="nt:unstructured"
-    sling:resourceType="cq/experience-fragments/components/experiencefragment"
+    sling:resourceType="core/wcm/components/experiencefragment/v2/experiencefragment"
     fragmentVariationPath="/content/experience-fragments/mysite/en/site-header/master"/>
 ```
 
@@ -169,7 +167,7 @@ component dialog.
 For multi-language sites, the XF component automatically resolves the correct language
 variation based on the page's language:
 
-```
+```text
 Page: /content/mysite/de/home
 XF reference: /content/experience-fragments/mysite/en/site-header/master
 
@@ -187,8 +185,8 @@ This behaviour is built into the Core Component XF wrapper.
 ### Accessing XF content
 
 ```java
-import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
+import com.day.cq.wcm.api.Page;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -291,13 +289,20 @@ sequenceDiagram
 1. Open the XF in the editor
 2. Click **Export to Adobe Target** in the page properties or toolbar
 3. Select the Target configuration and workspace
-4. The XF HTML is pushed to Target as an **HTML offer**
+4. The XF is pushed to Target as an **HTML offer** or, where configured, a **JSON offer**
 5. Use the offer in Target activities (A/B tests, Experience Targeting)
 
 ### Offer format
 
-When exported, the XF is rendered to a self-contained HTML snippet that Target can
-inject into any page. The HTML includes inlined styles for reliable rendering.
+When exported as HTML, the XF is rendered to a self-contained HTML snippet that Target can
+inject into any page. A JSON offer can be used when the consuming application wants to render
+the component structure itself.
+
+:::note[Link rewriting]
+AEM rewrites internal links in exported XF HTML through the
+`com.adobe.cq.xf.ExperienceFragmentLinkRewriterProvider` OSGi configuration. Verify the
+rewriter rules before using XF offers on external domains.
+:::
 
 ---
 
@@ -307,11 +312,17 @@ inject into any page. The HTML includes inlined styles for reliable rendering.
 
 XFs can be exported as JSON via the Sling Model Exporter (like any AEM page):
 
-```
+```text
 GET /content/experience-fragments/mysite/en/promo-banner/master.model.json
 ```
 
 This returns the component tree as JSON, which a decoupled frontend can render.
+
+For rendered markup without the authoring wrapper, request the plain HTML rendition:
+
+```text
+GET /content/experience-fragments/mysite/en/promo-banner/master.plain.html
+```
 
 ### XF via Content Services
 
@@ -333,7 +344,7 @@ XFs use their own template types, separate from page templates:
 
 Create custom XF templates under:
 
-```
+```text
 /conf/mysite/settings/wcm/templates/xf-custom-template/
 ```
 
@@ -355,7 +366,7 @@ In multi-site architectures, XFs can be shared across brands/sites:
 
 XFs support the same language copy mechanism as pages:
 
-```
+```text
 /content/experience-fragments/mysite/
 ├── en/
 │   └── site-header/master/

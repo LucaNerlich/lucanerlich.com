@@ -571,13 +571,16 @@ protected void doGet(SlingHttpServletRequest request,
                      SlingHttpServletResponse response) throws IOException {
 
     String targetPath = request.getParameter("target");
-    if (StringUtils.isNotBlank(targetPath)) {
-        // Use ResourceResolver.map() for proper URL mapping
-        String mappedUrl = request.getResourceResolver().map(request, targetPath);
-        response.sendRedirect(mappedUrl);
-    } else {
-        response.sendError(SlingHttpServletResponse.SC_BAD_REQUEST, "Missing target parameter");
+    String normalizedPath = ResourceUtil.normalize(targetPath);
+    if (StringUtils.isBlank(normalizedPath)
+            || !normalizedPath.startsWith("/content/myproject/")) {
+        response.sendError(SlingHttpServletResponse.SC_BAD_REQUEST, "Invalid target parameter");
+        return;
     }
+
+    // Use ResourceResolver.map() for proper URL mapping after allowlisting the target.
+    String mappedUrl = request.getResourceResolver().map(request, normalizedPath);
+    response.sendRedirect(mappedUrl);
 }
 ```
 
@@ -585,8 +588,9 @@ protected void doGet(SlingHttpServletRequest request,
 
 ## Dispatcher and Servlet Caching
 
-By default, Dispatcher caches GET responses. For servlets that return dynamic data, you need to
-either disable caching or configure appropriate cache rules.
+Dispatcher can cache GET responses when cache rules allow the URL. For servlets that return dynamic
+data, configure Dispatcher/CDN cache rules explicitly and send browser cache headers that match the
+intended behaviour.
 
 ### Preventing caching on dynamic endpoints
 
@@ -599,11 +603,13 @@ protected void doGet(SlingHttpServletRequest request,
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     response.setHeader("Pragma", "no-cache");
     response.setDateHeader("Expires", 0);
-    response.setHeader("Dispatcher", "no-cache");
 
     // ... write response ...
 }
 ```
+
+The `Cache-Control` response header does not by itself override every Dispatcher configuration. Make
+sure the Dispatcher `/cache/rules` and `/cache/headers` settings for the endpoint match your intent.
 
 ### Allowing Dispatcher caching for stable data
 
@@ -664,16 +670,10 @@ Servlet parameters come directly from the HTTP request. Never trust them:
 
 ```java
 String path = request.getParameter("path");
-
-// Validate: must start with /content/
-if (path == null || !path.startsWith("/content/")) {
-    response.sendError(SC_BAD_REQUEST, "Invalid path");
-    return;
-}
-
-// Sanitize: prevent path traversal
 path = ResourceUtil.normalize(path);
-if (path == null) {
+
+// Validate after normalization: must remain under /content/
+if (path == null || !path.startsWith("/content/")) {
     response.sendError(SC_BAD_REQUEST, "Invalid path");
     return;
 }

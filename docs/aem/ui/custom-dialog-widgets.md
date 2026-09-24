@@ -97,6 +97,7 @@ import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceWrapper;
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.request.RequestDispatcherOptions;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.osgi.service.component.annotations.Component;
@@ -129,8 +130,10 @@ public class DynamicPathFieldServlet extends SlingSafeMethodsServlet {
         // Create a wrapped resource with the overridden rootPath
         Resource wrappedResource = createWrappedResource(fieldResource, computedRootPath);
 
-        // Forward to the standard pathfield renderer
-        RequestDispatcher dispatcher = request.getRequestDispatcher(wrappedResource);
+        // Forward to the standard pathfield renderer, not back to this servlet
+        RequestDispatcherOptions options = new RequestDispatcherOptions();
+        options.setForceResourceType("granite/ui/components/coral/foundation/form/pathfield");
+        RequestDispatcher dispatcher = request.getRequestDispatcher(wrappedResource, options);
         if (dispatcher != null) {
             request.setAttribute("org.apache.sling.api.include.resource", wrappedResource);
             dispatcher.include(request, response);

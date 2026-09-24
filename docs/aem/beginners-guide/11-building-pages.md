@@ -221,6 +221,9 @@ public class ArticlePageModel {
     @ScriptVariable
     private Page currentPage;
 
+    @SlingObject
+    private ResourceResolver resourceResolver;
+
     public String getTitle() {
         return currentPage.getTitle();
     }
@@ -252,7 +255,10 @@ public class ArticlePageModel {
 >
 > ```java
 > public String getLocalizedTagTitle(String tagId, Locale locale) {
->     TagManager tagManager = resource.getResourceResolver().adaptTo(TagManager.class);
+>     TagManager tagManager = resourceResolver.adaptTo(TagManager.class);
+>     if (tagManager == null) {
+>         return tagId;
+>     }
 >     Tag tag = tagManager.resolve(tagId);
 >     return tag != null ? tag.getTitle(locale) : tagId;
 > }
@@ -318,7 +324,7 @@ The value is stored on the page's `jcr:content` node and read back through `curr
 
 The Navigation Core Component builds a navigation tree from the site structure:
 
-```
+```text
 /content/mysite/en
 ├── home
 ├── about

@@ -6,6 +6,11 @@ tags: [aem, spa, react, angular, frontend]
 
 # AEM SPA Editor
 
+:::warning[Deprecated for new projects]
+Adobe has deprecated SPA Editor for new projects. Maintain existing SPA Editor implementations when
+needed, but choose Universal Editor for new React or Angular authoring experiences.
+:::
+
 The **AEM SPA Editor** enables authors to visually edit Single Page Applications (React or
 Angular) directly in the AEM author environment - drag-and-drop, inline editing, layout
 mode, and all the authoring features they know from traditional AEM pages. The SPA
@@ -74,7 +79,7 @@ The page model is a nested JSON tree. Each component maps to a node:
 {
   ":type": "myproject/components/page",
   ":path": "/content/myproject/en/home",
-  ":children": {
+  ":items": {
     "root": {
       ":type": "wcm/foundation/components/responsivegrid",
       ":items": {
@@ -116,7 +121,7 @@ mvn -B archetype:generate \
 
 This generates:
 
-```
+```text
 myspa/
 ├── core/                  # Java backend (Sling Models, Exporters)
 ├── ui.apps/               # AEM components, templates, clientlibs
@@ -245,8 +250,7 @@ child containers:
 
 ```jsx title="ui.frontend/src/App.js"
 import React from 'react';
-import { Page, withModel } from '@adobe/aem-react-editable-components';
-import { ModelManager } from '@adobe/aem-spa-page-model-manager';
+import { Page } from '@adobe/aem-react-editable-components';
 
 // Import all component mappings so they register
 import './components/Hero/Hero';
@@ -254,36 +258,28 @@ import './components/Cards/Cards';
 import './components/Text/Text';
 // ...
 
-// Initialise the model manager
-ModelManager.initialize().then(() => {
-    // Ready to render
-});
-
-function App() {
-    return <Page />;
+function App(props) {
+    return <Page {...props} />;
 }
 
-// withModel HOC fetches the page model and passes it as props
-export default withModel(App);
+export default App;
 ```
 
 ### Entry point
 
 ```jsx title="ui.frontend/src/index.js"
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { ModelManager } from '@adobe/aem-spa-page-model-manager';
 import App from './App';
 
 ModelManager.initialize().then((pageModel) => {
-    ReactDOM.render(
+    createRoot(document.getElementById('spa-root')).render(
         <App
-            cqChildren={pageModel[':children']}
             cqItems={pageModel[':items']}
             cqItemsOrder={pageModel[':itemsOrder']}
             cqPath={pageModel[':path']}
-        />,
-        document.getElementById('spa-root')
+        />
     );
 });
 ```

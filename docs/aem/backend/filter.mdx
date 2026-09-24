@@ -331,7 +331,7 @@ public class LowPriorityFilter implements Filter {
 
 The call order for a single request looks like:
 
-```
+```text
 Client → HighPriorityFilter (1000) → LowPriorityFilter (100) → Servlet → LowPriorityFilter → HighPriorityFilter → Client
 ```
 

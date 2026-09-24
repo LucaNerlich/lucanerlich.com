@@ -398,6 +398,9 @@ If you don't want to build a custom annotation, there are simpler ways to extern
 ### Manual externalization in `@PostConstruct`
 
 ```java
+@SlingObject
+private SlingHttpServletRequest request;
+
 @ValueMapValue
 private String linkUrl;
 
@@ -420,6 +423,9 @@ public String getLinkUrl() {
 ```java
 @OSGiService
 private com.day.cq.commons.Externalizer externalizer;
+
+@SlingObject
+private ResourceResolver resourceResolver;
 
 @ValueMapValue
 private String linkUrl;
@@ -474,8 +480,10 @@ domain. Never blindly redirect to an externalized user-provided path without val
 
 ### Don't double-externalize
 
-If you use `@ExternalizedValueMapValue` in your Sling Model, don't also apply `@ context='uri'` in
-HTL or call `resolver.map()` again. The path is already mapped.
+If you use `@ExternalizedValueMapValue` in your Sling Model, don't call `resolver.map()` or
+`Externalizer` again in HTL or another getter. The path is already mapped. HTL URI context is escaping,
+not URL mapping; using `${model.linkUrl}` in an `href` attribute (or an explicit `@ context='uri'` when
+needed) is still appropriate.
 
 ### Performance
 

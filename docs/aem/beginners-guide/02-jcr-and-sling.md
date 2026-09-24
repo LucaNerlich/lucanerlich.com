@@ -65,7 +65,7 @@ The JCR is made of **nodes** and **properties**:
 
 Example - a page node:
 
-```
+```text
 /content/mysite/en/about
 ├── jcr:primaryType = "cq:Page"
 └── jcr:content
@@ -118,7 +118,7 @@ Nodes can also have **mixin types** that add additional capabilities:
 
 CRXDE Lite is a browser-based tool for browsing and editing the JCR. Open it at:
 
-```
+```text
 http://localhost:4502/crx/de
 ```
 
@@ -128,7 +128,7 @@ http://localhost:4502/crx/de
 |------------------|------------------------------------------------|
 | **Left panel**   | Node tree browser - navigate the hierarchy    |
 | **Center panel** | Node properties (key-value pairs)              |
-| **Bottom panel** | Query tool, access control, replication status |
+| **Bottom panel** | Query tool, access control, and node details |
 
 ### Browsing content
 
@@ -184,7 +184,7 @@ When a request like `GET /content/mysite/en/about.html` arrives:
 
 Sling breaks down URLs into parts:
 
-```
+```text
 /content/mysite/en/about.article.html/suffix?key=value
 |______________________|_____|____|______|___________|
          Resource path  Selectors Ext  Suffix  Query
@@ -239,7 +239,7 @@ find a script in the current component, it walks up the super-type chain and use
 how **proxy components** work - your project component inherits all rendering from a Core Component and only overrides
 what it needs:
 
-```
+```text
 /apps/mysite/components/text
     sling:resourceSuperType = "core/wcm/components/text/v2/text"
     → Sling uses scripts from the Core Component unless you provide your own
@@ -353,7 +353,7 @@ Besides navigating the tree, you can query it. AEM supports two query languages:
 
 AEM's query API - used in Java code and HTTP:
 
-```
+```text
 http://localhost:4502/bin/querybuilder.json?
   path=/content/mysite
   &type=cq:Page

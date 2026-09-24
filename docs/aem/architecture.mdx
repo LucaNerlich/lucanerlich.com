@@ -39,14 +39,16 @@ graph LR
 |------|------|
 | **Author** | Content authoring, workflows, approvals, previews. Runs the Touch UI editor. Typically not internet-facing |
 | **Publish** | Serves content to end users. Receives replicated content from Author. Can be scaled horizontally |
-| **Dispatcher** | Apache httpd module (or CDN edge) that caches rendered pages. Invalidated via flush agents when content is published |
+| **Dispatcher** | Apache httpd module (or CDN edge) that caches rendered pages. Invalidated via flush agents on 6.5/AMS or managed invalidation on AEMaaCS |
 
 ### Content flow
 
 1. An author creates or edits content on the **Author** instance.
 2. When the content is approved, the author **activates** (replicates) it.
-3. The replication agent serialises the content and pushes it to one or more **Publish** instances.
-4. A flush agent invalidates the **Dispatcher** cache for the affected paths.
+3. On AEM 6.5/AMS, the replication agent serialises the content and pushes it to one or more **Publish** instances.
+   On AEMaaCS, Adobe-managed content distribution performs the equivalent movement.
+4. A 6.5/AMS flush agent, or the managed AEMaaCS invalidation flow, invalidates the **Dispatcher/CDN** cache for the
+   affected paths.
 5. The next request from a browser triggers a cache miss, Dispatcher fetches the fresh page from Publish, caches it, and serves it.
 
 ## The Sling Request Processing Pipeline
@@ -240,6 +242,12 @@ graph TD
 **Sling Model** (reads the data, applies logic):
 
 ```java title="core/src/main/java/com/example/core/models/GreetingModel.java"
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
 @Model(adaptables = SlingHttpServletRequest.class,
        adapters = GreetingModel.class,
        resourceType = "myproject/components/greeting",
@@ -433,7 +441,7 @@ AEM's Content Fragment GraphQL API enables headless delivery:
 {
   articleList(
     filter: { _path: { _expressions: [{ value: "/content/dam/my-site/articles", _operator: STARTS_WITH }] } }
-    _sort: [{ publishDate: DESC }]
+    sort: "publishDate DESC"
   ) {
     items {
       _path
@@ -660,7 +668,8 @@ try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(para
 ### Dispatcher and caching
 
 - **"Works on author, broken on publish"** - the Dispatcher strips query parameters, blocks certain paths, and caches aggressively. Always test with Dispatcher enabled during development
-- **Not invalidating on publish** - ensure flush agents are correctly configured for every Publish instance
+- **Not invalidating on publish** - on 6.5/AMS, ensure flush agents are correctly configured; on AEMaaCS, inspect the
+  managed invalidation/CDN headers before assuming the content did not publish
 - **Caching personalised content** - if the page varies by user, either use SDI for the dynamic fragments or set `Dispatcher: no-cache` headers on that path
 
 ## See also

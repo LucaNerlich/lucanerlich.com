@@ -35,7 +35,7 @@ graph LR
 Every JCR node can have a `rep:policy` child node containing **Access Control Entries
 (ACEs)**. Each ACE grants or denies specific privileges to a principal:
 
-```
+```text
 /content/mysite/
 └── rep:policy/
     ├── allow  (rep:GrantACE)
@@ -65,11 +65,12 @@ Every JCR node can have a `rep:policy` child node containing **Access Control En
 
 ### Evaluation order
 
-1. ACEs are evaluated **in order** (top to bottom within `rep:policy`)
-2. **Deny** takes precedence over **allow** at the same path
-3. ACEs on **child paths** override parent ACEs (most specific wins)
-4. The `admin` user bypasses all ACL checks
-5. `everyone` group applies to all authenticated users
+1. Effective permissions are resolved from the repository root down to the target path
+2. ACEs on **child paths** are more specific than inherited parent ACEs
+3. Matching **deny** entries take precedence over matching **allow** entries for the same privilege
+4. Direct user ACEs and all group memberships are combined; avoid contradictory ACEs
+5. The `admin` user bypasses ACL checks
+6. `everyone` applies to every session, including anonymous
 
 ---
 
@@ -78,7 +79,7 @@ Every JCR node can have a `rep:policy` child node containing **Access Control En
 `rep:glob` restricts an ACE to a **subset of paths** below the ACE's location. This
 is powerful for fine-grained control without creating ACEs on every node:
 
-```
+```text
 /content/mysite/
 └── rep:policy/
     └── allow
@@ -101,7 +102,7 @@ is powerful for fine-grained control without creating ACEs on every node:
 
 Allow reading `jcr:content` but not the page node itself (hides the page from navigation):
 
-```
+```text
 Path: /content/mysite/secret
 rep:glob = "*/jcr:content*"
 Privilege: jcr:read (allow)
@@ -117,7 +118,9 @@ manage users, groups, service users, and ACLs declaratively:
 ```text title="ui.config/.../org.apache.sling.jcr.repoinit.RepositoryInitializer~myproject.cfg.json"
 {
     "scripts": [
-        "create service user myproject-service-user with path system/myproject",
+        "ensure nodes (sling:OrderedFolder) /content/mysite,/content/dam/mysite",
+        "",
+        "create service user myproject-service-user with path system/cq:services/myproject",
         "",
         "set ACL for myproject-service-user",
         "    allow jcr:read on /content/mysite",
@@ -153,7 +156,7 @@ manage users, groups, service users, and ACLs declaratively:
 | Allow               | `allow jcr:read on /content/mysite`                               |
 | Deny                | `deny rep:write on /content/mysite`                               |
 | Glob restriction    | `allow jcr:read on /content restriction(rep:glob,*/jcr:content*)` |
-| Create path         | `create path /content/mysite(sling:OrderedFolder)`                |
+| Create path         | `ensure nodes (sling:OrderedFolder) /content/mysite`              |
 
 ---
 
@@ -359,7 +362,7 @@ They replace the deprecated `loginAdministrative()` approach.
 **Repoinit (AEMaaCS):**
 
 ```text
-create service user myproject-content-reader with path system/myproject
+create service user myproject-content-reader with path system/cq:services/myproject
 
 set ACL for myproject-content-reader
     allow jcr:read on /content/mysite
@@ -391,8 +394,8 @@ Map the service user to your bundle:
 ```json title="ui.config/.../config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~myproject.cfg.json"
 {
     "user.mapping": [
-        "com.myproject.core:content-reader=myproject-content-reader",
-        "com.myproject.core:content-writer=myproject-content-writer"
+        "com.myproject.core:content-reader=[myproject-content-reader]",
+        "com.myproject.core:content-writer=[myproject-content-writer]"
     ]
 }
 ```
@@ -477,14 +480,13 @@ equivalent, `<accessControlHandling>merge</accessControlHandling>` - see the
 [filevault-package-maven-plugin config above](../components/core-components.mdx)) or the
 `rep:cugPolicy` node will be skipped on install.
 
-### Via repoinit
+### Deployment notes
 
-```text
-create path /content/mysite/premium(cq:Page)
-set CUG for /content/mysite/premium
-    principalNames = premium-members
-end
-```
+Sling repoinit does not provide a portable `set CUG` statement. Deploy the
+`rep:cugPolicy` node as access-control content in a package (with access-control
+handling set to `merge`) or let a tool such as the Netcentric ACL Tool write the CUG.
+Also make sure Oak CUG support is enabled for the intended roots (for example
+`/content`) in the CUG OSGi configuration; otherwise the policy is ignored.
 
 ### How CUGs work
 
@@ -580,7 +582,7 @@ Use **User Admin** or the Impersonate feature to test as a specific user:
 
 AEM provides a permission check endpoint:
 
-```
+```http
 GET /system/console/jcr?path=/content/mysite&user=content-author-user
 ```
 

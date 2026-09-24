@@ -39,7 +39,7 @@ end-to-end.
 | Mocking collaborators | **Mockito** | Use for external services; prefer `AemContext.registerService` for Sling/OSGi services |
 | HTTP mocking | **WireMock** | Stubs external APIs your Sling Models call |
 | UI tests | **Selenium / WebDriver** via the AEM Archetype `ui.tests` module, **Cypress**, or **Playwright** | Hobbes.js is deprecated - avoid starting new tests on it |
-| Dispatcher config | **`dispatcher-cloud-optimized`** CLI | Validates `dispatcher.any` structure offline |
+| Dispatcher config | **AEM Dispatcher SDK validator** (`bin/validate.sh` / `bin/validator`) | Validates the AEMaaCS Dispatcher source tree offline |
 
 :::info[AEM Mocks vs Sling Mocks - what's the difference?]
 **Sling Mocks** is the upstream Apache project. It gives you a Sling-aware in-memory environment
@@ -480,7 +480,7 @@ and services - don't chase 100% for HTL or generated code.
 - [ ] Create a page with every custom component; save and reopen each dialog.
 - [ ] Publish a content page and verify rendering on Publish.
 - [ ] Exercise Dispatcher by requesting a page twice - second request should be a cache hit
-      (check `X-Cache-Info` or the `cache/` directory).
+      (check `dispatcher.log`, the cache directory, or `X-Cache-Info` only if `/info "1"` is enabled and you send `X-Dispatcher-Info`).
 - [ ] Hit `/system/console/*` through Dispatcher from outside - must return 404.
 - [ ] Verify clientlibs load without 404s (check the Network tab).
 - [ ] Run `validate.sh` against the current Dispatcher config.

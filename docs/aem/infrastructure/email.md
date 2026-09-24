@@ -63,10 +63,10 @@ docker run -d --name mailhog -p 1025:1025 -p 8025:8025 mailhog/mailhog
 
 ![MailHog web UI showing a captured test mail](/images/aem/mailhog.png)
 
-### Stage / Production
+### Stage / Production (AEM 6.5 / AMS)
 
-For real environments, point at your SMTP relay (e.g. SendGrid, Amazon SES, corporate
-mail server):
+For AEM 6.5 or AMS environments with direct network access, point at your SMTP relay
+(e.g. SendGrid, Amazon SES, corporate mail server):
 
 ```json title="ui.config/.../config.publish/com.day.cq.mailer.DefaultMailService.cfg.json"
 {
@@ -86,6 +86,9 @@ mail server):
 > Use **secret environment variables** (`$[secret:...]`) in AEMaaCS to keep credentials
 > out of the code repository. See the [OSGi configuration](../backend/osgi-configuration.mdx)
 > page for details.
+
+> On AEMaaCS, do not point `smtp.host` directly at the external SMTP host. Use the
+> Advanced Networking proxy pattern shown below.
 
 ### Configuration reference
 
@@ -1049,8 +1052,8 @@ public class TemplatedEmailStep implements WorkflowProcess {
             params.put("link.open", "/editor.html" + payloadPath + ".html");
             params.put("modelTitle", workItem.getWorkflow().getWorkflowModel().getTitle());
             params.put("eventTimestamp", workItem.getTimeStarted().toString());
-            // absolute host prefix so links work in mail clients
-            params.put("host.prefix", externalizer.externalLink(resolver, Externalizer.LOCAL, ""));
+            // absolute publish host prefix so links work outside AEM
+            params.put("host.prefix", externalizer.externalLink(resolver, Externalizer.PUBLISH, ""));
 
             List<Authorizable> recipients = resolveRecipients(argMap.get("sendTo"), resolver);
             emailService.sendToAuthorizables(templatePath, params, recipients, resolver);
@@ -1096,14 +1099,15 @@ configure **Advanced Networking** to allow AEM to reach an external SMTP server.
 |-------------------|--------------------|
 | Port forward name | `smtp_sendgrid`    |
 | Protocol          | TCP                |
-| Port              | 587                |
+| `portDest`        | 587                |
+| `portOrig`        | 30587              |
 | Destination host  | `smtp.sendgrid.net`|
 
 3. **Reference the forwarded port** in your OSGi config:
 
 ```json title="ui.config/.../config.publish/com.day.cq.mailer.DefaultMailService.cfg.json"
 {
-    "smtp.host": "localhost",
+    "smtp.host": "$[env:AEM_PROXY_HOST;default=proxy.tunnel]",
     "smtp.port": 30587,
     "smtp.user": "$[secret:smtp_user]",
     "smtp.password": "$[secret:smtp_password]",
@@ -1114,9 +1118,10 @@ configure **Advanced Networking** to allow AEM to reach an external SMTP server.
 }
 ```
 
-> On AEMaaCS, `smtp.host` is always `localhost` and `smtp.port` is the **forwarded port**
-> (typically 30000 + original port, e.g., 30587 for port 587). The Cloud Manager
-> infrastructure proxies the traffic to the actual SMTP host.
+> On AEMaaCS, `smtp.host` must use the reserved proxy host
+> `$[env:AEM_PROXY_HOST;default=proxy.tunnel]`; do not set `AEM_PROXY_HOST` yourself in
+> Cloud Manager. `smtp.port` is the `portOrig` value from the Cloud Manager `portForwards`
+> rule (for example `30587`), not the SMTP server's destination port.
 
 ### OAuth 2.0 (Microsoft 365 / Google Workspace)
 
@@ -1125,7 +1130,7 @@ Microsoft 365 or Google Workspace, which have deprecated basic password authenti
 
 ```json title="OAuth configuration"
 {
-    "smtp.host": "localhost",
+    "smtp.host": "$[env:AEM_PROXY_HOST;default=proxy.tunnel]",
     "smtp.port": 30587,
     "oauth.flow": true,
     "oauth.client.id": "$[secret:oauth_client_id]",
@@ -1282,7 +1287,7 @@ block the calling thread. Consider:
 | Pitfall                                    | Solution                                                                              |
 |--------------------------------------------|---------------------------------------------------------------------------------------|
 | `MessageGateway` is null                   | OSGi config missing or invalid; verify in Felix console under **Day CQ Mail Service** |
-| Mails sent locally but not on AEMaaCS      | Configure Advanced Networking with port forwarding; `smtp.host` must be `localhost`   |
+| Mails sent locally but not on AEMaaCS      | Configure Advanced Networking with port forwarding; `smtp.host` must be `$[env:AEM_PROXY_HOST;default=proxy.tunnel]` and `smtp.port` must be the `portOrig` value |
 | Authentication failure on Microsoft 365    | Microsoft deprecated basic auth; use `oauth.flow: true` with a registered app         |
 | Mails land in spam                         | Set proper SPF, DKIM, and DMARC DNS records for the sending domain                    |
 | `javax.mail.AuthenticationFailedException` | Wrong credentials or wrong auth mechanism; check `smtp.user` and `smtp.password`      |

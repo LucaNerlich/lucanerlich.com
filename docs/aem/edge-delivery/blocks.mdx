@@ -12,7 +12,7 @@ selects one in Universal Editor) and EDS turns it into a `<div>` with the block 
 its class. Your `decorate()` function then has free rein to restructure the DOM into
 whatever semantic markup the design needs.
 
-```
+```text
 /blocks/
   /hero/
     hero.js
@@ -26,7 +26,7 @@ whatever semantic markup the design needs.
 
 A document like this:
 
-```
+```markdown
 | Hero                    |
 |-------------------------|
 | ![hero.jpg](hero.jpg)   |
@@ -68,29 +68,29 @@ sequenceDiagram
     participant Browser as Browser
 
     Page->>aem: loadEager()
-    aem->>Block: decorate(heroBlock)
+    aem->>Block: decorate(blocks in first section)
     Block-->>aem: returns
-    aem->>Page: paint LCP
+    aem->>Page: wait for LCP image
 
     Page->>aem: loadLazy()
-    aem->>Block: decorate(belowFoldBlock)
-    Note over aem,Browser: IntersectionObserver fires<br/>as visitor scrolls
-    Browser->>aem: block enters viewport
-    aem->>Block: import + decorate(block)
+    aem->>Block: import + decorate(remaining sections' blocks)
+    aem->>Page: header, footer, lazy-styles.css, fonts
 
     Page->>aem: loadDelayed()
-    Note over aem: 3s timeout or first interaction
-    aem->>Block: import + run delayed scripts
+    Note over aem: setTimeout(..., 3000)
+    aem->>Browser: import delayed.js
 ```
 
 | Phase | When | Used for |
 |-------|------|----------|
-| **Eager** | Before LCP | Above-the-fold blocks (hero, primary nav) |
-| **Lazy** | After LCP, on viewport entry | Below-the-fold blocks |
-| **Delayed** | 3s after load or first user interaction | Analytics, chat, A/B testing |
+| **Eager** | Before LCP | Blocks in the first section (hero, above-the-fold content) |
+| **Lazy** | Right after LCP | All remaining sections and blocks, header, footer, lazy styles, fonts |
+| **Delayed** | About 3 seconds after load | `delayed.js`: analytics, chat, marketing tags |
 
-You don't usually pick the phase per block - `aem.js` decides based on the block's
-position. You can override in `scripts/scripts.js` if needed.
+You don't usually pick the phase per block - `aem.js` decides based on the section the block
+sits in. Blocks that should only do expensive work when visible (maps, videos, embeds) can add
+their own `IntersectionObserver` inside `decorate()`. You can override the phases in
+`scripts/scripts.js` if needed.
 
 ## Writing a block
 
@@ -179,7 +179,7 @@ export default function decorate(block) {
 For configuration-style blocks where each row is a `key | value` pair, use the
 `readBlockConfig` helper from `aem.js`:
 
-```
+```markdown
 | Embed                                       |
 |---------------------------------------------|
 | Source | https://www.youtube.com/watch?v=.. |
@@ -210,7 +210,7 @@ export default function decorate(block) {
 
 Variations are extra class names appended in parentheses after the block name:
 
-```
+```markdown
 | Hero (dark, centered) |
 |------------------------|
 | ...                    |
@@ -230,7 +230,7 @@ block when `hero (dark)` will do.
 
 Some blocks accept `key=value` options inside the parentheses:
 
-```
+```markdown
 | Carousel (autoplay=true, interval=5000) |
 |------------------------------------------|
 | ...                                      |
@@ -323,8 +323,9 @@ CSS so theming flows through:
 
 ## The block library (boilerplate)
 
-The [aem-boilerplate-blocks](https://github.com/adobe-rnd/aem-boilerplate-blocks) and
-the [Block Collection](https://www.aem.live/developer/block-collection) ship
+The [aem-boilerplate](https://github.com/adobe/aem-boilerplate) (a handful of starter
+blocks) and the [Block Collection](https://www.aem.live/developer/block-collection)
+(source: [aem-block-collection](https://github.com/adobe/aem-block-collection)) ship
 production-ready reference implementations. Copy, don't fork.
 
 | Block | Purpose |

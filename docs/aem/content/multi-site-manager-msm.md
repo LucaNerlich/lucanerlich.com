@@ -118,28 +118,37 @@ graph LR
 ### Via Java API
 
 ```java title="Programmatic Live Copy creation"
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
+import com.day.cq.wcm.api.WCMException;
 import com.day.cq.wcm.msm.api.LiveRelationshipManager;
 import com.day.cq.wcm.msm.api.RolloutConfig;
+import org.apache.sling.api.resource.ResourceResolver;
 
 @Reference
 private LiveRelationshipManager liveRelationshipManager;
 
-public void createLiveCopy(ResourceResolver resolver,
-        String blueprintPath, String liveCopyPath, String title)
+public Page createLiveCopy(ResourceResolver resolver,
+        String blueprintPath, String liveCopyPath)
         throws WCMException {
 
-    // Optionally specify rollout configs (null = use default)
-    RolloutConfig[] rolloutConfigs = null;
+    PageManager pageManager = resolver.adaptTo(PageManager.class);
+    if (pageManager == null) {
+        throw new WCMException("Cannot adapt resolver to PageManager");
+    }
 
-    liveRelationshipManager.create(
-        resolver.getResource(blueprintPath),  // source
-        resolver.getResource(liveCopyPath).getParent(),  // parent of the live copy
-        title,           // title
-        true,            // deep (include sub-pages)
-        rolloutConfigs   // rollout configurations
-    );
+    Page source = pageManager.getPage(blueprintPath);
+    if (source == null) {
+        throw new WCMException("Blueprint page not found: " + blueprintPath);
+    }
 
-    resolver.commit();
+    // Create the page copy first, then establish the MSM relationship.
+    Page copy = pageManager.copy(source, liveCopyPath, null, false, true, true);
+
+    RolloutConfig[] rolloutConfigs = null; // null = inherit/default rollout configs
+    liveRelationshipManager.establishRelationship(source, copy, true, true, rolloutConfigs);
+
+    return copy;
 }
 ```
 
@@ -294,6 +303,7 @@ import com.day.cq.wcm.api.WCMException;
 import com.day.cq.wcm.msm.api.LiveAction;
 import com.day.cq.wcm.msm.api.LiveActionFactory;
 import com.day.cq.wcm.msm.api.LiveRelationship;
+import com.day.cq.wcm.msm.commons.BaseAction;
 import com.myproject.core.services.NotificationService;
 import org.apache.sling.api.resource.Resource;
 import org.osgi.service.component.annotations.Component;
@@ -326,7 +336,7 @@ public class NotificationRolloutActionFactory implements LiveActionFactory<LiveA
         return new NotifyAction(notificationService);
     }
 
-    private static class NotifyAction implements LiveAction {
+    private static class NotifyAction extends BaseAction {
 
         private final NotificationService notificationService;
 
@@ -340,13 +350,14 @@ public class NotificationRolloutActionFactory implements LiveActionFactory<LiveA
         }
 
         @Override
-        public void execute(Resource source, Resource target,
-                LiveRelationship relation, boolean autoSave,
-                boolean isResetRollout) throws WCMException {
+        protected boolean handles(Resource source, Resource target,
+                LiveRelationship relation, boolean isResetRollout) {
+            return source != null && target != null;
+        }
 
-            if (source == null || target == null) {
-                return;
-            }
+        @Override
+        protected void doExecute(Resource source, Resource target,
+                LiveRelationship relation, boolean isResetRollout) throws WCMException {
 
             String sourcePath = source.getPath();
             String targetPath = target.getPath();
@@ -392,13 +403,14 @@ private LiveRelationshipManager liveRelationshipManager;
 
 | Method                                                         | Purpose                                       |
 |----------------------------------------------------------------|-----------------------------------------------|
-| `create(source, parent, title, deep, configs)`                 | Create a new Live Copy                        |
+| `establishRelationship(sourcePage, copyPage, deep, autoSave, configs...)` | Put an existing page copy under Live Copy control |
 | `getLiveRelationship(resource, advancedStatus)`                | Get the relationship for a resource           |
-| `getLiveRelationships(source, path, deep)`                     | Get all Live Copies of a Blueprint resource   |
+| `getLiveRelationships(source, targetPathFilter, triggerFilter)` | Get all Live Copies of a Blueprint resource   |
+| `hasLiveRelationship(resource)`                                | Check if a resource is a Live Copy target     |
 | `isSource(resource)`                                           | Check if a resource is a Blueprint source     |
-| `endRelationship(resolver, relation, deep)`                    | Detach a Live Copy from its Blueprint         |
-| `reenableRelationship(resolver, relation, deep)`               | Re-enable inheritance on a detached Live Copy |
-| `cancelRelationship(resolver, relation, deep, triggerRollout)` | Cancel inheritance (make local)               |
+| `endRelationship(resource, autoSave)`                          | Detach a Live Copy from its Blueprint         |
+| `reenableRelationship(resolver, relation, autoSave)`           | Re-enable cancelled inheritance               |
+| `cancelRelationship(resolver, relation, deep, autoSave)`       | Cancel inheritance (make local)               |
 
 ### Checking MSM status
 
@@ -417,7 +429,7 @@ public String getBlueprintPath(Resource liveCopyResource) throws WCMException {
     LiveRelationship relationship = liveRelationshipManager
         .getLiveRelationship(liveCopyResource, false);
     if (relationship != null && relationship.getStatus() != null) {
-        return relationship.getStatus().getSourcePath();
+        return relationship.getSourcePath();
     }
     return null;
 }
@@ -426,6 +438,8 @@ public String getBlueprintPath(Resource liveCopyResource) throws WCMException {
 ### Triggering rollout programmatically
 
 ```java title="Programmatic rollout"
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.msm.api.RolloutManager;
 
 @Reference
@@ -434,15 +448,18 @@ private RolloutManager rolloutManager;
 public void rollout(ResourceResolver resolver, String blueprintPath, boolean deep)
         throws WCMException {
 
-    Resource blueprint = resolver.getResource(blueprintPath);
+    PageManager pageManager = resolver.adaptTo(PageManager.class);
+    Page blueprint = pageManager.getPage(blueprintPath);
     if (blueprint == null) {
         throw new WCMException("Blueprint not found: " + blueprintPath);
     }
 
-    // Roll out to all Live Copies
-    rolloutManager.rollout(resolver, blueprint, deep);
+    RolloutManager.RolloutParams params = new RolloutManager.RolloutParams();
+    params.main = blueprint;
+    params.isDeep = deep;
+    params.trigger = RolloutManager.Trigger.ROLLOUT;
 
-    resolver.commit();
+    rolloutManager.rollout(params);
 }
 ```
 
@@ -519,7 +536,7 @@ public class MsmAwareComponent {
                 isLiveCopy = true;
                 LiveStatus status = relationship.getStatus();
                 if (status != null) {
-                    blueprintPath = status.getSourcePath();
+                    blueprintPath = relationship.getSourcePath();
                     isInheritanceCancelled = status.isCancelled();
                 }
             }
@@ -567,7 +584,7 @@ def rel = lrm.getLiveRelationship(resource, true)
 if (rel != null) {
     def status = rel.status
     println "Is Live Copy: true"
-    println "Source: ${status?.sourcePath}"
+    println "Source: ${rel.sourcePath}"
     println "Cancelled: ${status?.cancelled}"
     println "Last rolled out: ${status?.lastRolledOut}"
 } else {
@@ -584,8 +601,12 @@ def rm = getService(RolloutManager.class)
 def blueprintPath = "/content/myproject/master/en/products"
 def blueprint = getResource(blueprintPath)
 
-// DRY_RUN: uncomment the next line to actually roll out
-// rm.rollout(resourceResolver, blueprint, true)
+// DRY_RUN: uncomment the next lines to actually roll out
+// def params = new RolloutManager.RolloutParams()
+// params.source = blueprint
+// params.isDeep = true
+// params.trigger = RolloutManager.Trigger.ROLLOUT
+// rm.rollout(params)
 println "Would roll out: ${blueprintPath} (deep)"
 ```
 

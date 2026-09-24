@@ -6,7 +6,7 @@ tags: [aem, events, backend]
 
 # Event Listeners and Handlers
 
-AEM provides two event systems for reacting to changes in the repository and the platform. Understanding
+AEM provides three event APIs for reacting to changes in the repository and the platform. Understanding
 when to use which is critical for building robust, performant integrations.
 
 | System | Interface | When to use |
@@ -220,16 +220,24 @@ The lowest-level approach. Use this only when you need fine-grained control over
 the Sling APIs don't expose (e.g., filtering by node type, or listening for property-level changes
 on specific node types).
 
+:::warning[AEMaaCS]
+JCR observation listeners are discouraged on AEM as a Cloud Service. Prefer
+`ResourceChangeListener` for repository changes and offload durable work to Sling Jobs.
+:::
+
 ```java title="core/.../listeners/JcrNodeListener.java"
 package com.myproject.core.listeners;
 
-import org.apache.sling.jcr.api.SlingRepository;
+import org.apache.sling.api.resource.LoginException;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.*;
 import javax.jcr.observation.*;
+import java.util.Map;
 
 @Component(service = {}, immediate = true)
 public class JcrNodeListener implements EventListener {
@@ -237,13 +245,19 @@ public class JcrNodeListener implements EventListener {
     private static final Logger LOG = LoggerFactory.getLogger(JcrNodeListener.class);
 
     @Reference
-    private SlingRepository repository;
+    private ResourceResolverFactory resolverFactory;
 
+    private ResourceResolver resolver;
     private Session session;
 
     @Activate
-    protected void activate() throws RepositoryException {
-        session = repository.loginService("my-service-user", null);
+    protected void activate() throws LoginException, RepositoryException {
+        resolver = resolverFactory.getServiceResourceResolver(
+            Map.of(ResourceResolverFactory.SUBSERVICE, "my-service-user"));
+        session = resolver.adaptTo(Session.class);
+        if (session == null) {
+            throw new RepositoryException("Could not adapt service resolver to Session");
+        }
 
         session.getWorkspace().getObservationManager().addEventListener(
             this,                              // listener
@@ -260,9 +274,14 @@ public class JcrNodeListener implements EventListener {
 
     @Deactivate
     protected void deactivate() throws RepositoryException {
-        if (session != null) {
-            session.getWorkspace().getObservationManager().removeEventListener(this);
-            session.logout();
+        try {
+            if (session != null) {
+                session.getWorkspace().getObservationManager().removeEventListener(this);
+            }
+        } finally {
+            if (resolver != null) {
+                resolver.close();
+            }
         }
     }
 
@@ -394,6 +413,8 @@ public class ReplicationWebhookHandler implements EventHandler {
     @Activate
     @Modified
     protected void activate(Config config) {
+        closeHttpClient();
+
         enabled = config.enabled();
         webhookUrl = config.webhookUrl();
         monitoredPaths = config.monitoredPaths();
@@ -413,11 +434,17 @@ public class ReplicationWebhookHandler implements EventHandler {
 
     @Deactivate
     protected void deactivate() {
+        closeHttpClient();
+    }
+
+    private void closeHttpClient() {
         if (httpClient != null) {
             try {
                 httpClient.close();
             } catch (IOException e) {
                 LOG.warn("Error closing HTTP client", e);
+            } finally {
+                httpClient = null;
             }
         }
     }
@@ -992,7 +1019,7 @@ instance.
 
 ### Felix Web Console
 
-Navigate to `http://localhost:4502/system/console/events` to see:
+Navigate to `http://localhost:4502/system/console/slingevent` to see:
 - All registered event topics and their handlers
 - Recent event history
 - Event delivery statistics

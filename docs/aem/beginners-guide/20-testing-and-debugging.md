@@ -49,10 +49,12 @@ you can register a model, load content, and assert on the result - no running in
 ```java
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
+import org.apache.sling.api.resource.Resource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(AemContextExtension.class)
 class HelloModelTest {
@@ -65,7 +67,9 @@ class HelloModelTest {
         ctx.load().json("/com/mysite/core/models/HelloModel.json", "/content/hello");
 
         Resource resource = ctx.resourceResolver().getResource("/content/hello");
+        assertNotNull(resource);
         HelloModel model = resource.adaptTo(HelloModel.class);
+        assertNotNull(model);
 
         assertEquals("Hello, World", model.getTitle());
     }

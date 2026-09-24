@@ -21,8 +21,8 @@ configurations, and debugging.
 
 ## What is OSGi?
 
-OSGi (Open Services Gateway initiative) is a specification for modular Java applications. In AEM, it is implemented by *
-*Apache Felix**.
+OSGi (Open Services Gateway initiative) is a specification for modular Java applications. In AEM, it is implemented by
+**Apache Felix**.
 
 Key concepts:
 
@@ -53,7 +53,7 @@ flowchart TD
 
 A bundle is a JAR file with OSGi metadata in its `MANIFEST.MF`:
 
-```
+```text
 Bundle-SymbolicName: com.mysite.core
 Bundle-Version: 1.0.0
 Import-Package: org.apache.sling.api, javax.inject
@@ -158,26 +158,31 @@ Other components reference services using `@OSGiService`:
 
 ```java
 @Model(
-    adaptables = {SlingHttpServletRequest.class, Resource.class},
-    adapters = {GreetingModel.class, ComponentExporter.class},
-    resourceType = GreetingModel.RESOURCE_TYPE,
+    adaptables = SlingHttpServletRequest.class,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class GreetingModel {
 
     @OSGiService
     private GreetingService greetingService;
-    
-    // [...]
+
+    private String message = "";
 
     @PostConstruct
     public void init() {
-        final String message = greetingService.greet("AEM");
+        if (greetingService != null) {
+            message = greetingService.greet("AEM");
+        }
+    }
+
+    public String getMessage() {
+        return message;
     }
 }
 ```
 
-OSGi **injects** the service automatically. If the service is not available, the component will not activate (this is
-called **dependency satisfaction**).
+For Declarative Services components, `@Reference` participates in dependency satisfaction: if a mandatory referenced
+service is not available, the DS component will not activate. In a Sling Model, `@OSGiService` looks up an OSGi service
+when the model adapts. If the injection is optional, handle `null`; if it is required, the model fails to adapt.
 
 ### Service ranking
 
@@ -219,7 +224,7 @@ private GreetingService greetingService;
 
 The OSGi Web Console is your debugging Swiss Army knife. Access it at:
 
-```
+```text
 http://localhost:4502/system/console
 ```
 
@@ -327,7 +332,7 @@ The `@Activate` method is called when the component starts and receives the curr
 
 In AEMaaCS, configurations are stored as `.cfg.json` files in the `ui.config` module:
 
-```
+```text
 ui.config/src/main/content/jcr_root/apps/mysite/osgiconfig/
 ├── config/                          # All environments
 │   └── com.mysite.core.services.impl.GreetingServiceImpl.cfg.json
@@ -452,7 +457,7 @@ inside the OSGi runtime.
 
 Always separate interface from implementation:
 
-```
+```text
 com.mysite.core.services/
 ├── GreetingService.java          # Interface (exported)
 └── impl/

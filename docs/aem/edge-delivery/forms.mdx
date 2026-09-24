@@ -14,77 +14,79 @@ served from the CDN. The form runtime is just another block.
 
 ### Document-based forms
 
-Author a form as a table - one row per field. The `form` block converts it into a
-semantic `<form>`:
+The form definition lives in a **spreadsheet** (Excel or Google Sheets), one row per
+field. When you preview/publish the sheet, EDS serves it as JSON (for example
+`/forms/contact.json`). A page then references it with a `Form` block that contains a link
+to that sheet:
 
-```
-| Form                    |          |          |
-|-------------------------|----------|----------|
-| Field type | Label      | Name     | Required |
-| text       | First name | first    | true     |
-| text       | Last name  | last     | true     |
-| email      | Email      | email    | true     |
-| select     | Country    | country |          |
-| submit     | Subscribe  |          |          |
+```text
+| Form                                          |
+|-----------------------------------------------|
+| https://main--site--org.aem.page/forms/contact.json |
 ```
 
-The first row is the block name (and optional variations). Subsequent rows describe
-the fields. The `form` block in [aem-boilerplate-blocks](https://github.com/adobe-rnd/aem-boilerplate-blocks/tree/main/blocks/form)
-ships a working reference implementation.
+The sheet columns describe each field. Exact column names depend on the block version you
+use; a typical definition looks like:
+
+```text
+| Name    | Type   | Label      | Placeholder     | Mandatory | Options          |
+|---------|--------|------------|-----------------|-----------|------------------|
+| first   | text   | First name |                 | true      |                  |
+| email   | email  | Email      | you@example.com | true      |                  |
+| country | select | Country    |                 |           | Germany, France  |
+| submit  | submit | Subscribe  |                 |           |                  |
+```
+
+The `form` block fetches the JSON and renders a semantic `<form>`. Start from a maintained
+implementation rather than writing your own - the
+[aem-block-collection](https://github.com/adobe/aem-block-collection) has a simple
+spreadsheet-driven form, and [aem-boilerplate-forms](https://github.com/adobe-rnd/aem-boilerplate-forms)
+contains the full Adaptive Forms block.
 
 ### Adaptive Forms (AEM Forms)
 
-For complex forms - multi-step flows, conditional fields, server-side validation --
-authors use the **AEM Forms** authoring UI. The form definition is rendered into
-the EDS pipeline via the Adaptive Forms block. EDS handles delivery and accessibility;
-AEM Forms handles validation rules, drafts, and submission storage.
+For complex forms - multi-step flows, conditional fields, rules, server-side validation --
+use the **Adaptive Forms block** from `aem-boilerplate-forms`, authored either in a
+spreadsheet or in the Universal Editor on AEM Forms as a Cloud Service. EDS handles delivery;
+the block's rule engine handles conditional logic, and AEM Forms handles submission actions
+and storage.
 
 This requires an AEM Forms entitlement.
 
 ## The form block
 
-Whichever authoring path you pick, the runtime side is the `form` block. Like any
-EDS block, it's a folder of JS + CSS:
+Whichever authoring path you pick, the runtime side is a `form` block. Like any EDS block,
+it's a folder of JS + CSS, often split into helper modules:
 
-```
+```text
 /blocks/form/
     form.js
     form.css
     form-fields.js
-    form-validation.js
-    form-submit.js
 ```
 
-Responsibilities split across the helper modules:
+The exact file layout differs between implementations (the Adaptive Forms block has many
+more modules), but the responsibilities are the same:
 
-- `form.js` - decoration entry point: read fields, build `<form>`, wire submit
-- `form-fields.js` - render input types (text, email, select, radio, checkbox,
-  textarea, file, date)
-- `form-validation.js` - client-side validation, ARIA error wiring
-- `form-submit.js` - collect values, post to the configured endpoint, handle
-  success / error UI
+- decoration entry point: fetch the definition, build `<form>`, wire submit
+- field rendering: text, email, select, radio, checkbox, textarea, file, date
+- client-side validation and ARIA error wiring
+- submission: collect values, post to the configured endpoint, handle success / error UI
 
 ## Submission targets
 
-The `form` block reads a target URL from a `submit` row or a meta tag. Common targets:
+Common targets:
 
 | Target | Use case |
 |--------|----------|
-| **AEM Forms endpoint** | Stores the submission in AEM, runs server-side validation, optionally fires a workflow |
+| **AEM Forms Submission Service** | Adobe-hosted service that writes submissions into the form's spreadsheet (e.g. an `incoming` sheet) |
+| **AEM Forms submit actions** | For Adaptive Forms on AEM Forms: store in AEM, trigger a workflow, send email, call a form data model |
 | **External REST API** | Anything else - CRM, marketing automation, custom backend |
-| **SharePoint list** | For internal forms, store directly in a SharePoint list |
-| **Email** | Via a serverless function or `mailto:` action |
 | **Webhook** | For lightweight integrations (Slack, Teams, custom) |
 
-A typical `submit` row in a document-based form:
+For a custom endpoint, a submit helper posts JSON:
 
-```
-| submit | Subscribe | endpoint=/api/subscribe |
-```
-
-Read the endpoint with `readBlockConfig` and POST JSON:
-
-```javascript title="blocks/form/form-submit.js"
+```javascript title="blocks/form/form.js (custom submit helper)"
 export async function submit(form, endpoint) {
     const data = Object.fromEntries(new FormData(form).entries());
     const res = await fetch(endpoint, {
@@ -124,8 +126,7 @@ at least one of:
 
 ## Accessibility
 
-The `form` block is tested with screen readers. Keep these invariants when
-customising:
+Keep these invariants when customising a form block:
 
 - Every input has a programmatically associated `<label>` (use `for`/`id` or wrap)
 - Required fields use both `required` and `aria-required="true"`
@@ -137,17 +138,20 @@ customising:
 
 ### Multi-step form
 
-The block reads `step` rows that group fields:
+Group fields into fieldsets or panels in the definition and show one group at a time:
 
-```
-| step | personal-details |
-| text | First name | first |
-| text | Last name  | last  |
-| step | preferences      |
-| select | Topic | topic |
+```text
+| Name        | Type     | Label            | Fieldset    |
+|-------------|----------|------------------|-------------|
+| personal    | fieldset | Personal details |             |
+| first       | text     | First name       | personal    |
+| last        | text     | Last name        | personal    |
+| preferences | fieldset | Preferences      |             |
+| topic       | select   | Topic            | preferences |
 ```
 
-JS hides steps after the current one and wires Next / Previous buttons.
+JS hides the groups after the current one and wires Next / Previous buttons. The Adaptive
+Forms block ships a wizard layout for this, so prefer it over a hand-rolled version.
 
 ### File upload to AEM Assets
 
@@ -182,5 +186,5 @@ Clear the draft on successful submit.
 
 - [Blocks](./blocks.mdx) - the form block follows normal block conventions
 - [Customizing](./customizing.mdx) - response headers (CSP) for form submissions
-- aem.live: [forms documentation](https://www.aem.live/docs/forms)
+- aem.live: [forms documentation](https://www.aem.live/developer/forms)
 - Adobe docs: [EDS for Forms](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/edge-delivery/build-forms/overview)

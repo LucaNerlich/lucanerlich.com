@@ -77,10 +77,16 @@ query is index-backed before you ship it.
 An Oak index is a definition under `/oak:index` that tells the query engine how to look up nodes by
 certain properties without scanning the tree. The two you will use:
 
-- **Property index** - fast exact-match on one or few properties.
+- **Property index** - fast exact-match on one or few properties (AEM 6.5 only for custom indexes).
 - **Lucene index** - the standard custom index in AEM; supports exact match, sorting, and full-text.
+  On AEM as a Cloud Service, custom indexes **must** be Lucene indexes.
 
-### A simple property index
+### A simple property index (AEM 6.5 only)
+
+:::warning[Not supported for custom indexes on AEM as a Cloud Service]
+AEM as a Cloud Service only accepts custom indexes of `type="lucene"`. Use the Lucene example below on
+Cloud Service. Adobe recommends Lucene indexes on 6.5 too, so a later migration is painless.
+:::
 
 ```xml title="ui.apps/.../jcr_root/_oak_index/mysiteTemplate/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
@@ -88,19 +94,26 @@ certain properties without scanning the tree. The two you will use:
           jcr:primaryType="oak:QueryIndexDefinition"
           type="property"
           propertyNames="[cq:template]"
-          reindex="{Boolean}true"/>
+          includedPaths="[/content/mysite]"/>
 ```
+
+Use a property index only for simple exact-match queries on the indexed node's own property (for
+example `cq:PageContent` nodes with `cq:template`). Use a Lucene index when your query targets
+`cq:Page` and filters or sorts on relative `jcr:content/...` properties. Do not ship
+`reindex="{Boolean}true"` in a definition you deploy -- it triggers a full reindex on every deployment.
 
 ### A Lucene index (property + sort)
 
-```xml title="ui.apps/.../jcr_root/_oak_index/mysiteArticle-custom-1/.content.xml"
+```xml title="ui.apps/.../jcr_root/_oak_index/mysite.article-1-custom-1/.content.xml"
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-          xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0"
+          xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
           jcr:primaryType="oak:QueryIndexDefinition"
           type="lucene"
-          async="[async]"
+          async="[async,nrt]"
           compatVersion="{Long}2"
-          evaluatePathRestrictions="{Boolean}true">
+          evaluatePathRestrictions="{Boolean}true"
+          includedPaths="[/content/mysite]"
+          queryPaths="[/content/mysite]">
     <indexRules jcr:primaryType="nt:unstructured">
         <cq:Page jcr:primaryType="nt:unstructured">
             <properties jcr:primaryType="nt:unstructured">
@@ -119,16 +132,27 @@ certain properties without scanning the tree. The two you will use:
 
 Commit index definitions to Git under `ui.apps` and deploy them like any other code - never
 hand-create them in CRXDE on a real environment (they will drift and be lost on deploy). On AEM as a
-Cloud Service, custom indexes must follow the `<name>-custom-<N>` naming convention.
+Cloud Service, index names must follow Adobe's naming convention:
+
+- **Customized product index:** `<productIndexName>-<productVersion>-custom-<N>`, for example
+  `damAssetLucene-8-custom-1`
+- **Fully custom index:** `<prefix>.<indexName>-<version>-custom-<N>`, for example
+  `mysite.article-1-custom-1`
+
+Increment `<N>` whenever you change the definition; Cloud Manager builds the new index version before
+switching traffic to it.
 
 ## Check your query with Explain Query
 
 Before shipping, run the query through the **Explain Query** tool to confirm it uses an index and is
-not traversing:
+not traversing. On the local SDK or AEM 6.5, open **Tools > Diagnosis > Query Performance** and switch
+to the **Explain Query** tab:
 
 ```text
-/libs/granite/operations/content/diagnosistools/queryExplainTool.html
+/libs/granite/operations/content/diagnosistools/queryPerformance.html
 ```
+
+On AEM as a Cloud Service environments, use the **Queries** tab in the Developer Console instead.
 
 Paste your query; the tool reports which index is used (or warns about a traversal) and the estimated
 cost.

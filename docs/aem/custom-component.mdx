@@ -213,7 +213,7 @@ The `_cq_dialog` defines the author-facing form. This dialog has two tabs: **Con
                                                 fieldLabel="Link"
                                                 name="./enableLink"
                                                 text="Enable CTA link"
-                                                uncheckedValue="false"
+                                                uncheckedValue="{Boolean}false"
                                                 value="{Boolean}true"/>
                                             <linkUrl
                                                 jcr:primaryType="nt:unstructured"
@@ -236,7 +236,7 @@ The `_cq_dialog` defines the author-facing form. This dialog has two tabs: **Con
                                                 sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
                                                 name="./openInNewTab"
                                                 text="Open in new tab"
-                                                uncheckedValue="false"
+                                                uncheckedValue="{Boolean}false"
                                                 value="{Boolean}true"
                                                 granite:class="cmp-articlecard__dialog-new-tab"/>
                                         </items>
@@ -320,7 +320,7 @@ site-wide defaults that authors should not change per instance.
                                                 name="./showImage"
                                                 text="Show image"
                                                 checked="{Boolean}true"
-                                                uncheckedValue="false"
+                                                uncheckedValue="{Boolean}false"
                                                 value="{Boolean}true"/>
                                         </items>
                                     </column>
@@ -540,6 +540,10 @@ public class ArticleCardModel implements ComponentExporter {
 
     @PostConstruct
     protected void init() {
+        headingLevel = "h2";
+        maxSummaryLength = 150;
+        showImage = true;
+
         // Read template policy values
         ContentPolicyManager policyManager = resource.getResourceResolver()
             .adaptTo(ContentPolicyManager.class);
@@ -550,10 +554,6 @@ public class ArticleCardModel implements ComponentExporter {
                 maxSummaryLength = policy.getProperties().get("maxSummaryLength", 150);
                 showImage = policy.getProperties().get("showImage", true);
             }
-        }
-        // Apply defaults if policy not found
-        if (headingLevel == null) {
-            headingLevel = "h2";
         }
     }
 
@@ -1050,6 +1050,8 @@ class ArticleCardModelTest {
 
     @BeforeEach
     void setUp() {
+        context.addModelsForClasses(ArticleCardModel.class);
+
         // Register a mock OSGi service
         dateFormatterService = mock(DateFormatterService.class);
         when(dateFormatterService.format(any(Calendar.class))).thenReturn("March 15, 2025");

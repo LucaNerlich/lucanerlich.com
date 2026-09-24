@@ -232,7 +232,7 @@ When the model adapts from a request but you need to delegate via the resource:
 @Model(adaptables = SlingHttpServletRequest.class)
 public class WrapperModel {
 
-    // Adapts the underlying resource (not the request) to ChildModel
+    // Delegates using the current resource's sling:resourceSuperType
     @Self @Via(type = ResourceSuperType.class)
     private ChildModel delegateModel;
 }
@@ -636,7 +636,7 @@ private ContentModel contentModel;
 @Self @Via(type = ResourceSuperType.class)
 private ParentModel parentModel;
 
-// Via a specific child path using BeanProperty
+// Read a property from a specific child resource path
 @ValueMapValue @Via(value = "jcr:content", type = ChildResource.class)
 private String pageTitle;
 ```

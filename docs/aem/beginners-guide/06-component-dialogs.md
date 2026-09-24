@@ -55,7 +55,7 @@ The dialog lives in `_cq_dialog/.content.xml` inside the component folder.
        fieldDescription="Enter the component title"
        name="./title"
        required="{Boolean}true"
-       maxlength="100"/>
+       maxlength="{Long}100"/>
 ```
 
 ### Textarea - multi-line text
@@ -245,7 +245,8 @@ Multifields let authors add multiple items of the same structure:
                           sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
                           text="Open in new tab"
                           name="./openInNewTab"
-                          value="{Boolean}true"/>
+                          value="{Boolean}true"
+                          uncheckedValue="{Boolean}false"/>
         </items>
     </field>
 </links>
@@ -257,7 +258,7 @@ simple, single-field multifields (e.g., a list of strings), not for multi-proper
 
 With `composite=true`:
 
-```
+```text
 component-node/
 └── links/
     ├── item0/
@@ -398,7 +399,8 @@ A complete dialog for a Hero banner component:
                                                        sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
                                                        text="Full Width"
                                                        name="./fullWidth"
-                                                       value="{Boolean}true"/>
+                                                       value="{Boolean}true"
+                                                       uncheckedValue="{Boolean}false"/>
                                         </items>
                                     </column>
                                 </items>

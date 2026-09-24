@@ -62,7 +62,10 @@ The [AEM Project Archetype](https://github.com/adobe/aem-project-archetype) gene
 | `dispatcher/` | Config | CDN/Dispatcher | Apache/Dispatcher configuration files |
 
 :::warning
-On AEMaaCS, **mutable content** (`ui.content`) is only deployed on first install or explicitly via `repoinit` scripts. Subsequent deployments will **not** overwrite content that authors have changed. Structure your packages accordingly.
+On AEMaaCS, **mutable content** (`ui.content`) can be installed by pipelines, but it
+must be packaged with safe import modes (typically `merge`) so deployments do not
+overwrite author-owned content. Use `repoinit` for deterministic bootstrap paths,
+service users, groups, and ACLs.
 :::
 
 ### Container Package (`all/`)
@@ -107,7 +110,7 @@ mvn clean install -PautoInstallSinglePackage
 mvn clean install -PautoInstallBundle -pl core
 
 # Deploy to a local publish instance (port 4503)
-mvn clean install -PautoInstallSinglePackage -Daem.port=4503
+mvn clean install -PautoInstallSinglePackagePublish
 
 # Deploy only the ui.apps package
 mvn clean install -PautoInstallPackage -pl ui.apps
@@ -154,7 +157,7 @@ The `filter.xml` file in each content package declares which repository paths th
 |---|---|---|
 | `/apps` | **Immutable** | Fully replaced on every deployment |
 | `/libs` | **Immutable** | Owned by Adobe - never deploy here |
-| `/content` | **Mutable** | Only deployed on first install; authors own this |
+| `/content` | **Mutable** | Installed according to package import mode; authors usually own this |
 | `/conf` | **Mutable** | Editable templates, policies; merge on install |
 | `/etc` | **Mutable** | Workflow models, designs (legacy) |
 | `/var` | **Mutable** | Workflow instances, audit logs - never package |

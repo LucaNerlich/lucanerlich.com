@@ -19,7 +19,7 @@ hashmap.
 The below configuration creates a query that searches for nodes below a given path,
 that have two predefined property key/value pairs.
 
-Using the QueryBuilder is strongly advised when you need to sanitze input.
+Using the QueryBuilder is strongly advised when you need to sanitize input.
 For example in a servlet, where the user can customize the query via request parameter.
 
 ```java
@@ -63,7 +63,7 @@ construction is safe:
 
 ```java
 final String myQuery = "SELECT * FROM [nt:base] AS s " +
-                "WHERE ISDESCENDANTNODE([/content/experience-fragments]) " +
+                "WHERE ISDESCENDANTNODE(s, '/content/experience-fragments') " +
                 "AND [sling:resourceType] = '" + TestModel.RESOURCE_TYPE + "'";
 final Iterator<Resource> results = request.getResourceResolver().findResources(myQuery, Query.JCR_SQL2);
 ```
@@ -79,7 +79,7 @@ if (!ALLOWED_LOCALES.contains(locale)) {
     return Collections.emptyIterator();
 }
 final String myQuery = "SELECT * FROM [nt:base] AS s " +
-                "WHERE ISDESCENDANTNODE([/content/experience-fragments/" + locale + "]) " +
+                "WHERE ISDESCENDANTNODE(s, '/content/experience-fragments/" + locale + "') " +
                 "AND [sling:resourceType] = '" + TestModel.RESOURCE_TYPE + "'";
 ```
 
@@ -167,8 +167,8 @@ legacy `sql` language is deprecated and gone in modern Oak).
 ```groovy
 def findByResourceType(rootPath, resourceType) {
     def queryManager = session.workspace.queryManager
-    def statement = "SELECT * FROM [nt:base] " +
-            "WHERE ISDESCENDANTNODE([${rootPath}]) " +
+    def statement = "SELECT * FROM [nt:base] AS s " +
+            "WHERE ISDESCENDANTNODE(s, '${rootPath}') " +
             "AND [sling:resourceType] = '${resourceType}'"
     queryManager.createQuery(statement, 'JCR-SQL2')
 }
@@ -193,8 +193,8 @@ import javax.jcr.Session
 Session session = resourceResolver.adaptTo(Session.class)
 
 def queryManager = session.workspace.queryManager
-def statement = "SELECT * FROM [nt:base] " +
-        "WHERE ISDESCENDANTNODE([/content/eurowings/backoffice]) " +
+def statement = "SELECT * FROM [nt:base] AS s " +
+        "WHERE ISDESCENDANTNODE(s, '/content/eurowings/backoffice') " +
         "AND [jcr:language] IS NOT NULL"
 def result = queryManager.createQuery(statement, 'JCR-SQL2').execute()
 
