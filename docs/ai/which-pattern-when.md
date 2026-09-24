@@ -26,6 +26,8 @@ assumes you have skimmed [Large Language Models](./llm.md) and points to deep di
 | **Ship a feature users see in your product** | [AI in Products](./ai-in-products.md) | [Structured outputs](./structured-outputs.md), [cost & latency](./cost-and-latency.md) | Autonomous agents without approval |
 | **Keep sensitive data on-prem** | [Cloud vs Local](./cloud-vs-local.md) | [Local LLM app](./local-llm-app.md), [privacy](./privacy-and-data.md) | Sending full corpus to frontier APIs |
 | **Control spend at scale** | [Cost, Latency & Model Routing](./cost-and-latency.md) | [Context engineering](./context-engineering.md), evals | Frontier model for every request |
+| **Choose a model or read benchmarks** | [Model Selection](./model-selection.md) | Internal evals, cost/latency checks | Naming a universal "best" model |
+| **Adapt stable model behavior** | [Fine-Tuning & Model Adaptation](./fine-tuning.md) | [RAG](./rag.md) for facts, held-out evals | Fine-tuning for knowledge injection |
 | **Make outputs machine-parseable** | [Structured Outputs](./structured-outputs.md) | Validation/repair loops, eval scorers | Free-form prose to regex later |
 | **Operate safely in production** | [Safety](./safety.md) + [Privacy & Data](./privacy-and-data.md) | [Human-in-the-loop](./human-in-the-loop.md), red-teaming via [evals](./evaluation-and-llmops.md) | Guardrails as the only layer |
 | **Debug wrong or broken behavior** | [Debugging LLM Apps](./debugging-llm-apps.md) | Traces from [LLMOps](./evaluation-and-llmops.md) | Rewriting the whole prompt blindly |
@@ -72,7 +74,7 @@ From [LLMs](./llm.md#foundation-models-rent-dont-build) - try in order; stop whe
 1. **Prompt / context** - instructions, examples, [context engineering](./context-engineering.md)
 2. **[RAG](./rag.md)** - fresh, private knowledge at inference
 3. **[Project memory / rules / skills](./project-memory-and-rules.md)** - repeatable team conventions and workflows
-4. **Fine-tuning / LoRA** - domain style or format the model resists via prompting (see [RAG vs fine-tuning](./rag.md#rag-vs-fine-tuning))
+4. **[Fine-tuning / LoRA](./fine-tuning.md)** - domain style or format the model resists via prompting (see [RAG vs fine-tuning](./rag.md#rag-vs-fine-tuning))
 5. **Pre-training** - almost never
 
 For coding agents, (3) often beats (4).

@@ -80,6 +80,7 @@ Check vendor docs before changing production `robots.txt`, because crawler names
 | Anthropic | `Claude-SearchBot` | Search indexing for Claude search surfaces | Search, not training |
 | Anthropic | `Claude-User` | User-triggered fetches from Claude | User-requested fetches |
 | Perplexity | `PerplexityBot` | Perplexity crawler for search and answer results | Perplexity says it is not for foundation-model training |
+| Perplexity | `Perplexity-User` | User-triggered fetches from Perplexity | User-requested fetches; Perplexity says it generally ignores `robots.txt` |
 | Google | `Google-Extended` | `robots.txt` product token controlling some Gemini and Vertex AI uses | Product token, not a crawler |
 
 `Google-Extended` is the odd one: Google's docs describe it as a standalone product token, not a crawler
@@ -123,6 +124,9 @@ User-agent: ChatGPT-User
 Allow: /
 
 User-agent: Claude-User
+Allow: /
+
+User-agent: Perplexity-User
 Allow: /
 
 User-agent: *
@@ -214,8 +218,7 @@ without a click, or send traffic through changing domains.
 - [OpenAI - Overview of OpenAI crawlers](https://developers.openai.com/api/docs/bots)
 - [Anthropic Support - Claude crawler controls](https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler)
 - [Perplexity Docs - Perplexity crawlers](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)
-- [Google Search Central - Google crawlers and Google-Extended](https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers)
-- [Google Search Central - Blocking Google-Extended](https://developers.google.com/search/docs/crawling-indexing/blocking-google-extended)
+- [Google Search Central - Google crawlers and Google-Extended](https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers#google-extended)
 - [llms.txt proposal](https://llmstxt.org/)
 
 ## See also

@@ -52,6 +52,8 @@ Define the shape you expect explicitly:
     "sentiment": { "type": "string", "enum": ["positive", "negative", "neutral"] },
     "confidence": {
       "type": "number",
+      "minimum": 0,
+      "maximum": 1,
       "description": "Score from 0 to 1; validate the range in application code."
     },
     "summary": {
@@ -73,9 +75,11 @@ Design schemas for **machine consumption**:
 - Split large outputs into multiple calls or nested objects rather than one giant schema.
 
 :::note
-This example avoids `minimum`, `maximum`, and `maxLength` because OpenAI strict structured outputs use a
-subset of JSON Schema. Validate value ranges, lengths, regexes, and formats after parsing unless your
-specific provider documents hard support for those keywords.
+This example uses `minimum` and `maximum`, which OpenAI strict structured outputs support. Anthropic's
+structured outputs do not support numeric constraints: send the schema without them (Anthropic's Python
+and TypeScript SDK helpers strip them automatically and validate the response client-side). The example
+avoids `minLength` / `maxLength` because neither provider's strict mode lists them. Keep application
+validation for business-critical ranges, lengths, regexes, and formats either way.
 :::
 
 ## Provider caveats {#provider-caveats}
@@ -88,16 +92,72 @@ Structured mode reduces parse failures, but it does not remove runtime checks:
 - **Truncation can still happen.** If output stops because of a token cap or length finish reason, JSON may
   be incomplete even when the request used a schema. Check the provider status or finish reason before
   accepting the object.
-- **OpenAI strict mode is a JSON Schema subset.** The supported subset requires `additionalProperties: false`
-  and all object properties listed in `required`; model optional fields as `["string", "null"]` or another
-  nullable union. OpenAI's documented unsupported keywords include `minLength`, `maxLength`, `minimum`,
-  `maximum`, `pattern`, and `format`.
-- **Anthropic schemas still need validation.** Anthropic's tool/structured-output docs use JSON Schema-style
-  `input_schema`, but public docs do not provide the same strict keyword support matrix as OpenAI. Treat
-  constraints such as `minLength`, `pattern`, and `format` as contracts your code validates, not as the only
-  enforcement layer.
-- **First request latency is real.** OpenAI documents additional latency when a new schema is first processed;
-  subsequent calls with the same schema are cached. Keep schemas stable and pre-warm critical paths.
+- **OpenAI strict mode is a documented JSON Schema subset.** Its current [supported schemas](https://platform.openai.com/docs/guides/structured-outputs#supported-schemas)
+  include `pattern` and listed `format` values for strings, numeric `minimum` / `maximum` /
+  `exclusiveMinimum` / `exclusiveMaximum` / `multipleOf`, and array `minItems` / `maxItems`. Objects still
+  require `additionalProperties: false`, every property in `required`, and nullable unions for optional
+  values. The supported-properties list does not include `minLength` or `maxLength`; fine-tuned models also
+  lack several type-specific constraints that base structured-output models support.
+- **Anthropic has its own limits.** Anthropic's [JSON Schema limitations](https://platform.claude.com/docs/en/build-with-claude/structured-outputs#json-schema-limitations)
+  require `additionalProperties: false` for objects, support basic types, enums, `const`, limited
+  `anyOf` / `allOf`, refs, common string formats, and `minItems` only for values `0` or `1`. They do not
+  support recursive schemas, numerical constraints such as `minimum` / `maximum`, string constraints such
+  as `minLength` / `maxLength`, array constraints beyond that limited `minItems`, or
+  `additionalProperties` values other than `false`; unsupported features return a 400 error.
+- **First request latency is real.** OpenAI documents additional latency on the first request with any
+  schema and no additional latency for subsequent requests with the same schema. Anthropic documents grammar
+  compilation on first use and a 24-hour cache from last use. Keep schemas stable and pre-warm critical
+  paths.
+
+## Grammar-constrained decoding for local models
+
+Open and self-hosted stacks often implement structured outputs by turning a schema or grammar into token
+masks. That guarantees syntax and shape, not factual correctness, policy compliance, or business-rule
+validity.
+
+- **llama.cpp** supports [GBNF grammars](https://github.com/ggml-org/llama.cpp/tree/master/grammars) in
+  `llama-cli`, `llama-completion`, and `llama-server`. `llama-server` accepts a `json_schema` body field
+  for completion endpoints and `response_format` for `/chat/completions`, then converts a JSON Schema
+  subset to grammar constraints. The schema is not injected into the prompt, so describe the desired output
+  in the prompt too.
+- **Ollama** supports structured outputs through the [`format`](https://docs.ollama.com/capabilities/structured-outputs)
+  field: `"json"` for JSON mode or a JSON Schema object for schema-constrained JSON. Ollama documents that
+  its Cloud currently does not support structured outputs.
+
+```bash
+curl -X POST http://localhost:11434/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-oss",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Return a one-line profile for Ada Lovelace as JSON."
+      }
+    ],
+    "stream": false,
+    "format": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "known_for": { "type": "string" },
+        "born": { "type": "integer" }
+      },
+      "required": ["name", "known_for", "born"]
+    }
+  }'
+```
+
+- **vLLM** supports structured outputs in the OpenAI-compatible server with
+  `extra_body: {"structured_outputs": {"json": ...}}` plus `choice`, `regex`, `grammar`, and
+  `structural_tag`; the older `guided_json`, `guided_regex`, `guided_choice`, and `guided_grammar` fields
+  were removed in v0.12.0. vLLM also supports OpenAI-style `response_format` with `type: "json_schema"`,
+  and offline inference uses `SamplingParams(structured_outputs=StructuredOutputsParams(...))`.
+- **Outlines** constrains generation from Python types, Pydantic models, literals, and provider backends such
+  as OpenAI, Ollama, and vLLM.
+- **XGrammar** provides constrained decoding by compiling grammars and applying token masks during sampling.
+- **llguidance** is a low-level constrained-decoding library for arbitrary context-free grammars and is one
+  of vLLM's supported backends.
 
 ## Validation and repair loops
 
@@ -165,6 +225,8 @@ before applying - structure does not imply correctness.
 
 - [AI Agents](./agents.md) - tool calling as structured action requests
 - [Evaluation & LLMOps](./evaluation-and-llmops.md) - schema validity as an eval scorer
+- [Local LLM Apps](./local-llm-app.md) - applying local models in applications
+- [LLM Serving](./llm-serving.md) - serving stacks for open and self-hosted models
 - [Cost, Latency & Model Routing](./cost-and-latency.md) - shorter structured responses save tokens
 - [AI in Products](./ai-in-products.md) - error states when structure fails
 - [AI Glossary](./glossary.md) - structured output and related terms

@@ -21,8 +21,9 @@ trained to predict the next token, then aligned via [post-training](#how-an-llm-
 like a useful assistant.
 
 This page is the entry point for the AI section. From here, follow the links into
-[Agents](./agents.md), [RAG](./rag.md), [Tooling](./tooling.md), and
-[Cloud vs Local Models](./cloud-vs-local.md), or skim the [Glossary](./glossary.md).
+[Prompt Engineering Basics](./prompt-engineering.md), [Reasoning Models](./reasoning-models.md),
+[Agents](./agents.md), [RAG](./rag.md), [Tooling](./tooling.md), and [Cloud vs Local Models](./cloud-vs-local.md),
+or skim the [Glossary](./glossary.md).
 
 ## How an LLM produces text
 
@@ -54,14 +55,39 @@ then feeds the extended sequence back through the model. Production servers reus
 instead of recomputing all prior tokens from scratch. Chat formats, tool use, and agents are all scaffolding
 around this loop.
 
+## Decoding and sampling controls
+
+After the model produces probabilities for the next token, the serving API has to choose one. That choice is
+called **decoding**. Common knobs include:
+
+| Control | What it does | Use with care when |
+|---|---|---|
+| Greedy decoding | Always chooses the highest-probability next token | You need diversity or creative alternatives |
+| `temperature` | Rescales probabilities before sampling; lower is more deterministic, higher is more random | The task needs exact formats or reproducibility |
+| `top_k` | Samples only from the `k` most likely tokens | The provider or model does not expose it |
+| `top_p` / nucleus | Samples from the smallest token set whose cumulative probability reaches `p` | Combining it with temperature makes behavior harder to reason about |
+| `min_p` | Filters out tokens below a probability threshold relative to the most likely token | The API does not document the parameter |
+| Repetition, frequency, or presence penalties | Discourage repeated tokens or topics in API-specific ways | Exact wording or code must not be distorted |
+| Stop sequences | End generation when a configured string appears | The stop text can appear naturally in the answer |
+| Max tokens | Cap generated tokens | [Reasoning models](./reasoning-models.md) may spend the cap on hidden thinking before visible text |
+
+Not every model accepts every knob. In particular, current reasoning-model docs are moving some models away from
+traditional sampling controls: OpenAI's GPT-6 migration guide says to remove `temperature`, `top_p`, and
+logprob options when reasoning effort is not `none`; Google's Gemini 3.8 Flash migration guidance says
+to remove `temperature`, `top_p`, and `top_k`; and Anthropic's newer thinking-model guidance moves control toward
+thinking effort instead of manual sampling. Check the exact model documentation before copying parameters between
+providers.
+
 ## How an LLM is built
 
-Modern LLMs are produced in three sequential stages.
+Modern LLM development is often described in three broad stages, although labs draw the boundaries differently
+and may call the middle phase continued pre-training, annealing, or mid-training.
 
 1. **Pre-training** - self-supervised next-token prediction on a web-scale corpus. Produces a
    *base model* that is fluent but not yet helpful. This is the compute-dominant phase.
-2. **Mid-training** - continued training on higher-quality, structured data (instructions, code, math).
-   Begins shaping the model toward useful behavior.
+2. **Continued / mid-training** - additional next-token training on higher-quality or targeted data such as
+   code, math, long-context, multilingual, or instruction-like corpora. This bridges broad pre-training and
+   post-training, but it is not a universal public stage name.
 3. **Post-training** - alignment to human preferences. Combines supervised fine-tuning (teaching the
    assistant format via chat templates) with preference learning (RLHF / DPO). Produces the
    *instruct / chat model* end users actually talk to.
@@ -75,8 +101,8 @@ Adapters can be layered on top without retraining the base: [PEFT](./glossary.md
 - Language understanding and generation across genres and styles.
 - Translation, summarization, classification.
 - Code generation, refactoring, and explanation.
-- Multi-step reasoning when guided ([chain-of-thought](./glossary.md#chain-of-thought), scratchpads,
-  [agents](./agents.md)).
+- Multi-step reasoning when guided by [prompts](./prompt-engineering.md), [reasoning models](./reasoning-models.md),
+  scratchpads, or [agents](./agents.md).
 - *In-context learning*: adapting from examples in the prompt, with no retraining.
 
 ## What LLMs are not good at
@@ -157,6 +183,8 @@ See [Cost, Latency & Model Routing](./cost-and-latency.md) for token economics a
 ## See also
 
 - [AI Agents](./agents.md) - wrapping LLMs in tool-use loops
+- [Prompt Engineering Basics](./prompt-engineering.md) - writing instructions and output contracts
+- [Reasoning Models & Test-Time Compute](./reasoning-models.md) - when to spend extra inference-time tokens
 - [RAG](./rag.md) - augmenting an LLM with external knowledge
 - [Cost, Latency & Model Routing](./cost-and-latency.md) - per-token cost and model tiers
 - [AI in Products](./ai-in-products.md) - shipping LLM features to users

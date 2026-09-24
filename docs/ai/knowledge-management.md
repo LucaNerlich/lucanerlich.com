@@ -80,7 +80,7 @@ LLMs do not get bored and can touch many files in one pass, so routine bookkeepi
 dramatically when the workflow is well scoped and reviewed. Its spiritual ancestor is the
 **[memex](./glossary.md#memex)**, Vannevar Bush's 1945 vision of a personal, curated
 knowledge store with associative trails - the maintenance problem was the unsolved part, and LLMs are the
-missing piece.
+new mechanism that can help with that missing piece.
 
 > This very documentation section was generated this way: adapted by an LLM from a structured source vault
 > into interlinked, cross-referenced pages.

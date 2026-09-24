@@ -163,13 +163,24 @@ IVFFlat uses `WITH (lists = ...)` at index creation and `ivfflat.probes` at quer
 pgvector 0.8.0 also documents iterative scans (`hnsw.iterative_scan` and `ivfflat.iterative_scan`) so a
 filtered ANN query can scan farther until enough post-filtered rows are found, subject to configured caps.
 
+```sql
+CREATE INDEX ON items USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+
+SET hnsw.ef_search = 100;
+SET ivfflat.probes = 10;
+SET hnsw.iterative_scan = strict_order;
+SET ivfflat.iterative_scan = relaxed_order;
+```
+
 Metadata filtering is both a quality lever and a security boundary:
 
-- **Pre-filter when possible.** Restrict by tenant, document ACL, language, source, or time range before ANN
-  search, or partition the index by those boundaries. This preserves recall better for selective filters.
+- **Pre-filter when the database truly supports it.** Restrict by tenant, document ACL, language, source, or
+  time range before ANN search, or partition the index by those boundaries. In pgvector, approximate-index
+  filtering is applied after the index scan, so use exact B-tree indexes, partial indexes, partitions, or
+  per-tenant tables for highly selective security filters.
 - **Post-filtering can silently lose recall.** If ANN first retrieves global neighbors and then applies
   `WHERE tenant_id = ...`, the relevant tenant-local neighbors may never be visited. Over-fetching,
-  iterative scans, exact fallback, or per-tenant indexes can mitigate this.
+  pgvector iterative scans, exact fallback, or per-tenant indexes can mitigate this.
 - **Do not delegate permissions to the LLM.** Enforce tenant isolation and access control in the retrieval
   layer before any chunk enters the prompt. The model can summarize allowed context; it must not decide
   which private documents the user may see.

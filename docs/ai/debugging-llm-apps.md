@@ -60,6 +60,35 @@ Minimum debug bundle (most [LLMOps](./evaluation-and-llmops.md) tools capture th
 
 If you cannot reproduce without this, you are guessing.
 
+## Reproducibility caveats
+
+`temperature: 0` is not a determinism guarantee. OpenAI's
+[Chat Completions API reference](https://developers.openai.com/api/reference/resources/chat.md) still
+documents `seed` as beta and best effort: repeated requests with the same seed and parameters should return
+the same result, but determinism is not guaranteed, and `system_fingerprint` should be logged to detect
+backend changes.
+
+Why identical-looking calls can differ:
+
+- **Batching and floating point** - Thinking Machines'
+  [Defeating Nondeterminism in LLM Inference](https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/)
+  explains how server load can change batch size, and batch-size changes can change floating-point reduction
+  order enough to alter greedy decoding.
+- **Backend routing** - service tier, region, provider capacity, and hidden backend configuration can change
+  even when the public model alias is the same.
+- **Model snapshots** - provider aliases can move; OpenAI's
+  [text-generation guide](https://developers.openai.com/api/docs/guides/text) recommends pinning production
+  apps to specific model snapshots for consistency.
+- **Provider-side caching** - prompt caches change latency and cost, and cache-hit fields are part of the
+  replay environment. Log them when the provider exposes them.
+
+To make debugging reproducible, capture the full rendered request and all generation parameters, model
+snapshot ID or alias, provider request ID, `seed`, `system_fingerprint` when available, service tier/region,
+prompt version, retrieved document IDs and scores, reranker output, tool inputs and outputs, validation
+errors, token counts, cache usage fields, and final response. Replay from traces: freeze the prompt version,
+use the same model snapshot, replay stored retrieval results and tool outputs, and add the failing trace to
+an eval fixture before changing prompts or code.
+
 ## Wrong answers (chat and RAG)
 
 ### 1. Is it hallucination or missing context?
@@ -152,5 +181,6 @@ Cross-reference [Safety & Guardrails](./safety.md) and [Privacy & Data Handling]
 - [RAG](./rag.md) - retrieval production levers
 - [AI Agents](./agents.md) - tool use and multi-agent failure modes
 - [Structured Outputs](./structured-outputs.md) - validation and repair
+- [Cost, Latency & Model Routing](./cost-and-latency.md) - rate limits, retries, caching, and latency metrics
 - [AI in Products](./ai-in-products.md) - user-visible failure states
 - [AI Glossary](./glossary.md) - groundedness, context rot, and related terms

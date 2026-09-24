@@ -30,7 +30,7 @@ changes.
 |---|---|---|---|
 | **Project memory** | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` | Every relevant session | Repo map, build/test commands, architecture summary |
 | **GitHub Copilot instructions** | `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md` | Repository-wide or path-scoped | Copilot Chat, IDE, CLI, and coding-agent guidance |
-| **Rules** | `.cursor/rules/*.mdc`, `.windsurf/rules/*.md` | Always, glob, model decision, or manual | Short coding standards, framework conventions |
+| **Rules** | `.cursor/rules/*.mdc`, `.devin/rules/*.md`, `.windsurf/rules/*.md` | Always, glob, model decision, or manual | Short coding standards, framework conventions |
 | **Skills** | `.agents/skills/`, `.cursor/skills/`, `.claude/skills/` | On demand when task matches | Multi-step workflows (deploy, review ritual) |
 | **User rules** | Editor or CLI settings | Global to your account/tool | Personal preferences not shared with the team |
 
@@ -82,7 +82,7 @@ varies by surface, so prefer the documented file for the surface you are targeti
 | Organization | Organization-level Copilot settings | Shared policy for repositories owned by the organization |
 | Repository-wide | `.github/copilot-instructions.md` | Broad project guidance for Copilot in supported IDE and GitHub surfaces |
 | Path-specific | `.github/instructions/*.instructions.md` | Markdown instruction files with YAML frontmatter such as `applyTo` |
-| Copilot CLI | CLI custom-instruction files | CLI docs also describe advanced fields such as `excludeAgent`; do not assume every IDE honors them |
+| Copilot CLI | CLI custom-instruction files | CLI supports user, repository, path-specific, and agent instruction files; `excludeAgent` is frontmatter for path-specific instructions |
 
 A small path-specific instruction file:
 
@@ -107,9 +107,9 @@ instruction file should be a local convention, not a second architecture documen
 
 | Copilot surface | Verified support status |
 |---|---|
-| GitHub Copilot coding agent | GitHub's 2025 changelog says the coding agent supports `AGENTS.md` custom instructions. |
-| GitHub Copilot CLI | GitHub's Copilot CLI docs cover custom instruction files and agent customization; use the CLI docs for exact precedence. |
-| VS Code Copilot Chat | VS Code documents `.github/copilot-instructions.md` and `.instructions.md` files. I did not find official VS Code docs saying ordinary Copilot Chat reads `AGENTS.md` directly; delegating to the GitHub coding agent from VS Code uses that agent's server-side behavior. |
+| GitHub Copilot cloud/coding agent | GitHub's support matrix lists agent instructions from `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`; Copilot code review supports `AGENTS.md`. |
+| GitHub Copilot CLI | CLI docs list `AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md`, and `GEMINI.md`. `@path` imports work in `.github/copilot-instructions.md`, `AGENTS.md`, and `CLAUDE.md`, but not in `GEMINI.md` or `*.instructions.md`. |
+| VS Code Copilot Chat | GitHub and VS Code docs list agent instructions from `AGENTS.md`; VS Code also uses `.github/copilot-instructions.md` and `.github/instructions/*.instructions.md`. |
 
 Practical default: keep shared, vendor-neutral onboarding in `AGENTS.md`, then add thin tool-specific files
 that import or summarize it only when the tool officially supports that pattern.
@@ -124,7 +124,7 @@ memory. The safe hierarchy to document for teams is:
 | Managed / enterprise | Admin-managed policy or managed settings | Non-negotiable organization rules |
 | Project | `./CLAUDE.md` or `./.claude/CLAUDE.md` | Team-shared project context, checked in when appropriate |
 | User | `~/.claude/CLAUDE.md` | Personal preferences across projects |
-| Local project | `CLAUDE.local.md` | Legacy/local-only pattern; current guidance favors user memory plus imports instead of new `CLAUDE.local.md` usage |
+| Local project | `./CLAUDE.local.md` | Personal project-specific preferences; add it to `.gitignore` |
 
 Claude Code supports `@path` imports inside memory files, for example:
 
@@ -143,8 +143,9 @@ Imports are for maintainability, not token savings: imported content still becom
 ownership clear, not to hide a thousand lines of instructions.
 
 The `/memory` command lets users inspect and edit memory. Claude's current docs and product material also
-describe auto memory: Claude can retain learned preferences or project facts across sessions. Treat auto
-memory as editable working state, not as policy. Put team contracts in version-controlled files.
+describe auto memory: Claude can retain learned preferences or project facts across sessions, loaded per
+repository at the start of future sessions. Treat auto memory as editable working state, not as policy. Put
+team contracts in version-controlled files.
 
 Claude Code also documents `.claude/rules/` for modular rule files. Where your installed version supports
 path-scoped rules, use YAML frontmatter such as:
@@ -161,8 +162,9 @@ paths:
 - Keep error responses consistent across endpoints.
 ```
 
-Because this area has changed quickly, verify rule loading with `/memory` or the Claude Code docs for the
-version your team uses.
+Rules without `paths` frontmatter load unconditionally; path-scoped rules load when Claude reads matching
+files. Because this area has changed quickly, verify rule loading with `/memory`, `/context`, or the Claude
+Code docs for the version your team uses.
 
 ## Gemini CLI and Windsurf
 
@@ -181,18 +183,31 @@ which is the documented way to make Gemini CLI read `AGENTS.md` instead:
 Gemini CLI also supports `@file` imports and `/memory show` or `/memory reload` commands for inspecting and
 refreshing loaded context.
 
-**Windsurf** separates Memories from Rules. Durable team guidance belongs in rules, usually
-`.windsurf/rules/*.md`. Current Windsurf docs describe activation modes such as:
+**Windsurf / Devin Desktop** separates Memories from Rules. The current docs say Memories apply to the
+legacy Cascade agent only; for durable team guidance, write rules in `.devin/rules/*.md` (preferred) or
+legacy `.windsurf/rules/*.md`, or use `AGENTS.md`.
 
-| Mode | Meaning |
+Workspace rules declare an activation mode with `trigger:` frontmatter:
+
+| `trigger:` value | Meaning |
 |---|---|
 | `always_on` | Include the whole rule every time |
-| `glob` | Include the rule when matching files are in scope |
+| `glob` | Include the rule when matching files are in scope; use `globs` for the file pattern |
 | `model_decision` | Show the description and let Cascade decide whether to load the rule |
 | `manual` | Load only when explicitly invoked |
 
+```markdown
+---
+trigger: glob
+globs: "src/**/*.ts"
+---
+
+- Use the repository TypeScript conventions in this directory.
+```
+
 Keep always-on rules sparse. Prefer `glob` or model-decision rules for language-specific or directory-specific
-conventions.
+conventions. Auto-generated memories are local to `~/.codeium/windsurf/memories/`; global rules live in
+`~/.codeium/windsurf/memories/global_rules.md`; legacy `.windsurfrules` is still read.
 
 ## Cursor rules (`.mdc`)
 
@@ -260,7 +275,7 @@ Over time teams accumulate overlapping rules, memory, and skills:
 - [Claude Code Docs - How Claude remembers your project](https://code.claude.com/docs/en/memory)
 - [Claude Code Docs - Explore the .claude directory](https://code.claude.com/docs/en/claude-directory)
 - [Gemini CLI Docs - Provide context with GEMINI.md](https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gemini-md.md)
-- [Windsurf Docs - Cascade Memories and Rules](https://docs.windsurf.com/windsurf/cascade/memories)
+- [Devin Desktop Docs - Memories and Rules](https://docs.windsurf.com/windsurf/cascade/memories)
 
 ## See also
 

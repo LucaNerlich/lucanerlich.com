@@ -91,6 +91,19 @@ The tooling has matured to the point where a laptop can run useful models.
 The practical limit is **VRAM**: pick the largest parameter count that fits your GPU memory, which is
 where quantization comes in.
 
+:::warning
+Local does not automatically mean safe. Ollama binds to localhost by default, but exposing it with
+`OLLAMA_HOST=0.0.0.0:11434` makes an unauthenticated model API reachable on the network unless you add a
+proxy, firewall, or VPN. LM Studio network serving also needs its optional API-token auth enabled. Open WebUI
+auth is on by default through `WEBUI_AUTH=True`; do not disable it on shared instances. See the fuller setup
+note in [Build a Local LLM App](./local-llm-app.md).
+:::
+
+Context length is another local-vs-cloud trade-off. Ollama now documents VRAM-based default context windows
+and supports `OLLAMA_CONTEXT_LENGTH`, API `num_ctx`, and Modelfile `PARAMETER num_ctx`; larger windows grow
+KV-cache memory and can reduce concurrency. For the serving mechanics, see
+[Serving LLMs at Scale](./llm-serving.md).
+
 ### Quantization and QLoRA make local models practical {#quantization-and-qlora}
 
 [Quantization](./glossary.md#quantization) replaces model weights with lower-precision approximations to
@@ -129,6 +142,8 @@ RAG for facts, fine-tune for style).
 - [Large Language Models](./llm.md) - foundation, frontier, and open-weights distinctions
 - [RAG](./rag.md) - managed (Bedrock Knowledge Bases) vs self-hosted retrieval
 - [Tooling and Frameworks](./tooling.md) - model serving and LLMOps
+- [Serving LLMs at Scale](./llm-serving.md) - context windows, KV cache, batching, and throughput
+- [Multimodal & Voice](./multimodal-and-voice.md) - when images, audio, and realtime voice change model choice
 - [Build a Local LLM App](./local-llm-app.md) - run Ollama/LM Studio and call it from your own app
 - [Local & offline Copilot alternative](./local-llm-for-coding.md) - a hands-on Ollama setup
 - [AI Glossary](./glossary.md) - open-weights, quantization, QLoRA, foundation model, and more

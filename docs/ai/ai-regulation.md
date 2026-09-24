@@ -68,7 +68,7 @@ As of this September 2026 snapshot, the high-risk timing changes above are not m
 adopted through Regulation (EU) 2026/1744 and reflected in the Commission's AI Omnibus materials:
 <https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng> and
 <https://digital-strategy.ec.europa.eu/en/news/ai-omnibus-enters-force>.
-Still, verify the consolidated Article 113 timeline before shipping.
+Still, verify the latest consolidated text and Commission timeline before shipping.
 
 ### GPAI model obligations
 
@@ -144,7 +144,7 @@ ISO/IEC 42001:2023 is the international management-system standard for organizat
 or use AI systems.
 The official ISO page describes it as specifying requirements for establishing, implementing, maintaining,
 and continually improving an AI management system:
-<https://www.iso.org/standard/81231.html>.
+<https://www.iso.org/standard/42001>.
 
 For builders, ISO/IEC 42001 is useful vocabulary for operational evidence:
 policy, roles, risk assessment, impact assessment, supplier controls, monitoring, audit, and continual

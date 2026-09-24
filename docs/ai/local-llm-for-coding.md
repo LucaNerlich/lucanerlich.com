@@ -1,3 +1,15 @@
+---
+title: Local & offline Copilot alternative
+description: How to run a local coding assistant with Ollama, Continue, and Open WebUI, including model roles, reranking, context limits, and security notes.
+tags: [ai, local-models, ollama, coding]
+keywords:
+    - local copilot alternative
+    - continue dev ollama
+    - offline coding assistant
+    - ollama coding model
+    - local code assistant
+---
+
 # How to set up a local & offline GitHub Copilot alternative
 
 This guide sets up a local **coding assistant** inside your editor. If you instead want to run a local model
@@ -25,6 +37,21 @@ offline development, the tooling is now good enough to use daily.
     - https://plugins.jetbrains.com/plugin/22707-continue
     - https://marketplace.visualstudio.com/items?itemName=Continue.continue
 3. Optionally, use [OpenWebUI](https://docs.openwebui.com) via Docker as an Interface for Chatting
+
+:::warning
+Keep Ollama, LM Studio, and Open WebUI bound to localhost unless you add authentication and network controls.
+Ollama binds to `127.0.0.1:11434` by default, but `OLLAMA_HOST=0.0.0.0:11434` exposes it. LM Studio API
+tokens are off by default. Open WebUI authentication is on by default through `WEBUI_AUTH=True`; do not set
+`WEBUI_AUTH=False` on a shared or exposed instance. See the full security note in
+[Build a Local LLM App](./local-llm-app.md).
+:::
+
+:::note
+Coding assistants can fill context quickly with files, diffs, and repo maps. Ollama's effective context window
+now depends on version and VRAM; configure it with `OLLAMA_CONTEXT_LENGTH`, API `num_ctx`, or a Modelfile only
+after checking memory. See [Build a Local LLM App](./local-llm-app.md) and
+[Serving LLMs at Scale](./llm-serving.md).
+:::
 
 ## Model Setup
 
@@ -57,12 +84,13 @@ offline development, the tooling is now good enough to use daily.
       ```bash
       ollama pull qwen3:30b-a3b
       ```
-4. Reranking Model
-   ```bash
-   ollama pull qllama/bge-reranker-v2-m3
-   ```
-    - https://docs.continue.dev/customize/model-roles/reranking
-    - https://ollama.com/qllama/bge-reranker-v2-m3
+4. Optional reranking model
+    - Continue's [reranking docs](https://docs.continue.dev/customize/model-roles/reranking) document Voyage,
+      Cohere, LLM-based reranking, and Hugging Face Text Embeddings Inference (TEI).
+    - They explicitly warn that the LLM fallback does **not** work with local models such as Ollama because too
+      many parallel requests are required.
+    - For a local setup, run a TEI reranker separately and use the `huggingface-tei` config shown below, or omit
+      the reranker until you have a measured need for it.
 5. Update continue.dev `config.yaml` -> [see here](#suggested-continuedev-config)
 6. Run ollama api locally
     ```bash
@@ -132,6 +160,14 @@ or via the chat-sidebar tab
 - Unix: `~/.continue/config.yaml`
 - Windows: `%USERPROFILE%\.continue\config.yaml`
 
+:::note
+Continue's current codebase/documentation awareness guide says the old `@Codebase` and `@Docs` context
+providers are deprecated in favor of Agent mode tools, project rules, and MCP servers. Continue's deprecated
+codebase reference also covers `@Folder`. Use built-in file/search/repo-map tools and `.continue/rules` for
+project context; use MCP servers such as Context7 or custom internal docs servers when documentation retrieval
+must be tool-backed.
+:::
+
 ```yaml title="~/.continue/config.yaml"
 name: Local Ollama
 version: 0.0.1
@@ -169,9 +205,11 @@ models:
       model: nomic-embed-text
       roles:
           - embed
-    - name: BGE Reranker v2 M3
-      provider: ollama
-      model: qllama/bge-reranker-v2-m3
+    - name: BGE Reranker via TEI
+      provider: huggingface-tei
+      model: tei
+      apiBase: http://localhost:8080
+      apiKey: tei
       roles:
           - rerank
 
@@ -210,10 +248,12 @@ context:
     - provider: terminal
     - provider: open
     - provider: repo-map
-    - provider: docs
+    - provider: tree
+    - provider: problems
+    - provider: os
     - provider: web
     - provider: url
-    - provider: os
+    - provider: docs # legacy @Docs; see the deprecation note above
 
 docs:
     - name: aem.live
@@ -231,3 +271,10 @@ docs:
     - name: react spectrum
       startUrl: https://react-spectrum.adobe.com/index.html
 ```
+
+## See also
+
+- [Build a Local LLM App](./local-llm-app.md) - Ollama, LM Studio, Open WebUI, and local API security
+- [Cloud vs Local Models](./cloud-vs-local.md) - choosing local, self-hosted, or managed models
+- [Serving LLMs at Scale](./llm-serving.md) - context length, KV cache, batching, and serving trade-offs
+- [Multimodal & Voice](./multimodal-and-voice.md) - images, documents, audio, and realtime voice agents

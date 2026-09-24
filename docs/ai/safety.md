@@ -35,7 +35,13 @@ policy description alongside the input. Two architectural patterns dominate:
   each policy independently.
 
 Major open-source families: **Llama Guard** (Meta), **ShieldGemma** (Google), **Granite Guardian** (IBM),
-and **Aegis** (NVIDIA). Managed options include **Bedrock Guardrails** (see
+and NVIDIA **NemoGuard / Nemotron** content-safety models such as
+[Llama 3.1 NemoGuard 8B ContentSafety NIM](https://docs.nvidia.com/nim/llama-3-1-nemoguard-8b-contentsafety/latest/index.html).
+NVIDIA's **Aegis** name refers to the
+[Aegis / Nemotron content-safety dataset](https://huggingface.co/datasets/nvidia/Aegis-AI-Content-Safety-Dataset-2.0),
+not to the programmable guardrail framework. That framework is
+[NeMo Guardrails](https://docs.nvidia.com/nemo/guardrails/latest/), a rails library and microservice for
+LLM applications. Managed options include **Bedrock Guardrails** (see
 [Cloud vs Local Models](./cloud-vs-local.md#enterprise-cloud-options)).
 
 ### What guardrails get right - and wrong
@@ -46,12 +52,15 @@ limits - worth knowing so you do not over-trust a single guardrail:
 
 1. **Recall is the bottleneck.** Guardrails systematically favor precision (few false positives) at the cost
    of missing genuinely unsafe content.
-2. **Poor generalization to unseen policies.** Moving from a standard taxonomy to a domain-specific one can
-   drop F1 by 24+ points - sometimes below the model's own non-safety-tuned base model.
+2. **Poor generalization to unseen policies.** The ACL 2026 paper
+   [Domain Generalizable AI Guardrails with Augmented Policy Training](https://aclanthology.org/2026.acl-long.748/)
+   finds that fine-tuned guardrails can overfit their training policies and adapt poorly to new domains.
 3. **Prompt extension is not enough.** Bolting new categories onto the policy prompt tends to either not
    improve recall or trade recall for large false-positive spikes.
-4. **Domain-specific risks are nearly invisible.** In financial-services red-teaming, evaluated guardrails
-   caught roughly a third or less of unsafe queries even with extended taxonomies.
+4. **Domain-specific risks are nearly invisible.** In the financial-services study
+   [Understanding and Mitigating Risks of Generative AI in Financial Services](https://arxiv.org/abs/2504.20086),
+   off-the-shelf guardrails show low recall on domain-specific unsafe queries, even when prompts are expanded.
+   Measure recall on your own domain red-team set before relying on one.
 
 Mitigations split into training-time (e.g. perturbing policies during training so the model attends to the
 supplied policy text rather than memorizing one taxonomy) and deployment-time (multi-layer strategies,
@@ -74,7 +83,37 @@ ignoring its original instructions.
 
 For agents this compounds: a single user turn fans out to many tool calls, and an injected instruction can
 trigger real-world actions. Constrain what tools exist and what they may do, and treat tool inputs/outputs
-as untrusted (see [Agents](./agents.md#what-makes-agents-hard)).
+as untrusted (see [Agents](./agents.md#what-makes-agents-hard) and the dedicated
+[Agent Security](./agent-security.md) page).
+
+## OWASP Top 10 for LLM Applications (2025)
+
+Prompt injection is only the first entry. The archived
+[OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
+and its [source files](https://github.com/OWASP/www-project-top-10-for-large-language-model-applications/tree/main/2_0_vulns)
+are a useful checklist for threat modeling any LLM feature:
+
+| ID and name | Site coverage |
+|---|---|
+| **LLM01:2025 Prompt Injection** | [Agent Security](./agent-security.md), [RAG](./rag.md), and this page |
+| **LLM02:2025 Sensitive Information Disclosure** | [Privacy & Data Handling](./privacy-and-data.md) |
+| **LLM03:2025 Supply Chain** | [Agent Security](./agent-security.md) and [Model Selection](./model-selection.md) |
+| **LLM04:2025 Data and Model Poisoning** | [Eval Datasets & Synthetic Data](./eval-datasets-and-synthetic-data.md), [Fine-Tuning](./fine-tuning.md), and [RAG](./rag.md) |
+| **LLM05:2025 Improper Output Handling** | [Structured Outputs](./structured-outputs.md) |
+| **LLM06:2025 Excessive Agency** | [Agent Security](./agent-security.md) and [Human-in-the-Loop](./human-in-the-loop.md) |
+| **LLM07:2025 System Prompt Leakage** | [Privacy & Data Handling](./privacy-and-data.md) and [Prompt Engineering](./prompt-engineering.md) |
+| **LLM08:2025 Vector and Embedding Weaknesses** | [Embeddings](./embeddings.md) and [RAG](./rag.md) |
+| **LLM09:2025 Misinformation** | [Large Language Models](./llm.md), [RAG](./rag.md), and [Evaluation and LLMOps](./evaluation-and-llmops.md) |
+| **LLM10:2025 Unbounded Consumption** | [Cost, Latency & Model Routing](./cost-and-latency.md) |
+
+Two entries are easy to underestimate. **Improper output handling** (LLM05) is classic injection with a new
+source: treat model output like user input before rendering HTML, running shell commands, or building
+queries. **System prompt leakage** (LLM07) is a design smell rather than a filter problem: never put
+credentials, internal URLs, or authorization rules in a prompt and assume they stay secret.
+
+OWASP has also published a separate
+[Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/);
+use it alongside [Agent Security](./agent-security.md) when tools can plan, act, or delegate.
 
 ## Red-teaming
 
@@ -122,6 +161,7 @@ stakes warrant it.
 
 - [Large Language Models](./llm.md#hallucination) - hallucination, the failure safety mitigations contain
 - [AI Agents](./agents.md) - why agentic systems compound safety concerns
+- [Agent Security](./agent-security.md) - indirect prompt injection, tool poisoning, exfiltration, and sandboxing
 - [Privacy & Data Handling](./privacy-and-data.md) - PII, logging, and data residency (distinct from attacks)
 - [Human-in-the-Loop](./human-in-the-loop.md) - approval and audit for high-impact actions
 - [RAG](./rag.md) - grounding as a safety mitigation; also an injection vector

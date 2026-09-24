@@ -1,6 +1,6 @@
 ---
 title: Serving LLMs at Scale
-description: How production LLM serving works: prefill, decode, KV cache sizing, batching, prefix reuse, speculative decoding, quantization, parallelism, engines, autoscaling, and benchmarks.
+description: How production LLM serving works, covering prefill, decode, KV cache sizing, batching, prefix reuse, speculative decoding, quantization, parallelism, engines, autoscaling, and benchmarks.
 tags: [ai, llm-serving, inference, deployment]
 keywords:
     - llm serving
@@ -102,8 +102,8 @@ wasted memory from fragmentation and makes continuous batching practical for man
 
 Prefix caching reuses already-computed KV blocks when requests share the same leading tokens. It helps
 chatbots with stable system prompts, agents with stable tool definitions, RAG apps with repeated documents,
-and retries. vLLM V1 documents prefix caching as enabled by default, and the CLI still documents
-`--enable-prefix-caching` for explicit setups.
+and retries. vLLM's Automatic Prefix Caching docs say to set `enable_prefix_caching=True`; the `vllm serve`
+CLI exposes this as `--enable-prefix-caching`.
 
 Keep stable content first and dynamic content last. The same layout also improves provider-side prompt
 caching; see [Cost, Latency & Model Routing](./cost-and-latency.md).
@@ -111,9 +111,10 @@ caching; see [Cost, Latency & Model Routing](./cost-and-latency.md).
 ### Chunked prefill
 
 Chunked prefill splits a long prompt into smaller prefill chunks so decode steps from existing users can
-run between chunks. vLLM documents chunked prefill as a tuning lever for balancing TTFT, TPOT, and GPU
-utilization in long-context workloads. It is especially useful when short chats and long RAG prompts share
-the same serving pool.
+run between chunks. vLLM V1 documents chunked prefill as enabled by default whenever possible, with
+`max_num_batched_tokens` as the main tuning lever for balancing TTFT, TPOT, and GPU utilization in
+long-context workloads. It is especially useful when short chats and long RAG prompts share the same serving
+pool.
 
 ### Speculative decoding
 
@@ -124,6 +125,9 @@ passes. Current vLLM docs cover several proposer families:
 - **EAGLE** - a learned feature-level proposer family for speculative decoding.
 - **N-gram** - a lightweight proposer that looks for repeated n-grams in the prompt or context.
 - **MTP** - multi-token prediction when the target model architecture exposes native multi-token heads.
+
+The same vLLM docs also describe PARD, MLP, suffix, custom proposer, dynamic, and adaptive verification
+paths; support is version-specific, so check your installed vLLM release before copying flags.
 
 The win depends on acceptance rate, draft overhead, target model size, and current load. Benchmark it on
 your own prompts before enabling it globally.
@@ -152,7 +156,8 @@ together; a smaller memory footprint is not useful if it breaks your eval set.
 Disaggregated prefill/decode moves prompt processing and token generation onto separate workers and
 transfers KV cache between them. vLLM documents this as experimental disaggregated prefilling, and PyTorch
 has published a vLLM-based disaggregated inference architecture. It is operationally more complex than one
-replica per model, so start with unified serving unless you have clear latency pressure.
+replica per model, and vLLM's guide explicitly warns that the example does not improve throughput, so start
+with unified serving unless you have clear latency pressure.
 
 ## Serving engines
 

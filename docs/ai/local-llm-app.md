@@ -33,6 +33,39 @@ OpenAI API can speak to a local model.
 
 Pick whichever you prefer; the [app code below](#write-a-simple-app) works with both.
 
+## Security: localhost is not an auth boundary
+
+:::warning
+Do not expose a local model server unless you have added network access control.
+:::
+
+Ollama's [FAQ](https://docs.ollama.com/faq) says the local server binds to `127.0.0.1:11434` by default and
+can be exposed by setting `OLLAMA_HOST`, for example `OLLAMA_HOST=0.0.0.0:11434`. Ollama's
+[API introduction](https://docs.ollama.com/api) also says local inference uses `http://localhost:11434` and
+omits the authorization header; in other words, the local server should be treated as unauthenticated unless
+you put something in front of it.
+
+LM Studio's [server docs](https://lmstudio.ai/docs/developer/core/server) say its server can run on
+`localhost` or on the network. Its [authentication docs](https://lmstudio.ai/docs/developer/core/authentication)
+say API tokens are supported, but authentication is **off by default** and must be enabled in Developer ->
+Server Settings. Its [network-serving docs](https://lmstudio.ai/docs/developer/core/server/serve-on-network)
+explicitly warn that any bind other than `127.0.0.1` exposes the server beyond localhost and recommend
+enabling authentication.
+
+Open WebUI adds a web application in front of your models. Its current
+[environment reference](https://docs.openwebui.com/reference/env-configuration/) documents `WEBUI_AUTH` as
+`True` by default; setting `WEBUI_AUTH=False` disables authentication and is only possible for fresh
+installations without existing users. If you publish Open WebUI with Docker port mappings such as
+`-p 3000:8080`, protect it like any other web app.
+
+Safe patterns:
+
+- Keep Ollama and LM Studio bound to `127.0.0.1` for laptop development.
+- If another device needs access, prefer a VPN or Tailscale instead of a public bind.
+- If you must bind to `0.0.0.0`, add a firewall allowlist and a reverse proxy with TLS and authentication.
+- Enable LM Studio API tokens before using **Serve on Local Network**.
+- Keep Open WebUI authentication enabled; use SSO or a reverse proxy if exposing it beyond one machine.
+
 ## Option A: Ollama
 
 [Ollama](https://ollama.com/download) is the simplest way to run open-weights models from the terminal.
@@ -267,6 +300,27 @@ print(resp.choices[0].message.content)
 - **Streaming on/off** - set `"stream": false` to get the whole response in one JSON object instead of
   token-by-token.
 
+### Context length and memory
+
+Do not assume an old fixed Ollama context default. Ollama's current
+[context-length page](https://docs.ollama.com/context-length) says defaults are VRAM-based (`< 24 GiB` ->
+4k, `24-48 GiB` -> 32k, `>= 48 GiB` -> 256k), while the [FAQ](https://docs.ollama.com/faq) still describes
+4096 tokens as the default context window. Treat the effective context as version- and hardware-dependent
+and check `ollama ps`, whose `CONTEXT` column shows what is actually allocated for a loaded model.
+
+Ways to set context length:
+
+- Set the server default with `OLLAMA_CONTEXT_LENGTH=64000 ollama serve`.
+- Use `/set parameter num_ctx 4096` in `ollama run`.
+- Send API options such as `"options": {"num_ctx": 4096}`.
+- Put `PARAMETER num_ctx 4096` in a [Modelfile](https://docs.ollama.com/modelfile) when creating a derived model.
+
+Long context is not free. KV-cache memory grows with live context and parallel requests; Ollama's FAQ notes
+that required RAM scales with `OLLAMA_NUM_PARALLEL * OLLAMA_CONTEXT_LENGTH`. For the serving-side memory
+model, see [Serving LLMs at Scale](./llm-serving.md#kv-cache-memory-sizing). Ollama also documents
+`OLLAMA_FLASH_ATTENTION` and `OLLAMA_KV_CACHE_TYPE` (`f16`, `q8_0`, `q4_0`) as memory/performance levers,
+but you should benchmark quality and latency on your own prompts before changing them globally.
+
 ## CORS and the browser {#cors-and-the-browser}
 
 The Node CLI talks to `localhost` directly, so it never hits CORS. A **browser** app served from a different
@@ -294,6 +348,8 @@ exact origin, rather than opening the file directly.
 
 - [Cloud vs Local Models](./cloud-vs-local.md) - when to run locally vs in the cloud, and how to size a model
 - [Local & offline Copilot alternative](./local-llm-for-coding.md) - a local coding assistant (Ollama + Continue.dev)
+- [Serving LLMs at Scale](./llm-serving.md) - context length, KV cache, batching, and serving trade-offs
+- [Multimodal & Voice](./multimodal-and-voice.md) - images, documents, audio, and realtime voice agents
 - [Large Language Models](./llm.md) - what the model is doing under the hood
 - [RAG](./rag.md) - add your own documents to a local app
 - [AI Glossary](./glossary.md) - open-weights, quantization, inference, and more

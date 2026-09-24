@@ -137,13 +137,15 @@ Eval is not a pre-launch gate. Wire it into the production loop:
 ### Tracing GenAI calls with OpenTelemetry
 
 LLMOps telemetry should connect eval scores to concrete model calls. The OpenTelemetry
-[GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) define common span and
-metric attributes for LLM and embedding calls. As of this page's 2026 update, the GenAI conventions are still
-marked **Development** in OpenTelemetry's semantic-convention process, so treat them as useful but changeable
-and pin your instrumentation version.
+[GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai) define common
+spans, metrics, and events for LLM and embedding calls. As of this page's 2026 update, the GenAI conventions
+are still marked **Development** in OpenTelemetry's semantic-convention process, so treat them as useful but
+changeable and pin your instrumentation version. The older `opentelemetry.io` registry pages now mark GenAI
+entries as moved because the canonical definitions live in that repository.
 
 Useful attributes from the official
-[GenAI attribute registry](https://opentelemetry.io/docs/specs/semconv/registry/attributes/gen-ai/) include:
+[GenAI span conventions](https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/gen-ai-spans.md)
+include:
 
 | Attribute | Use |
 |---|---|

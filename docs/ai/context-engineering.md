@@ -84,8 +84,9 @@ and maintaining the optimal set of tokens across *many turns* of inference, not 
 ## Context rot: the constraint behind the techniques
 
 **[Context rot](./glossary.md#context-rot)** is the empirical phenomenon that as the number of tokens grows,
-the model's ability to accurately recall information from the context *decreases* - "needle-in-a-haystack
-degradation". Two contributors often stack:
+the model's ability to accurately use information from the context can *decrease*, especially on tasks that
+require semantic matching, distractor resistance, or multi-step use of long input. Two contributors often
+stack:
 
 1. **O(n^2) attention.** In standard transformer attention, each token compares with every allowed token, so
    compute and interference grow quickly with sequence length.

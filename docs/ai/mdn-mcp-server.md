@@ -25,7 +25,7 @@ The MDN MCP server solves this by giving your tools a real-time lookup channel:
 - **Browser support data** grounded in BCD (Browser Compatibility Data), MDN's compatibility dataset that
   also feeds parts of Can I Use
 - **Up-to-date documentation** -- spec changes, deprecations, and new APIs appear as MDN publishes them
-- **Faster answers** -- structured MCP responses are roughly 2× faster than the model reasoning from memory alone
+- **Faster answers in MDN's own comparison** -- MDN reported that Claude Code responses using the server were [roughly twice as fast](https://developer.mozilla.org/en-US/blog/introducing-mdn-mcp-server/#what_difference_does_the_mcp_make) in a small experiment; treat that as directional, not a general benchmark
 
 ## Setup
 
@@ -117,6 +117,7 @@ Queries sent to the MDN MCP server are processed by Mozilla's infrastructure. Re
 
 ## See also
 
+- [MCP & A2A in Production](./mcp-and-a2a-in-production.md) - current MCP transport, authorization, registry, and security guidance
 - [AI Agents](./agents.md#mcp-model-context-protocol) - how MCP works and the N+M problem it solves
 - [Tooling and Frameworks](./tooling.md#connectivity-protocols) - MCP, A2A, and the broader connectivity stack
 - [AI-Assisted Development](./ai-assisted-development.md) - practical patterns for using AI tools in a dev workflow

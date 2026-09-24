@@ -110,11 +110,13 @@ measure retrieval plus answer quality.
 | Recursive / structure-aware | Split by Markdown headings, HTML sections, paragraphs, functions, or classes before falling back to size | Docs, code, legal text, web pages | Needs parsers and source-specific rules |
 | Semantic chunking | Split where embedding/topic similarity changes | Long narrative docs with topic shifts | More expensive and harder to reproduce |
 | Parent-child / small-to-big | Retrieve small child chunks, then pass the containing section or page to the model | Precise retrieval with enough context to answer | Requires stable parent IDs and deduplication |
-| Contextual retrieval | Prepend an LLM-written, document-aware context sentence to each chunk before embedding | Enterprise docs where chunks lose local meaning | Adds indexing cost; verify context does not introduce facts |
+| Contextual retrieval | Prepend an LLM-written, document-aware context snippet to each chunk before embedding | Enterprise docs where chunks lose local meaning | Adds indexing cost; verify context does not introduce facts |
 | Late chunking | Encode a long document first, then pool token spans into chunk embeddings | Long-context embedding models and cross-chunk references | Model/API support varies; benchmark before adopting |
 
 [Anthropic's Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval) describes
-adding chunk-specific context before embedding. [Jina's late chunking work](https://jina.ai/blog/late-chunking/)
+adding 50--100 tokens of chunk-specific context before embedding and BM25 indexing. In Anthropic's internal
+top-20 retrieval-failure metric, contextual embeddings reduced failures by 35%, contextual embeddings plus
+contextual BM25 by 49%, and contextual retrieval plus reranking by 67%. [Jina's late chunking work](https://jina.ai/blog/late-chunking/)
 describes pooling chunk vectors after a long-context embedding pass. Both address the same failure mode:
 isolated chunks often lose the document context needed to retrieve or interpret them.
 
@@ -140,18 +142,19 @@ Retrieval metrics:
 - **precision@k** - fraction of the top k results that are relevant.
 - **hit rate** - whether at least one relevant result appears in the top k.
 - **MRR** - mean reciprocal rank of the first relevant result; rewards putting the first hit early.
-- **nDCG** - graded ranking quality; rewards highly relevant results near the top.
+- **nDCG** - normalized discounted cumulative gain; a graded ranking score that rewards highly relevant
+  results near the top.
 
 Generation metrics:
 
 - **faithfulness / groundedness** - answer claims are supported by retrieved context.
-- **answer relevance** - answer addresses the user question.
+- **response relevance** - answer addresses the user question.
 - **context precision / context recall** - retrieved context is useful and complete enough for the answer.
 - **citation accuracy** - cited chunks actually support the cited claims.
 
-Tools such as [Ragas](https://docs.ragas.io/) expose metrics named faithfulness, answer relevancy,
-context precision, and context recall. Treat LLM-as-judge metrics as diagnostics, not a substitute for
-golden-answer tests and human review on high-risk flows.
+Tools such as [Ragas](https://docs.ragas.io/) expose metrics named Faithfulness, Response Relevancy
+(`AnswerRelevancy` in code examples), Context Precision, and Context Recall. Treat LLM-as-judge metrics as
+diagnostics, not a substitute for golden-answer tests and human review on high-risk flows.
 
 ## Production levers
 

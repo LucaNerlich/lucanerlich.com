@@ -95,7 +95,9 @@ system.
 
 ## Protocols: connecting agents to tools and to each other
 
-Two open standards form the connectivity stack for agent networks:
+Two open standards form the connectivity stack for agent networks. Production transport, authorization,
+registry, and security details live in [MCP & A2A in Production](./mcp-and-a2a-in-production.md);
+agent-specific risks are covered in [Agent Security](./agent-security.md).
 
 ```mermaid
 flowchart LR
@@ -140,7 +142,8 @@ uses both.
 - **Tool selection** - bloated tool sets confuse models; if a human cannot pick the right tool, neither
   can the model.
 - **Trust and verification** - agents that discover new tools/servers at runtime need governance to
-  avoid connecting to untrusted servers; prompt injection is the top agent security risk.
+  avoid connecting to untrusted servers; prompt injection and tool poisoning are covered in
+  [Agent Security](./agent-security.md).
 - **Operations** - every turn fans out to many model and tool calls, so [LLMOps](./tooling.md) (tracing,
   evaluation, cost control) becomes load-bearing. See [Tooling](./tooling.md) for the framework and
   observability landscape.
@@ -150,6 +153,8 @@ uses both.
 - [Large Language Models](./llm.md) - the model an agent loop is built around
 - [Human-in-the-Loop](./human-in-the-loop.md) - approval gates and maker-checker in production
 - [RAG](./rag.md) - retrieval as a (often tool-driven) way to ground answers
+- [MCP & A2A in Production](./mcp-and-a2a-in-production.md) - production protocol guidance for tool and agent connectivity
+- [Agent Security](./agent-security.md) - prompt injection, tool poisoning, and approval controls
 - [Tooling and Frameworks](./tooling.md) - LangGraph, CrewAI, ADK, MCP servers, observability
 - [Cloud vs Local Models](./cloud-vs-local.md) - where agent models run
 - [AI Glossary](./glossary.md) - definitions of agent, tool use, MCP, A2A, and more

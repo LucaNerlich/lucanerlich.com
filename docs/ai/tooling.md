@@ -44,8 +44,7 @@ flowchart TB
 
 Frameworks provide building blocks for [agents](./agents.md) and multi-agent systems - they do **not**
 provide a production system. The gap from prototype to handling real traffic (integrations,
-observability, failure handling, evaluation) is typically 3--6 months of engineering regardless of
-framework.
+observability, failure handling, evaluation) is substantial regardless of framework.
 
 | Framework | Orchestration model | State | Cross-framework | Best for |
 |---|---|---|---|---|
@@ -62,14 +61,15 @@ A few rules of thumb:
 - **State management is the most common production failure.** LangGraph checkpoints every transition, so
   state survives failures and can resume; CrewAI/AutoGen-style conversations need extra persistence, while
   OpenAI and Claude SDK session layers still require you to design recovery deliberately.
-- **CrewAI is fastest to a demo** ("a working multi-agent system in under 20 lines") but rigid at scale.
+- **CrewAI is fastest to a demo** because its abstractions and CLI scaffolding make role-based crews quick to prototype, but it can be rigid at scale.
 - **Google ADK has documented A2A support**, making it a strong pick for heterogeneous, multi-team agent
   ecosystems.
 - **AutoGen's conversational model is expensive** - a 4-agent, 5-round debate is 20+ LLM calls minimum.
 
 ## Connectivity protocols
 
-Two open standards (covered in detail under [Agents](./agents.md#protocols-connecting-agents-to-tools-and-to-each-other))
+Two open standards (introduced under [Agents](./agents.md#protocols-connecting-agents-to-tools-and-to-each-other)
+and covered in production detail in [MCP & A2A in Production](./mcp-and-a2a-in-production.md))
 form the connectivity stack:
 
 - **MCP (Model Context Protocol)** - agent to tools/data. Build a tool server once; any MCP-compatible
@@ -136,6 +136,7 @@ model and tool calls.
 
 ## See also
 
+- [MCP & A2A in Production](./mcp-and-a2a-in-production.md) - transport, authorization, registry, and security guidance for agent protocols
 - [MDN MCP Server](./mdn-mcp-server.md) - setup guide for Mozilla's live browser compatibility MCP server
 - [Cost, Latency & Model Routing](./cost-and-latency.md) - token economics, caching, and model routing
 - [Structured Outputs](./structured-outputs.md) - schema validity as an eval scorer
