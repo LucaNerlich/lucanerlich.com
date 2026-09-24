@@ -36,9 +36,16 @@ The three most common bottlenecks:
 
 ## Response caching
 
+Strapi 5 does not include a built-in REST response cache. Add caching deliberately with HTTP/CDN cache headers, custom
+middleware, or a Strapi 5-compatible third-party plugin that you have verified for your project.
+
 ### In-memory cache (simple, single-instance)
 
 Good for small projects, no external dependencies:
+
+This pattern is intentionally single-instance. With multiple Strapi replicas, in-memory caches diverge unless you add
+Redis pub/sub, shared keys, or another invalidation channel; see
+[Running Strapi on multiple instances](./scaling-multiple-instances.md).
 
 ```js
 // src/api/article/middlewares/cache.js
@@ -99,6 +106,19 @@ const Redis = require('ioredis');
 
 let redis;
 
+async function deleteByPattern(pattern) {
+  let cursor = '0';
+
+  do {
+    const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+    cursor = nextCursor;
+
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+  } while (cursor !== '0');
+}
+
 module.exports = (config, { strapi }) => {
   const ttl = config.ttl || 60;  // seconds
   const prefix = config.prefix || 'strapi:cache:';
@@ -112,8 +132,7 @@ module.exports = (config, { strapi }) => {
       await next();
       // Invalidate related cache on writes
       const pattern = `${prefix}${ctx.url.split('?')[0]}*`;
-      const keys = await redis.keys(pattern);
-      if (keys.length) await redis.del(...keys);
+      await deleteByPattern(pattern);
       return;
     }
 
@@ -174,6 +193,19 @@ module.exports = createCoreRouter('api::article.article', {
 const Redis = require('ioredis');
 const redis = new Redis(process.env.REDIS_URL);
 
+async function deleteByPattern(pattern) {
+  let cursor = '0';
+
+  do {
+    const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+    cursor = nextCursor;
+
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+  } while (cursor !== '0');
+}
+
 module.exports = {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
@@ -184,11 +216,8 @@ module.exports = {
         const apiName = context.uid.split('.').pop();
         const pattern = `${prefix}/api/${apiName}*`;
 
-        const keys = await redis.keys(pattern);
-        if (keys.length) {
-          await redis.del(...keys);
-          strapi.log.debug(`[cache] Invalidated ${keys.length} keys for ${context.uid}`);
-        }
+        await deleteByPattern(pattern);
+        strapi.log.debug(`[cache] Invalidated cache keys for ${context.uid}`);
       }
 
       return result;
@@ -230,16 +259,11 @@ module.exports = {
       table.index('author_id');
     });
   },
-
-  async down(knex) {
-    await knex.schema.alterTable('articles', (table) => {
-      table.dropIndex('slug');
-      table.dropIndex('published_at');
-      table.dropIndex(['locale', 'slug']);
-    });
-  },
 };
 ```
+
+Strapi 5 migrations support `up(knex)` only. There is no automatic `down()` rollback hook; write a new migration if you
+need to revert a schema change.
 
 ### Connection pooling
 
@@ -324,9 +348,50 @@ const all = await strapi.documents('api::article.article').findMany({});
 
 // GOOD: paginate
 const page1 = await strapi.documents('api::article.article').findMany({
-  page: 1,
-  pageSize: 25,
+  start: 0,
+  limit: 25,
 });
+```
+
+For REST endpoints, cap default and maximum page sizes in `config/api.js`:
+
+```js
+module.exports = {
+  rest: {
+    defaultLimit: 25,
+    maxLimit: 100,
+    withCount: true,
+  },
+};
+```
+
+### Enable response compression
+
+`strapi::compression` exists but is not enabled in the default middleware stack. Add it before `strapi::body` when API
+payloads are large enough to benefit from compression:
+
+```js
+// config/middlewares.js
+module.exports = [
+  'strapi::logger',
+  'strapi::errors',
+  'strapi::security',
+  'strapi::cors',
+  'strapi::poweredBy',
+  'strapi::query',
+  {
+    name: 'strapi::compression',
+    config: {
+      gzip: true,
+      br: true,
+      threshold: 1024,
+    },
+  },
+  'strapi::body',
+  'strapi::session',
+  'strapi::favicon',
+  'strapi::public',
+];
 ```
 
 ---

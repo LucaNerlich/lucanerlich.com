@@ -13,15 +13,20 @@ seeding.
 
 ## Strapi transfer (built-in)
 
-Strapi 5 includes `strapi transfer` for moving data between instances.
+Strapi 5 includes `strapi transfer` for moving data directly between two running instances. Use it when source and
+destination run compatible project code, content-type schemas, plugins, and Strapi versions.
 
 ### Setup
 
-The **destination** instance needs a transfer token:
+The remote instance needs a transfer token: the **destination** needs one for a push, and the **source** needs one for a
+pull.
 
 1. In the admin panel: **Settings > Transfer Tokens > Create new Transfer Token**
 2. Choose scope: **Push** (receive data) or **Full Access**
 3. Copy the token
+
+Transfer token hashes use the `TRANSFER_TOKEN_SALT` value from `config/admin.*`; keep that environment variable stable
+for each environment so existing transfer tokens remain valid.
 
 ### Push data to another instance
 
@@ -39,25 +44,46 @@ npx strapi transfer --from https://production.example.com/admin \
   --from-token YOUR_TRANSFER_TOKEN
 ```
 
+> **Destructive operation:** `strapi transfer` replaces the destination data groups being transferred. Back up the
+> destination first and use `--force` only in scripted workflows where you already have a backup.
+
 ### Options
 
 ```bash
 # Only transfer specific content
 npx strapi transfer --to https://staging.example.com/admin \
   --to-token TOKEN \
-  --only content    # Only content entries (no config, no schemas)
+  --only content    # Only content entries; schemas are still checked
 
 # Exclude specific data
 npx strapi transfer --to https://staging.example.com/admin \
   --to-token TOKEN \
   --exclude files   # Don't transfer media files
+
+# Slow down requests if a remote host or proxy is rate-limiting the transfer
+npx strapi transfer --to https://staging.example.com/admin \
+  --to-token TOKEN \
+  --throttle 100
 ```
 
-| Flag        | Values                       | Description                        |
-|-------------|------------------------------|------------------------------------|
-| `--only`    | `content`, `files`, `config` | Transfer only specified data types |
-| `--exclude` | `content`, `files`, `config` | Exclude specified data types       |
-| `--force`   | -                            | Skip confirmation prompts          |
+| Flag           | Values                       | Description                                            |
+|----------------|------------------------------|--------------------------------------------------------|
+| `--from`       | URL                          | Remote source URL for pulling into the local instance  |
+| `--to`         | URL                          | Remote destination URL for pushing local data          |
+| `--from-token` | token                        | Transfer token for the remote source                   |
+| `--to-token`   | token                        | Transfer token for the remote destination              |
+| `--only`       | `content`, `files`, `config` | Transfer only the listed data types                    |
+| `--exclude`    | `content`, `files`, `config` | Exclude the listed data types                          |
+| `--force`      | -                            | Skip destructive-operation confirmation prompts        |
+| `--throttle`   | milliseconds                 | Add a delay between each transferred entity            |
+
+`content` covers entries and relations, `files` covers Media Library assets, and `config` covers Strapi-managed project
+configuration. Schema metadata is included for strict schema matching, but a transfer is not a replacement for
+deploying code-level content-type and plugin changes. The transfer does **not** move admin users, API tokens, or
+transfer tokens; deploy the same project code and plugin set to both environments first.
+
+Media Library database records belong to `content`; `files` controls the binary assets. For example, `--exclude files`
+does not remove media records from transferred content, but the records can point to assets that were not copied.
 
 ---
 
@@ -72,6 +98,12 @@ npx strapi export --file my-backup
 # Without encryption
 npx strapi export --file my-backup --no-encrypt
 
+# Without gzip compression
+npx strapi export --file my-backup --no-compress
+
+# Reuse a known encryption key instead of the generated key
+npx strapi export --file my-backup --key "$STRAPI_EXPORT_KEY"
+
 # Only content
 npx strapi export --file content-backup --no-encrypt --only content
 ```
@@ -84,7 +116,29 @@ npx strapi import --file my-backup.tar.gz.enc
 
 # Without encryption
 npx strapi import --file my-backup.tar.gz
+
+# Encrypted backup with a known key
+npx strapi import --file my-backup.tar.gz.enc --key "$STRAPI_EXPORT_KEY"
 ```
+
+`strapi import` is also destructive: it deletes the destination data groups being imported before loading the archive.
+Groups left out with `--only` or `--exclude` are preserved. Keep imports for fresh environments, restore drills, or
+well-tested maintenance windows.
+
+| Flag            | Commands          | Description                                          |
+|-----------------|-------------------|------------------------------------------------------|
+| `--file`        | export, import    | Archive base name on export; archive path on import  |
+| `--no-encrypt`  | export            | Write an unencrypted archive                         |
+| `--no-compress` | export            | Write an uncompressed archive                        |
+| `--key`         | export, import    | Encryption key to create or read encrypted archives  |
+| `--only`        | export, import    | Include only `content`, `files`, and/or `config`     |
+| `--exclude`     | export, import    | Exclude `content`, `files`, and/or `config`          |
+| `--force`       | import            | Skip destructive-operation confirmation prompts      |
+
+Export/import archives include content, Media Library files, Strapi-managed configuration, and schemas for matching.
+The `--only` and `--exclude` values control `content`, `files`, and `config`; schemas are still exported for import
+checks. Archives do not include admin users, API tokens, transfer tokens, or plugin source code. Import into a project
+running the same Strapi version and matching schemas.
 
 ---
 
@@ -278,14 +332,28 @@ module.exports = ({ strapi }) => ({
 
   async exportToJSON(uid, options = {}) {
     const { locale, status = 'published', fields, populate } = options;
+    const pageSize = 100;
+    const documents = [];
+    let start = 0;
 
-    const documents = await strapi.documents(uid).findMany({
-      locale,
-      status,
-      fields,
-      populate: populate || '*',
-      limit: -1,  // All entries
-    });
+    while (true) {
+      const batch = await strapi.documents(uid).findMany({
+        locale,
+        status,
+        fields,
+        populate: populate || '*',
+        start,
+        limit: pageSize,
+      });
+
+      documents.push(...batch);
+
+      if (batch.length < pageSize) {
+        break;
+      }
+
+      start += pageSize;
+    }
 
     return documents;
   },
@@ -315,12 +383,8 @@ module.exports = ({ strapi }) => ({
 
 ## Database migrations
 
-For schema changes that go beyond what the Content-Type Builder handles:
-
-```bash
-# Generate a migration file
-npx strapi generate migration add-reading-time
-```
+For schema changes that go beyond what the Content-Type Builder handles, create a file manually in
+`database/migrations/`. Strapi runs pending migration files once at startup, before schema sync.
 
 ```js
 // database/migrations/2025.01.15T00.00.00.add-reading-time.js
@@ -348,17 +412,11 @@ module.exports = {
       }
     }
   },
-
-  async down(knex) {
-    const hasColumn = await knex.schema.hasColumn('articles', 'reading_time');
-    if (hasColumn) {
-      await knex.schema.alterTable('articles', (table) => {
-        table.dropColumn('reading_time');
-      });
-    }
-  },
 };
 ```
+
+Strapi 5 migrations do not support `down()` rollbacks. Restore from a backup or write a new forward migration if you
+need to undo a change.
 
 ### Data-only migration (no schema change)
 
@@ -381,10 +439,6 @@ module.exports = {
           .update({ slug: normalized });
       }
     }
-  },
-
-  async down() {
-    // Data normalization cannot be cleanly reversed
   },
 };
 ```
@@ -426,7 +480,9 @@ module.exports = {
           slug: 'getting-started',
           content: '<p>Welcome to our blog!</p>',
           featured: true,
-          tags: createdTags.slice(0, 2).map(t => ({ documentId: t.documentId })),
+          tags: {
+            connect: createdTags.slice(0, 2).map(t => t.documentId),
+          },
         },
       });
 
@@ -493,7 +549,7 @@ pg_dump -h localhost -U strapi strapi_db | gzip > "$BACKUP_DIR/db-$DATE.sql.gz"
 
 # Strapi export (includes content + config)
 cd /srv/strapi
-npx strapi export --file "$BACKUP_DIR/strapi-$DATE" --no-encrypt --no-interactive
+npx strapi export --file "$BACKUP_DIR/strapi-$DATE" --no-encrypt
 
 # Upload to S3
 aws s3 cp "$BACKUP_DIR/db-$DATE.sql.gz" s3://my-backups/strapi/
@@ -510,7 +566,7 @@ find "$BACKUP_DIR" -type f -mtime +7 -delete
 | Pitfall                           | Problem                              | Fix                                                    |
 |-----------------------------------|--------------------------------------|--------------------------------------------------------|
 | Transfer without matching schemas | Data import fails or corrupts        | Deploy schema changes first, then transfer content     |
-| No `down()` in migration          | Cannot roll back                     | Always write a `down()` function                       |
+| Expecting rollback migrations     | Strapi 5 only runs forward `up()`    | Restore backup or write a new forward migration        |
 | Seeding in production             | Overwrites real data                 | Guard with `if (count === 0)` or env check             |
 | CSV encoding issues               | Special characters corrupt on import | Use UTF-8 BOM or specify encoding explicitly           |
 | Importing relations by ID         | IDs differ between environments      | Import by slug or unique field, then resolve relations |

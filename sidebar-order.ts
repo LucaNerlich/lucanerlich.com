@@ -197,7 +197,9 @@ export const sidebarOrder: Record<string, string[]> = {
         'content-modeling-patterns',
         'relations-and-population',
         'data-import-export-migration',
+        'editorial-workflow-features',
         'authentication-and-permissions',
+        'api-security-hardening',
         'custom-controllers-services',
         'custom-routes-and-endpoints',
         'middleware-and-policies',
@@ -211,6 +213,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'typescript-integration',
         'scheduled-publishing',
         'performance-and-caching',
+        'scaling-multiple-instances',
         'testing-strapi-applications',
         'configuration-and-deployment',
     ],
@@ -460,11 +463,11 @@ export const sidebarGroups: Record<string, {label: string; items: string[]}[]> =
     ],
 
     'strapi': [
-        {label: 'Content & Data', items: ['content-modeling-patterns', 'relations-and-population', 'data-import-export-migration']},
-        {label: 'API Development', items: ['authentication-and-permissions', 'custom-controllers-services', 'custom-routes-and-endpoints', 'middleware-and-policies', 'lifecycle-hooks', 'webhooks-and-integrations']},
+        {label: 'Content & Data', items: ['content-modeling-patterns', 'relations-and-population', 'data-import-export-migration', 'editorial-workflow-features']},
+        {label: 'API Development', items: ['authentication-and-permissions', 'api-security-hardening', 'custom-controllers-services', 'custom-routes-and-endpoints', 'middleware-and-policies', 'lifecycle-hooks', 'webhooks-and-integrations']},
         {label: 'Media & Headless', items: ['file-uploads-and-media', 'graphql-customization', 'i18n-multi-locale']},
         {label: 'Extensibility', items: ['admin-panel-customization', 'plugin-development', 'typescript-integration']},
-        {label: 'Operations', items: ['scheduled-publishing', 'performance-and-caching', 'testing-strapi-applications', 'configuration-and-deployment']},
+        {label: 'Operations', items: ['scheduled-publishing', 'performance-and-caching', 'scaling-multiple-instances', 'testing-strapi-applications', 'configuration-and-deployment']},
     ],
 };
 

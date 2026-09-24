@@ -42,7 +42,7 @@ formData.append('files', fileInput.files[0]);
 const response = await fetch('/api/upload', {
   method: 'POST',
   headers: {
-    Authorization: `Bearer ${jwt}`,
+    Authorization: 'Bearer <api-token>',
   },
   body: formData,
 });
@@ -57,12 +57,12 @@ console.log(uploadedFile.url);
 const formData = new FormData();
 formData.append('files', fileInput.files[0]);
 formData.append('ref', 'api::article.article');       // content type UID
-formData.append('refId', 'documentId123');             // document ID
+formData.append('refId', 'documentId123');             // entry documentId
 formData.append('field', 'cover');                     // field name
 
 const response = await fetch('/api/upload', {
   method: 'POST',
-  headers: { Authorization: `Bearer ${jwt}` },
+  headers: { Authorization: 'Bearer <api-token>' },
   body: formData,
 });
 ```
@@ -77,7 +77,7 @@ for (const file of fileInput.files) {
 
 const response = await fetch('/api/upload', {
   method: 'POST',
-  headers: { Authorization: `Bearer ${jwt}` },
+  headers: { Authorization: 'Bearer <api-token>' },
   body: formData,
 });
 
@@ -105,6 +105,8 @@ module.exports = ({ env }) => ({
     config: {
       provider: 'aws-s3',
       providerOptions: {
+        baseUrl: env('CDN_URL'),
+        rootPath: env('CDN_ROOT_PATH'),
         s3Options: {
           credentials: {
             accessKeyId: env('AWS_ACCESS_KEY_ID'),
@@ -114,6 +116,7 @@ module.exports = ({ env }) => ({
           params: {
             Bucket: env('AWS_BUCKET'),
             ACL: env('AWS_ACL', 'public-read'),
+            signedUrlExpires: env.int('AWS_SIGNED_URL_EXPIRES', 15 * 60),
           },
         },
       },
@@ -184,18 +187,44 @@ module.exports = ({ env }) => ({
 });
 ```
 
+### Content Security Policy for remote media
+
+When the admin panel loads thumbnails from S3, Cloudinary, or a CDN, allow the provider host in `strapi::security`.
+
+```js
+// config/middlewares.js
+module.exports = [
+  // ...
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'connect-src': ["'self'", 'https:'],
+          'img-src': ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', 'res.cloudinary.com', 'cdn.example.com'],
+          'media-src': ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', 'res.cloudinary.com', 'cdn.example.com'],
+          upgradeInsecureRequests: null,
+        },
+      },
+    },
+  },
+  // ...
+];
+```
+
 ---
 
 ## Image optimization and responsive formats
 
-Strapi automatically generates responsive image formats using [Sharp](https://sharp.pixelplumbing.com/):
+When the Media Library's **Responsive friendly upload** setting is enabled, Strapi generates responsive image formats
+using [Sharp](https://sharp.pixelplumbing.com/):
 
-| Format      | Max width | Default |
-|-------------|-----------|---------|
-| `thumbnail` | 245px     | Enabled |
-| `small`     | 500px     | Enabled |
-| `medium`    | 750px     | Enabled |
-| `large`     | 1000px    | Enabled |
+| Format   | Max width | Default |
+|----------|-----------|---------|
+| `small`  | 500px     | Enabled |
+| `medium` | 750px     | Enabled |
+| `large`  | 1000px    | Enabled |
 
 ### Customizing breakpoints
 
@@ -209,7 +238,7 @@ module.exports = () => ({
         large: 1200,
         medium: 768,
         small: 480,
-        thumbnail: 200,
+        xsmall: 64,
       },
       // Limit file size (in bytes)
       sizeLimit: 10 * 1024 * 1024, // 10 MB
@@ -253,7 +282,33 @@ function ResponsiveImage({ image }) {
 
 ### File type restrictions
 
-Set allowed MIME types per media field in the Content-Type Builder, or validate in a lifecycle hook:
+Set allowed MIME types per media field in the Content-Type Builder. For global upload rules, configure the Upload
+plugin's MIME-type checks in `config/plugins.js`:
+
+```js
+// config/plugins.js
+module.exports = ({ env }) => ({
+  upload: {
+    config: {
+      security: {
+        allowedTypes: [
+          'image/jpeg',
+          'image/png',
+          'image/webp',
+          'application/pdf',
+        ],
+        deniedTypes: [
+          'image/svg+xml',
+          'text/html',
+          'application/javascript',
+        ],
+      },
+    },
+  },
+});
+```
+
+For business-specific rules, add Document Service middleware for the Upload plugin file content type:
 
 ```js
 // src/index.js
@@ -283,6 +338,20 @@ module.exports = {
 
 ### File size limits
 
+Use both limits: `upload.config.sizeLimit` is the Upload plugin limit, while `strapi::body` controls the multipart
+parser before the Upload plugin receives the file.
+
+```js
+// config/plugins.js
+module.exports = () => ({
+  upload: {
+    config: {
+      sizeLimit: 10 * 1024 * 1024, // 10 MB
+    },
+  },
+});
+```
+
 ```js
 // config/middlewares.js
 module.exports = [
@@ -304,13 +373,155 @@ module.exports = [
 
 ---
 
+## Upload security
+
+### Private media on S3
+
+For private blog assets, keep the bucket private and configure the AWS S3 upload provider with `ACL: 'private'`.
+Strapi's S3 provider exposes `isPrivate()` when the provider ACL is private and returns presigned URLs from
+`getSignedUrl`, using `signedUrlExpires` as the expiration time.
+
+```js
+// config/plugins.js
+module.exports = ({ env }) => ({
+  upload: {
+    config: {
+      provider: 'aws-s3',
+      providerOptions: {
+        s3Options: {
+          credentials: {
+            accessKeyId: env('AWS_ACCESS_KEY_ID'),
+            secretAccessKey: env('AWS_ACCESS_SECRET'),
+          },
+          region: env('AWS_REGION'),
+          params: {
+            Bucket: env('AWS_BUCKET'),
+            ACL: 'private',
+            signedUrlExpires: env.int('AWS_SIGNED_URL_EXPIRES', 15 * 60),
+          },
+        },
+      },
+    },
+  },
+});
+```
+
+Do not combine private objects with a public bucket policy. If you use CloudFront, use CloudFront signed URLs or a
+private origin access setup instead of making the bucket public.
+
+### S3 CSP and bucket CORS
+
+Allow the S3 or CDN domain in `img-src` and `media-src`; see
+[Content Security Policy for remote media](#content-security-policy-for-remote-media) for the Strapi middleware
+example. S3 bucket CORS is still needed when the browser loads admin thumbnails or downloads private signed URLs. Admin
+uploads themselves go through the Strapi server, not directly from the browser to S3.
+
+```json
+[
+  {
+    "AllowedHeaders": ["*"],
+    "AllowedMethods": ["GET", "HEAD"],
+    "AllowedOrigins": [
+      "https://cms.example.com",
+      "https://www.example.com"
+    ],
+    "ExposeHeaders": [],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
+
+Use exact origins in production. Avoid `"*"` when media is private or when signed URLs are used.
+
+### Who may upload
+
+The Upload plugin has public API permissions in the Users & Permissions plugin. In **Settings > Users & Permissions
+Plugin > Roles**, disable the `upload` actions for the **Public** role and enable them only for trusted authenticated
+roles that need frontend uploads. Admin panel uploads are controlled by admin roles and permissions separately.
+
+### Malware scanning pattern
+
+Strapi does not ship with malware scanning. Add it as a custom workflow around uploads. For example, use Document
+Service middleware for `plugin::upload.file` to scan or quarantine files with ClamAV after metadata is created:
+
+```js
+// src/index.js
+module.exports = {
+  register({ strapi }) {
+    strapi.documents.use(async (context, next) => {
+      const result = await next();
+
+      if (
+        context.uid === 'plugin::upload.file' &&
+        context.action === 'create'
+      ) {
+        const file = Array.isArray(result) ? result[0] : result;
+
+        // Example only: implement downloadFromProvider() and scanWithClamAv()
+        // for your storage provider and deployment model.
+        const localPath = await downloadFromProvider(file);
+        const clean = await scanWithClamAv(localPath);
+
+        if (!clean) {
+          await strapi.documents('plugin::upload.file').delete({
+            documentId: file.documentId,
+          });
+          throw new Error('Upload failed malware scanning.');
+        }
+      }
+
+      return result;
+    });
+  },
+};
+```
+
+For high-volume sites, queue the scan, mark files as `pending_scan`, and keep them out of API responses until the scan
+passes.
+
+### Per-user quotas
+
+If authenticated visitors can upload media, enforce quotas in a policy or custom upload wrapper before accepting the
+file. Store ownership explicitly, then sum the user's stored file sizes before allowing another upload:
+
+```js
+// src/policies/within-upload-quota.js
+module.exports = async (policyContext, config, { strapi }) => {
+  const user = policyContext.state.user;
+
+  if (!user) {
+    return false;
+  }
+
+  const used = await strapi
+    .service('api::upload-quota.upload-quota')
+    .bytesUsedByUser(user.id);
+
+  const incoming = Number(policyContext.request.length || 0);
+  const quota = 100 * 1024 * 1024; // 100 MB
+
+  return used + incoming <= quota;
+};
+```
+
+Apply the same check in any custom upload endpoint, because client-side limits are easy to bypass.
+
+### SVG and HTML XSS risk
+
+Treat SVG, HTML, and scriptable document formats as active content. An uploaded SVG can contain scripts, external
+references, or event handlers, and an uploaded HTML file can execute in a user's browser if served inline. Prefer
+denying `image/svg+xml`, `text/html`, and JavaScript MIME types with `security.deniedTypes`. If the business must accept
+SVG, sanitize it server-side and serve it from a separate domain with restrictive headers.
+
+---
+
 ## Media library API
 
 ### List all files
 
 ```bash
 GET /api/upload/files
-GET /api/upload/files?filters[mime][$contains]=image
+GET /api/upload/files/page?filters[mime][$startsWith]=image/
 ```
 
 ### Get a single file
@@ -337,7 +548,7 @@ formData.append('fileInfo', JSON.stringify({
 
 await fetch(`/api/upload?id=${fileId}`, {
   method: 'POST',
-  headers: { Authorization: `Bearer ${jwt}` },
+  headers: { Authorization: 'Bearer <api-token>' },
   body: formData,
 });
 ```
@@ -356,11 +567,12 @@ admin panel's Media Library UI, or use a community plugin that adds folder-aware
 
 ## Security considerations for media
 
-- **Validate uploads server-side**: never trust client-side MIME type alone
-- **Scan for malware**: consider integrating ClamAV for user-uploaded content
-- **Use a CDN**: serve media through a CDN for performance and DDoS protection
-- **Set proper CORS**: restrict which domains can embed your media
-- **Generate signed URLs**: for private media, use pre-signed S3 URLs with expiration
+- **Validate uploads server-side**: use Upload plugin `security.allowedTypes` and `security.deniedTypes`
+- **Limit size twice**: set both Upload plugin `sizeLimit` and `strapi::body` `formidable.maxFileSize`
+- **Restrict upload permissions**: do not allow the Public role to upload unless the endpoint is intentionally public
+- **Scan untrusted files**: integrate a scanner such as ClamAV before publishing user uploads
+- **Use private storage for private media**: private S3 buckets need presigned URLs and tight CORS/CSP
+- **Deny active content**: SVG and HTML uploads can become XSS vectors if served inline
 
 ---
 

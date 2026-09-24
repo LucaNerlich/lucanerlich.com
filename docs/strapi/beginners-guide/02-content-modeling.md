@@ -47,13 +47,25 @@ flowchart TD
 
 Let's create the core of our blog: a **Post** collection type.
 
-### Via the admin panel
+### Content-Type Builder walkthrough
+
+Use the Content-Type Builder (CTB) while Strapi is running in development mode:
+
+```bash
+pnpm strapi develop
+```
+
+The CTB is only editable when `autoReload` is enabled. In development, Strapi watches schema files, writes changes to
+disk, and restarts the server after you save. In production (`strapi start`), CTB editing is disabled because changing a
+schema on a live server would write files, require a restart, and bypass the deployment process.
+
+Create the **Post** collection type:
 
 1. Open the admin panel at `http://localhost:1337/admin`
 2. Go to **Content-Type Builder** in the sidebar
 3. Click **Create new collection type**
 4. Enter the display name: **Post**
-5. Strapi auto-generates the API ID: `post` (and the UID `api::post.post`)
+5. Check the generated API IDs: singular `post`, plural `posts`, UID `api::post.post`
 6. Click **Continue**
 
 Now add fields one by one:
@@ -67,14 +79,30 @@ Now add fields one by one:
 | `publishedDate` | Date               | Date only                     |
 | `featured`      | Boolean            | Default: `false`              |
 
-Click **Save** after adding all fields. Strapi restarts the server and generates the schema, API routes, controller, and
-service automatically.
+When you create or edit a field, Strapi splits options into **Basic settings** and **Advanced settings**:
+
+| Setting area | Typical options | Blog example |
+|--------------|-----------------|--------------|
+| Basic settings | field name, field type, default value, attached field for UID, media kind, repeatable component toggle | `slug` is a UID attached to `title`; `featured` defaults to `false` |
+| Advanced settings | `required`, `unique`, `private`, `minLength`, `maxLength`, number `min`/`max`, `regex`, `configurable` | `title` and `slug` are required; `excerpt` has `maxLength: 300` |
+
+Use these settings deliberately:
+
+- **Required** prevents saving an incomplete post.
+- **Unique** is useful for `slug`, but avoid it on fields that editors may intentionally repeat.
+- **Private** hides internal fields from API responses.
+- **Min/max** constraints keep titles, excerpts, and numbers within predictable ranges.
+- **Default** values make repeated editorial choices faster.
+- **Regex** can enforce formats such as a campaign code or strict slug pattern when UID is not enough.
+
+Click **Save** after adding all fields. Strapi writes `schema.json`, restarts the development server, and generates the
+schema, API routes, controller, and service automatically.
 
 ### What Strapi generated
 
 After saving, look at your project's file system:
 
-```
+```text
 src/api/post/
 ├── content-types/
 │   └── post/
@@ -241,9 +269,9 @@ Let's create an **SEO** component that any content type can use:
 
 6. Save the component
 
-The component schema is stored in:
+The CTB creates a component schema file instead of an API folder:
 
-```
+```text
 src/components/shared/seo.json
 ```
 
@@ -284,7 +312,8 @@ Now go back to the **Post** content type and add a new field:
 4. Field name: `seo`
 5. Choose **Single component** (not repeatable)
 
-Every post now has an SEO section.
+Every post now has an SEO section. In `src/api/post/content-types/post/schema.json`, the `seo` attribute points to
+`shared.seo`; the component's fields stay in `src/components/shared/seo.json`.
 
 ### Repeatable components
 
@@ -322,9 +351,10 @@ Let's add a dynamic zone to a new **Page** single type (or collection type) so e
 | **ImageGallery** | `blocks` | `images` (media, multiple), `columns` (integer, default 3)         |
 | **CallToAction** | `blocks` | `title` (string), `buttonText` (string), `buttonUrl` (string)      |
 
-2. Add a **Dynamic zone** field to your content type
+2. In the CTB, add a **Dynamic zone** field to your content type
 3. Name it `blocks`
 4. Select which components are allowed in the zone
+5. Save so Strapi writes the zone to the content type schema and restarts
 
 Content editors can now add, remove, and reorder blocks freely. The API returns the blocks as an array with
 `__component` identifiers:
@@ -394,16 +424,18 @@ In the admin panel, this renders as a dropdown.
 
 You have two ways to define content types:
 
-| Method                                 | Best for                                                    |
-|----------------------------------------|-------------------------------------------------------------|
-| **Admin panel** (Content-Type Builder) | Exploration, quick prototyping, visual feedback             |
-| **JSON schema files**                  | Version control, reproducible setups, CI/CD, team workflows |
+| Method | Best for | What happens |
+|--------|----------|--------------|
+| **Admin panel** (Content-Type Builder) | Exploration, quick prototyping, visual feedback | CTB writes `schema.json` files, then restarts the development server through `autoReload`. |
+| **JSON schema files** | Version control, reproducible setups, CI/CD, team workflows | You edit files directly, restart Strapi, and the admin panel reflects the schema. |
 
-Both produce the same result. The admin panel writes JSON files; editing JSON files updates the admin panel on next
-restart.
+Both produce the same result. A content type's schema lives in
+`src/api/<name>/content-types/<name>/schema.json`; reusable components live in `src/components/<category>/<name>.json`.
+Editing JSON by hand is normal for code review, copy/paste refactors, or advanced attributes. The CTB is safer while you
+are learning because it prevents many invalid combinations and shows field-specific settings in the UI.
 
 > **Important:** In production, the Content-Type Builder is disabled by default. All schema changes should be made in
-> development and deployed via version control.
+> development, committed to version control, and deployed with the application code.
 
 ## What we built so far
 

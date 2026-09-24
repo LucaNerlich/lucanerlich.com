@@ -52,7 +52,7 @@ The components:
 
 Strapi supports environment-specific configuration files. Instead of one `config/database.ts`, you can have:
 
-```
+```text
 config/
 ├── database.ts           # Default (development)
 └── env/
@@ -75,6 +75,7 @@ API_TOKEN_SALT=your-api-token-salt
 ADMIN_JWT_SECRET=your-admin-jwt-secret
 TRANSFER_TOKEN_SALT=your-transfer-token-salt
 JWT_SECRET=your-jwt-secret
+ENCRYPTION_KEY=your-encryption-key
 DATABASE_FILENAME=.tmp/data.db
 ```
 
@@ -125,7 +126,7 @@ export default ({ env }) => ({
     client: "postgres",
     connection: {
       host: env("DATABASE_HOST", "127.0.0.1"),
-      port: parseInt(env("DATABASE_PORT", "5432"), 10),
+      port: env.int("DATABASE_PORT", 5432),
       database: env("DATABASE_NAME", "strapi"),
       user: env("DATABASE_USERNAME", "strapi"),
       password: env("DATABASE_PASSWORD", ""),
@@ -150,16 +151,21 @@ export default ({ env }) => ({
 // config/env/production/server.ts
 export default ({ env }) => ({
   host: env("HOST", "0.0.0.0"),
-  port: parseInt(env("PORT", "1337"), 10),
+  port: env.int("PORT", 1337),
   url: env("PUBLIC_URL", "https://cms.yourdomain.com"),
+  proxy: {
+    koa: true,
+    maxIpsCount: env.int("PROXY_MAX_IPS_COUNT", 1),
+  },
   app: {
-    keys: env("APP_KEYS", "").split(","),
+    keys: env.array("APP_KEYS"),
   },
 });
 ```
 
 The `url` setting is critical - it tells Strapi its public URL, which is used for generating absolute URLs in API
-responses and the admin panel.
+responses and the admin panel. The `proxy` block tells Strapi to trust nginx's forwarded headers; keep
+`maxIpsCount` equal to the number of trusted proxies in front of Strapi.
 
 ### Production admin config
 
@@ -177,6 +183,9 @@ export default ({ env }) => ({
       salt: env("TRANSFER_TOKEN_SALT"),
     },
   },
+  secrets: {
+    encryptionKey: env("ENCRYPTION_KEY"),
+  },
 });
 ```
 
@@ -191,12 +200,12 @@ The same server can host Strapi.
 # Update packages
 sudo apt update && sudo apt upgrade -y
 
-# Install Node.js 20 (LTS)
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+# Install Node.js 22 (LTS)
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt install -y nodejs
 
 # Verify
-node --version   # v20.x.x
+node --version   # v22.x.x
 npm --version    # 10.x.x
 
 # Install PostgreSQL
@@ -255,11 +264,15 @@ ssh your-user@your-server
 # Switch to the strapi directory
 cd /var/www/strapi
 
-# Install production dependencies
-NODE_ENV=production npm install
+# Install dependencies. Do not set NODE_ENV=production here:
+# the admin build needs devDependencies.
+npm ci
 
 # Build the admin panel
 NODE_ENV=production npm run build
+
+# Optional: remove devDependencies after the build on space-constrained servers.
+npm prune --omit=dev
 ```
 
 ### Set up environment variables
@@ -283,6 +296,7 @@ API_TOKEN_SALT=random-salt-here
 ADMIN_JWT_SECRET=random-secret-here
 TRANSFER_TOKEN_SALT=random-salt-here
 JWT_SECRET=random-secret-here
+ENCRYPTION_KEY=random-encryption-key-here
 
 # PostgreSQL
 DATABASE_HOST=127.0.0.1
@@ -296,7 +310,7 @@ DATABASE_SSL=false
 Generate random secrets:
 
 ```bash
-openssl rand -base64 32  # Run this 5 times for each secret
+openssl rand -base64 32  # Run this 6 times for each secret
 ```
 
 ### Test the production build
@@ -322,7 +336,7 @@ module.exports = {
       name: "strapi",
       cwd: "/var/www/strapi",
       script: "npm",
-      args: "run start",
+      args: "start",
       env: {
         NODE_ENV: "production",
       },
@@ -384,7 +398,7 @@ Type=simple
 User=strapi
 Group=strapi
 WorkingDirectory=/var/www/strapi
-ExecStart=/usr/bin/node node_modules/.bin/strapi start
+ExecStart=/usr/bin/npm run start
 Restart=on-failure
 RestartSec=10
 Environment=NODE_ENV=production
@@ -417,6 +431,11 @@ nginx sits in front of Strapi, handling SSL, compression, and caching.
 
 ```nginx
 # /etc/nginx/sites-available/strapi
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
 server {
     listen 80;
     server_name cms.yourdomain.com;
@@ -434,6 +453,7 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/cms.yourdomain.com/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    client_max_body_size 50m;
 
     # Proxy to Strapi
     location / {
@@ -444,12 +464,11 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
+        proxy_set_header Connection $connection_upgrade;
 
         # Increase timeouts for large uploads
         proxy_read_timeout 300s;
         proxy_send_timeout 300s;
-        client_max_body_size 50m;
     }
 
     # Cache static assets
@@ -457,13 +476,6 @@ server {
         proxy_pass http://127.0.0.1:1337;
         proxy_cache_valid 200 1d;
         add_header Cache-Control "public, max-age=86400";
-    }
-
-    # Cache admin panel assets
-    location /admin/ {
-        proxy_pass http://127.0.0.1:1337;
-        proxy_cache_valid 200 7d;
-        add_header Cache-Control "public, max-age=604800";
     }
 }
 ```
@@ -733,6 +745,105 @@ Before going live, verify:
 | Fail2Ban installed                                         |        |
 | Automatic updates enabled                                  |        |
 | Backups configured (database + uploads)                    |        |
+
+## Moving data between environments
+
+Once production is live, keep schema changes in Git and move blog content with Strapi's data-management CLI. For deeper
+restore and migration examples, see [Data Import, Export, and Migration](../data-import-export-migration.md).
+
+### Typical blog workflows
+
+Back up production before a deploy or a risky import:
+
+```bash
+cd /var/www/strapi
+npx strapi export --file backups/prod-$(date +%Y%m%d) --no-encrypt
+```
+
+Seed staging from a production archive:
+
+```bash
+# On production
+npx strapi export --file prod-seed --key "$STRAPI_EXPORT_KEY"
+
+# Copy prod-seed.tar.gz.enc to staging, then on staging:
+npx strapi import --file prod-seed.tar.gz.enc --key "$STRAPI_EXPORT_KEY"
+```
+
+Push local editorial content to a remote staging instance:
+
+```bash
+npx strapi transfer --to https://staging-cms.example.com/admin \
+  --to-token "$STRAPI_STAGING_TRANSFER_TOKEN" \
+  --only content \
+  --force
+```
+
+Pull production content into local development:
+
+```bash
+npx strapi transfer --from https://cms.example.com/admin \
+  --from-token "$STRAPI_PROD_TRANSFER_TOKEN" \
+  --exclude files
+```
+
+### Export/import flags
+
+| Flag            | Use it for                                               |
+|-----------------|----------------------------------------------------------|
+| `--file`        | Archive base name on export, archive path on import      |
+| `--no-encrypt`  | Plain archive for local-only backups                     |
+| `--no-compress` | Skip gzip compression when another tool handles it        |
+| `--key`         | Reuse a known encryption key for automated restores       |
+| `--only`        | Include only `content`, `files`, and/or `config`          |
+| `--exclude`     | Exclude `content`, `files`, and/or `config`               |
+| `--force`       | Skip the destructive import confirmation                  |
+
+Example:
+
+```bash
+npx strapi export --file blog-content \
+  --no-compress \
+  --key "$STRAPI_EXPORT_KEY" \
+  --only content
+```
+
+### Transfer flags and tokens
+
+`strapi transfer` connects two running Strapi instances directly. Create transfer tokens in the admin panel under
+**Settings > Transfer Tokens**. The token hash uses `TRANSFER_TOKEN_SALT` from `config/admin.*`, so keep that
+environment variable stable within each environment.
+
+| Flag           | Use it for                                            |
+|----------------|-------------------------------------------------------|
+| `--from`       | Remote source URL when pulling into the local project |
+| `--to`         | Remote destination URL when pushing local data        |
+| `--from-token` | Transfer token for the remote source                  |
+| `--to-token`   | Transfer token for the remote destination             |
+| `--only`       | Transfer only `content`, `files`, and/or `config`     |
+| `--exclude`    | Skip `content`, `files`, and/or `config`              |
+| `--force`      | Skip the destination-wipe confirmation                |
+| `--throttle`   | Delay each transferred entity to reduce remote load   |
+
+### What moves and what does not
+
+Data export/import and transfer can move:
+
+- Content entries and relations (`content`)
+- Media Library files (`files`)
+- Strapi-managed configuration (`config`)
+- Schema metadata for strict matching
+
+They do **not** move admin users, API tokens, transfer tokens, or plugin source code. Schema metadata is included so
+Strapi can verify compatibility, but you should still deploy the same code-level content-type schemas, plugins, and
+Strapi version before importing or transferring.
+
+Media Library database records are part of `content`; `files` controls the binary assets. If you transfer content while
+excluding files, media relations can point to assets that were not copied.
+
+> **Warning:** `strapi import` and `strapi transfer` wipe destination data for the groups being restored or transferred.
+> Groups left out with `--only` or `--exclude` are preserved. Back up the destination first, test the command on
+> staging, and reserve `--force` for repeatable scripts.
 
 ## Database backups
 

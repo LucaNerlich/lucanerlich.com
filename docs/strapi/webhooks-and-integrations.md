@@ -24,9 +24,12 @@ Strapi has a webhook system configurable from the admin panel (**Settings > Webh
 | `entry.delete`    | A content entry is deleted     |
 | `entry.publish`   | A content entry is published   |
 | `entry.unpublish` | A content entry is unpublished |
+| `entry.draft-discard` | A content draft is discarded |
 | `media.create`    | A media file is uploaded       |
 | `media.update`    | A media file is updated        |
 | `media.delete`    | A media file is deleted        |
+| `review-workflows.updateEntryStage` | An entry changes review stage (Enterprise) |
+| `releases.publish` | A release is published (Growth/Enterprise) |
 
 ### Webhook payload
 
@@ -51,13 +54,56 @@ Strapi has a webhook system configurable from the admin panel (**Settings > Webh
 1. Go to **Settings > Webhooks > Create new webhook**
 2. Enter the target URL
 3. Select which events to trigger on
-4. Optionally add custom headers (e.g., `Authorization: Bearer secret`)
+4. Optionally add custom headers (for example `X-Webhook-Token: <shared-token>`)
+
+### Webhook configuration in `config/server.js`
+
+```js
+module.exports = ({ env }) => ({
+  webhooks: {
+    defaultHeaders: {
+      'X-Webhook-Token': env('WEBHOOK_SHARED_TOKEN'),
+    },
+  },
+});
+```
+
+Strapi 5 no longer supports the Strapi 4 `webhooks.populateRelations` option. Entry webhook payloads are populated by
+Strapi's webhook implementation and are not configurable per webhook.
+
+Built-in outgoing webhooks do **not** automatically generate an HMAC signature. If the receiver requires tamper-proof
+verification, add your own shared header/token or send the request yourself from custom code where you can compute a
+signature.
+
+Media webhook payloads use `{ event, createdAt, media }`; they do not include `model`, `uid`, or `entry`.
 
 ---
 
 ## Custom event listeners (programmatic)
 
 For more control, use Document Service middleware or lifecycle subscribers in code.
+
+If you need a custom event to appear in the built-in webhook UI, register it with the webhook store and emit it through
+Strapi's event hub. The webhook runner listens to `strapi.eventHub` and sends `{ event, createdAt, ...info }` to matching
+webhooks.
+
+```js
+// src/index.js
+module.exports = {
+  register({ strapi }) {
+    strapi.webhookStore.addAllowedEvent('SEARCH_SYNC', 'search.sync');
+  },
+
+  async bootstrap({ strapi }) {
+    await strapi.eventHub.emit('search.sync', {
+      uid: 'api::article.article',
+      entry: {
+        documentId: 'article-document-id',
+      },
+    });
+  },
+};
+```
 
 ### Trigger a static site rebuild on publish
 
@@ -196,13 +242,11 @@ module.exports = {
           const algolia = strapi.service('api::algolia.algolia');
 
           if (context.action === 'publish') {
-            const doc = await strapi.documents(context.uid).findOne(
-              result.documentId,
-              {
-                status: 'published',
-                fields: ['title', 'slug', 'content', 'publishedAt'],
-              }
-            );
+            const doc = await strapi.documents(context.uid).findOne({
+              documentId: result.documentId,
+              status: 'published',
+              fields: ['title', 'slug', 'content', 'publishedAt'],
+            });
             if (doc) await algolia.indexDocument(context.uid, doc);
           }
 
@@ -392,7 +436,11 @@ module.exports = {
 
 ## Webhook retry and reliability
 
-Built-in Strapi webhooks have basic retry logic, but for critical integrations, consider:
+Built-in Strapi webhooks are convenient, but they are not a durable outbox for critical integrations. In multi-instance
+deployments, plan retries, dead-letter handling, and idempotency explicitly; see
+[Running Strapi on multiple instances](./scaling-multiple-instances.md).
+
+For critical integrations, consider:
 
 ```js
 // src/services/webhook-queue.js

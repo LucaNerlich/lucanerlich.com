@@ -7,9 +7,27 @@ tags: [strapi, scheduling, publishing, cron, workflows]
 
 # Scheduled Publishing
 
-Strapi does not ship with built-in scheduled publishing. This page shows how to implement it reliably, explains the
-draft/published duality that makes naive approaches fail, and covers advanced patterns like scheduled unpublishing,
-editorial review, and timezone handling.
+Strapi 5 includes scheduled publishing through **Releases** on Growth and Enterprise plans. For projects that need
+free/self-hosted per-entry scheduling, custom rules, or scheduled unpublishing, you can also implement scheduling with
+Strapi cron jobs. This page explains both paths, the draft/published duality that makes naive custom approaches fail,
+and advanced patterns like scheduled unpublishing, editorial review, and timezone handling.
+
+## Built-in option: Releases
+
+Releases group entries from multiple content types and locales, then publish or unpublish the whole batch manually or at
+a scheduled date and timezone. Use this first when your project is on a Growth or Enterprise plan and editors can work
+with release containers instead of a per-entry `scheduledPublishAt` field.
+
+Key characteristics:
+
+- Available on Growth and Enterprise plans.
+- Requires Draft & Publish on the included content types.
+- A scheduled release publishes the latest saved draft at release time; it does not freeze a snapshot of the entry when
+  the entry is added to the release.
+- Enterprise adds audit-log entries for release actions.
+
+The cron-based approach below is still useful when Releases are unavailable, too coarse-grained, or when you need custom
+rules such as scheduled unpublishing of individual entries.
 
 ## The problem: draft/published duality
 
@@ -60,8 +78,9 @@ This completely sidesteps the draft duality issue.
 In the Content-Type Builder, add a `scheduledPublishAt` field of type **DateTime** to every content type that needs
 scheduling. Or add it directly in the schema:
 
+File: `src/api/article/content-types/article/schema.json`
+
 ```json
-// src/api/article/content-types/article/schema.json
 {
   "attributes": {
     "title": { "type": "string", "required": true },
@@ -76,27 +95,35 @@ scheduling. Or add it directly in the schema:
 ### Step 2: create the cron job
 
 ```js
+// config/cron-tasks.js
+module.exports = {
+  scheduledPublish: {
+    task: async ({ strapi }) => {
+      await publishScheduled(strapi);
+    },
+    options: {
+      rule: '*/5 * * * *',
+      tz: 'UTC',
+    },
+  },
+};
+```
+
+```js
 // config/server.js
+const cronTasks = require('./cron-tasks');
+
 module.exports = ({ env }) => ({
   host: env('HOST', '0.0.0.0'),
   port: env.int('PORT', 1337),
   cron: {
     enabled: true,
-    tasks: {
-      // ┌──── minute (0-59)
-      // │ ┌── hour (0-23)
-      // │ │ ┌ day of month (1-31)
-      // │ │ │ ┌ month (1-12)
-      // │ │ │ │ ┌ day of week (0-7, 0 and 7 = Sunday)
-      // │ │ │ │ │
-      // * * * * *
-      '*/5 * * * *': async ({ strapi }) => {
-        await publishScheduled(strapi);
-      },
-    },
+    tasks: cronTasks,
   },
 });
+```
 
+```js
 async function publishScheduled(strapi) {
   const now = new Date().toISOString();
 
@@ -121,12 +148,11 @@ async function publishScheduled(strapi) {
 
     for (const doc of documents) {
       try {
-        // Publish the document
-        await strapi.documents(uid).publish(doc.documentId);
-
-        // Clear the scheduled date so it won't be picked up again
-        await strapi.documents(uid).update(doc.documentId, {
+        // Clear the scheduled date and publish the draft in one operation.
+        await strapi.documents(uid).update({
+          documentId: doc.documentId,
           data: { scheduledPublishAt: null },
+          status: 'published',
         });
 
         strapi.log.info(
@@ -147,10 +173,17 @@ async function publishScheduled(strapi) {
 
 | Scenario                                      | What happens                                                     |
 |-----------------------------------------------|------------------------------------------------------------------|
-| New draft, never published                    | `publish()` creates the published version. Correct.              |
-| Already published, editor schedules an update | `publish()` re-publishes with the latest draft content. Correct. |
+| New draft, never published                    | `update({ status: 'published' })` creates the published version. Correct. |
+| Already published, editor schedules an update | `update({ status: 'published' })` republishes the latest draft. Correct.  |
 | Published, no `scheduledPublishAt` set        | Not picked up by the filter. Correct.                            |
 | Already processed by cron                     | `scheduledPublishAt` was cleared. Not picked up again. Correct.  |
+
+If you only need to query "never published" or "modified since publish" drafts, prefer Strapi's `publicationFilter`
+instead of inferring it from `status: 'draft'`.
+
+If your cron does not need to mutate fields before publishing, use the explicit operation instead:
+`await strapi.documents(uid).publish({ documentId: doc.documentId, locale: doc.locale })`. The
+`update({ status: 'published' })` form above is useful when clearing scheduler metadata and publishing in one call.
 
 ---
 
@@ -158,8 +191,9 @@ async function publishScheduled(strapi) {
 
 The same pattern works for scheduled unpublishing (e.g., time-limited promotions):
 
+Add this to `schema.json`:
+
 ```json
-// Add to schema.json
 {
   "attributes": {
     "scheduledPublishAt": { "type": "datetime" },
@@ -198,8 +232,11 @@ async function unpublishScheduled(strapi) {
 
     for (const doc of documents) {
       try {
-        await strapi.documents(uid).unpublish(doc.documentId);
-        await strapi.documents(uid).update(doc.documentId, {
+        await strapi.documents(uid).unpublish({
+          documentId: doc.documentId,
+        });
+        await strapi.documents(uid).update({
+          documentId: doc.documentId,
           data: { scheduledUnpublishAt: null },
         });
 
@@ -247,9 +284,10 @@ module.exports = ({ strapi }) => ({
 
       for (const doc of documents) {
         try {
-          await strapi.documents(uid).publish(doc.documentId);
-          await strapi.documents(uid).update(doc.documentId, {
+          await strapi.documents(uid).update({
+            documentId: doc.documentId,
             data: { scheduledPublishAt: null },
+            status: 'published',
           });
           totalPublished++;
           strapi.log.info(`[scheduler] Published ${uid} "${doc.title}"`);
@@ -277,8 +315,11 @@ module.exports = ({ strapi }) => ({
 
       for (const doc of documents) {
         try {
-          await strapi.documents(uid).unpublish(doc.documentId);
-          await strapi.documents(uid).update(doc.documentId, {
+          await strapi.documents(uid).unpublish({
+            documentId: doc.documentId,
+          });
+          await strapi.documents(uid).update({
+            documentId: doc.documentId,
             data: { scheduledUnpublishAt: null },
           });
           totalUnpublished++;
@@ -304,9 +345,31 @@ The cron job becomes a one-liner:
 
 ```js
 // config/server.js
-'*/5 * * * *': async ({ strapi }) => {
-  await strapi.service('api::scheduler.scheduler').runAll();
-},
+const cronTasks = require('./cron-tasks');
+
+module.exports = ({ env }) => ({
+  host: env('HOST', '0.0.0.0'),
+  port: env.int('PORT', 1337),
+  cron: {
+    enabled: true,
+    tasks: cronTasks,
+  },
+});
+```
+
+```js
+// config/cron-tasks.js
+module.exports = {
+  scheduledPublishing: {
+    task: async ({ strapi }) => {
+      await strapi.service('api::scheduler.scheduler').runAll();
+    },
+    options: {
+      rule: '*/5 * * * *',
+      tz: 'UTC',
+    },
+  },
+};
 ```
 
 ---
@@ -329,7 +392,8 @@ module.exports = {
       const uid = context.uid;
 
       // Check if this document has a future scheduled date
-      const draft = await strapi.documents(uid).findOne(docId, {
+      const draft = await strapi.documents(uid).findOne({
+        documentId: docId,
         status: 'draft',
         fields: ['scheduledPublishAt'],
       });
@@ -458,12 +522,13 @@ to UTC before sending it to the API:
 // Frontend: convert local datetime input to UTC ISO string
 const localDate = new Date('2025-03-15T09:00:00'); // user's local time
 const utcString = localDate.toISOString();          // '2025-03-15T08:00:00.000Z' (CET -> UTC)
+const authHeader = getEditorAuthHeader();
 
 await fetch('/api/articles/abc123', {
   method: 'PUT',
   headers: {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${jwt}`,
+    Authorization: authHeader,
   },
   body: JSON.stringify({
     data: { scheduledPublishAt: utcString },
@@ -487,19 +552,21 @@ async processScheduledPublish() {
 
   for (const doc of documents) {
     try {
-      await strapi.documents(uid).publish(doc.documentId);
-      await strapi.documents(uid).update(doc.documentId, {
+      await strapi.documents(uid).update({
+        documentId: doc.documentId,
         data: { scheduledPublishAt: null },
+        status: 'published',
       });
 
       // Notify via email
-      const fullDoc = await strapi.documents(uid).findOne(doc.documentId, {
+      const fullDoc = await strapi.documents(uid).findOne({
+        documentId: doc.documentId,
         status: 'published',
         populate: ['createdBy'],
       });
 
       if (fullDoc?.createdBy?.email) {
-        await strapi.plugins['email'].services.email.send({
+        await strapi.plugin('email').service('email').send({
           to: fullDoc.createdBy.email,
           subject: `Published: ${doc.title}`,
           html: `<p>Your scheduled content <strong>${doc.title}</strong> has been published.</p>`,
@@ -540,6 +607,32 @@ async processScheduledPublish() {
 
 Keep in mind that the maximum delay equals the cron interval. A 5-minute cron means content publishes within 5 minutes
 of the scheduled time.
+
+On a multi-instance Strapi deployment, every instance with cron enabled runs the same `config/cron-tasks` schedule.
+Use a single cron runner or a distributed lock before enabling scheduled publishing on multiple replicas; see
+[Running Strapi on multiple instances](./scaling-multiple-instances.md).
+
+Cron jobs can also be added at runtime, for example from `bootstrap()` in a plugin:
+
+```js
+strapi.cron.add({
+  scheduledPublishing: {
+    task: async ({ strapi }) => {
+      await strapi.service('api::scheduler.scheduler').runAll();
+    },
+    options: {
+      rule: '*/5 * * * *',
+      tz: 'UTC',
+    },
+  },
+});
+```
+
+## `publishedAt` semantics
+
+In Strapi 5, `publishedAt` is `null` on draft versions and a timestamp on published versions. The Document Service API
+returns drafts by default, so add `status: 'published'` when you need the live version. The REST API defaults to
+published content; pass `status=draft` to read or write drafts without publishing.
 
 ---
 

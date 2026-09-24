@@ -16,13 +16,14 @@ Before customising, ensure the entry file is ready:
 
 ```bash
 # Rename the example file
-mv src/admin/app.example.tsx src/admin/app.tsx  # or .js
+mv src/admin/app.example.tsx src/admin/app.tsx  # or app.js
 
 # Create the extensions folder
 mkdir -p src/admin/extensions
 ```
 
 In Strapi 5, the dev server runs in `watch-admin` mode by default - changes to `src/admin/` hot-reload automatically.
+Run `strapi build` before deployment so the production admin bundle includes your customizations.
 
 ---
 
@@ -92,7 +93,8 @@ export default {
 ```
 
 The full list of overridable color keys is in
-the [Strapi Design System source](https://github.com/strapi/design-system/tree/main/packages/design-system/src/themes).
+the [Strapi theme extension documentation](https://docs.strapi.io/cms/admin-panel-customization/theme-extension) and the
+[Strapi Design System source](https://github.com/strapi/design-system/tree/main/packages/design-system/src/themes).
 
 ---
 
@@ -108,9 +110,8 @@ export default {
             de: {
                 'Auth.form.email.label': 'E-Mail-Adresse',
                 'Auth.form.password.label': 'Passwort',
+                'Auth.form.welcome.title': 'Willkommen bei Strapi!',
                 'app.components.LeftMenu.navbrand.title': 'Meine CMS',
-                'content-manager.popUpWarning.warning.publish-question':
-                    'Möchten Sie diesen Eintrag veröffentlichen?',
             },
             fr: {
                 'app.components.LeftMenu.navbrand.title': 'Mon CMS',
@@ -123,7 +124,7 @@ export default {
 ```
 
 Find all translation keys in
-the [Strapi GitHub source](https://github.com/strapi/strapi/tree/develop/packages/core/admin/admin/src/translations).
+the [Strapi GitHub source](https://github.com/strapi/strapi/tree/main/packages/core/admin/admin/src/translations).
 
 ---
 
@@ -189,12 +190,14 @@ Plugins and extensions can inject React components into predefined zones in the 
 export default {
     bootstrap(app) {
         // Inject a component above the Content Manager's edit view
-        app.injectContentManagerComponent('editView', 'right-links', {
-            name: 'my-custom-button',
-            Component: () => {
-                return <button onClick={() => alert('Custom action!')}>My Button</button>;
-            },
-        });
+        app
+            .getPlugin('content-manager')
+            .injectComponent('editView', 'right-links', {
+                name: 'my-custom-button',
+                Component: () => {
+                    return <button onClick={() => alert('Custom action!')}>My Button</button>;
+                },
+            });
     },
 };
 ```
@@ -209,6 +212,30 @@ Available injection zones:
 ## Custom homepage widgets
 
 Strapi 5 supports custom homepage widgets:
+
+```tsx
+// src/admin/app.tsx
+import {ChartBubble} from '@strapi/icons';
+
+export default {
+    register(app) {
+        app.widgets.register({
+            id: 'quick-stats',
+            icon: ChartBubble,
+            title: {
+                id: 'custom.widgets.quick-stats.title',
+                defaultMessage: 'Quick Stats',
+            },
+            component: async () => {
+                const component = await import('./extensions/HomepageWidget');
+                return component.default;
+            },
+        });
+    },
+    bootstrap() {
+    },
+};
+```
 
 ```tsx
 // src/admin/extensions/HomepageWidget.tsx
@@ -239,26 +266,25 @@ Add buttons to the edit view toolbar:
 // src/admin/app.tsx
 export default {
     bootstrap(app) {
-        app.addDocumentAction([
-            {
-                name: 'export-pdf',
-                // Only show for articles
-                Component: ({document}) => {
-                    if (document.contentType !== 'api::article.article') return null;
+        const contentManager = app.getPlugin('content-manager').apis;
 
-                    return (
-                        <button
-                            onClick={async () => {
-                                const res = await fetch(`/api/articles/${document.id}/export-pdf`);
-                                const blob = await res.blob();
-                                const url = URL.createObjectURL(blob);
-                                window.open(url, '_blank');
-                            }}
-                        >
-                            Export PDF
-                        </button>
-                    );
-                },
+        contentManager.addDocumentAction((actions) => [
+            ...actions,
+            ({document, model}) => {
+                if (model !== 'api::article.article' || !document?.documentId) {
+                    return null;
+                }
+
+                return {
+                    label: 'Export PDF',
+                    position: 'header',
+                    onClick: async () => {
+                        const res = await fetch(`/api/articles/${document.documentId}/export-pdf`);
+                        const blob = await res.blob();
+                        const url = URL.createObjectURL(blob);
+                        window.open(url, '_blank');
+                    },
+                };
             },
         ]);
     },
@@ -270,23 +296,24 @@ export default {
 ```tsx
 export default {
     bootstrap(app) {
-        app.addEditViewSidePanel([
-            {
-                name: 'seo-checker',
-                Component: ({document}) => {
-                    const title = document?.title || '';
-                    const titleLength = title.length;
+        const contentManager = app.getPlugin('content-manager').apis;
 
-                    return (
+        contentManager.addEditViewSidePanel([
+            ({document}) => {
+                const title = document?.title || '';
+                const titleLength = title.length;
+
+                return {
+                    title: 'SEO Check',
+                    content: (
                         <div style={{padding: '16px'}}>
-                            <h3>SEO Check</h3>
                             <p>
                                 Title length: {titleLength}/60{' '}
                                 {titleLength > 60 ? '(too long)' : '(ok)'}
                             </p>
                         </div>
-                    );
-                },
+                    ),
+                };
             },
         ]);
     },
@@ -307,6 +334,9 @@ module.exports = ({env}) => ({
     port: env.int('ADMIN_PORT', 8000),
     auth: {
         secret: env('ADMIN_JWT_SECRET'),
+        cookie: {
+            path: '/dashboard',
+        },
     },
     rateLimit: {
         enabled: true,
