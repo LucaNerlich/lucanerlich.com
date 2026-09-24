@@ -42,7 +42,54 @@ dark
 - **Use JSON stringify/parse** for objects.
 - **Handle missing keys**: `getItem` can return `null`.
 - **Keep keys consistent**: namespace them (e.g., `app:theme`).
-- **Avoid secrets**: localStorage is readable by any script on the page.
+- **Avoid secrets and tokens**: localStorage is readable by any script on the page.
+
+## Handling quota and access errors
+
+Web Storage is convenient, but it is not guaranteed to be available. Merely accessing `window.localStorage` or
+`window.sessionStorage` can throw a `SecurityError` when storage is blocked, for example when the user blocks site data
+or the page runs in a sandboxed iframe. Writing can also fail: `setItem` can throw a `DOMException` named
+`QuotaExceededError` when the origin has used too much storage.
+
+Use a feature detect before relying on storage:
+
+```ts
+type StorageType = "localStorage" | "sessionStorage";
+
+function isStorageAvailable(type: StorageType): boolean {
+    try {
+        const storage = window[type];
+        const testKey = "__storage_test__";
+        storage.setItem(testKey, testKey);
+        storage.removeItem(testKey);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+console.log(isStorageAvailable("localStorage"));
+```
+
+When a write fails, check `error.name`:
+
+```ts
+try {
+    localStorage.setItem("draft", "...");
+} catch (error) {
+    if (error instanceof DOMException && error.name === "QuotaExceededError") {
+        console.warn("Storage quota exceeded.");
+    } else {
+        console.warn("Storage is not available.");
+    }
+}
+```
+
+Limits are usually around 5 MiB per origin, but the exact limit varies by browser. In private browsing, storage normally
+works for the session and is discarded when the private session ends. Older Safari versions threw on `setItem` in private
+mode, which is another reason to feature-detect.
+
+Web Storage is synchronous and blocks the main thread. Keep values small, and use IndexedDB for larger data.
 
 ## localStorage vs sessionStorage
 

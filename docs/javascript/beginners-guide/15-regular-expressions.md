@@ -604,3 +604,6 @@ possessive quantifiers, so refactor the pattern or add input limits instead.
 - Always escape special characters (`\.`, `\$`, `\\`) when matching them literally.
 - Use regex for validation, extraction, and replacement - but keep patterns readable. If a regex becomes unreadable,
   break it into smaller pieces or use string methods instead.
+
+Next up: [Classes & Prototypes](./16-classes.md) - blueprints for objects, inheritance, and how the prototype chain
+works.

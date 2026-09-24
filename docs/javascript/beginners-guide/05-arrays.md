@@ -431,6 +431,27 @@ Result:
 2
 ```
 
+### `findLast` / `findLastIndex` - search from the end
+
+Use these when the last matching item matters:
+
+```js
+const scores = [42, 91, 68, 95, 73];
+
+const lastPassing = scores.findLast((score) => score >= 60);
+const lastPassingIndex = scores.findLastIndex((score) => score >= 60);
+
+console.log(lastPassing);
+console.log(lastPassingIndex);
+```
+
+Result:
+
+```text
+73
+4
+```
+
 ### `some` / `every` - boolean tests
 
 ```js
@@ -576,6 +597,42 @@ Result:
 [ 1, 2, 3 ]
 ```
 
+### ES2023 copying methods
+
+Modern JavaScript includes copying versions of common mutating methods. They return a new array and leave the original
+array unchanged:
+
+```js
+const numbers = [3, 1, 2];
+const letters = ["a", "b", "c"];
+
+const sorted = numbers.toSorted((a, b) => a - b);
+const reversed = letters.toReversed();
+const spliced = letters.toSpliced(1, 1, "B");
+const replaced = letters.with(2, "C");
+
+console.log(numbers);
+console.log(sorted);
+console.log(letters);
+console.log(reversed);
+console.log(spliced);
+console.log(replaced);
+```
+
+Result:
+
+```text
+[ 3, 1, 2 ]
+[ 1, 2, 3 ]
+[ 'a', 'b', 'c' ]
+[ 'c', 'b', 'a' ]
+[ 'a', 'B', 'c' ]
+[ 'a', 'b', 'C' ]
+```
+
+Use these when you want array updates that are easy to reason about, especially in UI code where preserving the original
+array matters.
+
 ## Other useful methods
 
 ### `concat` - merge arrays
@@ -642,6 +699,18 @@ Result:
 ```
 
 Like `sort`, `reverse` mutates the original. Copy first with `[...array]` if needed.
+
+### Mutating vs non-mutating methods
+
+Some array methods change the original array. Others return a new array or another value and leave the original alone.
+
+| Mutating methods                  | Non-mutating methods                         |
+|-----------------------------------|----------------------------------------------|
+| `push`, `pop`, `shift`, `unshift` | `map`, `filter`, `slice`, `concat`           |
+| `splice`, `sort`, `reverse`       | `toSorted`, `toReversed`, `toSpliced`        |
+| `fill`, `copyWithin`              | `with`, `find`, `findLast`, `includes`, etc. |
+
+When in doubt, check whether the method returns a new array and whether the original array changes in your logs.
 
 ### `slice` - extract a portion
 
@@ -794,9 +863,11 @@ Result:
 - Arrays are zero-indexed ordered lists; use `[]` to create them.
 - `push`/`pop` (end), `unshift`/`shift` (start), `splice` (anywhere) to add/remove.
 - `map` transforms, `filter` selects, `reduce` accumulates, `find` searches.
+- `findLast` and `findLastIndex` search from the end when the latest matching item matters.
 - `some`/`every` check conditions across all elements.
 - Chain methods for expressive data pipelines.
 - `sort()` mutates and sorts string representations by default - provide a compare function for numbers.
+- Use copying methods like `toSorted`, `toReversed`, `toSpliced`, and `with` when you need the original array unchanged.
 - Destructuring extracts values; spread `...` copies and merges arrays.
 
 Next up: [Objects](./06-objects.md) - key-value data structures that model real-world entities.

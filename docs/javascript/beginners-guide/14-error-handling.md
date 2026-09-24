@@ -113,6 +113,7 @@ JavaScript has several specific error types that inherit from `Error`:
 | `SyntaxError`    | Code cannot be parsed                | `JSON.parse("{invalid}")`                 |
 | `RangeError`     | A value is outside the allowed range | `new Array(-1)`                           |
 | `URIError`       | Invalid use of URI functions         | `decodeURIComponent("%")`                 |
+| `AggregateError` | Several errors grouped together      | `Promise.any()` when every promise rejects |
 
 ### Checking the error type
 
@@ -131,6 +132,34 @@ try {
         console.log("Unknown error:", error.message);
     }
 }
+```
+
+### `AggregateError`
+
+`AggregateError` means several operations failed together. A common place to see it is `Promise.any()`: it returns the
+first successful promise, but throws `AggregateError` if every promise rejects.
+
+```js
+const sources = [
+    Promise.reject(new Error("Cache failed")),
+    Promise.reject(new Error("Network failed")),
+];
+
+try {
+    await Promise.any(sources);
+} catch (error) {
+    if (error instanceof AggregateError) {
+        console.log("All options failed");
+        console.log(error.errors.map((err) => err.message).join(", "));
+    }
+}
+```
+
+Result:
+
+```text
+All options failed
+Cache failed, Network failed
 ```
 
 ## Throwing errors
@@ -355,6 +384,37 @@ window.addEventListener("unhandledrejection", (event) => {
     // Log to an error reporting service
 });
 ```
+
+### Catching errors you missed
+
+Browser-level handlers can report errors that slipped through local handling. Treat them as a last safety net, not as
+the main way to handle errors. Use local `try`/`catch` or `.catch()` when you know what can fail.
+
+```js
+window.addEventListener("error", (event) => {
+    // event.error is the thrown value; event.message is browser-formatted text
+    const message = event.error instanceof Error ? event.error.message : event.message;
+    console.error("Uncaught error:", message);
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+    const message = event.reason instanceof Error ? event.reason.message : String(event.reason);
+    console.error("Unhandled promise rejection:", message);
+    event.preventDefault();
+});
+```
+
+If code throws `new Error("Button failed")` and a promise rejects with `new Error("Request failed")`, the handler
+output would be:
+
+Result:
+
+```text
+Uncaught error: Button failed
+Unhandled promise rejection: Request failed
+```
+
+See the [Error Handling reference](../javascript-error-handling.md) for Node.js global handlers and more details.
 
 ## Error handling in the DOM
 
@@ -625,8 +685,8 @@ async function initializeDashboard() {
 ## Summary
 
 - **`try`/`catch`/`finally`** is the core error handling mechanism - `finally` always runs.
-- JavaScript has built-in error types (`TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`) - use `instanceof`
-  to distinguish them.
+- JavaScript has built-in error types (`TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`,
+  `AggregateError`) - use `instanceof` to distinguish them.
 - **Always throw `Error` objects** (not strings) to get stack traces.
 - **Custom error classes** let you add properties and handle errors by category.
 - **Error `cause`** (ES2022) chains errors to preserve the original failure.

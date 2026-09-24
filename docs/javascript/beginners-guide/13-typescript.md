@@ -19,6 +19,9 @@ TypeScript is JavaScript with **static types**. It catches bugs at compile time 
 editor autocompletion, and makes large codebases easier to maintain. TypeScript can parse JavaScript syntax, so you can
 adopt it gradually, although strict type checking may still report errors in existing JavaScript.
 
+**Tip:** This chapter is a high-level overview. For a deeper path through the language, continue with the
+[full TypeScript beginners guide](../../typescript/beginners-guide/01-introduction.md).
+
 ## Why TypeScript?
 
 Consider this JavaScript function:
@@ -836,7 +839,42 @@ fetchPosts().then(posts => {
 ```
 
 The annotation tells TypeScript what you expect, but it does not validate the JSON at runtime. Validate untrusted API
-responses before relying on their shape in production code.
+responses before relying on their shape in production code. For small shapes, a hand-written type guard is enough:
+
+```ts
+interface Post {
+    id: number;
+    title: string;
+    body: string;
+}
+
+function isPost(value: unknown): value is Post {
+    if (typeof value !== "object" || value === null) return false;
+
+    const post = value as Record<string, unknown>;
+    return typeof post.id === "number"
+        && typeof post.title === "string"
+        && typeof post.body === "string";
+}
+
+function isPostArray(value: unknown): value is Post[] {
+    return Array.isArray(value) && value.every(isPost);
+}
+
+async function fetchPosts(): Promise<Post[]> {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data: unknown = await response.json();
+
+    if (!isPostArray(data)) {
+        throw new Error("API returned invalid posts");
+    }
+
+    return data;
+}
+```
+
+For larger API contracts, schema libraries such as Zod or Valibot can define the runtime validation and TypeScript type
+from one schema.
 
 ### Typing an object map
 
@@ -965,6 +1003,7 @@ This gives you a TypeScript project with hot reloading, ready to develop in the 
 - **Utility types** (`Partial`, `Pick`, `Omit`, `Record`) transform existing types.
 - **`strict: true`** in `tsconfig.json` catches the most bugs - always use it.
 - Migrate gradually: add TypeScript to an existing project one file at a time.
+- For a deeper sequence, continue with the [full TypeScript beginners guide](../../typescript/beginners-guide/01-introduction.md).
 
 TypeScript is used by most modern JavaScript frameworks (Angular, Next.js, SvelteKit) and is the de facto standard for
 professional JavaScript development. The investment in learning it pays off immediately through fewer bugs and better

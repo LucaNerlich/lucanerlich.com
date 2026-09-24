@@ -657,8 +657,8 @@ Store project data as JSON so we can load and filter it dynamically:
 
     <div class="filters" id="filters"></div>
     <div class="card-grid" id="project-list"></div>
-    <p id="no-results" style="display: none; color: var(--color-text-muted);">
-        No projects match this filter.
+    <p id="project-status" role="status" aria-live="polite" style="color: var(--color-text-muted);">
+        Loading projects...
     </p>
 </main>
 
@@ -681,9 +681,9 @@ Store project data as JSON so we can load and filter it dynamically:
 async function initProjects() {
     const listContainer = document.querySelector("#project-list");
     const filtersContainer = document.querySelector("#filters");
-    const noResults = document.querySelector("#no-results");
+    const status = document.querySelector("#project-status");
 
-    if (!listContainer || !filtersContainer) return;
+    if (!listContainer || !filtersContainer || !status) return;
 
     // ── Load project data ─────────────────────────────────────
 
@@ -697,12 +697,12 @@ async function initProjects() {
         projects = await response.json();
     } catch (error) {
         listContainer.innerHTML = "";
-        const errorP = document.createElement("p");
-        errorP.textContent = `Error loading projects: ${error.message}`;
-        errorP.style.color = "red";
-        listContainer.appendChild(errorP);
+        status.textContent = `Error loading projects: ${error.message}`;
+        status.style.color = "red";
         return;
     }
+
+    status.textContent = "";
 
     // ── Build filter buttons ──────────────────────────────────
 
@@ -735,11 +735,11 @@ async function initProjects() {
             : projects.filter((p) => p.tags.includes(filter));
 
         if (filtered.length === 0) {
-            noResults.style.display = "block";
+            status.textContent = "No projects match this filter.";
             return;
         }
 
-        noResults.style.display = "none";
+        status.textContent = "";
 
         for (const project of filtered) {
             const card = document.createElement("div");
@@ -987,6 +987,9 @@ function initContactForm() {
 document.addEventListener("DOMContentLoaded", initContactForm);
 ```
 
+Client-side validation is only a user-experience layer. Repeat the same validation on the server, and add spam
+protection such as a hidden honeypot field plus rate limiting.
+
 ## Step 8: testing locally
 
 ### Option 1: VS Code Live Server
@@ -1210,9 +1213,9 @@ Split styles across files and load them in order:
 
 ```html
 <head>
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/layout.css">
-    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
 </head>
 ```
 
@@ -1233,12 +1236,12 @@ Create `components/nav.html`:
 ```html
 <nav class="site-nav">
     <div class="nav-inner">
-        <a href="/index.html" class="nav-logo">MyPortfolio</a>
+        <a href="index.html" class="nav-logo">MyPortfolio</a>
         <ul class="nav-links">
-            <li><a href="/index.html">Home</a></li>
-            <li><a href="/projects.html">Projects</a></li>
-            <li><a href="/blog/index.html">Blog</a></li>
-            <li><a href="/contact.html">Contact</a></li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="blog/index.html">Blog</a></li>
+            <li><a href="contact.html">Contact</a></li>
             <li><button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">Dark Mode</button></li>
         </ul>
     </div>

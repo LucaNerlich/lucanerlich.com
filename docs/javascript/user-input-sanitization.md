@@ -230,6 +230,97 @@ rendering boundary or before storing/serving it. Keep the allow-list tight and e
 only safe for an HTML context -- do not concatenate it into scripts, styles, or URLs. Avoid writing a custom HTML parser
 unless you have a strong reason.
 
+For example, allow only the tags and attributes your editor actually needs:
+
+```ts
+import DOMPurify from "dompurify";
+
+function sanitizeRichText(dirtyHtml: string): string {
+    return DOMPurify.sanitize(dirtyHtml, {
+        ALLOWED_TAGS: ["p", "strong", "em", "ul", "ol", "li", "a", "code"],
+        ALLOWED_ATTR: ["href", "title"],
+    });
+}
+```
+
+## Content Security Policy as defense in depth
+
+A Content Security Policy (CSP) tells the browser which sources are allowed to load scripts, styles, images, frames,
+and other resources. For XSS prevention, its strongest value is blocking unexpected script execution if an unsafe sink
+slips through code review. CSP is a second layer of defense, not a replacement for validation, sanitization, and
+context-aware output encoding.
+
+A strict starter policy for an application that can add nonces to scripts looks like this:
+
+```http
+Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-random-per-response'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'
+```
+
+Generate a fresh, unpredictable nonce for every response and put the same value on each trusted script tag. If static
+HTML cannot generate nonces, use `script-src` hashes for known inline scripts, or better, move scripts into external
+files and keep `script-src 'self'`. Do not add `'unsafe-inline'` to `script-src`: it allows inline scripts and event
+handler attributes, which defeats most of CSP's XSS protection.
+
+Roll CSP out with a report-only header first so you can see what would break without blocking users:
+
+```http
+Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'nonce-random-per-response'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; report-to csp-endpoint
+```
+
+After reports are clean, switch to the enforcing `Content-Security-Policy` header.
+
+## Trusted Types
+
+Trusted Types reduce DOM-based XSS by requiring dangerous HTML/script sinks, such as `innerHTML`, to receive a trusted
+object instead of a plain string. Enable enforcement with CSP where supported:
+
+```http
+Content-Security-Policy: require-trusted-types-for 'script'; trusted-types app-html dompurify
+```
+
+`trusted-types` lists the policy names the page may create. DOMPurify creates its own internal policy named
+`dompurify` when Trusted Types are available, so allow that name too, or DOMPurify cannot parse HTML under enforcement.
+
+Then create one policy that turns untrusted strings into sanitized HTML. Use feature detection so older browsers still
+receive sanitized strings:
+
+```ts
+type TrustedTypesWindow = Window & typeof globalThis & {
+    trustedTypes?: {
+        createPolicy: (
+            name: string,
+            rules: { createHTML: (input: string) => string },
+        ) => { createHTML: (input: string) => object };
+    };
+};
+
+declare const DOMPurify: {
+    sanitize(input: string): string;
+};
+
+const trustedTypes = (window as TrustedTypesWindow).trustedTypes;
+const htmlPolicy = trustedTypes?.createPolicy("app-html", {
+    createHTML: (input: string) => DOMPurify.sanitize(input),
+});
+
+function sanitizeForHtml(input: string): string | object {
+    return htmlPolicy ? htmlPolicy.createHTML(input) : DOMPurify.sanitize(input);
+}
+
+function renderUserHtml(content: Element, userHtml: string): void {
+    content.innerHTML = sanitizeForHtml(userHtml) as string;
+}
+
+const content = document.querySelector("#content");
+if (content) {
+    renderUserHtml(content, "<p>Hello</p>");
+}
+```
+
+The policy above is named `app-html`; a `default` policy is also possible, but named policies make the trust boundary
+more explicit. Trusted Types are supported in Chromium-based browsers; check MDN for current Firefox and Safari
+support before relying on enforcement as a hard requirement.
+
 ## Common pitfalls
 
 - **Trusting client-side validation**: users can bypass it.

@@ -411,6 +411,47 @@ Verify the timer is active:
 sudo systemctl status certbot.timer
 ```
 
+### Add HTTP Strict Transport Security
+
+HTTP Strict Transport Security (HSTS) tells browsers to use HTTPS for future visits. Add it to the HTTPS `server`
+block only after HTTPS works on every domain and subdomain that will receive the header. Start with a short `max-age`,
+such as `300`, test carefully, and then increase it.
+
+```nginx
+add_header Strict-Transport-Security "max-age=300" always;
+```
+
+After you are confident, a long-lived production value is common:
+
+```nginx
+add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+```
+
+`includeSubDomains` applies the rule to every subdomain. Only use it when all subdomains have working HTTPS. Browser
+preload lists go even further: if you submit a domain for preload, browsers can enforce HTTPS before the first visit,
+and mistakes can be painful to undo.
+
+Nginx has one important inheritance gotcha: if you add any `add_header` directive inside a `location` block, that
+location no longer inherits the `add_header` directives from the surrounding `server` block. Repeat all required
+headers inside that location, or keep headers at one level.
+
+### Add a starter Content Security Policy
+
+The static site from [chapter 11](./11-project-build-a-website.md) loads local CSS and JavaScript files, fetches
+`data/projects.json`, and uses a few inline `style=""` attributes. The core project does not need inline scripts. A
+starter CSP that fits that project is:
+
+```nginx
+add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests" always;
+```
+
+`connect-src 'self'` allows the `fetch("data/projects.json")` call. The `'unsafe-inline'` in `style-src` is there
+because the chapter's HTML contains inline `style=""` attributes; JavaScript assignments such as `element.style.color`
+are not the same thing. If you move those inline style attributes into `css/styles.css`, remove `'unsafe-inline'` from
+`style-src`. Do not add `'unsafe-inline'` to `script-src`. If you used the optional `fetch()`-based component loader
+from chapter 11, move its inline `<script>` block into an external file such as `js/layout.js`, otherwise this policy
+blocks it. For more background, see [User Input Sanitization](../user-input-sanitization.md).
+
 ## Step 8: basic security hardening
 
 ### Automatic security updates
@@ -557,7 +598,7 @@ curl -I https://yoursite.com
 curl -vI https://yoursite.com 2>&1 | grep -i "subject\|expire"
 
 # Check security headers
-curl -I https://yoursite.com 2>&1 | grep -i "x-frame\|x-content\|referrer"
+curl -I https://yoursite.com 2>&1 | grep -i "strict-transport-security\|content-security-policy\|x-frame\|x-content\|referrer"
 ```
 
 ## Complete server setup checklist
@@ -575,6 +616,7 @@ Here is everything we did, in order:
 - [ ] Created nginx site configuration
 - [ ] Pointed the domain to the server (DNS)
 - [ ] Installed HTTPS with Let's Encrypt
+- [ ] Added HSTS and Content Security Policy headers
 - [ ] Set up automatic security updates
 - [ ] Installed Fail2Ban
 - [ ] Created a deploy script
