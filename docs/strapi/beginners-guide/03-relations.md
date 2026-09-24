@@ -22,12 +22,14 @@ In this chapter we create four content types and connect them to build a complet
 
 ## Relation types
 
-Strapi supports four relation types:
+Strapi supports one-way and bidirectional relation shapes. The Content-Type Builder exposes these common options:
 
 | Relation         | Description                                | Example               |
 |------------------|--------------------------------------------|-----------------------|
+| **One-way**      | Each A points to one B, no inverse field   | Post - Featured Image |
 | **One-to-one**   | Each A has exactly one B, and vice versa   | User - Profile       |
 | **One-to-many**  | One A has many Bs, each B belongs to one A | Author - Posts       |
+| **Many-to-one**  | Many As belong to one B                    | Posts - Category     |
 | **Many-to-many** | Many As can relate to many Bs              | Posts - Tags         |
 | **Many-way**     | One-sided many, no inverse                 | Post - Related Posts |
 
@@ -194,7 +196,7 @@ Key properties:
 
 | Property     | Meaning                                                                    |
 |--------------|----------------------------------------------------------------------------|
-| `relation`   | The relation type (`manyToOne`, `oneToMany`, `manyToMany`, `oneToOne`)     |
+| `relation`   | The schema relation type (`manyToOne`, `oneToMany`, `manyToMany`, `oneToOne`) |
 | `target`     | The UID of the related content type (`api::author.author`)                 |
 | `inversedBy` | The field name on the other side of the relation                           |
 | `mappedBy`   | Used on the inverse side to point back (Strapi manages this automatically) |
@@ -250,24 +252,9 @@ This creates a join table linking posts to other posts.
 
 ## Polymorphic relations
 
-Strapi also supports **polymorphic relations** where a field can relate to multiple content types. For example, a
-**Comment** might belong to either a Post or a Page:
-
-```json
-{
-  "related": {
-    "type": "relation",
-    "relation": "morphToOne",
-    "morphColumn": {
-      "idColumn": { "name": "related_id", "type": "integer" },
-      "typeColumn": { "name": "related_type", "type": "string" }
-    }
-  }
-}
-```
-
-Polymorphic relations are advanced - we mention them here for completeness. For most blog use cases, standard relations
-are sufficient.
+Strapi uses polymorphic structures internally for features such as media fields and dynamic zones, but they are not a
+normal Content-Type Builder relation choice for a beginner blog model. For most blog use cases, standard relations and
+components are sufficient.
 
 ## Relation best practices
 
@@ -275,7 +262,7 @@ are sufficient.
 
 Avoid deeply nested relations. Each level of nesting adds a database JOIN and slows down queries.
 
-```
+```text
 Good:  Post → Author (1 level)
 Avoid: Post → Author → Company → Country → Region (4 levels)
 ```
@@ -291,7 +278,7 @@ If data always belongs to its parent and has no meaning on its own, use a compon
 
 Use descriptive names that make the relationship obvious:
 
-```
+```text
 Good:   post.author, post.category, post.tags
 Avoid:  post.relation1, post.ref, post.data
 ```
@@ -307,7 +294,7 @@ will cover this in detail in [chapter 5 (REST API)](./05-rest-api.md).
 
 You learned:
 
-- The four relation types: one-to-one, one-to-many, many-to-many, and many-way
+- The common relation shapes: one-way, one-to-one, one-to-many, many-to-one, many-to-many, and many-way
 - How to create and connect content types in the admin panel
 - What the relation schema looks like in JSON
 - The difference between owning and inverse sides

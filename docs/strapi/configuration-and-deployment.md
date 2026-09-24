@@ -12,7 +12,7 @@ deployment and hours of debugging.
 
 ## Project structure (config files)
 
-```
+```text
 config/
 ├── admin.js          # Admin panel settings
 ├── api.js            # API settings (response format, pagination)
@@ -30,7 +30,7 @@ All files can be `.js` or `.ts` and receive the `env` helper to read environment
 
 Strapi supports per-environment overrides via `config/env/{environment}/`:
 
-```
+```text
 config/
 ├── database.js            # Default (development)
 ├── server.js
@@ -99,7 +99,7 @@ module.exports = ({ env }) => ({
 // config/env/production/database.js
 module.exports = ({ env }) => ({
   connection: {
-    client: 'mysql2',
+    client: 'mysql',
     connection: {
       host: env('DATABASE_HOST', 'localhost'),
       port: env.int('DATABASE_PORT', 3306),
@@ -107,6 +107,33 @@ module.exports = ({ env }) => ({
       user: env('DATABASE_USERNAME', 'strapi'),
       password: env('DATABASE_PASSWORD'),
     },
+  },
+});
+```
+
+---
+
+## Admin configuration
+
+Admin authentication, API-token salts, transfer-token salts, and token visibility encryption live in `config/admin.js`.
+Keep these values stable per environment; rotating them invalidates the related tokens or sessions.
+
+```js
+// config/admin.js
+module.exports = ({ env }) => ({
+  auth: {
+    secret: env('ADMIN_JWT_SECRET'),
+  },
+  apiToken: {
+    salt: env('API_TOKEN_SALT'),
+  },
+  transfer: {
+    token: {
+      salt: env('TRANSFER_TOKEN_SALT'),
+    },
+  },
+  secrets: {
+    encryptionKey: env('ENCRYPTION_KEY'),
   },
 });
 ```
@@ -183,6 +210,50 @@ module.exports = ({ env }) => ({
 
 ---
 
+## Global middleware configuration
+
+Configure global middleware in `config/middlewares.js`. Keep the default stack order unless you have a specific reason
+to move a middleware.
+
+```js
+// config/middlewares.js
+module.exports = [
+  'strapi::logger',
+  'strapi::errors',
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'connect-src': ["'self'", 'https:'],
+          'img-src': ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', 'cdn.example.com'],
+          'media-src': ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', 'cdn.example.com'],
+          upgradeInsecureRequests: null,
+        },
+      },
+    },
+  },
+  {
+    name: 'strapi::cors',
+    config: {
+      origin: ['https://www.example.com'],
+      headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+      keepHeaderOnError: true,
+    },
+  },
+  'strapi::poweredBy',
+  'strapi::query',
+  'strapi::body',
+  'strapi::session',
+  'strapi::favicon',
+  'strapi::public',
+];
+```
+
+---
+
 ## Environment variables (.env)
 
 ```bash
@@ -199,6 +270,7 @@ API_TOKEN_SALT=<generated-salt>
 ADMIN_JWT_SECRET=<generated-secret>
 TRANSFER_TOKEN_SALT=<generated-salt>
 JWT_SECRET=<generated-secret>
+ENCRYPTION_KEY=<generated-secret>
 
 DATABASE_HOST=localhost
 DATABASE_PORT=5432
@@ -272,7 +344,9 @@ services:
       APP_KEYS: ${APP_KEYS}
       API_TOKEN_SALT: ${API_TOKEN_SALT}
       ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
       JWT_SECRET: ${JWT_SECRET}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
     volumes:
       - strapi-uploads:/app/public/uploads
     depends_on:

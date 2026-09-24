@@ -113,18 +113,22 @@ module.exports = createCoreController('api::article.article', ({ strapi }) => ({
 
   // Custom action: POST /api/articles/:id/like
   async like(ctx) {
-    const { id } = ctx.params;
-    const article = await strapi.documents('api::article.article').findOne(id);
+    const { id: documentId } = ctx.params;
+    const article = await strapi.documents('api::article.article').findOne({
+      documentId,
+    });
 
     if (!article) {
       return ctx.notFound('Article not found');
     }
 
-    const updated = await strapi.documents('api::article.article').update(id, {
+    const updated = await strapi.documents('api::article.article').update({
+      documentId,
       data: { likes: (article.likes || 0) + 1 },
     });
 
-    return this.transformResponse(updated);
+    const sanitized = await this.sanitizeOutput(updated, ctx);
+    return this.transformResponse(sanitized);
   },
 }));
 ```
@@ -170,7 +174,8 @@ module.exports = createCoreService('api::article.article', ({ strapi }) => ({
 module.exports = ({ strapi }) => ({
 
   async sendPushNotification({ userId, title, body }) {
-    const user = await strapi.documents('plugin::users-permissions.user').findOne(userId, {
+    const user = await strapi.db.query('plugin::users-permissions.user').findOne({
+      where: { id: userId },
       populate: ['pushTokens'],
     });
 

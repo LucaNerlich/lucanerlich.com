@@ -27,7 +27,7 @@ npm install --save-dev ts-jest @types/supertest
 module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/__tests__/**/*.test.(js|ts)', '**/*.test.(js|ts)'],
-  testPathIgnorePatterns: ['/node_modules/', '/build/', '/.cache/'],
+  testPathIgnorePatterns: ['/node_modules/', '/build/', '/dist/', '/.cache/', '/.tmp/'],
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
@@ -42,21 +42,46 @@ module.exports = {
 
 ```js
 // tests/helpers/strapi.js
-const Strapi = require('@strapi/strapi');
+const fs = require('fs');
+const { createStrapi } = require('@strapi/strapi');
 
 let instance;
 
 async function setupStrapi() {
   if (!instance) {
-    instance = await Strapi().load();
-    await instance.server.mount();
+    process.env.NODE_ENV = process.env.NODE_ENV || 'test';
+    process.env.APP_KEYS = process.env.APP_KEYS || 'test-key-1,test-key-2';
+    process.env.API_TOKEN_SALT = process.env.API_TOKEN_SALT || 'test-api-token-salt';
+    process.env.ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'test-admin-jwt-secret';
+    process.env.TRANSFER_TOKEN_SALT = process.env.TRANSFER_TOKEN_SALT || 'test-transfer-token-salt';
+    process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-jwt-secret';
+    process.env.DATABASE_CLIENT = process.env.DATABASE_CLIENT || 'sqlite';
+    process.env.DATABASE_FILENAME = process.env.DATABASE_FILENAME || '.tmp/test.db';
+    process.env.STRAPI_DISABLE_CRON = 'true';
+    process.env.PORT = process.env.PORT || '0';
+
+    fs.mkdirSync('.tmp', { recursive: true });
+
+    instance = await createStrapi().load();
+    await instance.start();
+    global.strapi = instance;
   }
   return instance;
 }
 
 async function teardownStrapi() {
   if (instance) {
+    const dbSettings = instance.config.get('database.connection');
+
+    await instance.server.httpServer.close();
     await instance.destroy();
+
+    const filename = dbSettings?.connection?.filename;
+    if (filename && filename !== ':memory:' && fs.existsSync(filename)) {
+      fs.unlinkSync(filename);
+    }
+
+    global.strapi = undefined;
     instance = null;
   }
 }
@@ -85,6 +110,10 @@ async function cleanDatabase() {
 module.exports = { setupStrapi, teardownStrapi, cleanDatabase };
 ```
 
+For TypeScript projects, the official package also exports `compileStrapi`. Use it when you intentionally want tests to
+exercise compiled output; otherwise, `createStrapi().load()` keeps the Jest inner loop faster by loading the project
+directly.
+
 ### Global test setup/teardown
 
 ```js
@@ -106,11 +135,12 @@ Add to Jest config:
 // jest.config.js
 module.exports = {
   // ...
-  globalSetup: './tests/setup.js',
-  globalTeardown: './tests/teardown.js',
-  setupFilesAfterEnv: ['./tests/setup-after.js'],
+  setupFilesAfterEnv: ['./tests/setup.js'],
 };
 ```
+
+Do not put `beforeAll()` or `afterAll()` files in Jest's `globalSetup` or `globalTeardown`: those options expect modules
+that export setup/teardown functions, and globals created there are not the same runtime as your test files.
 
 ---
 
@@ -221,7 +251,7 @@ describe('Article API', () => {
       const article = await strapi.documents('api::article.article').create({
         data: { title: 'Published', slug: 'published', content: 'Content' },
       });
-      await strapi.documents('api::article.article').publish(article.documentId);
+      await strapi.documents('api::article.article').publish({ documentId: article.documentId });
 
       // Create a draft (should NOT appear)
       await strapi.documents('api::article.article').create({
@@ -240,12 +270,12 @@ describe('Article API', () => {
       const article = await strapi.documents('api::article.article').create({
         data: { title: 'JavaScript Guide', slug: 'js-guide', content: 'Content', featured: true },
       });
-      await strapi.documents('api::article.article').publish(article.documentId);
+      await strapi.documents('api::article.article').publish({ documentId: article.documentId });
 
       const article2 = await strapi.documents('api::article.article').create({
         data: { title: 'Python Guide', slug: 'py-guide', content: 'Content', featured: false },
       });
-      await strapi.documents('api::article.article').publish(article2.documentId);
+      await strapi.documents('api::article.article').publish({ documentId: article2.documentId });
 
       const res = await request(app)
         .get('/api/articles?filters[featured][$eq]=true')
@@ -265,11 +295,11 @@ describe('Article API', () => {
     });
 
     it('should create an article when authenticated', async () => {
-      const jwt = await getAuthToken(); // helper function
+      const authHeader = await getAuthHeader(); // helper function
 
       const res = await request(app)
         .post('/api/articles')
-        .set('Authorization', `Bearer ${jwt}`)
+        .set('Authorization', authHeader)
         .send({
           data: {
             title: 'New Article',
@@ -285,34 +315,32 @@ describe('Article API', () => {
 });
 
 // Helper to get an auth token for tests
-async function getAuthToken() {
+async function getAuthHeader() {
   // Create or find a test user
-  let testUser = await strapi.query('plugin::users-permissions.user').findOne({
+  let testUser = await strapi.db.query('plugin::users-permissions.user').findOne({
     where: { email: 'test@example.com' },
   });
 
   if (!testUser) {
-    const defaultRole = await strapi.query('plugin::users-permissions.role').findOne({
+    const defaultRole = await strapi.db.query('plugin::users-permissions.role').findOne({
       where: { type: 'authenticated' },
     });
 
-    testUser = await strapi.query('plugin::users-permissions.user').create({
-      data: {
-        username: 'testuser',
-        email: 'test@example.com',
-        password: 'TestPassword123!',
-        provider: 'local',
-        confirmed: true,
-        role: defaultRole.id,
-      },
+    testUser = await strapi.plugin('users-permissions').service('user').add({
+      username: 'testuser',
+      email: 'test@example.com',
+      password: 'TestPassword123!',
+      provider: 'local',
+      confirmed: true,
+      role: defaultRole.id,
     });
   }
 
-  const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
+  const jwt = strapi.plugin('users-permissions').service('jwt').issue({
     id: testUser.id,
   });
 
-  return jwt;
+  return ['Bearer', jwt].join(' ');
 }
 ```
 
@@ -406,10 +434,10 @@ describe('Lifecycle Hooks', () => {
       },
     });
 
-    const updated = await strapi.documents('api::article.article').update(
-      article.documentId,
-      { data: { title: 'Updated Title' } }
-    );
+    const updated = await strapi.documents('api::article.article').update({
+      documentId: article.documentId,
+      data: { title: 'Updated Title' },
+    });
 
     expect(updated.slug).toBe('updated-title');
   });
@@ -427,7 +455,7 @@ describe('Cache Middleware', () => {
     const article = await strapi.documents('api::article.article').create({
       data: { title: 'Cached', slug: 'cached', content: 'Content' },
     });
-    await strapi.documents('api::article.article').publish(article.documentId);
+    await strapi.documents('api::article.article').publish({ documentId: article.documentId });
 
     // First request: cache MISS
     const res1 = await request(app)
@@ -459,7 +487,7 @@ module.exports = ({ env }) => ({
   connection: {
     client: 'sqlite',
     connection: {
-      filename: '.tmp/test.db',
+      filename: env('DATABASE_FILENAME', '.tmp/test.db'),
     },
     useNullAsDefault: true,
   },
@@ -511,7 +539,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
@@ -540,7 +568,7 @@ jobs:
 
 ## Test structure recommendation
 
-```
+```text
 tests/
 ├── helpers/
 │   ├── strapi.js          # Strapi instance management
@@ -572,7 +600,7 @@ tests/
 | Tests share state                     | One test's data leaks into another   | Clean database between tests                  |
 | Strapi instance not destroyed         | Port still in use, next run fails    | Always call `teardownStrapi()` in `afterAll`  |
 | Testing against production DB         | Accidentally deletes real data       | Use `NODE_ENV=test` with a separate database  |
-| Slow test suite                       | Strapi boots for every test file     | Use `globalSetup` to boot once                |
+| Slow test suite                       | Strapi boots for every test file     | Reuse the shared `setupStrapi()` helper per suite        |
 | Missing env vars in CI                | Strapi fails to start                | Set all required env vars in CI config        |
 | Testing implementation, not behaviour | Brittle tests that break on refactor | Test API responses, not internal method calls |
 

@@ -37,7 +37,7 @@ flowchart TD
 
 ### Common single types
 
-```
+```text
 Site Settings      - logo, site title, social links, analytics ID
 Homepage           - hero, featured articles, CTA blocks
 Footer             - columns, links, copyright text
@@ -121,7 +121,7 @@ endpoint - they only exist as part of a parent document.
 
 Organize components into categories for clarity:
 
-```
+```text
 src/components/
 ├── shared/          # Cross-cutting: SEO, breadcrumbs, social links
 │   ├── seo.json
@@ -172,7 +172,8 @@ Dynamic zones let editors choose from a set of components in any order - the cla
 ### Querying dynamic zones
 
 ```js
-const page = await strapi.documents('api::page.page').findOne(documentId, {
+const page = await strapi.documents('api::page.page').findOne({
+  documentId,
   populate: {
     blocks: {
       on: {
@@ -245,7 +246,7 @@ function DynamicZone({ blocks }) {
 
 ### Anti-pattern: component when you need a relation
 
-```
+```text
 ❌ Article has a "author" component with name, bio, avatar
    → Changing the author's bio means updating every article
 
@@ -255,7 +256,7 @@ function DynamicZone({ blocks }) {
 
 ### Anti-pattern: relation when you need a component
 
-```
+```text
 ❌ Article has a relation to "SEO" collection type
    → Creates orphaned SEO entries, confusing admin UI, unnecessary joins
 
@@ -271,7 +272,7 @@ function DynamicZone({ blocks }) {
 
 A page that can contain any combination of blocks:
 
-```
+```text
 Page
 ├── title (string)
 ├── slug (string)
@@ -285,7 +286,7 @@ Page
 
 ### Pattern: taxonomy with tags
 
-```
+```text
 Article
 ├── title
 ├── content
@@ -305,7 +306,7 @@ Tag (collection type)
 
 ### Pattern: settings hierarchy
 
-```
+```text
 SiteSettings (single type)
 ├── siteName
 ├── logo (media)
@@ -317,7 +318,7 @@ SiteSettings (single type)
 
 ### Pattern: product with variants
 
-```
+```text
 Product (collection type)
 ├── name
 ├── description
@@ -337,17 +338,18 @@ Product (collection type)
 
 ### Pattern: nested navigation
 
-```
-NavigationItem (component: layout.nav-item)
+```text
+NavigationItem (collection type)
 ├── label (string)
 ├── url (string)
 ├── target (enum: _self, _blank)
 ├── icon (media)
-└── children (repeatable component: layout.nav-item)  ← self-referencing
+├── parent (relation: manyToOne → NavigationItem)
+└── children (relation: oneToMany → NavigationItem)
 ```
 
-> Strapi allows components to reference themselves for tree-like structures, but limit the nesting depth to avoid
-> performance issues.
+> Use a self-referencing collection type for tree-like structures. Avoid direct self-referencing components; circular
+> component schemas are hard to validate and can break the Content Manager.
 
 ---
 

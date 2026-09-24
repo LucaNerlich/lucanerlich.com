@@ -60,10 +60,10 @@ This creates the standard REST routes:
 | Method   | Path             | Action  | Handler        |
 |----------|------------------|---------|----------------|
 | `GET`    | `/api/posts`     | find    | `post.find`    |
-| `GET`    | `/api/posts/:id` | findOne | `post.findOne` |
+| `GET`    | `/api/posts/:documentId` | findOne | `post.findOne` |
 | `POST`   | `/api/posts`     | create  | `post.create`  |
-| `PUT`    | `/api/posts/:id` | update  | `post.update`  |
-| `DELETE` | `/api/posts/:id` | delete  | `post.delete`  |
+| `PUT`    | `/api/posts/:documentId` | update  | `post.update`  |
+| `DELETE` | `/api/posts/:documentId` | delete  | `post.delete`  |
 
 ## Configuring core routes
 
@@ -81,13 +81,13 @@ export default factories.createCoreRouter("api::post.post", {
     },
     create: {
       // Attach policies to the create route
-      policies: ["is-authenticated"],
+      policies: ["plugin::users-permissions.isAuthenticated"],
     },
     update: {
-      policies: ["is-authenticated", "api::post.is-owner"],
+      policies: ["plugin::users-permissions.isAuthenticated", "api::post.is-owner"],
     },
     delete: {
-      policies: ["is-authenticated", "api::post.is-owner"],
+      policies: ["plugin::users-permissions.isAuthenticated", "api::post.is-owner"],
     },
   },
 });
@@ -104,7 +104,7 @@ export default {
   routes: [
     {
       method: "GET",
-      path: "/api/posts/featured",
+      path: "/posts/featured",
       handler: "api::post.post.findFeatured",
       config: {
         auth: false, // Public access
@@ -112,7 +112,7 @@ export default {
     },
     {
       method: "GET",
-      path: "/api/posts/by-slug/:slug",
+      path: "/posts/by-slug/:slug",
       handler: "api::post.post.findBySlug",
       config: {
         auth: false,
@@ -120,7 +120,7 @@ export default {
     },
     {
       method: "GET",
-      path: "/api/posts/:id/related",
+      path: "/posts/:documentId/related",
       handler: "api::post.post.findRelated",
       config: {
         auth: false,
@@ -139,14 +139,14 @@ export default {
 Strapi matches routes in order. Custom routes are loaded **before** core routes if the filename sorts before the core
 route file. To ensure custom routes match first, prefix with a number:
 
-```
+```text
 src/api/post/routes/
 ├── 01-custom-post.js    # Custom routes (matched first)
 └── post.js              # Core routes (matched second)
 ```
 
 This matters when paths overlap. For example, `/api/posts/featured` could match the core `findOne` route (
-`/api/posts/:id`) if core routes are checked first. Putting custom routes first prevents this.
+`/api/posts/:documentId`) if core routes are checked first. Putting custom routes first prevents this.
 
 ### Route configuration
 
@@ -155,16 +155,12 @@ Each route accepts a `config` object:
 ```javascript
 {
   method: "GET",
-  path: "/api/posts/featured",
+  path: "/posts/featured",
   handler: "api::post.post.findFeatured",
   config: {
     auth: false,               // Public (no auth required)
     policies: ["is-admin"],    // Policy checks
-    middlewares: ["log-request"], // Middleware chain
-    tag: {                     // Admin panel integration
-      plugin: "content-manager",
-      actionType: "find",
-    },
+    middlewares: ["api::post.log-request"], // Middleware chain
   },
 }
 ```
@@ -174,7 +170,6 @@ Each route accepts a `config` object:
 | `auth`        | `true`  | Require authentication (`false` for public) |
 | `policies`    | `[]`    | Array of policy names to apply              |
 | `middlewares` | `[]`    | Array of middleware names to apply          |
-| `tag`         | -      | Links to admin panel permissions            |
 
 ### URL parameters
 
@@ -183,7 +178,7 @@ Use `:param` syntax for dynamic URL segments:
 ```javascript
 {
   method: "GET",
-  path: "/api/posts/by-slug/:slug",
+  path: "/posts/by-slug/:slug",
   handler: "api::post.post.findBySlug",
 }
 ```
@@ -204,14 +199,16 @@ return 403 Forbidden).
 
 ### Built-in policies
 
-Strapi provides global policies you can reference by name:
+Strapi provides built-in policies you can reference by name:
 
-| Policy                        | Description                   |
-|-------------------------------|-------------------------------|
-| `admin::isAuthenticatedAdmin` | Requires admin authentication |
+| Policy                                      | Description                                    |
+|---------------------------------------------|------------------------------------------------|
+| `admin::isAuthenticatedAdmin`               | Requires admin authentication                  |
+| `plugin::users-permissions.isAuthenticated` | Requires an authenticated Users & Permissions user |
 
-For API users, authentication is handled by the `auth` config on routes, not a separate policy. You write custom
-policies for finer-grained control.
+For ordinary generated Content API routes, role permissions and the `auth` config handle basic access. Use the
+Users & Permissions policy when a custom route explicitly needs an authenticated API user before running finer-grained
+custom policies.
 
 ### Creating a custom policy
 
@@ -231,11 +228,11 @@ export default async (policyContext, config, { strapi }) => {
     return false;
   }
 
-  const { id } = policyContext.params;
+  const { documentId } = policyContext.params;
 
   // Fetch the post with its author (and the author's linked user)
   const post = await strapi.documents("api::post.post").findOne({
-    documentId: id,
+    documentId,
     populate: { author: { populate: { user: { fields: ["id"] } } } },
   });
 
@@ -272,7 +269,7 @@ export default factories.createCoreRouter("api::post.post", {
 // In custom routes
 {
   method: "PUT",
-  path: "/api/posts/:id",
+  path: "/posts/:documentId",
   handler: "api::post.post.update",
   config: {
     policies: ["api::post.is-owner"],
@@ -376,7 +373,7 @@ export default factories.createCoreRouter("api::post.post", {
 // Custom routes
 {
   method: "GET",
-  path: "/api/posts/featured",
+  path: "/posts/featured",
   handler: "api::post.post.findFeatured",
   config: {
     middlewares: ["api::post.log-request"],

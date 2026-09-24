@@ -89,7 +89,8 @@ Strapi projects include a `tsconfig.json` by default. Verify it has reasonable s
 npm run develop
 ```
 
-Strapi compiles TypeScript automatically on startup. If there are type errors, they appear in the console.
+Strapi transpiles TypeScript automatically on startup. Syntax and compilation errors appear in the console, but you
+should run `tsc --noEmit` separately for full type checking.
 
 ## Generating types from content schemas
 
@@ -104,7 +105,7 @@ npm run strapi ts:generate-types
 
 This creates a `types/generated/` directory with types for all your content types:
 
-```
+```text
 types/
 └── generated/
     ├── components.d.ts    # Component types
@@ -163,10 +164,9 @@ export interface ApiPostPost {
 You can configure Strapi to regenerate types on every server restart:
 
 ```typescript
-// config/admin.ts
-export default ({ env }) => ({
-  autoGenerateTypes: true,
-  // ... other admin config
+// config/typescript.ts
+export default () => ({
+  autogenerate: true,
 });
 ```
 
@@ -207,13 +207,13 @@ export default factories.createCoreController(
       });
 
       const sanitized = await this.sanitizeOutput(posts, ctx);
-      return { data: sanitized };
+      return this.transformResponse(sanitized);
     },
 
     async findBySlug(ctx) {
       const { slug } = ctx.params as { slug: string };
 
-      const posts = await strapi.documents("api::post.post").findMany({
+      const post = await strapi.documents("api::post.post").findFirst({
         filters: { slug },
         status: "published",
         populate: {
@@ -222,15 +222,14 @@ export default factories.createCoreController(
           tags: { fields: ["name", "slug"] },
           seo: true,
         },
-        limit: 1,
       });
 
-      if (posts.length === 0) {
+      if (!post) {
         return ctx.notFound("Post not found");
       }
 
-      const sanitized = await this.sanitizeOutput(posts[0], ctx);
-      return { data: sanitized };
+      const sanitized = await this.sanitizeOutput(post, ctx);
+      return this.transformResponse(sanitized);
     },
   })
 );
@@ -264,25 +263,36 @@ export default factories.createCoreService(
       });
     },
 
-    async findRelated(postId: string, limit: number = 3) {
+    async findRelated(documentId: string, limit: number = 3) {
       const post = await strapi.documents("api::post.post").findOne({
-        documentId: postId,
+        documentId,
         populate: ["category", "tags"],
       });
 
       if (!post) return [];
 
-      const tagIds = (post.tags as Array<{ id: number }>)?.map(
-        (t) => t.id
+      const tagDocumentIds = (post.tags as Array<{ documentId: string }>)?.map(
+        (tag) => tag.documentId
       ) || [];
+      const categoryDocumentId = (
+        post.category as { documentId: string } | null
+      )?.documentId;
+      const relationFilters: Array<Record<string, unknown>> = [];
+
+      if (categoryDocumentId) {
+        relationFilters.push({ category: { documentId: categoryDocumentId } });
+      }
+
+      if (tagDocumentIds.length > 0) {
+        relationFilters.push({ tags: { documentId: { $in: tagDocumentIds } } });
+      }
+
+      if (relationFilters.length === 0) return [];
 
       return await strapi.documents("api::post.post").findMany({
         filters: {
-          documentId: { $ne: postId },
-          $or: [
-            { category: { id: (post.category as { id: number })?.id } },
-            { tags: { id: { $in: tagIds } } },
-          ],
+          documentId: { $ne: documentId },
+          $or: relationFilters,
         },
         status: "published",
         limit,
@@ -323,7 +333,7 @@ export default {
   routes: [
     {
       method: "GET" as const,
-      path: "/api/posts/featured",
+      path: "/posts/featured",
       handler: "api::post.post.findFeatured",
       config: {
         auth: false,
@@ -331,7 +341,7 @@ export default {
     },
     {
       method: "GET" as const,
-      path: "/api/posts/by-slug/:slug",
+      path: "/posts/by-slug/:slug",
       handler: "api::post.post.findBySlug",
       config: {
         auth: false,
@@ -354,20 +364,20 @@ const isOwner: Core.Policy = async (policyContext, config, { strapi }) => {
     return false;
   }
 
-  const { id } = policyContext.params as { id: string };
+  const { documentId } = policyContext.params as { documentId: string };
 
   const post = await strapi.documents("api::post.post").findOne({
-    documentId: id,
-    populate: { author: { fields: ["id"] } },
+    documentId,
+    populate: { author: { populate: { user: { fields: ["id"] } } } },
   });
 
   if (!post) {
     return false;
   }
 
-  const author = post.author as { id: number } | null;
+  const author = post.author as { user?: { id: number } } | null;
 
-  return author?.id === user.id;
+  return author?.user?.id === user.id;
 };
 
 export default isOwner;
@@ -465,95 +475,50 @@ export default ({ env }: { env: (key: string, defaultValue?: string) => string }
 });
 ```
 
-## Custom type utilities
+## Using generated document types
 
-For convenience, create helper types for common patterns:
+After running `ts:generate-types`, import Strapi's public type namespaces from `@strapi/strapi` instead of maintaining
+hand-written shapes that can drift from your schemas.
 
 ```typescript
-// src/types/index.ts
+import type { Core, Data, UID, Modules } from "@strapi/strapi";
 
-// Extract the data shape from a content type
-type Post = {
-  id: number;
-  documentId: string;
-  title: string;
-  slug: string;
-  content: unknown;
-  excerpt: string | null;
-  publishedDate: string | null;
-  featured: boolean;
-  author?: Author | null;
-  category?: Category | null;
-  tags?: Tag[];
-  seo?: SEO | null;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string | null;
-};
+type PostUID = "api::post.post";
+type Post = Data.ContentType<PostUID>;
+type AnyContentTypeUID = UID.ContentType;
+type DocumentParams<TUID extends UID.ContentType> =
+  Modules.Documents.ServiceParams<TUID>["findMany"];
 
-type Author = {
-  id: number;
-  documentId: string;
-  name: string;
-  bio: string | null;
-  email: string;
-  avatar?: MediaFile | null;
-};
-
-type Category = {
-  id: number;
-  documentId: string;
-  name: string;
-  slug: string;
-  description: string | null;
-};
-
-type Tag = {
-  id: number;
-  documentId: string;
-  name: string;
-  slug: string;
-};
-
-type SEO = {
-  metaTitle: string | null;
-  metaDescription: string | null;
-  canonicalUrl: string | null;
-  noIndex: boolean;
-};
-
-type MediaFile = {
-  id: number;
-  documentId: string;
-  name: string;
-  url: string;
-  alternativeText: string | null;
-  caption: string | null;
-  width: number;
-  height: number;
-  formats: Record<string, { url: string; width: number; height: number }>;
-  mime: string;
-  size: number;
-};
-
-export type { Post, Author, Category, Tag, SEO, MediaFile };
+async function findPublishedPosts(
+  strapi: Core.Strapi,
+  params: DocumentParams<PostUID> = {}
+): Promise<Post[]> {
+  return await strapi.documents("api::post.post").findMany({
+    ...params,
+    status: "published",
+  });
+}
 ```
 
 Use these in your controllers and services:
 
 ```typescript
-import type { Post } from "../../../types";
+import type { Data } from "@strapi/strapi";
+
+type Post = Data.ContentType<"api::post.post">;
 
 async findBySlug(ctx) {
-  const posts = await strapi.documents("api::post.post").findMany({
-    // ...
-  }) as Post[];
+  const post = await strapi.documents("api::post.post").findFirst({
+    filters: { slug: ctx.params.slug },
+    status: "published",
+  }) as Post | null;
 
-  if (posts.length === 0) {
+  if (!post) {
     return ctx.notFound("Post not found");
   }
 
-  return { data: posts[0] };
+  const sanitized = await this.sanitizeOutput(post, ctx);
+  return this.transformResponse(sanitized);
 }
 ```
 

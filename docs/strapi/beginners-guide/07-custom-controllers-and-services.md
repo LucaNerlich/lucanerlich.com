@@ -166,14 +166,15 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
       limit: 5,
     });
 
-    return { data: posts };
+    const sanitized = await this.sanitizeOutput(posts, ctx);
+    return this.transformResponse(sanitized);
   },
 
   // Custom action: find posts by slug
   async findBySlug(ctx) {
     const { slug } = ctx.params;
 
-    const posts = await strapi.documents("api::post.post").findMany({
+    const post = await strapi.documents("api::post.post").findFirst({
       filters: { slug },
       status: "published",
       populate: {
@@ -182,14 +183,14 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
         tags: { fields: ["name", "slug"] },
         seo: true,
       },
-      limit: 1,
     });
 
-    if (posts.length === 0) {
+    if (!post) {
       return ctx.notFound("Post not found");
     }
 
-    return { data: posts[0] };
+    const sanitized = await this.sanitizeOutput(post, ctx);
+    return this.transformResponse(sanitized);
   },
 }));
 ```
@@ -242,9 +243,9 @@ export default factories.createCoreService("api::post.post", ({ strapi }) => ({
   },
 
   // Find related posts by category and tags
-  async findRelated(postId, limit = 3) {
+  async findRelated(documentId, limit = 3) {
     const post = await strapi.documents("api::post.post").findOne({
-      documentId: postId,
+      documentId,
       populate: ["category", "tags"],
     });
 
@@ -253,14 +254,17 @@ export default factories.createCoreService("api::post.post", ({ strapi }) => ({
     // In Strapi 5, use documentId for relations
     const tagDocumentIds = post.tags?.map((t) => t.documentId) || [];
     const categoryDocumentId = post.category?.documentId;
+    const relationFilters = [
+      categoryDocumentId ? { category: { documentId: categoryDocumentId } } : null,
+      tagDocumentIds.length > 0 ? { tags: { documentId: { $in: tagDocumentIds } } } : null,
+    ].filter(Boolean);
+
+    if (relationFilters.length === 0) return [];
 
     return await strapi.documents("api::post.post").findMany({
       filters: {
-        documentId: { $ne: postId },
-        $or: [
-          categoryDocumentId ? { category: { documentId: categoryDocumentId } } : {},
-          tagDocumentIds.length > 0 ? { tags: { documentId: { $in: tagDocumentIds } } } : {},
-        ].filter(f => Object.keys(f).length > 0),
+        documentId: { $ne: documentId },
+        $or: relationFilters,
       },
       status: "published",
       limit,
@@ -290,12 +294,13 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
   },
 
   async findRelated(ctx) {
-    const { id } = ctx.params;
+    const { documentId } = ctx.params;
     const posts = await strapi
       .service("api::post.post")
-      .findRelated(id);
+      .findRelated(documentId);
 
-    return { data: posts };
+    const sanitized = await this.sanitizeOutput(posts, ctx);
+    return this.transformResponse(sanitized);
   },
 }));
 ```
@@ -382,11 +387,11 @@ const count = await docs.count({
 |------------------|--------------------------------------|------------------------------------|
 | **Access**       | `strapi.documents("api::post.post")` | `strapi.service("api::post.post")` |
 | **Purpose**      | Raw data access                      | Business logic + data access       |
-| **Sanitization** | No (raw data)                        | Yes (respects permissions)         |
+| **Sanitization** | No (raw data)                        | No automatic output sanitization   |
 | **Use from**     | Services                             | Controllers                        |
 
-Use the **core service** when you need sanitized, permission-aware responses. Use the **Document Service** when you need
-raw data access in your custom service logic.
+Use the **core service** for reusable business logic and the **Document Service** for direct content access inside that
+logic. When a custom controller returns data from either one, sanitize the output before sending it to clients.
 
 ## Output sanitization
 
@@ -404,7 +409,7 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
     // Sanitize output to respect content-type settings
     const sanitizedPosts = await this.sanitizeOutput(posts, ctx);
 
-    return { data: sanitizedPosts };
+    return this.transformResponse(sanitizedPosts);
   },
 }));
 ```
@@ -467,11 +472,30 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
 
   // Custom action: featured posts
   async findFeatured(ctx) {
+    const posts = await strapi.documents("api::post.post").findMany({
+      filters: { featured: true },
+      status: "published",
+      populate: {
+        author: { fields: ["name"] },
+        category: { fields: ["name", "slug"] },
+      },
+      sort: { publishedDate: "desc" },
+      limit: 5,
+    });
+
+    const sanitized = await this.sanitizeOutput(posts, ctx);
+    return this.transformResponse(sanitized);
+  },
+
+  // Custom action: related posts
+  async findRelated(ctx) {
+    const { documentId } = ctx.params;
     const posts = await strapi
       .service("api::post.post")
-      .findPopular(5);
+      .findRelated(documentId);
+
     const sanitized = await this.sanitizeOutput(posts, ctx);
-    return { data: sanitized };
+    return this.transformResponse(sanitized);
   },
 
   // Custom action: find by slug
@@ -495,7 +519,7 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
       }
 
       const sanitized = await this.sanitizeOutput(post, ctx);
-      return { data: sanitized };
+      return this.transformResponse(sanitized);
     } catch (error) {
       strapi.log.error("Error finding post by slug:", error);
       return ctx.internalServerError("Something went wrong");

@@ -37,8 +37,9 @@ When a file is uploaded:
 
 1. The Upload plugin receives the file
 2. If it is an image, Strapi generates **responsive formats** (thumbnail, small, medium, large)
-3. The file and all formats are sent to the **storage provider**
-4. Metadata (URL, size, dimensions, format) is stored in the database
+3. If size optimization is enabled in the Media Library settings, Strapi reduces image size and quality during processing
+4. The file and all formats are sent to the **storage provider**
+5. Metadata (URL, size, dimensions, format) is stored in the database
 
 ## The local provider
 
@@ -223,6 +224,7 @@ module.exports = ({ env }) => ({
           params: {
             Bucket: env("AWS_BUCKET"),
             ACL: env("AWS_ACL", "public-read"),
+            signedUrlExpires: env("AWS_SIGNED_URL_EXPIRES", 15 * 60),
           },
         },
       },
@@ -244,6 +246,7 @@ AWS_ACCESS_KEY_ID=your-access-key
 AWS_ACCESS_SECRET=your-secret-key
 AWS_REGION=eu-central-1
 AWS_BUCKET=my-strapi-uploads
+AWS_SIGNED_URL_EXPIRES=900
 CDN_URL=https://d123456.cloudfront.net
 ```
 
@@ -266,6 +269,7 @@ module.exports = [
             "'self'",
             "data:",
             "blob:",
+            "market-assets.strapi.io",
             "https://my-strapi-uploads.s3.eu-central-1.amazonaws.com",
             "https://d123456.cloudfront.net",
           ],
@@ -273,9 +277,11 @@ module.exports = [
             "'self'",
             "data:",
             "blob:",
+            "market-assets.strapi.io",
             "https://my-strapi-uploads.s3.eu-central-1.amazonaws.com",
             "https://d123456.cloudfront.net",
           ],
+          upgradeInsecureRequests: null,
         },
       },
     },
@@ -326,9 +332,33 @@ CLOUDINARY_KEY=your-api-key
 CLOUDINARY_SECRET=your-api-secret
 ```
 
-## Upload validation with lifecycle hooks
+## Upload validation
 
-You can validate uploads using Document Service middleware:
+Prefer the Upload plugin's built-in security configuration for MIME-type validation. It validates the actual MIME type,
+not just the file extension:
+
+```javascript
+// config/plugins.js
+module.exports = ({ env }) => ({
+  upload: {
+    config: {
+      security: {
+        allowedTypes: [
+          "image/*",
+          "application/pdf",
+        ],
+        deniedTypes: [
+          "image/svg+xml",
+          "application/x-sh",
+          "application/x-dosexec",
+        ],
+      },
+    },
+  },
+});
+```
+
+For business-specific rules, you can also add Document Service middleware for the upload file content type:
 
 ```javascript
 // src/index.js
@@ -341,8 +371,8 @@ module.exports = {
       ) {
         const file = context.params.data;
 
-        // Reject files larger than 5 MB
-        if (file.size > 5 * 1024 * 1024) {
+        // file.size is stored in kilobytes; reject files larger than 5 MB
+        if (file.size > 5 * 1024) {
           throw new Error("File too large. Maximum size is 5 MB.");
         }
 
@@ -435,7 +465,9 @@ flowchart TD
     Blog --> Content["content-images/"]
 ```
 
-Folders are managed through the admin panel. They do not affect the file URL - they are purely organizational.
+Folders are managed through the admin panel. They do not affect the file URL - they are purely organizational and are
+not exposed through the Content API. Files uploaded through REST are placed in the automatically created "API Uploads"
+folder.
 
 ## Managing media via the API
 
@@ -456,13 +488,9 @@ curl http://localhost:1337/api/upload/files/1 \
 ### Update file metadata
 
 ```bash
-curl -X PUT http://localhost:1337/api/upload/files/1 \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -d '{
-    "alternativeText": "A beautiful landscape",
-    "caption": "Photo taken in 2025"
-  }'
+curl -X POST "http://localhost:1337/api/upload?id=1" \
+  -H "Authorization: ******" \
+  -F 'fileInfo={"alternativeText":"A beautiful landscape","caption":"Photo taken in 2025"}'
 ```
 
 ### Delete a file
@@ -487,7 +515,8 @@ curl -X POST http://localhost:1337/api/upload \
 
 ### Optimize images before upload
 
-While Strapi generates responsive formats, it does not optimize the original. For best performance:
+While Strapi can optimize uploaded images, do not rely on upload-time processing alone for large originals. For best
+performance:
 
 - Use modern formats (WebP, AVIF) when possible
 - Compress images before uploading
@@ -525,7 +554,7 @@ You learned:
 - The **local provider** for development
 - **S3** and **Cloudinary** providers for production
 - **Upload configuration** - size limits, responsive breakpoints
-- **Upload validation** with lifecycle hooks
+- **Upload validation** with security rules and optional Document Service middleware
 - How media appears in **API responses** and how to use responsive images
 - **Managing media** via the API and admin panel
 - **Best practices** - alt text, optimization, CDN, CORS

@@ -22,10 +22,13 @@ Testing ensures your CMS behaves correctly as you add features and refactor code
 ### Install testing dependencies
 
 ```bash
-npm install --save-dev jest supertest sqlite3
+npm install --save-dev jest supertest
 npm install --save-dev @types/jest @types/supertest
 npm install --save-dev ts-jest # If using TypeScript
 ```
+
+Strapi 5 projects already include the database driver chosen at project creation. For the default SQLite setup, keep the
+project's SQLite driver installed (current Strapi 5 scaffolds use `better-sqlite3`).
 
 ### Configure Jest
 
@@ -44,6 +47,8 @@ module.exports = {
   ],
   setupFilesAfterEnv: ["./tests/setup.js"],
   testTimeout: 30000,
+  maxWorkers: 1,
+  testPathIgnorePatterns: ["/node_modules/", ".tmp", ".cache"],
 };
 ```
 
@@ -63,6 +68,8 @@ module.exports = {
   ],
   setupFilesAfterEnv: ["./tests/setup.ts"],
   testTimeout: 30000,
+  maxWorkers: 1,
+  testPathIgnorePatterns: ["/node_modules/", ".tmp", ".cache"],
 };
 ```
 
@@ -72,20 +79,26 @@ Create a separate test database configuration:
 
 ```javascript
 // config/env/test/database.js
-module.exports = ({ env }) => ({
-  connection: {
-    client: "sqlite",
+module.exports = ({ env }) => {
+  const rawClient = env("DATABASE_CLIENT", "sqlite");
+  const client = ["sqlite3", "better-sqlite3"].includes(rawClient)
+    ? "sqlite"
+    : rawClient;
+
+  return {
     connection: {
-      filename: ".tmp/test.db",
+      client,
+      connection: {
+        filename: env("DATABASE_FILENAME", ":memory:"),
+      },
+      useNullAsDefault: true,
+      pool: {
+        min: 0,
+        max: 1,
+      },
     },
-    useNullAsDefault: true,
-    // Disable database migrations during tests
-    pool: {
-      min: 0,
-      max: 1,
-    },
-  },
-});
+  };
+};
 ```
 
 ### Test setup file
@@ -94,22 +107,36 @@ Create a setup file to initialize Strapi for tests:
 
 ```javascript
 // tests/setup.js
-const { createStrapi, compileStrapi } = require("@strapi/strapi");
 const fs = require("fs");
+const { createStrapi } = require("@strapi/strapi");
+
+process.env.NODE_ENV = process.env.NODE_ENV || "test";
+process.env.APP_KEYS = process.env.APP_KEYS || "testKeyOne,testKeyTwo";
+process.env.API_TOKEN_SALT =
+  process.env.API_TOKEN_SALT || "test-api-token-salt";
+process.env.ADMIN_JWT_SECRET =
+  process.env.ADMIN_JWT_SECRET || "test-admin-jwt-secret";
+process.env.TRANSFER_TOKEN_SALT =
+  process.env.TRANSFER_TOKEN_SALT || "test-transfer-token-salt";
+process.env.JWT_SECRET = process.env.JWT_SECRET || "test-jwt-secret";
+process.env.ENCRYPTION_KEY =
+  process.env.ENCRYPTION_KEY || "0123456789abcdef0123456789abcdef";
+process.env.DATABASE_CLIENT = process.env.DATABASE_CLIENT || "sqlite";
+process.env.DATABASE_FILENAME = process.env.DATABASE_FILENAME || ":memory:";
+process.env.PORT = process.env.PORT || "0";
 
 let instance;
 
 async function setupStrapi() {
   if (!instance) {
-    // Delete test database before tests
-    const dbFile = ".tmp/test.db";
+    const dbFile = process.env.DATABASE_FILENAME;
     if (fs.existsSync(dbFile)) {
       fs.unlinkSync(dbFile);
     }
 
-    await compileStrapi();
-    instance = await createStrapi({ appDir: process.cwd() }).load();
-    await instance.server.mount();
+    instance = await createStrapi().load();
+    await instance.start();
+    global.strapi = instance;
 
     // Create test data if needed
     await createTestData(instance);
@@ -119,9 +146,16 @@ async function setupStrapi() {
 
 async function cleanupStrapi() {
   if (instance) {
+    await instance.server.httpServer.close();
     await instance.db.connection.destroy();
     await instance.destroy();
     instance = null;
+    delete global.strapi;
+
+    const dbFile = process.env.DATABASE_FILENAME;
+    if (dbFile !== ":memory:" && fs.existsSync(dbFile)) {
+      fs.unlinkSync(dbFile);
+    }
   }
 }
 
@@ -394,8 +428,26 @@ describe("Post API", () => {
 
   describe("POST /api/posts", () => {
     it("should create a new post with authentication", async () => {
-      // Get API token (you would set this up in your test data)
-      const token = "test-api-token";
+      const authenticatedRole = await strapi.db
+        .query("plugin::users-permissions.role")
+        .findOne({ where: { type: "authenticated" } });
+
+      const user = await strapi
+        .plugin("users-permissions")
+        .service("user")
+        .add({
+          username: "post-author",
+          email: "post-author@example.com",
+          password: "Test1234!",
+          provider: "local",
+          confirmed: true,
+          blocked: false,
+          role: authenticatedRole.id,
+        });
+
+      const token = strapi
+        .service("plugin::users-permissions.jwt")
+        .issue({ id: user.id });
 
       const response = await request(app)
         .post("/api/posts")
@@ -707,23 +759,28 @@ Create reusable test utilities:
 ```javascript
 // tests/utils/auth.js
 async function createTestUser(strapi, data = {}) {
-  return await strapi.plugins["users-permissions"].services.user.add({
-    username: data.username || "testuser",
-    email: data.email || "test@example.com",
-    password: data.password || "Test1234",
-    provider: "local",
-    confirmed: true,
-    blocked: false,
-    role: data.role || 1,
-  });
+  const authenticatedRole = await strapi.db
+    .query("plugin::users-permissions.role")
+    .findOne({ where: { type: "authenticated" } });
+
+  return await strapi
+    .plugin("users-permissions")
+    .service("user")
+    .add({
+      username: data.username || "testuser",
+      email: data.email || "test@example.com",
+      password: data.password || "Test1234",
+      provider: "local",
+      confirmed: true,
+      blocked: false,
+      role: data.role || authenticatedRole.id,
+    });
 }
 
-async function getAuthToken(strapi, email, password) {
-  const response = await strapi.plugins["users-permissions"].services.auth.login({
-    identifier: email,
-    password: password,
-  });
-  return response.jwt;
+function getAuthToken(strapi, user) {
+  return strapi
+    .service("plugin::users-permissions.jwt")
+    .issue({ id: user.id });
 }
 
 module.exports = { createTestUser, getAuthToken };
@@ -779,7 +836,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [22.x, 24.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -797,6 +854,14 @@ jobs:
         run: npm test
         env:
           NODE_ENV: test
+          APP_KEYS: testKeyOne,testKeyTwo
+          API_TOKEN_SALT: test-api-token-salt
+          ADMIN_JWT_SECRET: test-admin-jwt-secret
+          TRANSFER_TOKEN_SALT: test-transfer-token-salt
+          JWT_SECRET: test-jwt-secret
+          ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef
+          DATABASE_CLIENT: sqlite
+          DATABASE_FILENAME: ':memory:'
 
       - name: Generate coverage report
         run: npm run test:coverage
@@ -887,4 +952,4 @@ You learned:
 
 Testing gives you confidence that your CMS works correctly and continues to work as you make changes. With good test coverage, you can refactor and add features without fear of breaking existing functionality.
 
-Next up: [Docker & Deployment Automation](./14-docker-deployment.md) - containerizing Strapi, docker-compose for development, and automated deployments.
+Next up: [Docker & Deployment Automation](./14-docker-deployment.md) - containerizing Strapi, Docker Compose for development, and automated deployments.

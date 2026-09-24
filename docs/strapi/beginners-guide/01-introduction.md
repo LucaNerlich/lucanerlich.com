@@ -80,11 +80,12 @@ Strapi is one of the most popular headless CMS options. Here is why:
 
 Before we start, make sure you have:
 
-- **Node.js 20.x or 22.x (LTS versions)** - check with `node --version`
-  - Strapi 5 requires Node.js 20 or later. Node 18 support was dropped in Strapi 5.31.0 (April 2025).
-  - Odd-numbered Node.js releases (19, 21, 23) are not officially supported
+- **Node.js 22.x, 24.x, or 26.x (active or maintenance LTS versions)** - check with `node --version`
+  - Strapi supports active and maintenance LTS versions only; odd-numbered Node.js releases (23, 25, etc.) are not
+    officially supported
   - Always check the [official Strapi docs](https://docs.strapi.io) for the latest requirements
-- **npm 7+, yarn 3+, or pnpm 8+** - any package manager works
+- **A package manager** - npm v6+ or pnpm; yarn is also supported by the Strapi CLI
+- **Python** - required when using SQLite
 - **A code editor** - VS Code recommended for TypeScript support
 - **A terminal**
 - **Git** - for version control
@@ -101,6 +102,9 @@ npx create-strapi@latest my-blog
 
 The CLI will ask you a few questions. TypeScript is the default in Strapi 5 - we disable it here so we can learn the
 basics first and add it in chapter 11:
+
+If the CLI asks whether to **Login/Signup** or **Skip**, choose **Skip** unless you want to connect the project to a
+Strapi Cloud trial.
 
 | Question              | Recommended answer                                            |
 |-----------------------|---------------------------------------------------------------|
@@ -142,7 +146,7 @@ Click **Let's start** and you are in the admin panel.
 
 After creation, your project looks like this:
 
-```
+```text
 my-blog/
 ├── config/             # Server, database, admin, plugin configuration
 │   ├── admin.js        # Admin panel settings (.ts if you chose TypeScript)
@@ -163,7 +167,7 @@ my-blog/
 │   └── policies/       # Custom policies
 ├── .env                # Environment variables (APP_KEYS, API_TOKEN_SALT, etc.)
 ├── package.json
-└── tsconfig.json       # Even JS projects have this for editor support
+└── tsconfig.json       # Or jsconfig.json in JavaScript projects, for editor support
 ```
 
 The directories you will work with most:
@@ -244,16 +248,16 @@ querying the database directly, you use the Document Service API:
 
 ```javascript
 // Find all published blog posts
-const posts = await strapi.documents("api::post.post").findMany({
-  status: "published",
-  populate: ["author", "category"],
+const posts = await strapi.documents('api::post.post').findMany({
+  status: 'published',
+  populate: ['author', 'category'],
 });
 
 // Create a new post
-const newPost = await strapi.documents("api::post.post").create({
+const newPost = await strapi.documents('api::post.post').create({
   data: {
-    title: "My First Post",
-    content: "Hello, Strapi!",
+    title: 'My First Post',
+    content: 'Hello, Strapi!',
   },
 });
 ```

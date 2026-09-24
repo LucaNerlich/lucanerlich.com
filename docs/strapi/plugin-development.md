@@ -40,14 +40,14 @@ Use the CLI generator:
 
 ```bash
 npx @strapi/sdk-plugin init my-plugin
-# or inside an existing Strapi project:
-yarn strapi generate
-# Select "plugin"
 ```
+
+The Plugin SDK can create a plugin outside a Strapi project, build it for npm, and link it to a project with `yalc`
+while you develop.
 
 This creates the following structure:
 
-```
+```text
 src/plugins/my-plugin/
 ├── admin/
 │   └── src/
@@ -80,8 +80,10 @@ import routes from './routes';
 import services from './services';
 import policies from './policies';
 import middlewares from './middlewares';
+import config from './config';
 
 export default {
+  config,
   register({ strapi }) {
     // Registration logic (runs before bootstrap)
   },
@@ -102,8 +104,9 @@ export default {
 
 ### Content types
 
+File: `server/src/content-types/bookmark/schema.json`
+
 ```json
-// server/src/content-types/bookmark/schema.json
 {
   "kind": "collectionType",
   "collectionName": "bookmarks",
@@ -218,7 +221,8 @@ const bookmarkService = ({ strapi }: { strapi: Core.Strapi }) => ({
   },
 
   async deleteIfOwner(bookmarkId: string, userId: string) {
-    const bookmark = await strapi.documents('plugin::my-plugin.bookmark').findOne(bookmarkId, {
+    const bookmark = await strapi.documents('plugin::my-plugin.bookmark').findOne({
+      documentId: bookmarkId,
       populate: ['owner'],
     });
 
@@ -226,7 +230,9 @@ const bookmarkService = ({ strapi }: { strapi: Core.Strapi }) => ({
       return null;
     }
 
-    return strapi.documents('plugin::my-plugin.bookmark').delete(bookmarkId);
+    return strapi.documents('plugin::my-plugin.bookmark').delete({
+      documentId: bookmarkId,
+    });
   },
 });
 
@@ -237,35 +243,57 @@ export default bookmarkService;
 
 ```ts
 // server/src/routes/index.ts
-export default [
-  {
-    method: 'GET',
-    path: '/bookmarks',
-    handler: 'bookmark.find',
-    config: {
-      policies: [],
-    },
+export default {
+  'content-api': {
+    type: 'content-api',
+    routes: [
+      {
+        method: 'GET',
+        path: '/bookmarks',
+        handler: 'bookmark.find',
+        config: {
+          policies: [],
+        },
+      },
+      {
+        method: 'POST',
+        path: '/bookmarks',
+        handler: 'bookmark.create',
+        config: {
+          policies: [],
+        },
+      },
+      {
+        method: 'DELETE',
+        path: '/bookmarks/:id',
+        handler: 'bookmark.delete',
+        config: {
+          policies: [],
+        },
+      },
+    ],
   },
-  {
-    method: 'POST',
-    path: '/bookmarks',
-    handler: 'bookmark.create',
-    config: {
-      policies: [],
-    },
+  admin: {
+    type: 'admin',
+    routes: [
+      {
+        method: 'GET',
+        path: '/bookmarks',
+        handler: 'bookmark.find',
+        config: {
+          policies: ['admin::isAuthenticatedAdmin'],
+        },
+      },
+    ],
   },
-  {
-    method: 'DELETE',
-    path: '/bookmarks/:id',
-    handler: 'bookmark.delete',
-    config: {
-      policies: [],
-    },
-  },
-];
+};
 ```
 
-Plugin routes are prefixed with `/my-plugin/`, so the endpoints become `/my-plugin/bookmarks`.
+The named router format makes the route surface explicit. Content API routes and admin routes are both prefixed with
+`/<plugin-name>/`, so the public endpoints above become `/my-plugin/bookmarks`.
+
+If the plugin only exposes admin-panel endpoints, keep them in the `admin` router. Use `content-api` only for endpoints
+intended to be called by frontends through Strapi's Content API authentication.
 
 ---
 
@@ -304,10 +332,7 @@ export default {
         id: `${pluginId}.plugin.name`,
         defaultMessage: 'Bookmarks',
       },
-      Component: async () => {
-        const component = await import('./pages/App');
-        return component;
-      },
+      Component: () => import('./pages/App'),
       permissions: [],
     });
 
@@ -327,10 +352,7 @@ export default {
       },
       id: `${pluginId}-settings`,
       to: `/settings/${pluginId}`,
-      Component: async () => {
-        const component = await import('./pages/Settings');
-        return component;
-      },
+      Component: () => import('./pages/Settings'),
       permissions: [],
     });
   },
@@ -448,6 +470,7 @@ Users configure it in their project:
 module.exports = {
   'my-plugin': {
     enabled: true,
+    resolve: './src/plugins/my-plugin', // only for local plugins; omit for npm-installed plugins
     config: {
       maxBookmarksPerUser: 100,
       enablePublicBookmarks: false,
@@ -537,7 +560,9 @@ export default {
   "types": "./dist/server/index.d.ts",
   "scripts": {
     "build": "strapi-plugin build",
-    "watch": "strapi-plugin watch"
+    "watch": "strapi-plugin watch",
+    "watch:link": "strapi-plugin watch:link",
+    "verify": "strapi-plugin verify"
   },
   "exports": {
     "./package.json": "./package.json",
@@ -568,7 +593,7 @@ step generates the `dist/` directory used above.
 2. **Build the plugin**:
 
 ```bash
-yarn build
+npm run build && npm run verify
 ```
 
 3. **Publish**:

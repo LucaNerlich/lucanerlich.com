@@ -22,8 +22,9 @@ and populate them efficiently is essential for any non-trivial project.
 
 Relations are configured in the Content-Type Builder or directly in the schema JSON:
 
+File: `src/api/article/content-types/article/schema.json`
+
 ```json
-// src/api/article/content-types/article/schema.json
 {
   "attributes": {
     "title": { "type": "string", "required": true },
@@ -43,6 +44,22 @@ Relations are configured in the Content-Type Builder or directly in the schema J
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"]
+    }
+  }
+}
+```
+
+Use `inversedBy` on the owning side and `mappedBy` on the inverse side. For example, the `tag` schema can point back to
+the `article.tags` relation like this:
+
+```json
+{
+  "attributes": {
+    "articles": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::article.article",
+      "mappedBy": "tags"
     }
   }
 }
@@ -71,6 +88,9 @@ GET /api/articles?populate[author][populate]=avatar
 
 # Using the qs library for cleaner URLs
 ```
+
+`populate=*` only populates one level deep. For deeper relation trees, components, or dynamic zones, spell out the
+nested `populate` object explicitly.
 
 ### Using `qs` for complex queries
 
@@ -187,8 +207,8 @@ const response = await fetch('/api/articles', {
   body: JSON.stringify({
     data: {
       title: 'My New Article',
-      author: 3, // author document ID
-      tags: [1, 2, 5], // tag document IDs
+      author: 'author-document-id',
+      tags: ['tag-document-id-1', 'tag-document-id-2', 'tag-document-id-5'],
     },
   }),
 });
@@ -204,8 +224,13 @@ const response = await fetch('/api/articles/abc123', {
   body: JSON.stringify({
     data: {
       tags: {
-        connect: [{ id: 7 }],    // add tag 7
-        disconnect: [{ id: 2 }], // remove tag 2
+        connect: [
+          {
+            documentId: 'tag-document-id-7',
+            position: { end: true },
+          },
+        ],
+        disconnect: [{ documentId: 'tag-document-id-2' }],
       },
     },
   }),
@@ -218,7 +243,11 @@ const response2 = await fetch('/api/articles/abc123', {
   body: JSON.stringify({
     data: {
       tags: {
-        set: [{ id: 1 }, { id: 3 }, { id: 7 }],
+        set: [
+          { documentId: 'tag-document-id-1' },
+          { documentId: 'tag-document-id-3' },
+          { documentId: 'tag-document-id-7' },
+        ],
       },
     },
   }),
@@ -229,7 +258,8 @@ const response2 = await fetch('/api/articles/abc123', {
 
 ```js
 // Connect/disconnect in a service
-await strapi.documents('api::article.article').update(documentId, {
+await strapi.documents('api::article.article').update({
+  documentId,
   data: {
     tags: {
       connect: [{ documentId: 'tag-abc' }],
@@ -249,7 +279,15 @@ await strapi.documents('api::article.article').update(documentId, {
 // BAD: N+1 queries - one query per article to fetch author
 const articles = await strapi.documents('api::article.article').findMany({});
 for (const article of articles) {
-  article.author = await strapi.documents('api::author.author').findOne(article.authorId);
+  const [author] = await strapi.documents('api::author.author').findMany({
+    filters: {
+      articles: {
+        documentId: article.documentId,
+      },
+    },
+    limit: 1,
+  });
+  article.author = author;
 }
 ```
 
@@ -324,7 +362,8 @@ module.exports = createCoreRouter('api::article.article', {
 Components and dynamic zones also need explicit population:
 
 ```js
-const page = await strapi.documents('api::page.page').findOne(documentId, {
+const page = await strapi.documents('api::page.page').findOne({
+  documentId,
   populate: {
     // Component
     seo: {
@@ -348,6 +387,9 @@ const page = await strapi.documents('api::page.page').findOne(documentId, {
 ```bash
 GET /api/pages/abc123?populate[blocks][on][blocks.hero][populate]=backgroundImage&populate[blocks][on][blocks.text-with-image][populate]=image
 ```
+
+To populate all first-level fields for a specific dynamic-zone component, use fragment syntax such as
+`populate[blocks][on][blocks.hero]=*`.
 
 Or with `qs`:
 
@@ -373,9 +415,9 @@ const query = qs.stringify({
 |-------------------------------------|----------------------------------------------------|----------------------------------------------------------|
 | `populate=*` in production          | Fetches everything, huge payloads, slow            | Explicitly list needed relations and fields              |
 | Missing `fields` on populate        | Returns all attributes of the related entity       | Use `fields: ['name']` to restrict                       |
-| Circular population                 | Author populates articles which populate author... | Set explicit `maxDepth` or break the chain with `fields` |
+| Circular population                 | Author populates articles which populate author... | Spell out a finite populate tree and stop the cycle      |
 | Forgetting dynamic zone `on` syntax | Returns empty array for dynamic zones              | Use the `on` key with component UIDs                     |
-| Filtering on unpopulated relation   | Filter silently fails or returns wrong results     | Ensure the relation exists in the query context          |
+| Using numeric `id` in REST relations | Works inconsistently in Strapi 5 Content API calls | Use the stable `documentId` relation syntax              |
 
 ---
 

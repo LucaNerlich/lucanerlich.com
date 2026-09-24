@@ -24,12 +24,13 @@ This chapter covers common issues you'll encounter with Strapi, debugging techni
 #### Node.js version incompatibility
 
 **Error:**
-```
-error strapi@5.x.x: The engine "node" is incompatible with this module. Expected version ">=20.0.0". Got "19.0.0"
+```text
+error @strapi/strapi@5.x.x: The engine "node" is incompatible with this module. Expected version ">=20.0.0 <=26.x.x". Got "25.0.0"
 ```
 
-Strapi 5 only supports LTS versions of Node.js. Since Strapi 5.31.0, the minimum is Node 20. Odd-numbered
-releases (19, 21, 23) are never supported.
+Strapi 5 only supports Active LTS and Maintenance LTS versions of Node.js (currently v22, v24, and v26). Strapi
+5.31.0 (November 2025) dropped Node 18, so the `engines` field now requires at least Node 20. Odd-numbered
+"current" releases (21, 23, 25) are not supported.
 
 **Solution:**
 ```bash
@@ -44,7 +45,7 @@ node --version  # Should show v22.x.x
 #### Permission errors during installation
 
 **Error:**
-```
+```text
 EACCES: permission denied, mkdir '/usr/local/lib/node_modules'
 ```
 
@@ -65,7 +66,7 @@ npx create-strapi@latest my-project
 #### Connection refused errors
 
 **Error:**
-```
+```text
 error: connect ECONNREFUSED 127.0.0.1:5432
 ```
 
@@ -88,21 +89,27 @@ DATABASE_PASSWORD=your-password
 #### Migration failures
 
 **Error:**
-```
+```text
 error: Migration failed: relation "posts" already exists
 ```
 
 **Solution:**
-```javascript
-// Clear migrations and rebuild
-// 1. Backup your database first!
-pg_dump -U strapi strapi_blog > backup.sql
+Back up the database before destructive recovery steps:
 
-// 2. Drop and recreate the database
+```bash
+pg_dump -U strapi strapi_blog > backup.sql
+```
+
+Then recreate the database from a SQL client if you intentionally want Strapi to rebuild its schema:
+
+```sql
 DROP DATABASE strapi_blog;
 CREATE DATABASE strapi_blog OWNER strapi;
+```
 
-// 3. Re-run Strapi to recreate tables
+Finally restart Strapi:
+
+```bash
 npm run develop
 ```
 
@@ -113,15 +120,21 @@ npm run develop
 **Problem:** Related data not showing in API responses
 
 **Solution:**
-```javascript
-// Always explicitly populate relations
-// In API call:
+Always explicitly populate relations:
+
+```http
 GET /api/posts?populate=*
+```
 
-// Or specific relations:
+Or populate specific fields:
+
+```http
 GET /api/posts?populate[author][fields][0]=name&populate[category][fields][0]=name
+```
 
-// In controller:
+In a controller, set a default populate object before calling the core action:
+
+```javascript
 async find(ctx) {
   ctx.query = {
     ...ctx.query,
@@ -144,25 +157,25 @@ async find(ctx) {
 # Check permissions in admin panel:
 # Settings > Roles > Public > Check appropriate permissions
 
-# Or programmatically:
+# Or programmatically with full action UIDs:
 ```
 
 ```javascript
 // src/index.js - Set permissions on bootstrap
 export default {
   async bootstrap({ strapi }) {
-    // Get public role
     const publicRole = await strapi
-      .query("plugin::users-permissions.role")
-      .findOne({ where: { type: "public" } });
+      .db.query('plugin::users-permissions.role')
+      .findOne({ where: { type: 'public' } });
 
-    // Update permissions
     await strapi
-      .query("plugin::users-permissions.permission")
+      .db.query('plugin::users-permissions.permission')
       .updateMany({
         where: {
-          role: publicRole.id,
-          action: ["find", "findOne"],
+          role: { id: publicRole.id },
+          action: {
+            $in: ['api::post.post.find', 'api::post.post.findOne'],
+          },
         },
         data: {
           enabled: true,
@@ -208,10 +221,16 @@ export default ({ env }) => ({
   },
   // Ensure URL is set correctly
   url: env('PUBLIC_URL', 'https://cms.yourdomain.com'),
-  // Admin panel configuration
-  admin: {
-    url: '/admin', // Ensure this matches your nginx config
-    serveAdminPanel: env.bool('SERVE_ADMIN', true),
+});
+```
+
+```javascript
+// config/admin.js
+export default ({ env }) => ({
+  url: env('ADMIN_URL', '/admin'), // Ensure this matches your reverse proxy config
+  serveAdminPanel: env.bool('SERVE_ADMIN', true),
+  auth: {
+    secret: env('ADMIN_JWT_SECRET'),
   },
 });
 ```
@@ -221,7 +240,7 @@ export default ({ env }) => ({
 #### File size limit errors
 
 **Error:**
-```
+```text
 PayloadTooLargeError: request entity too large
 ```
 
@@ -250,35 +269,40 @@ export default [
 #### S3 upload failures
 
 **Error:**
-```
+```text
 Error: AccessDenied: Access Denied
 ```
 
 **Solution:**
-```javascript
-// Verify S3 bucket policy
+Verify the IAM policy includes both bucket-level and object-level permissions:
+
+```json
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "StrapiUpload",
+      "Sid": "StrapiListBucket",
       "Effect": "Allow",
       "Principal": {
         "AWS": "arn:aws:iam::YOUR_ACCOUNT:user/strapi-user"
       },
-      "Action": [
-        "s3:PutObject",
-        "s3:GetObject",
-        "s3:DeleteObject",
-        "s3:PutObjectAcl"
-      ],
+      "Action": ["s3:ListBucket"],
+      "Resource": "arn:aws:s3:::your-bucket"
+    },
+    {
+      "Sid": "StrapiUploadObjects",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::YOUR_ACCOUNT:user/strapi-user"
+      },
+      "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject", "s3:PutObjectAcl"],
       "Resource": "arn:aws:s3:::your-bucket/*"
     }
   ]
 }
-
-// Check CORS configuration on S3 bucket
 ```
+
+Also check the bucket CORS configuration and Strapi's Content Security Policy if thumbnails fail in the Media Library.
 
 ## Debugging Techniques
 
@@ -288,11 +312,6 @@ Error: AccessDenied: Access Denied
 // config/logger.js
 export default {
   level: process.env.LOG_LEVEL || 'debug',
-  // Enable SQL query logging
-  database: {
-    enabled: true,
-    level: 'debug',
-  },
 };
 ```
 
@@ -355,12 +374,16 @@ export default ({ env }) => ({
     connection: {
       // ... connection details
     },
-    debug: true, // Enable query logging
+    debug: env.bool('DATABASE_DEBUG', false),
     log: {
-      warn(msg) { strapi.log.warn(msg); },
-      error(msg) { strapi.log.error(msg); },
-      deprecate(msg) { strapi.log.warn(msg); },
-      debug(msg) { strapi.log.debug(msg); },
+      warn(msg) { console.warn(msg); },
+      error(msg) { console.error(msg); },
+      deprecate(msg) { console.warn(msg); },
+      debug(msg) {
+        if (env.bool('DATABASE_DEBUG', false)) {
+          console.debug(msg);
+        }
+      },
     },
   },
 });
@@ -413,7 +436,7 @@ const published = await strapi.documents('api::post.post').findMany({
 });
 ```
 
-#### 3. Lifecycle hooks → Document Service middleware
+#### 3. Lifecycle hook timing and Document Service middleware
 
 **Strapi 4:**
 ```javascript
@@ -422,13 +445,14 @@ module.exports = {
   beforeCreate(event) {
     const { data } = event.params;
     if (data.title && !data.slug) {
-      data.slug = slugify(data.title);
+      data.slug = data.title.toLowerCase().replace(/\s+/g, '-');
     }
   },
 };
 ```
 
-**Strapi 5:**
+**Strapi 5:** lifecycle hooks still exist, but Document Service methods can trigger them differently. For
+document-level behavior, prefer Document Service middleware:
 ```javascript
 // src/index.js
 export default {
@@ -440,7 +464,7 @@ export default {
       ) {
         const data = context.params.data;
         if (data?.title && !data.slug) {
-          data.slug = slugify(data.title);
+          data.slug = data.title.toLowerCase().replace(/\s+/g, '-');
         }
       }
       return await next();
@@ -476,9 +500,10 @@ Remove the header once all clients have been updated to the new format.
 #### 5. REST API relation handling
 
 **Strapi 4:**
-```javascript
-// Create with relations using IDs
+```http
 POST /api/posts
+Content-Type: application/json
+
 {
   "data": {
     "title": "Post Title",
@@ -489,9 +514,10 @@ POST /api/posts
 ```
 
 **Strapi 5:**
-```javascript
-// Create with relations using connect/disconnect
+```http
 POST /api/posts
+Content-Type: application/json
+
 {
   "data": {
     "title": "Post Title",
@@ -507,8 +533,8 @@ POST /api/posts
 
 ### Automated upgrade tool
 
-Strapi provides `@strapi/upgrade` with codemods that automate many of the breaking changes. Run it before doing
-anything else:
+Strapi provides `@strapi/upgrade` with codemods that automate many of the breaking changes. Back up first (see
+Step 1 below), then run it on a clean Git working tree:
 
 ```bash
 npx @strapi/upgrade major
@@ -518,7 +544,7 @@ This tool scans your codebase and automatically applies transformations such as:
 
 - Converting Entity Service calls to Document Service syntax
 - Updating import paths
-- Converting lifecycle files to Document Service middleware
+- Adding `__TODO__` comments where manual migration is still required
 
 Review the changes it makes, then proceed with manual migration steps for anything it could not handle automatically.
 
@@ -537,79 +563,33 @@ tar -czf uploads_backup.tar.gz public/uploads/
 tar -czf strapi_v4_project.tar.gz --exclude=node_modules --exclude=.tmp .
 ```
 
-#### Step 2: Create migration script
+#### Step 2: Create database migrations for data changes
 
 ```javascript
-// scripts/migrate-v4-to-v5.js
-import { Strapi } from '@strapi/strapi';
-
-async function migrate() {
-  const strapi = await Strapi().load();
-
-  try {
-    // 1. Update content type schemas
-    await migrateSchemas(strapi);
-
-    // 2. Migrate data
-    await migrateData(strapi);
-
-    // 3. Update permissions
-    await migratePermissions(strapi);
-
-    console.log('Migration completed successfully');
-  } catch (error) {
-    console.error('Migration failed:', error);
-    process.exit(1);
-  } finally {
-    await strapi.destroy();
-  }
-}
-
-async function migrateSchemas(strapi) {
-  // Update schema files to remove deprecated options
-  // This typically needs to be done manually
-  console.log('Review and update schema files manually');
-}
-
-async function migrateData(strapi) {
-  // Migrate relation data format
-  const posts = await strapi.db.query('api::post.post').findMany({
-    populate: ['author', 'category', 'tags'],
-  });
-
-  for (const post of posts) {
-    // Update relation format if needed
-    await strapi.documents('api::post.post').update({
-      documentId: post.documentId,
-      data: {
-        // Update data format as needed
-      },
-    });
-  }
-}
-
-async function migratePermissions(strapi) {
-  // Update permissions for new Document Service
-  const roles = await strapi.db.query('plugin::users-permissions.role').findMany();
-
-  for (const role of roles) {
-    // Update permissions as needed
-  }
-}
-
-migrate();
+// database/migrations/2026.09.24T00.00.00.migrate-post-data.js
+module.exports = {
+  async up(knex) {
+    // Migrations run before Strapi's schema sync and are one-way.
+    // Use Knex here for table/column data moves that must happen before sync.
+    await knex('posts')
+      .whereNull('excerpt')
+      .update({ excerpt: '' });
+  },
+};
 ```
 
 #### Step 3: Update dependencies
 
+`npx @strapi/upgrade major` bumps these for you. If you update manually, keep all `@strapi/*` packages on the same
+version. `@strapi/plugin-i18n` is a v4-only package -- i18n is part of the Strapi 5 core, so remove it from
+`package.json`:
+
 ```json
-// package.json
 {
   "dependencies": {
-    "@strapi/strapi": "5.0.0",
-    "@strapi/plugin-users-permissions": "5.0.0",
-    "@strapi/plugin-i18n": "5.0.0",
-    "@strapi/plugin-cloud": "5.0.0"
+    "@strapi/strapi": "^5.55.0",
+    "@strapi/plugin-users-permissions": "^5.55.0",
+    "@strapi/plugin-cloud": "^5.55.0"
   }
 }
 ```
@@ -626,16 +606,19 @@ npm install
 #### Step 4: Update custom code
 
 ```javascript
-// Update all custom controllers, services, and middleware
-// Example: Update controller
-// Before (Strapi 4):
+// The factory signature is unchanged; CommonJS still works in Strapi 5 JavaScript projects.
+// What changes is the code inside: replace Entity Service calls with the Document Service.
 const { createCoreController } = require('@strapi/strapi').factories;
 
-// After (Strapi 5):
-import { factories } from '@strapi/strapi';
-
-export default factories.createCoreController('api::post.post', ({ strapi }) => ({
-  // Update methods to use Document Service
+module.exports = createCoreController('api::post.post', ({ strapi }) => ({
+  async findOne(ctx) {
+    // Before (Strapi 4): strapi.entityService.findOne('api::post.post', ctx.params.id)
+    const post = await strapi.documents('api::post.post').findOne({
+      documentId: ctx.params.id, // the :id route param now carries the documentId
+    });
+    const sanitized = await this.sanitizeOutput(post, ctx);
+    return this.transformResponse(sanitized);
+  },
 }));
 ```
 
@@ -665,9 +648,9 @@ curl http://localhost:1337/api/posts/document-id
 | Update Node.js to a supported LTS release (v22, v24, or v26) | ☐ |
 | Update Strapi dependencies to v5 | ☐ |
 | Convert Entity Service to Document Service | ☐ |
-| Update lifecycle hooks to middleware | ☐ |
+| Review lifecycle hooks and use Document Service middleware where appropriate | ☐ |
 | Update relation handling in API calls | ☐ |
-| Convert require() to ES modules | ☐ |
+| Remove `@strapi/plugin-i18n` (i18n is built into v5) | ☐ |
 | Update custom controllers and services | ☐ |
 | Update middleware and policies | ☐ |
 | Test all API endpoints | ☐ |
@@ -683,7 +666,8 @@ curl http://localhost:1337/api/posts/document-id
 ### Slow queries
 
 ```javascript
-// Enable query logging to find slow queries
+// Enable query logging to find expensive SQL, then use your database slow-query log
+// or APM tool for duration thresholds.
 // config/database.js
 export default ({ env }) => ({
   connection: {
@@ -691,21 +675,21 @@ export default ({ env }) => ({
     connection: {
       // ... connection details
     },
-    pool: {
-      afterCreate(conn, done) {
-        conn.on('query', (query) => {
-          const start = Date.now();
-          conn.on('query-response', () => {
-            const duration = Date.now() - start;
-            if (duration > 1000) {
-              strapi.log.warn(`Slow query (${duration}ms):`, {
-                sql: query.sql,
-                bindings: query.bindings,
-              });
-            }
-          });
-        });
-        done();
+    debug: env.bool('DATABASE_DEBUG', false),
+    log: {
+      warn(msg) {
+        console.warn(msg);
+      },
+      error(msg) {
+        console.error(msg);
+      },
+      deprecate(msg) {
+        console.warn(msg);
+      },
+      debug(msg) {
+        if (env.bool('DATABASE_DEBUG', false)) {
+          console.debug(msg);
+        }
       },
     },
   },

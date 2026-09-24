@@ -12,11 +12,12 @@ custom resolvers, apply middleware, secure queries, and avoid performance traps.
 
 :::danger[Mutations are exposed by default]
 
-When you install `@strapi/plugin-graphql`, Strapi generates **full CRUD mutations** (`create`, `update`, `delete`) for *
-*every** content type. If you only configure the Public role's REST permissions in the admin panel, the GraphQL
-mutations may **still be accessible** unless you explicitly lock them down.
+When you install `@strapi/plugin-graphql`, Strapi generates **full CRUD mutations** (`create`, `update`, `delete`) for
+**every** content type. Authorization still goes through API tokens or the Users & Permissions plugin, but the mutation
+fields exist in the schema unless you explicitly lock them down.
 
-**Any attacker who can reach `/graphql` can potentially create, update, or delete content** if you don't take action.
+**Any client with a token or role that can reach those mutations can create, update, or delete content** if you don't
+take action.
 See [Securing the default schema](#securing-the-default-schema-critical) below.
 
 :::
@@ -36,9 +37,11 @@ module.exports = {
     config: {
       endpoint: '/graphql',
       shadowCRUD: true,            // Auto-generate types from content types
-      playgroundAlways: false,     // Disable playground in production
+      landingPage: false,          // Disable Apollo Sandbox everywhere
       depthLimit: 7,               // Prevent deeply nested queries
-      amountLimit: 100,            // Max items per query
+      defaultLimit: 25,            // Page size when no pagination is passed
+      maxLimit: 100,               // Cap client-requested page sizes
+      v4CompatibilityMode: false,  // Keep Strapi 5's flattened response format
       apolloServer: {
         tracing: false,
         introspection: true,       // Set to false in production
@@ -68,20 +71,33 @@ type Article {
   locale: String
 }
 
-type ArticleEntityResponseCollection {
-  data: [Article!]!
-  meta: ResponseCollectionMeta!
+type ArticleConnection {
+  nodes: [Article!]!
+  pageInfo: Pagination!
 }
 
 type Query {
-  article(documentId: ID!): Article
+  article(
+    documentId: ID!
+    locale: I18NLocaleCode
+    status: PublicationStatus
+  ): Article
   articles(
     filters: ArticleFiltersInput
     pagination: PaginationArg
     sort: [String]
-    locale: String
+    locale: I18NLocaleCode
     status: PublicationStatus
-  ): ArticleEntityResponseCollection!
+    publicationFilter: PublicationFilter
+  ): [Article!]!
+  articles_connection(
+    filters: ArticleFiltersInput
+    pagination: PaginationArg
+    sort: [String]
+    locale: I18NLocaleCode
+    status: PublicationStatus
+    publicationFilter: PublicationFilter
+  ): ArticleConnection!
 }
 
 type Mutation {
@@ -95,12 +111,12 @@ type Mutation {
 
 ## Securing the default schema (critical)
 
-This is the **most important section** on this page. By default, the auto-generated schema exposes mutations that allow
-anyone to create, update, and delete your content - unless you explicitly deny it.
+This is the **most important section** on this page. By default, the auto-generated schema exposes mutation fields that
+can create, update, and delete your content when a role or token is allowed to call them.
 
 ### The problem
 
-With the GraphQL plugin installed, an attacker can run:
+With the GraphQL plugin installed, these mutation fields exist in the schema:
 
 ```graphql
 # Anyone can delete your articles if mutations are not locked down
@@ -119,9 +135,10 @@ mutation {
 }
 ```
 
-Even if you carefully configured the Public role in **Settings > Users & Permissions** to only allow `find` and
-`findOne` for the REST API, the GraphQL plugin generates its own permission layer. You must explicitly configure GraphQL
-permissions **separately**.
+With the Users & Permissions plugin, Strapi checks the matching permission (`find`, `findOne`, `create`, `update`, or
+`delete`) for GraphQL too. However, leaving write operations in a public schema makes mistakes with API tokens, role
+permissions, or `auth: false` resolver configuration much more dangerous. Disable mutations that a frontend should
+never call.
 
 ### Solution 1: disable all mutations for public-facing types (recommended)
 
@@ -361,16 +378,16 @@ After applying the configuration, test it:
 
 ```graphql
 # This should work (read):
-query { articles { data { documentId title } } }
+query { articles { documentId title } }
 
 # This should fail with "Cannot query field" (mutation removed from schema):
 mutation { deleteArticle(documentId: "abc") { documentId } }
 
 # This should fail (hidden type):
-query { auditLogs { data { documentId } } }
+query { auditLogs { documentId } }
 
 # This should NOT return email (hidden field):
-query { usersPermissionsUsers { data { username email } } }
+query { usersPermissionsUsers { username email } }
 ```
 
 If any of these succeed when they shouldn't, review your `register()` configuration.
@@ -393,7 +410,7 @@ module.exports = {
       typeDefs: `
         type Query {
           featuredArticles: [Article]!
-          articleBySlug(slug: String!, locale: String): Article
+          articleBySlug(slug: String!, locale: I18NLocaleCode): Article
         }
       `,
 
@@ -590,7 +607,7 @@ extensionService.use({
 module.exports = {
   graphql: {
     config: {
-      playgroundAlways: false,
+      landingPage: false,
       apolloServer: {
         introspection: false,   // Prevents schema discovery
       },
@@ -606,7 +623,8 @@ module.exports = {
   graphql: {
     config: {
       depthLimit: 5,       // Prevent { article { author { articles { author { ... } } } } }
-      amountLimit: 50,     // Max items per list query
+      defaultLimit: 25,    // Default page size
+      maxLimit: 50,        // Max client-requested page size
     },
   },
 };
@@ -698,15 +716,15 @@ extensionService.use(({ strapi }) => ({
 ### Filtered list with pagination
 
 ```graphql
-query Articles($locale: String, $page: Int, $pageSize: Int) {
-  articles(
+query Articles($locale: I18NLocaleCode, $page: Int, $pageSize: Int) {
+  articles_connection(
     locale: $locale
     pagination: { page: $page, pageSize: $pageSize }
     sort: "publishedAt:desc"
     filters: { tags: { slug: { eq: "javascript" } } }
     status: PUBLISHED
   ) {
-    data {
+    nodes {
       documentId
       title
       slug
@@ -719,13 +737,11 @@ query Articles($locale: String, $page: Int, $pageSize: Int) {
         alternativeText
       }
     }
-    meta {
-      pagination {
-        page
-        pageSize
-        pageCount
-        total
-      }
+    pageInfo {
+      page
+      pageSize
+      pageCount
+      total
     }
   }
 }
@@ -765,10 +781,10 @@ query ArticleBySlug($slug: String!) {
 | **Mutations exposed by default**        | **Anyone can create/update/delete content** | **`disableMutations()` on all read-only types**         |
 | Introspection enabled in production     | Schema leaks to attackers                   | Set `introspection: false` in production config         |
 | No depth limit                          | Malicious nested queries crash the server   | Set `depthLimit: 5-7`                                   |
-| Trusting REST permissions for GraphQL   | GraphQL has its own permission layer        | Configure `resolversConfig` and `shadowCRUD` separately |
+| Trusting REST checks alone for GraphQL  | GraphQL has its own schema/resolver config | Configure `resolversConfig` and `shadowCRUD` separately |
 | N+1 queries on relations                | Slow list queries                           | Use DataLoader or ensure population is optimized        |
 | Missing `auth: false` on public queries | 403 for anonymous users                     | Set `auth: false` in `resolversConfig`                  |
-| Playground enabled in production        | Security and information disclosure risk    | Set `playgroundAlways: false`                           |
+| Sandbox enabled in production           | Security and information disclosure risk    | Set `landingPage: false`                                |
 | Sensitive user fields exposed           | Email, password hash visible in schema      | `field('email').disable()` on user type                 |
 
 ---

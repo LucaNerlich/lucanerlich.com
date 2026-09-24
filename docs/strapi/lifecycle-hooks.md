@@ -1,20 +1,20 @@
 ---
 title: "Lifecycle Hooks"
 sidebar_position: 3
-description: "Strapi lifecycle hooks: Document Service middleware for before/after create, update, delete, and publish events with practical examples."
+description: "Strapi lifecycle hooks: database lifecycle hooks and Document Service middleware for before/after create, update, delete, and publish events with practical examples."
 tags: [strapi, lifecycle, hooks, events]
 ---
 
 # Lifecycle Hooks
 
-Lifecycle hooks run automatically before or after database operations. They are the right place for auto-computed
-fields, audit logging, cache invalidation, and side effects that should always happen regardless of which controller
-triggers the operation.
+Lifecycle hooks run automatically before or after database operations. In Strapi 5, database lifecycle hooks still
+exist, but **Document Service middleware** is usually the better extension point for content workflows because it sees
+document-level actions such as Draft & Publish and i18n operations.
 
-## Document Service middleware as lifecycle hooks
+## Document Service middleware
 
-In Strapi 5, lifecycle hooks are implemented as **Document Service middleware**. They intercept calls on the Document
-Service API.
+Document Service middleware intercepts calls on the Document Service API and is the safest place for content-level
+side effects that should run for `create`, `update`, `delete`, `publish`, `unpublish`, and similar document actions.
 
 ```mermaid
 sequenceDiagram
@@ -55,9 +55,52 @@ Every middleware receives a `context` with:
 | Property      | Type     | Description                                                                              |
 |---------------|----------|------------------------------------------------------------------------------------------|
 | `uid`         | `string` | Content type UID (e.g., `api::article.article`)                                          |
-| `action`      | `string` | Method name: `findOne`, `findMany`, `create`, `update`, `delete`, `publish`, `unpublish` |
+| `action`      | `string` | Method name such as `findOne`, `findFirst`, `findMany`, `create`, `update`, `delete`, `publish`, `unpublish`, `discardDraft`, `count` |
 | `params`      | `object` | The parameters passed to the method (data, filters, populate, etc.)                      |
 | `contentType` | `object` | Full content type schema                                                                 |
+
+---
+
+## Database lifecycle hooks
+
+Database lifecycle hooks are still available when you need to react to lower-level Query Engine operations. Define them
+beside a content type:
+
+```js
+// src/api/article/content-types/article/lifecycles.js
+module.exports = {
+  beforeCreate(event) {
+    event.params.data.slug = event.params.data.slug || 'draft';
+    event.state.startedAt = Date.now();
+  },
+
+  afterCreate(event) {
+    strapi.log.info(`Created article row ${event.result.id}`);
+  },
+};
+```
+
+The `event` object contains `action`, `model`, `params`, `result` for `after*` hooks, and `state` for sharing data
+between the matching `before*` and `after*` hook. Available events include `beforeCreate`, `afterCreate`,
+`beforeCreateMany`, `afterCreateMany`, `beforeUpdate`, `afterUpdate`, `beforeUpdateMany`, `afterUpdateMany`,
+`beforeDelete`, `afterDelete`, `beforeDeleteMany`, `afterDeleteMany`, `beforeCount`, `afterCount`, `beforeFindOne`,
+`afterFindOne`, `beforeFindMany`, and `afterFindMany`.
+
+You can also subscribe programmatically:
+
+```js
+strapi.db.lifecycles.subscribe({
+  models: ['api::article.article'],
+
+  beforeUpdate(event) {
+    strapi.log.debug(`Updating ${event.model.uid}`);
+  },
+});
+```
+
+Be careful with Draft & Publish and i18n: one Document Service action can trigger several database operations. For
+example, publishing creates a published row and may delete an old published row. Bulk database lifecycle hooks are not
+triggered by Document Service methods. Use Document Service middleware when you need one hook per document action.
 
 ---
 
@@ -168,6 +211,19 @@ module.exports = {
 const Redis = require('ioredis');
 const redis = new Redis(process.env.REDIS_URL);
 
+async function deleteByPattern(pattern) {
+  let cursor = '0';
+
+  do {
+    const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+    cursor = nextCursor;
+
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+  } while (cursor !== '0');
+}
+
 module.exports = {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
@@ -177,11 +233,8 @@ module.exports = {
       if (['create', 'update', 'delete', 'publish', 'unpublish'].includes(context.action)) {
         const pattern = `strapi:${context.uid}:*`;
 
-        const keys = await redis.keys(pattern);
-        if (keys.length > 0) {
-          await redis.del(...keys);
-          strapi.log.debug(`Invalidated ${keys.length} cache entries for ${context.uid}`);
-        }
+        await deleteByPattern(pattern);
+        strapi.log.debug(`Invalidated cache entries for ${context.uid}`);
       }
 
       return result;
@@ -204,10 +257,10 @@ module.exports = {
       ) {
         setImmediate(async () => {
           try {
-            const article = await strapi.documents('api::article.article').findOne(
-              result.documentId,
-              { populate: ['author'] }
-            );
+            const article = await strapi.documents('api::article.article').findOne({
+              documentId: result.documentId,
+              populate: ['author'],
+            });
 
             if (article?.author?.email) {
               await strapi.plugins['email'].services.email.send({

@@ -139,13 +139,13 @@ async findByAuthor(ctx) {
 async findByDate(ctx) {
   const { year, month } = ctx.params;
   const startDate = new Date(year, month - 1, 1);
-  const endDate = new Date(year, month, 0);
+  const endDate = new Date(year, month, 1);
 
   const articles = await strapi.documents('api::article.article').findMany({
     filters: {
       publishedAt: {
         $gte: startDate.toISOString(),
-        $lte: endDate.toISOString(),
+        $lt: endDate.toISOString(),
       },
     },
   });
@@ -191,7 +191,8 @@ Set `auth: false` in the route config:
 }
 ```
 
-You must also enable the route in the **Users & Permissions** plugin under **Public** role permissions.
+`auth: false` bypasses Strapi's Content API authentication for that route. For generated content-type routes that still
+use the Users & Permissions plugin, grant access in the relevant role instead of disabling auth in custom route config.
 
 ---
 
@@ -297,6 +298,14 @@ module.exports = ({ strapi }) => ({
       products: 'api::product.product',
     };
 
+    if (type && !searchableTypes[type]) {
+      return {
+        data: {},
+        query,
+        error: `Unsupported search type: ${type}`,
+      };
+    }
+
     const typesToSearch = type
       ? { [type]: searchableTypes[type] }
       : searchableTypes;
@@ -373,7 +382,7 @@ export default {
 |--------------------------------------|----------------------------------------------|---------------------------------------------------|
 | Custom route shadowed by core router | Core wildcard `:id` matches your custom path | Prefix custom route file with `01-`               |
 | `handler` string typo                | Route returns 404                            | Use the full `api::name.controller.action` format |
-| Public route but no role permission  | 403 Forbidden despite `auth: false`          | Enable the route in Public role settings          |
+| Generated route lacks role access    | Users & Permissions returns 403             | Enable the route in Public role settings          |
 | Duplicate method+path                | Only the first route wins                    | Ensure unique method+path combinations            |
 | Missing controller action            | 500 error on request                         | Create the corresponding controller method        |
 

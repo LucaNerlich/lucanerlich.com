@@ -1,12 +1,12 @@
 ---
 title: "Docker & Deployment Automation"
 sidebar_label: "Docker & CI/CD"
-description: Containerizing Strapi with Docker, docker-compose for development, and setting up automated deployments with GitHub Actions.
+description: Containerizing Strapi with Docker, Docker Compose for development, and setting up automated deployments with GitHub Actions.
 slug: /strapi/beginners-guide/docker-deployment
 tags: [strapi, beginners, docker, ci-cd]
 keywords:
   - strapi docker
-  - strapi docker-compose
+  - strapi docker compose
   - strapi github actions
   - strapi ci/cd
   - strapi automated deployment
@@ -15,7 +15,7 @@ sidebar_position: 14
 
 # Docker & Deployment Automation
 
-Containerizing your Strapi application ensures consistency across development, staging, and production environments. In this chapter, we'll set up Docker, create a development environment with docker-compose, and automate deployments with GitHub Actions.
+Containerizing your Strapi application ensures consistency across development, staging, and production environments. In this chapter, we'll set up Docker, create a development environment with Docker Compose, and automate deployments with GitHub Actions.
 
 ## Docker Setup
 
@@ -24,7 +24,7 @@ Containerizing your Strapi application ensures consistency across development, s
 ```dockerfile
 # Dockerfile
 # Multi-stage build for smaller production images
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 
 # Install dependencies for building native modules
 RUN apk update && apk add --no-cache \
@@ -34,6 +34,7 @@ RUN apk update && apk add --no-cache \
   automake \
   zlib-dev \
   libpng-dev \
+  bash \
   vips-dev \
   git \
   > /dev/null 2>&1
@@ -84,10 +85,10 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
-# Install dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init
+# Install runtime dependencies for signal handling and sharp/libvips
+RUN apk add --no-cache dumb-init vips-dev
 
 # Create non-root user
 RUN addgroup -g 1001 -S strapi && \
@@ -96,9 +97,9 @@ RUN addgroup -g 1001 -S strapi && \
 # Set working directory
 WORKDIR /app
 
-# Copy built application from builder stage
+# Copy built application from builder stage.
+# In Strapi 5 TypeScript projects, the admin bundle is written under dist/build.
 COPY --from=builder --chown=strapi:strapi /app/dist ./dist
-COPY --from=builder --chown=strapi:strapi /app/build ./build
 COPY --from=builder --chown=strapi:strapi /app/public ./public
 
 # Copy production dependencies
@@ -118,6 +119,10 @@ USER strapi
 
 # Expose port
 EXPOSE 1337
+
+# Strapi exposes a built-in readiness endpoint.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:1337/_health || exit 1
 
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
@@ -154,13 +159,13 @@ coverage/
 
 ## Docker Compose for Development
 
-### Create docker-compose.yml
+### Create compose.yaml
 
 ```yaml
-# docker-compose.yml
+# compose.yaml
 services:
   postgres:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     container_name: strapi-postgres
     restart: unless-stopped
     environment:
@@ -199,6 +204,7 @@ services:
       APP_KEYS: ${APP_KEYS:-key1,key2,key3,key4}
       API_TOKEN_SALT: ${API_TOKEN_SALT:-change-me-in-production}
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT:-change-me-in-production}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-change-me-in-production}
     volumes:
       - ./src:/app/src
       - ./config:/app/config
@@ -262,12 +268,13 @@ DATABASE_USERNAME=strapi
 DATABASE_PASSWORD=local-dev-password
 DATABASE_SSL=false
 
-# Generate these with: openssl rand -base64 32
+# Generate these six values with: openssl rand -base64 32
 JWT_SECRET=your-jwt-secret-here
 ADMIN_JWT_SECRET=your-admin-jwt-secret-here
 APP_KEYS=key1,key2,key3,key4
 API_TOKEN_SALT=your-api-token-salt
 TRANSFER_TOKEN_SALT=your-transfer-token-salt
+ENCRYPTION_KEY=your-encryption-key-here
 
 # Optional Redis configuration
 REDIS_HOST=redis
@@ -279,36 +286,36 @@ REDIS_PASSWORD=
 
 ```bash
 # Start all services
-docker-compose up -d
+docker compose up -d
 
 # View logs
-docker-compose logs -f strapi
+docker compose logs -f strapi
 
 # Stop all services
-docker-compose down
+docker compose down
 
 # Rebuild after code changes
-docker-compose build strapi
-docker-compose up -d strapi
+docker compose build strapi
+docker compose up -d strapi
 
 # Access Strapi shell
-docker-compose exec strapi sh
+docker compose exec strapi sh
 
 # Strapi runs database migrations automatically on startup.
 # To force a restart (which triggers migrations):
-docker-compose restart strapi
+docker compose restart strapi
 
 # Clean everything (including volumes)
-docker-compose down -v
+docker compose down -v
 ```
 
 ## Production Docker Compose
 
 ```yaml
-# docker-compose.prod.yml
+# compose.prod.yaml
 services:
   postgres:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     container_name: strapi-postgres
     restart: always
     environment:
@@ -345,6 +352,7 @@ services:
       APP_KEYS: ${APP_KEYS}
       API_TOKEN_SALT: ${API_TOKEN_SALT}
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       PUBLIC_URL: ${PUBLIC_URL}
     volumes:
       - uploads:/app/public/uploads
@@ -353,6 +361,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:1337/_health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     deploy:
       resources:
         limits:
@@ -377,7 +391,8 @@ services:
     networks:
       - strapi-network
     depends_on:
-      - strapi
+      strapi:
+        condition: service_healthy
 
 volumes:
   postgres-data:
@@ -403,7 +418,7 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -413,7 +428,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:15
+        image: postgres:17
         env:
           POSTGRES_USER: strapi
           POSTGRES_PASSWORD: strapi
@@ -451,9 +466,29 @@ jobs:
           DATABASE_NAME: strapi_test
           DATABASE_USERNAME: strapi
           DATABASE_PASSWORD: strapi
+          APP_KEYS: testKeyOne,testKeyTwo
+          API_TOKEN_SALT: test-api-token-salt
+          ADMIN_JWT_SECRET: test-admin-jwt-secret
+          TRANSFER_TOKEN_SALT: test-transfer-token-salt
+          JWT_SECRET: test-jwt-secret
+          ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef
 
       - name: Generate coverage report
         run: npm run test:coverage
+        env:
+          NODE_ENV: test
+          DATABASE_CLIENT: postgres
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          DATABASE_NAME: strapi_test
+          DATABASE_USERNAME: strapi
+          DATABASE_PASSWORD: strapi
+          APP_KEYS: testKeyOne,testKeyTwo
+          API_TOKEN_SALT: test-api-token-salt
+          ADMIN_JWT_SECRET: test-admin-jwt-secret
+          TRANSFER_TOKEN_SALT: test-transfer-token-salt
+          JWT_SECRET: test-jwt-secret
+          ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -541,14 +576,14 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           script: |
             cd /app/strapi
-            docker-compose pull strapi
-            docker-compose up -d strapi
+            docker compose -f compose.prod.yaml pull strapi
+            docker compose -f compose.prod.yaml up -d strapi
             # Strapi runs database migrations automatically on startup
 
       - name: Health check
         run: |
           sleep 30
-          curl -f https://staging.yourdomain.com/api/health || exit 1
+          curl -fsSI https://staging.yourdomain.com/_health || exit 1
 
       - name: Notify Slack on success
         if: success()
@@ -585,28 +620,32 @@ jobs:
             cd /app/strapi
 
             # Backup database before deployment
-            docker-compose exec -T postgres pg_dump -U strapi strapi > backup-$(date +%Y%m%d-%H%M%S).sql
+            docker compose -f compose.prod.yaml exec -T postgres \
+              sh -c 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' \
+              > backup-$(date +%Y%m%d-%H%M%S).sql
 
             # Pull and deploy new version
-            docker-compose pull strapi
-            docker-compose up -d strapi
+            docker compose -f compose.prod.yaml pull strapi
+            docker compose -f compose.prod.yaml up -d strapi
             # Strapi runs database migrations automatically on startup
 
             # Clear cache if using Redis
-            docker-compose exec -T redis redis-cli FLUSHALL
+            if docker compose -f compose.prod.yaml ps -q redis >/dev/null 2>&1; then
+              docker compose -f compose.prod.yaml exec -T redis redis-cli FLUSHALL
+            fi
 
       - name: Health check
         run: |
           sleep 30
-          curl -f https://cms.yourdomain.com/api/health || exit 1
+          curl -fsSI https://cms.yourdomain.com/_health || exit 1
 
       - name: Create GitHub release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
+          name: Release ${{ github.run_number }}
           body: |
             Production deployment completed successfully
             Commit: ${{ github.sha }}
@@ -614,91 +653,36 @@ jobs:
 
 ## Database migrations
 
-### Create migration scripts
+Strapi runs pending files in `database/migrations` automatically on startup before it synchronizes the schema. There is
+no supported CLI command or custom script to force-run migrations manually.
+
+### Create migration files
 
 ```javascript
-// scripts/migrate.js
-import Strapi from "@strapi/strapi";
-
-async function migrate() {
-  const strapi = await Strapi().load();
-
-  try {
-    // Run Strapi's built-in migrations
-    await strapi.db.migrations.up();
-
-    // Custom migrations
-    const migrations = [
-      // Add your custom migrations here
-      async () => {
-        // Example: Add index
-        await strapi.db.connection.raw(`
-          CREATE INDEX IF NOT EXISTS idx_posts_featured
-          ON posts(featured)
-          WHERE featured = true;
-        `);
-      },
-    ];
-
-    for (const migration of migrations) {
-      await migration();
-    }
-
-    console.log("Migrations completed successfully");
-  } catch (error) {
-    console.error("Migration failed:", error);
-    process.exit(1);
-  } finally {
-    await strapi.destroy();
-  }
-}
-
-migrate();
+// database/migrations/2026.09.24T00.00.00.add-post-indexes.js
+module.exports = {
+  async up(knex) {
+    await knex.schema.alterTable('posts', (table) => {
+      table.index(['featured', 'published_at'], 'idx_posts_featured_published');
+    });
+  },
+};
 ```
+
+Use Knex inside the exported `up()` function. If a migration needs the Strapi instance, wrap the work in
+`strapi.db.transaction()` so failures roll back cleanly.
 
 ## Health check endpoint
 
-Add a health check endpoint for monitoring:
+Strapi 5 exposes a built-in lightweight readiness endpoint at `/_health`. It returns `204 No Content` when the server is
+ready, so load balancers, Docker, Kubernetes, and CI smoke checks can use it directly:
 
-```javascript
-// src/api/health/routes/health.js
-export default {
-  routes: [
-    {
-      method: "GET",
-      path: "/api/health",
-      handler: async (ctx) => {
-        try {
-          // Check database connection
-          await strapi.db.connection.raw("SELECT 1");
-
-          // Check Redis if configured
-          if (strapi.redis) {
-            await strapi.redis.ping();
-          }
-
-          ctx.body = {
-            status: "healthy",
-            timestamp: new Date().toISOString(),
-            version: strapi.config.get("info.strapi"),
-            environment: process.env.NODE_ENV,
-            uptime: process.uptime(),
-          };
-        } catch (error) {
-          ctx.status = 503;
-          ctx.body = {
-            status: "unhealthy",
-            error: error.message,
-          };
-        }
-      },
-      config: {
-        auth: false,
-      },
-    },
-  ],
-};
+```bash
+curl -fsSI http://localhost:1337/_health
 ```
+
+Add a custom `/api/health` route only if you need deeper dependency checks, such as confirming Redis or an external media
+provider is reachable.
 
 ## Docker best practices
 
@@ -708,16 +692,16 @@ Use multi-stage builds to minimize image size:
 
 ```dockerfile
 # Bad: Single stage with all dependencies
-FROM node:20
+FROM node:22
 COPY . .
 RUN npm install
 CMD ["npm", "start"]
 # Result: ~1.5GB image
 
 # Good: Multi-stage build
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 # ... build steps
-FROM node:20-alpine
+FROM node:22-alpine
 COPY --from=builder /app/dist ./dist
 # Result: ~200MB image
 ```
@@ -735,7 +719,7 @@ Add security scanning to your CI pipeline:
     output: 'trivy-results.sarif'
 
 - name: Upload Trivy results to GitHub Security
-  uses: github/codeql-action/upload-sarif@v2
+  uses: github/codeql-action/upload-sarif@v3
   with:
     sarif_file: 'trivy-results.sarif'
 ```
@@ -819,13 +803,13 @@ spec:
             cpu: "1"
         livenessProbe:
           httpGet:
-            path: /api/health
+            path: /_health
             port: 1337
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
-            path: /api/health
+            path: /_health
             port: 1337
           initialDelaySeconds: 5
           periodSeconds: 5
@@ -836,7 +820,7 @@ spec:
 You learned:
 
 - Creating a **multi-stage Dockerfile** for optimized production images
-- Setting up **docker-compose** for local development with PostgreSQL and Redis
+- Setting up **Docker Compose** for local development with PostgreSQL and Redis
 - Implementing **GitHub Actions workflows** for CI/CD
 - Automating **deployment** to staging and production
 - Adding **health checks** and monitoring endpoints

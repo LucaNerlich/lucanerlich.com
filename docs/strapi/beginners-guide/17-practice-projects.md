@@ -125,8 +125,8 @@ That is it - one content type.
 
 ### Key features to implement
 
-1. **Auto-generate `shortCode`** - register a Document Service middleware that generates a random 6-character
-   alphanumeric code on `beforeCreate` if no `shortCode` is provided.
+1. **Auto-generate `shortCode`** - register a Document Service middleware that checks `context.action === 'create'`
+   and generates a random 6-character alphanumeric code if no `shortCode` is provided.
 2. **`GET /s/:shortCode` redirect endpoint** - a custom route that looks up the link, increments the click counter,
    and returns a 302 redirect to `originalUrl`. Return 404 if not found, 410 if expired.
 3. **`GET /api/links/:documentId/stats` endpoint** - returns the link's click count and creation date.
@@ -216,8 +216,9 @@ modeling and light on custom backend logic - the challenge is designing a flexib
 ### Key features to implement
 
 1. **Flexible page builder** - editors should be able to compose any page from any combination of blocks.
-2. **Deep population endpoint** - `GET /api/pages?populate=deep` or a custom controller that fully populates all
-   dynamic zone blocks including nested relations (projects, skills) and media.
+2. **Deep population endpoint** - build a custom controller with an explicit nested `populate` object that fully
+   populates all dynamic zone blocks including nested relations (projects, skills) and media. Strapi core does not
+   provide a built-in `populate=deep` parameter.
 3. **Configure an external upload provider** - set up S3 or Cloudinary so portfolio images are served from a CDN.
 4. **Optimized list endpoint** - a custom `GET /api/projects` controller that returns only the fields needed for a
    grid card (title, slug, coverImage thumbnail, year, tags).
@@ -265,7 +266,8 @@ and notes. Each user only sees their own readings.
 4. **Stats endpoint** - `GET /api/readings/stats` returns the current user's totals: books by status, average rating,
    total pages read (sum of `pageCount` for finished books).
 5. **Rate limiting middleware** - protect the API from abuse since it is designed for mobile clients.
-6. **Production config** - configure PostgreSQL, environment-based settings, and API tokens for mobile auth.
+6. **Production config** - configure PostgreSQL, environment-based settings, and Users & Permissions JWT/refresh-token
+   sessions for mobile auth. Reserve API tokens for server-to-server access.
 
 ### Stretch goals
 

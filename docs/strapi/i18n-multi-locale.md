@@ -7,32 +7,26 @@ tags: [strapi, i18n, internationalization, locale, translation]
 
 # i18n and Multi-Locale Content
 
-Strapi's Internationalization (i18n) plugin lets you manage content in multiple languages. It sounds simple in theory -
+Strapi's Internationalization (i18n) feature lets you manage content in multiple languages. It sounds simple in theory -
 in practice, locale-aware querying, relation population, and fallback strategies are where most developers get stuck.
 
 ## Enabling i18n
 
-### Plugin configuration
+### Locale configuration
 
-```js
-// config/plugins.js
-module.exports = {
-  i18n: {
-    enabled: true,
-    config: {
-      defaultLocale: 'en',
-      locales: ['en', 'de', 'fr', 'es', 'ja'],
-    },
-  },
-};
+In Strapi 5, i18n is a core feature configured from **Settings > Global Settings > Internationalization**. Add the
+locales there, and set the default locale in the admin panel. For a fresh environment, you can seed the initial default
+locale with an environment variable:
+
+```bash
+STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE=en
 ```
 
 ### Enabling on a content type
 
 In the Content-Type Builder, toggle **Enable localization** on a content type. Or in the schema:
 
-```json
-// src/api/article/content-types/article/schema.json
+```json title="src/api/article/content-types/article/schema.json"
 {
   "kind": "collectionType",
   "collectionName": "articles",
@@ -94,9 +88,12 @@ GET /api/articles?locale=de
 # Get a specific article in French
 GET /api/articles/abc123?locale=fr
 
-# Get all locales for a document (Strapi 5)
-GET /api/articles/abc123?populate=localizations
+# Get another locale for the same documentId
+GET /api/articles/abc123?locale=de
 ```
+
+Strapi 5 does **not** support `locale=all`. To build a language switcher or fetch every localized version, keep a list
+of configured locales and request each locale explicitly.
 
 ### Document Service (backend)
 
@@ -108,7 +105,8 @@ const articles = await strapi.documents('api::article.article').findMany({
 });
 
 // Find one article in French
-const article = await strapi.documents('api::article.article').findOne(documentId, {
+const article = await strapi.documents('api::article.article').findOne({
+  documentId,
   locale: 'fr',
 });
 
@@ -146,7 +144,8 @@ module.exports = createCoreService('api::article.article', ({ strapi }) => ({
       : FALLBACK_CHAIN;
 
     for (const tryLocale of chain) {
-      const result = await strapi.documents('api::article.article').findOne(documentId, {
+      const result = await strapi.documents('api::article.article').findOne({
+        documentId,
         locale: tryLocale,
         status: 'published',
         populate,
@@ -210,13 +209,15 @@ if the German one is empty):
 ```js
 async findOneWithFieldFallback(documentId, { locale, fallbackLocale = 'en', populate } = {}) {
   const [localized, fallback] = await Promise.all([
-    strapi.documents('api::article.article').findOne(documentId, {
+    strapi.documents('api::article.article').findOne({
+      documentId,
       locale,
       status: 'published',
       populate,
     }),
     locale !== fallbackLocale
-      ? strapi.documents('api::article.article').findOne(documentId, {
+      ? strapi.documents('api::article.article').findOne({
+          documentId,
           locale: fallbackLocale,
           status: 'published',
           populate,
@@ -282,13 +283,11 @@ module.exports = (config, { strapi }) => {
 
       if (articleLocale !== fallbackLocale) {
         // Try fetching the article with the fallback locale for this relation
-        const fallbackArticle = await strapi.documents('api::article.article').findOne(
-          ctx.params.id,
-          {
-            locale: fallbackLocale,
-            populate: ['author'],
-          }
-        );
+        const fallbackArticle = await strapi.documents('api::article.article').findOne({
+          documentId: ctx.params.id,
+          locale: fallbackLocale,
+          populate: ['author'],
+        });
 
         if (fallbackArticle?.author) {
           ctx.body.data.author = fallbackArticle.author;
@@ -331,7 +330,8 @@ is stored per locale.
 ### Populating localized dynamic zones
 
 ```js
-const page = await strapi.documents('api::page.page').findOne(documentId, {
+const page = await strapi.documents('api::page.page').findOne({
+  documentId,
   locale: 'de',
   populate: {
     seo: { populate: ['ogImage'] },

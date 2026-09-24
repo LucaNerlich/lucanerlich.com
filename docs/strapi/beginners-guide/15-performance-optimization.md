@@ -24,13 +24,13 @@ As your Strapi application grows, performance becomes crucial. This chapter cove
 Indexes dramatically improve query performance. Add them for frequently queried fields:
 
 ```javascript
-// database/migrations/add-indexes.js
+// database/migrations/2026.09.24T00.00.00.add-post-indexes.js
 module.exports = {
   async up(knex) {
+    // Use the actual table and column names generated for your content types.
     // Index for featured posts
     await knex.schema.alterTable('posts', (table) => {
       table.index(['featured', 'published_at'], 'idx_posts_featured_published');
-      table.index(['category_id', 'published_at'], 'idx_posts_category_published');
       table.index('slug', 'idx_posts_slug');
       table.index('published_at', 'idx_posts_published_at');
     });
@@ -44,29 +44,12 @@ module.exports = {
     await knex.schema.alterTable('posts_tags_links', (table) => {
       table.index(['post_id', 'tag_id'], 'idx_posts_tags');
     });
-  },
-
-  async down(knex) {
-    await knex.schema.alterTable('posts', (table) => {
-      table.dropIndex('idx_posts_featured_published');
-      table.dropIndex('idx_posts_category_published');
-      table.dropIndex('idx_posts_slug');
-      table.dropIndex('idx_posts_published_at');
-    });
-
-    await knex.schema.alterTable('authors', (table) => {
-      table.dropIndex('idx_authors_email');
-    });
-
-    await knex.schema.alterTable('posts_tags_links', (table) => {
-      table.dropIndex('idx_posts_tags');
-    });
   }
 };
 ```
 
-Save the file under `database/migrations/`. Strapi runs pending migrations automatically on startup, so restart the
-server to apply them:
+Save the file under `database/migrations/`. Strapi runs pending migrations automatically on startup and tracks them
+as one-way migrations, so test index changes against a copy of production before rolling them out:
 
 ```bash
 npm run develop
@@ -282,7 +265,7 @@ Register the middleware:
 export default [
   // ... other middleware
   {
-    name: './src/middlewares/cache',
+    name: 'global::cache',
     config: {
       ttl: 300, // 5 minutes
     },
@@ -322,42 +305,21 @@ export default {
 
 ### Compression
 
-Enable gzip/brotli compression:
-
-```bash
-npm install koa-compress
-```
+Enable Strapi's built-in compression middleware:
 
 ```javascript
 // config/middlewares.js
-import compress from 'koa-compress';
-
 export default [
   // ... other middleware
   {
-    resolve: './src/middlewares/compression',
-    config: {},
+    name: 'strapi::compression',
+    config: {
+      threshold: 2048, // Compress responses larger than 2KB
+      br: true,
+      gzip: true,
+    },
   },
 ];
-```
-
-```javascript
-// src/middlewares/compression.js
-import compress from 'koa-compress';
-
-export default (config, { strapi }) => {
-  return compress({
-    threshold: 2048, // Compress responses larger than 2KB
-    gzip: {
-      flush: require('zlib').constants.Z_SYNC_FLUSH,
-    },
-    br: {
-      params: {
-        [require('zlib').constants.BROTLI_PARAM_QUALITY]: 4,
-      },
-    },
-  });
-};
 ```
 
 ### Lazy loading relations
@@ -407,6 +369,10 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
 ### Static asset CDN
 
 Configure a CDN for media files:
+
+```bash
+npm install @strapi/provider-upload-aws-s3
+```
 
 ```javascript
 // config/plugins.js
@@ -615,24 +581,28 @@ export default ({ env }) => ({
       // ... connection details
     },
     debug: env.bool('DATABASE_DEBUG', false),
-    // Log queries taking longer than 1 second
-    pool: {
-      afterCreate(conn, done) {
-        conn.on('query', (query) => {
-          const start = Date.now();
-          conn.on('query-response', () => {
-            const duration = Date.now() - start;
-            if (duration > 1000) {
-              strapi.log.warn(`Slow query (${duration}ms): ${query.sql}`);
-            }
-          });
-        });
-        done();
+    log: {
+      warn(message) {
+        console.warn(message);
+      },
+      error(message) {
+        console.error(message);
+      },
+      deprecate(message) {
+        console.warn(message);
+      },
+      debug(message) {
+        if (env.bool('DATABASE_DEBUG', false)) {
+          console.debug(message);
+        }
       },
     },
   },
 });
 ```
+
+Use your database's slow-query log or an APM tool when you need duration thresholds; Knex's `debug` mode logs SQL but
+does not provide a built-in per-query slow-query threshold.
 
 ## Performance best practices
 

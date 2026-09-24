@@ -78,7 +78,14 @@ Response:
       "documentId": "abc123def456",
       "title": "Getting Started with Strapi",
       "slug": "getting-started-with-strapi",
-      "content": [...],
+      "content": [
+        {
+          "type": "paragraph",
+          "children": [
+            { "type": "text", "text": "Welcome to Strapi." }
+          ]
+        }
+      ],
       "excerpt": "A quick introduction to building APIs with Strapi.",
       "publishedDate": "2025-01-15",
       "featured": true,
@@ -166,7 +173,7 @@ curl "http://localhost:1337/api/posts?populate=*"
 
 ### Deep population
 
-To populate nested relations (e.g., the author's avatar media), use dot notation or nested syntax:
+To populate nested relations (e.g., the author's avatar media), use nested query syntax:
 
 ```bash
 # Populate author and their avatar
@@ -384,12 +391,8 @@ curl -X POST http://localhost:1337/api/posts \
       "slug": "my-api-post",
       "excerpt": "Created via the REST API",
       "featured": false,
-      "author": {
-        "connect": ["author-document-id-here"]
-      },
-      "category": {
-        "connect": ["category-document-id-here"]
-      },
+      "author": "author-document-id-here",
+      "category": "category-document-id-here",
       "tags": {
         "connect": ["tag1-document-id", "tag2-document-id"]
       }
@@ -400,13 +403,13 @@ curl -X POST http://localhost:1337/api/posts \
 Key points:
 
 - The body must be wrapped in a `data` object
-- **Relations in Strapi 5**: Use `connect` with an array of `documentId` values
-  - For single relations: `{ "connect": ["documentId"] }`
+- **Relations in Strapi 5**: Use `documentId` values
+  - For single relations: `"author": "documentId"`
   - For multiple relations: `{ "connect": ["id1", "id2"] }`
   - To disconnect: `{ "disconnect": ["documentId"] }`
   - To set (replace all): `{ "set": ["id1", "id2"] }`
-- The entry is created as a **draft** by default
-- To publish immediately, add `"status": "published"` to the data object
+- The REST API creates and publishes the entry by default when Draft & Publish is enabled
+- To create it as a draft instead, add `?status=draft` to the request URL
 
 ## Draft & Publish System in Strapi 5
 
@@ -422,26 +425,22 @@ curl "http://localhost:1337/api/posts?status=published"
 curl "http://localhost:1337/api/posts?status=draft" \
   -H "Authorization: Bearer YOUR_API_TOKEN"
 
-# Get both drafts and published posts
-curl "http://localhost:1337/api/posts?status=draft&status=published" \
-  -H "Authorization: Bearer YOUR_API_TOKEN"
+# To find documents by draft/published relationship (for example, modified or never-published), use `publicationFilter`.
 ```
 
 ### Publishing and Unpublishing
 
-In Strapi 5, publishing and unpublishing is done by updating the document with the `status` field, or by using the
-Document Service API programmatically in custom controllers:
+In Strapi 5, REST `POST` and `PUT` requests use the `status` query parameter. Omitting it is the same as
+`status=published`; use `status=draft` when you want to save without publishing. Unpublishing still requires the
+Document Service API programmatically in a custom controller:
 
 ```bash
-# Publish a draft by updating it with status=published
-curl -X PUT http://localhost:1337/api/posts/abc123def456 \
+# Publish a draft by updating it with status=published (the default)
+curl -X PUT "http://localhost:1337/api/posts/abc123def456?status=published" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_TOKEN" \
   -d '{
-    "data": {
-      "title": "Getting Started with Strapi"
-    },
-    "status": "published"
+    "data": {}
   }'
 ```
 
@@ -449,22 +448,27 @@ To unpublish or discard drafts, use the Document Service API in a custom control
 [chapter 7](./07-custom-controllers-and-services.md)):
 
 ```javascript
-// In a custom controller action
-async unpublishPost(ctx) {
-  const { id } = ctx.params;
-  const result = await strapi.documents("api::post.post").unpublish({
-    documentId: id,
-  });
-  return { data: result };
-},
+const { createCoreController } = require('@strapi/strapi').factories;
 
-async discardDraft(ctx) {
-  const { id } = ctx.params;
-  const result = await strapi.documents("api::post.post").discardDraft({
-    documentId: id,
-  });
-  return { data: result };
-},
+module.exports = createCoreController('api::post.post', ({ strapi }) => ({
+  async unpublishPost(ctx) {
+    const { documentId } = ctx.params;
+    const result = await strapi.documents('api::post.post').unpublish({
+      documentId,
+    });
+
+    return { data: result };
+  },
+
+  async discardDraft(ctx) {
+    const { documentId } = ctx.params;
+    const result = await strapi.documents('api::post.post').discardDraft({
+      documentId,
+    });
+
+    return { data: result };
+  },
+}));
 ```
 
 > **Note:** The Document Service provides `publish()`, `unpublish()`, and `discardDraft()` methods. The REST API does
@@ -485,8 +489,8 @@ curl -X PUT http://localhost:1337/api/posts/abc123def456 \
 
 - Use the `documentId` in the URL (not the numeric `id`)
 - Only send the fields you want to change - other fields are preserved
-- Updating a published entry creates a draft version with the changes
-- The published version remains unchanged until you explicitly publish the draft
+- A normal `PUT` publishes the changes immediately
+- To update only the draft version and keep the published version unchanged, add `?status=draft` to the URL
 
 ## Deleting entries
 
@@ -549,19 +553,19 @@ async function getBlogPosts(category = "javascript", page = 1) {
 
 > **Tip:** Building deeply nested query strings by hand is error-prone. The
 > [`qs`](https://www.npmjs.com/package/qs) library (recommended in Strapi's official docs) makes it much easier:
->
-> ```javascript
-> import qs from "qs";
->
-> const query = qs.stringify({
->   filters: { category: { slug: { $eq: "javascript" } } },
->   populate: { author: { fields: ["name"] }, tags: { fields: ["name"] } },
->   sort: ["publishedDate:desc"],
->   pagination: { page: 1, pageSize: 10 },
-> }, { encodeValuesOnly: true });
->
-> const response = await fetch(`http://localhost:1337/api/posts?${query}`);
-> ```
+
+```javascript
+import qs from 'qs';
+
+const query = qs.stringify({
+  filters: { category: { slug: { $eq: 'javascript' } } },
+  populate: { author: { fields: ['name'] }, tags: { fields: ['name'] } },
+  sort: ['publishedDate:desc'],
+  pagination: { page: 1, pageSize: 10 },
+}, { encodeValuesOnly: true });
+
+const response = await fetch(`http://localhost:1337/api/posts?${query}`);
+```
 
 ## API response format
 
@@ -662,8 +666,8 @@ frontend, use the official renderer for your framework:
 npm install @strapi/blocks-react-renderer
 ```
 
-```javascript
-import { BlocksRenderer } from "@strapi/blocks-react-renderer";
+```jsx
+import { BlocksRenderer } from '@strapi/blocks-react-renderer';
 
 function PostBody({ content }) {
   return <BlocksRenderer content={content} />;

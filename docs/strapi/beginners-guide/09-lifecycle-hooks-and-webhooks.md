@@ -17,12 +17,14 @@ sidebar_position: 9
 
 Sometimes you need to react to content changes: validate data before saving, send a notification when a post is
 published, or sync content with an external service. Strapi provides two mechanisms for this: **Document Service
-middleware** (lifecycle hooks) and **webhooks**.
+middleware** and **webhooks**.
 
 ## Document Service middleware
 
-In Strapi 5, lifecycle hooks are implemented as **Document Service middleware**. They intercept calls on the Document
-Service - the layer that handles all content operations.
+In Strapi 5, use **Document Service middleware** for most application-level content hooks. They intercept calls on the
+Document Service - the layer that handles documents, draft/publish, localization, components, and relations. Database
+lifecycle hooks still exist in model files, but they run at the lower database layer and can fire differently for
+Document Service methods because draft and published versions are separate database records.
 
 ```mermaid
 sequenceDiagram
@@ -42,26 +44,24 @@ sequenceDiagram
     After-->>Controller: Final result
 ```
 
-### Available events
+### Available actions
 
-| Event             | When it runs                          |
-|-------------------|---------------------------------------|
-| `beforeCreate`    | Before a new document is created      |
-| `afterCreate`     | After a new document is created       |
-| `beforeUpdate`    | Before a document is updated          |
-| `afterUpdate`     | After a document is updated           |
-| `beforeDelete`    | Before a document is deleted          |
-| `afterDelete`     | After a document is deleted           |
-| `beforeFindOne`   | Before a single document is fetched   |
-| `afterFindOne`    | After a single document is fetched    |
-| `beforeFindMany`  | Before multiple documents are fetched |
-| `afterFindMany`   | After multiple documents are fetched  |
-| `beforeCount`     | Before a count query                  |
-| `afterCount`      | After a count query                   |
-| `beforePublish`   | Before a document is published        |
-| `afterPublish`    | After a document is published         |
-| `beforeUnpublish` | Before a document is unpublished      |
-| `afterUnpublish`  | After a document is unpublished       |
+Document Service middleware does not use `beforeCreate` or `afterCreate` event names. A middleware receives the
+Document Service method in `context.action`; code before `await next()` runs before the method, and code after it runs
+after the method.
+
+| Action         | When it runs                                  |
+|----------------|-----------------------------------------------|
+| `findOne`      | Fetching one document by `documentId`         |
+| `findFirst`    | Fetching the first document matching filters  |
+| `findMany`     | Fetching multiple documents                   |
+| `create`       | Creating a document                           |
+| `update`       | Updating a document                           |
+| `delete`       | Deleting a document                           |
+| `publish`      | Publishing a draft document                   |
+| `unpublish`    | Moving a published document back to draft     |
+| `discardDraft` | Discarding draft changes                      |
+| `count`        | Counting matching documents                   |
 
 ### Registering middleware
 
@@ -301,10 +301,10 @@ code inside Strapi), webhooks send an HTTP request to a URL you specify.
 
 4. Select events:
 
-| Event category | Events                                                                             |
-|----------------|------------------------------------------------------------------------------------|
-| **Entry**      | `entry.create`, `entry.update`, `entry.delete`, `entry.publish`, `entry.unpublish` |
-| **Media**      | `media.create`, `media.update`, `media.delete`                                     |
+| Event category | Events                                                                                                  |
+|----------------|---------------------------------------------------------------------------------------------------------|
+| **Entry**      | `entry.create`, `entry.update`, `entry.delete`, `entry.publish`, `entry.unpublish`, `entry.draft-discard` |
+| **Media**      | `media.create`, `media.update`, `media.delete`                                                          |
 
 5. Click **Save**
 
@@ -324,10 +324,16 @@ When an event triggers, Strapi sends a POST request with this payload:
     "title": "Getting Started with Strapi",
     "slug": "getting-started-with-strapi",
     "createdAt": "2025-01-15T10:00:00.000Z",
-    "updatedAt": "2025-01-15T10:00:00.000Z"
+    "updatedAt": "2025-01-15T10:00:00.000Z",
+    "publishedAt": "2025-01-15T10:00:00.000Z"
   }
 }
 ```
+
+Entry payloads include `event`, `createdAt`, `model`, `uid`, and `entry`. For entry events except `entry.delete` and
+`entry.unpublish`, Strapi reads the entry again before sending the payload, so relations, media, components, and dynamic
+zones are populated. Media events use a different envelope: `event`, `createdAt`, and `media` with no `model` or `uid`.
+Webhook requests also include an `X-Strapi-Event` header.
 
 ### Common webhook use cases
 
@@ -351,7 +357,7 @@ Now every time you publish, unpublish, or delete a post, Vercel rebuilds your fr
 
 ### Example - Slack notification
 
-```
+```text
 Webhook URL: https://hooks.slack.com/services/T00000/B00000/XXXXX
 Events: entry.publish
 
@@ -461,8 +467,8 @@ Use webhooks when you need to:
 
 You learned:
 
-- **Document Service middleware** - the Strapi 5 approach to lifecycle hooks
-- All available **events** (before/after create, update, delete, publish, etc.)
+- **Document Service middleware** - the Strapi 5 approach for most content hooks
+- Available **Document Service actions** (`create`, `update`, `publish`, etc.)
 - Practical examples: validation, slug generation, logging, notifications
 - How to **organize** middleware across content types
 - **Webhooks** - configuring HTTP callbacks in the admin panel

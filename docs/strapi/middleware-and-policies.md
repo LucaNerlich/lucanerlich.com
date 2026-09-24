@@ -24,7 +24,10 @@ flowchart LR
 
 ## Policies
 
-Policies return `true` (allow) or call `ctx.unauthorized()` (deny). They cannot modify the request.
+Policies are route-level guards. Return `true` to allow the request, return `false` to stop with 403, or throw a Strapi
+error for a custom status/message. If a policy returns nothing, Strapi treats it as allowed, so return `false`
+explicitly when denying a request. Policies can read and mutate the underlying Koa context, but keep them focused on
+access control so middleware remains responsible for request/response transformations.
 
 ### Creating a policy
 
@@ -55,7 +58,8 @@ module.exports = async (policyContext, config, { strapi }) => {
   // Use the contentType from config, defaulting to the route's content type
   const uid = config.contentType || 'api::article.article';
 
-  const entry = await strapi.documents(uid).findOne(entryId, {
+  const entry = await strapi.documents(uid).findOne({
+    documentId: entryId,
     populate: ['createdBy'],
   });
 
@@ -113,6 +117,23 @@ module.exports = (policyContext, config, { strapi }) => {
 };
 
 // Reference in route config as: 'api::article.has-draft-access'
+```
+
+### Custom policy errors
+
+Use `PolicyError` from `@strapi/utils` when a denied request needs a clearer message than the default 403:
+
+```js
+const { errors } = require('@strapi/utils');
+const { PolicyError } = errors;
+
+module.exports = (policyContext) => {
+  if (!policyContext.state.user) {
+    throw new PolicyError('You must be signed in to access this route.');
+  }
+
+  return true;
+};
 ```
 
 ---
@@ -277,9 +298,9 @@ module.exports = {
 | Aspect                  | Policies                           | Middleware                            |
 |-------------------------|------------------------------------|---------------------------------------|
 | **Purpose**             | Access control (allow/deny)        | Request/response transformation       |
-| **Return value**        | `true` or `false`                  | Calls `next()`                        |
-| **Can modify request**  | No                                 | Yes                                   |
-| **Can modify response** | No                                 | Yes                                   |
+| **Return value**        | `true`, `false`, or throws         | Calls `next()`                        |
+| **Can modify request**  | Technically yes, but avoid it      | Yes                                   |
+| **Can modify response** | Technically yes, but avoid it      | Yes                                   |
 | **Scope**               | Route-level only                   | Global or route-level                 |
 | **Use case**            | Is-owner, role check, feature flag | Logging, caching, rate limiting, CORS |
 
@@ -291,7 +312,7 @@ module.exports = {
 |--------------------------------------------------|-----------------------------------------|-------------------------------------------------|
 | Forgetting `await next()` in middleware          | Request hangs, never reaches controller | Always call `await next()`                      |
 | Modifying `ctx.body` before `next()`             | Overwrites the controller response      | Modify after `next()` for response manipulation |
-| Policy returning `undefined`                     | Treated as `false` (403 Forbidden)      | Explicitly return `true`                        |
+| Policy returning `undefined`                     | Treated as allowed                      | Explicitly return `false` when denying          |
 | Global middleware not in `config/middlewares.js` | Middleware never loads                  | Add it to the array                             |
 | Expensive logic in middleware                    | Runs on every matched request           | Guard with conditions, use caching              |
 

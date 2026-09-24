@@ -102,7 +102,9 @@ Response:
 }
 ```
 
-The response includes the JWT immediately - the user is logged in upon registration.
+When email confirmation is disabled, the response includes the JWT immediately and the user is logged in upon
+registration. When email confirmation is enabled, Strapi returns the user object without a JWT until the user confirms
+their email address.
 
 ## Login
 
@@ -141,22 +143,25 @@ permission, it returns `403 Forbidden`.
 
 ## JWT configuration
 
-The JWT secret and expiration are configured via environment variables:
+The JWT secret is generated in `.env` for new projects:
 
 ```bash
 # .env
 JWT_SECRET=your-secret-key-here
 ```
 
-The default token expiration is **30 days**. You can change it in `config/plugins.js`:
+Current Strapi projects scaffolded by `create-strapi@latest` use refresh-token session management with HTTP-only
+cookies by default. Existing projects may still use legacy JWT mode, where access tokens default to **30 days**. In
+legacy mode, you can change the expiration in `config/plugins.js`:
 
 ```javascript
 // config/plugins.js
 module.exports = ({ env }) => ({
-  "users-permissions": {
+  'users-permissions': {
     config: {
+      jwtManagement: 'legacy-support',
       jwt: {
-        expiresIn: "7d", // 7 days
+        expiresIn: '7d', // 7 days
       },
     },
   },
@@ -184,10 +189,10 @@ Strapi ships with two default roles:
 | Action      | HTTP method             | Description      |
 |-------------|-------------------------|------------------|
 | **find**    | `GET /api/posts`        | List entries     |
-| **findOne** | `GET /api/posts/:id`    | Get single entry |
+| **findOne** | `GET /api/posts/:documentId`    | Get single entry |
 | **create**  | `POST /api/posts`       | Create entry     |
-| **update**  | `PUT /api/posts/:id`    | Update entry     |
-| **delete**  | `DELETE /api/posts/:id` | Delete entry     |
+| **update**  | `PUT /api/posts/:documentId`    | Update entry     |
+| **delete**  | `DELETE /api/posts/:documentId` | Delete entry     |
 
 4. Click **Save**
 
@@ -296,19 +301,18 @@ Response:
   "provider": "local",
   "confirmed": true,
   "blocked": false,
-  "role": {
-    "id": 1,
-    "name": "Authenticated",
-    "description": "Default role given to authenticated user.",
-    "type": "authenticated"
-  }
+  "createdAt": "2025-01-15T10:00:00.000Z",
+  "updatedAt": "2025-01-15T10:00:00.000Z"
 }
 ```
 
-### Updating the current user
+### Updating a user
+
+The Users & Permissions plugin exposes `GET /api/users/me` for the current user, but updates use the user endpoint with
+the user's integer `id`:
 
 ```bash
-curl -X PUT http://localhost:1337/api/users/me \
+curl -X PUT http://localhost:1337/api/users/1 \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT" \
   -d '{
