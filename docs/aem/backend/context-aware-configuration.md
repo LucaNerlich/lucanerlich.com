@@ -14,7 +14,7 @@ OSGi configurations (which are global or per-run-mode), CA Config values are
 Use cases:
 
 - Different analytics tracking IDs per site
-- API keys that vary between tenants
+- Public integration IDs that vary between tenants (not secrets)
 - Feature flags scoped to a specific brand
 - Social media URLs per regional site
 
@@ -51,7 +51,7 @@ path where the configuration is stored.
 
 ### JCR structure
 
-```
+```text
 /conf/
 ├── brand-a/
 │   └── sling:configs/
@@ -80,6 +80,11 @@ path where the configuration is stored.
 │   ├── sling:configRef = "/conf/brand-b"
 │   └── en/
 ```
+
+:::warning[Do not store secrets in CA Config]
+CA Config is content and is replicated like content. Store only author-manageable or public values
+there. Use OSGi configuration with `$[env:...]` or `$[secret:...]` placeholders for credentials.
+:::
 
 ---
 
@@ -117,6 +122,12 @@ public @interface SiteConfig {
     int maxItemsPerPage() default 10;
 }
 ```
+
+:::note[Register CA Config classes in the bundle]
+The CA Config annotations must be discoverable by Sling. Either add the
+`Sling-ContextAware-Configuration-Classes` bundle header for your config package/classes, or use the
+Sling CA Config bnd scanner plugin (`org.apache.sling.caconfig.bndplugin.ConfigurationClassScannerPlugin`).
+:::
 
 ### Supported property types
 
@@ -264,7 +275,7 @@ public @interface NavigationItem {
 
 JCR structure for nested configs:
 
-```
+```text
 /conf/brand-a/sling:configs/
 └── com.myproject.core.config.NavigationConfig/
     ├── maxDepth = 3
@@ -368,7 +379,7 @@ Configure how CA Config finds the "site root" for a given resource:
 ```json title="ui.config/.../config/io.wcm.caconfig.extensions.contextpath.impl.AbsoluteParentContextPathStrategy~site.cfg.json"
 {
     "levels": [3],
-    "contextPathRegex": "^/content/[^/]+/[^/]+$",
+    "contextPathRegex": "^/content/([^/]+)/[^/]+$",
     "configPathPatterns": ["/conf/$1"],
     "templatePaths": ["/conf/myproject/settings/wcm/templates/.*"]
 }

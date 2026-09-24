@@ -15,7 +15,7 @@ delivery pipeline doesn't care which one you pick. The choice is about **who aut
 Authors create content in **Microsoft Word** (via SharePoint) or **Google Docs** (via
 Google Drive). Structured content is authored using simple tables that map to blocks.
 
-```
+```markdown
 | Hero                    |
 |-------------------------|
 | ![hero.jpg](hero.jpg)   |
@@ -64,9 +64,9 @@ For wiring blocks into UE, see [Universal Editor](./universal-editor.mdx).
 | Author skill level | Low (Word / Docs) | Medium (AEM UI) |
 | Content complexity | Simple pages, blogs, landing pages | Complex layouts, reusable fragments |
 | Governance | Loose | Structured (permissions, workflows) |
-| Preview fidelity | Approximate | Exact |
+| Preview fidelity | Exact after Sidekick preview, but not in-editor | Exact in-context |
 | Infrastructure | SharePoint or Google Workspace | AEM as a Cloud Service |
-| Translation | Adobe-managed translation, GLaaS, manual | AEM + multi-site manager |
+| Translation | Manual or external localization workflow | AEM + multi-site manager / translation integration |
 
 You can run both side-by-side. The same site can serve a `/blog/` tree authored in
 SharePoint and a `/products/` tree authored in Universal Editor - the Content Bus

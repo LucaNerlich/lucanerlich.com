@@ -63,9 +63,15 @@ A process step is an OSGi component implementing `WorkflowProcess`:
 
 ```java
 import com.adobe.granite.workflow.WorkflowSession;
+import com.adobe.granite.workflow.WorkflowException;
 import com.adobe.granite.workflow.exec.WorkItem;
 import com.adobe.granite.workflow.exec.WorkflowProcess;
 import com.adobe.granite.workflow.metadata.MetaDataMap;
+import java.util.Calendar;
+import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
 
 @Component(
@@ -75,19 +81,25 @@ import org.osgi.service.component.annotations.Component;
 public class StampApprovedDateProcess implements WorkflowProcess {
 
     @Override
-    public void execute(WorkItem workItem, WorkflowSession wfSession, MetaDataMap args) {
+    public void execute(WorkItem workItem, WorkflowSession wfSession, MetaDataMap args) throws WorkflowException {
         String payloadPath = workItem.getWorkflowData().getPayload().toString();
         ResourceResolver resolver = wfSession.adaptTo(ResourceResolver.class);
+        if (resolver == null) {
+            throw new WorkflowException("Could not adapt workflow session to a ResourceResolver");
+        }
 
         Resource content = resolver.getResource(payloadPath + "/jcr:content");
         if (content != null) {
             ModifiableValueMap vm = content.adaptTo(ModifiableValueMap.class);
+            if (vm == null) {
+                throw new WorkflowException("Payload content is not modifiable: " + content.getPath());
+            }
             vm.put("approvedAt", Calendar.getInstance());
             try {
                 resolver.commit();
             } catch (PersistenceException e) {
                 // Fail the step so the workflow can retry / route to error handling
-                throw new RuntimeException("Could not stamp approved date", e);
+                throw new WorkflowException("Could not stamp approved date", e);
             }
         }
     }

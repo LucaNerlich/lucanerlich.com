@@ -168,6 +168,7 @@ export const sidebarOrder: Record<string, string[]> = {
     'aem/components': [
         'overview',
         'core-components',
+        'core-components-delegation',
         'dialog-validation',
         'templates-policies',
         'decoration-tag',

@@ -108,7 +108,7 @@ graph TD
 
 | Component           | Description                                                                   |
 |---------------------|-------------------------------------------------------------------------------|
-| **Runtime Actions** | Serverless Node.js functions (max 60s default, 60 min with async)             |
+| **Runtime Actions** | Serverless Node.js functions (60s default timeout, configurable up to 60 min; CDN-served web actions still need fast responses) |
 | **Web Assets**      | Optional React SPA served from Adobe's CDN, embedded in AEM Shell             |
 | **Files SDK**       | Cloud file storage (Azure Blob under the hood) for temporary/persistent files |
 | **State SDK**       | Key-value store (Azure Cosmos DB) for caching, state, and configuration       |
@@ -120,7 +120,7 @@ graph TD
 Runtime Actions are **stateless, short-lived functions**. Each invocation:
 
 1. Receives a JSON params object (HTTP request body + headers + runtime config)
-2. Executes Node.js code (max memory: 256 MB default, configurable up to 2 GB)
+2. Executes Node.js code (max memory: 256 MB default, configurable up to 4096 MB)
 3. Returns a JSON response
 4. Logs are available via `aio app logs`
 
@@ -161,7 +161,7 @@ aio app init my-aem-integration
 
 ### Project structure
 
-```
+```text
 my-aem-integration/
 ├── app.config.yaml          # Deployment manifest
 ├── package.json
@@ -188,9 +188,9 @@ my-aem-integration/
 The manifest defines actions, their runtime configuration, and event registrations:
 
 ```yaml title="app.config.yaml"
-application:
-  actions: actions
-  web: web-src
+extensions:
+  dx/excshell/1:
+    $include: ./src/dx-excshell-1/ext.config.yaml
 ```
 
 ```yaml title="src/dx-excshell-1/ext.config.yaml"
@@ -199,30 +199,38 @@ operations:
     - type: web
       impl: index.html
 
-actions:
-  asset-upload:
-    function: actions/asset-upload/index.js
-    web: 'yes'
-    runtime:
-      memory: 512        # MB
-      timeout: 300000     # ms (5 min)
-    inputs:
-      AEM_HOST: $AEM_HOST
-      AEM_TOKEN: $AEM_TOKEN
-    annotations:
-      require-adobe-auth: true  # Enforce IMS authentication
-      final: true
+web: web-src
 
-  event-handler:
-    function: actions/event-handler/index.js
-    web: 'no'
-    runtime:
-      memory: 256
-      timeout: 60000
-    inputs:
-      AEM_HOST: $AEM_HOST
-    annotations:
-      final: true
+runtimeManifest:
+  packages:
+    dx-excshell-1:
+      license: Apache-2.0
+      actions:
+        asset-upload:
+          function: actions/asset-upload/index.js
+          web: 'yes'
+          runtime: nodejs:22
+          limits:
+            memory: 512        # MB
+            timeout: 300000     # ms (5 min)
+          inputs:
+            AEM_HOST: $AEM_HOST
+            AEM_TOKEN: $AEM_TOKEN
+          annotations:
+            require-adobe-auth: true  # Enforce IMS authentication
+            final: true
+
+        event-handler:
+          function: actions/event-handler/index.js
+          web: 'no'
+          runtime: nodejs:22
+          limits:
+            memory: 256
+            timeout: 60000
+          inputs:
+            AEM_HOST: $AEM_HOST
+          annotations:
+            final: true
 ```
 
 ---
@@ -238,7 +246,7 @@ For backend actions that run without a user context, use a **Technical Account**
 called Service Credentials):
 
 1. In the Adobe Developer Console, add the **AEM as a Cloud Service** API to your project
-2. Generate a **Service Account (JWT)** credential or use **OAuth Server-to-Server** (recommended)
+2. Create an **OAuth Server-to-Server** credential
 3. Store the credentials as environment variables
 
 ```bash title=".env (local development only)"
@@ -300,17 +308,17 @@ Builder actions react to them automatically.
 
 ### Common AEM event types
 
-| Event Provider        | Event Type                     | Triggered when                      |
-|-----------------------|--------------------------------|-------------------------------------|
-| AEM Assets            | `asset_created`                | A new asset is uploaded             |
-| AEM Assets            | `asset_updated`                | An asset is modified or reprocessed |
-| AEM Assets            | `asset_deleted`                | An asset is removed                 |
-| AEM Content Fragments | `content_fragment_created`     | A new CF is created                 |
-| AEM Content Fragments | `content_fragment_modified`    | A CF is updated                     |
-| AEM Content Fragments | `content_fragment_published`   | A CF is published                   |
-| AEM Content Fragments | `content_fragment_unpublished` | A CF is unpublished                 |
-| AEM Pages             | `page_published`               | A page is activated                 |
-| AEM Pages             | `page_unpublished`             | A page is deactivated               |
+| Event Provider        | Event Type                        | Triggered when                      |
+|-----------------------|-----------------------------------|-------------------------------------|
+| AEM Assets            | `aem.assets.asset.created`        | A new asset is uploaded             |
+| AEM Assets            | `aem.assets.asset.updated`        | An asset is modified or reprocessed |
+| AEM Assets            | `aem.assets.asset.deleted`        | An asset is removed                 |
+| AEM Content Fragments | `aem.contentfragment.created`     | A new CF is created                 |
+| AEM Content Fragments | `aem.contentfragment.modified`    | A CF is updated                     |
+| AEM Content Fragments | `aem.contentfragment.published`   | A CF is published                   |
+| AEM Content Fragments | `aem.contentfragment.unpublished` | A CF is unpublished                 |
+| AEM Sites             | `aem.sites.page.published`        | A page is activated                 |
+| AEM Sites             | `aem.sites.page.unpublished`      | A page is deactivated               |
 
 ### Registering an event consumer
 
@@ -337,7 +345,7 @@ async function main(params) {
         logger.info(`Resource: ${JSON.stringify(eventData)}`);
 
         // Example: react to asset creation
-        if (eventType.includes('asset_created')) {
+        if (eventType === 'aem.assets.asset.created') {
             const assetPath = eventData?.path;
             logger.info(`New asset created at: ${assetPath}`);
 
@@ -806,7 +814,6 @@ aio app init my-asset-worker --template @adobe/aio-cli-plugin-asset-compute
 
 ```js title="actions/worker/index.js"
 const { worker } = require('@adobe/asset-compute-sdk');
-const { serializeXmp } = require('@adobe/asset-compute-xmp');
 
 exports.main = worker(async (source, rendition, params) => {
     // source.url - presigned URL to the original asset
@@ -815,7 +822,7 @@ exports.main = worker(async (source, rendition, params) => {
     // Example: generate a watermarked version using sharp
     const sharp = require('sharp');
     const response = await fetch(source.url);
-    const buffer = await response.buffer();
+    const buffer = Buffer.from(await response.arrayBuffer());
 
     await sharp(buffer)
         .composite([{
@@ -948,7 +955,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
@@ -1037,14 +1044,15 @@ runtime:
 Don't re-implement caching or file storage. Use the provided SDKs:
 
 ```js
-const { Files, State } = require('@adobe/aio-sdk');
+const filesLib = require('@adobe/aio-lib-files');
+const stateLib = require('@adobe/aio-lib-state');
 
 // Store temporary files
-const files = await Files.init();
+const files = await filesLib.init();
 await files.write('temp/processing.json', JSON.stringify(data));
 
 // Cache API responses
-const state = await State.init();
+const state = await stateLib.init();
 await state.put('cache:token', accessToken, { ttl: 3600 });
 const cached = await state.get('cache:token');
 ```
@@ -1092,7 +1100,7 @@ logger.info({ assetPath, fileSize, duration }, 'Asset upload complete');
 | Event handler misses events             | Use the **Journaling API** (polling) instead of webhooks for reliability                    |
 | Action works locally but fails deployed | Check that all environment variables are configured in the Developer Console workspace      |
 | `413 Payload Too Large` from AEM        | Use the Direct Binary Upload API (presigned URLs) instead of posting binary to AEM directly |
-| Memory limit exceeded                   | Increase `memory` in manifest (max 2048 MB); process files in streaming chunks              |
+| Memory limit exceeded                   | Increase `memory` in manifest (max 4096 MB); process files in streaming chunks              |
 | Rate limiting from AEM                  | Implement throttling and batch processing; respect `Retry-After` headers                    |
 
 ---

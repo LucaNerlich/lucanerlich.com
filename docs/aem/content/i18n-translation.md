@@ -50,9 +50,10 @@ locale.
 
 ### Dictionary structure
 
-Dictionaries are stored in the JCR as `sling:MessageEntry` nodes:
+Dictionaries can be stored as JSON key/value files or as older node-based `sling:MessageEntry`
+children:
 
-```
+```text
 /apps/myproject/i18n/
 ├── en.json           ← English (source language)
 ├── de.json           ← German
@@ -62,7 +63,7 @@ Dictionaries are stored in the JCR as `sling:MessageEntry` nodes:
 
 Or in the older node-based format:
 
-```
+```text
 /apps/myproject/i18n/
 ├── en/
 │   ├── jcr:language = "en"
@@ -81,14 +82,14 @@ The simplest approach is JSON files:
 {
     "jcr:language": "en",
     "jcr:mixinTypes": ["mix:language"],
-    "jcr:primaryType": "nt:unstructured",
+    "jcr:primaryType": "sling:Folder",
     "sling:basename": "myproject",
 
-    "readMore": { "jcr:primaryType": "sling:MessageEntry", "sling:key": "readMore", "sling:message": "Read more" },
-    "backToTop": { "jcr:primaryType": "sling:MessageEntry", "sling:key": "backToTop", "sling:message": "Back to top" },
-    "searchPlaceholder": { "jcr:primaryType": "sling:MessageEntry", "sling:key": "searchPlaceholder", "sling:message": "Search..." },
-    "noResults": { "jcr:primaryType": "sling:MessageEntry", "sling:key": "noResults", "sling:message": "No results found" },
-    "loadMore": { "jcr:primaryType": "sling:MessageEntry", "sling:key": "loadMore", "sling:message": "Load more" }
+    "readMore": "Read more",
+    "backToTop": "Back to top",
+    "searchPlaceholder": "Search...",
+    "noResults": "No results found",
+    "loadMore": "Load more"
 }
 ```
 
@@ -96,14 +97,14 @@ The simplest approach is JSON files:
 {
     "jcr:language": "de",
     "jcr:mixinTypes": ["mix:language"],
-    "jcr:primaryType": "nt:unstructured",
+    "jcr:primaryType": "sling:Folder",
     "sling:basename": "myproject",
 
-    "readMore": { "jcr:primaryType": "sling:MessageEntry", "sling:key": "readMore", "sling:message": "Weiterlesen" },
-    "backToTop": { "jcr:primaryType": "sling:MessageEntry", "sling:key": "backToTop", "sling:message": "Nach oben" },
-    "searchPlaceholder": { "jcr:primaryType": "sling:MessageEntry", "sling:key": "searchPlaceholder", "sling:message": "Suchen..." },
-    "noResults": { "jcr:primaryType": "sling:MessageEntry", "sling:key": "noResults", "sling:message": "Keine Ergebnisse gefunden" },
-    "loadMore": { "jcr:primaryType": "sling:MessageEntry", "sling:key": "loadMore", "sling:message": "Mehr laden" }
+    "readMore": "Weiterlesen",
+    "backToTop": "Nach oben",
+    "searchPlaceholder": "Suchen...",
+    "noResults": "Keine Ergebnisse gefunden",
+    "loadMore": "Mehr laden"
 }
 ```
 
@@ -112,7 +113,7 @@ The simplest approach is JSON files:
 If your project has multiple dictionaries (e.g., shared and site-specific), use
 `sling:basename` to namespace them and avoid collisions:
 
-```
+```text
 /apps/myproject/i18n/        sling:basename = "myproject"
 /apps/shared/i18n/           sling:basename = "shared"
 ```
@@ -174,6 +175,8 @@ from the language root, e.g., `/content/mysite/de`).
 import com.day.cq.i18n.I18n;
 import org.apache.sling.api.SlingHttpServletRequest;
 
+import java.util.ResourceBundle;
+
 // In a Sling Model
 @Model(adaptables = SlingHttpServletRequest.class)
 public class SearchResultsModel {
@@ -194,8 +197,9 @@ public class SearchResultsModel {
 
     // With a specific basename
     public String getLabel(String key) {
-        I18n i18n = new I18n(request);
-        return i18n.get(key, "myproject");
+        ResourceBundle bundle = request.getResourceBundle("myproject", request.getLocale());
+        I18n i18n = new I18n(bundle);
+        return i18n.get(key);
     }
 }
 ```
@@ -211,7 +215,7 @@ import java.util.ResourceBundle;
 private ResourceBundleProvider resourceBundleProvider;
 
 public String translate(String key, Locale locale) {
-    ResourceBundle bundle = resourceBundleProvider.getResourceBundle(locale);
+    ResourceBundle bundle = resourceBundleProvider.getResourceBundle("myproject", locale);
     return bundle.containsKey(key) ? bundle.getString(key) : key;
 }
 ```
@@ -224,7 +228,7 @@ public String translate(String key, Locale locale) {
 
 AEM follows a convention-based site structure for multi-language sites:
 
-```
+```text
 /content/mysite/
 ├── en/                  ← English (source language)
 │   ├── jcr:language = "en"
@@ -310,9 +314,11 @@ sequenceDiagram
 
 ### Translation rules
 
-The `translation_rules.xml` file controls which properties and components are translated:
+The `translation_rules.xml` file controls which properties and components are translated. In current
+AEM versions it lives under `/conf/global/settings/translation/rules/`; older installations may
+still use `/etc/translation/rules/`:
 
-```xml title="/etc/translation/rules/translation_rules.xml"
+```xml title="/conf/global/settings/translation/rules/translation_rules.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <nodelist>
     <!-- Translate text properties -->
@@ -395,7 +401,7 @@ Content Fragments can be translated via the TIF:
 
 XFs follow the same pattern as pages:
 
-```
+```text
 /content/experience-fragments/mysite/
 ├── en/
 │   └── header/
@@ -553,7 +559,7 @@ public class LanguageSwitcherModel {
 
 Use keys that describe the purpose, not the English text:
 
-```
+```text
 // Good
 "searchNoResults"
 "buttonSubmitForm"

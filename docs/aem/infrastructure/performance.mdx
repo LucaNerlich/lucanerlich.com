@@ -92,7 +92,8 @@ Setting `p.limit=-1` fetches **every** matching node in a single call. On a larg
 
 ### JCR-SQL2 Index Hints
 
-If Oak chooses the wrong index, you can force one with the `OPTION(INDEX ...)` hint:
+If Oak chooses the wrong index, you can limit index selection with Oak's `option(index tag ...)`
+hint:
 
 ```sql
 SELECT * FROM [nt:unstructured] AS node
@@ -277,14 +278,12 @@ Frontend assets are served through AEM's Client Library (clientlib) framework. M
 
 Enable minification in the **HTML Library Manager** OSGi config:
 
-```json
+```json title="com.adobe.granite.ui.clientlibs.impl.HtmlLibraryManagerImpl.cfg.json"
 {
-    "com.adobe.granite.ui.clientlibs.impl.HtmlLibraryManagerImpl": {
-        "htmllibmanager.minify": true,
-        "htmllibmanager.gzip": true,
-        "htmllibmanager.timing": true,
-        "htmllibmanager.debug.init.js": false
-    }
+    "htmllibmanager.minify": true,
+    "htmllibmanager.gzip": true,
+    "htmllibmanager.timing": true,
+    "htmllibmanager.debug.init.js": false
 }
 ```
 
@@ -468,7 +467,7 @@ resolver.commit(); // single commit
 
 Enable the session leak logger to find code paths that forget to close resolvers:
 
-```
+```text
 org.apache.sling.resourceresolver.impl.CommonResourceResolverFactoryImpl
   -> log level: DEBUG
 ```
@@ -485,7 +484,7 @@ You cannot optimise what you do not measure. AEM provides several built-in tools
 
 AEM's `request.log` records every request with its processing time in milliseconds:
 
-```
+```text
 [2025-06-15 10:23:45] 200 GET /content/mysite/en.html 142ms
 ```
 
@@ -500,20 +499,18 @@ sort -t' ' -k5 -rn request.log | head -20
 
 Enable the Oak query performance logger to capture queries exceeding a threshold:
 
-```
+```text
 org.apache.jackrabbit.oak.query
   -> log level: DEBUG
 ```
 
 Or set a threshold via OSGi:
 
-```json
+```json title="org.apache.jackrabbit.oak.query.QueryEngineSettingsService.cfg.json"
 {
-    "org.apache.jackrabbit.oak.query.QueryEngineSettingsService": {
-        "queryLimitReads": 100000,
-        "queryFailTraversal": true,
-        "fastQuerySize": true
-    }
+    "queryLimitReads": 100000,
+    "queryFailTraversal": true,
+    "fastQuerySize": true
 }
 ```
 
@@ -549,7 +546,7 @@ Look for threads in `BLOCKED` or `WAITING` state and check if any hold monitors 
 
 The built-in query debugger at:
 
-```
+```text
 /libs/granite/operations/content/diagnosistools/queryPerformance.html
 ```
 

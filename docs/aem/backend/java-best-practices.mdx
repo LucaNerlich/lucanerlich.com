@@ -65,6 +65,11 @@ public class MyComponent implements ComponentExporter {
     public String getTitle() {
         return StringUtils.defaultIfBlank(title, "Default title");
     }
+
+    @Override
+    public String getExportedType() {
+        return RESOURCE_TYPE;
+    }
 }
 ```
 
@@ -117,6 +122,10 @@ Example config file:
 - Avoid leaking resolver instances across threads.
 
 ```java
+Map<String, Object> authInfo = Map.of(
+    ResourceResolverFactory.SUBSERVICE, "my-subservice"
+);
+
 try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(authInfo)) {
     Resource resource = resolver.getResource(path);
     // work with resource
@@ -186,7 +195,7 @@ try {
 
 ## Threading and schedulers
 
-- Prefer `SlingScheduler` or OSGi schedulers.
+- Prefer Sling Jobs for work that must run once in a cluster; use the Sling Scheduler only as the trigger.
 - Do not spawn your own threads without a clear reason.
 - Keep scheduled jobs idempotent.
 
@@ -212,24 +221,20 @@ Treat anything that comes from requests, content properties, or external service
 
 #### Backend validation + encoding (AEM/Sling)
 
-Use AEM’s XSSAPI to validate and encode user input before it reaches templates or logs.
+Use Sling's `org.apache.sling.xss.XSSAPI` to validate and encode user input before it reaches
+templates or logs.
 
 ```java
 @Reference
 private XSSAPI xssApi;
 
 public String safeText(String input) {
-    // Strictly validate: returns null if invalid
-    String valid = xssApi.getValidString(input, 200, true);
-    if (valid == null) {
-        return "";
-    }
-    // Encode for HTML output
-    return xssApi.encodeForHTML(valid);
+    // Encode for HTML element text. Use a context-specific encoder for attributes or JS.
+    return xssApi.encodeForHTML(input == null ? "" : input);
 }
 
 public String safeUrl(String url) {
-    // Validates and normalizes URLs
+    // Sanitizes href/src values; invalid URLs return an empty string.
     return xssApi.getValidHref(url);
 }
 ```

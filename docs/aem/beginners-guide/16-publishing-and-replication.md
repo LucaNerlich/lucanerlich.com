@@ -87,14 +87,20 @@ The `com.day.cq.replication.Replicator` service activates or deactivates a path.
 
 ```java
 import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
 import com.day.cq.replication.Replicator;
+import javax.jcr.Session;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Reference;
 
 @Reference
 private Replicator replicator;
 
-public void publish(ResourceResolver resolver, String path) throws Exception {
+public void publish(ResourceResolver resolver, String path) throws ReplicationException {
     Session session = resolver.adaptTo(Session.class);
+    if (session == null) {
+        throw new ReplicationException("Could not adapt ResourceResolver to a JCR Session");
+    }
     replicator.replicate(session, ReplicationActionType.ACTIVATE, path);
 }
 ```

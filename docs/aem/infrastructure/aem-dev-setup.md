@@ -14,25 +14,25 @@ commands you will likely run during development.
 
 1. Install Java (JDK)
     1. [Download JDK](https://adoptopenjdk.net/) or use SDKMAN
-    2. Prefer JDK 21 for Cloud SDKs released since mid 2025
+    2. Prefer JDK 21 for current Cloud SDKs; Java 17 is also supported
     3. Add to `PATH` and verify with `java -version`
 2. Login with your Adobe account & download AEM
     1. [Adobe Software Distribution](https://experience.adobe.com/#/downloads/content/software-distribution/en/aemcloud.html)
     2. Example Cloud SDK version: `2021.3.5087.20210322T071003Z-210325`
         1. Cloud SDK uses `year + version + timestamp` format
     3. Extract the archive
-    4. Rename to `cq-author-p4502.jar`
-        1. For a local publish, name it `cq-publish-p4503.jar`
+    4. Rename to `aem-author-p4502.jar`
+        1. For a local publish, name it `aem-publish-p4503.jar`
         2. Adjust the port if you already have something running
 3. Start AEM instance
-    1. `java -jar cq-author-p4502.jar -gui`
+    1. `java -jar aem-author-p4502.jar -nointeractive`
     2. Wait 1-5 minutes (newer versions start much faster)
 4. Install Maven
     1. [Download](https://maven.apache.org/download.cgi)
     2. Add to `PATH` and verify with `mvn -v`
 5. Execute the [Maven Archetype Command](#bootstrapping-a-development-environment-via-maven-archetype)
     1. `cd ./mysite`
-    2. `mvn clean install -PautoInstallPackage`
+    2. `mvn clean install -PautoInstallSinglePackage`
 6. Access [http://localhost:4502](http://localhost:4502) and login with `admin:admin`
 
 Once you have shut down (`ctrl+c`) your initial AEM instance, you should start and stop AEM via the scripts in
@@ -53,8 +53,9 @@ Managed Services offerings still bear the classic `major.minor.patch` level nota
 ### Tools
 
 - Java JDK
-    - JDK 21 -> AEM Cloud SDKs released since mid 2025
-    - JDK 11 -> AEM Cloud SDK + AEM 6.5 (older SDKs)
+    - JDK 21 -> current AEM Cloud SDK runtime and AEM 6.5 LTS
+    - JDK 17 -> supported by AEM Cloud SDK and AEM 6.5 LTS
+    - JDK 11 -> older AEM Cloud SDKs and classic AEM 6.5 (not current Cloud runtime)
     - JDK 8 -> AEM 6.4 and below
 - Maven >= 3.8
 - AEM-Repo Tool
@@ -101,23 +102,28 @@ the [Adobe Software Distribution](https://experience.adobe.com/#/downloads/conte
 extract the archive if you downloaded the Cloud SDK. For on-premise or managed services, you can run the jar directly.
 
 By renaming the jar according to the following schema, a couple of default settings can be
-set: `cq-(author|publish)-p(port)`.
-For example `cq-author-p4502.jar`.
+set: `aem-(author|publish)-p(port)`.
+For example `aem-author-p4502.jar`.
 When started, this will run the AEM instance as an author and expose it locally via port 4502.
 The same pattern applies to publish with a default port of 4503.
 
 Running the jar is as easy as executing it like this:
 
 ```bash
-java -jar cq-author-p4502.jar -gui
+java -jar aem-author-p4502.jar -nointeractive
 ```
 
 The first run will unpack the `crx-quickstart` directory next to the jar. This folder is the actual runtime and is
 where logs, bundles, and repository data are stored.
 
-The parameter `-gui` can be appended, to launch an additional small UI, which informs the user about the startup /
-installation progress.
-Additionally, `-gui` will automatically set the default admin users credentials to `admin:admin`.
+The Cloud SDK does not need a `license.properties` file. `-nointeractive` starts the
+SDK without a startup dialog and uses the default local credentials (`admin:admin`).
+You can also skip renaming and pass the values explicitly:
+
+```bash
+java -jar aem-sdk-quickstart-*.jar -r author -p 4502 -nointeractive
+java -jar aem-sdk-quickstart-*.jar -r publish -p 4503 -nointeractive
+```
 
 #### Start and stop scripts
 
@@ -176,24 +182,25 @@ To summarize, by using an archetype, which itself has been created by the AEM De
 variables with which the archetype bootstraps itself and creates a customized set of files and directories - ready to
 use.
 
-The following example demonstrates a bash command using v27 of the `aem-project-archetype`.
+The following example demonstrates a bash command using the `aem-project-archetype`.
 By setting `appTitle`, `appId`, and `groupId` we tell the archetype how to name and structure the project.
 `frontendModule` can be one of `none`, `general`, `react`, or `angular`.
 By specifying this parameter, we can opt in to use the `ui.frontend` module, which can be preconfigured with either
 a classic HTML variant or a modern SPA framework (React or Angular).
 
-If we do not specify `aemVersion`, the latest AEM Cloud SDK is used. A specific version can be set via passing the AEM
-version in its `major.minor.patch` notation. For example `aemVersion="6.4.8"` creates a project based on AEM 6.4 with
-patch level 8 and adds all necessary dependencies to the `pom.xml`.
+For AEM as a Cloud Service, set `aemVersion=cloud`. A specific on-prem version can be set via passing the AEM
+version in its `major.minor.patch` notation. For example `aemVersion="6.5.21"` creates a project based on AEM 6.5 with
+service pack 21 and adds all necessary dependencies to the `pom.xml`.
 
 ```bash
-mvn -B archetype:generate \
+mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.2.1:generate \
  -D archetypeGroupId=com.adobe.aem \
  -D archetypeArtifactId=aem-project-archetype \
- -D archetypeVersion=27 \
+ -D archetypeVersion=58 \
  -D appTitle="My Site" \
  -D appId="mysite" \
  -D groupId="com.mysite" \
+ -D aemVersion=cloud \
  -D frontendModule=react \
  -D includeExamples=y
 ```
@@ -260,6 +267,9 @@ just the Java module `core` can be achieved with the profile `-PautoInstallBundl
 ```bash
 # Full build and deploy all packages
 mvn clean install -PautoInstallSinglePackage
+
+# Full build and deploy all packages to local publish
+mvn clean install -PautoInstallSinglePackagePublish
 
 # Build and install only ui.apps/ui.config/ui.content packages
 mvn clean install -PautoInstallPackage

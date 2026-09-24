@@ -8,7 +8,9 @@ tags: [aem, ui, render-conditions]
 
 Render Conditions control whether a Granite UI element (dialog field, tab, toolbar button, or any
 other UI widget) is **shown or hidden** in the AEM Touch UI. They are evaluated server-side before
-the UI is rendered, so hidden elements never reach the browser.
+the UI is rendered, so hidden elements never reach the browser. They are not an authorization
+boundary: protect content and write operations with ACLs, servlets, Sling Models, and workflow
+checks as appropriate.
 
 This is the primary mechanism for:
 - Showing/hiding dialog fields based on **user group membership**
@@ -65,22 +67,20 @@ Show an element only if the current user has specific permissions on a resource:
     privileges="[rep:write]"/>
 ```
 
-### Group membership
+### Feature flags
 
-Show an element only for users in a specific group:
+Show an element only when a Granite feature flag is enabled:
 
 ```xml
 <granite:rendercondition
     jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/renderconditions/group"
-    groups="[administrators,content-authors]"
-    matchAll="{Boolean}false"/>
+    sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
+    feature="com.example.authoring.feature"/>
 ```
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `groups` | `String[]` | Group names to check |
-| `matchAll` | `Boolean` | `true` = user must be in ALL groups; `false` (default) = any group |
+| `feature` | `String` | Feature flag name to check |
 
 ### Simple expression
 
@@ -110,8 +110,8 @@ Combine multiple render conditions with boolean logic:
         privileges="[rep:write]"/>
     <condition2
         jcr:primaryType="nt:unstructured"
-        sling:resourceType="granite/ui/components/coral/foundation/renderconditions/group"
-        groups="[content-authors]"/>
+        sling:resourceType="granite/ui/components/coral/foundation/renderconditions/simple"
+        expression="${requestPathInfo.suffix != null}"/>
 </granite:rendercondition>
 ```
 
@@ -123,12 +123,12 @@ Combine multiple render conditions with boolean logic:
     sling:resourceType="granite/ui/components/coral/foundation/renderconditions/or">
     <condition1
         jcr:primaryType="nt:unstructured"
-        sling:resourceType="granite/ui/components/coral/foundation/renderconditions/group"
-        groups="[administrators]"/>
+        sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
+        feature="com.example.authoring.featureA"/>
     <condition2
         jcr:primaryType="nt:unstructured"
-        sling:resourceType="granite/ui/components/coral/foundation/renderconditions/group"
-        groups="[super-authors]"/>
+        sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
+        feature="com.example.authoring.featureB"/>
 </granite:rendercondition>
 ```
 
@@ -137,14 +137,16 @@ Combine multiple render conditions with boolean logic:
 | Resource Type | Purpose |
 |--------------|---------|
 | `.../renderconditions/privilege` | Check JCR permissions on a path |
-| `.../renderconditions/group` | Check user group membership |
 | `.../renderconditions/simple` | Evaluate a simple expression |
 | `.../renderconditions/and` | Boolean AND of child conditions |
 | `.../renderconditions/or` | Boolean OR of child conditions |
 | `.../renderconditions/not` | Boolean NOT (invert a child condition) |
-| `.../renderconditions/emptytext` | Check if a text value is empty |
+| `.../renderconditions/feature` | Check a Granite feature flag |
 
-All live under `granite/ui/components/coral/foundation/renderconditions/`.
+All live under `granite/ui/components/coral/foundation/renderconditions/`. The simple condition uses
+Granite's expression resolver, so expressions can refer to values such as
+`${requestPathInfo.suffix}`, `${param.item}`, and Granite functions such as
+`${granite:relativeParent(requestPathInfo.suffix, 1)}`.
 
 ---
 
@@ -516,8 +518,8 @@ Render conditions work on **any** Granite UI element, not just form fields:
                       sling:resourceType="granite/ui/components/coral/foundation/container">
                 <granite:rendercondition
                     jcr:primaryType="nt:unstructured"
-                    sling:resourceType="granite/ui/components/coral/foundation/renderconditions/group"
-                    groups="[administrators]"/>
+                    sling:resourceType="myproject/renderconditions/group-check"
+                    group="administrators"/>
                 <items jcr:primaryType="nt:unstructured">
                     <!-- ... admin-only fields ... -->
                 </items>
@@ -565,9 +567,9 @@ Type hints in XML:
 
 | Mechanism | When evaluated | Scope | Security |
 |-----------|---------------|-------|----------|
-| **Render Condition** | Server-side, before dialog renders | Granite UI (dialogs, admin consoles) | Secure - hidden elements never reach the browser |
-| **`data-sly-test`** | Server-side, during HTL rendering | HTL templates (component rendering) | Secure - hidden markup never reaches the browser |
-| **`granite:hide`** | Build-time, during overlay resolution | Dialog inheritance and overlays | Secure - permanently removes fields from inherited dialogs |
+| **Render Condition** | Server-side, before dialog renders | Granite UI (dialogs, admin consoles) | UI hiding only; enforce access separately |
+| **`data-sly-test`** | Server-side, during HTL rendering | HTL templates (component rendering) | UI/output hiding only; enforce access separately |
+| **`sling:hideResource` / `sling:hideChildren`** | Request-time, during Sling Resource Merger resolution | Dialog inheritance and overlays | Removes inherited UI nodes; not a permission check |
 | **Client-side JS (`showhide`)** | Browser, after dialog loads | Coral UI `show`/`hide` listeners | Not secure - DOM elements exist but are hidden |
 
 :::warning

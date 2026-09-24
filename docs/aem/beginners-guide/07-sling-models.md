@@ -530,8 +530,7 @@ with minimal permissions.
 Repoinit scripts run at bundle startup and set up repository state (users, groups, ACLs). Add them as OSGi
 configurations in `ui.config`:
 
-```json
-// ui.config/.../config/org.apache.sling.jcr.repoinit.RepositoryInitializer-mysite.cfg.json
+```json title="ui.config/.../config/org.apache.sling.jcr.repoinit.RepositoryInitializer-mysite.cfg.json"
 {
     "scripts": [
         "create service user mysite-reader\nset ACL for mysite-reader\n    allow jcr:read on /content/mysite\nend"
@@ -541,7 +540,7 @@ configurations in `ui.config`:
 
 Or, more readably, with a multi-line script:
 
-```
+```text
 create service user mysite-reader
 
 set ACL for mysite-reader
@@ -555,8 +554,7 @@ end
 Map your bundle to the service user so `getServiceResourceResolver` knows which user to use. Add an **amended service
 user mapping** configuration:
 
-```json
-// ui.config/.../config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-mysite.cfg.json
+```json title="ui.config/.../config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-mysite.cfg.json"
 {
     "user.mapping": [
         "com.mysite.core:mysite-reader=mysite-reader"
@@ -575,18 +573,23 @@ public class ContentReaderServiceImpl implements ContentReaderService {
     @Reference
     private ResourceResolverFactory resolverFactory;
 
-    public Resource readContent(String path) throws LoginException {
+    public Optional<String> readTitle(String path) throws LoginException {
         Map<String, Object> params = Map.of(
             ResourceResolverFactory.SUBSERVICE, "mysite-reader"
         );
         try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(params)) {
-            return resolver.getResource(path);
+            Resource resource = resolver.getResource(path);
+            if (resource == null) {
+                return Optional.empty();
+            }
+            return Optional.of(resource.getValueMap().get("jcr:title", resource.getName()));
         }
     }
 }
 ```
 
-> **Important:** Always close service resource resolvers (use try-with-resources). A leaked resolver is a resource leak.
+> **Important:** Always close service resource resolvers (use try-with-resources), and do not return a `Resource` that
+> depends on a resolver you already closed. Read the values you need inside the `try` block.
 
 ## Security and service access hints
 

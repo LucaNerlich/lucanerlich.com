@@ -27,9 +27,10 @@ extension's project list.
 
 ## Project config: `tools/sidekick/config.json`
 
-A site can ship its own Sidekick config to register custom plugins, change the icon,
-or restrict the toolbar to specific URL patterns. The extension auto-discovers the
-config at `https://main--{repo}--{org}.aem.live/tools/sidekick/config.json`:
+A site can configure Sidekick plugins through the Admin API Configuration Service
+(`.../config/{org}/sites/{site}/sidekick.json`) or an equivalent project setup. A
+typical config registers custom plugins, changes the icon, or restricts the toolbar to
+specific URL patterns:
 
 ```json title="tools/sidekick/config.json"
 {
@@ -82,27 +83,29 @@ that the Sidekick loads in a side panel.
 <html>
     <head>
         <title>Library</title>
-        <script type="module" src="https://www.aem.live/tools/sidekick/library.js"></script>
+        <script type="module" src="https://www.aem.live/tools/sidekick/library/index.js"></script>
     </head>
     <body>
-        <sidekick-library config-path="/tools/sidekick/library.json"></sidekick-library>
+        <script>
+            const library = document.createElement('sidekick-library');
+            library.config = {
+                base: '/tools/sidekick/library.json',
+            };
+            document.body.prepend(library);
+        </script>
     </body>
 </html>
 ```
 
-The library element loads `library.json`, which lists the data sources for each tab.
+The library element loads `library.json`, commonly generated from a `library.xlsx`
+workbook under `/tools/sidekick`. Each sheet that starts with `helix-` represents a
+library plugin tab.
 
 ### library.json - the manifest
 
-```json title="tools/sidekick/library.json"
-{
-    "blocks": "/tools/sidekick/blocks.json",
-    "tags": "/tools/sidekick/tags.json"
-}
-```
-
-Each entry points at a sheet (a published spreadsheet, just like content metadata)
-that the library renders.
+`library.json` is the JSON rendition of the Sidekick Library workbook. Configure the
+library page with its `base` path instead of hand-writing a separate manifest unless
+your project has a custom library loader.
 
 ### A `blocks` source
 
@@ -110,7 +113,7 @@ The blocks source is an authored sheet listing every block, a thumbnail, the sou
 markup, and an optional description. The library renders one card per row and
 copies the source to clipboard or inserts it directly into the doc.
 
-```
+```markdown
 | name      | path                         | preview                  |
 |-----------|------------------------------|--------------------------|
 | Hero      | /library/blocks/hero         | /library/previews/hero   |
@@ -124,7 +127,7 @@ an asset URL).
 
 ### A `tags` source
 
-```
+```markdown
 | key             | value           |
 |-----------------|-----------------|
 | topic/cloud     | Cloud           |

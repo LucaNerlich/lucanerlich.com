@@ -32,7 +32,8 @@ properties on the same node, which is harder to work with and doesn't support mu
 ## How It Works
 
 When an author fills in a composite multifield, AEM stores each entry as a separate child node under the
-component's `jcr:content` node. `@ChildResource` tells Sling Models to look for those child nodes and adapt
+component resource node (which itself usually lives somewhere below the page's `jcr:content`). `@ChildResource`
+tells Sling Models to look for those child nodes and adapt
 each one to the target type.
 
 ```mermaid

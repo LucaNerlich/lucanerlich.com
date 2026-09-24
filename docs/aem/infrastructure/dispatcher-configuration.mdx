@@ -15,7 +15,7 @@ The AEM Dispatcher is an **Apache HTTP Server (`httpd`) module** that sits betwe
 
 In an AEM as a Cloud Service (AEMaaCS) topology, every request to a Publish tier flows through the Dispatcher:
 
-```
+```text
 Client → CDN → Dispatcher (Apache httpd + mod_dispatcher) → AEM Publish
 ```
 
@@ -31,7 +31,7 @@ In AEMaaCS the Dispatcher configuration ships as part of your Git repository and
 
 The AEMaaCS SDK ships a standard Dispatcher directory layout under `dispatcher/src/`. Understanding this tree is essential before making any changes.
 
-```
+```text
 dispatcher/src/
 ├── conf.d/                          # Apache httpd configuration
 │   ├── available_vhosts/
@@ -40,8 +40,8 @@ dispatcher/src/
 │   │   └── default.vhost -> ../available_vhosts/default.vhost
 │   ├── dispatcher_vhost.conf        # Main vhost include file
 │   ├── rewrites/
+│   │   ├── default_rewrite.rules    # Immutable baseline rewrite rules
 │   │   ├── rewrite.rules            # Custom Apache mod_rewrite rules
-│   │   └── xforwarded_forcessl_rewrite.rules
 │   └── variables/
 │       ├── custom.vars              # Project-specific variables
 │       └── global.vars              # Global environment variables
@@ -50,19 +50,25 @@ dispatcher/src/
 │   │   └── default.farm             # Default farm definition
 │   ├── enabled_farms/
 │   │   └── default.farm -> ../available_farms/default.farm
+│   ├── dispatcher.any               # Main dispatcher include file
 │   ├── cache/
+│   │   ├── default_invalidate.any   # Immutable flush client allow-list
+│   │   ├── default_rules.any        # Immutable baseline cache rules
+│   │   ├── marketing_query_parameters.any
 │   │   ├── rules.any                # Cache rules (what to cache)
-│   │   └── invalidate.any           # Auto-invalidation rules
 │   ├── clientheaders/
-│   │   └── clientheaders.any        # Forwarded client headers
+│   │   ├── default_clientheaders.any
+│   │   └── clientheaders.any        # Custom forwarded client headers
 │   ├── filters/
-│   │   └── filters.any              # Request filter rules
+│   │   ├── default_filters.any
+│   │   └── filters.any              # Custom request filter rules
 │   ├── renders/
-│   │   └── renders.any              # Backend publish host definitions
+│   │   └── default_renders.any      # Generated backend publish host definitions
 │   └── virtualhosts/
-│       └── virtualhosts.any         # Dispatcher-level virtual host matching
+│       ├── default_virtualhosts.any
+│       └── virtualhosts.any         # Custom Dispatcher-level virtual host matching
 └── opt-in/
-    └── USE_SOURCES_DIRECTLY         # Marker file for SDK opt-in
+    └── USE_SOURCES_DIRECTLY         # Flexible-mode marker file
 ```
 
 | Directory | Purpose | Key files |
@@ -73,6 +79,13 @@ dispatcher/src/
 
 :::warning
 Do **not** rename or restructure the top-level directories. The Cloud Manager pipeline validator expects exactly this layout and will reject the deployment if files are missing or misplaced.
+:::
+
+:::note
+In AEMaaCS, files such as `default_*.any`, `dispatcher.any`, `default.farm`, and
+`default.vhost` are baseline examples or immutable framework files. Put project changes in
+customer files such as `filters.any`, `rules.any`, `clientheaders.any`, custom vhosts, and custom
+farms. The Cloud runtime uses the current immutable versions even if you edit them locally.
 :::
 
 ---
@@ -89,7 +102,7 @@ Both delivery targets use the same `mod_dispatcher` binary, but the surrounding 
 | Flush agents | Pre-wired by Adobe | Author-side replication agents, manually configured |
 | Environment variables | Set in Cloud Manager UI, read via `${ENV_VAR}` | Injected via `httpd` config or OS env |
 | SDK version | Versioned module shipped with the AEM SDK zip | `dispatcher-apache*-linux-x86_64-*.tar.gz` installed manually |
-| Hostname in `renders` | Replaced at deploy - keep `localhost:4503` in source | Real publish hostnames |
+| Hostname in `renders` | `default_renders.any` uses `${AEM_HOST}` and `${AEM_PORT}` from the cloud runtime / SDK | Real publish hostnames |
 | Opt-in flags | `opt-in/USE_SOURCES_DIRECTLY` | Not applicable |
 
 :::tip
@@ -115,7 +128,7 @@ A **farm** is the Dispatcher's primary configuration unit. It binds incoming req
     }
 
     /renders {
-        $include "../renders/renders.any"
+        $include "../renders/default_renders.any"
     }
 
     /filter {
@@ -123,15 +136,22 @@ A **farm** is the Dispatcher's primary configuration unit. It binds incoming req
     }
 
     /cache {
-        /docroot "/mnt/var/www/html"
+        /docroot "${DOCROOT}"
         /statfileslevel "2"
         /allowAuthorized "0"
+        /serveStaleOnError "1"
         /rules {
             $include "../cache/rules.any"
         }
         /invalidate {
-            $include "../cache/invalidate.any"
+            /0000 { /glob "*" /type "deny" }
+            /0001 { /glob "*.html" /type "allow" }
         }
+        /allowedClients {
+            $include "../cache/default_invalidate.any"
+        }
+        /gracePeriod "2"
+        /enableTTL "1"
     }
 
     /vanity_urls {
@@ -158,16 +178,17 @@ A **farm** is the Dispatcher's primary configuration unit. It binds incoming req
 The `/renders` section tells the Dispatcher where to forward cache-miss requests:
 
 ```apacheconf
-# conf.dispatcher.d/renders/renders.any
+# conf.dispatcher.d/renders/default_renders.any
 
-/rend01 {
-    /hostname "localhost"
-    /port "4503"
+/0 {
+    /hostname "${AEM_HOST}"
+    /port "${AEM_PORT}"
     /timeout "10000"
 }
 ```
 
-In AEMaaCS, the hostname and port are replaced at deployment time by environment-specific values - you should keep `localhost:4503` for local SDK testing.
+In AEMaaCS, `AEM_HOST` and `AEM_PORT` are supplied by the cloud runtime and by the Dispatcher
+SDK launcher for local testing. Do not hardcode publish hostnames in `default_renders.any`.
 
 ---
 
@@ -218,7 +239,11 @@ The Dispatcher farm evaluates its own `/virtualhosts` glob list. A request that 
 
 ### Multiple farms
 
-When multiple farms are active, each has its own `virtualhosts.any`. The Dispatcher evaluates farms in file-name order and picks the **first farm whose glob list matches** the incoming `Host` header. Name farms `00_api.farm`, `10_publish.farm`, etc., so the order is deterministic.
+When multiple farms are active, each farm has its own `/virtualhosts` list. Dispatcher farm
+selection is order-sensitive: it evaluates farms in their include order from the bottom upward,
+then evaluates `/virtualhosts` entries from top to bottom inside each farm. Keep a deterministic
+include order (for example `00_default.farm`, `10_site.farm`) and place the broad fallback farm so
+it cannot shadow more specific farms.
 
 :::warning
 Forgetting `"localhost"` in `virtualhosts.any` is a classic cause of local SDK requests returning `404` - the Apache side accepts the request, but the Dispatcher farm silently declines it.
@@ -315,8 +340,6 @@ Cache rules determine which response types are stored on disk and served for sub
 Auto-invalidation tells the Dispatcher which cached files to mark stale when a flush event is received from AEM:
 
 ```apacheconf
-# conf.dispatcher.d/cache/invalidate.any
-
 /0000 { /glob "*"      /type "deny" }
 /0001 { /glob "*.html" /type "allow" }
 /0002 { /glob "*.json" /type "allow" }
@@ -424,10 +447,10 @@ For a typical multi-language site, `statfileslevel "2"` is a good starting point
 
 In AEMaaCS, flush agents are pre-configured. For on-premise or AMS environments, set up a flush agent on the **Author** instance:
 
-```
+```text
 Agent: Dispatcher Flush
 Transport URI:  http://dispatcher-host:80/dispatcher/invalidate.cache
-HTTP Method:    GET
+HTTP Method:    POST
 HTTP Headers:
     CQ-Action: {action}
     CQ-Handle: {path}
@@ -501,7 +524,9 @@ Beyond the `.stat`-based invalidation model, the Dispatcher supports **time-to-l
 }
 ```
 
-When TTL is enabled, the Dispatcher respects the `max-age` or `s-maxage` directive in the response's `Cache-Control` header. A cached file whose age exceeds the TTL is re-fetched regardless of the `.stat` file.
+When TTL is enabled, the Dispatcher evaluates standard expiration headers from the backend,
+notably `Cache-Control: max-age=...` and `Expires`. A cached file whose auxiliary TTL marker has
+expired is re-fetched regardless of the `.stat` file.
 
 ### Setting Cache-Control Headers in AEM
 
@@ -530,14 +555,16 @@ public class CacheControlFilter implements Filter {
 | Header | Who obeys it | Typical value |
 |---|---|---|
 | `max-age` | Browser + CDN + Dispatcher (if `enableTTL "1"`) | `300` (5 min for HTML) |
-| `s-maxage` | CDN + Dispatcher only (overrides `max-age`) | `3600` (1 hour) |
+| `s-maxage` | Shared caches such as the CDN; validate Dispatcher behavior before relying on it there | `3600` (1 hour) |
 | `stale-while-revalidate` | CDN (serves stale while re-fetching) | `60` |
 
 ### CDN Integration
 
-In AEMaaCS, a CDN (Fastly) sits in front of the Dispatcher. The Dispatcher's `Cache-Control` headers flow through to the CDN, so a single header controls both layers:
+In AEMaaCS, a CDN (Fastly) sits in front of the Dispatcher. Cache headers flow through unless a
+CDN rule changes them, but the CDN and Dispatcher do not have identical semantics; validate both
+layers when using shared-cache directives:
 
-```
+```http
 Cache-Control: public, max-age=300, s-maxage=3600, stale-while-revalidate=60
 ```
 

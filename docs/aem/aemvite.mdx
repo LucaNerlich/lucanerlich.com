@@ -86,7 +86,7 @@ And this is the *exact* `devDependencies` block from [`aemviteexample/ui.fronten
 ```json title="ui.frontend/package.json - AFTER (3 devDependencies)"
 {
   "devDependencies": {
-    "@aemvite/aem-config": "^0.6.0",
+    "@aemvite/aem-config": "^0.11.0",
     "sass": "^1.101.0",
     "typescript": "^5.6.0"
   },
@@ -115,11 +115,11 @@ This applies to AEM projects built on the classic Maven archetype (`ui.frontend`
 | [`@aemvite/vite-plugin-aem-css-url-passthrough`](https://www.npmjs.com/package/@aemvite/vite-plugin-aem-css-url-passthrough) | `css-loader: { url: false }` | Rewrites `url(...)` in emitted clientlib CSS back to the canonical `../resources/<sub>/<file>` form. Opt-in via `cssUrlPassthrough` on `defineAemConfig`. |
 | [`@aemvite/vite-plugin-aem-handlebars`](https://www.npmjs.com/package/@aemvite/vite-plugin-aem-handlebars) | `handlebars-loader` + Storybook stubs | Precompiles `.template.hbs` files via `handlebars/runtime` and stubs out Storybook stories / non-template `.hbs` partials. Opt-in via `handlebars` on `defineAemConfig`. |
 
-You only ever install `@aemvite/aem-config` yourself - the four plugin packages install transitively as its dependencies.
+You only ever install `@aemvite/aem-config` yourself - the five plugin packages install transitively as its dependencies.
 
 ## How they fit together
 
-```
+```text
                     aem.config.ts
                           │
                           ▼
@@ -191,8 +191,8 @@ Because of this, dispatcher invalidation paths, Cloud Manager packagers, and any
 
 ## Requirements
 
-- **Node.js:** `^20.19.0 || ^22.18.0 || >=24.11.0`. As of `@aemvite/*` `0.7.0`, the packages themselves are built with [Vite+](https://viteplus.dev), which tightened this range - notably, it drops the `22.12.0`-`22.17.x` band that Vite 8 alone still accepted. `frontend-maven-plugin`'s pinned `<nodeVersion>` (see step 12) needs to satisfy this too.
-- **Vite:** `^7 || ^8` (peer dependency on the plugin packages).
+- **Node.js:** `^20.19.0 || ^22.18.0 || >=24.11.0`. The packages are built with [Vite+](https://viteplus.dev), which tightens this range - notably, it drops the `22.12.0`-`22.17.x` band that Vite 8 alone still accepted. `frontend-maven-plugin`'s pinned `<nodeVersion>` (see step 12) needs to satisfy this too.
+- **Vite:** `^8` (peer dependency of `@aemvite/aem-config`).
 - **Sass:** required only when consuming `.scss`/`.sass` sources; not declared as a peer because plain CSS works without it.
 
 ## Quick start
@@ -229,7 +229,7 @@ That is the entire API surface for the common case: describe your clientlibs as 
 
 ## Migrating a real archetype `ui.frontend`
 
-The rest of this post walks through converting an actual AEM Maven archetype `ui.frontend` - the same conversion done in [`aemvite/ui.frontend`](https://github.com/LucaNerlich/aem-vite/tree/main/aemvite/ui.frontend) inside the repo, which is the reference consumer for all four packages.
+The rest of this post walks through converting an actual AEM Maven archetype `ui.frontend` - the same conversion done in [`aemvite/ui.frontend`](https://github.com/LucaNerlich/aem-vite/tree/main/aemvite/ui.frontend) inside the repo, which is the reference consumer for the package set.
 
 ### 1. Prerequisites
 
@@ -365,11 +365,11 @@ Keep `typescript` and `sass` if you still use them - both are independent of the
 ### 5. Install `@aemvite`
 
 ```sh
-# Single entry point - pulls in the four plugin packages
+# Single entry point - pulls in the plugin packages
 # (vite-plugin-aem-clientlib, vite-plugin-glob, vite-plugin-aem-resources,
 # vite-plugin-aem-css-url-passthrough / vite-plugin-aem-handlebars are optional
 # extras) transitively. @aemvite/aem-config also declares `esbuild` as a peer
-# dependency (range ^0.27.0 || ^0.28.0), so npm 7+ and pnpm 8+ auto-install it.
+# dependency (range ^0.28), so npm 7+ and pnpm 8+ auto-install it.
 # Yarn classic users must add it manually: npm install --save-dev esbuild@^0.28.0
 npm install --save-dev @aemvite/aem-config
 
@@ -395,7 +395,7 @@ The final `devDependencies` block of a published-package consumer ends up this s
     "test": "vitest run"
   },
   "devDependencies": {
-    "@aemvite/aem-config": "^0.6.0",
+    "@aemvite/aem-config": "^0.11.0",
     "sass":                "^1.77.0",
     "vite":                "^8.1.0",
     "vitest":              "^4.1.9"
@@ -601,7 +601,7 @@ The archetype copied everything under `src/main/webpack/resources/` (fonts, imag
 
 If the tree contains only `.gitkeep` placeholders, the plugin is a no-op - no empty `resources/` directory is emitted, which keeps descriptors byte-identical to the archetype's historical output. This is exactly the layout the reference project ships:
 
-```
+```text
 ui.frontend/src/main/webpack/resources/
 ├── fonts/.gitkeep
 └── images/.gitkeep
@@ -679,7 +679,7 @@ Setting `build.sourcemap: true` (or relying on the dev-mode baseline of `"inline
 
 What lands on disk for `build.sourcemap: true`:
 
-```
+```text
 clientlib-<name>/
 ├── .content.xml
 ├── js.txt           ← lists <name>.js only - never the .map
@@ -701,7 +701,7 @@ clientlib-<name>/
 
 Once loaded, Chrome DevTools → Sources shows your original files under a virtual tree:
 
-```
+```text
 aemvite://
 └── <clientlib>/
     └── src/main/frontend/components/_helloworld.js   ← your original file,
@@ -809,7 +809,7 @@ export default defineConfig({
 
 ## Troubleshooting
 
-- **`Error: Cannot find package 'esbuild'`** during `npm run prod`. `esbuild` is a peer dependency of `@aemvite/aem-config` (range `^0.27.0 || ^0.28.0`), auto-installed by npm 7+ / pnpm 8+. Yarn classic (or pnpm with `auto-install-peers=false`) needs it added manually: `npm install --save-dev esbuild@^0.28.0`.
+- **`Error: Cannot find package 'esbuild'`** during `npm run prod`. `esbuild` is a peer dependency of `@aemvite/aem-config` (range `^0.28`), auto-installed by npm 7+ / pnpm 8+. Yarn classic (or pnpm with `auto-install-peers=false`) needs it added manually: `npm install --save-dev esbuild@^0.28.0`.
 - **`Error: Cannot find package 'vite'`** during `npm run prod`. Install it explicitly: `npm install --save-dev vite@^8`.
 - **`Unknown --mode 'release'` (or similar) from `aem-build`.** Only `dev`, `prod`, `development`, and `production` are accepted.
 - **`SyntaxError: ... does not provide an export named 'styleText'`** or an `EBADENGINE` warning. Your Node doesn't satisfy `@aemvite/*`'s required range - bump to `^20.19.0 || ^22.18.0 || >=24.11.0` and, in a Maven build, bump `<nodeVersion>` in `frontend-maven-plugin` (see step 12). Note the `22.12.0`-`22.17.x` band is specifically excluded, even though it satisfied plain Vite 8's older range.
@@ -822,8 +822,8 @@ export default defineConfig({
 
 At the time of writing:
 
-- `@aemvite/aem-config` is `0.6.0` - a self-sufficient orchestrator with `plugins`/`vite` passthrough and all four plugin packages as transitive dependencies (five including the handlebars plugin).
-- `vite-plugin-aem-clientlib`, `vite-plugin-glob`, `vite-plugin-aem-resources`, `vite-plugin-aem-css-url-passthrough`, and `vite-plugin-aem-handlebars` are unified at `0.6.0`.
+- `@aemvite/aem-config` is `0.11.0` - a self-sufficient orchestrator with `plugins`/`vite` passthrough and all five plugin packages as transitive dependencies.
+- `vite-plugin-aem-clientlib`, `vite-plugin-glob`, `vite-plugin-aem-resources`, `vite-plugin-aem-css-url-passthrough`, and `vite-plugin-aem-handlebars` are unified at `0.11.0`.
 - `vite-plugin-aem-clientlib` asserts byte-identical descriptors against a captured golden reference via `Buffer.equals()`.
 - The reference `aemvite/ui.frontend` module in the repo has been migrated and verified - `npm run prod` and `npm run dev` both produce identical clientlib output against the captured golden.
 - Explicitly out of scope: build-time linting, SCSS-to-CSS source migration, and byte-level parity of minified JS/CSS *content* - only descriptors and folder structure carry the byte-identical guarantee.

@@ -38,7 +38,7 @@ Add the dependency to your root `pom.xml`:
 <dependency>
   <groupId>be.orbinson.aem</groupId>
   <artifactId>aem-groovy-console-all</artifactId>
-  <version>19.1.0</version>
+  <version>19.2.0</version>
   <type>zip</type>
 </dependency>
 ```
@@ -140,7 +140,7 @@ Restrict console access to trusted admin groups only:
 | `emailEnabled` | Send email notifications on script completion | `false` |
 | `emailRecipients` | Email addresses to notify | `[]` |
 | `threadTimeout` | Seconds before a script is interrupted (0 = no timeout) | `0` |
-| `distributedExecutionEnabled` | Replicate and execute script on all default replication agents | `false` |
+| `distributedExecutionEnabled` | Enable distributed execution for scripts replicated from author to publish/preview | `false` |
 
 :::danger
 Never leave the Groovy Console accessible on publish instances in production. It provides full JCR access
@@ -160,18 +160,35 @@ Every script automatically has access to these pre-bound variables - no imports 
 | `queryBuilder` | `QueryBuilder` | AEM QueryBuilder API |
 | `bundleContext` | `BundleContext` | OSGi bundle context for accessing services |
 | `log` | `Logger` | SLF4J logger (output appears in `error.log`) |
-| `out` | `PrintWriter` | Writes output to the console result panel |
-| `sling` | `SlingScriptHelper` | Access to Sling services via `sling.getService(...)` |
+| `out` | `PrintStream` | Writes output to the console result panel |
+| `slingRequest` | `SlingHttpServletRequest` | HTTP request object, available for web UI / HTTP executions |
+| `slingResponse` | `SlingHttpServletResponse` | HTTP response object, available for web UI / HTTP executions |
+| `nodeBuilder` | `NodeBuilder` | Groovy DSL builder for JCR node hierarchies |
+| `pageBuilder` | `PageBuilder` | Groovy DSL builder for AEM page hierarchies |
 
-### Getting other services
+### Built-in helper methods
 
-You can retrieve any OSGi service via the `bundleContext` or `sling` bindings:
+The console also adds convenience methods to the script class:
+
+| Method | Description |
+|--------|-------------|
+| `getService(Class)` / `getService(String)` | Return one OSGi service |
+| `getServices(Class, String)` / `getServices(String, String)` | Return OSGi services matching an LDAP filter |
+| `getResource(String)` | Resolve a Sling resource |
+| `getPage(String)` | Resolve a CQ page |
+| `getNode(String)` | Resolve a JCR node |
+| `save()` | Save the current JCR session |
+| `xpathQuery(String)` / `sql2Query(String)` | Execute JCR queries and return node iterators |
+| `activate(String)` / `deactivate(String)` | Replicate or deactivate a path |
+| `table { ... }` | Render structured tabular output in the Table tab |
+
+You can retrieve any OSGi service via the helper method or via `bundleContext`:
 
 ```groovy
 import com.day.cq.replication.Replicator
 
-// Option 1: via sling helper
-def replicator = sling.getService(Replicator)
+// Option 1: via Groovy Console helper
+def replicator = getService(Replicator)
 
 // Option 2: via bundleContext
 def ref = bundleContext.getServiceReference(Replicator.class.name)
@@ -468,7 +485,7 @@ import com.day.cq.replication.Replicator
 final String BASE_PATH = '/content/my-site/en/news'
 final boolean DRY_RUN = true
 
-def replicator = sling.getService(Replicator)
+def replicator = getService(Replicator)
 int count = 0
 
 getPage(BASE_PATH).recurse { page ->
@@ -647,7 +664,7 @@ return result.totalMatches
 ```groovy
 import org.osgi.service.cm.ConfigurationAdmin
 
-def configAdmin = sling.getService(ConfigurationAdmin)
+def configAdmin = getService(ConfigurationAdmin)
 def configs = configAdmin.listConfigurations(null)
 
 configs?.sort { it.pid }.each { config ->
@@ -718,8 +735,8 @@ if (!DRY_RUN) {
 
 ### Export query results to CSV
 
-Stream query results into a CSV table. The Groovy Console renders a `table` binding as a downloadable
-grid in the **Data** tab; you can also build the CSV string yourself and print it:
+Stream query results into CSV output. For interactive reporting, the Groovy Console's `table { ... }`
+helper renders a sortable grid in the **Table** tab; you can also build the CSV string yourself and print it:
 
 ```groovy
 import javax.jcr.query.Query
@@ -765,10 +782,15 @@ out.println("Exported ${count} rows")
 return count
 ```
 
-:::tip[The `table` binding]
-The Groovy Console exposes a `table` binding (a list of maps) that renders as a sortable,
-exportable grid in the **Data** tab of the result panel - often nicer than printing CSV to the
-output. Populate it with `table = rows.collect { [path: it.getPath('p'), title: ...] }`.
+:::tip[The `table` helper]
+For tabular output, use the built-in `table` method instead of assigning to a variable:
+
+```groovy
+table {
+    columns 'Path', 'Title', 'Template'
+    row '/content/my-site/en', 'Home', '/conf/my-site/settings/wcm/templates/content-page'
+}
+```
 :::
 
 ### Count nodes by type
@@ -956,7 +978,7 @@ AEMaaCS distribution is Adobe-managed and has no agents):
 import com.day.cq.replication.AgentManager
 import com.day.cq.replication.Agent
 
-def agentManager = sling.getService(AgentManager)
+def agentManager = getService(AgentManager)
 
 agentManager.agents.values().each { Agent agent ->
     if (!agent.isValid() || !agent.isEnabled()) {
@@ -1023,6 +1045,8 @@ Example: adding a custom binding that provides a `projectHelper` object to all s
 ```java title="core/src/main/java/com/example/core/groovy/ProjectBindingProvider.java"
 import be.orbinson.aem.groovy.console.api.BindingExtensionProvider;
 import be.orbinson.aem.groovy.console.api.BindingVariable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.osgi.service.component.annotations.Component;
 
 @Component(service = BindingExtensionProvider.class, immediate = true)

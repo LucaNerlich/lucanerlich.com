@@ -56,7 +56,7 @@ AEM ships with Coral UI 3. The full API is browsable on your local instance:
 |----------|-----|
 | **Coral UI component examples** | `http://localhost:4502/libs/granite/ui/components/coral/foundation/form/field.html` |
 | **Coral UI 3 API docs** | `http://localhost:4502/libs/granite/ui/references/coral-ui/coralui3/` |
-| **Granite UI server-side docs** | `http://localhost:4502/libs/granite/ui/content/dumplibs.html` |
+| **Granite UI server-side docs** | `http://localhost:4502/libs/granite/ui/components/coral/foundation/server.html` |
 
 ### Commonly used Coral UI components
 
@@ -150,7 +150,7 @@ The `dependencies` in the clientlib XML ensures Coral UI 3 is loaded before your
 <button is="coral-button" variant="primary" size="L">Large</button>
 ```
 
-Button variants: `default`, `primary`, `secondary`, `warning`, `quiet`, `minimal`, `quietaction`, `action`
+Button variants: `default`, `primary`, `warning`, `quiet`, `minimal`, `quietaction`, `action`
 
 ### Alerts
 
@@ -667,7 +667,7 @@ internal elements - use the component's JavaScript API instead:
 select.querySelector('.coral-Select-trigger').style.color = 'red';
 
 // ✅ Good: using the component API
-select.variant = 'warning';
+select.value = 'product';
 select.disabled = true;
 ```
 

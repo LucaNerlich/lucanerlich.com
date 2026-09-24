@@ -16,7 +16,7 @@ the workflows teams build on top.
 
 ## Base URL
 
-```
+```text
 https://admin.hlx.page/{action}/{owner}/{repo}/{ref}/{path}
 ```
 
@@ -32,37 +32,39 @@ https://admin.hlx.page/{action}/{owner}/{repo}/{ref}/{path}
 
 Three auth modes are supported, picked in this order of preference:
 
-1. **API key (server-to-server)** - a project API key issued via the Admin API itself.
-   Send it in the `Authorization: token <api-key>` header. This is the default for CI
-   and scripts.
+1. **API token (server-to-server)** - send a project token in either the
+   `x-auth-token: <token>` header or the `Authorization: token <token>` header. This
+   is the default for CI and scripts.
 2. **Sidekick session cookie** - when the request comes from a logged-in author via
    the Sidekick, the session cookie auths the call. You don't manage this; the
    extension does.
 3. **Anonymous** - a small subset of read-only endpoints (e.g. `status` for public
    sites) is available without auth.
 
-### Issuing an API key
-
-A project owner mints API keys via the API itself or the EDS admin UI. The key is
-scoped to a single repo and to one or more action groups:
+### Obtaining a token
 
 ```bash
-curl -X POST https://admin.hlx.page/config/acme/acme-website/main/api-keys \
-    -H "Authorization: token $ADMIN_BOOTSTRAP_TOKEN" \
-    -H "Content-Type: application/json" \
-    -d '{
-        "description": "CI republish job",
-        "scopes": ["preview", "live", "cache:purge"],
-        "expiresAt": "2027-01-01T00:00:00Z"
-    }'
+# Interactive browser login; stores the token for aem-cli
+aem login
+
+# Or log in through the Admin API UI, then inspect your profile
+open https://admin.hlx.page/login
+open https://admin.hlx.page/profile
 ```
 
-Store the returned `apiKey` value - it's only shown once.
+For automation, store the resulting token in your secret manager and rotate it
+regularly. Scope and issuance depend on the site's Admin API / Configuration Service
+setup.
 
 ### Using the key
 
 ```bash
 curl -H "Authorization: token $EDS_API_KEY" \
+    https://admin.hlx.page/status/acme/acme-website/main/products/widget
+```
+
+```bash
+curl -H "x-auth-token: $EDS_API_KEY" \
     https://admin.hlx.page/status/acme/acme-website/main/products/widget
 ```
 
@@ -89,7 +91,7 @@ const status = await res.json();
 | `/sitemap` | `POST`, `GET` | Regenerate or fetch sitemap.xml |
 | `/snapshot` | `POST`, `GET`, `DELETE` | Point-in-time content snapshots for rollback |
 | `/job` | `GET`, `DELETE` | Inspect or cancel async bulk jobs |
-| `/config` | `GET`, `POST`, `DELETE` | Site config: API keys, headers, redirects |
+| `/config` | `GET`, `PUT`, `PATCH` | Configuration Service: site config, headers, redirects, access rules |
 
 ### `/status` - inspect a resource
 
@@ -306,37 +308,27 @@ curl -H "Authorization: token $EDS_API_KEY" \
 
 `status` values: `pending`, `running`, `done`, `failed`, `cancelled`.
 
-### `/config` - site config and API keys
+### `/config` - Configuration Service
 
-Manage API keys (shown above) plus other site config (response headers, redirects)
-without touching the GitHub repo. Most teams keep config in `helix-config.yaml` so
-that PRs are the audit trail; `/config` is for emergency overrides.
+The Configuration Service uses site-oriented URLs rather than the content action URL
+shape:
+
+```text
+https://admin.hlx.page/config/{org}/sites/{site}.json
+```
+
+Use it to manage site configuration such as content sources, path mappings, headers,
+redirects, access rules, Sidekick configuration, indexes, sitemaps, and robots.txt.
+Older projects keep parts of this configuration in files (`paths.json`, `helix-query.yaml`,
+`helix-sitemap.yaml`) or in `.helix/*` spreadsheets in the content source. Before changing a
+repository file, verify which settings the Configuration Service owns for the site.
 
 ## Webhooks
 
-EDS posts webhooks on key events. Configure them via `/config`:
-
-```bash
-curl -X POST -H "Authorization: token $EDS_API_KEY" \
-    -H "Content-Type: application/json" \
-    https://admin.hlx.page/config/acme/acme-website/main/webhooks \
-    -d '{
-        "url": "https://hooks.acme.com/eds",
-        "events": ["preview.created", "live.published", "job.failed"],
-        "secret": "shared-secret-for-hmac-validation"
-    }'
-```
-
-| Event | Fired when |
-|-------|------------|
-| `preview.created` | A preview render completed |
-| `preview.deleted` | A preview was unpublished |
-| `live.published` | A page went live |
-| `live.deleted` | A page was unpublished from live |
-| `job.completed` | A bulk job finished |
-| `job.failed` | A bulk job hit fatal errors |
-| `cache.purged` | A purge completed |
-| `code.refreshed` | The code-bus was refreshed |
+Webhook support and event names depend on the configured Admin API/Configuration
+Service capabilities for the site. Verify the available webhook endpoints and event
+names in the Admin API UI before documenting them as contractually stable for a
+project.
 
 Each payload includes the path, actor, timestamp, and an HMAC signature you should
 verify against the `secret`.
@@ -456,7 +448,7 @@ on an already-previewed path is safe.
 
 ## Security checklist
 
-- Store API keys in your secret manager (GitHub Actions secrets, Vault, AWS Secrets
+- Store API tokens in your secret manager (GitHub Actions secrets, Vault, AWS Secrets
   Manager). Never commit them.
 - Scope keys narrowly - a republish bot doesn't need `cache:purge` if it never
   purges.
@@ -468,6 +460,6 @@ on an already-previewed path is safe.
 ## See also
 
 - [Sidekick](./sidekick.mdx) - the UI front-end for many of these endpoints
-- [Customizing](./customizing.mdx) - `helix-config.yaml` for declarative site config
+- [Customizing](./customizing.mdx) - site configuration for response headers and CDN
 - [Architecture](./architecture.mdx) - how the API ties into the pipeline
 - aem.live: [Admin API](https://www.aem.live/docs/admin)

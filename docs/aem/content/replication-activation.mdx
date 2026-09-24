@@ -31,19 +31,22 @@ AEM serializes not just the page node but also its `jcr:content` subtree. Refere
 
 ## Replication Agents
 
-Replication agents are the configuration objects that control **where** and **how** content is replicated. Each agent defines a transport URI, authentication credentials, trigger behavior, and retry settings.
+Replication agents are the configuration objects that control **where** and **how** content is
+replicated on AEM 6.5 and earlier self-managed topologies. Each agent defines a transport URI,
+authentication credentials, trigger behavior, and retry settings. On AEM as a Cloud Service,
+distribution agents are managed by Adobe infrastructure rather than by project code.
 
 ### Default Agent Location
 
 On an author instance, agents live under:
 
-```
+```text
 /etc/replication/agents.author/
 ```
 
 The default publish agent is typically named `publish` and can be accessed in the AEM Web Console at:
 
-```
+```text
 http://localhost:4502/etc/replication/agents.author/publish.html
 ```
 
@@ -98,7 +101,7 @@ When content is activated, the flush agent sends an HTTP request to the Dispatch
 
 The transport URI points to the Dispatcher's invalidation endpoint:
 
-```
+```text
 http://dispatcher:80/dispatcher/invalidate.cache
 ```
 
@@ -135,6 +138,9 @@ private Replicator replicator;
 
 public void activatePage(ResourceResolver resolver, String path) throws ReplicationException {
     Session session = resolver.adaptTo(Session.class);
+    if (session == null) {
+        throw new ReplicationException("Cannot adapt resolver to JCR Session");
+    }
 
     // Activate a page
     replicator.replicate(session, ReplicationActionType.ACTIVATE, path);
@@ -142,6 +148,9 @@ public void activatePage(ResourceResolver resolver, String path) throws Replicat
 
 public void deactivatePage(ResourceResolver resolver, String path) throws ReplicationException {
     Session session = resolver.adaptTo(Session.class);
+    if (session == null) {
+        throw new ReplicationException("Cannot adapt resolver to JCR Session");
+    }
 
     // Deactivate (unpublish) a page
     replicator.replicate(session, ReplicationActionType.DEACTIVATE, path);
@@ -174,9 +183,10 @@ Always wrap replication calls in proper error handling and ensure the `Session` 
 
 Tree Activation lets you publish an entire subtree of pages in a single operation, rather than activating each page individually.
 
-### Using the Tree Activation UI
+### Using the Tree Activation UI (AEM 6.5)
 
-1. Navigate to **Tools → Replication → Tree Activation**.
+1. Navigate to **Tools → Replication → Tree Activation**. In AEM as a Cloud Service, use
+   **Manage Publication** or the **Publish Content Tree** workflow instead.
 2. Set the **Start Path** (e.g. `/content/mysite/en`).
 3. Optionally set **Modified Only** to skip pages that are already published and unchanged.
 4. Optionally set **Dry Run** to preview what would be activated.
@@ -186,8 +196,11 @@ Tree Activation lets you publish an entire subtree of pages in a single operatio
 
 ```java
 import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
 import com.day.cq.replication.Replicator;
-import org.apache.sling.api.resource.Resource;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageFilter;
+import com.day.cq.wcm.api.PageManager;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import javax.jcr.Session;
@@ -196,34 +209,41 @@ import java.util.Iterator;
 public void activateTree(ResourceResolver resolver, Replicator replicator, String rootPath)
         throws Exception {
     Session session = resolver.adaptTo(Session.class);
-    Resource root = resolver.getResource(rootPath);
+    PageManager pageManager = resolver.adaptTo(PageManager.class);
+    if (session == null || pageManager == null) {
+        throw new ReplicationException("Cannot adapt resolver to required AEM APIs");
+    }
+
+    Page root = pageManager.getPage(rootPath);
 
     if (root == null) {
         return;
     }
 
     // Activate root
-    replicator.replicate(session, ReplicationActionType.ACTIVATE, rootPath);
+    replicator.replicate(session, ReplicationActionType.ACTIVATE, root.getPath());
 
     // Recursively activate children
-    Iterator<Resource> children = root.listChildren();
+    Iterator<Page> children = root.listChildren(new PageFilter(false, false));
     while (children.hasNext()) {
-        Resource child = children.next();
-        if ("cq:Page".equals(child.getResourceType())
-                || child.getPath().startsWith("/content/dam")) {
-            activateTree(resolver, replicator, child.getPath());
-        }
+        Page child = children.next();
+        activateTree(resolver, replicator, child.getPath());
     }
 }
 ```
 
 :::tip
-For large subtrees (thousands of pages), prefer the **Managed Publishing** workflow or a background Sling Job to avoid HTTP timeouts and replication queue overload.
+For large subtrees (thousands of pages), prefer **Manage Publication** or the **Publish Content Tree**
+workflow. On AEM as a Cloud Service these replace the classic Tree Activation tool and avoid custom
+HTTP request timeouts.
 :::
 
 ## Reverse Replication
 
-Reverse replication moves content in the opposite direction - from **publish** back to **author**. This is used when content originates on the publish tier, such as user-generated content (UGC), form submissions, or community data.
+Reverse replication moves content in the opposite direction - from **publish** back to **author**.
+This is a legacy AEM 6.5 pattern for content that originates on the publish tier, such as
+user-generated content (UGC), form submissions, or community data. It is not a recommended pattern
+for AEM as a Cloud Service; use an external service or data store for publish-originated data.
 
 ### How It Works
 
@@ -255,7 +275,7 @@ In **AEM as a Cloud Service (AEMaaCS)**, classic queue-based replication is repl
 | **Topology** | Author sends to each publish | Golden publish, then distributed |
 | **Queue** | Per-agent queue on author | Centralized, managed queue |
 | **Configuration** | Manual agent setup | Managed by Adobe infrastructure |
-| **Flush** | Flush agent to Dispatcher | Automatic CDN invalidation |
+| **Flush** | Flush agent to Dispatcher | Adobe-managed Dispatcher/CDN invalidation |
 
 ### Golden Publish Topology
 
@@ -273,7 +293,7 @@ Monitoring replication queues is critical for maintaining a healthy publish pipe
 
 Access the queue for a specific agent at:
 
-```
+```text
 /etc/replication/agents.author/publish/queue
 ```
 
@@ -313,7 +333,7 @@ A single failed item blocks all subsequent items in the queue (FIFO ordering). M
 
 6. **Agent credentials expiring** - If the transport user's password changes on publish but not in the agent configuration, replication silently fails. Use service users with non-expiring credentials or automate credential rotation.
 
-7. **Missing Dispatcher flush** - Content may be activated on publish but visitors still see the old version because the Dispatcher cache was not invalidated. Ensure flush agents are configured and healthy.
+7. **Missing Dispatcher flush (AEM 6.5)** - Content may be activated on publish but visitors still see the old version because the Dispatcher cache was not invalidated. Ensure flush agents are configured and healthy. On AEM as a Cloud Service, verify the publication event and Adobe-managed CDN/Dispatcher invalidation instead.
 
 ## See also
 

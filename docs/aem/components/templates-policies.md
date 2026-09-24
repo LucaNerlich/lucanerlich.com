@@ -76,7 +76,7 @@ graph LR
 
 ### JCR structure
 
-```
+```text
 /conf/mysite/
 ├── settings/
 │   └── wcm/
@@ -212,6 +212,7 @@ Page policies control **page-level settings** applied to all pages using a templ
 
 ```xml title="Policy definition"
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
     jcr:primaryType="nt:unstructured"
     jcr:title="My Site Page Policy"
     sling:resourceType="wcm/core/components/policy/policy"
@@ -261,6 +262,7 @@ A policy that restricts the Rich Text Editor to only bold, italic, and links:
 
 ```xml title="Policy for text component"
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
     jcr:primaryType="nt:unstructured"
     jcr:title="Restricted Text"
     sling:resourceType="wcm/core/components/policy/policy"
@@ -272,6 +274,7 @@ A policy that restricts the Rich Text Editor to only bold, italic, and links:
 
 ```xml
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
     jcr:primaryType="nt:unstructured"
     jcr:title="Standard Image Policy"
     sling:resourceType="wcm/core/components/policy/policy"
@@ -285,6 +288,12 @@ A policy that restricts the Rich Text Editor to only bold, italic, and links:
 ```java
 import com.day.cq.wcm.api.policies.ContentPolicy;
 import com.day.cq.wcm.api.policies.ContentPolicyManager;
+import java.util.Arrays;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.OSGiService;
+import org.apache.sling.models.annotations.injectorspecific.Self;
 
 @Model(adaptables = SlingHttpServletRequest.class)
 public class ImageModel {
@@ -297,7 +306,7 @@ public class ImageModel {
 
     public int[] getAllowedWidths() {
         Resource resource = request.getResource();
-        ContentPolicy policy = policyManager.getPolicy(resource);
+        ContentPolicy policy = policyManager.getPolicy(resource, request);
 
         if (policy != null) {
             String[] widths = policy.getProperties()
@@ -344,6 +353,7 @@ Template authors control which components are available per container:
 
 ```xml title="Policy restricting to specific groups"
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
     jcr:primaryType="nt:unstructured"
     jcr:title="Content Container Policy"
     sling:resourceType="wcm/core/components/policy/policy"
@@ -354,7 +364,7 @@ Template authors control which components are available per container:
 
 Different containers on the same template can have different allowed components:
 
-```
+```text
 Template: Landing Page
 ├── Header container  → Only: Navigation, Logo, Search
 ├── Hero container    → Only: Hero, Video Hero
@@ -373,6 +383,8 @@ developer intervention. It builds on top of component policies:
 
 ```xml title="Button component policy with styles"
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
     jcr:primaryType="nt:unstructured"
     jcr:title="Button Policy"
     sling:resourceType="wcm/core/components/policy/policy">
@@ -420,6 +432,9 @@ component's wrapper element.
 
 ```java
 import com.adobe.cq.wcm.style.ComponentStyleInfo;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
 
 @Model(adaptables = SlingHttpServletRequest.class)
 public class StyledComponent {
@@ -446,18 +461,18 @@ public class StyledComponent {
 
 Policies are mapped to components within a template via `cq:policy` references:
 
-```
+```text
 /conf/mysite/settings/wcm/templates/content-page/policies/
 ├── jcr:content
-│   ├── cq:policy = "/conf/mysite/settings/wcm/policies/mysite/page/default"
+│   ├── cq:policy = "mysite/page/default"
 │   └── root/
 │       └── responsivegrid/
-│           ├── cq:policy = "/conf/mysite/settings/wcm/policies/mysite/containers/content"
+│           ├── cq:policy = "mysite/containers/content"
 │           └── cq:policyMapping = { ... }
 ```
 
-The `cq:policy` property points to the policy definition node. The template editor
-manages these mappings automatically.
+The `cq:policy` property stores the policy path relative to `/conf/<site>/settings/wcm/policies`.
+The template editor manages these mappings automatically.
 
 ---
 
@@ -479,7 +494,7 @@ Locking is set via the `cq:editable` property on the structure node.
 
 For reference, legacy static templates use a different mechanism:
 
-```
+```text
 /apps/mysite/templates/
 └── content-page/
     ├── jcr:primaryType = "cq:Template"
@@ -505,7 +520,7 @@ For reference, legacy static templates use a different mechanism:
 
 Store templates in a shared `/conf/` location for use across multiple sites:
 
-```
+```text
 /conf/global/settings/wcm/templates/    ← Available to all sites
 /conf/brand-a/settings/wcm/templates/   ← Brand A only
 /conf/brand-b/settings/wcm/templates/   ← Brand B only
@@ -515,7 +530,7 @@ Store templates in a shared `/conf/` location for use across multiple sites:
 
 Restrict which content paths can use a template:
 
-```
+```text
 allowedPaths = ["/content/brand-a/.*"]
 ```
 
@@ -563,7 +578,7 @@ content repository.
 | Template not showing in "Create Page"  | Check `status` is `enabled` and `allowedPaths` matches the current content path                                                    |
 | Component not available in a container | Open the template in Structure mode and check the container's policy for allowed components                                        |
 | Policy values not picked up            | Verify the `cq:policy` reference on the template points to the correct policy node                                                 |
-| Style System classes not applied       | Ensure the component's HTL wrapper includes the `data-sly-use.style` binding or uses Core Components (which include it by default) |
+| Style System classes not applied       | Ensure the component renders with a decoration wrapper (or manually render `ComponentStyleInfo.getAppliedCssClasses()`) |
 | Design mode settings ignored           | Editable Templates do not use `/etc/designs/`; migrate to policies                                                                 |
 | Initial content not appearing          | Check the template's Initial Content mode; verify the components have content authored                                             |
 | Template locked for editing            | Only users with `template-authors` group membership can edit templates                                                             |

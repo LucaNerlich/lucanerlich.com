@@ -323,7 +323,7 @@ For an implementation of a dynamic rootPath, see [Custom Dialog Widgets - Dynami
 
 #### Pathbrowser
 
-In some cases you might want to use the older `coral2` pathbrowser component https://experienceleaguecommunities.adobe.com/t5/adobe-experience-manager/when-to-choice-pathbrowser-as-well-as-pathfield/m-p/312540/highlight/true#M32451.
+In legacy AEM 6.5 codebases you might still encounter the older Coral 2 `pathbrowser` component. Prefer the Coral 3 `pathfield` above for new dialogs, especially for AEM as a Cloud Service projects.
 
 <div class="alert alert-warning" role="alert">
     You can recognize the Coral 3 components by the path `/components/coral/foundation`. The older Coral 2 variants live
@@ -335,7 +335,7 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
    jcr:primaryType="nt:unstructured"
    sling:resourceType="granite/ui/components/foundation/form/pathbrowser"
    fieldLabel="Select asset"
-   rootpath="/content/dam"
+   rootPath="/content/dam"
    name="./assetpath"/>
 ```
 
@@ -366,10 +366,10 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
 <checkbox
     jcr:primaryType="nt:unstructured"
     sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
-    checked="true"
+    checked="{Boolean}true"
     name="./altValueFromPageImage"
     text="Inherit alternative text from page"
-    uncheckedValue="false"
+    uncheckedValue="{Boolean}false"
     value="{Boolean}true"/>
 ```
 
@@ -398,10 +398,10 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
 <switch
    jcr:primaryType="nt:unstructured"
    sling:resourceType="granite/ui/components/coral/foundation/form/switch"
-   checked="true"
+   checked="{Boolean}true"
    name="./switchValue"
    fieldLabel="Toggle Me"
-   uncheckedValue="false"
+   uncheckedValue="{Boolean}false"
    value="{Boolean}true"/>
 ```
 
@@ -417,7 +417,7 @@ In some cases you might want to use the older `coral2` pathbrowser component htt
    onText="On"
    offText="Off"
    name="./featureEnabled"
-   uncheckedValue="false"
+   uncheckedValue="{Boolean}false"
    value="{Boolean}true"/>
 ```
 
@@ -656,7 +656,7 @@ How Adobe's script resolves it:
     text="Enable analytics tracking"
     name="./enableAnalytics"
     value="{Boolean}true"
-    uncheckedValue="false"
+    uncheckedValue="{Boolean}false"
     granite:class="cq-dialog-checkbox-showhide">
     <granite:data
         jcr:primaryType="nt:unstructured"
@@ -722,8 +722,8 @@ When one widget controls the visibility of another, you can use dialog JS that r
           allowProxy="{Boolean}true"/>
 ```
 
-Alternatively, load the clientlib specifically only in the components dialog, by adding changing the categories propety to a custom name `categories="[cq.authoring.mycomponent]"` and
-the `extraClientlibs="[cq.authoring.mycomponent]"` property to its `/cq:dialog/.content.xml` file.
+Alternatively, load the clientlib only in this component's dialog by changing the clientlib category to a custom name such as `categories="[cq.authoring.mycomponent]"` and
+adding `extraClientlibs="[cq.authoring.mycomponent]"` to the component's `_cq_dialog/.content.xml` file.
 
 ```xml title="/apps/myproject/components/mycomponent/cq:dialog/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
@@ -734,7 +734,8 @@ the `extraClientlibs="[cq.authoring.mycomponent]"` property to its `/cq:dialog/.
           jcr:title="My Component"
           extraClientlibs="[cq.authoring.mycomponent]"
           sling:resourceType="cq/gui/components/authoring/dialog">
-<!-- [...] -->
+    <!-- [...] -->
+</jcr:root>
 ```
 
 ```text title="ui.apps/.../clientlibs/clientlib-dialog/js.txt"
@@ -748,7 +749,7 @@ Following JQuery Example is for a multifield which has a select dropdown "linkTy
 
 ```js title="ui.apps/.../clientlibs/clientlib-dialog/js/dialog-visibility.js"
 (function (window, document, Granite, $) {
-    "use strict"
+    "use strict";
 
     /**
      * Initializes the link type source dropdown elements by attaching event handlers for visibility toggling
@@ -793,14 +794,13 @@ Following JQuery Example is for a multifield which has a select dropdown "linkTy
             const toggleTarget = function () {
                 const value = select.value;
                 const well = $select.closest('div.coral-Well');
-                const target = well.find('.linkType-showhide-target')?.closest('div.coral-Form-fieldwrapper');
-                console.log("target", target);
+                const target = well.find('.linkType-showhide-target').closest('div.coral-Form-fieldwrapper');
                 if (!target.length) {
                     return;
                 }
 
                 // We have to show/hide via css, since newly added multifield items would otherwise always show the query textarea
-                if (value === 'mail') {
+                if (value === 'email') {
                     target.css('display', 'block');
                 } else {
                     target.css('display', 'none');
@@ -888,7 +888,7 @@ Closed
     name="./category">
     <datasource
         jcr:primaryType="nt:unstructured"
-        sling:resourceType="/apps/myproject/datasource/categories"/>
+        sling:resourceType="myproject/datasource/categories"/>
     <items jcr:primaryType="nt:unstructured"/>
 </categorySelect>
 ```
@@ -1014,7 +1014,7 @@ For dynamic values, provide a datasource resource type. This works well for auto
     multiple="{Boolean}false">
     <datasource
         jcr:primaryType="nt:unstructured"
-        sling:resourceType="/apps/myproject/datasource/customstrings"/>
+        sling:resourceType="myproject/datasource/customstrings"/>
     <options
         jcr:primaryType="nt:unstructured"
         sling:resourceType="granite/ui/components/coral/foundation/form/autocomplete/list"/>
@@ -1228,11 +1228,20 @@ UI paths are treated correctly:
 ```java
 import com.day.cq.tagging.Tag;
 import com.day.cq.tagging.TagManager;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @ValueMapValue(name = "cq:tags")
 private String[] tagIds;
 
-@SelfInjected
+@Self
 private SlingHttpServletRequest request;
 
 public List<Tag> getTags() {
@@ -1240,6 +1249,9 @@ public List<Tag> getTags() {
         return Collections.emptyList();
     }
     TagManager tagManager = request.getResourceResolver().adaptTo(TagManager.class);
+    if (tagManager == null) {
+        return Collections.emptyList();
+    }
     return Arrays.stream(tagIds)
             .map(tagManager::resolve)
             .filter(Objects::nonNull)
@@ -1504,6 +1516,7 @@ Lets authors drag an image from the asset finder straight onto the component.
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           jcr:primaryType="cq:EditConfig">
     <cq:dropTargets jcr:primaryType="nt:unstructured">
         <image
@@ -2557,9 +2570,9 @@ The following `.content.xml` file is a complete `cq:dialog` file for a component
                                             <switch
                                                 jcr:primaryType="nt:unstructured"
                                                 sling:resourceType="granite/ui/components/coral/foundation/form/switch"
-                                                checked="true"
+                                                checked="{Boolean}true"
                                                 name="./switchValue"
-                                                uncheckedValue="false"
+                                                uncheckedValue="{Boolean}false"
                                                 value="{Boolean}true"/>
                                             <buttonGroup jcr:primaryType="nt:unstructured"
                                                          sling:resourceType="granite/ui/components/coral/foundation/form/buttongroup"

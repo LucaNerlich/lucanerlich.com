@@ -281,7 +281,7 @@ public class ArticleModel {
 | `getName()`               | `String`                     | Node name (URL-safe)                    |
 | `getElement(name)`        | `ContentElement`             | Access a specific element by field name |
 | `getElements()`           | `Iterator<ContentElement>`   | Iterate over all elements               |
-| `getVariations()`         | `Iterator<ContentVariation>` | List available variations               |
+| `listAllVariations()`     | `Iterator<VariationDef>`     | List available variation definitions    |
 | `hasElement(name)`        | `boolean`                    | Check if an element exists              |
 | `getAssociatedContent()`  | `Iterator<Resource>`         | Get associated content (collections)    |
 | `adaptTo(Resource.class)` | `Resource`                   | Get the underlying Sling resource       |
@@ -342,7 +342,8 @@ if (summaryVariation != null) {
 Iterator<ContentVariation> variations = bodyElement.getVariations();
 while (variations.hasNext()) {
     ContentVariation variation = variations.next();
-    LOG.info("Variation: {} ({})", variation.getTitle(), variation.getName());
+    String variationName = variation.getName();
+    String variationTitle = variation.getTitle();
 }
 ```
 
@@ -361,8 +362,6 @@ import com.adobe.cq.dam.cfm.FragmentTemplate;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public ContentFragment createFragment(
         ResourceResolver resolver,
@@ -394,7 +393,6 @@ public ContentFragment createFragment(
     // 5. Create the fragment
     ContentFragment fragment = template.createFragment(folder, nodeName, title);
 
-    LOG.info("Created Content Fragment: {} ({})", title, fragment.adaptTo(Resource.class).getPath());
     return fragment;
 }
 ```
@@ -526,8 +524,13 @@ resolver.commit();
 ```java
 ContentElement bodyElement = fragment.getElement("body");
 
-// Create a new variation
-ContentVariation socialVariation = bodyElement.createVariation("social", "Social Media", "Short version for social");
+// Create a fragment-wide variation template, then create the element variation from it
+VariationDef socialVariationDef = fragment.createVariation(
+    "social",
+    "Social Media",
+    "Short version for social"
+);
+ContentVariation socialVariation = bodyElement.createVariation(socialVariationDef);
 
 // Set variation content
 socialVariation.setContent("Check out our latest article on Content Fragments!", "text/plain");
@@ -929,14 +932,16 @@ public List<Map<String, Object>> exportFragments(ResourceResolver resolver,
 | **Content Fragment API** | Same API as AEM 6.5; the `com.adobe.cq.dam.cfm` package is fully available                |
 | **GraphQL**              | Built-in and enabled by default on AEMaaCS; requires Dispatcher configuration for caching |
 | **Persisted queries**    | Preferred over ad-hoc queries for production use; cacheable by Dispatcher/CDN             |
-| **Assets HTTP API**      | REST API for CRUD operations on fragments without Java code                               |
+| **Content Fragments OpenAPI** | Newer AEMaaCS API under `/adobe/sites/cf/fragments` for managing fragments with scoped service credentials |
+| **Assets HTTP API**      | Older DAM Assets API support for Content Fragments; prefer the OpenAPI for new AEMaaCS integrations |
 | **CF Console**           | AEMaaCS has a dedicated Content Fragments Console at `/ui#/aem/cf/admin/`                 |
-| **OpenAPI**              | AEMaaCS supports the Content Fragments OpenAPI for headless delivery                      |
 | **Bulk imports**         | Use the Content Fragment Migration tool or the Assets HTTP API for large imports          |
 
 ### Assets HTTP API (REST)
 
-For external systems that need to create or read fragments without Java. See the
+For new AEMaaCS integrations, prefer the OpenAPI-based Content Fragments API
+(`/adobe/sites/cf/fragments`) where available. The older Assets HTTP API can still be useful for
+legacy DAM-style integrations that need to create or read fragments without Java. See the
 [Content Fragments Support in the Assets HTTP API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/admin/assets-api-content-fragments)
 reference (AEMaaCS):
 

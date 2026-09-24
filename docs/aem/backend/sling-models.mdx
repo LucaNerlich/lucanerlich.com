@@ -72,6 +72,7 @@ public class GreetingModel {
 package com.myproject.core.models;
 
 import com.adobe.cq.export.json.ComponentExporter;
+import com.adobe.cq.export.json.ExporterConstants;
 import com.day.cq.wcm.api.Page;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.myproject.core.services.DateFormatterService;
@@ -96,7 +97,8 @@ import java.util.List;
     resourceType = ArticleModel.RESOURCE_TYPE,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
-@Exporter(name = "jackson", extensions = "json")
+@Exporter(name = ExporterConstants.SLING_MODEL_EXPORTER_NAME,
+    extensions = ExporterConstants.SLING_MODEL_EXTENSION)
 public class ArticleModel implements ComponentExporter {
 
     static final String RESOURCE_TYPE = "myproject/components/article";
@@ -186,8 +188,8 @@ request context.
 
 ### Binding to a resource type
 
-When you specify `resourceType` in the `@Model` annotation, Sling automatically selects this model
-when HTL uses `data-sly-use` without a fully qualified class name:
+When you specify `resourceType` in the `@Model` annotation, Sling uses it to choose the right model
+implementation for request/resource adaptation and exporter requests:
 
 ```java
 @Model(adaptables = SlingHttpServletRequest.class,
@@ -196,11 +198,8 @@ public class TeaserModel { ... }
 ```
 
 ```html
-<!-- Sling resolves the model automatically via the component's sling:resourceType -->
+<!-- Reference the model class or an adapter interface; resourceType narrows the implementation. -->
 <sly data-sly-use.model="com.myproject.core.models.TeaserModel"/>
-
-<!-- Or even shorter if resourceType is set: -->
-<sly data-sly-use.model="myproject/components/teaser"/>
 ```
 
 ## Injection Annotations
@@ -238,7 +237,8 @@ This is essential for headless AEM, SPA Editor, and Content as a Service scenari
     resourceType = TitleModel.RESOURCE_TYPE,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
-@Exporter(name = "jackson", extensions = "json")
+@Exporter(name = ExporterConstants.SLING_MODEL_EXPORTER_NAME,
+    extensions = ExporterConstants.SLING_MODEL_EXTENSION)
 public class TitleModel implements ComponentExporter {
 
     static final String RESOURCE_TYPE = "myproject/components/title";
@@ -410,7 +410,7 @@ public boolean isEditMode(SlingHttpServletRequest request) {
     return mode == WCMMode.EDIT || mode == WCMMode.DESIGN;
 }
 
-public boolean isAuthorEnvironment(SlingHttpServletRequest request) {
+public boolean isAuthoringMode(SlingHttpServletRequest request) {
     WCMMode mode = WCMMode.fromRequest(request);
     switch (mode) {
         case EDIT:
@@ -423,7 +423,7 @@ public boolean isAuthorEnvironment(SlingHttpServletRequest request) {
 }
 ```
 
-| WCMMode | Environment | Description |
+| WCMMode | Context | Description |
 |---------|-------------|-------------|
 | `EDIT` | Author | Dialog editing is active |
 | `PREVIEW` | Author | Author preview mode |
@@ -493,10 +493,18 @@ Access user and group information via the JCR `UserManager`:
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.JackrabbitSession;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
 
 public String getUserDisplayName(ResourceResolver resolver, String userId) {
     try {
         Session session = resolver.adaptTo(Session.class);
+        if (!(session instanceof JackrabbitSession)) {
+            return userId;
+        }
         UserManager userManager = ((JackrabbitSession) session).getUserManager();
         Authorizable authorizable = userManager.getAuthorizable(userId);
 
@@ -907,8 +915,9 @@ annotations are self-documenting and avoid ambiguity.
 
 ### Don't store state between requests
 
-Sling Models are **request-scoped** - a new instance is created for each request. Never store
-cross-request state in a model. Use OSGi services with thread-safe patterns for shared state.
+Sling Models are short-lived adaptation objects (and may be cached only when explicitly configured).
+Never store cross-request state in a model. Use OSGi services with thread-safe patterns for shared
+state.
 
 ## See also
 

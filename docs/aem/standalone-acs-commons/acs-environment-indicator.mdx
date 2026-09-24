@@ -20,8 +20,11 @@ environments apart (`DEV` vs `STAGE` vs `PROD`) at a glance. It is an in-house r
 [Show Author Environment Indicator](https://adobe-consulting-services.github.io/acs-aem-commons/features/environment-indicator/index.html),
 updated for AEM as a Cloud Service and Adobe's Unified Shell.
 
-Upstream ACS Commons marks its classic indicator as **not AEM as a Cloud Service compatible**. This module takes a
-different approach: reuse Unified Shell's badge when present, and render a fallback badge when it is not.
+Upstream ACS Commons documents the classic indicator as **AEM 6.5 only** and redundant on
+AEM as a Cloud Service because Unified Shell already exposes an environment badge (although the
+ACS feature can still be configured there with environment variables). This module takes a
+different approach: reuse Unified Shell's badge when present, and render a fallback badge when it
+is not.
 
 ## How it works
 

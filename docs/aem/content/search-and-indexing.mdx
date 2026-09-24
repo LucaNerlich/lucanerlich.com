@@ -82,14 +82,15 @@ A traversal that is merely slow on author can take down a publish instance under
 
 | Type | Backed by | Best for |
 |------|-----------|----------|
-| **Property index** | Oak property index | Exact-match lookups on one/few properties (e.g. `cq:template`, an `sku`) |
+| **Property index** | Oak property index | AEM 6.5/simple local exact-match lookups on one/few properties |
 | **Lucene property index** | Lucene | The standard custom index in AEM - property + full-text, ordering, aggregation |
 | **Lucene full-text index** | Lucene | `CONTAINS()` / free-text search across content and binaries |
 
-In modern AEM (and exclusively on AEMaaCS) you almost always create a **Lucene** index; pure Oak
-property indexes are reserved for very simple, high-selectivity exact matches.
+In modern AEM you almost always create a **Lucene** index. AEM as a Cloud Service custom index
+definitions must be `type="lucene"`; pure Oak property indexes are only appropriate for AEM 6.5 or
+local/on-premise scenarios where you control the repository directly.
 
-## Defining a property index
+## Defining a property index (AEM 6.5 / local only)
 
 A minimal exact-match index on a single property, deployed as content under `/oak:index`:
 
@@ -155,8 +156,10 @@ A Lucene index uses **index rules** per node type, declaring which properties ar
 AEMaaCS requires a strict **naming convention** so its deployment process can merge custom indexes
 with out-of-the-box (OOTB) ones without downtime:
 
-- Customize an OOTB index: copy it and append `-custom-<N>`, e.g. `damAssetLucene-custom-1`.
-- Brand-new index: name it `<indexName>-custom-<N>` and include `indexRules`.
+- Customize an OOTB index: include the product index version and append `-custom-<N>`, e.g.
+  `damAssetLucene-8-custom-1`.
+- Brand-new index: use a namespace prefix and product/custom versions, e.g.
+  `acme.product-1-custom-1`, and include `indexRules`.
 - Deploy under `/oak:index` via your `ui.apps` package. The pipeline validates the definition and
   handles reindexing.
 
@@ -187,13 +190,12 @@ Changing an index definition requires a **reindex** so existing content is cover
 
 AEM ships tools to see whether a query is indexed and how it executes:
 
-- **Query Performance** - `/libs/granite/operations/content/diagnosistools/queryPerformanceTool.html`
-  lists slow and popular queries.
-- **Explain Query** - `/libs/granite/operations/content/diagnosistools/queryExplainTool.html` shows
-  which index a query uses (or reports a traversal) and the estimated cost. Run every new query through
-  it before shipping.
-- **Index Manager** - `/libs/granite/operations/content/diagnosistools/indexManager.html` lists index
-  definitions and their status.
+- **Query Performance** - `/libs/granite/operations/content/diagnosistools/queryPerformance.html`
+  lists slow and popular queries; on AEMaaCS use the Developer Console view.
+- **Explain Query** - the **Explain Query** tab in Query Performance shows which index a query uses
+  (or reports a traversal) and the estimated cost. Run every new query through it before shipping.
+- **Index Manager** - available on local SDK/AEM 6.5 only; AEMaaCS production index status is exposed
+  through Cloud Manager and the Developer Console rather than instance-local index management.
 - Watch `error.log` for `Traversed ... nodes` warnings during development.
 
 ## Best practices

@@ -7,9 +7,9 @@ tags: [aem, components, cq-htmlTag, decoration-tag, htl]
 
 # Decoration Tag (`cq:htmlTag`)
 
-When AEM includes a component on a page, it wraps the component's own output in an extra HTML element called
-the **decoration tag**. This is the element you see around your markup with a class that matches the
-component name, for example:
+When AEM renders an included editable component and decoration is requested, it can wrap the component's own
+output in an extra HTML element called the **decoration tag**. This is the element you see around your markup
+with a class that matches the component name, for example:
 
 ```html
 <div class="text aem-GridColumn aem-GridColumn--default--12">
@@ -18,7 +18,8 @@ component name, for example:
 </div>
 ```
 
-The outer `<div class="text ...">` is **not** produced by your HTL. AEM's decoration mechanism adds it so the
+The outer `<div class="text ...">` is **not** produced by your HTL. AEM's decoration mechanism adds it when a
+container or include asks for decoration (for example editable child components in the Page Editor), so the
 authoring UI (drag handles, the responsive grid, in-place editing) has a stable element to hook into, and so
 layout/grid classes have somewhere to live.
 
@@ -66,6 +67,9 @@ Any other property you add is rendered as a literal attribute on the decoration 
 `role="region"` or a `data-*` attribute), which makes `cq:htmlTag` a convenient place to attach static,
 component-wide attributes.
 
+Separately, the component node itself can set `cq:noDecoration="{Boolean}true"` to suppress wrapper generation
+even when an include requests decoration.
+
 ## How the class list is assembled
 
 The class attribute on the decoration element is a **merge** of several sources:
@@ -93,6 +97,7 @@ so the rendered page is more semantic and accessible - without polluting your HT
 ```xml title="A component rendered as a list item"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
           jcr:primaryType="nt:unstructured"
           cq:tagName="li"
           class="nav__item"/>
@@ -101,6 +106,7 @@ so the rendered page is more semantic and accessible - without polluting your HT
 ```xml title="A component rendered as a <section> landmark"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
           jcr:primaryType="nt:unstructured"
           cq:tagName="section"
           class="promo"
@@ -162,16 +168,36 @@ useful when the same component should be wrapped differently in different contex
     cssClassName='featured' }"></sly>
 ```
 
-```html title="Suppress the decoration element entirely"
+```html title="Code-reuse include: no decoration element is rendered"
 <sly data-sly-resource="${ 'content' @
-    resourceType='myproject/components/text',
-    decorationTagName='' }"></sly>
+    resourceType='myproject/components/text' }"></sly>
 ```
 
-:::tip[Decoration only happens for "synthetic"/included resources]
-A top-level resource rendered directly does not get a decoration tag - the wrapper is added when a component
-is **included** by a parent (a page, a layout container, or an explicit `data-sly-resource`). Empty
-decoration tags are also suppressed automatically when the component renders no output.
+A plain HTL include like this one renders the child's markup without a wrapper. To guarantee that a component
+is **never** decorated, even when a container or an include asks for decoration with `decoration=true`, set
+`cq:noDecoration` on the component definition instead:
+
+```xml title="ui.apps/.../components/text/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          jcr:primaryType="cq:Component"
+          jcr:title="Text"
+          componentGroup="My Project - Content"
+          cq:noDecoration="{Boolean}true"/>
+```
+
+:::warning
+Without a decoration element, the Page Editor has no wrapper to attach its overlay to, so a
+`cq:noDecoration` component cannot be selected or edited on its own. Use it only for components that are
+rendered for code reuse, not for components authors drop into a layout container.
+:::
+
+:::tip[HTL includes do not decorate by default]
+Plain HTL code-reuse includes such as `data-sly-resource="child"` do **not** render a wrapper by default.
+Use `decoration=true`, `decorationTagName`, or the Page Editor's container includes when the child must be
+editable or needs layout classes. Empty decoration tags are also suppressed automatically when the component
+renders no output.
 :::
 
 ## Gotchas

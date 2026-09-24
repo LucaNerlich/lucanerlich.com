@@ -125,7 +125,7 @@ For multi-language sites, AEM uses **Language Copies** and the **Translation Fra
 
 ### Site structure for multi-language
 
-```
+```text
 /content/mysite/
 ├── en/           # English (master)
 │   ├── home
@@ -242,7 +242,7 @@ For **UI strings** (labels, buttons, error messages), AEM uses i18n dictionaries
 
 Repository node structure example:
 
-```
+```text
 /apps/mysite/i18n/
 ├── en/
 │   ├── jcr:primaryType = "nt:folder"
@@ -262,14 +262,14 @@ Repository node structure example:
 
 The node-per-message format above still works, but the current AEM Maven archetype ships **JSON
 dictionaries** instead - they are far easier to maintain in Git and diff in pull requests. A JSON
-dictionary is a single file per language inside a clientlib-style folder marked with the
-`mix:language` mixin:
+dictionary is a single file per language under a repository folder such as `/apps/mysite/i18n`.
+Each language file is an `nt:file` with the `mix:language` mixin and `jcr:language` property:
 
 ```text
 ui.apps/.../jcr_root/apps/mysite/i18n/
-├── .content.xml          # cq:ClientLibraryFolder, mixin mix:language is set per-language file
-├── en.json
-└── de.json
+├── .content.xml          # sling:Folder
+├── en.json               # nt:file + mix:language, jcr:language="en"
+└── de.json               # nt:file + mix:language, jcr:language="de"
 ```
 
 ```json title="apps/mysite/i18n/en.json"
@@ -295,10 +295,10 @@ the same regardless of which storage you use. **Prefer JSON for new projects.**
 
 ```html
 <!-- Translate a string -->
-<span>${'Read More' @ i18n}</span>
+<span>${'readMore' @ i18n}</span>
 
 <!-- With explicit locale override (requires Sling i18n support for the locale option) -->
-<span>${'Read More' @ i18n, locale='de'}</span>
+<span>${'readMore' @ i18n, locale='de'}</span>
 
 <!-- In attributes -->
 <button aria-label="${'Close' @ i18n}">X</button>
@@ -310,6 +310,10 @@ HTL automatically resolves the translation based on the current page's language.
 
 ```java
 import com.day.cq.i18n.I18n;
+import javax.annotation.PostConstruct;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
 
 @Model(adaptables = SlingHttpServletRequest.class)
 public class MyModel {
@@ -325,7 +329,7 @@ public class MyModel {
     }
 
     public String getReadMoreLabel() {
-        return i18n.get("Read More");
+        return i18n.get("readMore");
     }
 }
 ```

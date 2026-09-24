@@ -21,7 +21,7 @@ organisation already follows on paper, in email chains, or in project management
 | Business process | AEM Workflow equivalent | Typical participants |
 |------------------|------------------------|---------------------|
 | Content review and approval | Request for Activation | Author, Reviewer, Publisher |
-| Asset ingestion and processing | DAM Update Asset | Photographer/Designer, DAM Admin |
+| Asset ingestion and processing | DAM Update Asset (AEM 6.5) / Asset microservices (AEMaaCS) | Photographer/Designer, DAM Admin |
 | Translation | Translation workflow (via Translation Integration Framework) | Author, Translation Provider, Language Lead |
 | Content decommission / sunset | Custom unpublish workflow | Content Owner, Legal, Webmaster |
 | Campaign launch | Custom scheduled activation workflow | Marketing Manager, Content Team, QA |
@@ -236,6 +236,7 @@ import com.adobe.granite.workflow.metadata.MetaDataMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.PersistenceException;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -289,7 +290,11 @@ public class AutoTagProcessStep implements WorkflowProcess {
                     LOG.info("Tagged {} with {}", payloadPath, newTag);
                 }
             }
-            resolver.commit();
+            try {
+                resolver.commit();
+            } catch (PersistenceException e) {
+                throw new WorkflowException("Could not save tags for " + payloadPath, e);
+            }
         }
     }
 }
@@ -559,18 +564,16 @@ public int terminateAllRunningWorkflows(ResourceResolver resolver) {
  * Disables all workflow launchers. Useful during bulk imports or migrations
  * to prevent unwanted workflow triggers.
  */
-public void disableAllLaunchers(ResourceResolver resolver) throws LoginException {
-    WorkflowLauncher launcherService = resolver.adaptTo(WorkflowLauncher.class);
-    if (launcherService == null) {
-        LOG.error("Could not obtain WorkflowLauncher service");
-        return;
-    }
+@Reference
+private WorkflowLauncher launcherService;
 
+public void disableAllLaunchers() throws WorkflowException {
     Iterator<ConfigEntry> entries = launcherService.getConfigEntries();
     while (entries.hasNext()) {
         ConfigEntry entry = entries.next();
         if (entry.isEnabled()) {
             entry.setEnabled(false);
+            launcherService.editConfigEntry(entry.getId(), entry);
             LOG.info("Disabled launcher: {}", entry.getId());
         }
     }
@@ -579,15 +582,13 @@ public void disableAllLaunchers(ResourceResolver resolver) throws LoginException
 /**
  * Re-enables all workflow launchers.
  */
-public void enableAllLaunchers(ResourceResolver resolver) {
-    WorkflowLauncher launcherService = resolver.adaptTo(WorkflowLauncher.class);
-    if (launcherService == null) return;
-
+public void enableAllLaunchers() throws WorkflowException {
     Iterator<ConfigEntry> entries = launcherService.getConfigEntries();
     while (entries.hasNext()) {
         ConfigEntry entry = entries.next();
         if (!entry.isEnabled()) {
             entry.setEnabled(true);
+            launcherService.editConfigEntry(entry.getId(), entry);
             LOG.info("Enabled launcher: {}", entry.getId());
         }
     }
@@ -700,11 +701,12 @@ Custom Java workflow steps for rendition generation **do not run** on AEMaaCS. I
 - Rendition generation is handled by Adobe's cloud-native microservices
 - Custom processing uses **Processing Profiles** (configured in the DAM admin UI)
 - For advanced custom processing, use **Asset Compute workers** (Adobe I/O Runtime)
-- **Post-processing workflows** can still run custom Java steps for metadata operations, but not
-binary manipulation
+- **Post-processing workflows** run after the microservices have finished and can still use custom
+Java steps (metadata, tagging, notifications, moving assets) - but should not generate renditions
 
-If you are building for AEMaaCS, plan your DAM workflow customisations around Processing Profiles
-and Asset Compute rather than custom `WorkflowProcess` steps.
+If you are building for AEMaaCS, plan your DAM customisations around Processing Profiles, Asset
+Compute, and post-processing workflows rather than extending DAM Update Asset. See
+[Asset Processing on AEMaaCS](../content/asset-processing.mdx) for the full picture.
 :::
 
 ---
@@ -790,10 +792,10 @@ private ResourceResolver getServiceResolver() throws LoginException {
 
 Configure the service user mapping in your OSGi configuration:
 
-```json title="ui.config/.../org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-workflow.cfg.json"
+```json title="ui.config/.../org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~workflow.cfg.json"
 {
     "user.mapping": [
-        "com.myproject.core:workflow-service=myproject-workflow-service"
+        "com.myproject.core:workflow-service=[myproject-workflow-service]"
     ]
 }
 ```
@@ -844,9 +846,9 @@ class AutoTagProcessStepTest {
 
 | Feature | AEM 6.5 (on-prem/AMS) | AEM as a Cloud Service |
 |---------|----------------------|------------------------|
-| Custom DAM processing steps | Supported | Not supported - use Asset Compute |
+| Custom DAM processing steps | Supported (in DAM Update Asset) | Not in the ingestion pipeline - use processing profiles / Asset Compute for renditions; run custom steps in a post-processing workflow |
 | Workflow model editor | Available | Available |
-| Custom process steps | Supported | Supported (for non-DAM workflows) |
+| Custom process steps | Supported | Supported (including post-processing workflows for assets) |
 | Workflow launchers | File-based and UI | Same |
 | Transient workflows | Supported | Supported |
 | Workflow purge | Manual or scheduled | Automatic (maintenance windows) |

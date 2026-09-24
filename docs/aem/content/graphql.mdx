@@ -460,7 +460,7 @@ curl "http://localhost:4502/graphql/execute.json/myproject/articles-by-category;
 |------------|-------------|
 | `/graphql/persist.json/{config}/{query-name}` | Create/update a persisted query (PUT) |
 | `/graphql/execute.json/{config}/{query-name}` | Execute a persisted query (GET) |
-| `/graphql/execute.json/{config}/{query-name};var1=val1;var2=val2` | Execute with variables |
+| `/graphql/execute.json/{config}/{query-name};var1=val1;var2=val2` | Execute with variables; URL-encode names and values |
 | `/graphql/list.json/{config}` | List all persisted queries for a config |
 
 ---
@@ -483,7 +483,7 @@ export async function fetchPersistedQuery<T>(
     let url = `${AEM_HOST}/graphql/execute.json/${queryPath}`;
     if (variables) {
         const params = Object.entries(variables)
-            .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
             .join(';');
         url += `;${params}`;
     }
@@ -493,7 +493,7 @@ export async function fetchPersistedQuery<T>(
         headers: {
             'Content-Type': 'application/json',
             // Add auth token for Author queries (not needed for Publish)
-            // 'Authorization': `Bearer ${token}`,
+            // 'Authorization': 'Bearer <access-token>',
         },
     });
 
@@ -713,13 +713,13 @@ graph LR
 |-------|----------------|-------------|
 | **Browser** | `Cache-Control` header | Time-based (TTL) |
 | **CDN** | `Surrogate-Control` or `Cache-Control` | Tag-based purge, TTL, or deploy hook |
-| **Dispatcher** | File-based cache (`.stat` invalidation) | Flush agent on content publish |
+| **Dispatcher** | File-based cache (`.stat` invalidation) | Flush agent on AEM 6.5; Adobe-managed invalidation on AEMaaCS |
 | **AEM Publish** | In-memory query cache | Automatic on content change |
 
 ### Cache invalidation on publish
 
-When a Content Fragment is published, AEM sends a flush request to Dispatcher. Configure a
-Dispatcher flush agent to invalidate the cached GraphQL responses:
+On AEM 6.5, configure a Dispatcher flush agent so Content Fragment publication invalidates cached
+GraphQL responses:
 
 ```text title="dispatcher/src/conf.dispatcher.d/cache/invalidate.any"
 /0001 {
@@ -728,8 +728,8 @@ Dispatcher flush agent to invalidate the cached GraphQL responses:
 }
 ```
 
-For CDN-level invalidation on AEMaaCS, use **Sling Content Distribution** events to trigger CDN
-purge APIs.
+On AEM as a Cloud Service, publication and Sling Content Distribution trigger Adobe-managed
+Dispatcher/CDN invalidation; do not configure custom flush agents on the cloud service.
 
 ---
 
@@ -749,7 +749,7 @@ async function fetchFromAuthor(queryPath: string) {
         `https://author-pXXXXX-eXXXXXX.adobeaemcloud.com/graphql/execute.json/${queryPath}`,
         {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/json',
             },
         }
@@ -901,7 +901,7 @@ For frequently filtered fields, ensure Oak indexes exist for the underlying JCR 
 | Slow queries | Limit depth, add pagination, create Oak indexes |
 | Schema not showing new model fields | Publish the updated CF Model; the schema regenerates on Publish |
 | Persisted queries not found on Publish | Persisted queries must be replicated to Publish |
-| Cache not invalidating | Ensure Dispatcher flush agent is configured for `.json` files |
+| Cache not invalidating | On AEM 6.5, ensure Dispatcher flush covers `.json`; on AEMaaCS, verify publication/distribution and cache headers |
 
 ## External Resources
 

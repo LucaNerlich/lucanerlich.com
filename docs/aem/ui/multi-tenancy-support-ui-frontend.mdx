@@ -333,7 +333,7 @@ const CLIENT_LIBS = SITES.map(siteName => ({
         resources: {
             cwd: `clientlib-${siteName}`,
             files: ['**/*.*'],
-            flatten: true,   // flatten resources for consistent sub-paths
+            flatten: false,  // preserve resources/fonts/... and resources/images/... paths
             ignore: ['**/*.js', '**/*.css'],
         },
     },
@@ -361,10 +361,10 @@ module.exports = {
 };
 ```
 
-:::info[Flatten resources]
-Setting `flatten: true` on the resources section copies all static files (fonts, images, favicons)
-into the clientlib's root `resources/` folder. This ensures that relative paths like
-`url('../resources/fonts/roboto.woff2')` work the same across all tenant clientlibs.
+:::info[Preserve resource paths]
+Keeping `flatten: false` on the resources section preserves folders such as `fonts/` and `images/`
+under the generated clientlib's `resources/` folder. This ensures that relative paths like
+`url('../resources/fonts/roboto.woff2')` continue to resolve after clientlib generation.
 :::
 
 ### 4. Loading tenant clientlibs in page templates

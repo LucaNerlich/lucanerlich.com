@@ -22,7 +22,7 @@ through the Felix Web Console.
 
 All OSGi configuration files live under the `ui.config` module. The standard path is:
 
-```
+```text
 ui.config/
 └── src/
     └── main/
@@ -75,7 +75,7 @@ OSGi configuration files use the `.cfg.json` extension and follow strict naming 
 
 For a service that has exactly one configuration instance, the filename is the **fully qualified PID**:
 
-```
+```text
 com.example.core.services.impl.MyServiceImpl.cfg.json
 ```
 
@@ -84,7 +84,7 @@ com.example.core.services.impl.MyServiceImpl.cfg.json
 When a service supports multiple configuration instances (a *factory*), append a tilde `~` followed by a
 unique identifier:
 
-```
+```text
 com.example.core.services.impl.MyServiceImpl~site-a.cfg.json
 com.example.core.services.impl.MyServiceImpl~site-b.cfg.json
 ```
@@ -112,6 +112,9 @@ supported but should be avoided in new projects.
 | `42` | `Integer` / `Long` | `100` |
 | `3.14` | `Float` / `Double` | `3.14` |
 | `["a","b"]` | `String[]` | `["jpg","png","gif"]` |
+
+When the type is ambiguous, add the Sling Installer type suffix to the property name:
+`"connectionTimeoutMs:Integer": 5000` or `"allowedMimeTypes:String[]": ["image/jpeg"]`.
 
 ### Full Example
 
@@ -230,6 +233,21 @@ public class AssetSyncServiceImpl implements AssetSyncService {
 }
 ```
 
+### Annotation method name to property name mapping
+
+The generated metatype property ID is derived from the annotation method name. Use underscores when
+the property name contains characters that are not valid in Java method names:
+
+| Method name | Configuration property |
+|-------------|------------------------|
+| `scheduler_expression()` | `scheduler.expression` |
+| `service_ranking()` | `service.ranking` |
+| `my__property()` | `my_property` |
+| `my$_$property()` | `my-property` |
+| `cost$$center()` | `cost$center` |
+
+Most project-specific properties can stay camelCase (`apiBaseUrl()` -> `apiBaseUrl`).
+
 :::tip[@Modified for live updates]
 Adding `@Modified` alongside `@Activate` lets AEM push configuration changes into a running service
 **without restarting the bundle**. Always use both unless the service requires a full restart on config change.
@@ -243,12 +261,13 @@ Sensitive data such as API keys, passwords, and tokens **must never be stored in
 
 ### AEM as a Cloud Service
 
-Use **Cloud Manager environment variables** and reference them with the `$[env:...]` syntax:
+Use **Cloud Manager environment variables** for non-secret values and **secrets** for credentials.
+Reference them with `$[env:...]` or `$[secret:...]` placeholders:
 
 ```json title="com.example.core.services.impl.ApiClientImpl.cfg.json"
 {
   "apiKey": "$[env:API_KEY]",
-  "apiSecret": "$[env:API_SECRET;default=]"
+  "apiSecret": "$[secret:API_SECRET]"
 }
 ```
 

@@ -147,9 +147,12 @@ the API is ready.
 
 GraphQL endpoints are configuration-specific (not always a single `global` endpoint). A common local SDK pattern is:
 
-```
+```text
 http://localhost:4502/content/_cq_graphql/<configuration>/endpoint.json
 ```
+
+The endpoint node is stored at `/content/cq:graphql/<configuration>/endpoint`; in request URLs, use the
+`_cq_graphql` form shown above.
 
 Replace `<configuration>` with your site configuration name (for example `mysite`). Endpoint paths can differ by setup
 and AEM version, so verify in your GraphQL/endpoint UI before integrating clients.
@@ -158,9 +161,10 @@ Use GraphiQL from the AEM GraphQL tooling UI for development and schema explorat
 
 ### Field name mapping
 
-GraphQL field names are derived from the Content Fragment Model field names. AEM converts them to **camelCase** -
-for example, a model field labeled "Publish Date" becomes `publishDate` in GraphQL. Field names are **case-sensitive**
-in queries. Use the GraphiQL IDE's schema explorer to verify exact field names if queries return `null` unexpectedly.
+GraphQL field names are derived from the Content Fragment Model field **Property Name**. When you create a field from
+a label like "Publish Date", AEM typically generates the property name `publishDate`, which is then exposed in
+GraphQL. Field names are **case-sensitive** in queries. Use the GraphiQL IDE's schema explorer to verify exact field
+names if queries return `null` unexpectedly.
 
 ### Basic queries
 
@@ -235,6 +239,26 @@ in queries. Use the GraphiQL IDE's schema explorer to verify exact field names i
     items {
       title
       publishDate
+    }
+  }
+}
+```
+
+For cursor-based pagination, use the generated `<model>Paginated` query:
+
+```graphql
+{
+  articlePaginated(first: 10, after: "cursor-from-pageInfo") {
+    edges {
+      cursor
+      node {
+        title
+        publishDate
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
     }
   }
 }

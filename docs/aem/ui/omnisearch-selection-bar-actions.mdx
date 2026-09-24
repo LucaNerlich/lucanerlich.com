@@ -134,15 +134,15 @@ runtime, so you only need to add the new node - not replace the whole selection 
         type="asset"/>
     <granite:rendercondition
         jcr:primaryType="nt:unstructured"
-        sling:resourceType="granite/ui/components/foundation/renderconditions/or">
+        sling:resourceType="granite/ui/components/coral/foundation/renderconditions/or">
         <condition1
             jcr:primaryType="nt:unstructured"
             feature="com.adobe.dam.asset.dynamicmedia.feature.flag"
-            sling:resourceType="granite/ui/components/foundation/renderconditions/feature"/>
+            sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"/>
         <condition2
             jcr:primaryType="nt:unstructured"
             feature="com.adobe.dam.asset.scene7.feature.flag"
-            sling:resourceType="granite/ui/components/foundation/renderconditions/feature"/>
+            sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"/>
     </granite:rendercondition>
 </jcr:root>
 ```
@@ -157,11 +157,9 @@ The flag strings `com.adobe.dam.asset.dynamicmedia.feature.flag` (DM hybrid/on-p
 public Adobe documentation. They can be discovered by inspecting Adobe's own `/libs/dam/gui/`
 nodes in CRXDE Lite - the built-in Smart Crop action already uses these same flags.
 
-The underlying `granite/ui/components/foundation/renderconditions/feature` component is
+The underlying `granite/ui/components/coral/foundation/renderconditions/feature` component is
 documented in the Granite UI API reference:
-[AEM 6.5 Granite UI API reference](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/renderconditions/feature/index.html).
-The Coral variant lives at
-`granite/ui/components/coral/foundation/renderconditions/feature`.
+[AEM 6.5 Granite UI API reference](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/renderconditions/feature/index.html).
 :::
 
 You also need to create the intermediate path nodes. FileVault requires them:
@@ -194,7 +192,7 @@ in your package:
 Do not use a narrow filter root like `...selection/smartcrop` directly. The FileVault
 `jackrabbit-filter` validator will fail with:
 
-```
+```text
 Filter root's ancestor '.../actions/selection' is not covered
 by any of the specified dependencies nor a valid root.
 ```
@@ -286,7 +284,7 @@ public class SmartCropCheckServlet extends SlingSafeMethodsServlet {
 
     private boolean isValidAssetPath(String path) {
         return path != null
-                && path.startsWith(CONTENT_DAM_PREFIX)
+                && (path.equals(CONTENT_DAM_PREFIX) || path.startsWith(CONTENT_DAM_PREFIX + "/"))
                 && !path.contains("..");
     }
 }
@@ -440,7 +438,7 @@ A few notes on the selectors:
 
 ## How the Two Layers Interact
 
-```
+```text
 Page load
   └─ DM feature flag render condition evaluates
        DM licensed?  YES → button rendered in DOM (hidden by default)

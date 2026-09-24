@@ -55,7 +55,7 @@ Always verify the current release at the [Core Components GitHub Releases](https
 ##### Root POM
 
 ```xml title="/pom.xml"
-<core.wcm.components.version>2.27.0</core.wcm.components.version>
+<core.wcm.components.version>2.32.8</core.wcm.components.version>
 
 <!-- [...] -->
 
@@ -105,8 +105,8 @@ Always verify the current release at the [Core Components GitHub Releases](https
 
 ##### All POM
 
-```xml title="/all/pom.xml"
-<root-element>
+```xml title="/all/pom.xml - filevault-package-maven-plugin <embeddeds>"
+<embeddeds>
     <embedded>
         <groupId>com.adobe.cq</groupId>
         <artifactId>core.wcm.components.content</artifactId>
@@ -147,7 +147,7 @@ Always verify the current release at the [Core Components GitHub Releases](https
         <type>zip</type>
         <target>/apps/mysite-vendor-packages/content/install</target>
     </embedded>
-</root-element>
+</embeddeds>
 ```
 
 ##### core POM
@@ -164,8 +164,9 @@ Always verify the current release at the [Core Components GitHub Releases](https
 ##### ui.apps POM
 
 ```xml title="/ui.apps/pom.xml"
-<dependencies>
-    <!-- [...] -->
+<build>
+    <plugins>
+        <!-- [...] -->
     <plugin>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>filevault-package-maven-plugin</artifactId>
@@ -192,9 +193,11 @@ Always verify the current release at the [Core Components GitHub Releases](https
             </dependencies>
         </configuration>
     </plugin>
+    </plugins>
+</build>
 
+<dependencies>
     <!-- [...] -->
-
     <dependency>
         <groupId>com.adobe.cq</groupId>
         <artifactId>core.wcm.components.core</artifactId>
@@ -215,7 +218,7 @@ Always verify the current release at the [Core Components GitHub Releases](https
 
 ### Extending Image Core Component
 
-> Based on v2.15.2
+> Based on current Core Components releases where the Image component resource type is `image/v3/image`.
 
 Extending an AEM Dialog is (currently) possible using one of two methods. The first option extends the desired dialog /
 component directly, whereas the ACS-Commons variant "pulls" the properties into a configurable namespace, which allows
@@ -234,12 +237,12 @@ Extending via `sling:resourceSuperType` is as simple as referencing the parent i
 
           jcr:primaryType="cq:Component"
           jcr:title="Extended Image Component"
-          sling:resourceSuperType="core/wcm/components/image/v2/image"
+          sling:resourceSuperType="core/wcm/components/image/v3/image"
           componentGroup="MySite - Content"/>
 ```
 
 You then need to look at the original dialog structure, which can be found
-at `/libs/core/wcm/components/image/v2/image/cq:dialog`. Copy/paste this and remove the 'asset' and 'metadata' tabs, since
+at `/libs/core/wcm/components/image/v3/image/cq:dialog`. Copy/paste this and remove the 'asset' and 'metadata' tabs, since
 these will be served from the inherited parent. You can now add your own dialog tab instead. The resulting dialog will
 merge all tabs together. Individual tabs can be hidden via `sling:hideChildren` on the tabs 'items' node.
 
@@ -255,8 +258,10 @@ merge all tabs together. Individual tabs can be hidden via `sling:hideChildren` 
 </tabs>
 ```
 
-Using this method, all properties will be written directly to the component's `jcr:content` node and need to be handled
-manually in your Sling Model. As of now, no reusable OSGi service exists to delegate the logic to.
+Using this method, all properties will be written directly to the component's `jcr:content` node. For a simple proxy
+or extension of a Core Component, prefer the standard Sling Model delegation pattern with
+`@Self @Via(type = ResourceSuperType.class)` so the Core Component model keeps handling its own logic
+(see [Extending Core Components with Delegation](./core-components-delegation.mdx)).
 
 #### Option 2 - Parameterized Namespace Granite Include
 
@@ -299,14 +304,14 @@ with optional `hide` and typed casting on top.
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Asset"
                         sling:resourceType="acs-commons/granite/ui/components/include"
-                        path="/libs/core/wcm/components/image/v2/image/cq:dialog/content/items/tabs/items/asset"
+                        path="/libs/core/wcm/components/image/v3/image/cq:dialog/content/items/tabs/items/asset"
                         namespace="image"
                         margin="{Boolean}true"/>
                     <imageMetaData
                         jcr:primaryType="nt:unstructured"
                         jcr:title="MetaData"
                         sling:resourceType="acs-commons/granite/ui/components/include"
-                        path="/libs/core/wcm/components/image/v2/image/cq:dialog/content/items/tabs/items/metadata"
+                        path="/libs/core/wcm/components/image/v3/image/cq:dialog/content/items/tabs/items/metadata"
                         namespace="image"
                         margin="{Boolean}true"/>
                     <ctaLinksContainer
@@ -444,8 +449,6 @@ import org.apache.sling.models.annotations.Exporter;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ChildResource;
 
-import javax.annotation.PostConstruct;
-
 @Model(
         adaptables = SlingHttpServletRequest.class,
         adapters = {ExtendedImage.class, ComponentExporter.class},
@@ -540,6 +543,7 @@ Thanks to [Niek Raaijmakers](https://github.com/niekraaijmakers) for figuring so
 - [Architecture](../architecture.mdx)
 - [Custom Component Guide](../custom-component.mdx)
 - [Components](./overview.mdx)
+- [Extending Core Components with Delegation](./core-components-delegation.mdx)
 - [Component dialogs](../component-dialogs.mdx)
 - [Dialog validation](./dialog-validation.mdx)
 - [Sling models](../backend/sling-models.mdx)

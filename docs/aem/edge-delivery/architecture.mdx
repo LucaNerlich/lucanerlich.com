@@ -61,16 +61,18 @@ representation and stored in the Content Bus. Two important properties:
 
 ## Delivery Pipeline
 
-The pipeline combines content from the Content Bus with frontend code from GitHub:
+The pipeline combines content from the Content Bus with frontend code from GitHub and
+serves the HTML, scripts, styles, and media through the Edge Delivery origins:
 
 1. **Content fetch** - HTML fragments from the Content Bus
-2. **Block decoration** - each block's JavaScript / CSS is loaded on demand
+2. **Code lookup** - scripts, styles, and block assets are resolved from the GitHub ref
 3. **Optimisation** - HTML minified, images lazy-loaded, CSS / JS inlined where useful
 4. **Caching** - aggressive CDN caching with instant purge on publish
 
-The pipeline is stateless. There is no server state per visitor; personalisation happens
-either at the edge ([experimentation](./experimentation.mdx) audiences) or in the
-client.
+Block decoration itself runs in the browser via `scripts/aem.js` and each block's
+`decorate(block)` function. The pipeline is stateless. There is no server state per
+visitor; personalisation happens through the configured experimentation/decisioning
+plugin or in the client.
 
 ## CDN layer
 
@@ -81,7 +83,7 @@ Key behaviours:
 
 - **Stale-while-revalidate** for near-zero latency on cache misses
 - **Instant purge** when content or code changes (push-invalidation)
-- **Edge-side personalisation** via the experimentation framework
+- **Traffic management** via the Adobe-managed CDN configuration
 - **Bot detection** and traffic management
 
 ## URL tiers
@@ -100,10 +102,10 @@ you `https://feature--{repo}--{org}.aem.page/`, which is invaluable for review.
 
 ## push-invalidation
 
-When content or code changes, EDS sends a purge request to the CDN. With the
-Adobe-managed CDN this is automatic; with a BYO CDN you configure a webhook endpoint
-that accepts EDS purge calls so pages update within seconds rather than waiting for TTL
-expiry. See [Customizing](./customizing.mdx#bring-your-own-cdn) for the configuration.
+When content or code changes, EDS invalidates the Adobe-managed CDN so the next request
+can pick up the new version. With a BYO CDN, configure that CDN's cache keys, TTLs, and
+purge automation explicitly; otherwise it may continue serving stale `*.aem.live`
+responses until its own TTL expires.
 
 ## Where state lives
 
@@ -114,7 +116,7 @@ expiry. See [Customizing](./customizing.mdx#bring-your-own-cdn) for the configur
 | **Frontend code** | GitHub repository |
 | **Cached HTML** | CDN edge |
 | **Visitor session** | Browser only (no per-visitor server state) |
-| **Experimentation assignment** | Cookie + edge-resolved audience |
+| **Experimentation assignment** | Experimentation/decisioning plugin state and RUM data |
 
 ## See also
 

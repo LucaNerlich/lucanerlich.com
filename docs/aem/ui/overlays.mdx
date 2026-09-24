@@ -30,8 +30,10 @@ graph LR
 
 ## How the Sling Resource Merger Works
 
-The Sling Resource Merger is active by default in AEM. When a resource is requested, Sling checks
-both `/apps` and `/libs` (in that order) and **merges** them:
+The Sling Resource Merger is active by default in AEM for merged virtual paths such as
+`/mnt/overlay` and `/mnt/override`. Normal Sling resource resolution still uses the search path
+(`/apps` before `/libs`); Granite UI consoles request their definitions through the merger so
+matching `/apps` nodes can merge with product nodes under `/libs`:
 
 | Scenario | Behaviour |
 |----------|----------|
@@ -86,6 +88,13 @@ Add the path to your `filter.xml`:
 :::warning
 Always use `mode="merge"` in your filter for overlays. Using the default `mode="replace"` would
 delete all product nodes not present in your overlay, potentially breaking the UI.
+:::
+
+:::warning[AEM as a Cloud Service]
+`/libs` is immutable on AEM as a Cloud Service. Keep overlays in `/apps`, keep them minimal, and
+only overlay supported public or abstract product areas. Nodes marked with mixins such as
+`granite:InternalArea` or `granite:FinalArea` are implementation details and can change without
+compatibility guarantees.
 :::
 
 ---
@@ -315,7 +324,8 @@ Hide the "Configure" (wrench) button for a specific component type:
                 text: 'View Analytics',
                 handler: function(editable) {
                     var path = editable.path;
-                    window.open('/mnt/overlay/dam/gui/content/assets/analysisreport.html?path=' + path, '_blank');
+                    window.open('/mnt/overlay/dam/gui/content/assets/analysisreport.html?path='
+                        + encodeURIComponent(path), '_blank');
                 },
                 condition: function(editable) {
                     // Only show for page components
@@ -330,7 +340,7 @@ Hide the "Configure" (wrench) button for a specific component type:
 
 ### Clientlib for toolbar customisations
 
-All toolbar JavaScript should be loaded via a clientlib with category `cq.authoring.dialog.all` or
+Toolbar JavaScript should be loaded via a page-editor clientlib category such as
 `cq.authoring.editor`:
 
 ```xml title="ui.apps/.../clientlibs/clientlib-authoring/.content.xml"
@@ -338,7 +348,7 @@ All toolbar JavaScript should be loaded via a clientlib with category `cq.author
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
     jcr:primaryType="cq:ClientLibraryFolder"
-    categories="[cq.authoring.dialog.all]"
+    categories="[cq.authoring.editor]"
     allowProxy="{Boolean}true"/>
 ```
 
@@ -417,7 +427,7 @@ Copy the pattern from `videoController.js` and change the `name` and `mimeType`:
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
     jcr:primaryType="cq:ClientLibraryFolder"
-    categories="[cq.authoring.dialog.all]"
+    categories="[cq.authoring.editor]"
     allowProxy="{Boolean}true"/>
 ```
 
@@ -571,7 +581,7 @@ placement rather than relying on JCR node ordering:
 | `filter.xml` with `mode="replace"` deletes product content | Always use `mode="merge"` for overlay paths |
 | Dialog overlay doesn't merge correctly | Ensure you replicate the full **node path** from root to the target field (every parent node must exist) |
 | Custom navigation button doesn't appear | Check the `order` value; set it between existing items' order values |
-| Toolbar action JS doesn't load | Verify clientlib category is `cq.authoring.dialog.all` or `cq.authoring.editor` |
+| Toolbar action JS doesn't load | Verify the clientlib category is `cq.authoring.editor` |
 | Overlay only works in CRXDE, not after deploy | Add the overlay path to `filter.xml` and ensure it's included in the content package |
 
 ## External Resources

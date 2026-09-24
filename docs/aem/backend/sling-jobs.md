@@ -90,12 +90,16 @@ import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Component(service = AssetImportService.class)
 public class AssetImportService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AssetImportService.class);
 
     // Job topics follow a reverse-domain naming convention
     public static final String JOB_TOPIC = "com/myproject/jobs/asset-import";
@@ -114,7 +118,7 @@ public class AssetImportService {
 
         if (job != null) {
             // Job was accepted and queued
-            log.info("Import job created: {}", job.getId());
+            LOG.info("Import job created: {}", job.getId());
         }
     }
 }
@@ -137,10 +141,13 @@ Implement `JobConsumer` and register it for a topic:
 ```java
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.consumer.JobConsumer;
+import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 @Component(
     service = JobConsumer.class,
@@ -169,7 +176,7 @@ public class AssetImportJobConsumer implements JobConsumer {
             LOG.info("Import completed successfully");
             return JobResult.OK;
 
-        } catch (TransientException e) {
+        } catch (IOException e) {
             // Temporary failure (network issue, timeout) - retry
             LOG.warn("Transient failure, will retry: {}", e.getMessage());
             return JobResult.FAILED;
@@ -181,7 +188,7 @@ public class AssetImportJobConsumer implements JobConsumer {
         }
     }
 
-    private void importAsset(String sourceUrl, String targetPath) throws Exception {
+    private void importAsset(String sourceUrl, String targetPath) throws IOException {
         // Implementation here
     }
 }
@@ -194,7 +201,7 @@ public class AssetImportJobConsumer implements JobConsumer {
 | `JobResult.OK`     | Job completed successfully; removed from queue                   |
 | `JobResult.FAILED` | Job failed; will be retried if retries remain                    |
 | `JobResult.CANCEL` | Job failed permanently; removed from queue, no retry             |
-| `JobResult.ASYNC`  | Job is processing asynchronously; call `job.acknowledge()` later |
+| `JobResult.ASYNC`  | Job is processing asynchronously; finish through `JobConsumer.AsyncHandler` |
 
 ---
 
@@ -283,6 +290,12 @@ OSGi:
 ## Schedulers
 
 Schedulers execute code at specific times or intervals. AEM supports two patterns.
+
+:::warning[AEMaaCS cluster behaviour]
+Schedulers are local triggers and can fire on more than one instance. For cluster-safe work, keep the
+scheduled `Runnable` small and have it enqueue a Sling Job; let the job consumer do the durable work.
+Avoid `scheduler.runOn`/leader-only assumptions on AEMaaCS.
+:::
 
 ### Pattern 1: OSGi Scheduler service (recommended)
 
@@ -375,6 +388,9 @@ OSGi config to deploy:
 | `0 0 0 1 * ?`       | First day of each month at midnight          |
 | `0 0/5 8-17 * * ?`  | Every 5 minutes during business hours (8-17) |
 
+Sling Scheduler uses Quartz-style cron expressions with seconds as the first field
+(six required fields, with an optional seventh year field).
+
 ### Pattern 2: Sling Scheduler API (programmatic)
 
 For dynamic scheduling (e.g., scheduling a task from a servlet or workflow):
@@ -397,7 +413,7 @@ public void scheduleOneTimeTask(String taskId, long delayMs) {
 }
 
 public void schedulePeriodic(String taskId, int intervalSeconds) {
-    ScheduleOptions options = scheduler.EXPR("0 0/" + (intervalSeconds / 60) + " * * * ?");
+    ScheduleOptions options = scheduler.NOW(-1, intervalSeconds);
     options.name(taskId);
     options.canRunConcurrently(false);
 
@@ -477,6 +493,8 @@ Remove temporary content older than 30 days:
 )
 public class ContentCleanupJobConsumer implements JobConsumer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ContentCleanupJobConsumer.class);
+
     @Reference
     private ResourceResolverFactory resolverFactory;
 
@@ -514,11 +532,11 @@ public class ContentCleanupJobConsumer implements JobConsumer {
             }
 
             resolver.commit();
-            log.info("Cleanup complete: deleted {} resources", deleted);
+            LOG.info("Cleanup complete: deleted {} resources", deleted);
             return JobResult.OK;
 
         } catch (Exception e) {
-            log.error("Cleanup failed", e);
+            LOG.error("Cleanup failed", e);
             return JobResult.FAILED;
         }
     }

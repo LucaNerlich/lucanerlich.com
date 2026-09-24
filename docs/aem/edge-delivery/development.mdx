@@ -1,6 +1,6 @@
 ---
 title: Development workflow
-description: Project bootstrap, project structure, aem-cli, fstab.yaml, paths.yaml, and the GitHub-first deployment flow.
+description: Project bootstrap, project structure, aem-cli, fstab.yaml, paths.json, and the GitHub-first deployment flow.
 tags: [aem, edge-delivery, development, aem-cli, github]
 ---
 
@@ -14,7 +14,7 @@ seconds.
 
 Most projects follow this layout (matches the [aem-boilerplate](https://github.com/adobe/aem-boilerplate)):
 
-```
+```text
 my-eds-project/
 ├── blocks/              # Block JS and CSS (one folder per block)
 │   ├── hero/
@@ -34,25 +34,29 @@ my-eds-project/
 ├── head.html            # Custom <head> content
 ├── 404.html             # Custom 404 page
 ├── fstab.yaml           # Content source configuration
-├── paths.yaml           # URL mapping / redirects
-└── helix-query.yaml     # Indexer config (sitemap, search)
+├── paths.json           # AEM path mappings (Universal Editor / AEM-authored sites)
+├── helix-query.yaml     # Query index definitions
+└── helix-sitemap.yaml   # Sitemap definitions (optional)
 ```
 
 ## Key files
 
 | File | Purpose |
 |------|---------|
-| `fstab.yaml` | Maps content sources (SharePoint URL, Google Drive ID, or AEM instance) to the project |
-| `paths.yaml` | URL rewriting and redirect rules |
-| `helix-query.yaml` | Defines indexes that feed sitemaps, search, and dynamic pages |
-| `helix-config.yaml` | helix5 site config - response headers, redirects, CDN options |
+| `fstab.yaml` | Maps the content source (SharePoint folder, Google Drive folder, or AEM author) to the project |
+| `paths.json` | Maps AEM repository paths to public URLs and lists which AEM paths may be published (AEM-authored sites) |
+| `helix-query.yaml` | Defines query indexes that feed search, lists, and dynamic pages |
+| `helix-sitemap.yaml` | Defines generated sitemaps (optional; a default sitemap is derived from the index) |
 | `head.html` | Additional `<head>` tags (meta, preload, third-party scripts) |
-| `scripts/aem.js` | EDS runtime: block loading, lazy loading, LCP optimisation |
+| `scripts/aem.js` | EDS runtime: block loading, section loading, LCP optimisation |
 | `scripts/scripts.js` | Your global initialisation code |
-| `scripts/delayed.js` | Scripts loaded after page interaction (analytics, chat widgets) |
+| `scripts/delayed.js` | Scripts loaded about three seconds after page load (analytics, chat widgets) |
 
-See [Customizing](./customizing.mdx) for `head.html`, `scripts.js`, `aem.js` overrides,
-and the `helix-config.yaml` response-header config.
+Site-level settings such as custom response headers, CDN configuration, access control, and
+Sidekick configuration are **not** repository files. They live in the site configuration, managed
+through the [Configuration Service](./admin-api.mdx#config---configuration-service) (or, in older
+document-based projects, in `.helix/config` and `.helix/headers` spreadsheets). See
+[Customizing](./customizing.mdx) for `head.html`, `scripts.js`, `aem.js` overrides, and response headers.
 
 ## fstab.yaml
 
@@ -61,38 +65,43 @@ mountpoints:
   /: https://adobe-my.sharepoint.com/:f:/g/personal/user/EaBC123...
 ```
 
-For Universal Editor:
+For Universal Editor (AEM-authored) projects, the mountpoint points at the EDS delivery servlet on
+AEM author, as in the [aem-boilerplate-xwalk](https://github.com/adobe-rnd/aem-boilerplate-xwalk)
+template:
 
 ```yaml title="fstab.yaml"
 mountpoints:
-  /: https://author-p12345-e67890.adobeaemcloud.com/
+  /:
+    url: "https://author-p12345-e67890.adobeaemcloud.com/bin/franklin.delivery/{org}/{repo}/main"
+    type: "markup"
+    suffix: ".html"
 ```
 
-You can mount different sources at different paths:
+Current (helix5 / aem.live) sites use a **single** `/` mountpoint - one content source per site.
+If different parts of a website are authored in different sources, set them up as separate
+sites (for example with the repoless setup that shares one code repository across sites) and
+route between them at the CDN.
 
-```yaml title="fstab.yaml"
-mountpoints:
-  /: https://adobe-my.sharepoint.com/...                  # marketing pages
-  /products/: https://author-p12345-e67890.adobeaemcloud.com/  # UE-authored
-  /blog/: https://drive.google.com/drive/folders/...      # blog
+## paths.json
+
+AEM-authored (Universal Editor) projects use `paths.json` to map AEM repository paths to public
+URLs and to declare which AEM paths may be published to Edge Delivery:
+
+```json title="paths.json"
+{
+    "mappings": [
+        "/content/mysite/:/",
+        "/content/mysite/configuration:/.helix/config.json",
+        "/content/mysite/metadata:/metadata.json"
+    ],
+    "includes": [
+        "/content/mysite/"
+    ]
+}
 ```
 
-## paths.yaml
-
-Rewrites and redirects evaluated at the edge:
-
-```yaml title="paths.yaml"
-mappings:
-  - /about-us:/company/about
-  - /docs/v1/(.*):/docs/legacy/$1
-
-includes:
-  - /sitemap.xml
-```
-
-`mappings` rewrites the path on the way through the pipeline; the URL in the browser
-stays the same. Use `redirects.json` (an authored spreadsheet) for actual HTTP
-redirects.
+Each mapping is `<AEM path>:<public path>`. `paths.json` is not a runtime rewrite engine for
+document-based sites - use `redirects.json` (an authored spreadsheet) for HTTP redirects.
 
 ## Local development
 

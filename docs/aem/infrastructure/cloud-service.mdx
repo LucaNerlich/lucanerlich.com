@@ -137,10 +137,9 @@ Initialisation (repoinit)** scripts to bootstrap required structures:
 ```json title="ui.config/.../org.apache.sling.jcr.repoinit.RepositoryInitializer~myproject.cfg.json"
 {
     "scripts": [
-        "create path /content/mysite(sling:OrderedFolder)",
-        "create path /content/dam/mysite(sling:OrderedFolder)",
+        "ensure nodes (sling:OrderedFolder) /content/mysite,/content/dam/mysite",
         "",
-        "create service user myproject-service with path system/myproject",
+        "create service user myproject-service with path system/cq:services/myproject",
         "set ACL for myproject-service",
         "    allow jcr:read on /content/mysite",
         "    allow rep:write on /content/mysite",
@@ -290,10 +289,10 @@ cloud runtime. Always develop against the SDK to catch compatibility issues earl
 
 ```bash
 # Start the author instance
-java -jar aem-sdk-quickstart-*.jar -p 4502
+java -jar aem-sdk-quickstart-*.jar -r author -p 4502 -nointeractive
 
 # Start a publish instance
-java -jar aem-sdk-quickstart-*.jar -p 4503 -r publish
+java -jar aem-sdk-quickstart-*.jar -r publish -p 4503 -nointeractive
 
 # Run the Dispatcher SDK
 cd dispatcher-tools
@@ -389,7 +388,7 @@ These features available on AEM 6.5 are **not available** or **deprecated** on A
 
 OSGi configurations on AEMaaCS follow a strict folder-based run mode structure:
 
-```
+```text
 ui.config/src/main/content/jcr_root/apps/myproject/osgiconfig/
 ├── config/                    ← All environments, all tiers
 │   └── com.myproject.MyService.cfg.json

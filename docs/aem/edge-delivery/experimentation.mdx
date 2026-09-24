@@ -1,98 +1,84 @@
 ---
 title: Experimentation
-description: Built-in A/B and multivariate testing, audiences, and edge-side resolution - no third-party tool required.
+description: Experiment variants with the AEM experimentation plugin, page metadata, and RUM measurement.
 tags: [aem, edge-delivery, experimentation, ab-testing, personalisation]
 ---
 
 # Experimentation
 
-EDS has **built-in experimentation** - A/B and multivariate testing, plus audience
-targeting - without any third-party tool. Variants are resolved at the **CDN edge**, so
-visitors never see a flicker of the control before the variant takes over.
+EDS sites can add **experiment variants** with the AEM experimentation plugin. Authors
+create challenger pages in the same authoring flow, then enable the experiment with
+metadata on the control page. Measurement uses Real User Monitoring (RUM).
 
 ## How a test is set up
 
-Define experiments in a spreadsheet (the "experiments" sheet in your content source):
+Create challenger pages under an `/experiments/<experiment-id>/` folder, publish the
+challengers, then add metadata to the control page:
 
-| Experiment | Page | Variant | Split |
-|------------|------|---------|-------|
-| hero-test | /home | /experiments/hero-v2 | 50 |
-| pricing-cta | /pricing | /experiments/pricing-cta-b | 50 |
+| Metadata row | Value |
+|--------------|-------|
+| Experiment | `hero-test` |
+| Experiment Variants | `https://main--site--owner.aem.live/experiments/hero-test/home` |
 
-- **Page** - the URL being tested
-- **Variant** - an alternative page that replaces the original for the test group
-- **Split** - percentage of traffic that sees the variant
+- **Experiment** - a unique experiment ID used for tracking and reporting.
+- **Experiment Variants** - one or more published challenger URLs, separated by line
+  breaks when there is more than one challenger.
 
 Variant pages are authored exactly like the original page - same blocks, same authoring
 flow - just with different content.
 
 ## Audiences
 
-Target content to specific audiences using the "audiences" sheet:
-
-| Audience | Condition |
-|----------|-----------|
-| mobile | device = mobile |
-| returning | returning-visitor = true |
-| germany | geo.country = DE |
-
-Combined with experiments:
-
-| Experiment | Page | Variant | Split | Audience |
-|------------|------|---------|-------|----------|
-| hero-test-de | /home | /experiments/hero-de | 100 | germany |
-
-Audiences resolve **at the edge**, so geographic and device targeting happens before
-the HTML is even sent to the browser. No client-side JavaScript is required to swap
-content.
+Audience and targeting features depend on the experimentation/decisioning plugin and
+the project's implementation. Do not model targeting as an `audiences` spreadsheet
+unless the site has explicitly implemented that contract.
 
 ## Multivariate
 
-Add multiple variant rows for the same experiment and EDS will distribute traffic
-across them according to the splits:
-
-| Experiment | Page | Variant | Split |
-|------------|------|---------|-------|
-| hero-mvt | /home | /experiments/hero-a | 33 |
-| hero-mvt | /home | /experiments/hero-b | 33 |
-| hero-mvt | /home | /experiments/hero-c | 34 |
+Add multiple challenger URLs to the `Experiment Variants` metadata row. By default,
+traffic is distributed evenly across the control and all challengers. For example, two
+challengers produce a three-way split: control, challenger A, and challenger B. The
+plugin supports metadata-based split overrides; keep those overrides close to the
+control page so authors can review them with the experiment.
 
 ## Tracking results
 
-EDS does not write results back into the spreadsheet. You wire your analytics tool of
-choice (Adobe Analytics, GA4, Plausible) and read the experiment / variant assignment
-from a meta tag or a `data-experiment` attribute that the EDS runtime adds to the
-`<body>`.
+EDS does not write results back into a spreadsheet. The experimentation plugin reports
+variant exposure through RUM, and you can also wire your analytics tool of choice
+(Adobe Analytics, GA4, Plausible) from the site's implementation.
 
-A typical setup in `delayed.js`:
+Keep custom analytics bridges implementation-specific. Read the selected experiment and
+variant from the experimentation plugin or data layer used by the site; do not assume a
+global `data-experiment` attribute exists unless your project adds one. For example:
 
 ```javascript title="scripts/delayed.js"
-const exp = document.body.dataset.experiment;
-const variant = document.body.dataset.experimentVariant;
-if (exp && window.analytics) {
-    window.analytics.track('experiment-exposure', { exp, variant });
+const assignment = window.acmeExperimentAssignment;
+if (assignment && window.analytics) {
+    window.analytics.track('experiment-exposure', assignment);
 }
 ```
 
 ## Stickiness
 
-EDS sets a cookie when a visitor is assigned to a variant, so they see the same variant
-on subsequent visits until the experiment ends or the cookie is cleared.
+The experimentation plugin keeps variant assignment stable for the visitor while the
+experiment is active. Review the plugin configuration before relying on a specific
+cookie name or lifetime.
 
 ## Concluding an experiment
 
 Two options:
 
 1. **Bake the winner in** - replace the original page's content with the winning
-   variant, then remove the experiment row.
+   variant, then remove the experiment metadata.
 2. **Promote the variant** - delete the original page, redirect to the variant URL.
 
 Option 1 keeps URLs stable and is the default.
 
 ## Limitations
 
-- Variant pages must live in the Content Bus - you can't run an experiment against an
-  external URL.
+- Variant pages should be published EDS pages, commonly under `/experiments/<id>/`.
+- Exclude challenger pages from the sitemap and add `robots: noindex,nofollow` to avoid
+  duplicate-content indexing.
 - Splits are per-experiment, not stacked. If you run two experiments on the same page,
   visitors are assigned independently to each.
 - Server-side personalisation tied to authenticated identity is out of scope - use

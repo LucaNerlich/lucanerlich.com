@@ -60,7 +60,7 @@ clientlib-site/
 | `dependencies` | String[] | Categories that must load **before** this one |
 | `embed` | String[] | Categories whose content is **inlined** into this one |
 | `channels` | String[] | Device channels: `[desktop]`, `[mobile]`, or both (rarely used) |
-| `cssProcessor` | String[] | CSS processing pipeline (e.g. `["default:none", "min:gcc"]`) |
+| `cssProcessor` | String[] | CSS processing pipeline (e.g. `["default:none", "min:yui"]`) |
 | `jsProcessor` | String[] | JS processing pipeline (e.g. `["min:gcc"]`) |
 
 ### The manifest files (js.txt / css.txt)
@@ -338,6 +338,11 @@ AEM's **HTML Library Manager** handles minification and aggregation at runtime.
 | `htmllibmanager.timing` | Log timing information for clientlib processing | `false` |
 | `htmllibmanager.maxage` | Cache-Control max-age in seconds (604800 = 7 days) | `604800` |
 
+:::warning[AEM as a Cloud Service]
+Do not rely on the HTML Library Manager OSGi configuration to set system-wide minifiers in an AEMaaCS full-stack
+pipeline. Define `cssProcessor` and `jsProcessor` on each `cq:ClientLibraryFolder` instead.
+:::
+
 ### Aggregation behaviour
 
 When minification is enabled, AEM concatenates all files in a category into a single output:
@@ -370,7 +375,7 @@ Setting processors to `none` disables AEM's minification for this clientlib - us
 
 ## Versioning and Cache Busting
 
-AEM generates versioned URLs with a content hash so browsers can cache aggressively:
+AEM as a Cloud Service generates long-cache-key clientlib URLs with a content hash so browsers can cache aggressively:
 
 ```text
 /etc.clientlibs/myproject/clientlibs/clientlib-site.lc-abc123def456-lc.min.css
@@ -381,8 +386,8 @@ AEM generates versioned URLs with a content hash so browsers can cache aggressiv
 When the clientlib content changes, the hash changes, and browsers fetch the new version. Combined with
 a long `max-age` header, this gives you instant cache invalidation without stale content.
 
-On the Dispatcher side, ensure your cache rules allow `/etc.clientlibs/` paths and that flush agents
-invalidate clientlib URLs when code deployments occur.
+On the Dispatcher side, ensure your cache rules allow `/etc.clientlibs/` paths. On AEM 6.5/AMS, enable equivalent
+versioned-clientlib handling (for example, a long-cache-key transformer) before using long browser TTLs.
 
 :::tip
 On AEM as a Cloud Service, clientlib versioning and Dispatcher invalidation are handled automatically
@@ -452,7 +457,7 @@ AEM includes a LESS compiler that processes `.less` files at runtime. Configure 
           jcr:primaryType="cq:ClientLibraryFolder"
           allowProxy="{Boolean}true"
           categories="[myproject.site]"
-          cssProcessor="[default:less, min:gcc;compilationLevel=simple]"/>
+          cssProcessor="[default:less, min:yui]"/>
 ```
 
 Then reference `.less` files in `css.txt`:

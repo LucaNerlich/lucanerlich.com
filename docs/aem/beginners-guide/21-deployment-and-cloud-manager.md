@@ -88,7 +88,7 @@ flowchart TD
 
 Cloud Manager provides a managed Git repository. Your project structure maps to it:
 
-```
+```text
 repository-root/
 ├── pom.xml
 ├── core/
@@ -154,19 +154,21 @@ Besides the full-stack pipeline, Cloud Manager supports specialized pipelines:
 
 | Pipeline type      | Deploys                                        | Use when                                      |
 |--------------------|------------------------------------------------|-----------------------------------------------|
-| **Full-stack**     | All modules (`core`, `ui.apps`, `ui.config`, `dispatcher`, etc.) | Java, component, config, or Dispatcher changes |
-| **Frontend-only**  | Only `ui.frontend` (compiled CSS/JS)           | CSS/JS-only changes - much faster (~10 min)  |
-| **Config-only**    | OSGi configs and Dispatcher config             | Configuration changes without a full build    |
+| **Full-stack**     | Back-end code, content packages, clientlibs, OSGi configs, and (unless split out) Dispatcher config | Java, component, config, or combined changes |
+| **Front-end**      | Front-end code builds such as site themes / CSS / JS | UI-only changes - much faster than full-stack |
+| **Web tier config** | HTTPD/Dispatcher configuration only           | Dispatcher and Apache config changes          |
+| **Config**         | CDN, traffic filter/WAF, log forwarding, purge, redirects, and related YAML configs | Edge/CDN operational config changes           |
 
-Frontend-only pipelines skip the Java build entirely, which dramatically shortens the deploy cycle for UI work.
-Config-only pipelines are useful for toggling feature flags or updating Dispatcher rules without redeploying code.
+Front-end pipelines skip the Java build entirely, which dramatically shortens the deploy cycle for UI work. Web tier
+config pipelines decouple Dispatcher changes from full-stack deployments, while config pipelines are for Cloud Manager
+YAML-based operational configuration such as CDN and traffic-filter rules.
 
 ### Creating a pipeline
 
 1. In Cloud Manager, go to **Pipelines**
 2. Click **Add Pipeline**
 3. Choose **Production** or **Non-Production**
-4. Select the pipeline type (Full-stack, Frontend, or Config)
+4. Select the pipeline type (Full-stack, Front-end, Web tier config, or Config)
 5. Configure the trigger:
     - **On Git Changes** - auto-trigger on push
     - **Manual** - trigger manually
@@ -227,8 +229,8 @@ aio aem:rde:install core/target/mysite.core-1.0-SNAPSHOT.jar
 # Deploy a content package
 aio aem:rde:install ui.apps/target/mysite.ui.apps-1.0-SNAPSHOT.zip
 
-# Deploy Dispatcher config
-aio aem:rde:install dispatcher/src --type dispatcher
+# Deploy Dispatcher config (after building the dispatcher module)
+aio aem:rde:install dispatcher/target/mysite.dispatcher.cloud-1.0-SNAPSHOT.zip
 ```
 
 ### RDE workflow
@@ -261,7 +263,7 @@ The cycle time is dramatically shorter than a full pipeline. Use RDEs for:
 
 OSGi configurations vary by environment using run mode folders (chapter 3):
 
-```
+```text
 ui.config/src/main/content/jcr_root/apps/mysite/osgiconfig/
 ├── config/                    # All environments
 ├── config.author/             # Author instances
@@ -287,8 +289,7 @@ AEMaaCS supports environment-specific variables in Cloud Manager:
 
 Access in OSGi configs (must be `.cfg.json` format - `.properties` files do not support these placeholders):
 
-```json
-// com.mysite.core.services.impl.AnalyticsServiceImpl.cfg.json
+```json title="com.mysite.core.services.impl.AnalyticsServiceImpl.cfg.json"
 {
     "api.key": "$[secret:API_KEY]",
     "analytics.id": "$[env:ANALYTICS_ID]"
