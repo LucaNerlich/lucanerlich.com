@@ -85,16 +85,18 @@ and maintaining the optimal set of tokens across *many turns* of inference, not 
 
 **[Context rot](./glossary.md#context-rot)** is the empirical phenomenon that as the number of tokens grows,
 the model's ability to accurately recall information from the context *decreases* - "needle-in-a-haystack
-degradation". Two causes stack:
+degradation". Two contributors often stack:
 
-1. **O(n^2) attention.** Every token attends to every other token, so the attention budget gets stretched
-   thin as context grows.
+1. **O(n^2) attention.** In standard transformer attention, each token compares with every allowed token, so
+   compute and interference grow quickly with sequence length.
 2. **Training-data distribution.** Short sequences dominate training data, so models have less experience
    with context-wide dependencies.
 
-The consequence: bigger context windows are not a solution. Context is a finite resource with diminishing
-returns, and performance is a gradient, not a cliff. A practitioner framing calls the productive range the
-"Smart Zone" (first ~100k tokens) and the degraded range the "Dumb Zone".
+The consequence: bigger context windows are not a complete solution. Context is a finite resource with
+diminishing returns, and performance is a gradient, not a cliff. A practitioner framing calls the most
+reliable part of a coding-agent session the "Smart Zone" - often described as roughly the first 100k
+high-signal tokens. Treat that as a heuristic, not a model limit: it varies by model, task, prompt quality,
+and how much irrelevant tool output has accumulated.
 
 ## Long-horizon techniques
 

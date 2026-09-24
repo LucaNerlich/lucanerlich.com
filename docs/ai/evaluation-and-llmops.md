@@ -27,7 +27,8 @@ the output good enough by these criteria, often enough?"
 An eval is built from three parts:
 
 1. **A dataset** - representative inputs, optionally paired with reference answers. Curate it from real or
-   realistic cases, including edge cases and known failures.
+   realistic cases, including edge cases and known failures; see
+   [Eval Datasets & Synthetic Data](./eval-datasets-and-synthetic-data.md).
 2. **A predict function** - the thing under test: your prompt, chain, or [agent](./agents.md).
 3. **Scorers** - functions that grade each output. The result is *aggregate scores* across the dataset, not
    a single pass/fail.
@@ -44,6 +45,30 @@ An eval is built from three parts:
 
 LLM-as-judge is powerful but must be **calibrated against human judgment** - treat the judge as a model that
 itself needs validation.
+
+### LLM-as-judge bias checks
+
+Treat an LLM judge as a measurement instrument, not an oracle. Zheng et al.'s
+["Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena"](https://arxiv.org/abs/2306.05685) documents
+several practical failure modes for model-based judging:
+
+- **Position bias** - in pairwise comparisons, the judge may prefer the answer shown first or second.
+- **Verbosity / length bias** - longer answers can look more complete even when they are not more correct.
+- **Self-preference / self-enhancement bias** - a judge can favor outputs from itself or similar models.
+- **Rubric wording sensitivity** - small changes in judge instructions can change outcomes; prompt-sensitivity
+  benchmarks such as [JudgeSense](https://arxiv.org/abs/2604.23478) study this failure mode directly.
+
+Mitigate these before using judge scores for release gates:
+
+1. Swap answer order and average pairwise results across both orders.
+2. Use pairwise judgments when possible, but keep both `A/B` and `B/A` runs.
+3. Write rubrics with anchored scales: each score maps to observable behavior.
+4. Give reference answers or source passages when the task has a known truth.
+5. Use multiple judges or a judge ensemble for high-stakes decisions.
+6. Calibrate against human labels before trusting the judge in CI.
+7. Report judge-human agreement, not just judge score. For categorical labels, include an agreement-aware
+   metric such as Cohen's kappa; human-agreement analyses such as
+   [Judge's Verdict](https://arxiv.org/abs/2510.09738) show why correlation alone is not enough.
 
 ## Eval-driven development
 
@@ -109,6 +134,30 @@ Eval is not a pre-launch gate. Wire it into the production loop:
 - **In production** - sample live traffic and score it continuously to catch **quality drift** as real
   inputs diverge from your test set.
 
+### Tracing GenAI calls with OpenTelemetry
+
+LLMOps telemetry should connect eval scores to concrete model calls. The OpenTelemetry
+[GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) define common span and
+metric attributes for LLM and embedding calls. As of this page's 2026 update, the GenAI conventions are still
+marked **Development** in OpenTelemetry's semantic-convention process, so treat them as useful but changeable
+and pin your instrumentation version.
+
+Useful attributes from the official
+[GenAI attribute registry](https://opentelemetry.io/docs/specs/semconv/registry/attributes/gen-ai/) include:
+
+| Attribute | Use |
+|---|---|
+| `gen_ai.operation.name` | The operation type, such as chat or embeddings |
+| `gen_ai.provider.name` | The model provider or platform |
+| `gen_ai.request.model` | The requested model name |
+| `gen_ai.response.model` | The model that actually served the response, when available |
+| `gen_ai.usage.input_tokens` | Input token count for cost and context-window analysis |
+| `gen_ai.usage.output_tokens` | Output token count for cost and latency analysis |
+
+Record these on the same trace that captures retrieval, tool calls, guardrails, and final response scoring.
+That makes a regression debuggable: you can see whether a drop came from prompt changes, model routing,
+retrieval, context size, or a judge/scorer change.
+
 ## The MLOps foundation underneath
 
 When the model is custom rather than a hosted LLM, classical **[MLOps](./glossary.md#mlops)** applies. Its
@@ -128,6 +177,7 @@ versioning, RAG/embedding pipelines, token economics, and eval harnesses on top.
 ## See also
 
 - [Tooling and Frameworks](./tooling.md) - the observability and eval tool landscape (LangSmith, MLflow, Ragas)
+- [Eval Datasets & Synthetic Data](./eval-datasets-and-synthetic-data.md) - building the golden datasets evals need
 - [Cost, Latency & Model Routing](./cost-and-latency.md) - measuring and optimizing production spend
 - [Structured Outputs](./structured-outputs.md) - deterministic scorers for schema-valid output
 - [AI Agents](./agents.md) - why agents make every LLMOps concern harder

@@ -26,9 +26,9 @@ that model tier. Input and output are priced separately; output is often more ex
 | Cost driver | Why it matters |
 |---|---|
 | **Context size** | System prompt, history, [RAG](./rag.md) chunks, tool definitions, and tool results all count as input tokens on every call |
-| **Output length** | Long answers, verbose tool schemas, and chain-of-thought all add output tokens |
+| **Output length** | Long answers, verbose tool schemas, and visible or provider-internal reasoning all add output/reasoning tokens |
 | **Call count** | [Agents](./agents.md) and multi-step chains multiply cost; a 5-round agent loop is at least 5× one chat turn |
-| **Model tier** | Frontier models (Claude Opus, GPT-4 class) can be 10–50× mid-tier models for the same token count |
+| **Model tier** | Provider flagship/frontier models can cost many times more than mid-tier models for the same token count |
 | **Tool fan-out** | Each tool result is appended to context and re-sent on the next model call |
 
 :::tip
@@ -54,9 +54,9 @@ You rarely need one model for everything. A common three-tier layout:
 
 | Tier | Typical use | Examples |
 |---|---|---|
-| **Frontier** | Hard reasoning, ambiguous tasks, final synthesis, complex agent planning | Claude Opus/Sonnet, GPT-4 class, Gemini Pro |
-| **Mid** | Most user-facing chat, RAG answers, code generation at scale | Claude Haiku/Sonnet, GPT-4o mini, Gemini Flash |
-| **Small / local** | Classification, routing, extraction, high-volume or offline paths | Haiku, small open-weights via [Ollama](./local-llm-app.md), on-device models |
+| **Frontier** | Hard reasoning, ambiguous tasks, final synthesis, complex agent planning | Claude Opus/Sonnet, OpenAI GPT flagship models, Gemini Pro |
+| **Mid** | Most user-facing chat, RAG answers, code generation at scale | Claude Haiku/Sonnet, OpenAI mini models, Gemini Flash |
+| **Small / local** | Classification, routing, extraction, high-volume or offline paths | Small hosted models, small open-weights via [Ollama](./local-llm-app.md), on-device models |
 
 Rules of thumb:
 
@@ -92,7 +92,8 @@ flowchart TB
 These levers appear repeatedly across production systems, in rough order of ROI:
 
 1. **Shrink the context** - drop stale tool results, summarize history, retrieve fewer [RAG](./rag.md) chunks. See [Context Engineering](./context-engineering.md).
-2. **Prompt caching** - providers cache repeated prefix tokens (system prompt, long docs) at a discount on subsequent calls. Structure prompts so stable content comes first.
+2. **Prompt caching** - providers cache repeated prefix tokens (system prompt, long docs); cache writes may
+   cost more, but cache hits are discounted on subsequent calls. Structure prompts so stable content comes first.
 3. **Cheaper retrieval** - smaller [embedding](./embeddings.md) models, fewer chunks, hybrid search before reranking.
 4. **Batch APIs** - non-interactive work at lower per-token rates with higher latency tolerance.
 5. **Structured outputs** - shorter, schema-bound responses instead of rambling prose ([Structured Outputs](./structured-outputs.md)).

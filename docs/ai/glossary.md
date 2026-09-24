@@ -25,17 +25,17 @@ Agent Cards for capability discovery. See [Agents](./agents.md#a2a-agent2agent).
 An [LLM](./llm.md) autonomously using tools in a loop: the model decides what to do next, your code runs
 the chosen tool, the result is fed back, and the loop repeats. See [AI Agents](./agents.md).
 
-## Agentic AI {#agentic-ai}
-
-The umbrella label for systems where an LLM plans, decides, and acts via tools rather than producing a
-single output. The same territory as "agents", framed as an architectural property you can add
-incrementally. See [AI Agents](./agents.md).
-
 ## Agent skill {#agent-skill}
 
 A portable, version-controlled workflow package (`SKILL.md` plus optional scripts and references) that
 teaches a coding agent how to perform a specific task. Loaded on demand when the agent matches the skill's
 description to the current task, unlike always-on rules or project memory files. See [Agent Skills](./skills.md).
+
+## Agentic AI {#agentic-ai}
+
+The umbrella label for systems where an LLM plans, decides, and acts via tools rather than producing a
+single output. The same territory as "agents", framed as an architectural property you can add
+incrementally. See [AI Agents](./agents.md).
 
 ## ANN (Approximate Nearest Neighbor) {#ann}
 
@@ -45,13 +45,14 @@ large speedup. See [RAG](./rag.md#vector-databases).
 
 ## Attention {#attention}
 
-The core operation inside each transformer layer: every token computes how much to "attend to" every prior
-token in the [context window](#context-window), letting the model relate words across a sequence.
+The core operation inside transformer layers. In decoder-only LLMs, each token computes how much to "attend
+to" previous tokens in the [context window](#context-window), letting the model relate words across a
+sequence.
 
 ## Base model {#base-model}
 
-A [foundation model](#foundation-model) straight out of pre-training - fluent but not yet a helpful
-assistant. It becomes an instruct/chat model only after [post-training](#post-training). See
+A [foundation model](#foundation-model) before instruction [post-training](#post-training) - fluent but not
+yet a helpful assistant. See
 [LLMs](./llm.md#how-an-llm-is-built).
 
 ## Chain-of-thought {#chain-of-thought}
@@ -72,8 +73,8 @@ compaction, structured notes, retrieval, and sub-agents. The agentic-era success
 
 ## Context rot {#context-rot}
 
-The empirical degradation of an LLM's recall as the context window fills - "lost in the middle". Caused by
-O(n^2) attention and short-sequence-heavy training data; bigger windows do not fix it. See
+The empirical degradation of an LLM's recall as the context window fills - "lost in the middle". Larger
+windows help with capacity but do not, by themselves, guarantee reliable use of every token. See
 [Context Engineering](./context-engineering.md#context-rot-the-constraint-behind-the-techniques).
 
 ## Context window {#context-window}
@@ -83,8 +84,8 @@ input, retrieved context, and generated output must fit inside it. See [LLMs](./
 
 ## Cosine similarity {#cosine-similarity}
 
-The dominant metric for comparing [embeddings](#embedding): the cosine of the angle between two vectors,
-measuring how similar in meaning two pieces of text are regardless of length. See [RAG](./rag.md).
+A common metric for comparing [embeddings](#embedding): the cosine of the angle between two vectors,
+measuring similarity by vector direction rather than raw magnitude. See [RAG](./rag.md).
 
 ## Deep modules {#deep-modules}
 
@@ -118,7 +119,7 @@ RAG, or fine-tuning) rather than training per task. LLMs are the best-known foun
 ## Frontier model {#frontier-model}
 
 The current capability ceiling - the largest, most capable models (Claude, GPT, Gemini), usually
-closed-source and accessed via API. See [Cloud vs Local Models](./cloud-vs-local.md).
+closed-weight and accessed via API. See [Cloud vs Local Models](./cloud-vs-local.md).
 
 ## Function calling {#function-calling}
 
@@ -130,16 +131,16 @@ structured request to call one. Your code executes it. See [Agents](./agents.md#
 A decoder-only transformer trained to generate text by next-token prediction; also OpenAI's product line.
 The architecture pattern underlying most modern [LLMs](./llm.md).
 
-## Groundedness {#groundedness}
-
-An evaluation metric (also "faithfulness") for whether an answer stuck to its retrieved sources rather than
-[hallucinating](./llm.md#hallucination). See [Evaluation and LLMOps](./evaluation-and-llmops.md).
-
 ## Graceful degradation {#graceful-degradation}
 
 Designing a product so core functionality still works when an [LLM](./llm.md) API fails, is disabled, or
 returns low-quality output - manual mode, cached answers, or queued retry instead of a broken UX. See
 [AI in Products](./ai-in-products.md).
+
+## Groundedness {#groundedness}
+
+An evaluation metric (also "faithfulness") for whether an answer stuck to its retrieved sources rather than
+[hallucinating](./llm.md#hallucination). See [Evaluation and LLMOps](./evaluation-and-llmops.md).
 
 ## Guardrails {#guardrails}
 
@@ -238,22 +239,23 @@ Machine Learning Operations - DevOps applied to the full ML lifecycle (data, tra
 monitoring). [LLMOps](#llmops) is its LLM-specific extension. See
 [Evaluation and LLMOps](./evaluation-and-llmops.md#the-mlops-foundation-underneath).
 
-## Multi-agent system {#multi-agent}
-
-A system where several specialized agents coordinate (orchestrator-worker, router, hierarchical,
-critic-refiner, network) to exceed a single agent's capability or context. See
-[Agents](./agents.md#multi-agent-patterns).
-
 ## Model routing {#model-routing}
 
 Sending each request to an appropriate model tier (frontier, mid, small/local) via classifiers, fallback
 chains, or task-specific rules to balance quality, [cost, and latency](./cost-and-latency.md). See
 [Cost, Latency & Model Routing](./cost-and-latency.md).
 
+## Multi-agent system {#multi-agent}
+
+A system where several specialized agents coordinate (orchestrator-worker, router, hierarchical,
+critic-refiner, network) to exceed a single agent's capability or context. See
+[Agents](./agents.md#multi-agent-patterns).
+
 ## Open-weights model {#open-weights}
 
-A model whose weights are downloadable (Llama, Mistral, Qwen, DeepSeek, Gemma, Phi), so it can be
-self-hosted and fine-tuned. The basis for [local model usage](./cloud-vs-local.md#local-model-usage).
+A model whose weights are downloadable (Llama, Mistral, Qwen, DeepSeek, Gemma, Phi), so it can often be
+self-hosted; fine-tuning and redistribution depend on the license. The basis for
+[local model usage](./cloud-vs-local.md#local-model-usage).
 
 ## Orchestrator-worker {#orchestrator-worker}
 
@@ -281,15 +283,15 @@ fine-tuning plus preference optimization (RLHF / DPO). See [LLMs](./llm.md#how-a
 The compute-dominant first stage: self-supervised next-token prediction on a web-scale corpus, producing a
 fluent [base model](#base-model). See [LLMs](./llm.md#how-an-llm-is-built).
 
-## Prompt engineering {#prompt-engineering}
-
-Shaping model behavior by changing the input text - instructions, examples, and formatting. The cheapest,
-fastest adaptation lever before RAG or fine-tuning. See [Context Engineering](./context-engineering.md).
-
 ## Prompt caching {#prompt-caching}
 
 A provider feature that discounts repeated identical prefix [tokens](#token) across requests - useful when
 system prompts or long documents stay stable. See [Cost, Latency & Model Routing](./cost-and-latency.md).
+
+## Prompt engineering {#prompt-engineering}
+
+Shaping model behavior by changing the input text - instructions, examples, and formatting. The cheapest,
+fastest adaptation lever before RAG or fine-tuning. See [Context Engineering](./context-engineering.md).
 
 ## Prompt injection {#prompt-injection}
 
@@ -297,22 +299,23 @@ An attack that disguises malicious instructions as normal input to override an L
 the OWASP #1 LLM risk, including indirect injection via retrieved data. See
 [AI Safety & Guardrails](./safety.md#the-attack-surface-prompt-injection-and-jailbreaking).
 
-## Quantization {#quantization}
-
-Replacing model weights with lower-precision approximations (e.g. 4-bit NF4) to cut memory use, with
-minimal quality loss for most tasks. What lets large models fit on consumer GPUs. See
-[Cloud vs Local Models](./cloud-vs-local.md#quantization-and-qlora).
-
 ## QLoRA {#qlora}
 
 Quantize the base model to 4-bit, freeze it, and train [LoRA](#lora) adapters on top - the standard recipe
 for fine-tuning a moderate-size LLM on a single consumer GPU. See
 [Cloud vs Local Models](./cloud-vs-local.md#quantization-and-qlora).
 
+## Quantization {#quantization}
+
+Replacing model weights with lower-precision approximations (e.g. 4-bit NF4) to cut memory use, usually
+with a quality/latency trade-off that must be measured on the target task. What lets large models fit on
+consumer GPUs. See [Cloud vs Local Models](./cloud-vs-local.md#quantization-and-qlora).
+
 ## RAG (Retrieval-Augmented Generation) {#rag}
 
 Retrieving relevant information from an external source before generation and injecting it into the prompt,
-so the model summarizes facts instead of recalling them. The primary defense against hallucination. See
+so the model can ground its answer in supplied facts instead of relying only on weights. A primary mitigation
+for factual hallucinations, but not a complete guarantee. See
 [RAG](./rag.md).
 
 ## Red-teaming {#red-teaming}
@@ -325,16 +328,16 @@ benchmarks. See [AI Safety & Guardrails](./safety.md#red-teaming).
 Re-scoring the top retrieved candidates with a cross-encoder model to improve relevance - often a bigger
 quality win than swapping the [embedding](#embedding) model. See [RAG](./rag.md#production-levers-in-order-of-roi).
 
-## Semantic search {#semantic-search}
-
-Searching by meaning rather than keyword match, using [embeddings](#embedding) and similarity. The
-capability that powers retrieval in [RAG](./rag.md).
-
 ## Semantic cache {#semantic-cache}
 
 Caching [LLM](./llm.md) responses keyed by embedding similarity of the query - returning a stored answer when
 a new question is close enough to a prior one. Requires TTL and invalidation when source data changes. See
 [Cost, Latency & Model Routing](./cost-and-latency.md#caching-strategies).
+
+## Semantic search {#semantic-search}
+
+Searching by meaning rather than keyword match, using [embeddings](#embedding) and similarity. The
+capability that powers retrieval in [RAG](./rag.md).
 
 ## SPDD (REASONS Canvas) {#spdd}
 
@@ -359,8 +362,9 @@ distilled summaries. See [Context Engineering](./context-engineering.md#long-hor
 
 ## Temperature {#temperature}
 
-A sampling parameter controlling randomness during generation: 0 is deterministic, higher values produce
-more varied output. See [LLMs](./llm.md#how-an-llm-produces-text).
+A sampling parameter controlling randomness during generation: lower values make the model choose
+high-probability tokens more often; higher values produce more varied output. See
+[LLMs](./llm.md#how-an-llm-produces-text).
 
 ## Token {#token}
 
@@ -375,20 +379,21 @@ them and returns the result. The mechanism that turns a text generator into an [
 
 ## Transformer {#transformer}
 
-The neural-network architecture every modern LLM uses, built from stacked layers of self-attention and
+The neural-network architecture most modern LLMs use, built from stacked layers of self-attention and
 feed-forward networks. See [LLMs](./llm.md).
 
 ## Vector database {#vector-database}
 
-A database specialized for storing and searching high-dimensional [embeddings](#embedding) by similarity
-(via [ANN](#ann)) rather than exact match. Examples: Pinecone, pgvector, OpenSearch, Weaviate, Milvus,
-Chroma. See [RAG](./rag.md#vector-databases).
+A database, extension, or search engine that stores and searches high-dimensional [embeddings](#embedding)
+by similarity (often via [ANN](#ann)) rather than exact match. Examples: Pinecone, pgvector, OpenSearch,
+Weaviate, Milvus, Chroma. See [RAG](./rag.md#vector-databases).
 
 ## Vector quantization {#vector-quantization}
 
-Compressing embedding vectors (e.g. to `int8` or binary) to cut storage and speed up search; distinct from
-model-weight [quantization](#quantization). For retrieval, unbiased similarity preservation matters more than
-reconstruction accuracy. See [Embeddings Deep Dive](./embeddings.md#dimensions-matryoshka-and-quantization).
+Compressing stored embedding vectors (for example with scalar, binary, or product quantization) to cut
+storage and speed up search; distinct from model-weight [quantization](#quantization). For retrieval,
+unbiased similarity preservation matters more than reconstruction accuracy. See
+[Embeddings Deep Dive](./embeddings.md#dimensions-matryoshka-and-quantization).
 
 ## Vertical slices {#vertical-slices}
 

@@ -68,8 +68,9 @@ ignoring its original instructions.
   is. Attackers often use injection to *achieve* some other category of violation.
 - **Indirect prompt injection** compromises LLM-integrated apps via malicious content hidden in *retrieved*
   data - a direct risk for any [RAG](./rag.md) or [agent](./agents.md) system that ingests untrusted text.
-- The **OWASP Top 10 for LLM Applications** ranks prompt injection as the #1 risk class. It is also largely
-  *not* covered by general content guardrails - dedicated detectors (e.g. Meta's Prompt Guard) exist for it.
+- The **OWASP Top 10 for LLM Applications 2025** lists **LLM01:2025 Prompt Injection** as the #1 risk
+  class. It is also largely *not* covered by general content guardrails - dedicated detectors (e.g. Meta's
+  Prompt Guard) exist for it.
 
 For agents this compounds: a single user turn fans out to many tool calls, and an injected instruction can
 trigger real-world actions. Constrain what tools exist and what they may do, and treat tool inputs/outputs

@@ -50,7 +50,8 @@ flowchart LR
 6. **Append and repeat** until an end-of-sequence token or a length limit.
 
 This is *autoregressive* generation: the model has no plan for the whole answer; it produces one token,
-then re-runs everything with that token appended. Chat formats, tool use, and agents are all scaffolding
+then feeds the extended sequence back through the model. Production servers reuse cached attention state
+instead of recomputing all prior tokens from scratch. Chat formats, tool use, and agents are all scaffolding
 around this loop.
 
 ## How an LLM is built
@@ -108,7 +109,7 @@ scores groundedness, **guardrails**, and human review for sensitive outputs.
 | [Token](./glossary.md#token) | The atomic unit the model reads and writes; a learned subword |
 | [Context window](./glossary.md#context-window) | The max tokens the model can attend to at once (thousands to millions) |
 | [Parameters](./glossary.md#parameters) | The learned weights; size correlates with capability and cost |
-| [Temperature](./glossary.md#temperature) | Sampling parameter for randomness; 0 = deterministic |
+| [Temperature](./glossary.md#temperature) | Sampling parameter for randomness; 0 = least random / greedy in most APIs |
 | [Foundation model](./glossary.md#foundation-model) | A general pre-trained base not yet specialized for a use case |
 | [Frontier model](./glossary.md#frontier-model) | The current capability ceiling - usually closed-source |
 | [Open-weights model](./glossary.md#open-weights) | A model whose weights are downloadable and self-hostable |

@@ -28,34 +28,33 @@ scripts, and HTTP clients all attach to it.
 
 - **V2 highlights:** client/server split with an [HTTP
   API](https://opencode.ai/v2/docs/api), background service that survives
-  terminal restarts, 75+ providers, agents, commands, plugins, skills, and MCP
-  support.
+  terminal restarts, a provider/model catalog from models.dev, agents,
+  commands, plugins, skills, and MCP support.
 - **Install:** follow the [V2 docs](https://opencode.ai/v2/docs/); the V2 CLI
-  binary is `opencode2` (or `mise use --global opencode`).
+  binary is `opencode` (or `mise use --global opencode`).
 - **Usage:**
-  - `opencode2` -- start the TUI in the current project
-  - `opencode2 run "explain this repo"` -- one-shot print mode
-  - `opencode2 service status` / `opencode2 service restart` -- manage the
+  - `opencode` -- start the TUI in the current project
+  - `opencode run "explain this repo"` -- one-shot print mode
+  - `opencode --standalone` -- run with a private server instead of the shared
     background service
-  - Configuration lives in `~/.config/opencode/opencode.json` (global) and
-    `opencode.json` per project; see the [config
+  - Configuration lives in `~/.config/opencode/opencode.json(c)` (global),
+    `opencode.json(c)`, or `.opencode/opencode.json(c)` per project; see the [config
     guide](https://opencode.ai/v2/docs/config).
 
 No `.zshrc` additions required -- it is fully self-contained.
 
 ### Adding a local provider (LM Studio)
 
-opencode treats any OpenAI-compatible server as a custom provider. To wire up
-a local [LM Studio](https://lmstudio.ai/) instance, add a provider entry to
-`~/.config/opencode/opencode.json`:
+opencode has built-in LM Studio discovery. To point it at a local
+[LM Studio](https://lmstudio.ai/) instance, add a provider override to
+`~/.config/opencode/opencode.jsonc`:
 
-```json title="~/.config/opencode/opencode.json"
+```json title="~/.config/opencode/opencode.jsonc"
 {
-  "provider": {
+  "$schema": "https://opencode.ai/config.json",
+  "providers": {
     "lmstudio": {
-      "name": "LM Studio (local)",
-      "npm": "@ai-sdk/openai-compatible",
-      "options": {
+      "settings": {
         "baseURL": "http://127.0.0.1:1234/v1"
       },
       "models": {
@@ -70,15 +69,13 @@ a local [LM Studio](https://lmstudio.ai/) instance, add a provider entry to
 
 Two gotchas that produce confusing errors:
 
-- `name` and `options` belong directly under the provider id (`lmstudio`), as
-  siblings of `models` -- not nested inside `models`. Nesting them inside
-  `models` makes the schema validator treat `"name"` as a model id whose
-  value should be an object, failing with something like `Expected object,
-  got "LM Studio (local)"`.
-- The key under `models` must match the model id LM Studio actually serves.
-  Confirm with `curl http://127.0.0.1:1234/v1/models` -- a provider-prefixed
-  alias like `lmstudio/qwen` will validate fine but fail at request time if
-  LM Studio doesn't recognize that id.
+- `settings` belongs directly under the provider id (`lmstudio`), as a sibling
+  of `models` -- not nested inside `models`. Nesting provider settings inside
+  `models` makes the schema validator treat them as model ids.
+- If you pin a model under `models`, its key must match the model id LM Studio
+  actually serves. Confirm with `curl http://127.0.0.1:1234/v1/models` -- a
+  provider-prefixed alias like `lmstudio/qwen` will validate fine but fail at
+  request time if LM Studio doesn't recognize that id.
 
 ### Adding a local provider (oMLX)
 
@@ -96,17 +93,18 @@ accept any non-empty string, oMLX answers `API key required` without one.
 curl http://127.0.0.1:8000/v1/models -H "Authorization: Bearer <your-omlx-api-key>"
 ```
 
-3. **Add the provider** to `~/.config/opencode/opencode.json`:
+3. **Add the provider** to `~/.config/opencode/opencode.jsonc`:
 
-```json title="~/.config/opencode/opencode.json"
+```json title="~/.config/opencode/opencode.jsonc"
 {
-  "provider": {
+  "$schema": "https://opencode.ai/config.json",
+  "providers": {
     "omlx-local": {
       "name": "oMLX (local)",
-      "npm": "@ai-sdk/openai-compatible",
-      "options": {
-        "baseURL": "http://127.0.0.1:8000/v1",
-        "apiKey": "<your-omlx-api-key>"
+      "env": ["OMLX_API_KEY"],
+      "package": "@opencode/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "http://127.0.0.1:8000/v1"
       },
       "models": {
         "Qwen3.8-27B-4bit": {
@@ -122,15 +120,13 @@ curl http://127.0.0.1:8000/v1/models -H "Authorization: Bearer <your-omlx-api-ke
 }
 ```
 
-4. **Verify** with `opencode models omlx-local`, then restart the TUI and pick
-   it via `/models`.
+4. **Verify** by starting opencode and picking the provider via `/models`.
 
 Gotchas learned the hard way:
 
-- `options.apiKey` is required -- an `auth.json` entry alone is not enough for
-  custom `openai-compatible` providers. If you prefer not to keep the secret in
-  the config file, use `"apiKey": "{env:OMLX_API_KEY}"` and
-  `export OMLX_API_KEY=<your-omlx-api-key>` before starting opencode.
+- Put the key in an environment variable listed under `env`, for example
+  `export OMLX_API_KEY=<your-omlx-api-key>` before starting opencode. A stored
+  account for another provider does not authenticate this custom provider.
 - If you set `limit`, it needs **both** `context` and `output` -- a lone
   `context` fails config validation and blocks `/models` entirely (the error
   names the missing `limit.output` key).
@@ -151,7 +147,7 @@ prompt templates, and themes bundled as shareable packages.
 - **Install:**
 
   ```bash
-  npm install -g @earendil-works/pi-coding-agent
+  npm install -g --ignore-scripts @earendil-works/pi-coding-agent
   # or, version-pinned with mise
   mise use --global pi
   ```
@@ -170,7 +166,7 @@ prompt templates, and themes bundled as shareable packages.
 
 - **Usage:**
   - `pi` -- interactive TUI in the current project
-  - `pi "fix the failing test"` -- one-shot prompt
+  - `pi --print "fix the failing test"` -- one-shot prompt
   - `/reload` -- pick up extension changes mid-session; ask pi to modify its
     own extensions and it will
   - Press `Enter` to steer the current run, `Alt+Enter` to queue a follow-up
@@ -311,7 +307,7 @@ working when you close the lid, drop the network, or restart the machine.
   start](https://herdr.dev/docs/quick-start/).
 - **Usage:**
   - `herdr` -- start or reattach to your workspace
-  - Start any supported agent (e.g. `claude`, `opencode2`, `pi`) in a pane;
+  - Start any supported agent (e.g. `claude`, `opencode`, `pi`) in a pane;
     herdr detects it automatically
   - `ctrl+b q` -- detach; everything keeps running
   - `herdr` again -- reattach, sessions are restored

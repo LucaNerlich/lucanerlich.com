@@ -15,7 +15,7 @@ keywords:
 
 **RAG** improves an [LLM](./llm.md)'s output by retrieving relevant information from an authoritative
 external source *before* generation, rather than relying solely on the model's frozen training data. It
-is the primary defense against [hallucination](./llm.md#hallucination) and a cost-effective alternative
+is a primary mitigation (not a guarantee) against [hallucination](./llm.md#hallucination) and a cost-effective alternative
 to fine-tuning for domain or organizational specificity.
 
 ## The standard pipeline
@@ -45,7 +45,7 @@ flowchart LR
 
 RAG mitigates four well-known LLM failure modes: presenting false information when it does not know,
 returning out-of-date or generic answers, drawing on non-authoritative sources, and confusing
-terminology across domains. It also adds **source attribution**, which builds trust and lets developers
+terminology across domains. It can also add **source attribution**, which builds trust and lets developers
 swap sources, restrict by permissions, and troubleshoot retrievals.
 
 ## RAG vs fine-tuning {#rag-vs-fine-tuning}
@@ -95,23 +95,79 @@ high-dimensional embeddings. Where traditional databases excel at *exact* matche
 primitive is **approximate nearest neighbor (ANN)** search, which checks a carefully selected subset of
 candidates instead of all vectors, trading a small amount of accuracy for a large speedup. Common
 options: Pinecone (hosted), pgvector (Postgres extension), OpenSearch, Weaviate, Milvus, and Chroma
-(lightweight, good for prototypes). See [Tooling](./tooling.md) for how these fit the broader stack.
+(lightweight, good for prototypes). The index trade-offs, pgvector syntax, and metadata-filtering pitfalls
+belong on [Embeddings Deep Dive](./embeddings.md#vector-indexes-and-filtering); this page focuses on how
+retrieval fits the RAG system. See [Tooling](./tooling.md) for how these fit the broader stack.
 
-## Production levers (in order of ROI)
+## Chunking strategies {#chunking-strategies}
+
+Chunking decides what retrieval can ever find. There is no universal chunk size; tune on real questions and
+measure retrieval plus answer quality.
+
+| Strategy | How it works | Use when | Watch out |
+|---|---|---|---|
+| Fixed-size with overlap | Split by tokens or characters and repeat some boundary text | Fast baseline, homogeneous prose | Cuts headings, tables, and code in awkward places |
+| Recursive / structure-aware | Split by Markdown headings, HTML sections, paragraphs, functions, or classes before falling back to size | Docs, code, legal text, web pages | Needs parsers and source-specific rules |
+| Semantic chunking | Split where embedding/topic similarity changes | Long narrative docs with topic shifts | More expensive and harder to reproduce |
+| Parent-child / small-to-big | Retrieve small child chunks, then pass the containing section or page to the model | Precise retrieval with enough context to answer | Requires stable parent IDs and deduplication |
+| Contextual retrieval | Prepend an LLM-written, document-aware context sentence to each chunk before embedding | Enterprise docs where chunks lose local meaning | Adds indexing cost; verify context does not introduce facts |
+| Late chunking | Encode a long document first, then pool token spans into chunk embeddings | Long-context embedding models and cross-chunk references | Model/API support varies; benchmark before adopting |
+
+[Anthropic's Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval) describes
+adding chunk-specific context before embedding. [Jina's late chunking work](https://jina.ai/blog/late-chunking/)
+describes pooling chunk vectors after a long-context embedding pass. Both address the same failure mode:
+isolated chunks often lose the document context needed to retrieve or interpret them.
+
+Practical defaults:
+
+- Keep chunks aligned to meaning first, size second. Prefer headings, list items, code symbols, and table
+  boundaries over blind token counts.
+- Use overlap sparingly. It helps with boundary facts but increases duplicate retrieval and index cost.
+- Store stable metadata (`source_id`, `section`, `tenant_id`, `version`, permissions) with every chunk.
+- Retrieve small, answer with enough context. Parent-child retrieval is often cleaner than making every
+  chunk huge.
+
+## Evaluation metrics {#evaluation-metrics}
+
+Evaluate the retriever separately from the final answer, then run end-to-end tests. Build a small judged
+dataset from real questions; synthetic data can fill gaps, but human-reviewed examples catch failure modes
+that synthetic generators miss. See [Evaluation and LLMOps](./evaluation-and-llmops.md) and
+[Eval Datasets and Synthetic Data](./eval-datasets-and-synthetic-data.md).
+
+Retrieval metrics:
+
+- **recall@k** - fraction of known-relevant documents found in the top k.
+- **precision@k** - fraction of the top k results that are relevant.
+- **hit rate** - whether at least one relevant result appears in the top k.
+- **MRR** - mean reciprocal rank of the first relevant result; rewards putting the first hit early.
+- **nDCG** - graded ranking quality; rewards highly relevant results near the top.
+
+Generation metrics:
+
+- **faithfulness / groundedness** - answer claims are supported by retrieved context.
+- **answer relevance** - answer addresses the user question.
+- **context precision / context recall** - retrieved context is useful and complete enough for the answer.
+- **citation accuracy** - cited chunks actually support the cited claims.
+
+Tools such as [Ragas](https://docs.ragas.io/) expose metrics named faithfulness, answer relevancy,
+context precision, and context recall. Treat LLM-as-judge metrics as diagnostics, not a substitute for
+golden-answer tests and human review on high-risk flows.
+
+## Production levers
 
 - **Add hybrid retrieval first.** Dense embeddings miss exact strings ("error code ABC-1234"); keyword
-  search misses paraphrases. Combine dense + sparse (BM25) with rank fusion. This is the single
-  highest-ROI fix for weak RAG.
-- **Rerank the top results.** Run a cross-encoder reranker (e.g. Cohere `rerank-3`, `bge-reranker-large`)
+  search misses paraphrases. Combine dense + sparse (BM25) with rank fusion. This is often one of the
+  highest-leverage fixes for weak RAG.
+- **Rerank the top results.** Run a cross-encoder reranker (e.g. Cohere `rerank-v4.0-pro`, `bge-reranker-large`)
   over the top ~50 candidates. Often a bigger win than swapping the embedding model.
 - **Mind chunking.** Match chunk size to the embedding model's natural window; wildly larger or smaller
   chunks degrade quality.
 - **Respect query/document asymmetry.** Many models need different prefixes or input-types for queries
-  versus documents. Forgetting this halves recall.
-- **Quantize once it works.** Store vectors as `int8` or `halfvec` for 4x+ storage reduction with a small
-  recall hit. See [quantization](./glossary.md#quantization).
-- **Plan for re-embedding.** Embeddings drift as content grows, and switching embedding models requires
-  re-embedding the whole corpus. Treat the embedding model as a versioned artifact.
+  versus documents. Forgetting this can severely reduce recall.
+- **Quantize once it works.** Store vectors as `halfvec` for ~2x storage reduction or `int8` for ~4x with a
+  small recall hit. See [quantization](./glossary.md#quantization).
+- **Plan for re-embedding.** Re-embed changed documents as the corpus evolves, and re-embed the whole corpus
+  when switching embedding models. Treat the embedding model as a versioned artifact.
 
 ## The trend: just-in-time retrieval in agents
 
@@ -124,5 +180,7 @@ RAG is not going away, but "some data up front, exploration at runtime" is becom
 - [Large Language Models](./llm.md) - the model RAG grounds
 - [AI Agents](./agents.md) - retrieval as a tool; MCP vs RAG
 - [Tooling and Frameworks](./tooling.md) - LangChain / LlamaIndex, vector DBs, evaluation
+- [Embeddings Deep Dive](./embeddings.md) - embedding models, vector indexes, quantization, and filtering
+- [Eval Datasets and Synthetic Data](./eval-datasets-and-synthetic-data.md) - building judged retrieval sets
 - [Cloud vs Local Models](./cloud-vs-local.md) - managed RAG (Bedrock Knowledge Bases) vs local RAG
 - [AI Glossary](./glossary.md) - embedding, vector database, reranking, semantic search, and more

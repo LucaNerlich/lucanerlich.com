@@ -1,6 +1,6 @@
 ---
 title: Tooling and Frameworks
-description: A map of the AI application tooling landscape - -orchestration frameworks, connectivity protocols, vector databases, evaluation and observability, and the LLMOps discipline that ties them together.
+description: A map of the AI application tooling landscape -- orchestration frameworks, connectivity protocols, vector databases, evaluation and observability, and the LLMOps discipline that ties them together.
 tags: [ai, tooling, frameworks, llmops, agents]
 keywords:
     - ai frameworks
@@ -53,16 +53,17 @@ framework.
 | **LlamaIndex** | Data / index-centric | Pluggable | No | RAG-heavy apps and data connectors |
 | **CrewAI** | Role-based | Task outputs, sequential | No | Fastest prototyping; clearly-defined sequential workflows |
 | **AutoGen / AG2** (Microsoft) | Conversational (message-passing) | In-memory history | No | Code generation and research dialogue (expensive at scale) |
-| **OpenAI Agents SDK** | Handoff-based | Ephemeral context | No | OpenAI ecosystem with clean handoffs |
-| **Google ADK** | Hierarchical trees | Pluggable backends | Yes (A2A) | Multimodal and cross-framework agent ecosystems |
-| **Claude Agent SDK** (Anthropic) | Tool-use | Conversation history | No | Safety and auditability |
+| **OpenAI Agents SDK** | Handoff-based | Sessions | No | OpenAI ecosystem with clean handoffs |
+| **Google ADK** | Graph workflows / hierarchies | Sessions, memory, artifacts | Yes (A2A, experimental) | Google/Gemini and A2A-integrated agent ecosystems |
+| **Claude Agent SDK** (Anthropic) | Claude Code agent loop | Sessions | No | Claude Code tools, permissions, hooks, and auditability |
 
 A few rules of thumb:
 
 - **State management is the most common production failure.** LangGraph checkpoints every transition, so
-  state survives failures and can resume; CrewAI/AutoGen/OpenAI SDK have weaker recovery stories.
+  state survives failures and can resume; CrewAI/AutoGen-style conversations need extra persistence, while
+  OpenAI and Claude SDK session layers still require you to design recovery deliberately.
 - **CrewAI is fastest to a demo** ("a working multi-agent system in under 20 lines") but rigid at scale.
-- **Google ADK is the only one with native A2A**, making it the pick for heterogeneous, multi-team agent
+- **Google ADK has documented A2A support**, making it a strong pick for heterogeneous, multi-team agent
   ecosystems.
 - **AutoGen's conversational model is expensive** - a 4-agent, 5-round debate is 20+ LLM calls minimum.
 
@@ -73,7 +74,7 @@ form the connectivity stack:
 
 - **MCP (Model Context Protocol)** - agent to tools/data. Build a tool server once; any MCP-compatible
   client (Cursor, Claude, internal agents) can use it. Official Python and TypeScript SDKs. For a
-  concrete, ready-to-use example see the [MDN MCP Server](./mdn-mcp-server.md) — Mozilla's official
+  concrete, ready-to-use example see the [MDN MCP Server](./mdn-mcp-server.md) -- Mozilla's official
   server for live browser compatibility data and MDN documentation.
 - **A2A (Agent2Agent)** - agent to agent across frameworks and vendors, with Agent Cards for capability
   discovery.
@@ -84,10 +85,11 @@ The [RAG](./rag.md) stack has its own tooling:
 
 - **Vector databases** - Pinecone (hosted), pgvector (Postgres extension), OpenSearch, Weaviate, Milvus,
   Chroma (lightweight prototyping). See [vector database](./glossary.md#vector-database).
-- **Embedding models** - OpenAI `text-embedding-3-*`, Cohere `embed-v3`, Voyage `voyage-3`, and
-  open-source `bge-*` / `e5` families. The [MTEB](https://huggingface.co/spaces/mteb/leaderboard)
-  leaderboard is a starting filter.
-- **Rerankers** - cross-encoders (Cohere `rerank-3`, `bge-reranker-large`) that re-score the top
+- **Embedding models** - OpenAI `text-embedding-3-*`, Cohere `embed-v4.0` /
+  `embed-*-v3.0`, Voyage `voyage-4`, and open-source `bge-*` / `e5` families.
+  The [MTEB](https://huggingface.co/spaces/mteb/leaderboard) leaderboard is a starting filter.
+- **Rerankers** - cross-encoders (Cohere `rerank-v4.0-pro` / `rerank-v3.5`,
+  `bge-reranker-large`) that re-score the top
   candidates and often beat swapping the embedding model.
 
 ## Evaluation and observability

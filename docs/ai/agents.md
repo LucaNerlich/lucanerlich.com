@@ -74,10 +74,10 @@ model calls it correctly - treat them as prompt engineering.
 ## Multi-agent patterns
 
 Multi-agent systems split cognitive load across specialized components, parallelize work, and reduce
-context overload - but they amplify errors if coordination is poor. A widely cited figure: independent
-multi-agent systems amplify errors ~17x versus a single-agent baseline, while a centralized
-orchestrator reduces that to ~4x. **The orchestrator layer is error containment, not optional
-convenience.**
+context overload - but they amplify errors if coordination is poor. In [Towards a Science of Scaling
+Agent Systems](https://arxiv.org/abs/2512.08296) (Kim et al., 2025), independent multi-agent systems
+amplified trace-level errors ~17x versus a single-agent baseline, while centralized coordination
+contained that to ~4x. **The orchestrator layer is error containment, not optional convenience.**
 
 | Pattern | Shape | When to use |
 |---|---|---|
@@ -112,16 +112,17 @@ integrations for every tool (Slack, Postgres, GitHub, a private wiki). MCP colla
 build a server once, and any MCP-compatible client can use it.
 
 - **Host** - the LLM application; coordinates clients and enforces security.
-- **Client** - maintains a 1:1 session with one server.
+- **Client** - communicates 1:1 with one server on behalf of the host.
 - **Server** - exposes resources, tools, and prompts; local process or remote service.
-- **Transport** - JSON-RPC 2.0 over stdio (local) or HTTP/SSE (remote).
+- **Transport** - JSON-RPC 2.0 over stdio (local) or Streamable HTTP (remote).
 
 Because the client/server split is logical, an app can be both - which is what enables composable,
 hierarchical agent systems.
 
 ### A2A (Agent2Agent)
 
-An open standard from Google for communication between agents from different frameworks and vendors.
+An open standard originally developed by Google and now maintained under the Linux Foundation for
+communication between agents from different frameworks and vendors.
 Where MCP is agent-to-tool, A2A is agent-to-agent: an A2A server wraps an agent and exposes it over HTTP;
 **Agent Cards** advertise each agent's capabilities for dynamic discovery. Before A2A, multi-agent systems
 were framework-locked; A2A lets a LangGraph agent delegate to a CrewAI crew without bespoke glue.

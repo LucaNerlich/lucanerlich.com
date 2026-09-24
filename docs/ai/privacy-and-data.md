@@ -16,6 +16,8 @@ keywords:
 send to [LLM](./llm.md) providers, what you log, where it is processed, and how to minimize exposure when
 shipping features to users. This is not legal advice; it is engineering hygiene that aligns with common
 privacy expectations (including GDPR-style requirements many European teams operate under).
+For regulatory classification, AI Act transparency duties, and DPAs, see
+[AI Regulation for Builders](./ai-regulation.md).
 
 ## The basic risk model
 
@@ -54,7 +56,8 @@ Cloud [LLM](./llm.md) APIs process data in provider regions you do not always co
 before launch:
 
 - **Where does inference run?** (region, sovereign cloud options)
-- **Are prompts used for training?** Most enterprise tiers opt out by default; verify contract and settings
+- **Are prompts used for training?** Major paid API and enterprise offerings often opt out by default; verify
+  contract, product tier, and settings
 - **Who are subprocessors?** Provider, hosting, observability vendor, vector DB host
 - **Can you pin region?** Some platforms offer EU-only or customer-VPC deployment
 
@@ -119,6 +122,7 @@ Before production:
 ## See also
 
 - [AI Safety & Guardrails](./safety.md) - prompt injection and tool abuse (security, not privacy policy)
+- [AI Regulation for Builders](./ai-regulation.md) - AI Act, GDPR interplay, DPAs, and compliance checklists
 - [Cloud vs Local Models](./cloud-vs-local.md) - keeping inference on-prem
 - [Knowledge Management with LLMs](./knowledge-management.md) - where synthesized data lives
 - [AI in Products](./ai-in-products.md) - transparency and user trust

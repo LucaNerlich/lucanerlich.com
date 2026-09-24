@@ -27,7 +27,7 @@ patterns on that axis and when to use each. It is the conceptual companion to [R
 | [Structured note-taking](./glossary.md#structured-note-taking) | External notes file | Bounded - agent decides | The agent itself | Note read/write |
 | [LLM-wiki pattern](./glossary.md#llm-wiki) | Persistent interlinked Markdown | Indefinite | LLM via ingest/lint workflows | Index lookup + page reads |
 | [llms.txt](./glossary.md#llms-txt) | Site root, by publisher | Indefinite, low frequency | Site owner (or tooling) | Single file fetch |
-| [Agent skills](./skills.md) | Skill directory (`SKILL.md`) | None - workflow, not knowledge | Skill author / team | On-demand load when task matches |
+| [Agent skills](./skills.md) | Skill directory (`SKILL.md`) | No accumulated knowledge - reusable workflow | Skill author / team | On-demand load when task matches |
 
 Reading top to bottom, each row makes synthesis more persistent and shifts maintenance further from the
 query and closer to the source. Every architecture choice is implicitly choosing *where the maintenance
@@ -76,8 +76,9 @@ Three layers (raw sources, the LLM-owned wiki, and a schema file describing conv
 (ingest, query, lint). The reason it works where human wikis fail: the hard part of a knowledge base is not
 reading or thinking, it is **bookkeeping** - updating cross-references, keeping summaries current, noting
 contradictions across dozens of pages. Humans abandon wikis because maintenance grows faster than value;
-LLMs do not get bored and can touch 15 files in one pass, so maintenance cost approaches zero. Its spiritual
-ancestor is the **[memex](./glossary.md#memex)**, Vannevar Bush's 1945 vision of a personal, curated
+LLMs do not get bored and can touch many files in one pass, so routine bookkeeping cost can drop
+dramatically when the workflow is well scoped and reviewed. Its spiritual ancestor is the
+**[memex](./glossary.md#memex)**, Vannevar Bush's 1945 vision of a personal, curated
 knowledge store with associative trails - the maintenance problem was the unsolved part, and LLMs are the
 missing piece.
 

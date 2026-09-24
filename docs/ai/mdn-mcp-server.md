@@ -22,13 +22,15 @@ AI tools trained on a fixed dataset go stale. Browser compatibility tables shift
 
 The MDN MCP server solves this by giving your tools a real-time lookup channel:
 
-- **Browser support data** grounded in BCD (Browser Compatibility Data), the same dataset powering caniuse
-- **Up-to-date documentation** — spec changes, deprecations, and new APIs appear as MDN publishes them
-- **Faster answers** — structured MCP responses are roughly 2× faster than the model reasoning from memory alone
+- **Browser support data** grounded in BCD (Browser Compatibility Data), MDN's compatibility dataset that
+  also feeds parts of Can I Use
+- **Up-to-date documentation** -- spec changes, deprecations, and new APIs appear as MDN publishes them
+- **Faster answers** -- structured MCP responses are roughly 2× faster than the model reasoning from memory alone
 
 ## Setup
 
-The server uses HTTP transport. Add it once; any MCP client that supports remote HTTP servers can use the same URL.
+The server uses remote HTTP transport. Add it once; any MCP client that supports remote HTTP servers can
+use the same URL.
 
 ### Claude Code
 
@@ -38,9 +40,9 @@ claude mcp add --transport http mdn https://mcp.mdn.mozilla.net/
 
 This stores the server in your Claude Code config. Confirm it's active with `claude mcp list`.
 
-### VS Code (GitHub Copilot / MCP extension)
+### VS Code (GitHub Copilot)
 
-Add to `.vscode/mcp.json` in your project, or to your user `settings.json`:
+Add to `.vscode/mcp.json` in your project, or to the MCP user configuration:
 
 ```json
 {
@@ -53,7 +55,8 @@ Add to `.vscode/mcp.json` in your project, or to your user `settings.json`:
 }
 ```
 
-See the [VS Code MCP docs](https://code.visualstudio.com/docs/copilot/chat/mcp-servers) for the full settings path.
+See the [VS Code MCP docs](https://code.visualstudio.com/docs/agent-customization/mcp-servers) for
+workspace, portable, and user-level config paths.
 
 ### Cursor
 
@@ -69,7 +72,7 @@ Add to `.cursor/mcp.json`:
 }
 ```
 
-See the [Cursor MCP docs](https://docs.cursor.com/context/mcp) for project vs global scope.
+See the [Cursor MCP docs](https://cursor.com/help/customization/mcp) for project vs global scope.
 
 ### Zed
 
@@ -79,10 +82,7 @@ Add to your Zed settings under `context_servers`:
 {
     "context_servers": {
         "mdn": {
-            "source": {
-                "type": "url",
-                "url": "https://mcp.mdn.mozilla.net/"
-            }
+            "url": "https://mcp.mdn.mozilla.net/"
         }
     }
 }
@@ -92,30 +92,24 @@ See the [Zed MCP docs](https://zed.dev/docs/ai/mcp) for details.
 
 ### Claude Desktop
 
-Add to your Claude Desktop config file (`claude_desktop_config.json`):
+Remote MCP servers are configured as Claude custom connectors, not by editing
+`claude_desktop_config.json`. In Claude Desktop, add a custom Web connector and use
+`https://mcp.mdn.mozilla.net/` as the remote MCP server URL.
 
-```json
-{
-    "mcpServers": {
-        "mdn": {
-            "type": "http",
-            "url": "https://mcp.mdn.mozilla.net/"
-        }
-    }
-}
-```
-
-See the [Claude Desktop connector docs](https://support.claude.com/en/articles/11176164-use-connectors-to-extend-claude-s-capabilities) for the config file location.
+See the [Claude custom connector docs](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)
+for the current setup flow and network requirements.
 
 ## What the server exposes
 
-The MDN MCP server is a read-only data source — it does not execute code or modify anything. Tools exposed typically include:
+The MDN MCP server is a read-only data source -- it does not execute code or modify anything. Current
+tools exposed by the official server include:
 
-- **Browser compatibility lookup** — given a feature name, returns a BCD-backed support table across browsers and versions
-- **MDN documentation fetch** — returns structured content from a specific MDN page
-- **Feature search** — find MDN pages and API entries by keyword
+- `get-compat` -- given a BCD feature key, returns browser compatibility data
+- `get-doc` -- returns a specific MDN documentation page as Markdown
+- `search` -- finds MDN documentation pages by keyword
 
-The exact tool list evolves as MDN expands the server; check the [mdn/mcp repository](https://github.com/mdn/mcp) for the current spec.
+The exact tool list evolves as MDN expands the server; check the
+[mdn/mcp repository](https://github.com/mdn/mcp) for the current spec.
 
 ## Privacy
 

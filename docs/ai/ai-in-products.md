@@ -42,7 +42,7 @@ Product guidelines:
 - **Show progress** for multi-step [agents](./agents.md) ("Searching…", "Running tests…") so silence is not
   mistaken for a hang.
 - **Allow cancel** - long runs need a stop button; partial results should be usable or clearly discarded.
-- **Set expectations** - "This usually takes 10–20 seconds" beats a blank spinner.
+- **Set expectations** - "This usually takes 10--20 seconds" beats a blank spinner.
 
 For background jobs, prefer email or in-app notification over blocking the UI.
 

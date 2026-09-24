@@ -27,7 +27,7 @@ OpenAI API can speak to a local model.
 |---|---|---|
 | Default base URL | `http://localhost:11434/v1` | `http://localhost:1234/v1` |
 | Native API (also) | `http://localhost:11434/api/chat` | - |
-| API key | any non-empty string (ignored) | any non-empty string (ignored) |
+| API key | any non-empty string (ignored) | not required by default; use a real token if LM Studio auth is enabled |
 | Interface | CLI-first | GUI-first (plus an `lms` CLI) |
 | Get a model | `ollama pull <model>` | search & download in the app |
 
@@ -225,14 +225,16 @@ below before running it in a browser.
 
 ### 3. Using the official OpenAI SDK
 
-If you already use the OpenAI SDK, just point it at the local base URL - nothing else changes.
+If you already use the OpenAI SDK, just point it at the local base URL - nothing else changes. The SDK
+requires an `apiKey` value even when the local server ignores it; if LM Studio authentication is enabled,
+use the token you created in LM Studio instead.
 
 ```js
 import OpenAI from 'openai';
 
 const client = new OpenAI({
     baseURL: 'http://localhost:11434/v1', // LM Studio: http://localhost:1234/v1
-    apiKey: 'ollama',                      // any non-empty string; local servers ignore it
+    apiKey: 'ollama',                      // Ollama ignores it; use your LM Studio token if auth is enabled
 });
 
 const completion = await client.chat.completions.create({
@@ -258,8 +260,8 @@ print(resp.choices[0].message.content)
 ## Tuning the behavior
 
 - **System prompt** - prepend a `{role: 'system', content: '...'}` message to set persona and rules.
-- **Temperature** - add `"temperature": 0.2` to the request body for more deterministic output (0) or more
-  variety (higher). See [temperature](./glossary.md#temperature).
+- **Temperature** - add `"temperature": 0.2` to the request body for more focused, repeatable output (lower,
+  down to 0 -- still not guaranteed deterministic) or more variety (higher). See [temperature](./glossary.md#temperature).
 - **Swap the model** - change one string. Pull another with `ollama pull <model>` or load another in
   LM Studio.
 - **Streaming on/off** - set `"stream": false` to get the whole response in one JSON object instead of

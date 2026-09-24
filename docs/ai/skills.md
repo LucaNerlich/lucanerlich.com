@@ -87,9 +87,9 @@ The `SKILL.md` format is shared; discovery paths and invocation differ by platfo
 | **Cursor** | `.cursor/skills/`, `.agents/skills/`, nested monorepo dirs | `~/.cursor/skills/`, `~/.agents/skills/` | Auto, `/skill-name`, `@` attach |
 | **Claude Code** | `.claude/skills/` | `~/.claude/skills/` | Auto via Skill tool, `/skill-name` |
 | **Claude.ai** | Upload via Customize > Skills | Account-level | Auto when description matches |
-| **Codex** | `.codex/skills/` | `~/.codex/skills/` | Platform skill tool |
-| **Gemini CLI** | Project skill dirs | User home equivalents | `activate_skill` tool |
-| **Copilot CLI** | Plugin-bundled skills | Installed plugins | `skill` tool |
+| **Codex** | `.agents/skills/` from CWD up to repo root | `~/.agents/skills/` (admin: `/etc/codex/skills`) | Auto, `/skills`, `$skill-name` |
+| **Gemini CLI** | `.gemini/skills/`, `.agents/skills/` | `~/.gemini/skills/`, `~/.agents/skills/` | Auto via `activate_skill`, `/skills`, `gemini skills` |
+| **Copilot CLI** | `.github/skills/`, `.claude/skills/`, `.agents/skills/` | `~/.copilot/skills/`, `~/.agents/skills/` | Auto, `/skill-name`, `/skills`, `copilot skill` |
 
 Cursor also loads `.claude/skills/` and `.codex/skills/` for compatibility, so a skill checked into
 `.claude/skills/` may work in Cursor without duplication. Nested project directories (e.g.
@@ -103,7 +103,7 @@ repository](https://github.com/anthropics/skills) (includes the `skill-creator` 
 Each skill is a directory. The folder name containing `SKILL.md` is the skill's identity (category folders
 above it are organizational only):
 
-```
+```text
 my-skill/
 ├── SKILL.md              # Required - instructions + frontmatter
 ├── scripts/              # Optional - executable helpers
@@ -113,7 +113,7 @@ my-skill/
 
 Category grouping is supported - tools walk skill roots recursively:
 
-```
+```text
 .cursor/skills/
 ├── shipping/
 │   └── deploy-staging/
@@ -125,7 +125,8 @@ Category grouping is supported - tools walk skill roots recursively:
 
 ### Scoping when a skill applies
 
-Three mechanisms limit which tasks surface a skill:
+Beyond the base `name` / `description` metadata, several coding-agent hosts
+support extra fields and directory conventions that limit which tasks surface a skill:
 
 **`paths` frontmatter** - glob patterns. The skill appears only when the agent works with matching files:
 
@@ -171,9 +172,12 @@ description: Generate descriptive commit messages from staged changes. Use when 
 |---|---|---|
 | `name` | Yes | Skill identifier. Lowercase letters, numbers, hyphens only. Should match the parent folder name. |
 | `description` | Yes | What the skill does and when to use it. Primary trigger mechanism for automatic invocation. |
-| `paths` | No | Glob patterns scoping the skill to matching files. Comma-separated string or YAML list. |
-| `disable-model-invocation` | No | When `true`, explicit invocation only (slash command behavior). |
-| `metadata` | No | Arbitrary key-value pairs for tooling or organization. |
+| `license` | No | Skill license name or a reference to a bundled license file. |
+| `compatibility` | No | Environment requirements such as intended host, packages, or network access. |
+| `metadata` | No | Arbitrary string key-value pairs for tooling or organization. |
+| `allowed-tools` | No | Experimental spec field listing pre-approved tools; support varies by host. |
+| `paths` | No | Host-specific glob patterns scoping the skill to matching files (Cursor, Claude Code, VS Code/Copilot). |
+| `disable-model-invocation` | No | Host-specific explicit-invocation-only behavior (Cursor, Claude Code, VS Code/Copilot). |
 
 :::tip
 The `description` field is the trigger. Write in **third person**, include both **WHAT** the skill does and
@@ -212,8 +216,8 @@ When you know which workflow you want:
 - **Claude.ai:** skills with matching descriptions activate when your request fits; upload skills via
   Customize > Skills.
 
-Set `disable-model-invocation: true` on skills that should **never** auto-load (migrations, releases,
-destructive operations).
+Set `disable-model-invocation: true` where supported on skills that should **never** auto-load
+(migrations, releases, destructive operations).
 
 ### Built-in authoring helpers
 
@@ -266,7 +270,7 @@ narrow the description or add `paths` scoping.
 
 **Directory structure:**
 
-```
+```text
 write-commit-message/
 └── SKILL.md
 ```
@@ -317,7 +321,7 @@ Validate tokens in middleware; return 401 on expiry.
 - *Automatic:* "Help me write a commit message for my staged changes" - the agent matches the description
   and follows the workflow.
 - *Explicit:* `/write-commit-message` - loads the skill even if auto-matching would miss it (especially
-  useful with `disable-model-invocation: true`).
+  useful with `disable-model-invocation: true` where supported).
 
 ## Common patterns
 
@@ -398,12 +402,14 @@ Branch on task type:
 
 - **Project skills in git** - commit `.cursor/skills/` or `.claude/skills/` so the whole team gets the same
   workflows on clone.
-- **Import from GitHub** - Cursor Settings → Rules → Add Rule → Remote Rule (GitHub URL).
+- **Install from GitHub** - Cursor imports skills through plugins/marketplaces, not bare skill folders;
+  package them in a Cursor plugin and install the plugin from Customize.
 - **Migrate legacy rules** - in Cursor 2.4+, run `/migrate-to-skills` to convert dynamic rules and slash
   commands into skills. Rules with `alwaysApply: true` or specific globs are not migrated (they have explicit
   triggering that differs from skill behavior).
 
-View discovered skills in Cursor via Settings → Rules → Agent Decides section.
+View discovered skills in Cursor via Customize → Skills; project and plugin skills also appear in the
+Agent Decides section.
 
 ## See also
 
