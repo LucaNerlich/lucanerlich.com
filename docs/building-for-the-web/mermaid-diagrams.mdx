@@ -1383,15 +1383,17 @@ A -->|"O(n) complexity"| B
 
 The Mermaid Live Editor is useful for quick experiments, but it is not a substitute for rendering in
 the tool that will publish the diagram. Mermaid versions, enabled diagram types, sanitization rules, and
-configuration can differ between Docusaurus, GitHub, GitLab, and editor extensions. Keep the rendered
-diagram and its adjacent source example identical, then run this site's production build before publishing:
+configuration can differ between Docusaurus, GitHub, GitLab, and editor extensions. Keep each Mermaid
+definition and its adjacent `markdown` source example identical, then run this site's production build
+before publishing:
 
 ```bash
 pnpm build
 ```
 
-The build parses rendered Mermaid blocks, but it does not parse ordinary `markdown` source examples. When
-you update one, copy the tested definition to the other in the same change.
+`pnpm build` compiles the page and recognizes Mermaid blocks, but it does not validate their diagram
+definitions or parse ordinary `markdown` source examples. Inspect each diagram in the published renderer.
+When you update a diagram, keep its adjacent `markdown` source example identical in the same change.
 
 ### Make diagrams accessible
 

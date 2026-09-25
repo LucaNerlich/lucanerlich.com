@@ -28,8 +28,8 @@ before sharing a report. Do not expose Discord account tokens to this tool or co
 After parsing all `.json` logs into Java entities, each `Channel` is analyzed by `Analyzer.java`.
 The analyzer reads each message and tracks a multitude of information for each specific author/chatter, automatically sorted by TreeMaps.
 
-Place the downloaded `.json` files in a local directory such as `logs/<name>` that is ignored by Git.
-Update the input directory in `readLogs`; avoid placing private exports in a repository.
+Place the downloaded `.json` files in a local directory outside the repository, and update the input
+directory in `readLogs` accordingly. Keep private exports out of the repository.
 
 Based on the `rankingType`, the analyzer writes its data to separate files.
 
@@ -46,6 +46,9 @@ public enum RankingType {
     AVG_WORD_COUNT
 }
 ```
+
+`ACCOUNT_AGE`, `calculateAccountAgeRanking`, and `joinedServer` are legacy implementation names in these
+examples. They refer to the earliest message for each author in the export, not account age or server-join date.
 
 The data is aggregated and analyzed by an implementation of `Ranking.java`.
 

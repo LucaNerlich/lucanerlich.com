@@ -39,23 +39,24 @@ führe keine fremden Skripte ohne Prüfung mit deinem Hauptkonto aus.
 
    ```powershell
    py -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   py -m pip install --upgrade pip
-   py -m pip install -r requirements.txt
+   .\.venv\Scripts\python.exe -m pip install --upgrade pip
+   .\.venv\Scripts\python.exe -m pip install html5lib requests psutil
    ```
 
 4. Lies die README des verwendeten Forks für die aktuellen Login- und Downloadbefehle. Bei der
    ursprünglichen CLI ist der Ablauf typischerweise:
 
    ```powershell
-   py gogrepoc.py login
-   py gogrepoc.py update
-   py gogrepoc.py download -lang en de
+   .\.venv\Scripts\python.exe gogrepoc.py login
+   .\.venv\Scripts\python.exe gogrepoc.py update
+   .\.venv\Scripts\python.exe gogrepoc.py download -lang en de
+   .\.venv\Scripts\python.exe gogrepoc.py verify
    ```
 
 5. Prüfe nach dem Download die vom Tool angebotenen Prüfsummen und bewahre die Installer, Metadaten sowie
-   Kauf-/Serieninformationen gemeinsam auf. Wiederhole `update` und die Integritätsprüfung regelmäßig,
-   statt jedes Mal die komplette Bibliothek blind neu herunterzuladen.
+   Kauf-/Serieninformationen gemeinsam auf. Führe bei der regelmäßigen Pflege zuerst `update`, dann
+   `download` und anschließend `verify` aus, damit auch neu entdeckte oder geänderte Dateien heruntergeladen
+   und geprüft werden.
 
 :::tip[Archivstrategie]
 Speichere das Archiv auf mindestens zwei physischen Medien oder nach der 3-2-1-Regel. Ein Backup ist erst

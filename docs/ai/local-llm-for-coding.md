@@ -109,6 +109,13 @@ after checking memory. See [Build a Local LLM App](./local-llm-app.md) and
 
 ![openwebui.png](./assets/openwebui.png)
 
+:::warning[Docker Engine before 28.0.0]
+The following Docker commands and Compose example publish Open WebUI to `127.0.0.1`. On Docker Engine
+versions older than 28.0.0, hosts on the same layer-2 network segment may still reach ports published to
+localhost, so this binding does not guarantee host-only access. Use a firewall or other network controls
+on those versions. See [Docker's port-publishing documentation](https://docs.docker.com/engine/network/port-publishing/).
+:::
+
 Nvidia GPU
 
 ```bash
