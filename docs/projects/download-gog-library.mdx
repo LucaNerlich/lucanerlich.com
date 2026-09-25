@@ -12,40 +12,56 @@ sidebar_position: 4
 
 # (DE) Download der kompletten GOG Bibliothek
 
-Wer Spiele bei [Good Old Games](https://gog.com) kauft, hat immer Zugriff auf die Offline-Installer aller Spiele in der Account-Bibliothek. GOG bietet zwar den Steam-Konkurrenten 'Galaxy' an, dieser ist aber nicht als Archiv / Backup-Tool gedacht, sondern *nur* für den *day-to-day* Kram (downloaden, spielen, shoppen).
+Wer Spiele bei [GOG](https://www.gog.com) kauft, kann die verfügbaren Offline-Installer aus der
+Bibliothek herunterladen. GOG Galaxy eignet sich gut zum Installieren und Aktualisieren, ersetzt aber kein
+eigenes, überprüftes Archiv.
 
-Möchte man nun seine komplette Bibliothek herunterladen, bzw. die Offline-Installer sichern, gibt es derzeit zwei Möglichkeiten.
+Die GOG-Weboberfläche bietet keinen offiziellen Ein-Klick-Export für eine komplette Bibliothek. Für größere
+Archive gibt es Community-Tools. Prüfe vor dem Einsatz deren aktuelle Wartung, die GOG-Nutzungsbedingungen
+und ihre Unterstützung für Zwei-Faktor-Authentifizierung -- diese Schnittstellen und Tools ändern sich.
 
-1. Der **lgogdownloader** von Sude-
- - https://github.com/Sude-/lgogdownloader
- - https://www.gog.com/forum/general/lgogdownloader_gogdownloader_for_linux
-2. Das **gogrepoc** Python Script von Kalanyr
- - https://github.com/Kalanyr/gogrepoc
- - https://www.gog.com/forum/general/gogrepopy_python_script_for_regularly_backing_up_your_purchased_gog_collection_for_full_offline_e/page199
+1. **[gogrepoc](https://github.com/Kalanyr/gogrepoc)** / gepflegte Forks: Python-basierte Downloader
+   für Offline-Installer und Zusatzinhalte.
+2. **[LGOGDownloader](https://github.com/Sude-/lgogdownloader)**: vor allem für Linux interessant.
+3. Manuell: Installer pro Spiel aus der GOG-Bibliothek herunterladen. Langsam, aber ohne ein
+   Drittanbieter-Tool.
 
-Der **lgogdownloader** muss unter Linux selbst kompiliert werden, das Python-Skript läuft quasi standalone.
-Dieser Beitrag ist daher eine kurze Anleitung, wie man das Python-Skript **gogrepoc** unter Windows 11 zum Laufen bekommt.
+Dieser Beitrag zeigt ein konservatives Windows-11-Setup für **gogrepoc**. Die konkreten Abhängigkeiten
+stehen in der README des gewählten Repositories; installiere sie nicht einzeln nach Fehlermeldungen und
+führe keine fremden Skripte ohne Prüfung mit deinem Hauptkonto aus.
 
-1. Python3 installieren - am einfachsten ueber den [Windows Store](https://www.microsoft.com/store/productId/9NCVDN91XZQP?ocid=pdpshare)
-2. Das gogrepoc script herunterladen
- - https://github.com/Kalanyr/gogrepoc
- - Entweder per git, oder einfach [als zip](https://github.com/Kalanyr/gogrepoc/archive/refs/heads/master.zip)
-3. Auf der Ziel-Festplatte einen neuen Ordner 'gog-backups', oder aehnlicher Name, erstellen und das Skript hier, entpackt, ablegen
-4. Sicherstellen, dass Python3 auf der Kommandozeile verfuebgar ist
- - Im Terminal / CMD / Powershell `python3 -v` eingeben
- - Die etwaige Python REPL per `exit()` verlassen
-5. Im Ordner des `gogrepoc.py` Skripts folgende Abhaengigkeiten installieren
- 1. `pip3 install html5lib`
- 2. `pip3 install pyOpenSSL`
-6. Sollten weitere Fehler folgender Art auftreten, den `pip3 install <library>` Befehl anpassen und mit der fehlenden Abhaengigkeit erneut ausfuehren
- - `ModuleNotFoundError: No module named 'html5lib'`
-7. Das Skript ausfuehren und einloggen
- - `python3 gogrepoc.py login`
-8. Die GOG Bibliothek scannen und initial alle Metadaten herunterladen
- - `python3 gogrepoc.py update`
-9. Kompletten Download starten
- - `python3 gogrepoc.py download -lang en de`
- - Das Skript kopiert erst ganz zum Schluss alle heruntergeladenen Dateien in die dedizierten Spieleordner
+1. Installiere eine aktuelle Python-3-Version von [python.org](https://www.python.org/downloads/windows/).
+   Prüfe sie in PowerShell mit `py --version`.
+2. Klone oder lade das gewählte Repository in einen Ordner auf dem Ziellaufwerk, zum Beispiel
+   `D:\gog-backups\gogrepoc`.
+3. Erzeuge eine isolierte Python-Umgebung und installiere ausschließlich die vom Projekt dokumentierten
+   Abhängigkeiten:
+
+   ```powershell
+   py -m venv .venv
+   .\.venv\Scripts\python.exe -m pip install --upgrade pip
+   .\.venv\Scripts\python.exe -m pip install html5lib requests psutil
+   ```
+
+4. Lies die README des verwendeten Forks für die aktuellen Login- und Downloadbefehle. Bei der
+   ursprünglichen CLI ist der Ablauf typischerweise:
+
+   ```powershell
+   .\.venv\Scripts\python.exe gogrepoc.py login
+   .\.venv\Scripts\python.exe gogrepoc.py update
+   .\.venv\Scripts\python.exe gogrepoc.py download -lang en de
+   .\.venv\Scripts\python.exe gogrepoc.py verify
+   ```
+
+5. Prüfe nach dem Download die vom Tool angebotenen Prüfsummen und bewahre die Installer, Metadaten sowie
+   Kauf-/Serieninformationen gemeinsam auf. Führe bei der regelmäßigen Pflege zuerst `update`, dann
+   `download` und anschließend `verify` aus, damit auch neu entdeckte oder geänderte Dateien heruntergeladen
+   und geprüft werden.
+
+:::tip[Archivstrategie]
+Speichere das Archiv auf mindestens zwei physischen Medien oder nach der 3-2-1-Regel. Ein Backup ist erst
+brauchbar, wenn du einen Installer auf einem separaten System testweise wiederherstellen kannst.
+:::
 
 
 Danke fürs Lesen.

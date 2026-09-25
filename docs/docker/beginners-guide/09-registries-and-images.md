@@ -88,7 +88,7 @@ GHCR is tightly integrated with GitHub Actions and GitHub's permission model. Im
 
 ```bash
 # Create a Personal Access Token at github.com → Settings → Developer settings
-# Required scopes: read:packages, write:packages, delete:packages
+# Required scopes: read:packages, write:packages
 
 echo $GITHUB_TOKEN | docker login ghcr.io --username $GITHUB_USERNAME --password-stdin
 ```
@@ -338,7 +338,7 @@ When a user pulls `myusername/my-app:1.0.0`, Docker automatically selects the im
 4. **Scan images before deployment** - Integrate Docker Scout or Trivy into CI.
 5. **Set up retention policies** - Registries grow; delete old images and untagged digests automatically.
 6. **Limit registry access** - Use private repositories for proprietary applications.
-7. **Sign images** - Use Docker Content Trust or sigstore/cosign to cryptographically verify image integrity.
+7. **Sign images** - Use modern signing tooling such as sigstore/cosign (or Notation where supported) to cryptographically verify image integrity.
 
 ```bash
 # Sign an image with cosign (after installing cosign)

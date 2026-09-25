@@ -8,48 +8,78 @@ tags: [design-patterns, behavioral]
 
 ## Overview
 
-Encapsulate a request as an object, allowing parameterization and queuing.
+Encapsulate a request as an object, allowing parameterization, queuing, and undo support.
 
 ## When to use
 
 - You need undo/redo.
 - You want to queue or log operations.
+- You want the invoker to stay decoupled from the receiver that does the real work.
 
 ## Java example
 
 ```java
-interface Command { void execute(); }
+interface Command {
+    void execute();
+}
+
+class Editor {
+    void save() {
+        System.out.println("saved");
+    }
+}
 
 class SaveCommand implements Command {
-    private final Document doc;
-    SaveCommand(Document doc) { this.doc = doc; }
-    public void execute() { doc.save(); }
+    private final Editor editor;
+
+    SaveCommand(Editor editor) {
+        this.editor = editor;
+    }
+
+    public void execute() {
+        editor.save();
+    }
 }
 
 class Invoker {
-    void run(Command cmd) { cmd.execute(); }
+    void run(Command cmd) {
+        cmd.execute();
+    }
 }
 ```
 
 ## TypeScript example
 
 ```ts
-interface Command { execute(): void; }
+interface Command {
+  execute(): void;
+}
+
+class Editor {
+  save(): void {
+    console.log('saved');
+  }
+}
 
 class SaveCommand implements Command {
-  constructor(private doc: Document) {}
-  execute(): void { this.doc.save(); }
+  constructor(private editor: Editor) {}
+
+  execute(): void {
+    this.editor.save();
+  }
 }
 
 class Invoker {
-  run(cmd: Command): void { cmd.execute(); }
+  run(cmd: Command): void {
+    cmd.execute();
+  }
 }
 ```
 
 ## Pros and cons
 
 Pros:
-- Supports undo/redo and logging.
+- Supports undo/redo, queuing, and logging.
 - Decouples invoker from receiver.
 
 Cons:

@@ -286,7 +286,7 @@ docker run -d \
   --name api \
   --network app-stack \
   -p 127.0.0.1:3000:3000 \
-  -e DATABASE_URL=postgres://myapp:secret@pg:5432/myapp \
+  -e DATABASE_URL=postgresql://dbuser:dbpassword@pg:5432/myapp \
   -e REDIS_URL=redis://redis:6379 \
   my-api:latest
 

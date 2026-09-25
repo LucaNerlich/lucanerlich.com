@@ -43,7 +43,7 @@ A response has:
 | List all tasks | `GET`    | `/api/tasks`      | Returns all tasks              |
 | Get one task   | `GET`    | `/api/tasks/{id}` | Returns a specific task        |
 | Create a task  | `POST`   | `/api/tasks`      | Creates and returns a new task |
-| Update a task  | `PUT`    | `/api/tasks/{id}` | Updates and returns the task   |
+| Complete a task | `PUT`   | `/api/tasks/{id}` | Marks the task as done and returns it |
 | Delete a task  | `DELETE` | `/api/tasks/{id}` | Deletes the task               |
 
 ## Project structure
@@ -217,8 +217,8 @@ public class JsonHelper {
 }
 ```
 
-This is intentionally minimal - it handles our specific data format. For production APIs, use a library like Jackson or
-Gson. See the [JSON Processing guide](../json-processing.md) for library-based approaches.
+This is intentionally minimal - it handles our specific data format. For production APIs, use a library like Jackson or Gson. See the [JSON Processing guide](../json-processing.md) for
+library-based approaches.
 
 ## Step 2: the request handler
 
@@ -413,6 +413,7 @@ Key points:
 - Routing is manual - check the path and method to determine the action
 - Responses are always JSON with the appropriate status code
 - Errors are caught and returned as JSON error responses
+- This example's `PUT /api/tasks/{id}` endpoint models **complete task**, not a general partial update
 
 ## Step 3: the server
 
@@ -432,6 +433,7 @@ public class ApiServer {
 
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
+        server.setExecutor(java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor());
 
         server.createContext("/api/", new TaskHandler(DATA_FILE));
 
@@ -441,7 +443,7 @@ public class ApiServer {
         System.out.println("  GET    /api/tasks       - list all tasks");
         System.out.println("  GET    /api/tasks/{id}   - get a task");
         System.out.println("  POST   /api/tasks       - create a task");
-        System.out.println("  PUT    /api/tasks/{id}   - complete a task");
+        System.out.println("  PUT    /api/tasks/{id}   - mark a task as completed");
         System.out.println("  DELETE /api/tasks/{id}   - delete a task");
         System.out.println("  GET    /api/health      - health check");
         System.out.println();

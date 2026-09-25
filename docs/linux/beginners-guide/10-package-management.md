@@ -197,8 +197,15 @@ sudo add-apt-repository --remove ppa:git-core/ppa
 Many vendors (Node.js, Nginx, Docker, PostgreSQL) maintain their own Debian/Ubuntu repositories with up-to-date packages:
 
 ```bash
-# Example: Install Node.js 20 from NodeSource
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+# Example: Install Node.js 20 from NodeSource without piping a script to the shell
+sudo apt install -y ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+sudo chmod a+r /etc/apt/keyrings/nodesource.gpg
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" \
+  | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null
+sudo apt update
 sudo apt install -y nodejs
 
 # Verify

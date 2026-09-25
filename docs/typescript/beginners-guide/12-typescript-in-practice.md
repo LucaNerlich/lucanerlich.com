@@ -27,6 +27,7 @@ and migrating an existing JavaScript project to TypeScript.
 ```bash
 mkdir ts-api && cd ts-api
 npm init -y
+npm pkg set type=module
 npm install express
 npm install --save-dev typescript @types/node @types/express tsx
 npx tsc --init
@@ -37,8 +38,8 @@ npx tsc --init
 {
     "compilerOptions": {
         "target": "ES2022",
-        "module": "CommonJS",
-        "moduleResolution": "Node",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
         "lib": ["ES2022"],
         "outDir": "dist",
         "rootDir": "src",
@@ -592,7 +593,8 @@ npx tsc --init
 {
     "compilerOptions": {
         "target": "ES2022",
-        "module": "CommonJS",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
         "allowJs": true,            // Allow JavaScript files alongside TypeScript
         "checkJs": false,           // Don't type-check JS files yet
         "outDir": "dist",
@@ -605,7 +607,7 @@ npx tsc --init
 }
 ```
 
-`allowJs: true` means you can have a mix of `.ts` and `.js` files. Rename and convert files one at a time.
+`allowJs: true` means you can have a mix of `.ts` and `.js` files. Rename and convert files one at a time. If the existing project still uses `require()` and `module.exports`, keep `CommonJS` during the migration and move to `NodeNext` later.
 
 ### Step 3: Rename files and fix errors
 

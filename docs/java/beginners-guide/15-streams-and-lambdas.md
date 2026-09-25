@@ -370,6 +370,9 @@ Map<String, Integer> nameLengths = names.stream()
 // {Alice=5, Bob=3, Charlie=7}
 ```
 
+If duplicate keys are possible, pass a merge function to `toMap(...)`; otherwise the collector throws
+`IllegalStateException`.
+
 ### `joining()`
 
 ```java
@@ -515,7 +518,10 @@ IntStream closed = IntStream.rangeClosed(1, 5); // 1, 2, 3, 4, 5
 IntStream chars = "hello".chars();
 
 // From lines of a file
-Stream<String> lines = Files.lines(Path.of("data.txt"));
+try (Stream<String> lines = Files.lines(Path.of("data.txt"))) {
+    long lineCount = lines.count();
+    System.out.println(lineCount);
+}
 ```
 
 ## Primitive streams

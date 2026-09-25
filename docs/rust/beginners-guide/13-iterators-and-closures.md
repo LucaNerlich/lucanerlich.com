@@ -234,7 +234,7 @@ fn main() {
 fn main() {
     let numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-    let evens: Vec<&i32> = numbers.iter().filter(|n| *n % 2 == 0).collect();
+    let evens: Vec<i32> = numbers.iter().copied().filter(|n| n % 2 == 0).collect();
 
     println!("{:?}", evens); // [2, 4, 6, 8, 10]
 }
@@ -333,7 +333,7 @@ fn main() {
     println!("Sum: {}", numbers.iter().sum::<i32>());
     println!("Any even? {}", numbers.iter().any(|n| n % 2 == 0));
     println!("All positive? {}", numbers.iter().all(|n| *n > 0));
-    println!("First even: {:?}", numbers.iter().find(|n| *n % 2 == 0));
+    println!("First even: {:?}", numbers.iter().copied().find(|n| n % 2 == 0));
     println!("Max: {:?}", numbers.iter().max());
 }
 ```
@@ -347,7 +347,7 @@ fn main() {
     let numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
     // Nothing happens here - the chain is lazy
-    let iter = numbers.iter().filter(|n| *n % 2 == 0).map(|n| n * 10);
+    let iter = numbers.iter().copied().filter(|n| n % 2 == 0).map(|n| n * 10);
 
     // Only now does the computation happen
     let result: Vec<i32> = iter.collect();

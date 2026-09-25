@@ -77,7 +77,7 @@ Measures **interactivity**: how long between a user action (click, tap, keypress
 
 **What helps INP:**
 
-- Break long tasks with `requestIdleCallback` or `scheduler.yield()`
+- Break long tasks into smaller chunks with `scheduler.yield()`, `requestAnimationFrame`, or short `setTimeout()` breaks; reserve `requestIdleCallback()` for non-urgent background work
 - Debounce input handlers
 - Use `requestAnimationFrame` for visual updates
 - Move heavy work to Web Workers
@@ -104,7 +104,7 @@ Measures **visual stability**: how much visible content moves unexpectedly durin
 - Always set `width` and `height` on images and videos
 - Use `aspect-ratio` in CSS for responsive containers
 - Reserve space for ads and embeds
-- Use `font-display: optional` to avoid font-swap layout shifts
+- Pick a `font-display` strategy that balances brand needs and layout stability (`swap`, `fallback`, or `optional`)
 
 ## Measuring performance
 
@@ -200,12 +200,12 @@ Web fonts can cause both layout shifts (CLS) and render delays (LCP).
 
 | Value | Behavior | CLS risk |
 |-------|----------|----------|
-| `swap` | Show fallback immediately, swap when loaded | Medium - text reflows on swap |
-| `optional` | Show fallback, use web font only if already cached | None - no swap |
+| `swap` | Show fallback immediately, swap when loaded | Medium - text can reflow on swap |
+| `optional` | Show fallback, use web font only if it loads immediately | Lowest - many first visits stay on fallback |
 | `fallback` | Brief invisible period (100ms), then fallback, then swap | Low |
 | `block` | Invisible text for up to 3 seconds | None, but FOIT (flash of invisible text) |
 
-**Recommendation:** Use `font-display: optional` for body text (avoids all layout shift). Use `swap` only if the brand font is critical to the design.
+**Recommendation:** Default to `swap` or `fallback` for readable text that should reliably use the web font. Use `optional` when zero layout shift matters more than guaranteed first-visit brand-font rendering.
 
 ### Font loading strategies
 
@@ -215,7 +215,7 @@ Web fonts can cause both layout shifts (CLS) and render delays (LCP).
       href="/fonts/inter-v13-latin-400.woff2" crossorigin>
 ```
 
-- **Self-host fonts** instead of loading from Google Fonts - avoids a DNS lookup, connection, and the Google Fonts CSS file
+- **Self-host fonts when practical** - it often improves privacy and lets you skip an extra stylesheet request
 - **Use WOFF2** - best compression, supported by all modern browsers
 - **Subset fonts** - include only the character sets you need (latin, latin-ext)
 - **Limit font weights** - every weight is a separate file; use 2-3 weights maximum
@@ -236,7 +236,7 @@ body {
 }
 ```
 
-Using `font-display: optional` combined with preloading gives you the web font on repeat visits (cached) and the system font on first visit (no layout shift).
+Using `font-display: optional` combined with preloading often gives you the web font on repeat visits (cached) and the system font on some first visits (minimal layout shift).
 
 ## JavaScript
 
@@ -288,7 +288,7 @@ Bundlers (webpack, Rollup, esbuild) remove unused exports from your bundles. For
 
 A **long task** is any JavaScript execution that takes longer than 50ms, blocking the main thread and hurting INP.
 
-- Break large loops with `requestIdleCallback` or `scheduler.yield()`
+- Break large loops into smaller chunks with `scheduler.yield()`, `requestAnimationFrame`, or timed yields
 - Defer non-critical work to after the page loads
 - Use Web Workers for CPU-intensive computation (parsing, sorting, image processing)
 - Profile with Chrome DevTools Performance panel - look for long yellow bars
@@ -309,6 +309,7 @@ Inline the CSS needed to render above-the-fold content in the `<head>`:
     <!-- Defer the full stylesheet -->
     <link rel="preload" as="style" href="/styles.css"
           onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
 </head>
 ```
 
@@ -541,7 +542,7 @@ These guides cover performance in the context of specific platforms used in this
 |------|-------------|
 | **Core Web Vitals** | LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1 - measure both lab and field |
 | **Images** | Use WebP/AVIF, responsive srcset, lazy-load (except LCP), always set dimensions |
-| **Fonts** | Self-host WOFF2, preload critical font, `font-display: optional` for zero CLS |
+| **Fonts** | Self-host WOFF2 when practical, preload the critical font, and choose `font-display` intentionally |
 | **JavaScript** | Code-split, `defer` scripts, break long tasks, tree-shake unused code |
 | **CSS** | Inline critical CSS, remove unused CSS, avoid render-blocking stylesheets |
 | **Caching** | Hash filenames for immutable caching, `stale-while-revalidate` for dynamic content |

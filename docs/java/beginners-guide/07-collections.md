@@ -70,8 +70,8 @@ Ada
 The `<String>` part is the **type parameter**. It tells the compiler what the list contains, catching errors at compile
 time instead of runtime.
 
-**Note:** generics work with objects only - you cannot use primitives (`int`, `double`, etc.). Use wrapper classes (
-`Integer`, `Double`) instead:
+**Note:** generics work with objects only - you cannot use primitives (`int`, `double`, etc.). Use wrapper classes
+(`Integer`, `Double`) instead:
 
 ```java
 List<Integer> numbers = new ArrayList<>();
@@ -275,7 +275,7 @@ ages.remove("Charlie");
 System.out.println(ages);
 ```
 
-Result:
+Result (map entry order may vary because `HashMap` is unordered):
 
 ```text
 {Ada=36, Bob=25, Charlie=30}
@@ -293,11 +293,10 @@ true
 ### Iterating over maps
 
 ```java
-Map<String, String> capitals = Map.of(
-    "Germany", "Berlin",
-    "France", "Paris",
-    "Japan", "Tokyo"
-);
+Map<String, String> capitals = new java.util.LinkedHashMap<>();
+capitals.put("Germany", "Berlin");
+capitals.put("France", "Paris");
+capitals.put("Japan", "Tokyo");
 
 // Keys
 for (String country : capitals.keySet()) {
@@ -388,7 +387,7 @@ tags.remove("tutorial");
 System.out.println(tags);
 ```
 
-Result:
+Result (set element order may vary because `HashSet` is unordered):
 
 ```text
 [java, tutorial, programming]
@@ -431,7 +430,7 @@ Difference: [1, 2, 3]
 
 ```java
 List<String> withDuplicates = List.of("a", "b", "a", "c", "b");
-List<String> unique = new ArrayList<>(new HashSet<>(withDuplicates));
+List<String> unique = new ArrayList<>(new java.util.LinkedHashSet<>(withDuplicates));
 System.out.println(unique);
 ```
 
@@ -441,7 +440,7 @@ Result:
 [a, b, c]
 ```
 
-**Note:** this does not preserve order. For order-preserving dedup, use `LinkedHashSet`.
+This preserves the original encounter order because `LinkedHashSet` keeps insertion order.
 
 ## Immutable collections
 

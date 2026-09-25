@@ -106,6 +106,7 @@ The build file replaces Maven's `pom.xml`:
 plugins {
     java
     application
+    id("com.gradleup.shadow") version "8.3.5"
 }
 
 group = "com.example"
@@ -130,23 +131,8 @@ application {
     mainClass = "taskapi.ApiServer"
 }
 
-// Fat JAR task - bundles all dependencies into one JAR
-tasks.register<Jar>("fatJar") {
+tasks.shadowJar {
     archiveClassifier = "all"
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    manifest {
-        attributes["Main-Class"] = "taskapi.ApiServer"
-    }
-
-    from(sourceSets.main.get().output)
-
-    dependsOn(configurations.runtimeClasspath)
-    from({
-        configurations.runtimeClasspath.get()
-            .filter { it.name.endsWith("jar") }
-            .map { zipTree(it) }
-    })
 }
 ```
 
@@ -157,7 +143,8 @@ Compare this to the Maven `pom.xml`:
 - **`repositories { mavenCentral() }`** - where to download dependencies (same Maven Central)
 - **`dependencies { implementation(...) }`** - equivalent to Maven's `<dependency>` block
 - **`application { mainClass = ... }`** - enables `gradle run` to start the app
-- **`fatJar` task** - custom task that creates a fat JAR (equivalent to Maven's shade plugin)
+- **`shadowJar` task** - the Shadow plugin creates a fat JAR without the common edge cases of manual `zipTree`
+  packaging
 
 ### Gradle vs Maven dependency notation
 
@@ -382,32 +369,32 @@ needs.
 
 ```bash
 # Compile
-gradle build
+./gradlew build
 
 # Run the application directly
-gradle run
+./gradlew run
 
 # Create the fat JAR
-gradle fatJar
+./gradlew shadowJar
 
 # Clean build output
-gradle clean
+./gradlew clean
 
 # Clean + build
-gradle clean build
+./gradlew clean build
 
 # List all available tasks
-gradle tasks
+./gradlew tasks
 ```
 
 ### Running the app
 
 ```bash
-# Option 1: gradle run (quick, for development)
-gradle run
+# Option 1: ./gradlew run (quick, for development)
+./gradlew run
 
 # Option 2: fat JAR (for deployment)
-gradle fatJar
+./gradlew shadowJar
 java -jar build/libs/task-api-1.0.0-all.jar
 ```
 
@@ -433,20 +420,21 @@ Now anyone can build with:
 
 ```bash
 ./gradlew clean build
-./gradlew fatJar
+./gradlew shadowJar
 ```
 
 The wrapper downloads the correct Gradle version automatically. **Always use the wrapper in CI/CD and shared projects.**
 
 ## Build cache and incremental builds
 
-Gradle is faster than Maven mainly because of:
+Gradle is often faster than Maven, especially on repeated builds, mainly because of:
 
 1. **Incremental compilation** - only recompiles changed files
 2. **Build cache** - reuses outputs from previous builds
 3. **Gradle daemon** - keeps a JVM running in the background
 
-In practice, `gradle build` on an unchanged project takes milliseconds. A full `mvn package` rescans everything.
+On a warm daemon with no changes, Gradle can often finish much faster because it reuses cached work. The exact speedup
+depends on the project and machine.
 
 ```bash
 # First build
@@ -468,7 +456,7 @@ SERVER="deploy@YOUR_SERVER_IP"
 REMOTE_PATH="/opt/task-api"
 
 echo "Building..."
-./gradlew fatJar -q
+./gradlew shadowJar -q
 
 echo "Uploading..."
 rsync -avz build/libs/task-api-1.0.0-all.jar "$SERVER:$REMOTE_PATH/task-api.jar"
@@ -506,7 +494,7 @@ The choice rarely matters for the end result. Pick one, learn it well, and switc
 
 - **Gradle** uses Kotlin DSL (`build.gradle.kts`) instead of XML - more concise and programmable.
 - `implementation("group:artifact:version")` declares dependencies (same Maven Central repository).
-- `gradle run` starts the app directly; `gradle fatJar` creates a deployable JAR.
+- `./gradlew run` starts the app directly; `./gradlew shadowJar` creates a deployable JAR.
 - The **Gradle wrapper** (`gradlew`) ensures reproducible builds without a global installation.
 - **Jackson** (`ObjectMapper`) is the industry-standard JSON library - `writeValueAsString` and `readValue`.
 - Gradle's **incremental builds and build cache** make rebuilds significantly faster than Maven.

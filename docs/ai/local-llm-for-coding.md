@@ -10,11 +10,17 @@ keywords:
     - local code assistant
 ---
 
-# How to set up a local & offline GitHub Copilot alternative
+# How to set up a local & offline coding assistant
 
 This guide sets up a local **coding assistant** inside your editor. If you instead want to run a local model
 and call it from your own app, see [Build a Local LLM App](./local-llm-app.md), and
 [Cloud vs Local Models](./cloud-vs-local.md) for when local makes sense.
+
+:::note
+This is an alternative workflow, not a drop-in replacement for GitHub Copilot. Model quality, agent
+features, indexing, editor integration, and context handling differ by tool and hardware. Test the setup
+on representative work before moving a team or sensitive repository to it.
+:::
 
 ## Local models are viable now
 
@@ -103,16 +109,23 @@ after checking memory. See [Build a Local LLM App](./local-llm-app.md) and
 
 ![openwebui.png](./assets/openwebui.png)
 
+:::warning[Docker Engine before 28.0.0]
+The following Docker commands and Compose example publish Open WebUI to `127.0.0.1`. On Docker Engine
+versions older than 28.0.0, hosts on the same layer-2 network segment may still reach ports published to
+localhost, so this binding does not guarantee host-only access. Use a firewall or other network controls
+on those versions. See [Docker's port-publishing documentation](https://docs.docker.com/engine/network/port-publishing/).
+:::
+
 Nvidia GPU
 
 ```bash
-docker run -d -p 3000:8080 --gpus all --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+docker run -d -p 127.0.0.1:3000:8080 --gpus all --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart unless-stopped ghcr.io/open-webui/open-webui:cuda
 ```
 
 Other
 
 ```bash
-docker run -d -p 3456:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+docker run -d -p 127.0.0.1:3456:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart unless-stopped ghcr.io/open-webui/open-webui:main
 ```
 
 ### Docker Compose
@@ -127,12 +140,12 @@ services:
         volumes:
             - ./data:/app/backend/data
         ports:
-            - 3456:8080
+            - 127.0.0.1:3456:8080
         environment:
             - 'OLLAMA_BASE_URL=http://host.docker.internal:11434'
         extra_hosts:
             - host.docker.internal:host-gateway
-        restart: always
+        restart: unless-stopped
         deploy:
             resources:
                 reservations:
@@ -144,6 +157,12 @@ services:
 volumes:
     open-webui: { }
 ```
+
+:::warning[Pin production images]
+The `main` and `cuda` tags move over time. They are convenient for a local experiment, but pin a tested
+release tag or image digest before using this setup for work you need to reproduce. Back up the persistent
+data volume before upgrades.
+:::
 
 ## Usage
 

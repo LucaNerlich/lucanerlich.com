@@ -456,14 +456,15 @@ npm install --save-dev testcontainers
 ```
 
 ```typescript
-import { PostgreSqlContainer } from '@testcontainers/postgresql';
+import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
 
 describe('UserRepository (Postgres)', () => {
+    let container: StartedPostgreSqlContainer;
     let pool: Pool;
 
     beforeAll(async () => {
-        const container = await new PostgreSqlContainer('postgres:16-alpine')
+        container = await new PostgreSqlContainer('postgres:16-alpine')
             .withDatabase('testdb')
             .start();
 
@@ -479,6 +480,7 @@ describe('UserRepository (Postgres)', () => {
 
     afterAll(async () => {
         await pool.end();
+        await container.stop();
     });
 
     it('inserts and retrieves a user', async () => {

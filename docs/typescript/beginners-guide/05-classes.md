@@ -399,10 +399,22 @@ class UserForm implements Serializable, Validatable {
     }
 
     deserialize(data: string): void {
-        const parsed = JSON.parse(data);
-        this.name = parsed.name;
-        this.email = parsed.email;
-        this.age = parsed.age;
+        const parsed: unknown = JSON.parse(data);
+
+        if (
+            typeof parsed !== 'object' ||
+            parsed === null ||
+            typeof (parsed as { name?: unknown }).name !== 'string' ||
+            typeof (parsed as { email?: unknown }).email !== 'string' ||
+            typeof (parsed as { age?: unknown }).age !== 'number'
+        ) {
+            throw new TypeError('Invalid user form data');
+        }
+
+        const candidate = parsed as { name: string; email: string; age: number };
+        this.name = candidate.name;
+        this.email = candidate.email;
+        this.age = candidate.age;
     }
 }
 

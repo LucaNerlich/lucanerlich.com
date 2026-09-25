@@ -53,17 +53,17 @@ String json = """
     {"name":"Alice","email":"alice@example.com","age":30}
     """;
 
-User user = mapper.readValue(json, User.class);
+User parsedUser = mapper.readValue(json, User.class);
 // User[name=Alice, email=alice@example.com, age=30]
 
 // From file
-User user = mapper.readValue(new File("user.json"), User.class);
+User fileUser = mapper.readValue(new File("user.json"), User.class);
 
 // From InputStream
-User user = mapper.readValue(inputStream, User.class);
+User streamUser = mapper.readValue(inputStream, User.class);
 
 // From byte[]
-User user = mapper.readValue(bytes, User.class);
+User byteUser = mapper.readValue(bytes, User.class);
 ```
 
 ### Deserialising generic types

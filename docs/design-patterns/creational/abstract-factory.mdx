@@ -18,14 +18,36 @@ Provide an interface for creating families of related objects without specifying
 ## Java example
 
 ```java
-interface Button { String render(); }
-interface Input { String render(); }
+interface Button {
+    String render();
+}
+
+interface Input {
+    String render();
+}
 
 class LightButton implements Button {
-    public String render() { return "light-button"; }
+    public String render() {
+        return "light-button";
+    }
 }
+
+class LightInput implements Input {
+    public String render() {
+        return "light-input";
+    }
+}
+
 class DarkButton implements Button {
-    public String render() { return "dark-button"; }
+    public String render() {
+        return "dark-button";
+    }
+}
+
+class DarkInput implements Input {
+    public String render() {
+        return "dark-input";
+    }
 }
 
 interface UiFactory {
@@ -34,19 +56,59 @@ interface UiFactory {
 }
 
 class LightUiFactory implements UiFactory {
-    public Button createButton() { return new LightButton(); }
-    public Input createInput() { return () -> "light-input"; }
+    public Button createButton() {
+        return new LightButton();
+    }
+
+    public Input createInput() {
+        return new LightInput();
+    }
+}
+
+class DarkUiFactory implements UiFactory {
+    public Button createButton() {
+        return new DarkButton();
+    }
+
+    public Input createInput() {
+        return new DarkInput();
+    }
 }
 ```
 
 ## TypeScript example
 
 ```ts
-interface Button { render(): string; }
-interface Input { render(): string; }
+interface Button {
+  render(): string;
+}
+
+interface Input {
+  render(): string;
+}
 
 class LightButton implements Button {
-  render(): string { return "light-button"; }
+  render(): string {
+    return 'light-button';
+  }
+}
+
+class LightInput implements Input {
+  render(): string {
+    return 'light-input';
+  }
+}
+
+class DarkButton implements Button {
+  render(): string {
+    return 'dark-button';
+  }
+}
+
+class DarkInput implements Input {
+  render(): string {
+    return 'dark-input';
+  }
 }
 
 interface UiFactory {
@@ -54,9 +116,24 @@ interface UiFactory {
   createInput(): Input;
 }
 
+class LightUiFactory implements UiFactory {
+  createButton(): Button {
+    return new LightButton();
+  }
+
+  createInput(): Input {
+    return new LightInput();
+  }
+}
+
 class DarkUiFactory implements UiFactory {
-  createButton(): Button { return { render: () => "dark-button" }; }
-  createInput(): Input { return { render: () => "dark-input" }; }
+  createButton(): Button {
+    return new DarkButton();
+  }
+
+  createInput(): Input {
+    return new DarkInput();
+  }
 }
 ```
 

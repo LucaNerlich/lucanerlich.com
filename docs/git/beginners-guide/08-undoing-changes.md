@@ -46,7 +46,8 @@ Before reaching for an undo command, ask:
 
 ## git restore - Discarding Working Tree Changes
 
-`git restore` discards changes in the working tree, reverting a file to its last committed (or staged) state. This is
+`git restore` discards changes in the working tree, reverting a file to the version currently in the index (or to a
+specific source you name). This is
 the modern replacement for `git checkout -- <file>`.
 
 ### Discard unstaged changes in a file
@@ -271,7 +272,7 @@ reset, checkout, rebase, or merge - an entry is added. The reflog is local and p
 git reflog
 # a1b2c3d (HEAD -> main) HEAD@{0}: reset: moving to HEAD~1
 # f4e5d6c HEAD@{1}: commit: feat(auth): add login endpoint
-# 9g8h7i6 HEAD@{2}: commit: feat(db): add users table
+# 9a8b7c6 HEAD@{2}: commit: feat(db): add users table
 # c3d4e5f HEAD@{3}: checkout: moving from feature/auth to main
 ```
 

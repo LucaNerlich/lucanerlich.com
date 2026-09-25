@@ -100,14 +100,17 @@ com.fasterxml.jackson.core:jackson-databind:2.17.0
 
 ## Dependency scopes
 
-| Scope               | Compile | Test | Runtime | Packaged | Use case                                    |
-|---------------------|---------|------|---------|----------|---------------------------------------------|
-| `compile` (default) | Yes     | Yes  | Yes     | Yes      | Most dependencies                           |
-| `test`              | No      | Yes  | No      | No       | JUnit, Mockito, AssertJ                     |
-| `provided`          | Yes     | Yes  | No      | No       | Servlet API, Lombok (provided by container) |
-| `runtime`           | No      | Yes  | Yes     | Yes      | JDBC drivers, SLF4J backends                |
-| `system`            | Yes     | Yes  | No      | No       | Local JARs (avoid)                          |
-| `import`            | -      | -   | -      | -       | BOM imports (in `<dependencyManagement>`)   |
+| Scope               | Compile | Test | Runtime | Bundled into a plain JAR? | Use case                                    |
+|---------------------|---------|------|---------|----------------------------|---------------------------------------------|
+| `compile` (default) | Yes     | Yes  | Yes     | No                         | Most dependencies                           |
+| `test`              | No      | Yes  | No      | No                         | JUnit, Mockito, AssertJ                     |
+| `provided`          | Yes     | Yes  | No      | No                         | Servlet API, Lombok (provided by container) |
+| `runtime`           | No      | Yes  | Yes     | No                         | JDBC drivers, SLF4J backends                |
+| `system`            | Yes     | Yes  | No      | No                         | Local JARs (avoid)                          |
+| `import`            | -       | -    | -       | -                          | BOM imports (in `<dependencyManagement>`)   |
+
+If you need one executable artifact with dependencies inside it, add a packaging plugin such as Shade or Spring Boot's
+repackage goal.
 
 ---
 

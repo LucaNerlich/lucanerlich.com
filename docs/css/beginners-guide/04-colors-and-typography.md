@@ -34,7 +34,6 @@ CSS defines 148 named colours. Some common ones:
 | `white`       | White     | `black`       | Black     |
 | `tomato`      | Tomato    | `coral`       | Coral     |
 | `navy`        | Navy      | `teal`        | Teal      |
-| `transparent` | Invisible | `currentColor`| Inherited |
 
 ```css
 h1 {
@@ -44,6 +43,11 @@ h1 {
 ```
 
 Named colours are convenient for quick prototyping but limited for precise design work.
+
+Two related keywords are worth knowing even though they are **not** named colours:
+
+- `transparent` - fully transparent black (`rgba(0, 0, 0, 0)`)
+- `currentColor` - reuses the element's current `color` value
 
 ### Hexadecimal (hex)
 
@@ -265,6 +269,8 @@ body {
 ```
 
 > **Tip:** Only load the weights you actually use. Each additional weight increases page load time.
+> If performance or privacy matters, self-host WOFF2 files instead of calling Google Fonts at runtime. See
+> [Web Performance](../../building-for-the-web/web-performance.md#fonts) for the trade-offs.
 
 ## Font size
 

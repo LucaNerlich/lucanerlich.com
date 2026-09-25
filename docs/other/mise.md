@@ -30,7 +30,8 @@ fish, or scripts -- it is not tied to any shell.
 
 ```bash
 brew install mise
-# or: curl https://mise.run | sh
+# for systems without Homebrew: inspect the installer first, then run it
+curl -fsSL https://mise.run | sh
 ```
 
 Add to `~/.zshrc` (mise adds its tool paths automatically when active -- you do
@@ -176,7 +177,8 @@ files that can define tasks and hooks, mise asks you to trust them once per
 project -- just accept the prompt or run `mise trust`. For the broader
 secrets story (tokens in shell profiles, rotation, secrets managers), see
 [Managing secrets](./my-shell-setup.md#managing-secrets) in my shell setup
-post.
+post. Keep `.env` out of git, and prefer `mise.local.toml` or a real secrets
+manager for machine-specific credentials.
 
 ## Tasks
 
@@ -219,7 +221,7 @@ exports -- `mise use --global java@... maven` makes them unnecessary.
 | `mise current` | Show which versions are active in the current directory |
 | `mise outdated` | Check for newer tool versions |
 | `mise upgrade` | Update all installed tools (add `--bump` to also bump pins in config) |
-| `mise x node@20 -- node -v` | Run a one-off command with a specific version, without installing it |
+| `mise x node@20 -- node -v` | Run a one-off command with a specific version, without changing your pinned config |
 | `mise cfg` | List every config file being loaded and its precedence ("why is this version active?") |
 | `mise which \<tool\>` | Show the binary that is actually on your `PATH` for a tool |
 | `mise settings` | View/change settings (e.g. `mise settings experimental=true`) |

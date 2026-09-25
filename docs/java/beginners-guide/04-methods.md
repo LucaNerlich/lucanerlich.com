@@ -360,6 +360,9 @@ A method that calls itself:
 
 ```java
 static int factorial(int n) {
+    if (n < 0) {
+        throw new IllegalArgumentException("Factorial is undefined for negative numbers");
+    }
     if (n <= 1) {
         return 1; // base case
     }
@@ -386,7 +389,8 @@ Every recursive method needs:
 1. A **base case** that stops the recursion
 2. A **recursive case** that moves toward the base case
 
-Without a base case, the method calls itself forever and throws `StackOverflowError`.
+Without a base case, the method calls itself forever and throws `StackOverflowError`. Also validate inputs when the
+math only makes sense for a subset of values, as with factorial and negative numbers.
 
 ### Fibonacci
 

@@ -250,7 +250,7 @@ URLs are forever. People bookmark them, link to them from elsewhere, and search 
 
 ### Localised URLs
 
-If you serve multiple languages, include the locale at the **start of the path** and translate the slug too.
+If you serve multiple languages, include the locale at the **start of the path**. Translate the rest of the slug only if you can do it consistently across the site.
 
 ```text
 /en/docs/api/authentication/

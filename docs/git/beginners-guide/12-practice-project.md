@@ -340,6 +340,7 @@ simulate that process.
 ### Step 15: Push the feature branch
 
 ```bash
+# Skip this step if you did not create an `origin` remote in Step 7.
 git push -u origin feature/core-commands
 ```
 
@@ -350,15 +351,104 @@ Imagine a reviewer says:
 > "The `markDone` function exits with `process.exit(1)` but does not throw an error that can be tested. Also, there
 > are no automated tests - can you add a basic test file?"
 
-### Step 16: Address review feedback - add tests
+### Step 16: Address review feedback - make the task logic testable
+
+Update `src/tasks.js` so the task layer throws a normal error and leaves CLI-specific exit handling to `tasker.js`:
+
+```bash
+cat > src/tasks.js << 'EOF'
+import { loadTasks, saveTasks } from './storage.js';
+
+export function addTask(description) {
+  const tasks = loadTasks();
+  const id = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
+  const task = { id, description, done: false };
+  tasks.push(task);
+  saveTasks(tasks);
+  console.log(`Task added: [${id}] ${description}`);
+}
+
+export function listTasks() {
+  const tasks = loadTasks();
+  if (tasks.length === 0) {
+    console.log('No tasks yet. Add one with: node tasker.js add "Task description"');
+    return;
+  }
+  console.log('Tasks:');
+  for (const task of tasks) {
+    const status = task.done ? '✓' : ' ';
+    console.log(`  [${task.id}] ${status} ${task.description}`);
+  }
+}
+
+export function markDone(id) {
+  const tasks = loadTasks();
+  const task = tasks.find(t => t.id === parseInt(id, 10));
+  if (!task) {
+    throw new Error(`Task ${id} not found.`);
+  }
+  task.done = true;
+  saveTasks(tasks);
+  console.log(`Task ${id} marked as done.`);
+}
+EOF
+```
+
+```bash
+cat > tasker.js << 'EOF'
+import { addTask, listTasks, markDone } from './src/tasks.js';
+
+const [,, command, ...args] = process.argv;
+
+try {
+  switch (command) {
+    case 'add':
+      if (!args[0]) {
+        console.error('Usage: node tasker.js add "Task description"');
+        process.exit(1);
+      }
+      addTask(args.join(' '));
+      break;
+
+    case 'list':
+      listTasks();
+      break;
+
+    case 'done':
+      if (!args[0]) {
+        console.error('Usage: node tasker.js done <id>');
+        process.exit(1);
+      }
+      markDone(args[0]);
+      break;
+
+    default:
+      console.log('Usage: node tasker.js <command>');
+      console.log('Commands: add, list, done');
+      process.exit(1);
+  }
+} catch (err) {
+  console.error(err.message);
+  process.exit(1);
+}
+EOF
+```
+
+```bash
+git add src/tasks.js tasker.js
+git commit -m "refactor(cli): throw testable task errors from domain logic"
+```
+
+### Step 17: Address review feedback - add tests
 
 ```bash
 mkdir tests
 cat > tests/basic.test.js << 'EOF'
 // Minimal test runner using Node built-ins
 import { strict as assert } from 'assert';
-import { writeFileSync, unlinkSync, existsSync } from 'fs';
+import { unlinkSync, existsSync } from 'fs';
 import { loadTasks, saveTasks } from '../src/storage.js';
+import { markDone } from '../src/tasks.js';
 
 let passed = 0;
 let failed = 0;
@@ -406,6 +496,22 @@ test('saveTasks handles multiple tasks', () => {
   assert.equal(loaded[1].done, false);
 });
 
+test('markDone updates the matching task', () => {
+  saveTasks([
+    { id: 1, description: 'First', done: false },
+    { id: 2, description: 'Second', done: false },
+  ]);
+  markDone(2);
+  const loaded = loadTasks();
+  assert.equal(loaded[0].done, false);
+  assert.equal(loaded[1].done, true);
+});
+
+test('markDone throws for an unknown task', () => {
+  saveTasks([{ id: 1, description: 'Only task', done: false }]);
+  assert.throws(() => markDone(99), /Task 99 not found\./);
+});
+
 // Cleanup
 if (existsSync('tasks.json')) {
   unlinkSync('tasks.json');
@@ -418,10 +524,10 @@ EOF
 
 ```bash
 git add tests/basic.test.js
-git commit -m "test(storage): add basic round-trip tests for storage module"
+git commit -m "test(tasks): cover storage round-trips and markDone errors"
 ```
 
-### Step 17: Run the tests
+### Step 18: Run the tests
 
 ```bash
 npm test
@@ -429,22 +535,25 @@ npm test
 #   ✓ loadTasks returns empty array when no file exists
 #   ✓ saveTasks and loadTasks round-trips correctly
 #   ✓ saveTasks handles multiple tasks
+#   ✓ markDone updates the matching task
+#   ✓ markDone throws for an unknown task
 #
-# 3 passed, 0 failed
+# 5 passed, 0 failed
 ```
 
-### Step 18: Push the updated branch
+### Step 19: Push the updated branch
 
 ```bash
+# Skip this step if you did not create an `origin` remote in Step 7.
 git push
 ```
 
 ## Part 4 - Squash-Merge the Pull Request
 
-After approval, merge the feature branch into `main` with a squash - combining all five commits into a single,
+After approval, merge the feature branch into `main` with a squash - combining the feature-branch commits into a single,
 clean commit.
 
-### Step 19: Squash and merge locally (simulating what GitHub does)
+### Step 20: Squash and merge locally (simulating what GitHub does)
 
 ```bash
 git switch main
@@ -463,7 +572,7 @@ git status
 #   modified:   package.json
 ```
 
-### Step 20: Write a single clean commit message
+### Step 21: Write a single clean commit message
 
 ```bash
 git commit -m "feat: add core task manager with add, list, and done commands
@@ -472,12 +581,12 @@ Implements the complete tasker CLI:
 - JSON-based task persistence (src/storage.js)
 - Task logic: add, list, mark as done (src/tasks.js)
 - CLI entry point with argument parsing (tasker.js)
-- Basic round-trip tests for storage module
+- Test coverage for storage round-trips and markDone errors
 
 Reviewed-by: Alice Smith <alice@example.com>"
 ```
 
-### Step 21: View the result
+### Step 22: View the result
 
 ```bash
 git log --oneline
@@ -487,10 +596,11 @@ git log --oneline
 
 Two commits. Clean and readable.
 
-### Step 22: Delete the feature branch
+### Step 23: Delete the feature branch
 
 ```bash
 git branch -d feature/core-commands
+# Skip the next command if you did not create an `origin` remote in Step 7.
 git push origin --delete feature/core-commands
 ```
 
@@ -498,14 +608,14 @@ git push origin --delete feature/core-commands
 
 The feature is merged and working. Time to ship `v1.0.0`.
 
-### Step 23: Run tests one final time on main
+### Step 24: Run tests one final time on main
 
 ```bash
 npm test
 # All tests pass
 ```
 
-### Step 24: Update the version in package.json
+### Step 25: Update the version in package.json
 
 ```bash
 cat > package.json << 'EOF'
@@ -528,7 +638,7 @@ git add package.json
 git commit -m "chore(release): bump version to 1.0.0"
 ```
 
-### Step 25: Create an annotated tag
+### Step 26: Create an annotated tag
 
 ```bash
 git tag -a v1.0.0 -m "Release v1.0.0
@@ -542,14 +652,15 @@ Features:
 - JSON persistence (tasks.json, gitignored per-user)"
 ```
 
-### Step 26: Push the tag
+### Step 27: Push the tag
 
 ```bash
+# Skip these commands if you did not create an `origin` remote in Step 7.
 git push origin main
 git push origin v1.0.0
 ```
 
-### Step 27: Create a GitHub release (optional)
+### Step 28: Create a GitHub release (optional)
 
 ```bash
 gh release create v1.0.0 \
@@ -557,7 +668,7 @@ gh release create v1.0.0 \
   --notes "Initial release of tasker. See README for usage."
 ```
 
-### Step 28: Verify everything
+### Step 29: Verify everything
 
 ```bash
 git log --oneline

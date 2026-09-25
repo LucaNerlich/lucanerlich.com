@@ -266,19 +266,22 @@ The simplest deployment strategy for a single server is to SSH in and `docker pu
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
               -u ${{ github.actor }} --password-stdin
 
-            docker pull ghcr.io/${{ github.repository }}:sha-${{ github.sha }}
+            export IMAGE_TAG=sha-${{ github.sha }}
+            docker pull ghcr.io/${{ github.repository }}:$IMAGE_TAG
 
-            # Tag it as the current active version
-            docker tag \
-              ghcr.io/${{ github.repository }}:sha-${{ github.sha }} \
-              ghcr.io/${{ github.repository }}:current
-
-            # Restart the service with the new image
-            docker compose -f /opt/my-app/docker-compose.yml pull
+            # Restart the service with the exact image tag that CI just built
             docker compose -f /opt/my-app/docker-compose.yml up -d --no-deps api
 
             # Clean up old images
             docker image prune -f
+```
+
+For this pattern to work, your server-side Compose file should reference the tag through an environment variable, for example:
+
+```yaml
+services:
+  api:
+    image: ghcr.io/myorg/my-app:${IMAGE_TAG}
 ```
 
 ### Using GitHub Environments for protection

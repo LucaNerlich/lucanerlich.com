@@ -44,7 +44,7 @@ For TypeScript projects, add the Babel or ts-jest transformer:
 # Option A: Babel (simpler, does not type-check)
 npm install --save-dev babel-jest @babel/core @babel/preset-env @babel/preset-typescript
 
-# Option B: ts-jest (slower but does type-check in tests)
+# Option B: ts-jest (slower, integrates TypeScript transforms with Jest -- still run `tsc --noEmit` separately for full type-checking)
 npm install --save-dev ts-jest
 ```
 

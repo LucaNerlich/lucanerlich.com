@@ -23,13 +23,25 @@ interface PricingStrategy {
 }
 
 class DiscountStrategy implements PricingStrategy {
-    public int price(int base) { return base - 10; }
+    public int price(int base) {
+        return base - 10;
+    }
 }
 
 class PricingService {
     private PricingStrategy strategy;
-    PricingService(PricingStrategy strategy) { this.strategy = strategy; }
-    int compute(int base) { return strategy.price(base); }
+
+    PricingService(PricingStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    void setStrategy(PricingStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    int compute(int base) {
+        return strategy.price(base);
+    }
 }
 ```
 
@@ -39,10 +51,18 @@ class PricingService {
 type PricingStrategy = (base: number) => number;
 
 const discount: PricingStrategy = (base) => base - 10;
+const premium: PricingStrategy = (base) => base + 25;
 
 class PricingService {
   constructor(private strategy: PricingStrategy) {}
-  compute(base: number): number { return this.strategy(base); }
+
+  setStrategy(strategy: PricingStrategy): void {
+    this.strategy = strategy;
+  }
+
+  compute(base: number): number {
+    return this.strategy(base);
+  }
 }
 ```
 

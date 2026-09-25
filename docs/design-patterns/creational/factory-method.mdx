@@ -8,12 +8,12 @@ tags: [design-patterns, creational]
 
 ## Overview
 
-Define an interface for creating objects, but let subclasses decide which class to instantiate.
+Define an interface for creating an object, but let subclasses decide which class to instantiate.
 
 ## When to use
 
 - The exact concrete type is decided at runtime.
-- You want to decouple creation logic from usage.
+- You want to decouple creation logic from the workflow that uses the created object.
 
 ## Java example
 
@@ -34,13 +34,23 @@ class CsvExporter implements Exporter {
     }
 }
 
-abstract class ExporterFactory {
-    public abstract Exporter create();
+abstract class DocumentExporter {
+    public String exportDocument(String data) {
+        return createExporter().export(data);
+    }
+
+    protected abstract Exporter createExporter();
 }
 
-class JsonExporterFactory extends ExporterFactory {
-    public Exporter create() {
+class JsonDocumentExporter extends DocumentExporter {
+    protected Exporter createExporter() {
         return new JsonExporter();
+    }
+}
+
+class CsvDocumentExporter extends DocumentExporter {
+    protected Exporter createExporter() {
+        return new CsvExporter();
     }
 }
 ```
@@ -64,13 +74,23 @@ class CsvExporter implements Exporter {
   }
 }
 
-abstract class ExporterFactory {
-  abstract create(): Exporter;
+abstract class DocumentExporter {
+  exportDocument(data: string): string {
+    return this.createExporter().export(data);
+  }
+
+  protected abstract createExporter(): Exporter;
 }
 
-class JsonExporterFactory extends ExporterFactory {
-  create(): Exporter {
+class JsonDocumentExporter extends DocumentExporter {
+  protected createExporter(): Exporter {
     return new JsonExporter();
+  }
+}
+
+class CsvDocumentExporter extends DocumentExporter {
+  protected createExporter(): Exporter {
+    return new CsvExporter();
   }
 }
 ```
@@ -78,7 +98,7 @@ class JsonExporterFactory extends ExporterFactory {
 ## Pros and cons
 
 Pros:
-- Centralizes creation logic.
+- Centralizes creation logic inside a larger workflow.
 - Enables substitution of product types.
 
 Cons:
@@ -87,8 +107,8 @@ Cons:
 
 ## Common pitfalls
 
-- Returning different product types from the same factory.
-- Pushing too much logic into the factory.
+- Using it when a plain constructor or simple function is enough.
+- Pushing too much unrelated logic into the creator.
 
 ## Related patterns
 

@@ -54,7 +54,6 @@ keybind = alt+a=new_split:left
 keybind = alt+s=new_split:down
 keybind = alt+w=new_split:up
 keybind = alt+d=new_split:right
-keybind = alt+d=new_split:right
 keybind = alt+e=new_split:auto
 
 # Navigate window splits
@@ -200,7 +199,7 @@ source $ZSH/oh-my-zsh.sh
 
 fpath=(~/.local/share/zsh/functions $fpath)
 autoload -Uz compinit
-compinit -u
+compinit
 
 ## ZSH Config
 PROMPT='%(?.%F{green}√.%F{red}?%?)%f %B%F{240}%~%f%b %# '
@@ -240,13 +239,14 @@ alias cd6='cd ../../../../../../'            # Go back 6 directory levels
 alias f='open .'
 
 # Docker
-alias dcu='docker-compose pull && docker-compose up -d'
-alias dcd='docker-compose down'
-alias dcl='docker-compose logs -f'
-alias dcb='docker-compose build'
+alias dcu='docker compose pull && docker compose up -d'
+alias dcd='docker compose down'
+alias dcl='docker compose logs -f'
+alias dcb='docker compose build'
 
 # Git
-alias gitfast='git pull && git add . && git commit -m "shortcut alias for minor changes" && git push'
+# Avoid an alias that blindly pulls, stages every file, commits, and pushes. Review the diff and use
+# explicit git add / git commit commands so accidental files and unrelated work do not get published.
 export gh='/Users/nerlich/tech/gh_2.64.0/bin'
 export PATH=$gh:$PATH
 
@@ -373,9 +373,9 @@ function msonar { mvn clean verify sonar:sonar -Dsonar.projectKey=R4C -Dsonar.ho
 #endregion
 
 #region Docker aliases
-function dcu { docker-compose pull; docker-compose up -d --remove-orphans }
-function dcul { docker-compose -f docker-compose-local.yml build; docker-compose -f docker-compose-local.yml up }
-function dcd { docker-compose down }
+function dcu { docker compose pull; docker compose up -d --remove-orphans }
+function dcul { docker compose -f docker-compose-local.yml build; docker compose -f docker-compose-local.yml up }
+function dcd { docker compose down }
 #endregion
 
 #region Version check alias

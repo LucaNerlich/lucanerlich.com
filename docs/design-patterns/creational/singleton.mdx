@@ -12,33 +12,33 @@ Ensure a class has a single instance and provide a global access point to it.
 
 ## When to use
 
-- A single shared resource is required (for example, config, cache).
-- You need lazy initialization and controlled access.
+- A single shared resource is required (for example, config or a process-wide cache).
+- You need controlled, lazy access to that resource.
 
 ## Java example
 
 ```java
 public final class ConfigRegistry {
-    private static volatile ConfigRegistry instance;
     private final Properties props;
 
-    private ConfigRegistry(Properties props) {
-        this.props = props;
+    private ConfigRegistry() {
+        this.props = loadProps();
     }
 
-    public static ConfigRegistry getInstance(Properties props) {
-        if (instance == null) {
-            synchronized (ConfigRegistry.class) {
-                if (instance == null) {
-                    instance = new ConfigRegistry(props);
-                }
-            }
-        }
-        return instance;
+    public static ConfigRegistry getInstance() {
+        return Holder.INSTANCE;
     }
 
     public String get(String key) {
         return props.getProperty(key);
+    }
+
+    private static Properties loadProps() {
+        return new Properties();
+    }
+
+    private static final class Holder {
+        private static final ConfigRegistry INSTANCE = new ConfigRegistry();
     }
 }
 ```
@@ -50,13 +50,13 @@ class ConfigRegistry {
   private static instance: ConfigRegistry | null = null;
   private readonly props: Record<string, string>;
 
-  private constructor(props: Record<string, string>) {
-    this.props = props;
+  private constructor() {
+    this.props = loadConfig();
   }
 
-  static getInstance(props: Record<string, string>): ConfigRegistry {
+  static getInstance(): ConfigRegistry {
     if (!ConfigRegistry.instance) {
-      ConfigRegistry.instance = new ConfigRegistry(props);
+      ConfigRegistry.instance = new ConfigRegistry();
     }
     return ConfigRegistry.instance;
   }
@@ -65,13 +65,17 @@ class ConfigRegistry {
     return this.props[key];
   }
 }
+
+function loadConfig(): Record<string, string> {
+  return { env: 'prod' };
+}
 ```
 
 ## Pros and cons
 
 Pros:
 - Controlled access to a single instance.
-- Lazy initialization possible.
+- Lazy initialization is possible.
 
 Cons:
 - Global state makes tests harder.

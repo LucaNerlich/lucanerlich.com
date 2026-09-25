@@ -125,7 +125,8 @@ Result:
 Weekday
 ```
 
-**Always include `break`** - without it, execution falls through to the next case.
+In classic `switch`, include `break` (or another explicit exit like `return`/`throw`) unless you intentionally want
+fall-through.
 
 Supported types: `byte`, `short`, `int`, `char`, `String`, and enums.
 

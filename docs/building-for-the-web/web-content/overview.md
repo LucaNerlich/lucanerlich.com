@@ -61,7 +61,7 @@ Use this before shipping or when auditing an existing page.
 | Area | Checks |
 |------|--------|
 | **Copy** | First sentence answers the user's question; jargon defined or linked; errors say how to fix. |
-| **Structure** | One `h1`; heading levels do not skip; sections titled descriptively. |
+| **Structure** | One primary `h1`; heading levels do not skip without reason; sections titled descriptively. |
 | **Measure & type** | Comfortable line length; body ~16px+; line-height ~1.4--1.6. |
 | **Focus** | One clear primary action per major region; secondary actions visually subordinate. |
 | **Color** | Text and UI meet contrast targets; focus visible; dark theme re-checked. |

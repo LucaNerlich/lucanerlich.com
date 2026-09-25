@@ -22,7 +22,7 @@ Semantic HTML means using elements that describe their **meaning** rather than t
 | Benefit | Explanation |
 |---------|-------------|
 | **Accessibility** | Screen readers use semantic elements to build a navigable page outline. A `<main>` element lets users skip to content; headings create a table of contents. |
-| **SEO** | Search engines use semantic structure to understand page content. `<article>`, `<h1>`-`<h6>`, and `<time>` all provide ranking signals. |
+| **SEO** | Search engines use semantic structure to understand page content. `<article>`, headings, and `<time>` make that structure easier to interpret. |
 | **Maintainability** | Semantic markup is self-documenting. Reading `<aside>` is faster than deciphering `<div class="sidebar-content-wrapper">`. |
 | **Default behaviour** | Many semantic elements come with built-in functionality - `<details>` is collapsible, `<dialog>` manages focus, `<form>` handles submission. No JavaScript required. |
 | **Interoperability** | RSS readers, read-mode browsers, and AI tools extract content more reliably from semantic markup. |
@@ -242,10 +242,10 @@ Headings (`<h1>` through `<h6>`) create an outline that screen readers and searc
 
 ### Rules
 
-- **One `<h1>` per page** - it represents the page title
-- **Do not skip levels** - go from `<h2>` to `<h3>`, not `<h2>` to `<h4>`
+- **Prefer one primary `<h1>` per page** - it usually represents the page title
+- **Do not skip levels without a reason** - go from `<h2>` to `<h3>` when the content is truly nested
 - **Use headings for structure, not styling** - if you need larger text, use CSS
-- **Every `<section>` should have a heading** - it labels the section for assistive technology
+- **Give sections an accessible label** - usually a visible heading, occasionally `aria-label`/`aria-labelledby`
 
 ## Text content
 
@@ -276,7 +276,7 @@ For extended quotations from another source:
 </blockquote>
 ```
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered:</strong>
 
 <blockquote cite="https://www.w3.org/WAI/">
@@ -304,7 +304,7 @@ Self-contained content with an optional caption - images, diagrams, code listing
 </figure>
 ```
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered:</strong>
 
 <figure>
@@ -345,7 +345,7 @@ A thematic break between sections (not just a visual line):
 </section>
 ```
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered:</strong>
 
 <hr />
@@ -375,7 +375,7 @@ These elements give meaning to words and phrases within a block of text.
 | `<dfn>` | Definition term | `A <dfn>CDN</dfn> is a content delivery network.` |
 | `<data>` | Machine-readable value | `<data value="42">forty-two</data>` |
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered examples:</strong>
 
 <p><strong>Warning:</strong> this will delete all data.</p>
@@ -470,7 +470,7 @@ Key-value pairs - glossaries, metadata, FAQs:
 </dl>
 ```
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered:</strong>
 
 <dl>
@@ -521,7 +521,7 @@ Tables are for **tabular data** - never for layout.
 </table>
 ```
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered:</strong>
 
 <table>
@@ -604,7 +604,7 @@ Forms are where semantic HTML provides the most built-in functionality for free.
 </form>
 ```
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered:</strong>
 
 <form onSubmit={(e) => e.preventDefault()}>
@@ -612,11 +612,11 @@ Forms are where semantic HTML provides the most built-in functionality for free.
         <legend>Newsletter Signup</legend>
         <div style={{marginBottom: '0.75rem'}}>
             <label htmlFor="demo-email" style={{display: 'block', marginBottom: '0.25rem'}}>Email address</label>
-            <input type="email" id="demo-email" placeholder="you@example.com" style={{padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid var(-ifm-color-emphasis-300)', width: '100%', maxWidth: '320px'}} />
+            <input type="email" id="demo-email" placeholder="you@example.com" style={{padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)', width: '100%', maxWidth: '320px'}} />
         </div>
         <div style={{marginBottom: '0.75rem'}}>
             <label htmlFor="demo-name" style={{display: 'block', marginBottom: '0.25rem'}}>Full name</label>
-            <input type="text" id="demo-name" style={{padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid var(-ifm-color-emphasis-300)', width: '100%', maxWidth: '320px'}} />
+            <input type="text" id="demo-name" style={{padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)', width: '100%', maxWidth: '320px'}} />
         </div>
         <button type="submit" style={{padding: '0.4rem 1rem', borderRadius: '4px', cursor: 'pointer'}}>Subscribe</button>
     </fieldset>
@@ -682,33 +682,33 @@ Using the correct `type` gives you free validation, the right mobile keyboard, a
 | `radio` | One-of-many selection | Radio button |
 | `hidden` | Hidden value (not for secrets) | Not visible |
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered - native input types:</strong>
 
 <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.75rem', marginTop: '0.75rem'}}>
 <div>
     <label htmlFor="demo-text" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>text</label>
-    <input type="text" id="demo-text" placeholder="Text input" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(-ifm-color-emphasis-300)'}} />
+    <input type="text" id="demo-text" placeholder="Text input" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
 </div>
 <div>
     <label htmlFor="demo-email2" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>email</label>
-    <input type="email" id="demo-email2" placeholder="you@example.com" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(-ifm-color-emphasis-300)'}} />
+    <input type="email" id="demo-email2" placeholder="you@example.com" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
 </div>
 <div>
     <label htmlFor="demo-number" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>number</label>
-    <input type="number" id="demo-number" placeholder="42" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(-ifm-color-emphasis-300)'}} />
+    <input type="number" id="demo-number" placeholder="42" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
 </div>
 <div>
     <label htmlFor="demo-date" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>date</label>
-    <input type="date" id="demo-date" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(-ifm-color-emphasis-300)'}} />
+    <input type="date" id="demo-date" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
 </div>
 <div>
     <label htmlFor="demo-time" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>time</label>
-    <input type="time" id="demo-time" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(-ifm-color-emphasis-300)'}} />
+    <input type="time" id="demo-time" style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
 </div>
 <div>
     <label htmlFor="demo-color" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>color</label>
-    <input type="color" id="demo-color" defaultValue="#3578e5" style={{width: '100%', height: '34px', borderRadius: '4px', border: '1px solid var(-ifm-color-emphasis-300)', cursor: 'pointer'}} />
+    <input type="color" id="demo-color" defaultValue="#3578e5" style={{width: '100%', height: '34px', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)', cursor: 'pointer'}} />
 </div>
 <div>
     <label htmlFor="demo-range" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>range</label>
@@ -716,7 +716,7 @@ Using the correct `type` gives you free validation, the right mobile keyboard, a
 </div>
 <div>
     <label htmlFor="demo-search" style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>search</label>
-    <input type="search" id="demo-search" placeholder="Search..." style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(-ifm-color-emphasis-300)'}} />
+    <input type="search" id="demo-search" placeholder="Search..." style={{width: '100%', padding: '0.3rem 0.5rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}} />
 </div>
 <div>
     <label style={{display: 'block', fontSize: '0.85rem', marginBottom: '0.2rem'}}>checkbox</label>
@@ -749,12 +749,12 @@ Dropdown selection:
 </select>
 ```
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered:</strong>
 
 <div>
 <label htmlFor="demo-country" style={{display: 'block', marginBottom: '0.25rem'}}>Country</label>
-<select id="demo-country" style={{padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid var(-ifm-color-emphasis-300)'}}>
+<select id="demo-country" style={{padding: '0.4rem 0.6rem', borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)'}}>
     <option value="">- Select -</option>
     <optgroup label="Europe">
         <option value="de">Germany</option>
@@ -808,7 +808,7 @@ Displays the result of a calculation or user action:
 | `<progress>` | Task completion (upload, loading bar) | Represents progress toward a goal |
 | `<meter>` | Scalar measurement (disk usage, score, rating) | Represents a value within a known range |
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered:</strong>
 
 <div style={{marginBottom: '0.75rem'}}>
@@ -844,7 +844,7 @@ A native collapsible disclosure widget - no JavaScript required:
 </details>
 ```
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered (click to toggle):</strong>
 
 <details>
@@ -903,7 +903,7 @@ Serve different image formats and sizes based on browser support and viewport:
 </picture>
 ```
 
-See the [Web Performance - Images](/web-performance#images) section for responsive image patterns with `srcset` and `sizes`.
+See the [Web Performance - Images](./web-performance.md#images) section for responsive image patterns with `srcset` and `sizes`.
 
 ### video
 
@@ -947,16 +947,16 @@ Contact information for the nearest `<article>` or `<body>` ancestor:
 </address>
 ```
 
-<div style={{padding: '1.5rem', border: '2px dashed var(-ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
+<div style={{padding: '1.5rem', border: '2px dashed var(--ifm-color-emphasis-300)', borderRadius: '8px', marginBottom: '1.5rem'}}>
 <strong>Rendered:</strong>
 
 <address>
-    <span style={{color: 'var(-ifm-link-color)', textDecoration: 'underline'}}>luca.nerlich@gmail.com</span><br />
-    <span style={{color: 'var(-ifm-link-color)', textDecoration: 'underline'}}>GitHub</span>
+    <span style={{color: 'var(--ifm-link-color)', textDecoration: 'underline'}}>luca.nerlich@gmail.com</span><br />
+    <span style={{color: 'var(--ifm-link-color)', textDecoration: 'underline'}}>GitHub</span>
 </address>
 </div>
 
-Not for arbitrary postal addresses - use `<p>` for those.
+Use `<address>` for contact information tied to the current page or article. A plain postal address with no contact context can stay a normal paragraph.
 
 ### template
 
@@ -981,7 +981,7 @@ document.body.appendChild(clone);
 
 ### slot (Web Components)
 
-A placeholder inside a Web Component's shadow DOM that receives content from the light DOM. See the [JavaScript: Web Components](/javascript/beginners-guide/project-build-a-website#web-components) section for details.
+A placeholder inside a Web Component's shadow DOM that receives content from the light DOM. See the [JavaScript: Web Components](../javascript/beginners-guide/11-project-build-a-website.md#web-components) section for details.
 
 ### map and area
 
@@ -1074,7 +1074,7 @@ A cheat sheet for choosing the right element:
 | Highlight a search term | `<mark>` |
 
 :::tip[Check browser support without leaving your editor]
-Several HTML elements on this page — `<dialog>`, `<details>`, `<popover>` — have uneven browser support. Add the [MDN MCP server](../ai/mdn-mcp-server.md) to your IDE or Claude Code and ask "what is the browser support for `<dialog>`?" to get a live compatibility table straight from MDN.
+Several HTML elements on this page -- especially `<dialog>` and the newer platform APIs around popovers -- have uneven browser support. Add the [MDN MCP server](../ai/mdn-mcp-server.md) to your IDE or Claude Code and ask "what is the browser support for `<dialog>`?" to get a live compatibility table straight from MDN.
 :::
 
 ## Summary

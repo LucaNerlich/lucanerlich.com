@@ -325,7 +325,7 @@ type FetchResult = Awaited<ReturnType<typeof fetchUser>>;
 // Extract the return type of a method
 class AuthService {
     async login(email: string, password: string): Promise<{ token: string; expiresAt: Date }> {
-        return { token: "abc123", expiresAt: new Date() };
+        return { token: 'token-value', expiresAt: new Date() };
     }
 }
 

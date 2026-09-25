@@ -86,7 +86,7 @@ id deploy
 # uid=1001(deploy) gid=1001(deploy) groups=1001(deploy),27(sudo)
 
 # Switch to the new user to test sudo works
-su - deploy
+sudo -iu deploy
 sudo whoami   # should print "root"
 exit
 ```
@@ -100,7 +100,7 @@ While still logged in as root:
 mkdir -p /home/deploy/.ssh
 chmod 700 /home/deploy/.ssh
 
-# Copy root's authorized_keys OR paste your public key directly
+# Copy your admin key into the new account OR paste the public key directly
 cp /root/.ssh/authorized_keys /home/deploy/.ssh/authorized_keys
 # OR
 echo "ssh-ed25519 AAAAC3... your.email@example.com" \
@@ -241,8 +241,15 @@ The default SSH jail bans IPs after 5 failed login attempts in 10 minutes for 10
 Install Node.js 20 LTS from the NodeSource repository:
 
 ```bash
-# Download and run the setup script
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+# Add NodeSource without piping a remote script to the shell
+sudo apt install -y ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+sudo chmod a+r /etc/apt/keyrings/nodesource.gpg
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" \
+  | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null
+sudo apt update
 
 # Install Node.js
 sudo apt install -y nodejs
@@ -264,7 +271,7 @@ sudo mkdir -p /opt/myapp/releases/1.0.0
 sudo chown -R deploy:deploy /opt/myapp
 
 # Switch to deploy user
-su - deploy
+sudo -iu deploy
 
 # Create the application
 mkdir -p /opt/myapp/releases/1.0.0
@@ -562,6 +569,7 @@ deploy ALL=(ALL) NOPASSWD: /bin/systemctl restart myapp, \
                            /bin/systemctl status myapp
 EOF
 sudo chmod 440 /etc/sudoers.d/myapp
+sudo visudo -cf /etc/sudoers.d/myapp
 ```
 
 ---

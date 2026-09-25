@@ -343,7 +343,9 @@ only proceeds if all checks pass.
 
 ```bash
 npm install --save-dev @commitlint/cli @commitlint/config-conventional
-echo "export default { extends: ['@commitlint/config-conventional'] };" > commitlint.config.js
+cat > commitlint.config.cjs << 'EOF'
+module.exports = { extends: ['@commitlint/config-conventional'] };
+EOF
 ```
 
 ### The commit-msg hook
@@ -445,8 +447,8 @@ npm install --save-dev husky lint-staged @commitlint/cli @commitlint/config-conv
 ```
 
 ```js
-// commitlint.config.js
-export default { extends: ['@commitlint/config-conventional'] };
+// commitlint.config.cjs
+module.exports = { extends: ['@commitlint/config-conventional'] };
 ```
 
 ```bash

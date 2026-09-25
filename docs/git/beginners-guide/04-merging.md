@@ -38,7 +38,7 @@ A ── B   ← main
 ```bash
 git switch main
 git merge feature/login
-# Updating b1a2c3d..d4e5f6g
+# Updating b1a2c3d..d4e5f6a
 # Fast-forward
 #  src/auth.js | 45 +++++++++++++++
 #  1 file changed, 45 insertions(+)

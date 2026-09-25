@@ -283,9 +283,9 @@ git blame src/auth.js
 # a1b2c3d (Alice Smith   2025-03-15 10:00:00 +0200 1) import jwt from 'jsonwebtoken';
 # f4e5d6c (Bob Jones     2025-04-01 14:30:00 +0200 2)
 # a1b2c3d (Alice Smith   2025-03-15 10:00:00 +0200 3) export function generateToken(userId) {
-# 9g8h7i6 (Carol White   2025-04-10 09:15:00 +0200 4)   const expiry = process.env.TOKEN_EXPIRY ?? '24h';
+# 9a8b7c6 (Carol White   2025-04-10 09:15:00 +0200 4)   const expiry = process.env.TOKEN_EXPIRY ?? '24h';
 # a1b2c3d (Alice Smith   2025-03-15 10:00:00 +0200 5)   return jwt.sign({ userId }, process.env.JWT_SECRET, {
-# 9g8h7i6 (Carol White   2025-04-10 09:15:00 +0200 6)     expiresIn: expiry
+# 9a8b7c6 (Carol White   2025-04-10 09:15:00 +0200 6)     expiresIn: expiry
 # a1b2c3d (Alice Smith   2025-03-15 10:00:00 +0200 7)   });
 # a1b2c3d (Alice Smith   2025-03-15 10:00:00 +0200 8) }
 ```
@@ -313,7 +313,7 @@ git blame v1.0.0 src/auth.js
 Once you find the commit hash from `git blame`, use `git show` to see the full commit:
 
 ```bash
-git show 9g8h7i6
+git show 9a8b7c6
 # Shows the diff and commit message for that hash
 ```
 
@@ -389,7 +389,7 @@ git show f4e5d6c
 git blame src/pricing.js -L 45,55
 
 # Jump to the commit that last touched those lines
-git show 9g8h7i6
+git show 9a8b7c6
 
 # See if there's a pattern - did this author make other related changes?
 git log --author="Carol White" --oneline --since="2025-04-01"

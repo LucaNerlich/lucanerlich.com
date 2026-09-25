@@ -191,18 +191,15 @@ docker run -d --cpu-shares 512 my-app
 
 ### In Docker Compose
 
+For plain `docker compose up`, most `deploy:` settings are ignored because they are intended for Swarm. Use service-level limits that Compose understands, or enforce limits in your orchestrator.
+
 ```yaml
 services:
   api:
     image: my-app:latest
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 512M
-        reservations:
-          cpus: "0.1"
-          memory: 128M
+    cpus: 0.5
+    mem_limit: 512m
+    mem_reservation: 128m
 ```
 
 ### Monitoring resource usage
@@ -273,7 +270,7 @@ docker run -d \
 
 ### Limit syscalls with seccomp
 
-Docker's default seccomp profile blocks ~44 dangerous syscalls. For stricter environments, use a custom profile:
+Docker's default seccomp profile blocks a set of dangerous syscalls. For stricter environments, use a custom profile:
 
 ```bash
 docker run -d --security-opt seccomp=/path/to/custom-profile.json my-app
@@ -456,11 +453,8 @@ services:
     read_only: true
     tmpfs:
       - /tmp:size=10m
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 256M
+    cpus: 0.5
+    mem_limit: 256m
     networks:
       - app-net
 

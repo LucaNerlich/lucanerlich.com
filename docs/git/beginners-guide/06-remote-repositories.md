@@ -63,7 +63,7 @@ git clone --depth 1 https://github.com/facebook/react.git
 After cloning, Git automatically creates:
 
 - A remote named **`origin`** pointing to the URL you cloned from
-- A local tracking branch (`main`) set up to track `origin/main`
+- A local branch for the remote's default branch (often `main`) set up to track its remote counterpart
 
 ## Understanding Remotes
 

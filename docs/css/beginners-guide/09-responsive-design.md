@@ -94,7 +94,7 @@ There are two approaches to responsive CSS:
 
 - Mobile styles are simpler (single column, stacked layout)
 - You progressively **add** complexity for larger screens instead of **removing** it
-- Smaller CSS files for mobile users (they only load the base styles)
+- Base styles apply immediately everywhere; wider-screen enhancements stay additive and easier to reason about
 - Forces you to prioritise content
 
 ### Mobile-first example
@@ -239,6 +239,22 @@ For art direction (showing different images at different sizes), use the `<pictu
     <img src="hero-small.jpg" alt="Hero image" />
 </picture>
 ```
+
+### srcset and sizes for the same image in different resolutions
+
+When the **image content stays the same** and only the file size changes, prefer a normal `<img>` with `srcset` and
+`sizes`:
+
+```html
+<img
+    src="card-800.jpg"
+    srcset="card-400.jpg 400w, card-800.jpg 800w, card-1200.jpg 1200w"
+    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+    alt="Project screenshot"
+>
+```
+
+The browser picks the most appropriate file for the current layout and device density.
 
 ### Object-fit for fixed-size images
 

@@ -14,8 +14,8 @@ This guide covers every commonly used diagram type with practical, copy-pasteabl
 
 ## Getting Started
 
-In Docusaurus (and many other Markdown renderers like GitHub, GitLab, Notion), you create a Mermaid diagram
-by using a fenced code block with the `mermaid` language identifier:
+In Docusaurus, you create a Mermaid diagram with a fenced code block using the `mermaid` language
+identifier:
 
 ````markdown
 ```mermaid
@@ -89,7 +89,6 @@ graph TD
 | `A(Text)` | Rounded rectangle | General step |
 | `A([Text])` | Stadium / pill | Start / end |
 | `A{Text}` | Diamond | Decision |
-| `A{Text}` | Diamond | Decision |
 | `A[/Text/]` | Parallelogram | Input / output |
 | `A[\Text\]` | Reverse parallelogram | Manual input |
 | `A[(Text)]` | Cylinder | Database / storage |
@@ -151,8 +150,8 @@ graph LR
     C ---|No arrow| D
     E -.->|Dotted| F
     G ==>|Thick| H
-    I -o|Circle end| J
-    K -x|Cross end| L
+    I --o|Circle end| J
+    K --x|Cross end| L
 ```
 ````
 
@@ -294,8 +293,8 @@ sequenceDiagram
 
 | Syntax | Style |
 |--------|-------|
-| `->>` | Solid arrow (synchronous) |
-| `-->>` | Dashed arrow (response / async) |
+| `->>` | Solid message arrow |
+| `-->>` | Dashed message arrow, commonly used for replies |
 | `-x` | Solid with cross (lost message) |
 | `--x` | Dashed with cross |
 | `-)` | Solid with open arrow (async) |
@@ -532,8 +531,8 @@ classDiagram
         +makeSound() void
     }
 
-    Animal <|- Dog : extends
-    Animal <|- Cat : extends
+    Animal <|-- Dog : extends
+    Animal <|-- Cat : extends
 ```
 ````
 
@@ -836,9 +835,9 @@ Source:
 ````markdown
 ```mermaid
 erDiagram
-    USER ||-o{ ORDER : places
-    ORDER ||-|{ ORDER_LINE : contains
-    PRODUCT ||-o{ ORDER_LINE : "is in"
+    USER ||--o{ ORDER : places
+    ORDER ||--|{ ORDER_LINE : contains
+    PRODUCT ||--o{ ORDER_LINE : "is in"
     USER {
         string id PK
         string email
@@ -1380,6 +1379,46 @@ A -->|"O(n) complexity"| B
 | Very long labels | Diagram becomes unreadable | Use short labels + a legend or notes |
 | Too many nodes | Visual clutter | Split into multiple diagrams |
 
+### Validate the exact target renderer
+
+The Mermaid Live Editor is useful for quick experiments, but it is not a substitute for rendering in
+the tool that will publish the diagram. Mermaid versions, enabled diagram types, sanitization rules, and
+configuration can differ between Docusaurus, GitHub, GitLab, and editor extensions. Keep each Mermaid
+definition and its adjacent `markdown` source example identical, then run this site's production build
+before publishing:
+
+```bash
+pnpm build
+```
+
+`pnpm build` compiles the page and recognizes Mermaid blocks, but it does not validate their diagram
+definitions or parse ordinary `markdown` source examples. Inspect each diagram in the published renderer.
+When you update a diagram, keep its adjacent `markdown` source example identical in the same change.
+
+### Make diagrams accessible
+
+Do not make a diagram the sole way to convey important information. Introduce it with a useful heading,
+explain the conclusion in nearby prose, and give dense diagrams a caption or a short text alternative.
+Use meaningful labels instead of anonymous node IDs, keep color from being the only signal, and check both
+light and dark themes. Mermaid supports accessibility directives for diagram types that implement them:
+
+```mermaid
+flowchart LR
+    accTitle: Sign-in request flow
+    accDescr: The browser submits credentials to the application, which validates them and returns a session.
+    Browser --> Application --> Session
+```
+
+For diagrams with operational or security meaning, add a textual sequence or table as well. This also makes
+the content searchable and understandable when SVG rendering is unavailable.
+
+### Treat diagram input as untrusted
+
+Do not interpolate user-controlled text into a Mermaid definition. Mermaid configuration can enable HTML
+labels and other features that change the browser attack surface; retain the renderer's secure defaults
+unless you have reviewed a specific requirement. If application data must become a diagram, validate and
+escape it first, and render it in the same environment in which users will view it.
+
 ### Diagram type selection guide
 
 | You want to show... | Use |
@@ -1404,8 +1443,8 @@ A -->|"O(n) complexity"| B
 This site uses `@docusaurus/theme-mermaid` to render Mermaid diagrams. The configuration in
 `docusaurus.config.ts` enables it:
 
-```javascript
-module.exports = {
+```typescript
+const config = {
     markdown: {
         mermaid: true,
     },
@@ -1416,6 +1455,8 @@ module.exports = {
         },
     },
 };
+
+export default config;
 ```
 
 Diagrams automatically adapt to the site's light/dark theme. No additional configuration is needed
@@ -1425,12 +1466,26 @@ per diagram.
 
 | Platform | Support |
 |----------|---------|
-| Docusaurus (with theme) | Full |
-| GitHub Markdown | Full (built-in since 2022) |
-| GitLab Markdown | Full |
-| Notion | Partial (via code blocks) |
-| VS Code | Via extensions (e.g. "Markdown Preview Mermaid Support") |
-| Confluence | Via plugin |
+| Docusaurus (with theme) | This site's configured renderer |
+| GitHub Markdown | Native Mermaid rendering; supported syntax can differ from this site |
+| GitLab Markdown | Native rendering on supported GitLab versions; verify the instance configuration |
+| Notion | No equivalent built-in Mermaid code-block renderer; use an integration or an exported image |
+| VS Code | Via an extension, whose Mermaid version and settings determine support |
+| Confluence | Via an installed app/plugin |
+
+### Diagram types not covered here
+
+This guide focuses on broadly useful diagram types that work well in documentation. Mermaid also offers
+architecture (C4-style), block, requirement, XY, Sankey, and Kanban diagrams. Consult the
+[syntax reference](https://mermaid.js.org/intro/syntax-reference.html), then verify that your target
+renderer supports the specific diagram type before standardizing on it.
+
+### Responsive diagrams
+
+Wide diagrams are hard to read on small screens. Prefer several focused diagrams over one dense canvas,
+use short labels, and test the result at narrow viewport widths. For a diagram that needs more space, use
+Mermaid configuration only after checking its impact in Docusaurus; renderer-level configuration can affect
+every diagram on the page.
 
 ### Live editor
 

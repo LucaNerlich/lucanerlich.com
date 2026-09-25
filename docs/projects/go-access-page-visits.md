@@ -11,7 +11,7 @@ keywords:
 sidebar_position: 2
 ---
 
-# Go Access - Easy Page Statistics Dashboard
+# GoAccess - Easy Page Statistics Dashboard
 
 Example GoAccess Widget
 
@@ -19,78 +19,48 @@ Example GoAccess Widget
 
 ## Option 1 - Visitors
 
-Hey there! In this post, I am going to quickly explain, how one can find the count of unique visitors on any server
+Hey there! In this post, I am going to quickly explain how one can find the count of unique visitors on any server
 running nginx.
 
-> This how-to has been tested on [Ubuntu Server 18.04.2 LTS](https://www.ubuntu.com/download/server).
+> The commands below are generic Linux examples. Package names and log paths may differ slightly on your distribution.
 
-To reach this goal, we are going to use the tool [Visitors](http://www.hping.org/visitors/). We will have to download
-the sourcecode, compile it to a usable program and feed it our access.log[^1].
+To reach this goal, we are going to use the tool [Visitors](http://www.hping.org/visitors/) or, for a more modern
+setup, [GoAccess](https://goaccess.io/).
 
-Lets go.
+### A quick reality check first
 
-1. Create a new directory where you want to place `visitors`.
-2. `cd` into this directory and download the sourcecode. At the time of writing, the current version is `0.7`.
+Visitors still works as a tiny offline report generator, but the old `visitors-0.7.tar.gz` download that many blog
+posts reference no longer exists at the original URL. So today the practical advice is:
 
-    ```bash
-    cd ~/your/path && wget http://www.hping.org/visitors/visitors-0.7.tar.gz
-    ```
+- if your distribution still packages `visitors`, install it from there and point it at your nginx access log;
+- otherwise skip straight to GoAccess below, which is actively maintained and much easier to automate.
 
-3. This archive needs to be `unzipped.`.
-
-    ```bash
-    tar -xzvf visitors-0.7.tar.gz
-    ```
-
-4. The sourcecode needs to be compiled.
-
-    ```bash
-    make
-    ```
-
-    - If `make` fails or you are unable to execute it, your machine needs the essential build tools.
-
-        ```bash
-        # as sudo
-        apt-get install build-essential
-        ```
-
-5. We are now able to let `visitors` parse the access.log[^1] and generate a `report.html` file.
-
-    ```bash
-    ~/your/path/visitors_0.7/visitors /var/log/nginx/access.log > report.html
-    ```
-
-If done correctly, `Visitors` will have written its report into the `report.html` file inside its root
-folder. `cd ~/your/path/visitors_0.7/`.
-
-Since you are most likely on a commandline only machine, you will need a handy solution to `view` this .html file. For
-this, we will be using [Lynx](https://invisible-island.net/lynx/) - a text only webbrowser.
-
-All common distributions will have Lynx in its repository. Therefore one can easily install it via the following
-command:
+If you do have a packaged `visitors` binary available, the actual report generation step is still as simple as:
 
 ```bash
-apt-get install lynx
+visitors /var/log/nginx/access.log > report.html
 ```
 
-Feeding Lynx our `report.html`, gives you the opportunity to step through the report, using your keyboard.
+The generated report is plain HTML, so a text browser such as [Lynx](https://invisible-island.net/lynx/) is still a
+handy way to inspect it on a headless box:
+
+```bash
+lynx ./report.html
+```
+
+Feeding Lynx our `report.html` gives you the opportunity to step through the report using your keyboard.
 
 The page will look similar to this: ![Lynx terminal browser displaying nginx access log HTML report](/images/tech/lynx.png)
 
-Text written in Green, represent links.
+Text written in green represents links.
 
 Using your keyboard, `right` will follow this link, whereas `left` will go `back`.
 `up` and `down` let you navigate your cursor. Quit with `Q`.
 
-As you can see in the above screenshot, lynx will analyse and group its results by day, month and pages as well as other
+As you can see in the above screenshot, Lynx will analyse and group its results by day, month and pages as well as other
 files. Feel free to explore!
 
-[^1]: Default location `/var/log/nginx/access.log`
-
 ## Option 2 - GoAccess Dashboard
-
-[GoAccess](https://goaccess.io/)
 
 To run the generation commands successfully, make sure that you have `zcat` and `goaccess` installed and available on
 your `$PATH`.
@@ -98,19 +68,25 @@ your `$PATH`.
 ### Simple CLI static generation
 
 ```bash
-zcat -f /var/log/nginx/access.log.*.gz | 
-    goaccess /var/log/nginx/access.log - 
-    -o /var/www/goaccess/report.html 
-    --log-format=COMBINED 
-    --html-report-title=my-dashboard
+mkdir -p /var/www/goaccess
+zcat -f /var/log/nginx/access.log.*.gz | goaccess /var/log/nginx/access.log - \
+    -o /var/www/goaccess/report.html \
+    --log-format=COMBINED \
+    --html-report-title='my-dashboard' \
+    --real-os \
+    --ignore-crawlers \
+    --anonymize-ip
 ```
 
 ### Automatic, scheduled script generation
 
-The following script runs based on a .env millisecond schedule. It generates a single `.html` goaccess dashboard file
-for each "group" of nginx log files. All generated `.html` dashboard files will be writte
-to `/var/www/goaccess/<your-app-name/report.file`. You can either visit them directly or build a small dashboard which
-links to each - for example.
+The following script runs on an interval configured via `.env`. It generates a single `.html` GoAccess dashboard file
+for each "group" of nginx log files. All generated dashboard files are written to
+`/var/www/goaccess/<your-app-name>/report.html`.
+
+Because these reports expose traffic patterns, URLs, referrers, and user-agent data, do **not** publish them as a
+world-readable path unless you are comfortable sharing that information. Put them behind HTTP auth, a VPN, or an
+internal-only vhost.
 
 You can specify the nginx output file name in the nginx config like this:
 
@@ -128,139 +104,125 @@ server {
 ![GoAccess browser breakdown chart](/images/tech/goaccess-browser.png)
 
 ```javascript
-const dotenvParseOutput = require('dotenv').config()
-const {exec} = require('child_process');
-const fs = require('fs');
-const _ = require('lodash');
+require('dotenv').config();
+const { spawn } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
-// DOTENV
-const TIMER_MS = process.env.TIMER_MS;
+const TIMER_MS = Number(process.env.TIMER_MS ?? 15 * 60 * 1000);
+if (!Number.isInteger(TIMER_MS) || TIMER_MS < 1000) {
+    throw new Error('TIMER_MS must be an integer >= 1000');
+}
 
 /**
- * List of nginx apps / single sites to track. Each app needs to correspond to the
- * /var/log/nginx/<appName>/access.log path <appName> variable.
+ * Hardcoded nginx app names to track. Each entry corresponds to
+ * /var/log/nginx/<appName>/access.log, except 'unsorted' which points to the root access.log.
  * @type {string[]}
  */
 const APPS = [
     'my-app-1',
     'my-app-2',
-    'unsorted' // all "other" non categoriesd nginx logs
+    'unsorted', // all other non-categorized nginx logs
 ];
 
-const basePathLogs = "/var/log/nginx";
-const accessLog = "/access.log";
-const accessLogWildcard = accessLog + ".*.gz";
+const LOG_ROOT = '/var/log/nginx';
+const REPORT_ROOT = '/var/www/goaccess';
+const LOG_FORMAT = 'COMBINED';
 
-function getAccessLogPath(appName, isWildcard) {
-    const appPath = appName === 'unsorted' ? '' : appName;
-    const base = basePathLogs + "/" + appPath + accessLog;
-    const wildcard = basePathLogs + "/" + appPath + accessLogWildcard;
-
-    return isWildcard ? wildcard : base;
-}
-
-const basePathReports = "/var/www/goaccess";
-const reportFile = "/report.html";
-
-function getReportPath(appName) {
-    return basePathReports + "/" + appName + reportFile;
-}
-
-/**
- * Creates the goaccess --ws-url option string for a given app
- * @param appName
- * @returns {string}
- */
-function getHtmlTitle(appName) {
-    return "--html-report-title=" + appName + "_statistics";
-}
-
-const logFormat = "--log-format=COMBINED";
-
-/**
- * Example: zcat -f /var/log/nginx/access.log.*.gz | goaccess /var/log/nginx/access.log - -o /var/www/goaccess/report.html --log-format=COMBINED --html-report-title=cffc_statistics
- * Create a goaccess report.html for the given app and its access.log location
- * @param appName -> the apps name
- */
-function buildCommand(appName) {
-    const cmdLogWildcardPath = getAccessLogPath(appName, true)
-    const cmdLogPath = getAccessLogPath(appName, false)
-    const reportPath = getReportPath(appName);
-
-    const commandFragments = [];
-    commandFragments.push('zcat -f')
-    commandFragments.push(cmdLogWildcardPath)
-    commandFragments.push('|')
-    commandFragments.push('goaccess')
-    commandFragments.push(cmdLogPath)
-    commandFragments.push('-')
-    commandFragments.push('-o')
-    commandFragments.push(reportPath)
-    commandFragments.push(logFormat)
-    commandFragments.push('--user-name=root')
-    commandFragments.push('--real-os')
-    commandFragments.push('--ignore-crawlers')
-    commandFragments.push('--anonymize-ip')
-    commandFragments.push(getHtmlTitle(appName))
-
-    return commandFragments.join(" ");
-}
-
-function start() {
-    console.log("If not installed, please install zcat/gzip and goaccess manually! \n");
-    checkPaths();
-    schedule();
-}
-
-/**
- * Check if nginx log path and goaccess output report path exist {@link APPS}.
- * Create if not.
- */
-function checkPaths() {
-    function getPathOnly(filePath) {
-        return filePath.substring(0, filePath.lastIndexOf("/"));
+function getAppPathSegment(appName) {
+    if (appName === 'unsorted') {
+        return '';
     }
 
-    _.forEach(APPS, function (app) {
-        const ACCESS_LOG_PATH = getPathOnly(getAccessLogPath(app, false));
-        const REPORT_PATH = getPathOnly(getReportPath(app));
+    if (!/^[a-z0-9-]+$/i.test(appName)) {
+        throw new Error(`Unsafe app name: ${appName}`);
+    }
 
-        console.log("Check and create path for: ", ACCESS_LOG_PATH);
-        console.log("Check and create path for: ", REPORT_PATH);
+    return appName;
+}
 
-        fs.mkdirSync(ACCESS_LOG_PATH, {recursive: true});
-        fs.mkdirSync(REPORT_PATH, {recursive: true});
+function getAccessLogPath(appName) {
+    return path.join(LOG_ROOT, getAppPathSegment(appName), 'access.log');
+}
+
+function getCompressedLogs(appName) {
+    const accessLogPath = getAccessLogPath(appName);
+    const logDir = path.dirname(accessLogPath);
+    const logBase = path.basename(accessLogPath);
+
+    return fs.readdirSync(logDir)
+        .filter((fileName) => fileName.startsWith(`${logBase}.`) && fileName.endsWith('.gz'))
+        .map((fileName) => path.join(logDir, fileName))
+        .sort();
+}
+
+function getReportPath(appName) {
+    return path.join(REPORT_ROOT, appName, 'report.html');
+}
+
+function runReport(appName) {
+    return new Promise((resolve, reject) => {
+        const reportPath = getReportPath(appName);
+        const archivedLogs = getCompressedLogs(appName);
+        fs.mkdirSync(path.dirname(reportPath), { recursive: true });
+
+        const goaccess = spawn('goaccess', [
+            getAccessLogPath(appName),
+            '-',
+            '-o',
+            reportPath,
+            `--log-format=${LOG_FORMAT}`,
+            `--html-report-title=${appName}_statistics`,
+            '--real-os',
+            '--ignore-crawlers',
+            '--anonymize-ip',
+        ]);
+
+        let stderr = '';
+        goaccess.stderr.on('data', (chunk) => {
+            stderr += chunk.toString();
+        });
+
+        if (archivedLogs.length > 0) {
+            const zcat = spawn('zcat', ['-f', ...archivedLogs]);
+            zcat.stderr.on('data', (chunk) => {
+                stderr += chunk.toString();
+            });
+            zcat.stdout.pipe(goaccess.stdin);
+        } else {
+            goaccess.stdin.end();
+        }
+
+        goaccess.on('close', (code) => {
+            if (code === 0) {
+                console.log(`Wrote ${reportPath}`);
+                resolve();
+                return;
+            }
+            reject(new Error(`goaccess failed for ${appName} (${code}): ${stderr}`));
+        });
     });
 }
 
-/**
- * Execute goaccess report html generation for each given appname / path segment
- */
-function schedule() {
-    const commands = _.map(APPS, buildCommand);
-
-    setInterval(() => {
-        _.forEach(commands, function (command) {
-            const cmd = exec(command, function (error, stdout, stderr) {
-                if (error) {
-                    console.log(error.stack);
-                    console.log('Error code: ' + error.code);
-                    console.log('Signal received: ' + error.signal);
-                } else {
-                    console.log(command);
-                    console.log(stdout);
-                }
-            });
-
-            cmd.on('exit', function (code) {
-                // do nothing
-            });
-        });
-    }, TIMER_MS)
+async function generateAllReports() {
+    for (const appName of APPS) {
+        await runReport(appName);
+    }
 }
 
-// start the app
-start();
+async function main() {
+    await generateAllReports();
+    setInterval(() => {
+        generateAllReports().catch((error) => {
+            console.error(error);
+        });
+    }, TIMER_MS);
+}
+
+main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+});
 ```
 
 Thanks for reading!

@@ -44,6 +44,7 @@ cargo add serde_json
 cargo add rusqlite --features bundled
 cargo add tokio --features full
 cargo add thiserror
+cargo add env_logger
 ```
 
 `Cargo.toml` dependencies:
@@ -57,6 +58,7 @@ serde_json = "1"
 rusqlite = { version = "0.32", features = ["bundled"] }
 tokio = { version = "1", features = ["full"] }
 thiserror = "2"
+env_logger = "0.11"
 ```
 
 > **Note:** `rusqlite` with the `bundled` feature compiles SQLite from source, so you do not need to install SQLite
@@ -193,8 +195,8 @@ impl Database {
                 })
             })
             .map_err(ApiError::from)?
-            .filter_map(|r| r.ok())
-            .collect();
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(ApiError::from)?;
         Ok(todos)
     }
 
@@ -211,7 +213,12 @@ impl Database {
                 })
             },
         )
-        .map_err(|_| ApiError::NotFound(format!("Todo {id} not found")))
+        .map_err(|err| match err {
+            rusqlite::Error::QueryReturnedNoRows => {
+                ApiError::NotFound(format!("Todo {id} not found"))
+            }
+            other => ApiError::Internal(other.to_string()),
+        })
     }
 
     pub fn create(&self, input: &CreateTodo) -> Result<Todo, ApiError> {
@@ -258,7 +265,8 @@ impl Database {
 ```
 
 The `Database` struct wraps a `Mutex<Connection>` for thread-safe access. Each method locks the connection, executes
-a query, and returns typed results.
+a query, and returns typed results. This synchronous SQLite approach is fine for a tutorial and small services; for
+higher throughput, prefer a connection pool or move blocking database work onto a dedicated thread pool.
 
 ## Step 4 - Handlers and server
 
@@ -272,6 +280,7 @@ mod models;
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::web::{self, Data, Json, Path};
+use actix_web::http::header;
 use actix_web::{App, HttpResponse, HttpServer};
 
 use db::Database;
@@ -321,9 +330,10 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         let cors = Cors::default()
-            .allow_any_origin()
-            .allow_any_method()
-            .allow_any_header();
+            .allowed_origin("http://localhost:3000")
+            .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+            .allowed_header(header::CONTENT_TYPE)
+            .max_age(3600);
 
         App::new()
             .wrap(Logger::default())
@@ -341,7 +351,7 @@ async fn main() -> std::io::Result<()> {
 }
 ```
 
-> **Note:** Add `env_logger` as a dependency (`cargo add env_logger`) for the `Logger` middleware to work.
+> **Note:** `Logger` writes request logs through the `log` facade. `env_logger` is added above so those logs show up during local development.
 
 ## How it all fits together
 
@@ -430,7 +440,7 @@ Extractors are types in handler parameters that Actix populates from the request
 Middleware wraps handlers to add cross-cutting concerns:
 
 - `Logger` - logs every request
-- `Cors` - handles Cross-Origin Resource Sharing headers
+- `Cors` - handles Cross-Origin Resource Sharing headers; prefer explicit origins in production instead of `allow_any_origin()`
 - Custom middleware for authentication, rate limiting, etc.
 
 ## Summary

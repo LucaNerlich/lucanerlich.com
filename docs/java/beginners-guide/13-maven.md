@@ -556,12 +556,15 @@ Copy the `<dependency>` XML snippet into your `pom.xml`.
 </dependency>
 ```
 
-| Scope               | Available during         | Included in JAR         |
+| Scope               | Available during         | In shaded/fat JAR?*     |
 |---------------------|--------------------------|-------------------------|
 | `compile` (default) | Compile + test + runtime | Yes                     |
 | `test`              | Test only                | No                      |
 | `provided`          | Compile + test           | No (server provides it) |
 | `runtime`           | Test + runtime           | Yes                     |
+
+`*` A plain Maven `jar` does **not** bundle dependencies. They are only packaged into one distributable artifact when
+you use a plugin such as Shade, as this chapter does.
 
 ## Maven wrapper
 

@@ -28,8 +28,8 @@ Java is a **statically typed, compiled, object-oriented** programming language. 
 2. **Compiled** - you turn source code (`.java` files) into bytecode (`.class` files) before running it.
 3. **Object-oriented** - code is organized into classes and objects (covered in chapter 5).
 
-Java was created in 1995 by James Gosling at Sun Microsystems. Its design philosophy is **"write once, run anywhere"
-** - compiled Java code runs on any platform that has a Java Virtual Machine.
+Java was created in 1995 by James Gosling at Sun Microsystems. Its design philosophy is **"write once, run anywhere"**
+- compiled Java code runs on any platform that has a Java Virtual Machine.
 
 ## JDK, JRE, JVM - what is what?
 
@@ -63,7 +63,8 @@ These three terms come up constantly. Here is what they mean:
 | **JRE**   | JVM + standard libraries                        | Users running Java programs |
 | **JDK**   | JRE + development tools (`javac`, `jar`, etc.)  | Developers writing Java     |
 
-You need the **JDK** - it includes everything.
+You need the **JDK** - it includes everything. In modern Java distributions, you will usually install a JDK; separate
+public JRE downloads are much less common than they used to be.
 
 ## How Java code runs
 
@@ -197,8 +198,8 @@ public class Hello {                    // 1. Class declaration
 }
 ```
 
-1. **`public class Hello`** - every Java file contains a class. The class name must match the filename (`Hello.java` →
-   `class Hello`). `public` means other classes can access it.
+1. **`public class Hello`** - this file declares a class named `Hello`. The class name must match the filename
+   (`Hello.java` → `class Hello`). `public` means other classes can access it.
 
 2. **`public static void main(String[] args)`** - the entry point. The JVM looks for this exact signature when you run
    the program.
@@ -234,8 +235,8 @@ No newline here
 
 ## One file, one public class
 
-Java enforces a strict rule: **each `.java` file can contain at most one `public` class**, and the filename must match
-that class name.
+Java enforces a strict rule: **each `.java` file can contain at most one `public` top-level type**, and the filename
+must match that type name.
 
 ```java
 // File: Calculator.java - the filename MUST be Calculator.java

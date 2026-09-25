@@ -435,7 +435,7 @@ $point = [10, 20];
 list($x, $y) = $point;
 echo "$x, $y";  // 10, 20
 
-// Short syntax (PHP 7.1+):
+// Short syntax (available in all supported PHP 8 versions):
 [$x, $y] = $point;
 ```
 
@@ -452,7 +452,7 @@ echo $email;  // alice@example.com
 
 ### The spread operator in arrays
 
-PHP 7.4+ supports the **spread operator** (`...`) to merge arrays or insert elements:
+The **spread operator** (`...`) can merge arrays or insert elements. It is fully available in PHP 8:
 
 ```php
 <?php

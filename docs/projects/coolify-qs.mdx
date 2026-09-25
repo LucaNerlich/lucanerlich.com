@@ -36,7 +36,7 @@ flowchart LR
 ## Requirements
 
 - **Omarchy Quattro** (Quickshell-based shell)
-- One or more self-hosted **Coolify** instances (v4.0.0-beta or later) with the API enabled and an API token with read access
+- One or more self-hosted **Coolify** v4 instances with the API enabled and an API token with read-only access
 - `~/.config/coolify-qs/config.json` -- see [Configuration](#configuration)
 
 ## Install
@@ -87,6 +87,8 @@ chmod 600 ~/.config/coolify-qs/config.json
 | `servers` | required | One entry per Coolify instance. |
 
 The file is re-read on every poll, so servers can be added or edited without restarting the shell. Tokens never leave the process -- the watch stream contains no secrets.
+
+Keep `config.json` out of dotfile sync or source control unless the file is encrypted separately.
 
 ## Usage
 

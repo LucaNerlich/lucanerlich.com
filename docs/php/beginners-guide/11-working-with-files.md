@@ -378,23 +378,32 @@ Never use the temp path directly. Move the file to your upload directory:
 $uploadDir = __DIR__ . '/uploads/';
 $allowedTypes = ['application/pdf', 'text/plain'];
 $maxSize = 2 * 1024 * 1024;  // 2 MB
+$file = $_FILES['document'];
 
-if ($_FILES['document']['error'] !== UPLOAD_ERR_OK) {
+if ($file['error'] !== UPLOAD_ERR_OK) {
     die('Upload failed');
 }
 
-if ($_FILES['document']['size'] > $maxSize) {
+if ($file['size'] > $maxSize) {
     die('File too large');
 }
 
-if (!in_array($_FILES['document']['type'], $allowedTypes)) {
+$finfo = new finfo(FILEINFO_MIME_TYPE);
+$detectedType = $finfo->file($file['tmp_name']);
+
+if (!in_array($detectedType, $allowedTypes, true)) {
     die('Invalid file type');
 }
 
-$safeName = basename($_FILES['document']['name']);
-$target = $uploadDir . $safeName;
+$extension = match ($detectedType) {
+    'application/pdf' => 'pdf',
+    'text/plain' => 'txt',
+    default => throw new RuntimeException('Unexpected file type'),
+};
 
-if (move_uploaded_file($_FILES['document']['tmp_name'], $target)) {
+$target = $uploadDir . bin2hex(random_bytes(16)) . '.' . $extension;
+
+if (move_uploaded_file($file['tmp_name'], $target)) {
     echo 'Upload successful';
 } else {
     echo 'Move failed';
@@ -406,7 +415,7 @@ if (move_uploaded_file($_FILES['document']['tmp_name'], $target)) {
 - **Validate file type** - Do not trust `$_FILES['type']`. Check extension and optionally use `finfo_file()` for MIME detection
 - **Limit size** - Enforce `upload_max_filesize` and `post_max_size` in `php.ini`, and check `$_FILES['size']` in code
 - **Restrict upload directory** - Store uploads outside the web root or in a directory that cannot execute PHP
-- **Use unique filenames** - Avoid overwriting; e.g. `uniqid() . '_' . $originalName`
+- **Use unique filenames** - Avoid overwriting; prefer `bin2hex(random_bytes(16))` over predictable IDs such as `uniqid()`
 
 ## Path Functions
 
@@ -457,7 +466,7 @@ $baseDir = realpath(__DIR__ . '/uploads/');
 $userPath = $baseDir . '/' . basename($_GET['file']);
 $realPath = realpath($userPath);
 
-if ($realPath === false || strpos($realPath, $baseDir) !== 0) {
+if ($realPath === false || !str_starts_with($realPath, $baseDir . DIRECTORY_SEPARATOR)) {
     die('Invalid path');
 }
 ```
@@ -504,7 +513,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['title'])) {
 if (isset($_GET['delete'])) {
     $name = basename($_GET['delete'], '.txt');
     $path = $notesDir . $name . '.txt';
-    if (is_file($path) && realpath($path) && strpos(realpath($path), realpath($notesDir)) === 0) {
+    $realNotesDir = realpath($notesDir);
+    $realPath = realpath($path);
+    if (is_file($path) && $realPath !== false && $realNotesDir !== false && str_starts_with($realPath, $realNotesDir . DIRECTORY_SEPARATOR)) {
         unlink($path);
     }
     header('Location: notes.php');
@@ -548,7 +559,7 @@ This example:
 
 - Sanitizes the title with `preg_replace` to allow only safe characters
 - Uses `basename()` for delete to prevent path traversal
-- Validates the delete path with `realpath()` and a prefix check
+- Validates the delete path with `realpath()` and a directory-aware prefix check
 - Stores notes as plain text files
 
 > **Note:** For production, you would add authentication, CSRF protection, and more robust validation. This is a learning example.

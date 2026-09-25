@@ -178,7 +178,7 @@ Use `unknown` for:
 ```typescript
 async function fetchUser(id: number): Promise<unknown> {
     const response = await fetch(`/api/users/${id}`);
-    return response.json(); // JSON.parse always returns unknown safely
+    return (await response.json()) as unknown; // Treat network JSON as unknown until you validate it
 }
 
 // Caller must narrow the type before using it

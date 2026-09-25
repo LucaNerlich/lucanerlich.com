@@ -110,7 +110,7 @@ Java has **eight** primitive types. They store values directly (not as objects):
 | `float`   | 32 bits | ~7 decimal digits                     | 0.0f     | `float f = 3.14f;`     |
 | `double`  | 64 bits | ~15 decimal digits                    | 0.0      | `double d = 3.14;`     |
 | `boolean` | 1 bit*  | `true` or `false`                     | false    | `boolean b = true;`    |
-| `char`    | 16 bits | Unicode character                     | '\u0000' | `char c = 'A';`        |
+| `char`    | 16 bits | UTF-16 code unit                      | '\u0000' | `char c = 'A';`        |
 
 *boolean actual size depends on the JVM implementation.
 
@@ -177,7 +177,7 @@ expressions are allowed in conditions.
 
 ### `char`
 
-A single Unicode character, wrapped in single quotes:
+A `char` stores a single **UTF-16 code unit**, wrapped in single quotes:
 
 ```java
 char letter = 'A';
@@ -198,6 +198,10 @@ A
 ★
 65
 ```
+
+For most common characters this behaves like "one character". But not every Unicode code point fits in a single
+`char` - many emoji and less-common symbols require two `char` values (a surrogate pair). For full Unicode text
+processing, prefer `String`.
 
 ## Strings
 
@@ -250,7 +254,7 @@ System.out.println(s.contains("World"));     // true
 System.out.println(s.startsWith("Hello"));   // true
 System.out.println(s.indexOf("World"));      // 7
 System.out.println(s.replace("World", "Java")); // Hello, Java!
-System.out.println(s.trim());               // trims whitespace
+System.out.println(s.trim());               // trims leading/trailing ASCII-style whitespace
 System.out.println(s.isEmpty());            // false
 System.out.println(s.isBlank());            // false (Java 11+)
 ```
@@ -272,6 +276,8 @@ Hello, World!
 false
 false
 ```
+
+For modern Unicode-aware trimming, use `strip()` (Java 11+) instead of `trim()`.
 
 ### String comparison - use `equals`, not `==`
 

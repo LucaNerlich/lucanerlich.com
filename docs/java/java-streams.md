@@ -405,11 +405,14 @@ Map<String, Long> wordFreq = Arrays.stream(text.split("\\s+"))
 ```java
 record Product(String name, double price, String category) {}
 
-List<Product> products = Files.lines(Path.of("products.csv"))
-    .skip(1) // skip header
-    .map(line -> line.split(","))
-    .map(parts -> new Product(parts[0].trim(), Double.parseDouble(parts[1].trim()), parts[2].trim()))
-    .toList();
+List<Product> products;
+try (Stream<String> lines = Files.lines(Path.of("products.csv"))) {
+    products = lines
+        .skip(1) // skip header
+        .map(line -> line.split(","))
+        .map(parts -> new Product(parts[0].trim(), Double.parseDouble(parts[1].trim()), parts[2].trim()))
+        .toList();
+}
 
 // Most expensive per category
 Map<String, Optional<Product>> mostExpensive = products.stream()

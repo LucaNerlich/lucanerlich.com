@@ -419,7 +419,7 @@ system.
 
 ## Common animation patterns
 
-### Fade in on scroll (CSS only)
+### Fade in on scroll
 
 ```css
 .fade-in {
@@ -434,7 +434,8 @@ system.
 }
 ```
 
-The `.visible` class is typically added by JavaScript when the element enters the viewport.
+This is the CSS half of a scroll-reveal pattern. In practice, the `.visible` class is usually added by JavaScript
+(for example with `IntersectionObserver`) or by newer scroll-driven animation APIs.
 
 ### Button press effect
 

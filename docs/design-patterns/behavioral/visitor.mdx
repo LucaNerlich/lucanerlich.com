@@ -23,12 +23,20 @@ interface Visitor {
     void visit(ImageNode node);
 }
 
-interface Node {
-    void accept(Visitor v);
+interface DocNode {
+    void accept(Visitor visitor);
 }
 
-class TextNode implements Node {
-    public void accept(Visitor v) { v.visit(this); }
+class TextNode implements DocNode {
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+}
+
+class ImageNode implements DocNode {
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 }
 ```
 
@@ -40,12 +48,20 @@ interface Visitor {
   visitImage(node: ImageNode): void;
 }
 
-interface Node {
-  accept(v: Visitor): void;
+interface DocNode {
+  accept(visitor: Visitor): void;
 }
 
-class TextNode implements Node {
-  accept(v: Visitor): void { v.visitText(this); }
+class TextNode implements DocNode {
+  accept(visitor: Visitor): void {
+    visitor.visitText(this);
+  }
+}
+
+class ImageNode implements DocNode {
+  accept(visitor: Visitor): void {
+    visitor.visitImage(this);
+  }
 }
 ```
 

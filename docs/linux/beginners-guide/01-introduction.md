@@ -162,7 +162,7 @@ ssh-keygen -t rsa -b 4096 -C "your.email@example.com"
 ssh-copy-id username@hostname
 
 # Manual alternative if ssh-copy-id is not available
-cat ~/.ssh/id_ed25519.pub | ssh username@hostname "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
+cat ~/.ssh/id_ed25519.pub | ssh username@hostname "umask 077 && mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys"
 ```
 
 ### SSH Config File

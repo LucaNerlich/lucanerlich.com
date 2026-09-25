@@ -95,7 +95,7 @@ scp target/x86_64-unknown-linux-gnu/release/todo-api user@your-server:~/
 >
 > ```bash
 > cargo install cross
-> cross build -release -target x86_64-unknown-linux-gnu
+> cross build --release --target x86_64-unknown-linux-gnu
 > ```
 
 ## Setting up a systemd service
@@ -106,8 +106,8 @@ Create a systemd service so your API starts automatically and restarts on failur
 
 ```bash
 sudo useradd -r -s /bin/false todoapi
-sudo mkdir -p /opt/todoapi
-sudo cp ~/todo-api /opt/todoapi/
+sudo mkdir -p /opt/todoapi/data
+sudo cp target/release/todo-api /opt/todoapi/
 sudo chown -R todoapi:todoapi /opt/todoapi
 ```
 
@@ -253,7 +253,7 @@ Docker packages your application with all its dependencies into a container.
 
 ```dockerfile
 # Stage 1: Build
-FROM rust:1.84-slim AS builder
+FROM rust:1-slim AS builder
 
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
@@ -333,7 +333,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - run: cargo fmt --check
-      - run: cargo clippy - -D warnings
+      - run: cargo clippy -- -D warnings
       - run: cargo test
 ```
 

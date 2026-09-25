@@ -21,7 +21,7 @@ Structure is what lets a reader skim a page in five seconds and decide whether t
 
 ## Headings, landmarks, and sections
 
-Use **one `<h1>`** per page. Increase heading level **by one** per nesting depth (`h1` → `h2` → `h3`). Headings are **signposts**, not slogans.
+Prefer **one primary `<h1>`** per page. Increase heading level **by one** per nesting depth when the content is truly subordinate (`h1` → `h2` → `h3`). Headings are **signposts**, not slogans.
 
 ### Do
 

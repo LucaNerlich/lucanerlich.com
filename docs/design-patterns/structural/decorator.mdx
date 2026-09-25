@@ -23,15 +23,21 @@ interface Notifier {
 }
 
 class EmailNotifier implements Notifier {
-    public void send(String message) { /* email */ }
+    public void send(String message) {
+        System.out.println("Email: " + message);
+    }
 }
 
 class SmsDecorator implements Notifier {
     private final Notifier wrapped;
-    SmsDecorator(Notifier wrapped) { this.wrapped = wrapped; }
+
+    SmsDecorator(Notifier wrapped) {
+        this.wrapped = wrapped;
+    }
+
     public void send(String message) {
         wrapped.send(message);
-        /* sms */
+        System.out.println("SMS: " + message);
     }
 }
 ```
@@ -44,13 +50,17 @@ interface Notifier {
 }
 
 class EmailNotifier implements Notifier {
-  send(message: string): void {}
+  send(message: string): void {
+    console.log(`Email: ${message}`);
+  }
 }
 
 class SmsDecorator implements Notifier {
   constructor(private wrapped: Notifier) {}
+
   send(message: string): void {
     this.wrapped.send(message);
+    console.log(`SMS: ${message}`);
   }
 }
 ```

@@ -52,7 +52,8 @@ struct Tweet {
 
 impl Summary for Article {
     fn summarize(&self) -> String {
-        format!("{} by {} - {}", self.title, self.author, &self.content[..50])
+        let preview: String = self.content.chars().take(50).collect();
+        format!("{} by {} - {}", self.title, self.author, preview)
     }
 }
 
@@ -71,7 +72,7 @@ fn main() {
 
     let tweet = Tweet {
         username: String::from("rustlang"),
-        text: String::from("Rust 1.84 is out!"),
+        text: String::from("Rust keeps getting better on the stable channel."),
     };
 
     println!("{}", article.summarize());

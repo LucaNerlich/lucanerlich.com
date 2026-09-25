@@ -252,10 +252,13 @@ HttpRequest.BodyPublishers.ofByteArray(bytes)
 HttpRequest.BodyPublishers.noBody()
 
 // Form data
-String formBody = "username=alice&password=secret";
+String formBody = "username=alice&rememberMe=true";
 HttpRequest.BodyPublishers.ofString(formBody)
 // + header("Content-Type", "application/x-www-form-urlencoded")
 ```
+
+For real form data, URL-encode each key and value (for example with `URLEncoder`) instead of
+concatenating raw user input.
 
 ---
 
@@ -310,7 +313,12 @@ HttpRequest request = HttpRequest.newBuilder()
 
         if (attempt < maxRetries) {
             long delay = (long) Math.pow(2, attempt) * 1000; // exponential backoff
-            Thread.sleep(delay);
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw e;
+            }
         }
     }
     throw lastException;
@@ -320,6 +328,8 @@ HttpRequest request = HttpRequest.newBuilder()
 HttpResponse<String> response = sendWithRetry(client, request,
     HttpResponse.BodyHandlers.ofString(), 3);
 ```
+
+Only retry requests that are safe or idempotent unless your API explicitly supports retried writes.
 
 ---
 

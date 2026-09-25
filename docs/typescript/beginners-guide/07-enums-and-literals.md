@@ -213,7 +213,7 @@ const allPermissions = Object.values(Permission); // Needed at runtime
 
 ```typescript
 // Without as const: type is string[]
-const colors = ["red", "green", "blue"];
+const basicColors = ["red", "green", "blue"];
 
 // With as const: type is readonly ["red", "green", "blue"]
 const colors = ["red", "green", "blue"] as const;
@@ -340,6 +340,18 @@ immediately error on `const exhaustiveCheck: never = action`, because `action` c
 ```typescript
 function assertNever(value: never, message?: string): never {
     throw new Error(message ?? `Unhandled case: ${JSON.stringify(value)}`);
+}
+
+type AppEvent =
+    | { type: 'click'; x: number; y: number }
+    | { type: 'keydown'; key: string };
+
+function handleClick(x: number, y: number): void {
+    console.log('click', x, y);
+}
+
+function handleKey(key: string): void {
+    console.log('key', key);
 }
 
 function processEvent(event: AppEvent): void {

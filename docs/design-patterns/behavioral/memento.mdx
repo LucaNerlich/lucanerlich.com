@@ -18,34 +18,56 @@ Capture and externalize an object's internal state so it can be restored later.
 ## Java example
 
 ```java
-class EditorMemento {
-    private final String content;
-    EditorMemento(String content) { this.content = content; }
-    String getContent() { return content; }
-}
-
 class Editor {
     private String content = "";
-    void type(String text) { content += text; }
-    EditorMemento save() { return new EditorMemento(content); }
-    void restore(EditorMemento memento) { content = memento.getContent(); }
+
+    void type(String text) {
+        content += text;
+    }
+
+    Snapshot save() {
+        return new Snapshot(content);
+    }
+
+    void restore(Snapshot snapshot) {
+        content = snapshot.content;
+    }
+
+    static final class Snapshot {
+        private final String content;
+
+        private Snapshot(String content) {
+            this.content = content;
+        }
+    }
 }
 ```
 
 ## TypeScript example
 
 ```ts
-class EditorMemento {
+class Snapshot {
   constructor(readonly content: string) {}
 }
 
 class Editor {
-  private content = "";
-  type(text: string): void { this.content += text; }
-  save(): EditorMemento { return new EditorMemento(this.content); }
-  restore(m: EditorMemento): void { this.content = m.content; }
+  private content = '';
+
+  type(text: string): void {
+    this.content += text;
+  }
+
+  save(): Snapshot {
+    return new Snapshot(this.content);
+  }
+
+  restore(snapshot: Snapshot): void {
+    this.content = snapshot.content;
+  }
 }
 ```
+
+In languages without nested access control, keep the memento type module-private if you want stronger encapsulation.
 
 ## Pros and cons
 

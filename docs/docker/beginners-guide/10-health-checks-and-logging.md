@@ -16,7 +16,7 @@ sidebar_position: 10
 
 # Health Checks and Logging
 
-A running container is not necessarily a healthy container. Your web server might be up but unable to reach the database. Your worker process might be stuck in a crash loop. Docker health checks let you define exactly what "healthy" means for your application, and orchestrators like Docker Swarm and Kubernetes use that information to make routing and restart decisions. Logging is the companion story: once your containers are running, you need a way to understand what they are doing.
+A running container is not necessarily a healthy container. Your web server might be up but unable to reach the database. Your worker process might be stuck in a crash loop. Docker health checks let you define exactly what "healthy" means for your application, and Docker-aware tooling such as Compose and Swarm can use that information when deciding startup order or service state. Kubernetes has its own liveness and readiness probes, so a Docker `HEALTHCHECK` does not replace those. Logging is the companion story: once your containers are running, you need a way to understand what they are doing.
 
 ---
 

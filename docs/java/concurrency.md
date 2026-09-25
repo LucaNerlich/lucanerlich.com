@@ -131,7 +131,10 @@ CompletableFuture<String> future = CompletableFuture
 ```java
 CompletableFuture<String> future = CompletableFuture
     .supplyAsync(() -> slowOperation())
-    .orTimeout(5, TimeUnit.SECONDS)                    // throws TimeoutException
+    .orTimeout(5, TimeUnit.SECONDS); // completes exceptionally with TimeoutException
+
+CompletableFuture<String> withFallback = CompletableFuture
+    .supplyAsync(() -> slowOperation())
     .completeOnTimeout("fallback", 5, TimeUnit.SECONDS); // returns default
 ```
 
@@ -187,7 +190,7 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 // GOOD: I/O-bound workload (HTTP calls, DB queries)
 try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
     List<Future<Response>> futures = urls.stream()
-        .map(url -> executor.submit(() -> httpClient.send(url)))
+        .map(url -> executor.submit(() -> sendRequest(httpClient, url)))
         .toList();
 
     for (var f : futures) {
