@@ -252,7 +252,15 @@ hasEvenLength.transform("Java");  // true (4 is even)
 ### Configurable retry logic
 
 ```java
-public static <T> T retry(Supplier<T> action, int maxAttempts, Predicate<Exception> retryable) {
+@FunctionalInterface
+interface ThrowingSupplier<T> {
+    T get() throws Exception;
+}
+
+public static <T> T retry(
+        ThrowingSupplier<T> action,
+        int maxAttempts,
+        Predicate<Exception> retryable) throws Exception {
     for (int attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
             return action.get();

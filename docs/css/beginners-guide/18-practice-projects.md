@@ -43,7 +43,7 @@ a mini "about me" page - a single card floating in the centre of the screen.
 
 - Start with the HTML structure: a container `div` with an `img`, `h2`, `p`, and a list of links
 - Use `border-radius: 50%` on the image with a fixed `width` and `height` for a circular photo
-- Centre the card with `display: flex; justify-content: center; align-items: center; min-height: 100vh` on the `body`
+- Centre the card with `display: flex; justify-content: center; align-items: center; min-height: 100dvh` on the `body`
 - Add a subtle `box-shadow` to the card
 - Style the social links as inline-block buttons with `background-color`, `padding`, and `border-radius`
 - Add a `transition` on hover to change the button colour smoothly
@@ -136,13 +136,13 @@ table, and a footer. Use a custom colour scheme with CSS custom properties and m
 - CSS custom properties (design tokens)
 - Responsive design (mobile-first, `clamp()` for fluid typography)
 - Gradients and shadows for visual depth
-- `min-height: 100vh` for the hero section
+- `min-height: 100dvh` for the hero section
 - Multiple backgrounds (gradient overlay on hero image)
 
 ### Hints
 
 - Start by defining your design tokens in `:root` - primary colour, text colour, background, spacing scale, fonts
-- The hero section uses `min-height: 100vh`, a background image with a dark gradient overlay, and centred white text
+- The hero section uses `min-height: 100dvh`, a background image with a dark gradient overlay, and centred white text
 - The features section uses CSS Grid: `repeat(auto-fit, minmax(280px, 1fr))`
 - Use `clamp()` for all heading font sizes so they scale smoothly
 - The pricing table is a flex row (or grid) with cards. Highlight the recommended plan with a modifier class
@@ -325,7 +325,7 @@ transitions, `outline`.
 
 ### CSS Zen Garden revisited
 
-The classic [CSS Zen Garden](http://www.csszengarden.com) challenge: take an existing HTML file and create a completely
+The classic [CSS Zen Garden](https://www.csszengarden.com) challenge: take an existing HTML file and create a completely
 unique design using only CSS. Download the HTML from the site and build your own stylesheet. It is the ultimate test of
 CSS creativity under constraints.
 

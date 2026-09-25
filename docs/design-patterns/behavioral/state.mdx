@@ -14,22 +14,50 @@ Allow an object to alter its behavior when its internal state changes.
 
 - Behavior varies based on state.
 - You want to avoid large conditionals.
+- State transitions belong inside the object rather than in client code.
 
 ## Java example
 
 ```java
 interface State {
-    String render();
+    String label();
+    void publish(Document document);
 }
 
 class DraftState implements State {
-    public String render() { return "draft"; }
+    public String label() {
+        return "draft";
+    }
+
+    public void publish(Document document) {
+        document.setState(new PublishedState());
+    }
+}
+
+class PublishedState implements State {
+    public String label() {
+        return "published";
+    }
+
+    public void publish(Document document) {
+        // already published
+    }
 }
 
 class Document {
     private State state = new DraftState();
-    void setState(State state) { this.state = state; }
-    String render() { return state.render(); }
+
+    void publish() {
+        state.publish(this);
+    }
+
+    void setState(State state) {
+        this.state = state;
+    }
+
+    String render() {
+        return state.label();
+    }
 }
 ```
 
@@ -37,17 +65,42 @@ class Document {
 
 ```ts
 interface State {
-  render(): string;
+  label(): string;
+  publish(document: Document): void;
 }
 
 class DraftState implements State {
-  render(): string { return "draft"; }
+  label(): string {
+    return 'draft';
+  }
+
+  publish(document: Document): void {
+    document.setState(new PublishedState());
+  }
+}
+
+class PublishedState implements State {
+  label(): string {
+    return 'published';
+  }
+
+  publish(_document: Document): void {}
 }
 
 class Document {
   private state: State = new DraftState();
-  setState(state: State): void { this.state = state; }
-  render(): string { return this.state.render(); }
+
+  publish(): void {
+    this.state.publish(this);
+  }
+
+  setState(state: State): void {
+    this.state = state;
+  }
+
+  render(): string {
+    return this.state.label();
+  }
 }
 ```
 
@@ -63,8 +116,8 @@ Cons:
 
 ## Common pitfalls
 
-- States that leak knowledge of others.
-- Hidden transitions spread across code.
+- States that leak knowledge of too many other states.
+- Hiding transitions across unrelated services.
 
 ## Related patterns
 

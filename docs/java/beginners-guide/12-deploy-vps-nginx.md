@@ -163,7 +163,7 @@ Type=simple
 User=deploy
 Group=deploy
 WorkingDirectory=/opt/task-api
-ExecStart=/usr/bin/java -jar /opt/task-api/task-api.jar
+ExecStart=/usr/bin/java -Xms64m -Xmx256m -jar /opt/task-api/task-api.jar
 Restart=on-failure
 RestartSec=10
 StandardOutput=journal
@@ -175,9 +175,6 @@ ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=/opt/task-api
 
-# JVM settings
-Environment="JAVA_OPTS=-Xms64m -Xmx256m"
-
 [Install]
 WantedBy=multi-user.target
 ```
@@ -188,7 +185,8 @@ Key settings:
 - `Restart=on-failure` - automatically restarts on crashes
 - `WorkingDirectory` - sets the working directory so `tasks.dat` is stored in `/opt/task-api/`
 - `ReadWritePaths` - allows writing only to the app directory (systemd security)
-- `JAVA_OPTS` - JVM memory settings (64MB initial, 256MB max - more than enough for this app)
+- `ExecStart=... -Xms64m -Xmx256m ...` - simple JVM memory settings inline (64MB initial, 256MB max - more than
+  enough for this app)
 
 ### Enable and start the service
 
@@ -216,7 +214,7 @@ Result:
      Memory: 80.0M
         CPU: 2.5s
      CGroup: /system.slice/task-api.service
-             └─12345 /usr/bin/java -jar /opt/task-api/task-api.jar
+             └─12345 /usr/bin/java -Xms64m -Xmx256m -jar /opt/task-api/task-api.jar
 ```
 
 ### Viewing logs
@@ -468,7 +466,7 @@ sudo journalctl -u task-api -p err
 
 ```bash
 # Memory and CPU
-ps aux | grep java
+ps -C java -o pid,%cpu,%mem,cmd
 
 # Detailed JVM info
 jcmd $(pgrep -f task-api) VM.info

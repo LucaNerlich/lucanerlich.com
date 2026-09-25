@@ -472,7 +472,7 @@ class Product {
 }
 ```
 
-Constants are always public, protected, or private. As of PHP 7.1, you can use visibility modifiers: `private const SECRET = 'x';`.
+Class constants are `public` by default. If you need stricter access, you can declare them with visibility modifiers such as `private const SECRET = 'x';`.
 
 ## Practical example: Product and ShoppingCart
 

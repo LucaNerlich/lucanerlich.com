@@ -296,7 +296,7 @@ Other crates can depend on this library.
 [package]
 name = "my-app"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
@@ -331,7 +331,7 @@ version within the specified range.
 `Cargo.lock` records the exact versions resolved for every dependency. It ensures reproducible builds:
 
 - **Applications**: Commit `Cargo.lock` to version control
-- **Libraries**: Do not commit `Cargo.lock` (let consumers resolve versions)
+- **Libraries**: Committing `Cargo.lock` is optional -- crates.io ignores it, but checking it in can still help CI and contributors reproduce builds
 
 ## Using external crates
 

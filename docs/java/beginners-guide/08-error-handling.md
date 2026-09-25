@@ -281,11 +281,12 @@ In practice, most modern Java code favors unchecked exceptions.
 Automatically closes resources (files, connections, streams) when the `try` block finishes:
 
 ```java
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-try (BufferedReader reader = new BufferedReader(new FileReader("example.txt"))) {
+try (var reader = Files.newBufferedReader(Path.of("example.txt"), StandardCharsets.UTF_8)) {
     String line;
     while ((line = reader.readLine()) != null) {
         System.out.println(line);
@@ -303,8 +304,8 @@ approach for cleanup and is less error-prone.
 
 ```java
 try (
-    var reader = new BufferedReader(new FileReader("input.txt"));
-    var writer = new java.io.BufferedWriter(new java.io.FileWriter("output.txt"))
+    var reader = Files.newBufferedReader(Path.of("input.txt"), StandardCharsets.UTF_8);
+    var writer = Files.newBufferedWriter(Path.of("output.txt"), StandardCharsets.UTF_8)
 ) {
     String line;
     while ((line = reader.readLine()) != null) {
@@ -436,9 +437,10 @@ static int readInt(Scanner scanner, String prompt) {
 }
 
 public static void main(String[] args) {
-    Scanner scanner = new Scanner(System.in);
-    int age = readInt(scanner, "Enter your age: ");
-    System.out.println("Your age is: " + age);
+    try (Scanner scanner = new Scanner(System.in)) {
+        int age = readInt(scanner, "Enter your age: ");
+        System.out.println("Your age is: " + age);
+    }
 }
 ```
 

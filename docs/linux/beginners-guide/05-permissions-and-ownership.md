@@ -141,9 +141,8 @@ chmod 644 app.conf
 # Set to rw------- (600) - private files
 chmod 600 ~/.ssh/id_ed25519
 
-# Recursive: apply to directory and all contents
-chmod -R 755 /opt/myapp/
-chmod -R 644 /opt/myapp/config/
+# Recursive: keep directories traversable and existing executables executable
+chmod -R u=rwX,go=rX /opt/myapp/
 
 # Recursive with different permissions for files vs directories
 # Set dirs to 755, files to 644
@@ -187,12 +186,15 @@ chown -R deploy:deploy /opt/myapp/
 
 # Web server needs to read static files
 chown -R deploy:www-data /opt/myapp/public/
-chmod -R 750 /opt/myapp/
-chmod -R 755 /opt/myapp/public/
+find /opt/myapp -type d -exec chmod 750 {} +
+find /opt/myapp -type f -exec chmod 640 {} +
+find /opt/myapp/public -type d -exec chmod 755 {} +
+find /opt/myapp/public -type f -exec chmod 644 {} +
 
 # Logs writable by app, readable by ops
 chown -R deploy:ops /var/log/myapp/
-chmod -R 770 /var/log/myapp/
+find /var/log/myapp -type d -exec chmod 770 {} +
+find /var/log/myapp -type f -exec chmod 660 {} +
 ```
 
 ---
@@ -375,7 +377,7 @@ After setting up a new server or deploying an application, verify these:
 ```bash
 # SSH private keys: owner-only read
 ls -la ~/.ssh/
-# id_ed25519 should be 600, authorized_keys should be 600 or 644
+# ~/.ssh should be 700; id_ed25519 and authorized_keys should be 600
 
 # Config files: not world-writable
 find /etc/myapp -type f -perm /002

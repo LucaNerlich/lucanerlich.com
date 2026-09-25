@@ -153,16 +153,18 @@ Signals are software interrupts sent to processes. Every process can define how 
 kill 1234
 
 # Send SIGKILL (force kill)
+# Use only as a last resort; the process cannot clean up temporary files or save state.
 kill -9 1234
 kill -SIGKILL 1234
 
 # Reload config (SIGHUP)
 kill -HUP $(cat /var/run/nginx.pid)
 
-# Kill by name (kills all processes matching the name)
+# Kill by name (kills all processes matching the name - be specific)
 killall nginx
 
 # Kill all processes matching a pattern
+# Be careful with broad patterns; verify with pgrep -af first.
 pkill -f "java -jar myapp"
 
 # Graceful killall
@@ -463,6 +465,7 @@ sleep 5
 kill -0 5678 2>/dev/null && echo "still running" || echo "stopped"
 
 # If still running, force kill
+# Use SIGKILL only if SIGTERM was ignored.
 kill -9 5678
 ```
 

@@ -173,12 +173,12 @@ Charlie - 0
 
 Control who can see and use your fields, methods, and classes:
 
-| Modifier                  | Class | Package | Subclass | World |
-|---------------------------|-------|---------|----------|-------|
-| `public`                  | Yes   | Yes     | Yes      | Yes   |
-| `protected`               | Yes   | Yes     | Yes      | No    |
-| (none - package-private) | Yes   | Yes     | No       | No    |
-| `private`                 | Yes   | No      | No       | No    |
+| Modifier                  | Class | Package | Subclass outside package | World |
+|---------------------------|-------|---------|--------------------------|-------|
+| `public`                  | Yes   | Yes     | Yes                      | Yes   |
+| `protected`               | Yes   | Yes     | Yes                      | No    |
+| (none - package-private) | Yes   | Yes     | No                       | No    |
+| `private`                 | Yes   | No      | No                       | No    |
 
 ```java
 public class BankAccount {
@@ -299,8 +299,8 @@ method name, the compiler will flag it.
 
 ## `equals` and `hashCode`
 
-By default, `==` and `.equals()` compare object **references** (whether they are the same object in memory). Override
-both to compare by **content**:
+By default, `==` compares object **references**. And if a class does **not** override `.equals()`, it inherits
+`Object.equals()`, which also compares references. Override both `equals` and `hashCode` to compare by **content**:
 
 ```java
 import java.util.Objects;

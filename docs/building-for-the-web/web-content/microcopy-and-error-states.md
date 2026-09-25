@@ -316,7 +316,7 @@ Two destructive variants:
 | Inline error | "Enter five digits for a German postcode." | "Invalid input." |
 | Empty state | Names the feature, shows next step. | "Nothing to see here." |
 | Loading | "Importing 312 of 1,400 contacts..." | Bare spinner. |
-| Success | "Invitation sent to alex@company.com." | "" |
+| Success | "Invitation sent to alex@company.com." | "Operation completed successfully!" |
 | 404 | Explains and offers next steps. | "404." |
 
 ## Related

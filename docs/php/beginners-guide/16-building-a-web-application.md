@@ -313,7 +313,7 @@ class Database
         if (self::$pdo === null) {
             $host = $_ENV['DB_HOST'] ?? 'localhost';
             $dbname = $_ENV['DB_NAME'] ?? 'notes_app';
-            $user = $_ENV['DB_USER'] ?? 'root';
+            $user = $_ENV['DB_USER'] ?? 'myapp_user';
             $pass = $_ENV['DB_PASS'] ?? '';
 
             self::$pdo = new PDO(
@@ -337,15 +337,15 @@ Credentials come from `.env`. Create a `.env` file in the project root:
 ```bash
 DB_HOST=localhost
 DB_NAME=notes_app
-DB_USER=root
+DB_USER=myapp_user
 DB_PASS=your_password
 ```
 
-> **Warning:** Never commit `.env` to version control. Use `.env.example` with placeholder values and copy it to `.env` for local setup.
+> **Warning:** Never commit `.env` to version control. Use `.env.example` with placeholder values and copy it to `.env` for local setup. In the database, create a dedicated `myapp_user` account with access only to the `notes_app` database.
 
 ## Templates and Layout
 
-Views are plain PHP files that receive data via `extract()` and render HTML. A layout wraps each page with a common header and footer.
+Views are plain PHP files rendered by a small helper. A layout wraps each page with a common header and footer.
 
 ### Layout Template
 
@@ -368,6 +368,7 @@ Create `templates/layout.php`:
                 <a href="/notes/">My Notes</a>
                 <a href="/notes/create">New Note</a>
                 <form action="/logout" method="post" style="display:inline">
+                    <input type="hidden" name="_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                     <button type="submit">Logout</button>
                 </form>
             <?php else: ?>
@@ -401,13 +402,22 @@ Create `src/helpers.php`:
 
 function view(string $name, array $data = []): void
 {
-    extract($data);
-    ob_start();
     $viewPath = __DIR__ . '/../templates/' . $name . '.php';
-    if (file_exists($viewPath)) {
-        require $viewPath;
+    if (!is_file($viewPath)) {
+        http_response_code(500);
+        echo 'View not found';
+        return;
     }
-    $content = ob_get_clean();
+
+    $render = static function (string $__viewPath, array $__data): string {
+        extract($__data, EXTR_SKIP);
+        ob_start();
+        require $__viewPath;
+        return ob_get_clean();
+    };
+
+    $content = $render($viewPath, $data);
+    $title = $data['title'] ?? null;
     require __DIR__ . '/../templates/layout.php';
 }
 
@@ -435,9 +445,28 @@ function flash(string $message): void
     $_SESSION['flash'] = $_SESSION['flash'] ?? [];
     $_SESSION['flash'][] = $message;
 }
+
+function csrfToken(): string
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['csrf_token'];
+}
+
+function verifyCsrfToken(): void
+{
+    $token = $_POST['_token'] ?? '';
+
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+        http_response_code(419);
+        exit('Invalid CSRF token');
+    }
+}
 ```
 
-The `view()` function extracts data, includes the template, captures output into `$content`, then includes the layout. `requireAuth()` redirects unauthenticated users to the login page.
+The `view()` function renders a template in a small isolated scope, captures the output into `$content`, then includes the layout. `csrfToken()` and `verifyCsrfToken()` protect state-changing forms. `requireAuth()` redirects unauthenticated users to the login page.
 
 ### Example View: Home
 
@@ -470,11 +499,17 @@ class AuthController
 {
     public static function register(): void
     {
+        verifyCsrfToken();
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
             flash('Email and password are required.');
+            redirect('/register');
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            flash('Enter a valid email address.');
             redirect('/register');
         }
 
@@ -495,6 +530,7 @@ class AuthController
         $stmt = $pdo->prepare('INSERT INTO users (email, password) VALUES (?, ?)');
         $stmt->execute([$email, $hash]);
 
+        session_regenerate_id(true);
         $_SESSION['user_id'] = (int) $pdo->lastInsertId();
         flash('Account created. Welcome!');
         redirect('/notes');
@@ -502,11 +538,17 @@ class AuthController
 
     public static function login(): void
     {
+        verifyCsrfToken();
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
             flash('Email and password are required.');
+            redirect('/login');
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            flash('Enter a valid email address.');
             redirect('/login');
         }
 
@@ -520,6 +562,7 @@ class AuthController
             redirect('/login');
         }
 
+        session_regenerate_id(true);
         $_SESSION['user_id'] = (int) $user['id'];
         flash('Logged in successfully.');
         redirect('/notes');
@@ -527,6 +570,14 @@ class AuthController
 
     public static function logout(): void
     {
+        verifyCsrfToken();
+        $_SESSION = [];
+
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], (bool) $params['secure'], (bool) $params['httponly']);
+        }
+
         session_destroy();
         redirect('/');
     }
@@ -542,6 +593,7 @@ Create `templates/login.php`:
 ```html
 <h1>Login</h1>
 <form action="/login" method="post">
+    <input type="hidden" name="_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
     <label>Email: <input type="email" name="email" required></label><br>
     <label>Password: <input type="password" name="password" required></label><br>
     <button type="submit">Login</button>
@@ -553,6 +605,7 @@ Create `templates/register.php`:
 ```html
 <h1>Register</h1>
 <form action="/register" method="post">
+    <input type="hidden" name="_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
     <label>Email: <input type="email" name="email" required></label><br>
     <label>Password: <input type="password" name="password" required minlength="8"></label><br>
     <button type="submit">Create Account</button>
@@ -598,6 +651,7 @@ class NoteController
     public static function store(): void
     {
         requireAuth();
+        verifyCsrfToken();
         $title = trim($_POST['title'] ?? '');
         $body = trim($_POST['body'] ?? '');
 
@@ -627,6 +681,7 @@ class NoteController
     public static function update(string $id): void
     {
         requireAuth();
+        verifyCsrfToken();
         $note = self::findNote($id);
         if (!$note) {
             flash('Note not found.');
@@ -642,8 +697,9 @@ class NoteController
         }
 
         $pdo = Database::get();
+        $noteId = self::validateId($id);
         $stmt = $pdo->prepare('UPDATE notes SET title = ?, body = ? WHERE id = ? AND user_id = ?');
-        $stmt->execute([$title, $body, $id, $_SESSION['user_id']]);
+        $stmt->execute([$title, $body, $noteId, $_SESSION['user_id']]);
         flash('Note updated.');
         redirect('/notes');
     }
@@ -651,6 +707,7 @@ class NoteController
     public static function delete(string $id): void
     {
         requireAuth();
+        verifyCsrfToken();
         $note = self::findNote($id);
         if (!$note) {
             flash('Note not found.');
@@ -658,8 +715,9 @@ class NoteController
         }
 
         $pdo = Database::get();
+        $noteId = self::validateId($id);
         $stmt = $pdo->prepare('DELETE FROM notes WHERE id = ? AND user_id = ?');
-        $stmt->execute([$id, $_SESSION['user_id']]);
+        $stmt->execute([$noteId, $_SESSION['user_id']]);
         flash('Note deleted.');
         redirect('/notes');
     }
@@ -667,10 +725,21 @@ class NoteController
     private static function findNote(string $id): ?array
     {
         $pdo = Database::get();
+        $noteId = self::validateId($id);
         $stmt = $pdo->prepare('SELECT * FROM notes WHERE id = ? AND user_id = ?');
-        $stmt->execute([$id, $_SESSION['user_id']]);
+        $stmt->execute([$noteId, $_SESSION['user_id']]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result ?: null;
+    }
+
+    private static function validateId(string $id): int
+    {
+        if (!ctype_digit($id)) {
+            flash('Invalid note id.');
+            redirect('/notes');
+        }
+
+        return (int) $id;
     }
 }
 ```
@@ -689,6 +758,7 @@ Create `templates/notes/index.php`:
     <li>
         <a href="/notes/<?= $note['id'] ?>/edit"><?= htmlspecialchars($note['title']) ?></a>
         <form action="/notes/<?= $note['id'] ?>/delete" method="post" style="display:inline">
+            <input type="hidden" name="_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
             <button type="submit" onclick="return confirm('Delete this note?')">Delete</button>
         </form>
     </li>
@@ -701,6 +771,7 @@ Create `templates/notes/create.php`:
 ```html
 <h1>New Note</h1>
 <form action="/notes" method="post">
+    <input type="hidden" name="_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
     <label>Title: <input type="text" name="title" required></label><br>
     <label>Body: <textarea name="body" rows="5"></textarea></label><br>
     <button type="submit">Create</button>
@@ -712,11 +783,13 @@ Create `templates/notes/edit.php`:
 ```html
 <h1>Edit Note</h1>
 <form action="/notes/<?= $note['id'] ?>" method="post">
+    <input type="hidden" name="_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
     <label>Title: <input type="text" name="title" value="<?= htmlspecialchars($note['title']) ?>" required></label><br>
     <label>Body: <textarea name="body" rows="5"><?= htmlspecialchars($note['body']) ?></textarea></label><br>
     <button type="submit">Update</button>
 </form>
 <form action="/notes/<?= $note['id'] ?>/delete" method="post">
+    <input type="hidden" name="_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
     <button type="submit" onclick="return confirm('Delete this note?')">Delete</button>
 </form>
 ```
@@ -788,7 +861,7 @@ You have built a working web application from scratch. As your projects grow, co
 | **Twig** / **Blade** | Templating engines with auto-escaping and template inheritance |
 | **Eloquent** / **Doctrine** | ORMs that map rows to objects and handle relationships |
 
-Next steps: add CSRF protection to forms, implement password reset, add pagination, and write tests. The concepts in this chapter - routing, controllers, views, authentication, CRUD - are the same in frameworks.
+Next steps: implement password reset, add pagination, improve form validation, and write tests. The concepts in this chapter - routing, controllers, views, authentication, CRUD - are the same in frameworks.
 
 ## Summary
 
@@ -796,7 +869,7 @@ Next steps: add CSRF protection to forms, implement password reset, add paginati
 - The front controller (`public/index.php`) receives all requests; the router dispatches to controllers
 - Composer PSR-4 autoloading maps `App\` namespace to `src/`
 - The Database class provides a singleton PDO connection using `.env` credentials
-- Templates use a layout with `extract()` and `include`; the `view()` helper renders pages
+- Templates use a layout and a small `view()` helper; state-changing forms include CSRF tokens
 - Authentication uses `password_hash()` and `password_verify()`; sessions store `user_id`
 - `requireAuth()` protects routes; notes are scoped to the logged-in user
 - Run with `php -S localhost:8000 -t public`; use Apache/Nginx rewrite rules for production

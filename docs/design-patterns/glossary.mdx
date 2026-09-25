@@ -14,13 +14,13 @@ An interface or base type that hides implementation details.
 
 How strongly related the responsibilities of a module are. High cohesion is preferred.
 
-## Coupling
-
-The degree of dependency between modules. Lower coupling is preferred.
-
 ## Composition
 
 Building behavior by combining objects rather than inheriting.
+
+## Coupling
+
+The degree of dependency between modules. Lower coupling is preferred.
 
 ## Dependency injection
 
@@ -30,6 +30,22 @@ Supplying dependencies from the outside rather than creating them inside a class
 
 Hiding internal state and exposing controlled access through methods.
 
+## Extrinsic state
+
+State supplied from the outside so a shared object can stay lightweight. Flyweight separates this from intrinsic state.
+
+## Intrinsic state
+
+Shared state stored inside a flyweight because it is the same across many logical objects.
+
 ## Polymorphism
 
 Using a common interface to work with different implementations.
+
+## Receiver
+
+The object that performs the real work behind a Command.
+
+## Subject
+
+The object being observed in the Observer pattern. It notifies dependents when its state changes.

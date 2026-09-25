@@ -104,9 +104,11 @@ function paginate(
     };
 }
 
-paginate(items);              // page=1, pageSize=20
-paginate(items, 2);           // page=2, pageSize=20
-paginate(items, 1, 50);       // page=1, pageSize=50
+const items = ['a', 'b', 'c'];
+
+paginate(items);                // page=1, pageSize=20
+paginate(items, 2);             // page=2, pageSize=20
+paginate(items, 1, 50);         // page=1, pageSize=50
 paginate(items, undefined, 50); // page=1 (default), pageSize=50
 ```
 
@@ -143,7 +145,10 @@ logWithPrefix("INFO", "Server started", "Listening on port 3000");
 Rest parameters must be last in the parameter list. Combining with typed tuples (TypeScript 4.0+):
 
 ```typescript
-type Middleware = [string, (req: Request, res: Response) => void];
+type Middleware = [
+    path: string,
+    handler: (req: { path: string }, res: { send: (body: string) => void }) => void,
+];
 
 function applyMiddleware(app: unknown, ...middleware: Middleware[]): void {
     middleware.forEach(([path, handler]) => {

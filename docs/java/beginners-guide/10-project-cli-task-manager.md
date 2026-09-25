@@ -65,6 +65,9 @@ public record Task(int id, String description, boolean done) {
      * Serialize this task to a single line for file storage.
      */
     public String toLine() {
+        if (description.contains(DELIMITER) || description.contains("\n") || description.contains("\r")) {
+            throw new IllegalStateException("Task descriptions must not contain '|' or line breaks");
+        }
         return id + DELIMITER + description + DELIMITER + done;
     }
 
@@ -172,6 +175,7 @@ The main class that parses commands and orchestrates everything:
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.List;
 
 public class TaskApp {
@@ -186,6 +190,13 @@ public class TaskApp {
     // ── Commands ──────────────────────────────────────────────
 
     void addTask(String description) throws IOException {
+        if (description == null || description.isBlank()) {
+            throw new IllegalArgumentException("Task description must not be blank");
+        }
+        if (description.contains("|") || description.contains("\n") || description.contains("\r")) {
+            throw new IllegalArgumentException("Task description must not contain '|' or line breaks");
+        }
+
         List<Task> tasks = store.load();
         int nextId = tasks.stream()
                 .mapToInt(Task::id)
@@ -261,7 +272,7 @@ public class TaskApp {
             return;
         }
 
-        String command = args[0].toLowerCase();
+        String command = args[0].toLowerCase(Locale.ROOT);
 
         try {
             switch (command) {
@@ -525,7 +536,8 @@ This project ties together everything from chapters 1–9:
 
 - A CLI application parses command-line arguments from `String[] args`.
 - Separate concerns: **model** (`Task`), **persistence** (`TaskStore`), **UI** (`TaskApp`).
-- Records with `toLine`/`fromLine` methods handle serialization.
+- Records with `toLine`/`fromLine` methods handle serialization. Because this example uses a simple pipe-delimited
+  format, the app validates descriptions to reject `|` and line breaks.
 - Input validation with clear error messages makes the tool user-friendly.
 - `jar cfm` packages `.class` files into a runnable JAR with a manifest.
 

@@ -200,6 +200,8 @@ void userHasCorrectProperties() {
 ### `assertTimeout` - verify performance
 
 ```java
+import java.time.Duration;
+
 @Test
 void completesInTime() {
     assertTimeout(Duration.ofSeconds(2), () -> {
@@ -271,7 +273,7 @@ Each test gets a fresh `TaskStore` - tests do not affect each other.
 @AfterEach
 void tearDown() {
     // Clean up resources - delete temp files, close connections
-    tempFile.delete();
+    Files.deleteIfExists(tempFile);
 }
 ```
 
@@ -446,28 +448,22 @@ void deleteDoesNotAffectOtherIds() {
 
 ### Testing file persistence
 
+For file-based tests, prefer JUnit 5's `@TempDir` over manual temp-file bookkeeping:
+
 ```java
+import org.junit.jupiter.api.io.TempDir;
 import java.nio.file.*;
 
 class TaskStorePersistenceTest {
 
-    private Path tempFile;
-    private TaskStore store;
-
-    @BeforeEach
-    void setUp() throws Exception {
-        tempFile = Files.createTempFile("tasks", ".dat");
-        store = new TaskStore(tempFile);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        Files.deleteIfExists(tempFile);
-    }
+    @TempDir
+    Path tempDir;
 
     @Test
     @DisplayName("tasks survive save and reload")
     void tasksSurviveReload() {
+        Path tempFile = tempDir.resolve("tasks.dat");
+        TaskStore store = new TaskStore(tempFile);
         store.add("Persistent task");
         store.save();
 
@@ -482,6 +478,8 @@ class TaskStorePersistenceTest {
     @Test
     @DisplayName("completed status is persisted")
     void completedStatusIsPersisted() {
+        Path tempFile = tempDir.resolve("tasks.dat");
+        TaskStore store = new TaskStore(tempFile);
         store.add("Task to complete");
         store.complete(1);
         store.save();

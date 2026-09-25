@@ -70,7 +70,7 @@ The `--from=builder` flag in `COPY` references the named stage `builder`. Only t
 
 ## FROM ... AS Syntax
 
-You name a stage by appending `AS <name>` to the `FROM` instruction. Names are case-insensitive and can be referenced in later `COPY --from` and `RUN --mount=from` instructions.
+You name a stage by appending `AS <name>` to the `FROM` instruction. That stage name can then be referenced in later `COPY --from` and `RUN --mount=from` instructions.
 
 ```dockerfile
 FROM ubuntu:24.04 AS base

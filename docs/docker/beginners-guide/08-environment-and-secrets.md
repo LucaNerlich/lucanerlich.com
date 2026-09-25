@@ -192,14 +192,16 @@ JWT_SECRET=changeme
 
 ### docker run with -e
 
-The simplest approach for standalone containers:
+The simplest approach for standalone containers is to pass non-secret configuration values explicitly:
 
 ```bash
 docker run -d \
-  -e DATABASE_URL="postgres://user:pass@host:5432/db" \
-  -e JWT_SECRET="$(cat /run/secrets/jwt_secret)" \
+  -e APP_ENV=production \
+  -e LOG_LEVEL=info \
   my-app
 ```
+
+For sensitive values, prefer `--env-file`, Docker secrets, or your platform's secret manager. Avoid shell patterns such as `-e JWT_SECRET="$(cat ...)"` because the expanded secret can end up in shell history or process listings on the host.
 
 ### docker run with --env-file
 
@@ -309,7 +311,7 @@ RUN npm run build
 ```bash
 # Pass the secret at build time - it never enters the image
 docker build \
-  --secret id=npm_token,src=$HOME/.npmrc \
+  --secret id=npm_token,src=$HOME/.config/myapp/npm_token \
   -t my-app .
 ```
 

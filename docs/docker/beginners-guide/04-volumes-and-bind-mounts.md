@@ -100,7 +100,7 @@ docker run -v myvolume:/data busybox
 
 ### Volume initialisation behaviour
 
-When Docker mounts a **named volume** into a container and the volume is empty, Docker copies the existing contents of the container's directory into the volume. This is how official database images seed the volume with initial data - Postgres pre-populates `/var/lib/postgresql/data` on first run.
+When Docker mounts a **named volume** into a container and the volume is empty, Docker copies any files that are already present at the target path in the image into the volume. This is useful for shipping default assets or starter data inside an image.
 
 Bind mounts do **not** have this behaviour - they simply overlay whatever is on the host.
 

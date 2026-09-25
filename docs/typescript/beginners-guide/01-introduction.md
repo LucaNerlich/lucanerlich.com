@@ -179,7 +179,8 @@ version to get started:
 {
     "compilerOptions": {
         "target": "ES2022",
-        "module": "commonjs",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
         "lib": ["ES2022"],
         "outDir": "./dist",
         "rootDir": "./src",
@@ -193,12 +194,14 @@ version to get started:
 }
 ```
 
+> **Note:** `NodeNext` works best when your `package.json` uses `"type": "module"`. If you are intentionally building a CommonJS Node.js project, switch `module` back to `CommonJS` instead.
+
 The key options explained:
 
 | Option                           | What it does                                                                           |
 |----------------------------------|----------------------------------------------------------------------------------------|
 | `target`                         | The JavaScript version to compile to. `ES2022` is safe for modern Node.js and browsers |
-| `module`                         | Module system. `commonjs` for Node.js, `ESNext` for modern bundlers                   |
+| `module` / `moduleResolution`      | For modern Node.js, prefer `NodeNext` / `NodeNext`; use `ESNext` / `Bundler` with Vite or other bundlers |
 | `outDir`                         | Where compiled `.js` files are written                                                 |
 | `rootDir`                        | Where your `.ts` source files live                                                     |
 | `strict`                         | Enables all strict type-checking rules. **Always enable this**                        |

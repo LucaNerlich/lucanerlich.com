@@ -15,7 +15,7 @@ sidebar_position: 16
 
 # Optionals
 
-`NullPointerException` is the most common runtime error in Java. It happens when you call a method on a `null`
+`NullPointerException` is one of the most common Java runtime errors. It happens when you call a method on a `null`
 reference:
 
 ```java
@@ -204,7 +204,7 @@ String city = Optional.ofNullable(user)
 
 ```java
 // getAddress() returns Optional<Address>
-Optional<String> city = Optional.ofNullable(user)
+String city = Optional.ofNullable(user)
     .flatMap(User::getAddress)   // returns Optional<Address>, not Optional<Optional<Address>>
     .map(Address::getCity)
     .orElse("Unknown");
@@ -419,7 +419,7 @@ return optional.map(String::toUpperCase).orElse("N/A");
 | Transforming a value that might be null | `Optional.ofNullable(x).map(...)`      |
 | Field that can be null                  | Plain `null` (Optional for the getter) |
 | Collection that can be empty            | Return empty collection, not Optional  |
-| Method parameter                        | Plain type with `@Nullable` annotation |
+| Method parameter                        | Plain type, optionally documented with a nullability annotation your project uses |
 
 ## Summary
 

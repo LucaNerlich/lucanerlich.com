@@ -262,7 +262,6 @@ Path aliases reduce relative import hell. The `baseUrl` is the base directory fo
         "noImplicitReturns": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
-        "allowImportingTsExtensions": true,
         "noEmit": true,
         "baseUrl": ".",
         "paths": {

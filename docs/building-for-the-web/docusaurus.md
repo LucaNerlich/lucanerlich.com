@@ -7,18 +7,17 @@ description: "Notes on building documentation sites with Docusaurus: setup, host
 
 ## Page Setup
 
-Development and Hosting is trivial. [Docusaurus](https://docusaurus.io/docs) comes with very sensible defaults and can
-be easily extended.
-Regular React code and be combined with easy to write markdown.
+Development and hosting are straightforward. [Docusaurus](https://docusaurus.io/docs) comes with sensible defaults,
+can be extended easily, and lets you mix React components with Markdown or MDX.
 
-[Vercel](https://vercel.com) with its `hobby` plan supports Docusaurus v2 out of the box and for free. Just login,
-connect your repository and add a custom domain.
+[Vercel](https://vercel.com) can host a Docusaurus 3 site without extra setup. Connect your repository, configure the
+build command, and add a custom domain if you need one.
 
 Done.
 
 ## Search
 
-Use the official Aligola / Docsearch integration. Alternatively use this
+Use the official Algolia / DocSearch integration. Alternatively use this
 plugin: https://github.com/lelouch77/docusaurus-lunr-search
 
 ## Using Infima Styling
@@ -31,14 +30,13 @@ Docusaurus comes with the Infima Styling Library by default. Therefore, we can j
 Here is an example alert:
 
 <div class="alert alert-primary" role="alert">
-    <button aria-label="Close" class="clean-btn close" type="button"><span aria-hidden="true">×</span></button>
     This is a <strong>primary</strong> alert. You should probably pay attention to it.
 </div>
 
-And as a `success` variant without a closable `x`:
+And as a `success` variant:
 
 <div class="alert alert-success" role="alert">
-    This is a <strong>primary</strong> alert. You should probably pay attention to it.
+    This is a <strong>success</strong> alert. Everything worked as expected.
 </div>
 
 ## Code Fence Line Highlighting
@@ -62,7 +60,7 @@ fn main() {
 This also works with a number range
 
 ````markdown title="code fence block"
-```rust {2–3} title="main.rs"
+```rust {2-3} title="main.rs"
 fn main() {
     println!("This line is highlighted.");
     println!("This line is also highlighted.");

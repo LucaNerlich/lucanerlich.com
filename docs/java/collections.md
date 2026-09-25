@@ -280,7 +280,7 @@ with `Collections.synchronizedXxx()`:
 
 ### ConcurrentHashMap
 
-Thread-safe map with fine-grained locking (segments, not the whole map):
+Thread-safe map with fine-grained concurrency control (per-bucket/CAS operations rather than a single global lock):
 
 ```java
 ConcurrentHashMap<String, AtomicInteger> wordCount = new ConcurrentHashMap<>();
@@ -331,12 +331,12 @@ String taskOrNull = queue.poll(5, TimeUnit.SECONDS); // returns null on timeout
 
 | Collection              | Thread safety         | Best for                            |
 |-------------------------|-----------------------|-------------------------------------|
-| `ConcurrentHashMap`     | Segment-level locking | Read/write-balanced maps            |
+| `ConcurrentHashMap`     | Fine-grained          | Read/write-balanced maps            |
 | `CopyOnWriteArrayList`  | Copy-on-write         | Read-heavy lists (event listeners)  |
 | `CopyOnWriteArraySet`   | Copy-on-write         | Read-heavy small sets               |
 | `ConcurrentLinkedQueue` | Lock-free (CAS)       | High-throughput FIFO queues         |
 | `LinkedBlockingQueue`   | Lock-based            | Producer-consumer with backpressure |
-| `ConcurrentSkipListMap` | Lock-free             | Sorted concurrent map               |
+| `ConcurrentSkipListMap` | Concurrent skip list  | Sorted concurrent map               |
 
 ---
 

@@ -45,9 +45,11 @@ brew install composer
 ### Linux (curl installer)
 
 ```bash
+php -r "copy('https://composer.github.io/installer.sig', 'composer-setup.sig');"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') !== trim(file_get_contents('composer-setup.sig'))) { echo 'Installer corrupt'; unlink('composer-setup.php'); unlink('composer-setup.sig'); exit(1); }"
 php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-php -r "unlink('composer-setup.php');"
+php -r "unlink('composer-setup.php'); unlink('composer-setup.sig');"
 ```
 
 ### Windows
@@ -62,7 +64,7 @@ composer --version
 
 You should see output like `Composer version 2.x.x`.
 
-> **Note:** Composer requires PHP 7.2.5 or newer. Run `php -v` to check your PHP version.
+> **Note:** Use a current Composer 2 release with the PHP 8.x version used in this guide. Run `php -v` and `composer --version` to confirm both tools are installed and current enough for your project.
 
 ## Creating a Project
 

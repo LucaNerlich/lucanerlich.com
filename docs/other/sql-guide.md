@@ -493,7 +493,7 @@ Result of `LIMIT 3 OFFSET 2`:
 | 4  | Linus Torvalds    | linus@example.com    | 54  | TRUE   |
 | 5  | Margaret Hamilton | margaret@example.com | 88  | TRUE   |
 
-**Note:** In SQL Server, use `TOP` or `FETCH FIRST` instead of `LIMIT`.
+**Note:** In SQL Server, use `TOP` or `OFFSET ... FETCH NEXT` instead of `LIMIT`.
 
 ### `DISTINCT` - unique values
 
@@ -548,8 +548,8 @@ TRUNCATE TABLE users;
 
 `TRUNCATE` is **DDL** (Data Definition Language), not DML. This has important consequences:
 
-- In most databases (MySQL, Oracle, SQL Server), `TRUNCATE` **cannot be rolled back** inside a transaction.
-- PostgreSQL is the exception - it supports transactional `TRUNCATE`.
+- Transactional behavior differs by database. PostgreSQL and SQL Server let you roll back `TRUNCATE` inside an
+  explicit transaction; MySQL and Oracle generally do not because DDL auto-commits.
 - `TRUNCATE` resets auto-increment counters; `DELETE` does not.
 - `TRUNCATE` does not fire row-level `DELETE` triggers.
 
@@ -733,8 +733,8 @@ Result (identical to `INNER JOIN` here because every post has a valid `user_id`)
 | Alan Turing    | Turing Machines      |
 | Linus Torvalds | Linux Kernel Design  |
 
-Not all databases support `RIGHT JOIN` (e.g., SQLite does not). You can always rewrite it as a `LEFT JOIN` by swapping
-the table order.
+Not all databases support `RIGHT JOIN`. SQLite only added it in version 3.39, so older builds still need the usual
+rewrite as a `LEFT JOIN` with the table order swapped.
 
 ### `FULL OUTER JOIN` - all rows from both tables
 
@@ -758,7 +758,8 @@ Result:
 | Margaret Hamilton | NULL                 |
 
 In this dataset the result looks like `LEFT JOIN` because every post has a valid user. In practice, `FULL OUTER JOIN`
-also shows orphaned right-side rows (e.g., posts with a deleted user would appear as `NULL | title`).
+also shows orphaned right-side rows (e.g., posts with a deleted user would appear as `NULL | title`). MySQL still has
+no native `FULL OUTER JOIN`, so you typically emulate it with `LEFT JOIN ... UNION ... RIGHT JOIN`.
 
 ### Join type visual summary
 
@@ -1407,8 +1408,8 @@ Result:
 
 | author         | title               | created_at           |
 |----------------|---------------------|----------------------|
-| Linus Torvalds | Linux Kernel Design | 2025-01-14 16:00:00  |
 | Ada Lovelace   | Advanced Joins      | 2025-01-15 10:30:00  |
+| Linus Torvalds | Linux Kernel Design | 2025-01-14 16:00:00  |
 | Grace Hopper   | COBOL to SQL        | 2025-01-12 14:00:00  |
 | Ada Lovelace   | Introduction to SQL | 2025-01-10 08:00:00  |
 
@@ -1586,10 +1587,14 @@ CREATE TRIGGER set_updated_at
 CREATE TRIGGER set_updated_at
     AFTER UPDATE ON articles
     FOR EACH ROW
+    WHEN NEW.updated_at = OLD.updated_at
 BEGIN
     UPDATE articles SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
 ```
+
+That `WHEN` guard matters in SQLite: it prevents the trigger from recursively
+updating the same row forever when recursive triggers are enabled.
 
 ### Pagination
 
@@ -1623,8 +1628,9 @@ INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
 ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
 
 -- MySQL
-INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
-ON DUPLICATE KEY UPDATE name = VALUES(name);
+INSERT INTO users (email, name)
+VALUES ('ada@example.com', 'Ada L.') AS incoming
+ON DUPLICATE KEY UPDATE name = incoming.name;
 
 -- SQLite (3.24+, true upsert using ON CONFLICT)
 INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
@@ -1691,20 +1697,20 @@ SELECT NULLIF(email, '') AS email FROM users;
 
 ```sql
 SELECT
-    UPPER('hello'),              - HELLO
-    LOWER('HELLO'),              - hello
-    LENGTH('hello'),             - 5
-    TRIM('  hello  '),           - hello
-    SUBSTRING('hello' FROM 2 FOR 3), - ell (PostgreSQL)
-    REPLACE('hello', 'l', 'r'), - herro
-    CONCAT('hello', ' ', 'world'); - hello world
+    UPPER('hello') AS upper_value,
+    LOWER('HELLO') AS lower_value,
+    LENGTH('hello') AS str_length,
+    TRIM('  hello  ') AS trimmed,
+    SUBSTRING('hello' FROM 2 FOR 3) AS substring_value,
+    REPLACE('hello', 'l', 'r') AS replaced,
+    CONCAT('hello', ' ', 'world') AS concatenated;
 ```
 
 Result:
 
-| upper | lower | length | trim  | substring | replace | concat      |
-|-------|-------|--------|-------|-----------|---------|-------------|
-| HELLO | hello | 5      | hello | ell       | herro   | hello world |
+| upper_value | lower_value | str_length | trimmed | substring_value | replaced | concatenated |
+|-------------|-------------|------------|---------|-----------------|----------|--------------|
+| HELLO       | hello       | 5          | hello   | ell             | herro    | hello world  |
 
 ## Date functions
 
@@ -1786,8 +1792,8 @@ END;
 -- Conditional price adjustment
 UPDATE products
 SET price = CASE
-    WHEN stock = 0 THEN price * 0.5    - clearance for out-of-stock
-    WHEN stock < 10 THEN price * 1.1   - premium for low stock
+    WHEN stock = 0 THEN price * 0.5    -- clearance for out-of-stock
+    WHEN stock < 10 THEN price * 1.1   -- premium for low stock
     ELSE price
 END;
 ```
@@ -1846,7 +1852,7 @@ INNER JOIN post_tags pt ON p.id = pt.post_id
 INNER JOIN tags t ON pt.tag_id = t.id
 GROUP BY u.name;
 
--- MySQL / SQLite: GROUP_CONCAT
+-- MySQL: GROUP_CONCAT with ORDER BY + SEPARATOR
 SELECT
     u.name,
     GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') AS tags
@@ -1855,6 +1861,22 @@ INNER JOIN posts p ON u.id = p.user_id
 INNER JOIN post_tags pt ON p.id = pt.post_id
 INNER JOIN tags t ON pt.tag_id = t.id
 GROUP BY u.name;
+
+-- SQLite: order in a subquery, then concatenate
+SELECT
+    name,
+    GROUP_CONCAT(tag, ', ') AS tags
+FROM (
+    SELECT
+        u.name,
+        t.name AS tag
+    FROM users u
+    INNER JOIN posts p ON u.id = p.user_id
+    INNER JOIN post_tags pt ON p.id = pt.post_id
+    INNER JOIN tags t ON pt.tag_id = t.id
+    ORDER BY u.name, t.name
+) AS ordered_tags
+GROUP BY name;
 ```
 
 Example result:

@@ -267,7 +267,7 @@ class Report implements Printable, Exportable {
 
     @Override
     public byte[] export() {
-        return format().getBytes();
+        return format().getBytes(java.nio.charset.StandardCharsets.UTF_8);
     }
 }
 ```
@@ -290,7 +290,7 @@ Key differences from abstract classes:
 
 - A class can implement **multiple** interfaces but extend only **one** class
 - Interfaces cannot have instance fields (only `static final` constants)
-- All methods are `public` by default
+- Abstract interface methods are implicitly `public`; default and static methods are also `public`
 
 ### Default methods
 
@@ -385,7 +385,9 @@ Combines the type check and cast in one step:
 
 ```java
 static void describe(Object obj) {
-    if (obj instanceof String s) {
+    if (obj == null) {
+        System.out.println("null");
+    } else if (obj instanceof String s) {
         System.out.println("String of length " + s.length());
     } else if (obj instanceof Integer i) {
         System.out.println("Integer: " + i);

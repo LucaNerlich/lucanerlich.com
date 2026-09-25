@@ -245,7 +245,7 @@ npm run storybook
 The `@storybook/addon-interactions` addon lets you write play functions that simulate user interactions inside a story:
 
 ```tsx
-import { userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from '@storybook/test';
 
 export const FilledForm: Story = {
     play: async ({ canvasElement }) => {

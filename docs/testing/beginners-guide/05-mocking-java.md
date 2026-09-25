@@ -283,7 +283,7 @@ Use `thenThrow()` to simulate error scenarios:
 @Test
 void throwsServiceExceptionWhenDbIsDown() {
     when(userRepository.findById(any()))
-        .thenThrow(new DataAccessException("Connection refused"));
+        .thenThrow(new DataRetrievalFailureException("Connection refused"));
 
     assertThatThrownBy(() -> userService.findById(1L))
         .isInstanceOf(UserServiceException.class)

@@ -62,9 +62,10 @@ data/users
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 
 try {
-    String content = Files.readString(Path.of("example.txt"));
+    String content = Files.readString(Path.of("example.txt"), StandardCharsets.UTF_8);
     System.out.println(content);
 } catch (IOException e) {
     System.out.println("Error: " + e.getMessage());
@@ -74,8 +75,10 @@ try {
 ### Read all lines as a list
 
 ```java
+import java.nio.charset.StandardCharsets;
+
 try {
-    var lines = Files.readAllLines(Path.of("example.txt"));
+    var lines = Files.readAllLines(Path.of("example.txt"), StandardCharsets.UTF_8);
     System.out.println("Lines: " + lines.size());
 
     for (String line : lines) {
@@ -89,7 +92,9 @@ try {
 ### Read line by line (memory-efficient for large files)
 
 ```java
-try (var reader = Files.newBufferedReader(Path.of("large-file.txt"))) {
+import java.nio.charset.StandardCharsets;
+
+try (var reader = Files.newBufferedReader(Path.of("large-file.txt"), StandardCharsets.UTF_8)) {
     String line;
     int count = 0;
     while ((line = reader.readLine()) != null) {
@@ -108,7 +113,9 @@ try (var reader = Files.newBufferedReader(Path.of("large-file.txt"))) {
 `newBufferedReader` or `lines()`:
 
 ```java
-try (var stream = Files.lines(Path.of("large-file.txt"))) {
+import java.nio.charset.StandardCharsets;
+
+try (var stream = Files.lines(Path.of("large-file.txt"), StandardCharsets.UTF_8)) {
     long count = stream.count();
     System.out.println("Lines: " + count);
 } catch (IOException e) {
@@ -124,10 +131,11 @@ try (var stream = Files.lines(Path.of("large-file.txt"))) {
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 try {
     String content = "Hello, file!\nSecond line.\nThird line.";
-    Files.writeString(Path.of("output.txt"), content);
+    Files.writeString(Path.of("output.txt"), content, StandardCharsets.UTF_8);
     System.out.println("File written");
 } catch (IOException e) {
     System.out.println("Error: " + e.getMessage());
@@ -152,10 +160,11 @@ Third line.
 
 ```java
 import java.util.List;
+import java.nio.charset.StandardCharsets;
 
 try {
     List<String> lines = List.of("Line 1", "Line 2", "Line 3");
-    Files.write(Path.of("output.txt"), lines);
+    Files.write(Path.of("output.txt"), lines, StandardCharsets.UTF_8);
     System.out.println("Lines written");
 } catch (IOException e) {
     System.out.println("Error: " + e.getMessage());
@@ -166,11 +175,13 @@ try {
 
 ```java
 import java.nio.file.StandardOpenOption;
+import java.nio.charset.StandardCharsets;
 
 try {
     Files.writeString(
         Path.of("log.txt"),
         "New log entry\n",
+        StandardCharsets.UTF_8,
         StandardOpenOption.CREATE,
         StandardOpenOption.APPEND
     );
@@ -187,7 +198,9 @@ try {
 For writing many lines efficiently:
 
 ```java
-try (var writer = Files.newBufferedWriter(Path.of("output.txt"))) {
+import java.nio.charset.StandardCharsets;
+
+try (var writer = Files.newBufferedWriter(Path.of("output.txt"), StandardCharsets.UTF_8)) {
     for (int i = 1; i <= 5; i++) {
         writer.write("Line " + i);
         writer.newLine();
@@ -275,11 +288,10 @@ Files.copy(Path.of("source.txt"), Path.of("copy.txt"));
 Files.move(Path.of("old-name.txt"), Path.of("new-name.txt"));
 
 // Copy with overwrite
-import java.nio.file.StandardCopyOption;
 Files.copy(
     Path.of("source.txt"),
     Path.of("dest.txt"),
-    StandardCopyOption.REPLACE_EXISTING
+    java.nio.file.StandardCopyOption.REPLACE_EXISTING
 );
 ```
 
@@ -362,7 +374,7 @@ static void writeUsers(Path file, List<User> users) throws IOException {
         lines.add(user.name() + "," + user.age() + "," + user.city());
     }
 
-    Files.write(file, lines);
+    Files.write(file, lines, StandardCharsets.UTF_8);
 }
 
 public static void main(String[] args) {
@@ -376,7 +388,7 @@ public static void main(String[] args) {
         System.out.println("CSV written");
 
         // Verify
-        String content = Files.readString(Path.of("new-users.csv"));
+        String content = Files.readString(Path.of("new-users.csv"), StandardCharsets.UTF_8);
         System.out.println(content);
     } catch (IOException e) {
         System.out.println("Error: " + e.getMessage());
@@ -417,7 +429,10 @@ record Task(int id, String title, boolean done) {
 
     // Deserialize from a line
     static Task fromLine(String line) {
-        String[] parts = line.split("\\|");
+        String[] parts = line.split("\\|", 3);
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Invalid task line: " + line);
+        }
         return new Task(
             Integer.parseInt(parts[0]),
             parts[1],
@@ -479,7 +494,7 @@ Task[id=3, title=Deploy to VPS, done=false]
 ```
 
 This pattern - serialize to a simple text format, one record per line - is the foundation of the CLI project in the
-next chapter.
+next chapter. For real-world data, choose a format that can safely escape delimiters or use JSON/CSV libraries.
 
 ## Summary
 

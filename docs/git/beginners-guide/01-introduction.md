@@ -49,9 +49,10 @@ differently: every time you commit, Git takes a **snapshot** of the entire proje
 file has not changed, Git stores a link to the previous identical file rather than a copy - this makes snapshots
 efficient.
 
-Each snapshot (commit) is identified by a SHA-1 hash - a 40-character string like
-`a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2`. This hash is computed from the content of the commit, so it is
-effectively a fingerprint. If anything changes, the hash changes.
+Each snapshot (commit) is identified by an object ID - by default a 40-character SHA-1 value such as
+`a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2`. Newer repositories can also be created in SHA-256 mode, but the key idea is
+the same: the ID is computed from the content of the commit, so it is effectively a fingerprint. If anything changes,
+the ID changes.
 
 ## Installing Git
 

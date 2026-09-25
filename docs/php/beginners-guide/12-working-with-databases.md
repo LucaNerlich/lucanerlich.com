@@ -91,7 +91,7 @@ brew install mariadb
 brew services start mariadb
 ```
 
-After installation, run the security script (MySQL) or set the root password. By default, the root user has no password - you should set one for local development.
+After installation, run the security script (MySQL) or follow the package prompts to secure the database. Recent MySQL and MariaDB packages may use socket authentication, a temporary password, or an installer prompt instead of leaving the root account empty.
 
 ### Linux (Debian/Ubuntu)
 
@@ -133,8 +133,8 @@ To connect, you create a `PDO` instance with a **DSN** (Data Source Name) - a st
 
 $host = 'localhost';
 $dbname = 'myapp';
-$username = 'root';
-$password = '';
+$username = 'myapp_user';
+$password = 'your_password';
 
 $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
 
@@ -147,7 +147,7 @@ try {
 
 The DSN format for MySQL is `mysql:host=HOST;dbname=DBNAME;charset=CHARSET`. Always include `charset=utf8mb4` so PHP and MySQL agree on character encoding (important for emoji and international text).
 
-> **Warning:** Never hardcode credentials in source code for production. Use environment variables or a config file that is not committed to version control.
+> **Warning:** Never use the database `root` account from a web application. Create a dedicated user with only the privileges your app needs, and keep credentials out of version control.
 
 ## Creating a Database and Table
 
@@ -337,7 +337,11 @@ With prepared statements, you send the SQL structure and the data separately. Th
 ```php
 <?php
 
-$id = $_GET['id'];
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+if ($id === false || $id === null) {
+    die('Invalid task id');
+}
+
 $stmt = $pdo->prepare('SELECT * FROM tasks WHERE id = :id');
 $stmt->execute([':id' => $id]);
 ```
@@ -471,8 +475,8 @@ Here is a minimal task manager that uses everything you have learned. Create the
 
 $host = 'localhost';
 $dbname = 'myapp';
-$username = 'root';
-$password = '';
+$username = 'myapp_user';
+$password = 'your_password';
 $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
 
 try {
@@ -574,7 +578,7 @@ This script:
 4. Fetches all tasks and displays them
 5. Escapes output with `htmlspecialchars()` to prevent XSS
 
-You can extend it with an edit form, validation, or pagination. The core pattern - connect, prepare, execute, fetch - stays the same.
+You can extend it with an edit form, CSRF protection, or pagination. The core pattern - connect, prepare, execute, fetch - stays the same.
 
 ## Summary
 

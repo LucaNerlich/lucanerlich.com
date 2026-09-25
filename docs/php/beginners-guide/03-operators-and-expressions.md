@@ -225,19 +225,20 @@ Loose comparison (`==`) can produce surprising results because PHP converts type
 ```php
 <?php
 
-var_dump(0 == 'hello');   // bool(true) in PHP 8 - 'hello' is converted to 0
+var_dump(0 == 'hello');   // bool(false) in PHP 8
 var_dump('' == false);    // bool(true)
 var_dump(0 == false);     // bool(true)
-var_dump('' == 0);        // bool(true) in PHP 8
+var_dump('' == 0);        // bool(false) in PHP 8
 var_dump('0' == 0);       // bool(true)
 var_dump('42' == 42);     // bool(true)
 ```
 
 | Comparison | Result |
 |------------|--------|
-| `0 == 'hello'` | `true` (string 'hello' becomes 0 in numeric context) |
+| `0 == 'hello'` | `false` in PHP 8 (non-numeric strings are no longer coerced to `0` for this comparison) |
 | `'' == false` | `true` (empty string and false are both falsy) |
 | `0 == false` | `true` (0 and false are both falsy) |
+| `'' == 0` | `false` in PHP 8, `true` in older PHP versions |
 | `'0' == 0` | `true` (string '0' converts to integer 0) |
 | `'42' == 42` | `true` (string '42' converts to integer 42) |
 | `null == ''` | `true` (both are falsy) |

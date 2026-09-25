@@ -154,10 +154,9 @@ Use `userEvent` for almost everything. It is more realistic and catches more bug
 ```typescript
 import userEvent from '@testing-library/user-event';
 
-// At the top of each test, set up userEvent
-const user = userEvent.setup();
-
 it('types into an input', async () => {
+    const user = userEvent.setup();
+
     render(<SearchInput />);
     const input = screen.getByRole('textbox', { name: /search/i });
     await user.type(input, 'testing library');
@@ -332,13 +331,13 @@ it('shows an error message when the request fails', async () => {
 When a component consumes a React context, wrap it in the provider for testing:
 
 ```tsx
-import { render } from '@testing-library/react';
-import { ThemeProvider } from './ThemeContext';
+import { render, screen } from '@testing-library/react';
+import { ThemeContext } from './ThemeContext';
 import { ThemedButton } from './ThemedButton';
 
 function renderWithTheme(ui: React.ReactElement, theme = 'light') {
     return render(
-        <ThemeProvider value={theme}>{ui}</ThemeProvider>
+        <ThemeContext.Provider value={theme}>{ui}</ThemeContext.Provider>
     );
 }
 

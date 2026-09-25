@@ -114,7 +114,7 @@ resolve them:
 
 ```bash
 # CONFLICT (content): Merge conflict in src/search.js
-# error: could not apply d4e5f6g... feat(search): add fuzzy matching
+# error: could not apply d4e5f6a... feat(search): add fuzzy matching
 #
 # Resolve all conflicts manually, mark them as resolved with
 # "git add/rm <conflicted_files>", then run "git rebase --continue".

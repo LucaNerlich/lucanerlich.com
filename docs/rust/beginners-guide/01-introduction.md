@@ -103,7 +103,7 @@ rustc --version
 cargo --version
 ```
 
-You should see version numbers for both. At the time of writing, the latest stable release is Rust 1.84.
+You should see version numbers for both. Use the current stable toolchain unless you have a project that explicitly requires an older one.
 
 ### Windows
 
@@ -227,7 +227,7 @@ Open the `Cargo.toml` file:
 [package]
 name = "hello-rust"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 ```
@@ -376,13 +376,13 @@ Let's write something slightly more interesting. Replace `src/main.rs` with:
 ```rust
 fn main() {
     let name = "Rustacean";
-    let year = 2015;
-    let current_year = 2026;
-    let age = current_year - year;
+    let first_release_year = 2015;
+    let anniversary_year = 2025;
+    let age = anniversary_year - first_release_year;
 
     println!("Hello, {name}!");
-    println!("Rust was first released in {year}.");
-    println!("That was {age} years ago.");
+    println!("Rust was first released in {first_release_year}.");
+    println!("Rust turned {age} years old in {anniversary_year}.");
 }
 ```
 

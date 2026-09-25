@@ -429,7 +429,7 @@ graph LR
 | Logging and rethrowing               | Same error appears multiple times in logs                    | Either log OR rethrow - not both                        |
 | `e.printStackTrace()`                | Prints to stderr, not the logging framework                  | Use `log.error("message", e)`                            |
 | Catching `Exception` just to log it  | Swallows the exception silently                              | Log and rethrow, or handle appropriately                 |
-| Missing logback.xml / log4j2.xml     | SLF4J falls back to NOP logger (no output)                   | Include the config file in `src/main/resources/`         |
+| Missing logback.xml / log4j2.xml     | You may get framework defaults or no output, depending on the active binding | Include the config file in `src/main/resources/` and ensure exactly one binding is present |
 
 ---
 

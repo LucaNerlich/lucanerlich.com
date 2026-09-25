@@ -109,7 +109,7 @@ exception):
 
 ```java
 // Single resource
-try (var reader = new BufferedReader(new FileReader("data.txt"))) {
+try (var reader = Files.newBufferedReader(Path.of("data.txt"), StandardCharsets.UTF_8)) {
     String line = reader.readLine();
 }
 // reader is closed automatically, even if an exception occurs
@@ -125,6 +125,8 @@ try (var conn = dataSource.getConnection();
 }
 // rs, stmt, and conn are closed in reverse order
 ```
+
+Using `Files.newBufferedReader(...)` avoids relying on the platform default charset.
 
 ### Implementing AutoCloseable
 

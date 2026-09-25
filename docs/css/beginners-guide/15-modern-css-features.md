@@ -28,12 +28,12 @@ You can now nest selectors inside other selectors, reducing repetition and impro
     border: 1px solid #ddd;
     border-radius: 8px;
 
-    h3 {
+    & h3 {
         margin: 0 0 8px;
         font-size: 1.25rem;
     }
 
-    p {
+    & p {
         margin: 0;
         color: #666;
     }
@@ -54,9 +54,11 @@ You can now nest selectors inside other selectors, reducing repetition and impro
 
 ### Nesting rules
 
-- Nested selectors that start with a **letter** (like `h3`, `p`) are automatically interpreted as descendants
-- Use `&` to reference the parent selector explicitly - required for pseudo-classes (`:hover`), pseudo-elements
-  (`::before`), and class selectors (`.badge`)
+- Use `&` when the nested selector would otherwise start with a **type selector** (`& h3`, `& p`)
+- Class, attribute, pseudo-class, and combinator-based relative selectors can usually nest directly (`.badge`,
+  `:hover`, `> img`)
+- Use `&` to reference the parent selector explicitly - required when you want to concatenate selectors (`&--large`,
+  `&:hover`)
 - Do not nest deeper than two or three levels - it hurts readability and increases specificity
 
 ### Before vs after nesting
@@ -77,7 +79,7 @@ You can now nest selectors inside other selectors, reducing repetition and impro
     display: flex;
     gap: 16px;
 
-    a {
+    & a {
         color: white;
         text-decoration: none;
 
@@ -350,7 +352,7 @@ These features are at various stages of browser support. Check
 
 Not all browsers support every modern feature. Follow this approach:
 
-1. **Check support:** Use [caniuse.com](https://caniuse.com) or MDN browser compatibility tables — or query them directly in your editor via the [MDN MCP server](../../ai/mdn-mcp-server.md)
+1. **Check support:** Use [caniuse.com](https://caniuse.com) or MDN browser compatibility tables -- or query them directly in your editor via the [MDN MCP server](../../ai/mdn-mcp-server.md)
 2. **Use progressive enhancement:** Start with styles that work everywhere, layer on modern features
 3. **Use @supports:** Test for feature support in CSS:
 

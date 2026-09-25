@@ -722,7 +722,7 @@ introduce Vite.
 To try it, install [Node.js LTS](https://nodejs.org/) first, then from a terminal:
 
 ```bash
-npm create vite@latest my-blog - --template vanilla
+npm create vite@latest my-blog -- --template vanilla
 cd my-blog
 npm install
 npm run dev
@@ -776,7 +776,7 @@ server with nginx).
 - If you stayed with plain files, upload `index.html`, `styles.css`, `app.js`, and `posts.json` (if you did Step 5).
 - If you used the Vite bonus, run `npm run build`. It creates a `dist/` folder - upload the **contents** of that
   folder, not the folder itself.
-  :::
+:::
 
 ### Option A - put it in an AWS S3 bucket
 
@@ -827,7 +827,7 @@ website. For a small blog you will pay cents per month.
 - If you want free HTTPS + a custom domain with zero fuss, **Netlify**, **Cloudflare Pages**, and **GitHub Pages** all
   let you drag-and-drop a folder (or point at a git repo) and get a secure URL immediately. S3 is great for learning
   how the pieces fit; those three are great for *done*.
-  :::
+:::
 
 ### Option B - run your own server with nginx
 
@@ -843,35 +843,39 @@ you have the basics working.
    DigitalOcean, Linode, and Vultr all offer plans for around $4-$6 a month, which is plenty. Create one running
    **Ubuntu 22.04 LTS** or newer. The provider will give you an **IP address** (like `203.0.113.42`) and a way to log
    in - either a password or an SSH key.
-2. **Log into the server** from your own computer's terminal:
+2. **Log into the server** from your own computer's terminal with a normal user that can run `sudo`:
 
    ```bash
-   ssh root@YOUR_SERVER_IP
+   ssh deploy@YOUR_SERVER_IP
    ```
 
    Replace `YOUR_SERVER_IP` with the actual number. Type `yes` when asked about the server's fingerprint.
 3. **Install nginx** on the server:
 
    ```bash
-   apt update && apt install nginx -y
+   sudo apt update && sudo apt install nginx -y
    ```
 
-4. **Copy your blog files up** from your own computer (open a *second* terminal on your machine, not on the server):
+4. **Create a staging folder in your home directory** on the server:
 
    ```bash
-   scp index.html styles.css app.js root@YOUR_SERVER_IP:/tmp/blog/
+   mkdir -p ~/blog-upload
    ```
 
-   If you see a "no such file or directory" error, first create the folder on the server:
-   `ssh root@YOUR_SERVER_IP "mkdir -p /tmp/blog"`, then retry `scp`.
-5. **Put the files where nginx expects them** (back on the server):
+5. **Copy your blog files up** from your own computer (open a *second* terminal on your machine, not on the server):
 
    ```bash
-   mkdir -p /var/www/blog
-   mv /tmp/blog/* /var/www/blog/
+   scp index.html styles.css app.js deploy@YOUR_SERVER_IP:~/blog-upload/
    ```
 
-6. **Tell nginx about your site.** Create `/etc/nginx/sites-available/blog` with this content:
+6. **Put the files where nginx expects them** (back on the server):
+
+   ```bash
+   sudo mkdir -p /var/www/blog
+   sudo cp ~/blog-upload/* /var/www/blog/
+   ```
+
+7. **Tell nginx about your site.** Create `/etc/nginx/sites-available/blog` with this content:
 
    ```nginx
    server {
@@ -889,7 +893,7 @@ you have the basics working.
 
    Quick English: "when a request arrives on port 80, look for files in `/var/www/blog`; if the file exists, serve it;
    otherwise return 404."
-7. **Turn the site on:**
+8. **Turn the site on:**
 
    ```bash
    ln -s /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/
@@ -900,7 +904,7 @@ you have the basics working.
 
    `nginx -t` checks the config for typos before reloading. If it prints `syntax is ok` and `test is successful`, you
    are good.
-8. **Visit your site.** Open `http://YOUR_SERVER_IP` in a browser (again, the real IP). Your blog should appear.
+9. **Visit your site.** Open `http://YOUR_SERVER_IP` in a browser (again, the real IP). Your blog should appear.
 
 ### Which option should I pick?
 

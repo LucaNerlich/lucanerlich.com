@@ -14,25 +14,36 @@ Pass a request along a chain of handlers until one handles it.
 
 - Multiple handlers can process a request.
 - You want to decouple sender from receiver.
+- You want to assemble processing pipelines, such as middleware or validation steps.
 
 ## Java example
 
 ```java
 abstract class Handler {
     private Handler next;
-    Handler link(Handler next) { this.next = next; return next; }
-    void handle(String msg) {
-        if (next != null) next.handle(msg);
+
+    Handler link(Handler next) {
+        this.next = next;
+        return next;
+    }
+
+    boolean handle(String msg) {
+        return next != null && next.handle(msg);
     }
 }
 
 class ErrorHandler extends Handler {
-    void handle(String msg) {
+    boolean handle(String msg) {
         if (msg.contains("ERROR")) {
-            // handle error
-            return;
+            return true;
         }
-        super.handle(msg);
+        return super.handle(msg);
+    }
+}
+
+class FallbackHandler extends Handler {
+    boolean handle(String msg) {
+        return true;
     }
 }
 ```
@@ -42,14 +53,29 @@ class ErrorHandler extends Handler {
 ```ts
 abstract class Handler {
   private next?: Handler;
-  link(next: Handler): Handler { this.next = next; return next; }
-  handle(msg: string): void { this.next?.handle(msg); }
+
+  link(next: Handler): Handler {
+    this.next = next;
+    return next;
+  }
+
+  handle(msg: string): boolean {
+    return this.next?.handle(msg) ?? false;
+  }
 }
 
 class ErrorHandler extends Handler {
-  handle(msg: string): void {
-    if (msg.includes("ERROR")) return;
-    super.handle(msg);
+  handle(msg: string): boolean {
+    if (msg.includes('ERROR')) {
+      return true;
+    }
+    return super.handle(msg);
+  }
+}
+
+class FallbackHandler extends Handler {
+  handle(_msg: string): boolean {
+    return true;
   }
 }
 ```
@@ -66,8 +92,8 @@ Cons:
 
 ## Common pitfalls
 
-- Not defining a default handler.
-- Long chains with unclear responsibility.
+- Not defining a default handler when one is required.
+- Long chains with unclear responsibility boundaries.
 
 ## Related patterns
 

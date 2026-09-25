@@ -235,7 +235,7 @@ ownership** - this is called **borrowing**.
 ### Immutable references (&)
 
 ```rust
-fn calculate_length(s: &String) -> usize {
+fn calculate_length(s: &str) -> usize {
     s.len()
 }
 
@@ -247,13 +247,13 @@ fn main() {
 }
 ```
 
-`&greeting` creates a **reference** to `greeting` without taking ownership. The function parameter `s: &String` accepts
-a reference. When the function returns, only the reference goes out of scope - the original `String` is untouched.
+`&greeting` creates a **reference** to `greeting` without taking ownership. The function parameter `s: &str` accepts
+a string slice. When the function returns, only the reference goes out of scope - the original `String` is untouched.
 
 ```mermaid
 flowchart LR
     greeting["greeting: String"] --> HeapData["'Hello' (heap)"]
-    s["s: &String"] --> greeting
+    s["s: &str"] --> greeting
 ```
 
 You can have **multiple immutable references** at the same time:
@@ -541,7 +541,7 @@ fn main() {
 | `let y = &x;`                   | Immutable borrow      | Yes                   |
 | `let y = &mut x;`               | Mutable borrow        | Yes (but restricted)  |
 | `fn foo(x: String)`             | Move into function    | No                    |
-| `fn foo(x: &String)`            | Borrow into function  | Yes                   |
+| `fn foo(x: &str)`               | Borrow into function  | Yes                   |
 | `fn foo(x: &mut String)`        | Mutable borrow        | Yes (but restricted)  |
 
 ## Summary

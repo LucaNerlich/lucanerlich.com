@@ -225,8 +225,8 @@ A more comprehensive version:
 }
 
 html {
-    -webkit-text-size-adjust: none;
-    text-size-adjust: none;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
@@ -338,7 +338,7 @@ preprocessors and plain CSS has narrowed significantly. Consider whether you sti
 | Mixins           | No | Yes |
 | Loops/conditions | No | Yes |
 | Colour functions | `color-mix()` | Full suite |
-| File splitting   | `@import` (needs bundler) | `@use`, `@forward` |
+| File splitting   | Multiple `<link>` tags or `@import` (prefer bundling) | `@use`, `@forward` |
 
 > **Tip:** For new projects, start with plain CSS. Add Sass only if you need mixins, loops, or other features that
 > native CSS does not support.

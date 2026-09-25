@@ -54,7 +54,7 @@ Nachfolgend der Container von M10Z:
         <itunes:author>M10Z</itunes:author>
         <podcast:locked>no</podcast:locked>
         <podcast:guid>E9QfcR8TYeotS5ceJLmn</podcast:guid>
-        <itunes:image href="https://raw.githubusercontent.com/LucaNerlich/m10z/main/static/img/M10Z_Logo3000x3000.jpg"/>
+        <itunes:image href="https://cms.m10z.de/uploads/M10_Z_Logo_Varianten_Twitter_Profil_c95f85e388.jpg"/>
         <atom:link href="https://m10z.de/audiofeed.xml" rel="self" type="application/rss+xml"/>
     </channel>
 </rss>
@@ -68,7 +68,7 @@ Innerhalb des Channel-Containers werden Podcasts nun einzeln als Item-Element hi
        <!-- [...] -->
        <item>
             <title>Fundbüro #03 - Zwielichtige Politik oder zocken an der Wallstreet: Hauptsache Tycoon</title>
-            <pubDate>Sun, 9 Jul 2023, 00:30 +MEZ</pubDate>
+            <pubDate>Sun, 09 Jul 2023 00:30:00 GMT</pubDate>
             <guid isPermaLink="false">9999508951ea1dbdcc20 [...]</guid>
             <itunes:image href="[...]"/>
             <description>[...]</description>
@@ -89,7 +89,7 @@ Die meisten Zeilen sind selbsterklärend, die anderen beschreibe ich hier kurz:
 - `guid` -> Ein einzigartiger Hash, der dieses spezifischen Item (diese Episode) identifizieren kann
 - `explicit` -> Ob der Inhalt für Nicht-Erwachsene ungeeignet ist
 - `duration` -> Die Abspieldauer der referenzierten Datei in Sekunden
-- `enclosure` -> Die konkrete Referenz auf die Audiodatei der Episode. Length entspricht hier der Dateigröße in Bytes, bzw. dem _Request Header_: _Content-Length_.
+- `enclosure` -> Die konkrete Referenz auf die Audiodatei der Episode. `length` entspricht hier der Dateigröße in Bytes, also dem `Content-Length`-Response-Header.
 
 ## Erzeugung der Feed XML Datei
 
@@ -112,19 +112,19 @@ Wir generieren nicht pro Anfrage neue Ergebnisse.
 
 Diese Tatsache kommt uns zugute und reduziert die Komplexität enorm.
 
-Wir brauchen also nur [eine Datei](http://m10z.de/audiofeed.yaml), mit der Redakteure einfach neue Podcasts erstellen können:
+Wir brauchen also nur eine Datei namens `audiofeed.yaml`, mit der Redakteure einfach neue Podcasts erstellen können:
 
 ```yaml
-- title: 'Mindestens 10 Zeichen #10 - Juhu, Jubiläum, wir sind 10!'
-  date: 2024-01-05
-  image: https://raw.githubusercontent.com/LucaNerlich/m10z/main/static/img/Mindestens10Zeichen_Remix_Logo3000x3000.jpg
+- title: 'Fundbüro #20 | Imperialistische Außerirdische gegen frühe Zivilisationen'
+  date: 2026-09-23
+  image: https://cms.m10z.de/uploads/medium_Design_ohne_Titel_2_b90e7becf8.png
   description: |2-
                     Hallo liebe Leute!
                     [...]
                     Liebe Grüsse
-  seconds: 3164
-  blogpost: https://m10z.de/m10z-10
-  url: https://m10z.adrilaida.de/M10Z/M10Z_010.mp3
+  seconds: 3497
+  blogpost: https://m10z.de/podcasts/fundbuero-20
+  url: https://m10z.de/api/podcast-download/fundbuero-20.mp3
 - title: Ein weiterer Podcast
   date: 2024-01-03
 # [...]
@@ -193,7 +193,7 @@ function convertToPubDateFormat(dateString) {
 ### 2.2 Items erzeugen
 
 Jetzt kommt der eigentlich spannende Teil, nämlich die Konvertierung der einzelnen Podcast-Elemente in das richtige XML-Item-Schema.
-Zur Erinnerung: Die Redakteure müsssen nur ein paar Elemente in eine `.yaml`-Datei schreiben, die dann im Skript mit den (statischen) Werten angereichert und schließlich in den Feed geschrieben werden.
+Zur Erinnerung: Die Redakteure müssen nur ein paar Elemente in eine `.yaml`-Datei schreiben, die dann im Skript mit den (statischen) Werten angereichert und schließlich in den Feed geschrieben werden.
 
 Zuerst wird die Funktion gekürzt:
 
@@ -211,9 +211,10 @@ return {
 
 #### 2.2.1 Dateigröße bestimmen
 
-Wenn man eine Datei von einem Server lädt, kann man auch über einen 'HEAD'-Request nur gewisse Metadaten abfragen, ohne die komplette Datei herunterladen zu müssen.
-Dies machen wir uns zu Nutze, um die Dateigröße in Bytes aus dem `content-length` _Request Header_ abzufragen.
-Dies läuft mit minimaler Latenz, da eben keine komplette Datei hin-und-her geschickt wird.
+Wenn man eine Datei von einem Server lädt, kann man auch über einen `HEAD`-Request nur gewisse Metadaten abfragen, ohne die komplette Datei herunterladen zu müssen.
+Dies machen wir uns zu Nutze, um die Dateigröße in Bytes aus dem `Content-Length`-Response-Header abzufragen.
+Dies läuft mit minimaler Latenz, da eben keine komplette Datei hin- und hergeschickt wird. Wichtig dabei: `Content-Length`
+ist ein **Response Header**, nicht ein Request Header.
 
 ```javascript
 // Aus dem Input Objekt ziehen wir uns die URL (Die Referenz auf die MP3 Datei des spezifischen Podcasts).
@@ -221,7 +222,7 @@ const url = new URL(yamlObject.url);
 const options = {
     method: 'HEAD',
     host: url.hostname,
-    path: url.pathname,
+    path: url.pathname + url.search,
 };
 
 // Wir senden einen HTTP 'HEAD' Request
@@ -234,9 +235,12 @@ const getFileSize = new Promise((resolve, reject) => {
     req.end();
 });
 
-// und speichern den Wert des 'content-length' headers in eine Variable
+// und speichern den Wert des 'content-length' Response-Headers in eine Variable
 const fileSize = await getFileSize;
 ```
+
+Falls euer Storage auf `HEAD` keinen `Content-Length` liefert, müsst ihr die Dateigröße anders beschaffen -- etwa über
+eine Objekt-Storage-API oder durch explizite Pflege in der YAML-Datei.
 
 #### 2.2.2 Return-Element zusammensetzen
 
@@ -272,7 +276,7 @@ return {
         },
         'itunes:image': {
             $: {
-                href: yamlObject.image ?? 'https://raw.githubusercontent.com/LucaNerlich/m10z/main/static/img/M10Z_Logo3000x3000.jpg',
+                href: yamlObject.image ?? 'https://cms.m10z.de/uploads/M10_Z_Logo_Varianten_Twitter_Profil_c95f85e388.jpg',
             },
         },
         'description': yamlObject.description,
@@ -314,14 +318,14 @@ function getSeconds(time) {
     const timeParts = time.toString().split(':');
     let seconds = 0;
     if (timeParts.length === 3) {
-        seconds += parseInt(timeParts[0]) * 3600; // hours to seconds
-        seconds += parseInt(timeParts[1]) * 60; // minutes to seconds
-        seconds += parseInt(timeParts[2]); // seconds
+        seconds += parseInt(timeParts[0], 10) * 3600; // hours to seconds
+        seconds += parseInt(timeParts[1], 10) * 60; // minutes to seconds
+        seconds += parseInt(timeParts[2], 10); // seconds
     } else if (timeParts.length === 2) {
-        seconds += parseInt(timeParts[0]) * 60; // minutes to seconds
-        seconds += parseInt(timeParts[1]); // seconds
+        seconds += parseInt(timeParts[0], 10) * 60; // minutes to seconds
+        seconds += parseInt(timeParts[1], 10); // seconds
     } else {
-        seconds += parseInt(timeParts[0]); // seconds
+        seconds += parseInt(timeParts[0], 10); // seconds
     }
     return seconds;
 }
@@ -330,4 +334,4 @@ function getSeconds(time) {
 Danke fürs Lesen.
 
 Meldet euch bei Fragen gerne auf [unserem Discord](https://discord.gg/bYPsrFxxtu).
-Das komplette Skript befindet sich [in unserem Repository](https://github.com/LucaNerlich/m10z/blob/main/generateAudioFeed.js).
+Das komplette Skript liegt im M10Z-Projekt-Repository neben den Docusaurus-Quellen.
