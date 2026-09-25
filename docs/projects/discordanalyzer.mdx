@@ -1,6 +1,6 @@
 ---
 title: "Discord Chat Analyzer"
-description: A Java tool that parses Discord chat export JSON files and generates ranked statistics - message count, mentions, reactions, attachments, and account age.
+description: A Java tool that parses Discord chat export JSON files and generates ranked statistics for message count, mentions, reactions, attachments, and the earliest exported messages.
 tags: [java, discord, analytics, open-source]
 keywords:
   - discord chat analyzer
@@ -14,15 +14,22 @@ sidebar_position: 1
 
 [GitHub Repository](https://github.com/LucaNerlich/Discord-Chat-Analyzer)
 
-The DCA operates on statically available chat log files, downloaded by the [DiscordChatExporter](https://github.com/Tyrrrz/DiscordChatExporter).
+The DCA operates on static JSON chat exports, downloaded by the
+[DiscordChatExporter](https://github.com/Tyrrrz/DiscordChatExporter).
+
+:::warning[Privacy and authorization]
+Chat exports can contain messages, usernames, IDs, attachments, and other personal data. Analyze only data
+you are authorized to access, keep the exports out of version control, and remove or anonymize personal data
+before sharing a report. Do not expose Discord account tokens to this tool or commit them to scripts.
+:::
 
 ## Architecture and Output
 
-After parsing all `.json` logs to Java Entities, separated into an array of `Channel` objects, each gets analyzed by the `Analyzer.java`.
+After parsing all `.json` logs into Java entities, each `Channel` is analyzed by `Analyzer.java`.
 The analyzer reads each message and tracks a multitude of information for each specific author/chatter, automatically sorted by TreeMaps.
 
-Place the downloaded `.json` files in a directory `/logs/<somename>` in the root of your project.
-Update the log file dirname accordingly in the `readLogs` method.
+Place the downloaded `.json` files in a local directory such as `logs/<name>` that is ignored by Git.
+Update the input directory in `readLogs`; avoid placing private exports in a repository.
 
 Based on the `rankingType`, the analyzer writes its data to separate files.
 
@@ -146,7 +153,7 @@ We instantiate a Gson object and read all json log files in parallel.
 private static List<Channel> parseJsonToChannels() {
         final Gson gson = new GsonBuilder().setDateFormat(DateFormat.FULL, DateFormat.FULL).create();
 
-        final List<Channel> channels = new ArrayList<>();
+        final List<Channel> channels = Collections.synchronizedList(new ArrayList<>());
         final List<String> logs = readLogs();
 
         logs.parallelStream().forEach(logFilePath -> {
@@ -254,9 +261,12 @@ private void calculateMentionRanking(List<AuthorData> authorDataList) {
 }
 ```
 
-### Account Age
+### Earliest message in the export
 
-> Author on the analyzed server with the oldest account / date of first message sent.
+> Author with the earliest message represented in the exported data.
+
+This is **not** the account's creation date or necessarily the date they joined the server. It is limited by
+the exported channels and the available history.
 
 ```java title="Comparator"
 public static class AuthorDataFirstMessageComparator implements Comparator<AuthorData> {
