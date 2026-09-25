@@ -16,12 +16,6 @@ This guide sets up a local **coding assistant** inside your editor. If you inste
 and call it from your own app, see [Build a Local LLM App](./local-llm-app.md), and
 [Cloud vs Local Models](./cloud-vs-local.md) for when local makes sense.
 
-:::note
-This is an alternative workflow, not a drop-in replacement for GitHub Copilot. Model quality, agent
-features, indexing, editor integration, and context handling differ by tool and hardware. Test the setup
-on representative work before moving a team or sensitive repository to it.
-:::
-
 ## Local models are viable now
 
 As of mid-2026, local models have closed much of the gap with frontier APIs for day-to-day coding tasks.
