@@ -100,7 +100,7 @@ const config: Config = {
                 },
                 blog: {
                     showReadingTime: true,
-                    editUrl: 'https://github.com/LucaNerlich/lucanerlich.com/tree/main',
+                    editUrl: 'https://github.com/LucaNerlich/lucanerlich.com/edit/main/',
                     blogTitle: 'Blog',
                     blogDescription: 'Notes and updates from Luca Nerlich on AEM, web development, and software engineering.',
                     blogSidebarTitle: 'Recent posts',
