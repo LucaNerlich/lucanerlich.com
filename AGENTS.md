@@ -128,6 +128,7 @@ docs/                  # All documentation content (one top-level dir per catego
   design-patterns/     # Design pattern catalog
   other/               # Misc topics (shell, SQL, mise, link collections)
   projects/            # Project showcases
+blog/                  # Blog posts (Docusaurus blog plugin, served at /blog)
 static/                # Static assets (images, favicon, manifest.json)
 .cursor/rules/         # 62 Cursor AI rules (performance + security)
 ```
@@ -136,7 +137,8 @@ static/                # Static assets (images, favicon, manifest.json)
 
 - **Broken link checking is strict** - `pnpm build` will fail on any broken
   link, anchor, markdown link, or image reference. Always verify after edits.
-- **Blog is disabled** (`blog: false` in preset config).
+- **Blog** lives in `blog/` and is served at `/blog` via the classic preset
+  blog plugin (docs keep `routeBasePath: '/'`).
 - **Client redirects** live in `redirects.ts` (imported into the config and
   consumed by `@docusaurus/plugin-client-redirects`), not in
   `docusaurus.config.ts`. To move/rename a doc, append a `{from, to}` entry
@@ -184,6 +186,16 @@ Rust, C, F#.
 3. If ordering matters, add the filename (without extension) to the appropriate
    array in `sidebar-order.ts`
 4. Run `pnpm build` to verify no broken links
+
+### Adding a blog post
+1. Create a dated Markdown file under `blog/`, e.g.
+   `blog/YYYY-MM-DD-my-post-title.md` (date is taken from the filename)
+2. Add frontmatter with at least `title` and `description`; reference authors
+   from `blog/authors.yml` (e.g. `authors: luca`) and optional tags
+3. Put a `<!-- truncate -->` marker after the teaser paragraph for the list page
+4. Do **not** edit `sidebar-order.ts` -- the blog sidebar is managed by the
+   blog plugin
+5. Run `pnpm build` to verify no broken links
 
 ### Moving or renaming a doc
 1. Move/rename the file
