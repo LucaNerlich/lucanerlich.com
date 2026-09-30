@@ -98,7 +98,18 @@ const config: Config = {
                         return sortSidebarItems(items, args.item.dirName, categoriesMetadata);
                     },
                 },
-                blog: false,
+                blog: {
+                    showReadingTime: true,
+                    editUrl: 'https://github.com/LucaNerlich/lucanerlich.com/tree/main',
+                    blogTitle: 'Blog',
+                    blogDescription: 'Notes and updates from Luca Nerlich on AEM, web development, and software engineering.',
+                    blogSidebarTitle: 'Recent posts',
+                    blogSidebarCount: 'ALL',
+                    feedOptions: {
+                        type: 'all',
+                        copyright: `Copyright \u00a9 ${new Date().getFullYear()} Luca Nerlich`,
+                    },
+                },
                 theme: {
                     customCss: ['./src/css/custom.css'],
                 },
@@ -201,6 +212,11 @@ const config: Config = {
                     position: 'left',
                 },
                 {
+                    to: '/blog',
+                    label: 'Blog',
+                    position: 'left',
+                },
+                {
                     to: '/other',
                     label: 'Other',
                     position: 'left',
@@ -239,6 +255,7 @@ const config: Config = {
                     title: 'More',
                     items: [
                         {label: 'Projects', to: '/projects'},
+                        {label: 'Blog', to: '/blog'},
                         {label: 'Other', to: '/other'},
                         {label: 'Changelog', to: '/changelog'},
                         {label: 'Imprint', to: '/imprint'},
