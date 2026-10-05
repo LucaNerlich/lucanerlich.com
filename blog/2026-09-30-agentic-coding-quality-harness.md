@@ -295,15 +295,17 @@ the ask; it proves the agent wrote tests.
 ### The run record
 
 One object per attempt. Pin model **and** the published token prices you used that day, because
-prices move. Pin harness, rules, and skills hashes, because those are part of the system under test
--- swapping Cursor rules mid-corpus is a different experiment.
+prices move. Record the full before/after commit SHAs and hashes of the frozen DoD, harness revision,
+and every guide or skill loaded. Those are part of the system under test -- swapping Cursor rules
+mid-corpus is a different experiment.
 
 ```json
 {
   "schema": "agent-run-record/v1",
   "ticket_id": "blog-quality-harness",
   "ticket_class": "docs",
-  "git_sha_before": "c13c612",
+  "git_sha_before": "<full commit SHA>",
+  "git_sha_after": "<full commit SHA>",
   "attempt": 1,
   "model": {
     "id": "composer-placeholder",
@@ -313,9 +315,17 @@ prices move. Pin harness, rules, and skills hashes, because those are part of th
   },
   "harness": {
     "name": "cursor-cloud",
-    "rules_ref": "AGENTS.md"
+    "revision": "<harness version or commit>",
+    "guides": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "<SHA-256>"
+      }
+    ],
+    "skills": []
   },
   "ask": {
+    "dod_sha256": "<SHA-256 of frozen DoD>",
     "dod": [
       {
         "id": "file",
@@ -376,11 +386,12 @@ speed and calendar speed are not the same thing -- see the [productivity evidenc
 
 ### Score a record
 
-Stdlib-only. Point it at one JSON file, or at a JSONL corpus later.
+Stdlib-only. Point it at one JSON file per attempt or a JSONL/NDJSON corpus.
 
 ```python
 import json
 from pathlib import Path
+from statistics import median
 
 
 def score(run: dict) -> dict:
@@ -394,6 +405,7 @@ def score(run: dict) -> dict:
     cost = run["cost"]
     return {
         "ticket_id": run["ticket_id"],
+        "ticket_class": run["ticket_class"],
         "model": run["model"]["id"],
         "F": round(f, 4),
         "G": g,
@@ -408,29 +420,40 @@ def score(run: dict) -> dict:
 
 
 def leaderboard(paths: list[Path]) -> list[dict]:
-    rows = [score(json.loads(p.read_text())) for p in paths]
-    models = sorted({row["model"] for row in rows})
+    runs = []
+    for path in paths:
+        text = path.read_text()
+        if path.suffix.lower() in {".jsonl", ".ndjson"}:
+            runs.extend(json.loads(line) for line in text.splitlines() if line.strip())
+        else:
+            runs.append(json.loads(text))
+    rows = [score(run) for run in runs]
     out = []
-    for model in models:
-        rs = [row for row in rows if row["model"] == model]
+    groups = sorted({(row["model"], row["ticket_class"]) for row in rows})
+    for model, ticket_class in groups:
+        rs = [
+            row for row in rows
+            if row["model"] == model and row["ticket_class"] == ticket_class
+        ]
         wins = [row for row in rs if row["S"]]
         n = len(rs)
         n_ok = len(wins)
         spent = sum(row["usd"] for row in rs)
         out.append({
             "model": model,
+            "ticket_class": ticket_class,
             "attempts": n,
             "success_rate": round(sum(row["S"] for row in rs) / n, 4),
-            "median_F": round(sorted(row["F"] for row in rs)[n // 2], 4),
+            "median_F": round(median(row["F"] for row in rs), 4),
             "G_rate": round(sum(row["G"] for row in rs) / n, 4),
-            "median_L": round(sorted(row["L"] for row in rs)[n // 2], 4),
+            "median_L": round(median(row["L"] for row in rs), 4),
             "usd_per_success_all_in": round(spent / n_ok, 4) if n_ok else None,
             "median_usd_success": (
-                round(sorted(row["usd"] for row in wins)[len(wins) // 2], 4)
+                round(median(row["usd"] for row in wins), 4)
                 if wins else None
             ),
             "median_human_min_success": (
-                round(sorted(row["human_min"] for row in wins)[len(wins) // 2], 4)
+                round(median(row["human_min"] for row in wins), 4)
                 if wins else None
             ),
         })
@@ -438,8 +461,9 @@ def leaderboard(paths: list[Path]) -> list[dict]:
 ```
 
 `usd_per_success_all_in` is the number I actually use to compare models: **every** dollar spent on
-that model on this corpus, divided by successes. Failed attempts count as waste. `median_usd_success`
-is the typical cost when it works -- useful, but it hides a model that fails often.
+that model in that ticket class, divided by successes. Failed attempts count as waste.
+`median_usd_success` is the typical cost when it works -- useful, but it hides a model that fails
+often.
 
 Two rules so the board stays honest:
 
