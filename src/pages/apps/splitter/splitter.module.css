@@ -232,6 +232,29 @@
     font-size: 0.9rem;
 }
 
+.chipEdit {
+    display: inline-flex;
+    align-items: center;
+    min-width: 7rem;
+    padding: 0.2rem 0.4rem;
+    background: var(--ifm-background-color);
+    border: 1px solid var(--ifm-color-primary);
+    border-radius: 999px;
+}
+
+.chipName {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+.chipName:hover {
+    text-decoration: underline;
+}
+
 .chipRemove {
     background: none;
     border: none;
@@ -359,14 +382,54 @@
     gap: 0.4rem;
 }
 
+.transferHeader {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.transferHeader .subSectionTitle {
+    margin: 0;
+}
+
 .transferRow {
     display: grid;
-    grid-template-columns: 1fr auto 1fr auto;
+    grid-template-columns: auto 1fr auto 1fr auto;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.75rem;
     background: var(--ifm-color-emphasis-100);
     border-radius: 6px;
+}
+
+.transferPaid {
+    opacity: 0.65;
+}
+
+.transferPaid .transferAmount {
+    text-decoration: line-through;
+}
+
+.paidCheck {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--custom-muted);
+    cursor: pointer;
+    user-select: none;
+}
+
+.paidLabel {
+    display: none;
+}
+
+@media (min-width: 640px) {
+    .paidLabel {
+        display: inline;
+    }
 }
 
 .transferFrom {
@@ -389,13 +452,102 @@
     justify-self: end;
 }
 
+.sessionBar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.sessionBar .fieldLabel {
+    max-width: 12rem;
+}
+
+.sessionActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.splitFields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.participantToggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.checkChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    background: var(--ifm-color-emphasis-100);
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.checkChip input {
+    margin: 0;
+}
+
+.splitInputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.6rem;
+}
+
+.splitCell {
+    font-size: 0.85rem;
+    color: var(--custom-muted);
+    max-width: 16rem;
+}
+
+.expenseEditor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--ifm-color-emphasis-100);
+    border-radius: 8px;
+}
+
+.calcDetails {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.calcSummary {
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--custom-muted);
+}
+
 .calcBlock {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    margin-top: 0.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--ifm-color-emphasis-200);
+    margin-top: 0.75rem;
+}
+
+@media print {
+    .noPrint {
+        display: none !important;
+    }
+
+    .printSettlement {
+        border: none;
+        padding: 0;
+    }
 }
 
 .calcHeading {

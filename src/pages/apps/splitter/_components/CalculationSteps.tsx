@@ -1,8 +1,9 @@
 import React, {useMemo} from 'react';
 import type {AppState} from '../_lib/types';
-import {fairShares, type Transfer} from '../_lib/settlement';
+import type {ExpenseBreakdown, Transfer} from '../_lib/settlement';
 import {indexPeople, nameFrom} from '../_lib/people';
 import {formatMoney, formatSignedMoney} from '../_lib/money';
+import {payerCoversOthers} from '../_lib/split';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -10,6 +11,7 @@ type Props = {
     totalCents: number;
     balances: Map<string, number>;
     transfers: Transfer[];
+    breakdowns: ExpenseBreakdown[];
 };
 
 const Formula: React.FC<{children: React.ReactNode; ariaLabel: string}> = ({
@@ -21,43 +23,47 @@ const Formula: React.FC<{children: React.ReactNode; ariaLabel: string}> = ({
     </div>
 );
 
-const CalculationSteps: React.FC<Props> = ({state, totalCents, balances, transfers}) => {
+const CalculationSteps: React.FC<Props> = ({
+    state,
+    totalCents,
+    balances,
+    transfers,
+    breakdowns,
+}) => {
     const peopleIndex = useMemo(() => indexPeople(state.people), [state.people]);
     const nameOf = (id: string) => nameFrom(peopleIndex, id);
+    const currency = state.currency;
 
-    const {N, baseShare, remainder, shares, paid} = useMemo(() => {
-        const collator = new Intl.Collator('en', {sensitivity: 'variant'});
-        const sortedIds = [...state.people.map(p => p.id)].sort(collator.compare);
-        const n = sortedIds.length;
-        const base = n > 0 ? Math.floor(totalCents / n) : 0;
-        const rem = totalCents - base * n;
-        const shareMap = fairShares(totalCents, sortedIds);
-
+    const paid = useMemo(() => {
         const paidMap = new Map<string, number>();
         for (const p of state.people) paidMap.set(p.id, 0);
-        for (const e of state.expenses) {
-            if (paidMap.has(e.paidBy)) {
-                paidMap.set(e.paidBy, (paidMap.get(e.paidBy) ?? 0) + e.cents);
+        for (const {expense} of breakdowns) {
+            paidMap.set(expense.paidBy, (paidMap.get(expense.paidBy) ?? 0) + expense.cents);
+        }
+        return paidMap;
+    }, [state.people, breakdowns]);
+
+    const obligation = useMemo(() => {
+        const map = new Map<string, number>();
+        for (const p of state.people) map.set(p.id, 0);
+        for (const {shares} of breakdowns) {
+            for (const [id, cents] of shares) {
+                map.set(id, (map.get(id) ?? 0) + cents);
             }
         }
+        return map;
+    }, [state.people, breakdowns]);
 
-        return {
-            N: n,
-            baseShare: base,
-            remainder: rem,
-            shares: shareMap,
-            paid: paidMap,
-        };
-    }, [state, totalCents]);
-
-    const expenseTerms = state.expenses.map(e => formatMoney(e.cents)).join(' + ');
+    const expenseTerms = breakdowns
+        .map(b => formatMoney(b.expense.cents, currency))
+        .join(' + ');
 
     return (
         <div className={styles.calcBlock}>
-            <h3 className={styles.subSectionTitle}>How the math works</h3>
             <p className={styles.muted}>
-                Equal split in integer cents. Positive balance means owed money;
-                negative means they owe.
+                Each expense is allocated to its participants (equal, shares, percent, or
+                exact amounts) in integer cents. Balance = paid − obligation. Positive means
+                owed money; negative means they owe.
             </p>
 
             <h4 className={styles.calcHeading}>Formulas</h4>
@@ -83,31 +89,7 @@ const CalculationSteps: React.FC<Props> = ({state, totalCents, balances, transfe
                         </mrow>
                     </math>
                 </Formula>
-                <Formula ariaLabel="Base share s equals the floor of T divided by N">
-                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-                        <mrow>
-                            <mi>s</mi>
-                            <mo>=</mo>
-                            <mrow>
-                                <mo>⌊</mo>
-                                <mfrac>
-                                    <mi>T</mi>
-                                    <mi>N</mi>
-                                </mfrac>
-                                <mo>⌋</mo>
-                            </mrow>
-                            <mo>,</mo>
-                            <mi>r</mi>
-                            <mo>=</mo>
-                            <mi>T</mi>
-                            <mo>−</mo>
-                            <mi>s</mi>
-                            <mo>⋅</mo>
-                            <mi>N</mi>
-                        </mrow>
-                    </math>
-                </Formula>
-                <Formula ariaLabel="Fair share S of person p equals s, plus one extra cent for each of the first r people by sorted id">
+                <Formula ariaLabel="For an equal split, share is floor of expense over participants">
                     <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
                         <mrow>
                             <msub>
@@ -115,41 +97,29 @@ const CalculationSteps: React.FC<Props> = ({state, totalCents, balances, transfe
                                 <mi>p</mi>
                             </msub>
                             <mo>=</mo>
-                            <mi>s</mi>
-                            <mo>+</mo>
                             <mrow>
-                                <mo>[</mo>
-                                <mi>p</mi>
-                                <mo>∈</mo>
-                                <msub>
-                                    <mi>R</mi>
-                                    <mi>r</mi>
-                                </msub>
-                                <mo>]</mo>
+                                <mo fence="true" stretchy="false">⌊</mo>
+                                <mfrac>
+                                    <msub>
+                                        <mi>e</mi>
+                                        <mi>i</mi>
+                                    </msub>
+                                    <msub>
+                                        <mi>N</mi>
+                                        <mi>i</mi>
+                                    </msub>
+                                </mfrac>
+                                <mo fence="true" stretchy="false">⌋</mo>
                             </mrow>
+                            <mtext>&nbsp;(+ remainder cents)</mtext>
                         </mrow>
                     </math>
                     <span className={styles.formulaCaption}>
-                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
-                            <msub>
-                                <mi>R</mi>
-                                <mi>r</mi>
-                            </msub>
-                        </math>
-                        {' '}
-                        = first <em>r</em> person ids in sorted order;{' '}
-                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
-                            <mrow>
-                                <mo>[</mo>
-                                <mi>⋅</mi>
-                                <mo>]</mo>
-                            </mrow>
-                        </math>
-                        {' '}
-                        is 1 when true and 0 otherwise (Iverson bracket).
+                        Unequal modes use weights / percents (largest remainder) or exact
+                        cent amounts. Obligation is the sum of shares across expenses.
                     </span>
                 </Formula>
-                <Formula ariaLabel="Balance B of person p equals amount paid minus fair share">
+                <Formula ariaLabel="Balance equals amount paid minus total obligation">
                     <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
                         <mrow>
                             <msub>
@@ -163,7 +133,7 @@ const CalculationSteps: React.FC<Props> = ({state, totalCents, balances, transfe
                             </msub>
                             <mo>−</mo>
                             <msub>
-                                <mi>S</mi>
+                                <mi>O</mi>
                                 <mi>p</mi>
                             </msub>
                         </mrow>
@@ -176,55 +146,48 @@ const CalculationSteps: React.FC<Props> = ({state, totalCents, balances, transfe
                 <li>
                     <span className={styles.calcStepLabel}>Total spent</span>
                     <code className={styles.calcInline}>
-                        T = {expenseTerms} = {formatMoney(totalCents)}
+                        T = {expenseTerms} = {formatMoney(totalCents, currency)}
                     </code>
                 </li>
                 <li>
-                    <span className={styles.calcStepLabel}>People and base share</span>
-                    <code className={styles.calcInline}>
-                        N = {N}
-                    </code>
-                    <code className={styles.calcInline}>
-                        s = ⌊{totalCents} / {N}⌋ = {baseShare} cents (= {formatMoney(baseShare)})
-                    </code>
-                    <code className={styles.calcInline}>
-                        r = {totalCents} − {baseShare}⋅{N} = {remainder}
-                        {remainder === 1 ? ' cent' : ' cents'}
-                    </code>
-                    {remainder > 0 && (
-                        <span className={styles.calcNote}>
-                            The leftover {remainder === 1 ? 'cent goes' : 'cents go'} to the
-                            first {remainder} {remainder === 1 ? 'person' : 'people'} in
-                            id-sorted order so shares sum to T exactly.
-                        </span>
-                    )}
-                </li>
-                <li>
-                    <span className={styles.calcStepLabel}>Fair share per person</span>
+                    <span className={styles.calcStepLabel}>Per-expense shares</span>
                     <ul className={styles.calcSubList}>
-                        {state.people.map(p => (
-                            <li key={p.id}>
-                                <code className={styles.calcInline}>
-                                    S<sub>{p.name}</sub> = {formatMoney(shares.get(p.id) ?? 0)}
-                                </code>
-                            </li>
-                        ))}
+                        {breakdowns.map(({expense, shares}) => {
+                            const label = expense.description || 'Untitled expense';
+                            const parts = [...shares.entries()]
+                                .map(
+                                    ([id, cents]) =>
+                                        `${nameOf(id)} ${formatMoney(cents, currency)}`,
+                                )
+                                .join(', ');
+                            return (
+                                <li key={expense.id}>
+                                    <code className={styles.calcInline}>
+                                        {label} ({formatMoney(expense.cents, currency)},{' '}
+                                        {expense.split.mode}
+                                        {payerCoversOthers(expense) ? ', payer covers' : ''}):{' '}
+                                        {parts}
+                                    </code>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </li>
                 <li>
                     <span className={styles.calcStepLabel}>
-                        Balance (paid − fair share)
+                        Balance (paid − obligation)
                     </span>
                     <ul className={styles.calcSubList}>
                         {state.people.map(p => {
                             const paidAmt = paid.get(p.id) ?? 0;
-                            const shareAmt = shares.get(p.id) ?? 0;
+                            const owedAmt = obligation.get(p.id) ?? 0;
                             const net = balances.get(p.id) ?? 0;
                             return (
                                 <li key={p.id}>
                                     <code className={styles.calcInline}>
-                                        B<sub>{p.name}</sub> = {formatMoney(paidAmt)} −{' '}
-                                        {formatMoney(shareAmt)} = {formatSignedMoney(net)}
+                                        B<sub>{p.name}</sub> = {formatMoney(paidAmt, currency)} −{' '}
+                                        {formatMoney(owedAmt, currency)} ={' '}
+                                        {formatSignedMoney(net, currency)}
                                     </code>
                                 </li>
                             );
@@ -240,15 +203,15 @@ const CalculationSteps: React.FC<Props> = ({state, totalCents, balances, transfe
                     ) : (
                         <>
                             <span className={styles.calcNote}>
-                                Match largest debtors with largest creditors until
-                                everyone is settled (at most N − 1 transfers).
+                                Match largest debtors with largest creditors until everyone
+                                is settled (at most N − 1 transfers).
                             </span>
                             <ul className={styles.calcSubList}>
-                                {transfers.map(t => (
-                                    <li key={`${t.from}-${t.to}`}>
+                                {transfers.map(tr => (
+                                    <li key={`${tr.from}-${tr.to}-${tr.cents}`}>
                                         <code className={styles.calcInline}>
-                                            {nameOf(t.from)} → {nameOf(t.to)}:{' '}
-                                            {formatMoney(t.cents)}
+                                            {nameOf(tr.from)} → {nameOf(tr.to)}:{' '}
+                                            {formatMoney(tr.cents, currency)}
                                         </code>
                                     </li>
                                 ))}
