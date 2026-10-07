@@ -425,6 +425,14 @@
         serif;
 }
 
+.formula math[display='block'] {
+    margin: 0.15rem auto;
+}
+
+.calcInline sub {
+    font-size: 0.75em;
+}
+
 .formulaCaption {
     font-size: 0.8rem;
     color: var(--custom-muted);
