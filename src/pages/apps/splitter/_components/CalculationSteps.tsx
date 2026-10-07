@@ -89,14 +89,16 @@ const CalculationSteps: React.FC<Props> = ({state, totalCents, balances, transfe
                             <mi>s</mi>
                             <mo>=</mo>
                             <mrow>
-                                <mo>⌊</mo>
+                                <mo fence="true" stretchy="false">⌊</mo>
                                 <mfrac>
                                     <mi>T</mi>
                                     <mi>N</mi>
                                 </mfrac>
-                                <mo>⌋</mo>
+                                <mo fence="true" stretchy="false">⌋</mo>
                             </mrow>
+                            <mspace width="0.6em" />
                             <mo>,</mo>
+                            <mspace width="0.6em" />
                             <mi>r</mi>
                             <mo>=</mo>
                             <mi>T</mi>
