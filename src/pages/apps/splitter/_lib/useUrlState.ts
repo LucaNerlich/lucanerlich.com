@@ -123,6 +123,8 @@ export function useUrlState<S, A>({
         // back/forward navigation between shared links is the only source.
         const onHashChange = () => {
             const raw = storeRef.current!.read();
+            // An empty hash keeps the current state on purpose: it is also the
+            // last session in the fallback store, so resetting here would wipe it.
             if (!raw) return;
             const decoded = codec.decode(raw);
             if (decoded) dispatch(hydrate(decoded));

@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.31.1] - 2026-10-07
+
+### Added
+- Splitter app: the last session is auto-saved to `localStorage` and restored when the URL carries no valid session; shared links still take precedence
+
+### Fixed
+- Splitter app: removed a keyboard trap in the expense form (Tab/Shift+Tab no longer loop inside the form)
+- Splitter app: amount field accepts `,5`/`.5` and locale commas in every browser, with a clearer format error; Enter submits the expense
+- Splitter app: duplicate person names are rejected, expenses without a description are labelled, transfer rows use stable keys
+
 ## [1.31.0] - 2026-08-28
 
 ### Added
