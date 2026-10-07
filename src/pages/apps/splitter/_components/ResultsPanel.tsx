@@ -3,6 +3,7 @@ import type {AppState} from '../_lib/types';
 import {summarize} from '../_lib/settlement';
 import {indexPeople, nameFrom} from '../_lib/people';
 import {formatMoney, formatSignedMoney} from '../_lib/money';
+import CalculationSteps from './CalculationSteps';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -87,6 +88,13 @@ const ResultsPanel: React.FC<Props> = ({state}) => {
                     ))}
                 </ul>
             )}
+
+            <CalculationSteps
+                state={state}
+                totalCents={totalCents}
+                balances={balances}
+                transfers={transfers}
+            />
         </section>
     );
 };
