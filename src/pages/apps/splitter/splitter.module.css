@@ -388,3 +388,90 @@
     font-variant-numeric: tabular-nums;
     justify-self: end;
 }
+
+.calcBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.calcHeading {
+    margin: 0.25rem 0 0;
+    font-size: 0.95rem;
+}
+
+.formulaList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.formula {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.65rem 0.85rem;
+    background: var(--ifm-color-emphasis-100);
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 1.05rem;
+}
+
+.formula math {
+    font-family: 'Latin Modern Math', 'STIX Two Math', 'Cambria Math', 'Times New Roman',
+        serif;
+}
+
+.formulaCaption {
+    font-size: 0.8rem;
+    color: var(--custom-muted);
+    line-height: 1.4;
+}
+
+.calcSteps {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.calcSteps > li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.calcStepLabel {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.calcInline {
+    display: block;
+    padding: 0.4rem 0.6rem;
+    background: var(--ifm-color-emphasis-100);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    white-space: normal;
+    word-break: break-word;
+    color: var(--ifm-font-color-base);
+}
+
+.calcNote {
+    font-size: 0.85rem;
+    color: var(--custom-muted);
+}
+
+.calcSubList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
