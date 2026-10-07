@@ -3,7 +3,7 @@ import type {Action, AppState} from './_lib/types';
 import {emptyState} from './_lib/types';
 import {applyAction, expensesPaidBy} from './_lib/model';
 import {encodeState, decodeState} from './_lib/urlState';
-import {useUrlState} from './_lib/useUrlState';
+import {localStore, useUrlState} from './_lib/useUrlState';
 import PeopleManager from './_components/PeopleManager';
 import ExpenseForm from './_components/ExpenseForm';
 import ExpenseList from './_components/ExpenseList';
@@ -18,6 +18,7 @@ const SplitterApp: React.FC = () => {
         init: emptyState,
         codec: {encode: encodeState, decode: decodeState},
         hydrate: decoded => ({type: 'HYDRATE', state: decoded}),
+        fallbackStore: localStore('splitter:v1'),
     });
     const [copied, setCopied] = useState(false);
 
@@ -61,8 +62,9 @@ const SplitterApp: React.FC = () => {
             <header className={styles.header}>
                 <h1 className={styles.title}>Splitter</h1>
                 <p className={styles.subtitle}>
-                    Who owes whom how much. Your data lives in this page's URL -
-                    bookmark or share the link to keep or send the session.
+                    Who owes whom how much. Your session lives in this page's URL
+                    and is also saved in this browser - share the link to send it
+                    to others.
                 </p>
                 <div className={styles.headerActions}>
                     <button

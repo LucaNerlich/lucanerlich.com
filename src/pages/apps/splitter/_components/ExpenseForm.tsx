@@ -14,7 +14,6 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
     const [paidBy, setPaidBy] = useState<string>(people[0]?.id ?? '');
     const [error, setError] = useState<string | null>(null);
     const descriptionRef = useRef<HTMLInputElement>(null);
-    const submitRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         if (!people.some(p => p.id === paidBy)) {
@@ -26,7 +25,11 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
         e.preventDefault();
         setError(null);
         const cents = toCents(amount);
-        if (cents === null || cents <= 0) {
+        if (cents === null) {
+            setError('Enter an amount like 12.50 or 12,50 (at most two decimals).');
+            return;
+        }
+        if (cents <= 0) {
             setError('Amount must be greater than 0.');
             return;
         }
@@ -55,32 +58,19 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
                         placeholder="Dinner, taxi, groceries…"
                         disabled={disabled}
                         className={styles.input}
-                        onKeyDown={e => {
-                            if (e.key === 'Tab' && e.shiftKey) {
-                                e.preventDefault();
-                                submitRef.current?.focus();
-                            }
-                        }}
                     />
                 </label>
                 <label className={styles.fieldLabel}>
                     <span>Amount (€)</span>
                     <input
-                        type="number"
+                        type="text"
                         value={amount}
                         onChange={e => setAmount(e.target.value)}
-                        step="0.01"
-                        min="0"
                         inputMode="decimal"
+                        autoComplete="off"
                         placeholder="0.00"
                         disabled={disabled}
                         className={styles.input}
-                        onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                (e.currentTarget.form?.querySelector('select') as HTMLElement | null)?.focus();
-                            }
-                        }}
                     />
                 </label>
                 <label className={styles.fieldLabel}>
@@ -112,16 +102,9 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
             {error && <p className={styles.error}>{error}</p>}
             <div>
                 <button
-                    ref={submitRef}
                     type="submit"
                     className={styles.primaryButton}
                     disabled={disabled}
-                    onKeyDown={e => {
-                        if (e.key === 'Tab' && !e.shiftKey) {
-                            e.preventDefault();
-                            descriptionRef.current?.focus();
-                        }
-                    }}
                 >
                     Add expense
                 </button>

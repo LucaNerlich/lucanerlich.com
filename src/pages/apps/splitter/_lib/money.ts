@@ -11,9 +11,9 @@ export const toCents = (value: string | number): number | null => {
     // an optional '.' or ',' separator and at most two fraction digits are
     // accepted; everything else (scientific notation, thousands separators)
     // is rejected as invalid.
-    const match = value.trim().match(/^(\d+)(?:[.,](\d{0,2}))?$/);
+    const match = value.trim().match(/^(?=[.,]?\d)(\d*)(?:[.,](\d{0,2}))?$/);
     if (!match) return null;
-    const cents = Number(match[1]) * 100 + Number((match[2] ?? '').padEnd(2, '0'));
+    const cents = Number(match[1] || '0') * 100 + Number((match[2] ?? '').padEnd(2, '0'));
     return Number.isSafeInteger(cents) ? cents : null;
 };
 

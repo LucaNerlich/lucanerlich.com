@@ -77,8 +77,8 @@ const ResultsPanel: React.FC<Props> = ({state}) => {
                 <p className={styles.muted}>Everyone is settled up.</p>
             ) : (
                 <ul className={styles.transferList}>
-                    {transfers.map((t, i) => (
-                        <li key={i} className={styles.transferRow}>
+                    {transfers.map(t => (
+                        <li key={`${t.from}-${t.to}`} className={styles.transferRow}>
                             <span className={styles.transferFrom}>{nameOf(t.from)}</span>
                             <span className={styles.transferArrow} aria-hidden>
                                 →

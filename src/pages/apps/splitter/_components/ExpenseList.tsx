@@ -26,24 +26,27 @@ const ExpenseList: React.FC<Props> = ({expenses, people, onRemove}) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {expenses.map(e => (
-                        <tr key={e.id}>
-                            <td>{e.description}</td>
-                            <td className={styles.numCell}>{formatMoney(e.cents)}</td>
-                            <td>{nameOf(e.paidBy)}</td>
-                            <td className={styles.actionCell}>
-                                <button
-                                    type="button"
-                                    className={styles.chipRemove}
-                                    onClick={() => onRemove(e.id)}
-                                    aria-label={`Remove expense ${e.description}`}
-                                    title="Remove expense"
-                                >
-                                    ×
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
+                    {expenses.map(e => {
+                        const label = e.description || 'Untitled expense';
+                        return (
+                            <tr key={e.id}>
+                                <td className={e.description ? undefined : styles.muted}>{label}</td>
+                                <td className={styles.numCell}>{formatMoney(e.cents)}</td>
+                                <td>{nameOf(e.paidBy)}</td>
+                                <td className={styles.actionCell}>
+                                    <button
+                                        type="button"
+                                        className={styles.chipRemove}
+                                        onClick={() => onRemove(e.id)}
+                                        aria-label={`Remove expense ${label}`}
+                                        title="Remove expense"
+                                    >
+                                        ×
+                                    </button>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>

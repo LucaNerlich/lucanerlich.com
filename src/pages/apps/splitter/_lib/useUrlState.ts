@@ -1,8 +1,9 @@
 // Reusable URL-persisted reducer.
 //
 // Owns the persistence lifecycle that was previously hand-wired into the view:
-//   - hydrate from the store once on mount and on hashchange navigation
-//   - debounce writes back to the store on every state change
+//   - hydrate from the store once on mount (falling back to an optional
+//     secondary store such as localStorage) and on hashchange navigation
+//   - debounce writes back to the store(s) on every state change
 //   - guard against writing before the first hydrate has run
 //   - skip the initial write when no valid state was read from the URL, so
 //     fresh visits don't gain a junk hash and foreign hashes survive
@@ -42,6 +43,28 @@ export const hashStore = (): StateStore => ({
     },
 });
 
+/**
+ * Store backed by `localStorage` under `key`. Storage can be unavailable
+ * (private mode, disabled cookies, quota), so every access fails soft: reads
+ * fall back to an empty string and failed writes are dropped.
+ */
+export const localStore = (key: string): StateStore => ({
+    read: () => {
+        try {
+            return window.localStorage.getItem(key) ?? '';
+        } catch {
+            return '';
+        }
+    },
+    write: encoded => {
+        try {
+            window.localStorage.setItem(key, encoded);
+        } catch {
+            // storage unavailable or full - the URL hash still holds the state
+        }
+    },
+});
+
 type UseUrlStateArgs<S, A> = {
     reducer: Reducer<S, A>;
     init: () => S;
@@ -49,6 +72,11 @@ type UseUrlStateArgs<S, A> = {
     /** Builds the action that loads a decoded state into the reducer. */
     hydrate: (decoded: S) => A;
     store?: StateStore;
+    /**
+     * Optional secondary store (e.g. localStorage). Read on mount only when
+     * the primary store holds no valid state; written alongside the primary.
+     */
+    fallbackStore?: StateStore;
     debounceMs?: number;
 };
 
@@ -58,10 +86,12 @@ export function useUrlState<S, A>({
     codec,
     hydrate,
     store,
+    fallbackStore,
     debounceMs = 150,
 }: UseUrlStateArgs<S, A>): [S, Dispatch<A>] {
     const [state, dispatch] = useReducer(reducer, undefined, init);
     const storeRef = useRef<StateStore | null>(null);
+    const fallbackRef = useRef<StateStore | undefined>(fallbackStore);
     const hydratedRef = useRef(false);
     const hadInitialStateRef = useRef(false);
     const wroteOnceRef = useRef(false);
@@ -71,12 +101,16 @@ export function useUrlState<S, A>({
     }
 
     useEffect(() => {
-        const raw = storeRef.current!.read();
-        if (raw) {
+        // A valid shared link always wins; the fallback store only restores
+        // the last session when the URL carries no usable state.
+        for (const source of [storeRef.current!, fallbackRef.current]) {
+            const raw = source?.read();
+            if (!raw) continue;
             const decoded = codec.decode(raw);
             if (decoded) {
                 hadInitialStateRef.current = true;
                 dispatch(hydrate(decoded));
+                break;
             }
         }
         hydratedRef.current = true;
@@ -110,7 +144,9 @@ export function useUrlState<S, A>({
         }
         wroteOnceRef.current = true;
         const handle = window.setTimeout(() => {
-            storeRef.current!.write(codec.encode(state));
+            const encoded = codec.encode(state);
+            storeRef.current!.write(encoded);
+            fallbackRef.current?.write(encoded);
         }, debounceMs);
         return () => window.clearTimeout(handle);
         // eslint-disable-next-line react-hooks/exhaustive-deps
