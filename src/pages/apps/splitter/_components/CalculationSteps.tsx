@@ -182,8 +182,13 @@ const CalculationSteps: React.FC<Props> = ({state, totalCents, balances, transfe
                 <li>
                     <span className={styles.calcStepLabel}>People and base share</span>
                     <code className={styles.calcInline}>
-                        N = {N},&nbsp; s = ⌊{formatMoney(totalCents)} / {N}⌋ ={' '}
-                        {formatMoney(baseShare)},&nbsp; r = {remainder}
+                        N = {N}
+                    </code>
+                    <code className={styles.calcInline}>
+                        s = ⌊{totalCents} / {N}⌋ = {baseShare} cents (= {formatMoney(baseShare)})
+                    </code>
+                    <code className={styles.calcInline}>
+                        r = {totalCents} − {baseShare}⋅{N} = {remainder}
                         {remainder === 1 ? ' cent' : ' cents'}
                     </code>
                     {remainder > 0 && (
