@@ -1,4 +1,18 @@
-const EUR = new Intl.NumberFormat(undefined, {style: 'currency', currency: 'EUR'});
+import type {Currency} from './types';
+
+// All user-facing money output goes through Intl, using the visitor's locale
+// (`undefined`), so symbols, separators and sign placement match their system.
+const CURRENCY: Currency = 'EUR';
+const MONEY = new Intl.NumberFormat(undefined, {style: 'currency', currency: CURRENCY});
+const SIGNED_MONEY = new Intl.NumberFormat(undefined, {
+    style: 'currency',
+    currency: CURRENCY,
+    signDisplay: 'exceptZero',
+});
+const PLAIN_AMOUNT = new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: MONEY.resolvedOptions().minimumFractionDigits,
+    maximumFractionDigits: MONEY.resolvedOptions().maximumFractionDigits,
+});
 
 export const toCents = (value: string | number): number | null => {
     if (typeof value === 'number') {
@@ -19,4 +33,17 @@ export const toCents = (value: string | number): number | null => {
 
 export const fromCents = (cents: number): number => cents / 100;
 
-export const formatMoney = (cents: number): string => EUR.format(fromCents(cents));
+export const formatMoney = (cents: number): string => MONEY.format(fromCents(cents));
+
+/** Balance-style output: "+€5.00" / "-€5.00" / "€0.00", sign placed by the locale. */
+export const formatSignedMoney = (cents: number): string => SIGNED_MONEY.format(fromCents(cents));
+
+/** Locale currency symbol, e.g. "€", for field labels. */
+export const currencySymbol: string =
+    MONEY.formatToParts(0).find(part => part.type === 'currency')?.value ?? CURRENCY;
+
+/** Locale-formatted zero amount ("0.00" / "0,00") for input placeholders. */
+export const amountPlaceholder: string = PLAIN_AMOUNT.format(0);
+
+/** Locale-formatted sample amount ("12.50" / "12,50") for validation hints. */
+export const amountExample: string = PLAIN_AMOUNT.format(12.5);

@@ -2,7 +2,7 @@ import React, {useMemo} from 'react';
 import type {AppState} from '../_lib/types';
 import {summarize} from '../_lib/settlement';
 import {indexPeople, nameFrom} from '../_lib/people';
-import {formatMoney} from '../_lib/money';
+import {formatMoney, formatSignedMoney} from '../_lib/money';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -59,14 +59,10 @@ const ResultsPanel: React.FC<Props> = ({state}) => {
                             : net < 0
                               ? styles.balanceNegative
                               : styles.balanceZero;
-                    const sign = net > 0 ? '+' : '';
                     return (
                         <li key={p.id} className={styles.balanceRow}>
                             <span>{p.name}</span>
-                            <span className={cls}>
-                                {sign}
-                                {formatMoney(net)}
-                            </span>
+                            <span className={cls}>{formatSignedMoney(net)}</span>
                         </li>
                     );
                 })}

@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import type {Person} from '../_lib/types';
-import {toCents} from '../_lib/money';
+import {amountExample, amountPlaceholder, currencySymbol, toCents} from '../_lib/money';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -26,7 +26,7 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
         setError(null);
         const cents = toCents(amount);
         if (cents === null) {
-            setError('Enter an amount like 12.50 or 12,50 (at most two decimals).');
+            setError(`Enter an amount like ${amountExample} (at most two decimals, no thousands separators).`);
             return;
         }
         if (cents <= 0) {
@@ -61,14 +61,14 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
                     />
                 </label>
                 <label className={styles.fieldLabel}>
-                    <span>Amount (€)</span>
+                    <span>Amount ({currencySymbol})</span>
                     <input
                         type="text"
                         value={amount}
                         onChange={e => setAmount(e.target.value)}
                         inputMode="decimal"
                         autoComplete="off"
-                        placeholder="0.00"
+                        placeholder={amountPlaceholder}
                         disabled={disabled}
                         className={styles.input}
                     />
