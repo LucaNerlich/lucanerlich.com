@@ -49,10 +49,13 @@ const ExpenseList: React.FC<Props> = ({
                         const participantNames = e.participants
                             .map(id => nameOf(id))
                             .join(', ');
-                        const splitLabel =
-                            e.split.mode === 'equal'
-                                ? `${messages.t('splitEqual')} · ${participantNames}`
-                                : `${e.split.mode} · ${participantNames}`;
+                        const splitKeys = {
+                            equal: 'splitEqual',
+                            shares: 'splitShares',
+                            percent: 'splitPercent',
+                            exact: 'splitExact',
+                        } as const;
+                        const splitLabel = `${messages.t(splitKeys[e.split.mode])} · ${participantNames}`;
                         return (
                             <React.Fragment key={e.id}>
                                 <tr>

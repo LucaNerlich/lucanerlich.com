@@ -28,10 +28,10 @@ export const importJson = (raw: string): AppState | null => {
             currency?: Currency;
             paidTransferKeys?: string[];
         };
-        if (typeof data.encoded === 'string') {
-            return decodeState(data.encoded);
-        }
-        if (data.state && Array.isArray(data.state.people) && Array.isArray(data.state.expenses)) {
+        if ('state' in data) {
+            if (!data.state || !Array.isArray(data.state.people) || !Array.isArray(data.state.expenses)) {
+                return null;
+            }
             return decodeState(
                 encodeState({
                     ...data.state,
@@ -39,6 +39,9 @@ export const importJson = (raw: string): AppState | null => {
                     paidTransferKeys: data.state.paidTransferKeys ?? [],
                 }),
             );
+        }
+        if (typeof data.encoded === 'string') {
+            return decodeState(data.encoded);
         }
         if (Array.isArray(data.people) && Array.isArray(data.expenses)) {
             return decodeState(
@@ -76,8 +79,8 @@ export const exportCsv = (state: AppState): string => {
 };
 
 const csvEscape = (value: string): string => {
-    if (/[",\n]/.test(value)) return `"${value.replace(/"/g, '""')}"`;
-    return value;
+    const literal = /^[=+@\-\t\r\n]/.test(value) ? `'${value}` : value;
+    return `"${literal.replace(/"/g, '""')}"`;
 };
 
 export const transfersAsText = (

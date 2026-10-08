@@ -56,8 +56,6 @@ const stripPersonFromExpenses = (expenses: Expense[], personId: string): Expense
                 // Dropping a person invalidates percent totals - fall back to equal.
                 return {...e, participants, split: equalSplit()};
             }
-            const amounts = {...e.split.amounts};
-            delete amounts[personId];
             // Exact amounts no longer sum - fall back to equal.
             return {...e, participants, split: equalSplit()};
         })
@@ -143,7 +141,9 @@ export const applyAction = (state: AppState, action: Action): AppState => {
             return {...state, expenses: [...state.expenses, copy]};
         }
         case 'SET_CURRENCY':
-            return {...state, currency: action.currency};
+            return state.currency === action.currency
+                ? state
+                : {...state, currency: action.currency, paidTransferKeys: []};
         case 'TOGGLE_TRANSFER_PAID': {
             const has = state.paidTransferKeys.includes(action.key);
             return {

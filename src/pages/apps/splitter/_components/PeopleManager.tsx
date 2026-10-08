@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import type {Person} from '../_lib/types';
 import type {Messages} from '../_lib/messages';
 import styles from '../splitter.module.css';
@@ -22,6 +22,7 @@ const PeopleManager: React.FC<Props> = ({
     const [error, setError] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editName, setEditName] = useState('');
+    const renameCancelled = useRef(false);
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,6 +39,7 @@ const PeopleManager: React.FC<Props> = ({
     };
 
     const startRename = (p: Person) => {
+        renameCancelled.current = false;
         setEditingId(p.id);
         setEditName(p.name);
         setError(null);
@@ -75,13 +77,20 @@ const PeopleManager: React.FC<Props> = ({
                                 autoFocus
                                 aria-label={`Rename ${p.name}`}
                                 onChange={e => setEditName(e.target.value)}
-                                onBlur={commitRename}
+                                onBlur={() => {
+                                    if (renameCancelled.current) {
+                                        renameCancelled.current = false;
+                                        return;
+                                    }
+                                    commitRename();
+                                }}
                                 onKeyDown={e => {
                                     if (e.key === 'Enter') {
                                         e.preventDefault();
                                         commitRename();
                                     }
                                     if (e.key === 'Escape') {
+                                        renameCancelled.current = true;
                                         setEditingId(null);
                                     }
                                 }}

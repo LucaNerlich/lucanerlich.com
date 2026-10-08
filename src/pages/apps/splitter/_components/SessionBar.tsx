@@ -99,8 +99,9 @@ const SessionBar: React.FC<Props> = ({
                     className={styles.secondaryButton}
                     onClick={() => {
                         const text = settlementSummaryText(state);
-                        const w = window.open('', '_blank', 'noopener,noreferrer');
+                        const w = window.open('', '_blank');
                         if (!w) return;
+                        w.opener = null;
                         w.document.write(
                             `<pre style="font:14px/1.5 system-ui,sans-serif;padding:1.5rem;white-space:pre-wrap">${escapeHtml(text)}</pre>`,
                         );

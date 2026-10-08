@@ -1,5 +1,6 @@
 import type {AppState, Currency, Expense, Person, Split} from './types';
 import {equalSplit, isCurrency} from './types';
+import {validateSplit} from './split';
 
 // Compact wire formats. v1 links keep working; everything encodes as v2.
 
@@ -121,14 +122,17 @@ const fromWireV2 = (w: WireV2): AppState => {
             const participants = (Array.isArray(participantsRaw) ? participantsRaw : [])
                 .map(String)
                 .filter(pid => personIds.has(pid));
-            const fallback = people.map(p => p.id);
+            const filteredParticipants = participants.length > 0
+                ? [...new Set(participants)]
+                : people.map(p => p.id);
+            const split = splitFromWire(splitRaw);
             return {
                 id: String(id),
                 description: String(description),
                 cents,
                 paidBy: String(paidBy),
-                participants: participants.length > 0 ? [...new Set(participants)] : fallback,
-                split: splitFromWire(splitRaw),
+                participants: filteredParticipants,
+                split: validateSplit(split, filteredParticipants, cents) ? equalSplit() : split,
             };
         });
     const currency: Currency = isCurrency(w.c) ? w.c : 'EUR';
@@ -146,7 +150,7 @@ const toBase64Url = (bytes: Uint8Array): string => {
 
 const fromBase64Url = (s: string): Uint8Array => {
     const pad = s.length % 4 === 0 ? '' : '='.repeat(4 - (s.length % 4));
-    const b64 = s.replace(/-/g, '+').replace(/\//g, '/') + pad;
+    const b64 = s.replace(/-/g, '+').replace(/_/g, '/') + pad;
     const binary = atob(b64);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);

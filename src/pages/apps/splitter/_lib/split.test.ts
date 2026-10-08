@@ -5,7 +5,8 @@ import {computeBalances, computeSettlement, summarize} from './settlement';
 import {applyAction} from './model';
 import {decodeState, encodeState} from './urlState';
 import {demoState} from './demo';
-import type {AppState, Expense} from './types';
+import {exportCsv, exportJson, importJson} from './io';
+import type {AppState, Expense, Split} from './types';
 import {emptyState, equalSplit} from './types';
 
 describe('allocateEqual', () => {
@@ -137,10 +138,34 @@ describe('settlement with participants and payer-covers', () => {
 describe('url codec', () => {
     it('round-trips v2 state', () => {
         const state = demoState();
-        const again = decodeState(encodeState(state));
-        assert.ok(again);
-        assert.equal(again!.expenses.length, state.expenses.length);
-        assert.equal(again!.currency, 'EUR');
+        state.people[0].name = 'Alice 🏿';
+        const encoded = encodeState(state);
+        assert.ok(encoded.includes('_'));
+        assert.deepEqual(decodeState(encoded), state);
+    });
+
+    it('falls back to equal when decoded splits are invalid after filtering participants', () => {
+        const splits: Split[] = [
+            {mode: 'shares', weights: {a: 0, b: 1}},
+            {mode: 'percent', percents: {a: 50, b: 40}},
+            {mode: 'exact', amounts: {a: 100, b: 100}},
+            {mode: 'percent', percents: {a: 50, b: 25, missing: 25}},
+        ];
+        for (const split of splits) {
+            const state: AppState = {
+                ...emptyState(),
+                people: [{id: 'a', name: 'A'}, {id: 'b', name: 'B'}],
+                expenses: [{
+                    id: 'e', description: 'Lunch', cents: 1000, paidBy: 'a',
+                    participants: ['a', 'b', 'missing'], split,
+                }],
+            };
+            const decoded = decodeState(encodeState(state));
+            assert.ok(decoded);
+            assert.deepEqual(decoded.expenses[0].participants, ['a', 'b']);
+            assert.deepEqual(decoded.expenses[0].split, equalSplit());
+            assert.equal([...allocateExpense(decoded.expenses[0]).values()].reduce((a, b) => a + b, 0), 1000);
+        }
     });
 
     it('migrates v1 wire', () => {
@@ -167,6 +192,14 @@ describe('url codec', () => {
 });
 
 describe('model', () => {
+    it('clears paid transfers only when currency changes', () => {
+        const state = {...demoState(), paidTransferKeys: ['a|b|100']};
+        assert.equal(applyAction(state, {type: 'SET_CURRENCY', currency: 'EUR'}), state);
+        assert.deepEqual(applyAction(state, {type: 'SET_CURRENCY', currency: 'USD'}), {
+            ...state, currency: 'USD', paidTransferKeys: [],
+        });
+    });
+
     it('renames and duplicates', () => {
         let state = emptyState();
         state = applyAction(state, {type: 'ADD_PERSON', name: 'Ada'});
@@ -188,5 +221,38 @@ describe('model', () => {
         state = applyAction(state, {type: 'DUPLICATE_EXPENSE', id: state.expenses[0].id});
         assert.equal(state.expenses.length, 2);
         assert.notEqual(state.expenses[0].id, state.expenses[1].id);
+    });
+});
+
+describe('session files', () => {
+    it('imports edits to exported state ahead of stale encoded data', () => {
+        const state = demoState();
+        const data = JSON.parse(exportJson(state));
+        data.state.people[0].name = 'Edited name';
+        assert.deepEqual(importJson(JSON.stringify(data)), data.state);
+        assert.deepEqual(importJson(JSON.stringify({encoded: data.encoded})), state);
+        assert.deepEqual(importJson(JSON.stringify(state)), state);
+    });
+
+    it('rejects malformed state instead of silently restoring encoded data', () => {
+        const encoded = encodeState(demoState());
+        for (const state of [null, {}, {people: [], expenses: null}]) {
+            assert.equal(importJson(JSON.stringify({encoded, state})), null);
+        }
+    });
+
+    it('quotes CSV text and neutralizes formula prefixes in descriptions and names', () => {
+        for (const prefix of ['=', '+', '-', '@', '\t', '\r', '\n']) {
+            const state = demoState();
+            state.expenses = [state.expenses[0]];
+            state.expenses[0].description = `${prefix}SUM(1)`;
+            state.people[0].name = `${prefix}Alice`;
+            const row = exportCsv(state).slice(exportCsv(state).indexOf('\n') + 1);
+            assert.equal(row, `"'${prefix}SUM(1)",72.00,EUR,"'${prefix}Alice","'${prefix}Alice;Bob;Carol",equal\n`);
+        }
+        const state = demoState();
+        state.expenses = [state.expenses[0]];
+        state.expenses[0].description = 'Tea, "cake"';
+        assert.ok(exportCsv(state).includes('"Tea, ""cake""",72.00'));
     });
 });

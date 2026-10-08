@@ -33,8 +33,13 @@ export const draftFromPeople = (people: Person[], previous?: SplitDraft): SplitD
     if (next.splitMode === 'percent') {
         const missing = next.participants.filter(id => !previous?.percents[id]);
         if (missing.length === next.participants.length && next.participants.length > 0) {
-            const each = (100 / next.participants.length).toFixed(2);
-            for (const id of next.participants) next.percents[id] = each;
+            const each = Math.floor(10000 / next.participants.length);
+            next.participants.forEach((id, index) => {
+                const share = index === next.participants.length - 1
+                    ? 10000 - each * index
+                    : each;
+                next.percents[id] = (share / 100).toFixed(2);
+            });
         }
     }
     return next;
@@ -168,10 +173,10 @@ const SplitFields: React.FC<Props> = ({
                     className={styles.select}
                     value={draft.splitMode}
                     onChange={e =>
-                        onChange({
+                        onChange(draftFromPeople(people, {
                             ...draft,
                             splitMode: e.target.value as Split['mode'],
-                        })
+                        }))
                     }
                 >
                     <option value="equal">{t('splitEqual')}</option>

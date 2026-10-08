@@ -7,8 +7,7 @@ export type Currency =
     | 'CZK'
     | 'SEK'
     | 'NOK'
-    | 'DKK'
-    | 'JPY';
+    | 'DKK';
 
 export const CURRENCIES: readonly Currency[] = [
     'EUR',
@@ -20,7 +19,6 @@ export const CURRENCIES: readonly Currency[] = [
     'SEK',
     'NOK',
     'DKK',
-    'JPY',
 ] as const;
 
 export const isCurrency = (value: string): value is Currency =>
