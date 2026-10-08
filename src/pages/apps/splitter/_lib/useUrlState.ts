@@ -2,22 +2,23 @@
 //
 // Owns the persistence lifecycle that was previously hand-wired into the view:
 //   - hydrate from the store once on mount (falling back to an optional
-//     secondary store such as localStorage) and on hashchange navigation
+//     secondary store such as localStorage) and on browser navigation
 //   - debounce writes back to the store(s) on every state change
 //   - guard against writing before the first hydrate has run
 //   - skip the initial write when no valid state was read from the URL, so
-//     fresh visits don't gain a junk hash and foreign hashes survive
+//     fresh visits don't gain a junk query/hash and foreign URLs survive
 //
 // The codec (encode/decode) and the store (read/write) are adapters, so the
-// same interface drives the live URL hash in production and an in-memory store
-// in tests or future apps.
+// same interface drives the live URL in production and an in-memory store
+// in tests or future apps. Encode/decode may be async (compressed payloads).
 
-import {useEffect, useReducer, useRef} from 'react';
+import {useEffect, useReducer, useRef, useState} from 'react';
 import type {Dispatch, Reducer} from 'react';
+import {readEncodedFromUrl, writeEncodedToUrl} from './urlState';
 
 export type Codec<S> = {
-    encode: (state: S) => string;
-    decode: (raw: string) => S | null;
+    encode: (state: S) => string | Promise<string>;
+    decode: (raw: string) => S | null | Promise<S | null>;
 };
 
 export type StateStore = {
@@ -26,19 +27,37 @@ export type StateStore = {
 };
 
 /**
- * Default store backed by the URL hash. Reads everything after `#`, and writes
- * via `history.replaceState` so it never adds browser history entries.
+ * Legacy store backed by the URL hash. Prefer `queryStore` for shareable
+ * links -- chat apps often truncate clickable URLs at `#`.
  */
 export const hashStore = (): StateStore => ({
     read: () => window.location.hash.slice(1),
     write: encoded => {
-        const newHash = '#' + encoded;
+        const newHash = encoded ? '#' + encoded : '';
         if (window.location.hash !== newHash) {
             window.history.replaceState(
                 null,
                 '',
                 window.location.pathname + window.location.search + newHash,
             );
+        }
+    },
+});
+
+/**
+ * Store backed by the `?s=` query param (see `SHARE_PARAM`). Reads fall back
+ * to a legacy `#…` hash so older shared links still open. Writes always use
+ * the query param and clear the hash.
+ */
+export const queryStore = (): StateStore => ({
+    read: () => readEncodedFromUrl(new URL(window.location.href)),
+    write: encoded => {
+        const next = writeEncodedToUrl(new URL(window.location.href), encoded);
+        const href = next.pathname + next.search + next.hash;
+        const current =
+            window.location.pathname + window.location.search + window.location.hash;
+        if (href !== current) {
+            window.history.replaceState(null, '', href);
         }
     },
 });
@@ -60,7 +79,7 @@ export const localStore = (key: string): StateStore => ({
         try {
             window.localStorage.setItem(key, encoded);
         } catch {
-            // storage unavailable or full - the URL hash still holds the state
+            // storage unavailable or full - the URL still holds the state
         }
     },
 });
@@ -90,54 +109,78 @@ export function useUrlState<S, A>({
     debounceMs = 150,
 }: UseUrlStateArgs<S, A>): [S, Dispatch<A>] {
     const [state, dispatch] = useReducer(reducer, undefined, init);
+    const [ready, setReady] = useState(false);
     const storeRef = useRef<StateStore | null>(null);
     const fallbackRef = useRef<StateStore | undefined>(fallbackStore);
-    const hydratedRef = useRef(false);
     const hadInitialStateRef = useRef(false);
     const wroteOnceRef = useRef(false);
+    const codecRef = useRef(codec);
+    codecRef.current = codec;
 
     if (storeRef.current === null) {
-        storeRef.current = store ?? hashStore();
+        // Default to query-param persistence so freshly shared links survive
+        // chat-app URL truncation at `#`.
+        storeRef.current = store ?? queryStore();
     }
 
     useEffect(() => {
-        // A valid shared link always wins; the fallback store only restores
-        // the last session when the URL carries no usable state.
-        for (const source of [storeRef.current!, fallbackRef.current]) {
-            const raw = source?.read();
-            if (!raw) continue;
-            const decoded = codec.decode(raw);
-            if (decoded) {
-                hadInitialStateRef.current = true;
-                dispatch(hydrate(decoded));
-                break;
+        let cancelled = false;
+        void (async () => {
+            // A valid shared link always wins; the fallback store only restores
+            // the last session when the URL carries no usable state.
+            for (const source of [storeRef.current!, fallbackRef.current]) {
+                const raw = source?.read();
+                if (!raw) continue;
+                const decoded = await Promise.resolve(codecRef.current.decode(raw));
+                if (cancelled) return;
+                if (decoded) {
+                    hadInitialStateRef.current = true;
+                    dispatch(hydrate(decoded));
+                    break;
+                }
             }
-        }
-        hydratedRef.current = true;
+            if (!cancelled) setReady(true);
+        })();
+        return () => {
+            cancelled = true;
+        };
         // Mount-only hydrate; adapters are captured in refs.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        // Writes go through replaceState and never fire hashchange, so
-        // back/forward navigation between shared links is the only source.
-        const onHashChange = () => {
-            const raw = storeRef.current!.read();
-            // An empty hash keeps the current state on purpose: it is also the
-            // last session in the fallback store, so resetting here would wipe it.
-            if (!raw) return;
-            const decoded = codec.decode(raw);
-            if (decoded) dispatch(hydrate(decoded));
+        // Writes go through replaceState. Back/forward between shared links
+        // fires popstate (query) and, for legacy links, hashchange.
+        let navigationSequence = 0;
+        let cancelled = false;
+        const onNavigate = () => {
+            const sequence = ++navigationSequence;
+            void (async () => {
+                const raw = storeRef.current!.read();
+                // An empty URL payload keeps the current state on purpose: it is
+                // also the last session in the fallback store, so resetting here
+                // would wipe it.
+                if (!raw) return;
+                const decoded = await Promise.resolve(codecRef.current.decode(raw));
+                if (!cancelled && sequence === navigationSequence && decoded) {
+                    dispatch(hydrate(decoded));
+                }
+            })();
         };
-        window.addEventListener('hashchange', onHashChange);
-        return () => window.removeEventListener('hashchange', onHashChange);
+        window.addEventListener('popstate', onNavigate);
+        window.addEventListener('hashchange', onNavigate);
+        return () => {
+            cancelled = true;
+            window.removeEventListener('popstate', onNavigate);
+            window.removeEventListener('hashchange', onNavigate);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        if (!hydratedRef.current) return;
+        if (!ready) return;
         // Skip the initial write unless a valid state was hydrated: an empty
-        // hash must stay empty and a foreign/corrupt hash (anchors, links
+        // URL must stay empty and a foreign/corrupt fragment (anchors, links
         // from other apps or versions) must not be clobbered. All writes
         // after user interaction behave as before.
         if (!wroteOnceRef.current && !hadInitialStateRef.current) {
@@ -145,14 +188,22 @@ export function useUrlState<S, A>({
             return;
         }
         wroteOnceRef.current = true;
+        const scheduledUrl = window.location.href;
+        let cancelled = false;
         const handle = window.setTimeout(() => {
-            const encoded = codec.encode(state);
-            storeRef.current!.write(encoded);
-            fallbackRef.current?.write(encoded);
+            void (async () => {
+                const encoded = await Promise.resolve(codecRef.current.encode(state));
+                if (cancelled || window.location.href !== scheduledUrl) return;
+                storeRef.current!.write(encoded);
+                fallbackRef.current?.write(encoded);
+            })();
         }, debounceMs);
-        return () => window.clearTimeout(handle);
+        return () => {
+            cancelled = true;
+            window.clearTimeout(handle);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state, debounceMs]);
+    }, [state, debounceMs, ready]);
 
     return [state, dispatch];
 }

@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.32.1] - 2026-10-08
+
+### Fixed
+- Splitter share links use `?s=` (query) instead of `#…` (hash) so WhatsApp/iMessage and similar apps keep the full session URL clickable
+- Splitter session payloads are shorter: compact v3 wire + `deflate-raw` (`z.` prefix); legacy uncompressed v1/v2 `#`/`?s=` base64 JSON links still decode
+
+### Changed
+- Splitter copy-link / live URL persistence write query-param sessions and clear legacy hashes; old hash links still load
+
 ## [1.32.0] - 2026-10-07
 
 ### Added

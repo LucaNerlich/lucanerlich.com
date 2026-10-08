@@ -8,7 +8,7 @@ type Dict = Record<string, string>;
 const en: Dict = {
     title: 'Splitter',
     subtitle:
-        'Who owes whom how much. Your session lives in this page\'s URL and is also saved in this browser -- share the link to send it to others.',
+        'Who owes whom how much. Your session lives in the page URL (?s=…) and is also saved in this browser -- share the link to send it to others (works in WhatsApp and similar apps).',
     copyLink: 'Copy share link',
     copied: 'Copied!',
     reset: 'Reset',
@@ -52,7 +52,7 @@ const de: Dict = {
     ...en,
     title: 'Splitter',
     subtitle:
-        'Wer wem wie viel schuldet. Die Sitzung steckt in der URL und wird auch lokal gespeichert -- Link teilen, fertig.',
+        'Wer wem wie viel schuldet. Die Sitzung steckt in der URL (?s=…) und wird auch lokal gespeichert -- Link teilen (auch in WhatsApp).',
     copyLink: 'Link kopieren',
     copied: 'Kopiert!',
     reset: 'Zurücksetzen',

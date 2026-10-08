@@ -6,19 +6,19 @@ import type {Transfer} from './settlement';
 import {summarize} from './settlement';
 import {transferKey} from './types';
 
-export const exportJson = (state: AppState): string =>
+export const exportJson = async (state: AppState): Promise<string> =>
     JSON.stringify(
         {
             format: 'lucanerlich.splitter',
             version: 2,
-            encoded: encodeState(state),
+            encoded: await encodeState(state),
             state,
         },
         null,
         2,
     );
 
-export const importJson = (raw: string): AppState | null => {
+export const importJson = async (raw: string): Promise<AppState | null> => {
     try {
         const data = JSON.parse(raw) as {
             encoded?: string;
@@ -32,8 +32,10 @@ export const importJson = (raw: string): AppState | null => {
             if (!data.state || !Array.isArray(data.state.people) || !Array.isArray(data.state.expenses)) {
                 return null;
             }
+            // Prefer the editable `state` object (may be newer than `encoded`),
+            // and normalize through encode/decode so invariants hold.
             return decodeState(
-                encodeState({
+                await encodeState({
                     ...data.state,
                     v: 2,
                     paidTransferKeys: data.state.paidTransferKeys ?? [],
@@ -45,7 +47,7 @@ export const importJson = (raw: string): AppState | null => {
         }
         if (Array.isArray(data.people) && Array.isArray(data.expenses)) {
             return decodeState(
-                encodeState({
+                await encodeState({
                     v: 2,
                     currency: data.currency ?? 'EUR',
                     people: data.people,
