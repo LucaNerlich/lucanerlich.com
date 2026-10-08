@@ -31,13 +31,18 @@ pnpm run clear        # Clear Docusaurus cache (.docusaurus/)
 
 ### Testing
 
-There is **no test framework** configured. No unit tests, integration tests, or
-E2E tests exist. The only verification is `pnpm build`, which fails on:
+Primary verification is `pnpm build`, which fails on:
 - Broken internal links (`onBrokenLinks: 'throw'`)
 - Broken anchors (`onBrokenAnchors: 'throw'`)
 - Broken markdown links and images (via `markdown.hooks`)
 
 **Always run `pnpm build` after making changes** to verify nothing is broken.
+
+The Splitter app also has Node built-in tests (no extra test runner dependency):
+
+```bash
+pnpm test # node:test + type-stripping for splitter/_lib
+```
 
 ### Prose Linting
 

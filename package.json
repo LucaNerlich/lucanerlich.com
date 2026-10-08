@@ -1,6 +1,6 @@
 {
     "name": "lucanerlich.com",
-    "version": "1.31.1",
+    "version": "1.32.0",
     "private": true,
     "scripts": {
         "docusaurus": "docusaurus",
@@ -13,7 +13,8 @@
         "clear": "docusaurus clear",
         "serve": "docusaurus serve",
         "write-translations": "docusaurus write-translations",
-        "write-heading-ids": "docusaurus write-heading-ids"
+        "write-heading-ids": "docusaurus write-heading-ids",
+        "test": "node --experimental-loader ./scripts/ts-ext-resolve.mjs --experimental-strip-types --test src/pages/apps/splitter/_lib/*.test.ts"
     },
     "dependencies": {
         "@docusaurus/core": "^3.10.2",
@@ -35,7 +36,7 @@
         "typescript": "~7.0.2"
     },
     "engines": {
-        "node": "^22",
+        "node": "^22.6.0",
         "pnpm": "^10"
     },
     "packageManager": "pnpm@10.33.4+sha512.1c67b3b359b2d408119ba1ed289f34b8fc3c6873412bec6fd264fbdc82489e510fcbecb9ce9d22dae7f3b76269d8441046014bdca53b9979cd7a561ad631b800"

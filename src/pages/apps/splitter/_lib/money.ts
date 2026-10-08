@@ -1,18 +1,45 @@
 import type {Currency} from './types';
 
-// All user-facing money output goes through Intl, using the visitor's locale
-// (`undefined`), so symbols, separators and sign placement match their system.
-const CURRENCY: Currency = 'EUR';
-const MONEY = new Intl.NumberFormat(undefined, {style: 'currency', currency: CURRENCY});
-const SIGNED_MONEY = new Intl.NumberFormat(undefined, {
-    style: 'currency',
-    currency: CURRENCY,
-    signDisplay: 'exceptZero',
-});
-const PLAIN_AMOUNT = new Intl.NumberFormat(undefined, {
-    minimumFractionDigits: MONEY.resolvedOptions().minimumFractionDigits,
-    maximumFractionDigits: MONEY.resolvedOptions().maximumFractionDigits,
-});
+type Formatters = {
+    money: Intl.NumberFormat;
+    signed: Intl.NumberFormat;
+    plain: Intl.NumberFormat;
+    symbol: string;
+    placeholder: string;
+    example: string;
+};
+
+const cache = new Map<Currency, Formatters>();
+
+const buildFormatters = (currency: Currency): Formatters => {
+    const money = new Intl.NumberFormat(undefined, {style: 'currency', currency});
+    const signed = new Intl.NumberFormat(undefined, {
+        style: 'currency',
+        currency,
+        signDisplay: 'exceptZero',
+    });
+    const plain = new Intl.NumberFormat(undefined, {
+        minimumFractionDigits: money.resolvedOptions().minimumFractionDigits,
+        maximumFractionDigits: money.resolvedOptions().maximumFractionDigits,
+    });
+    return {
+        money,
+        signed,
+        plain,
+        symbol: money.formatToParts(0).find(part => part.type === 'currency')?.value ?? currency,
+        placeholder: plain.format(0),
+        example: plain.format(12.5),
+    };
+};
+
+export const formattersFor = (currency: Currency): Formatters => {
+    let cached = cache.get(currency);
+    if (!cached) {
+        cached = buildFormatters(currency);
+        cache.set(currency, cached);
+    }
+    return cached;
+};
 
 export const toCents = (value: string | number): number | null => {
     if (typeof value === 'number') {
@@ -33,17 +60,21 @@ export const toCents = (value: string | number): number | null => {
 
 export const fromCents = (cents: number): number => cents / 100;
 
-export const formatMoney = (cents: number): string => MONEY.format(fromCents(cents));
+export const formatMoney = (cents: number, currency: Currency = 'EUR'): string =>
+    formattersFor(currency).money.format(fromCents(cents));
 
-/** Balance-style output: "+€5.00" / "-€5.00" / "€0.00", sign placed by the locale. */
-export const formatSignedMoney = (cents: number): string => SIGNED_MONEY.format(fromCents(cents));
+/** Balance-style output with locale sign placement. */
+export const formatSignedMoney = (cents: number, currency: Currency = 'EUR'): string =>
+    formattersFor(currency).signed.format(fromCents(cents));
 
-/** Locale currency symbol, e.g. "€", for field labels. */
-export const currencySymbol: string =
-    MONEY.formatToParts(0).find(part => part.type === 'currency')?.value ?? CURRENCY;
+export const currencySymbol = (currency: Currency = 'EUR'): string =>
+    formattersFor(currency).symbol;
 
-/** Locale-formatted zero amount ("0.00" / "0,00") for input placeholders. */
-export const amountPlaceholder: string = PLAIN_AMOUNT.format(0);
+export const amountPlaceholder = (currency: Currency = 'EUR'): string =>
+    formattersFor(currency).placeholder;
 
-/** Locale-formatted sample amount ("12.50" / "12,50") for validation hints. */
-export const amountExample: string = PLAIN_AMOUNT.format(12.5);
+export const amountExample = (currency: Currency = 'EUR'): string =>
+    formattersFor(currency).example;
+
+/** Plain decimal string for inputs, always with a dot (form-safe). */
+export const centsToInput = (cents: number): string => (cents / 100).toFixed(2);

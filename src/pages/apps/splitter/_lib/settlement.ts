@@ -1,51 +1,52 @@
-// Greedy minimum-transactions settlement.
+// Greedy minimum-transactions settlement over per-expense allocations.
 // Note: the optimal minimum-transactions problem is NP-hard. Greedy matching
 // of largest debtor with largest creditor produces at most N-1 transactions
 // and is near-optimal in practice - the standard trade-off for this kind of
 // "splitwise"-style UX.
 
-import type {AppState} from './types';
+import type {AppState, Expense} from './types';
+import {allocateExpense} from './split';
 
 export type Transfer = {from: string; to: string; cents: number};
 
-// The single definition of how a bill is split: each person's fair share of
-// `totalCents`, in integer cents. The remainder cent from an uneven split is
-// distributed deterministically to the first `total mod N` people in id-sorted
-// order, so the shares sum to exactly `totalCents`. Everything that needs a
-// per-person obligation derives from here rather than re-deriving the math.
-export const fairShares = (totalCents: number, sortedIds: string[]): Map<string, number> => {
-    const shares = new Map<string, number>();
-    const N = sortedIds.length;
-    if (N === 0) return shares;
+/** @deprecated Prefer allocateEqual from ./split - kept as a thin alias for tests/callers. */
+export {allocateEqual as fairShares} from './split';
 
-    const baseShare = Math.floor(totalCents / N);
-    const remainder = totalCents - baseShare * N;
-    sortedIds.forEach((id, i) => shares.set(id, baseShare + (i < remainder ? 1 : 0)));
-    return shares;
+export type ExpenseBreakdown = {
+    expense: Expense;
+    shares: Map<string, number>;
+};
+
+/**
+ * Per-expense obligation maps. Each `shares` map sums to that expense's cents
+ * when allocation succeeds; failed allocations are omitted.
+ */
+export const expenseBreakdowns = (state: AppState): ExpenseBreakdown[] => {
+    const known = new Set(state.people.map(p => p.id));
+    const out: ExpenseBreakdown[] = [];
+    for (const expense of state.expenses) {
+        if (!known.has(expense.paidBy)) continue;
+        const participants = expense.participants.filter(id => known.has(id));
+        if (participants.length === 0) continue;
+        const normalized: Expense = {...expense, participants};
+        const shares = allocateExpense(normalized);
+        if (shares.size === 0) continue;
+        out.push({expense: normalized, shares});
+    }
+    return out;
 };
 
 // Returns a Map<personId, netCents> where positive = is owed, negative = owes.
-// All amounts are integer cents; balances sum to exactly 0 because every
-// person's obligation comes from the same `fairShares` distribution.
+// Balances sum to 0 when every expense allocates cleanly.
 export const computeBalances = (state: AppState): Map<string, number> => {
     const balances = new Map<string, number>();
     for (const p of state.people) balances.set(p.id, 0);
 
-    if (state.people.length === 0) return balances;
-
-    const collator = new Intl.Collator('en', {sensitivity: 'variant'});
-    const sortedIds = [...state.people.map(p => p.id)].sort(collator.compare);
-
-    let total = 0;
-    for (const e of state.expenses) {
-        if (balances.has(e.paidBy)) {
-            balances.set(e.paidBy, (balances.get(e.paidBy) ?? 0) + e.cents);
-            total += e.cents;
+    for (const {expense, shares} of expenseBreakdowns(state)) {
+        balances.set(expense.paidBy, (balances.get(expense.paidBy) ?? 0) + expense.cents);
+        for (const [id, share] of shares) {
+            balances.set(id, (balances.get(id) ?? 0) - share);
         }
-    }
-
-    for (const [id, share] of fairShares(total, sortedIds)) {
-        balances.set(id, (balances.get(id) ?? 0) - share);
     }
 
     return balances;
@@ -87,20 +88,16 @@ export type Summary = {
     perPersonCents: number;
     balances: Map<string, number>;
     transfers: Transfer[];
+    breakdowns: ExpenseBreakdown[];
 };
 
-// Single source of truth for everything the results view shows. Computing the
-// total, balances, per-person share and transfers in one place keeps the money
-// math in integer cents and stops callers re-deriving the total themselves.
 export const summarize = (state: AppState): Summary => {
-    const totalCents = state.expenses.reduce((acc, e) => acc + e.cents, 0);
+    const breakdowns = expenseBreakdowns(state);
+    const totalCents = breakdowns.reduce((acc, b) => acc + b.expense.cents, 0);
     const balances = computeBalances(state);
     const transfers = computeSettlement(balances);
     const N = state.people.length;
-    // Display-only average for the "Per person" line. The exact obligations live
-    // in `balances` (via `fairShares`); when the bill does not divide evenly the
-    // individual shares differ by a cent, so this rounded average is a headline
-    // figure, not a per-person amount anyone actually owes.
+    // Display-only average. Exact obligations live in `balances` / breakdowns.
     const perPersonCents = N > 0 ? Math.round(totalCents / N) : 0;
-    return {totalCents, perPersonCents, balances, transfers};
+    return {totalCents, perPersonCents, balances, transfers, breakdowns};
 };

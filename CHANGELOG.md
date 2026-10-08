@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.32.0] - 2026-10-07
+
+### Added
+- Splitter app v2: per-expense participants, unequal splits (shares / percent / exact), multi-currency, edit/rename/duplicate, example trip, JSON/CSV export-import, printable summary, copy transfers, mark transfers paid, collapsible math steps, en/de UI copy, and Node test coverage for allocation/settlement/codec
+
+### Changed
+- Splitter URL sessions encode as v2 (v1 shared links still decode and migrate)
+
 ## [1.31.1] - 2026-10-07
 
 ### Added

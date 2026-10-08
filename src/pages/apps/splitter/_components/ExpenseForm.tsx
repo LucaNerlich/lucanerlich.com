@@ -1,32 +1,57 @@
 import React, {useEffect, useRef, useState} from 'react';
-import type {Person} from '../_lib/types';
+import type {Currency, ExpenseInput, Person} from '../_lib/types';
 import {amountExample, amountPlaceholder, currencySymbol, toCents} from '../_lib/money';
+import {validateSplit} from '../_lib/split';
+import type {Messages} from '../_lib/messages';
+import SplitFields, {
+    buildSplit,
+    draftFromPeople,
+    type SplitDraft,
+} from './SplitFields';
 import styles from '../splitter.module.css';
 
 type Props = {
     people: Person[];
-    onAdd: (description: string, cents: number, paidBy: string) => void;
+    currency: Currency;
+    lastPaidBy?: string;
+    messages: Messages;
+    onAdd: (expense: ExpenseInput) => void;
 };
 
-const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
+const ExpenseForm: React.FC<Props> = ({
+    people,
+    currency,
+    lastPaidBy,
+    messages,
+    onAdd,
+}) => {
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
-    const [paidBy, setPaidBy] = useState<string>(people[0]?.id ?? '');
+    const [paidBy, setPaidBy] = useState<string>(lastPaidBy ?? people[0]?.id ?? '');
+    const [draft, setDraft] = useState<SplitDraft>(() => draftFromPeople(people));
     const [error, setError] = useState<string | null>(null);
     const descriptionRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (!people.some(p => p.id === paidBy)) {
-            setPaidBy(people[0]?.id ?? '');
+            setPaidBy(lastPaidBy && people.some(p => p.id === lastPaidBy)
+                ? lastPaidBy
+                : people[0]?.id ?? '');
         }
-    }, [people, paidBy]);
+    }, [people, paidBy, lastPaidBy]);
+
+    useEffect(() => {
+        setDraft(prev => draftFromPeople(people, prev));
+    }, [people]);
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         const cents = toCents(amount);
         if (cents === null) {
-            setError(`Enter an amount like ${amountExample} (at most two decimals, no thousands separators).`);
+            setError(
+                `Enter an amount like ${amountExample(currency)} (at most two decimals, no thousands separators).`,
+            );
             return;
         }
         if (cents <= 0) {
@@ -37,9 +62,26 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
             setError('Choose who paid.');
             return;
         }
-        onAdd(description.trim(), cents, paidBy);
+        const {split, error: splitBuildError} = buildSplit(draft);
+        if (splitBuildError) {
+            setError(splitBuildError);
+            return;
+        }
+        const splitError = validateSplit(split, draft.participants, cents);
+        if (splitError) {
+            setError(splitError);
+            return;
+        }
+        onAdd({
+            description: description.trim(),
+            cents,
+            paidBy,
+            participants: draft.participants,
+            split,
+        });
         setDescription('');
         setAmount('');
+        // Keep paidBy + split draft for "same as last" speed.
         descriptionRef.current?.focus();
     };
 
@@ -49,7 +91,9 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
         <form onSubmit={submit} className={styles.expenseForm}>
             <div className={styles.expenseFormGrid}>
                 <label className={styles.fieldLabel}>
-                    <span>Description <span className={styles.optional}>(optional)</span></span>
+                    <span>
+                        Description <span className={styles.optional}>(optional)</span>
+                    </span>
                     <input
                         ref={descriptionRef}
                         type="text"
@@ -61,14 +105,14 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
                     />
                 </label>
                 <label className={styles.fieldLabel}>
-                    <span>Amount ({currencySymbol})</span>
+                    <span>Amount ({currencySymbol(currency)})</span>
                     <input
                         type="text"
                         value={amount}
                         onChange={e => setAmount(e.target.value)}
                         inputMode="decimal"
                         autoComplete="off"
-                        placeholder={amountPlaceholder}
+                        placeholder={amountPlaceholder(currency)}
                         disabled={disabled}
                         className={styles.input}
                     />
@@ -99,6 +143,18 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
                     </select>
                 </label>
             </div>
+
+            {!disabled && (
+                <SplitFields
+                    people={people}
+                    paidBy={paidBy}
+                    currency={currency}
+                    draft={draft}
+                    onChange={setDraft}
+                    messages={messages}
+                />
+            )}
+
             {error && <p className={styles.error}>{error}</p>}
             <div>
                 <button
@@ -106,7 +162,7 @@ const ExpenseForm: React.FC<Props> = ({people, onAdd}) => {
                     className={styles.primaryButton}
                     disabled={disabled}
                 >
-                    Add expense
+                    {messages.t('addExpense')}
                 </button>
                 {disabled && (
                     <span className={styles.mutedInline}>Add at least one person first.</span>
