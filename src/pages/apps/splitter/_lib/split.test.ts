@@ -3,7 +3,15 @@ import assert from 'node:assert/strict';
 import {allocateByWeights, allocateEqual, allocateExpense, validateSplit} from './split';
 import {computeBalances, computeSettlement, summarize} from './settlement';
 import {applyAction} from './model';
-import {decodeState, encodeState} from './urlState';
+import {
+    COMPRESSED_PREFIX,
+    SHARE_PARAM,
+    buildShareUrl,
+    decodeState,
+    encodeState,
+    readEncodedFromUrl,
+    writeEncodedToUrl,
+} from './urlState';
 import {demoState} from './demo';
 import {exportCsv, exportJson, importJson} from './io';
 import type {AppState, Expense, Split} from './types';
@@ -136,15 +144,15 @@ describe('settlement with participants and payer-covers', () => {
 });
 
 describe('url codec', () => {
-    it('round-trips v2 state', () => {
+    it('round-trips compressed v3 state', async () => {
         const state = demoState();
         state.people[0].name = 'Alice 🏿';
-        const encoded = encodeState(state);
-        assert.ok(encoded.includes('_'));
-        assert.deepEqual(decodeState(encoded), state);
+        const encoded = await encodeState(state);
+        assert.ok(encoded.startsWith(COMPRESSED_PREFIX));
+        assert.deepEqual(await decodeState(encoded), state);
     });
 
-    it('falls back to equal when decoded splits are invalid after filtering participants', () => {
+    it('falls back to equal when decoded splits are invalid after filtering participants', async () => {
         const splits: Split[] = [
             {mode: 'shares', weights: {a: 0, b: 1}},
             {mode: 'percent', percents: {a: 50, b: 40}},
@@ -160,7 +168,7 @@ describe('url codec', () => {
                     participants: ['a', 'b', 'missing'], split,
                 }],
             };
-            const decoded = decodeState(encodeState(state));
+            const decoded = await decodeState(await encodeState(state));
             assert.ok(decoded);
             assert.deepEqual(decoded.expenses[0].participants, ['a', 'b']);
             assert.deepEqual(decoded.expenses[0].split, equalSplit());
@@ -168,7 +176,7 @@ describe('url codec', () => {
         }
     });
 
-    it('migrates v1 wire', () => {
+    it('migrates legacy uncompressed v1 and v2 base64url payloads', async () => {
         const v1 = {
             v: 1 as const,
             c: 'EUR',
@@ -183,11 +191,88 @@ describe('url codec', () => {
         let binary = '';
         for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
         const encoded = btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-        const state = decodeState(encoded);
+        const state = await decodeState(encoded);
         assert.ok(state);
         assert.equal(state!.v, 2);
         assert.deepEqual(state!.expenses[0].participants, ['a', 'b']);
         assert.equal(state!.expenses[0].split.mode, 'equal');
+
+        const v2 = {
+            v: 2 as const,
+            c: 'EUR',
+            p: v1.p,
+            e: [['e1', 'Lunch', 2000, 'a', ['a', 'b'], 'eq']] as [
+                string,
+                string,
+                number,
+                string,
+                string[],
+                'eq',
+            ][],
+            t: [] as string[],
+        };
+        const v2json = JSON.stringify(v2);
+        const v2bytes = new TextEncoder().encode(v2json);
+        let v2binary = '';
+        for (let i = 0; i < v2bytes.length; i++) v2binary += String.fromCharCode(v2bytes[i]);
+        const v2encoded = btoa(v2binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const fromV2 = await decodeState(v2encoded);
+        assert.ok(fromV2);
+        assert.equal(fromV2!.expenses[0].cents, 2000);
+    });
+
+    it('builds WhatsApp-safe query share URLs and prefers ?s= over #', async () => {
+        const state = demoState();
+        const share = await buildShareUrl('https://lucanerlich.com/apps/splitter/', state);
+        const url = new URL(share);
+        assert.equal(url.hash, '');
+        assert.ok(url.searchParams.get(SHARE_PARAM)?.startsWith(COMPRESSED_PREFIX));
+
+        const legacyHash = new URL('https://lucanerlich.com/apps/splitter/');
+        legacyHash.hash = 'legacyPayload';
+        assert.equal(readEncodedFromUrl(legacyHash), 'legacyPayload');
+
+        const both = new URL('https://lucanerlich.com/apps/splitter/?s=fromQuery#fromHash');
+        assert.equal(readEncodedFromUrl(both), 'fromQuery');
+
+        const written = writeEncodedToUrl(legacyHash, 'abc');
+        assert.equal(written.hash, '');
+        assert.equal(written.searchParams.get(SHARE_PARAM), 'abc');
+    });
+
+    it('compresses typical sessions well under the old uncompressed payload size', async () => {
+        // User-reported session shape: 4 people, 3 equal-split expenses.
+        const legacy = {
+            v: 2 as const,
+            c: 'EUR',
+            p: [
+                ['6se1y9tc', 'luca'],
+                ['5kbr0qkc', 'nils'],
+                ['f2zrj5eo', 'fabian'],
+                ['ml3ctoxz', 'basti'],
+            ] as [string, string][],
+            e: [
+                ['xdmmy59f', 'einkauf', 26500, '6se1y9tc', ['6se1y9tc', '5kbr0qkc', 'f2zrj5eo', 'ml3ctoxz'], 'eq'],
+                ['v638lqfu', 'car', 38500, '5kbr0qkc', ['6se1y9tc', '5kbr0qkc', 'f2zrj5eo', 'ml3ctoxz'], 'eq'],
+                ['v0lw2hye', 'Alles zusammen', 46400, 'f2zrj5eo', ['6se1y9tc', '5kbr0qkc', 'f2zrj5eo', 'ml3ctoxz'], 'eq'],
+            ] as [string, string, number, string, string[], 'eq'][],
+            t: [] as string[],
+        };
+        const legacyJson = JSON.stringify(legacy);
+        let binary = '';
+        const legacyBytes = new TextEncoder().encode(legacyJson);
+        for (let i = 0; i < legacyBytes.length; i++) binary += String.fromCharCode(legacyBytes[i]);
+        const legacyPayload = btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+        const state = await decodeState(legacyPayload);
+        assert.ok(state);
+        const compact = await encodeState(state!);
+        assert.ok(compact.startsWith(COMPRESSED_PREFIX));
+        assert.ok(
+            compact.length < legacyPayload.length * 0.6,
+            `expected compact ${compact.length} << legacy ${legacyPayload.length}`,
+        );
+        assert.deepEqual(await decodeState(compact), state);
     });
 });
 
@@ -225,19 +310,19 @@ describe('model', () => {
 });
 
 describe('session files', () => {
-    it('imports edits to exported state ahead of stale encoded data', () => {
+    it('imports edits to exported state ahead of stale encoded data', async () => {
         const state = demoState();
-        const data = JSON.parse(exportJson(state));
+        const data = JSON.parse(await exportJson(state));
         data.state.people[0].name = 'Edited name';
-        assert.deepEqual(importJson(JSON.stringify(data)), data.state);
-        assert.deepEqual(importJson(JSON.stringify({encoded: data.encoded})), state);
-        assert.deepEqual(importJson(JSON.stringify(state)), state);
+        assert.deepEqual(await importJson(JSON.stringify(data)), data.state);
+        assert.deepEqual(await importJson(JSON.stringify({encoded: data.encoded})), state);
+        assert.deepEqual(await importJson(JSON.stringify(state)), state);
     });
 
-    it('rejects malformed state instead of silently restoring encoded data', () => {
-        const encoded = encodeState(demoState());
+    it('rejects malformed state instead of silently restoring encoded data', async () => {
+        const encoded = await encodeState(demoState());
         for (const state of [null, {}, {people: [], expenses: null}]) {
-            assert.equal(importJson(JSON.stringify({encoded, state})), null);
+            assert.equal(await importJson(JSON.stringify({encoded, state})), null);
         }
     });
 

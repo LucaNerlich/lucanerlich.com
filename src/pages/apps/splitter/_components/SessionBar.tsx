@@ -32,7 +32,7 @@ const SessionBar: React.FC<Props> = ({
     const onFile = async (file: File | null) => {
         if (!file) return;
         const text = await file.text();
-        const next = importJson(text);
+        const next = await importJson(text);
         if (!next) {
             window.alert('Could not import that JSON file.');
             return;
@@ -67,13 +67,15 @@ const SessionBar: React.FC<Props> = ({
                 <button
                     type="button"
                     className={styles.secondaryButton}
-                    onClick={() =>
-                        downloadText(
-                            'splitter-session.json',
-                            exportJson(state),
-                            'application/json',
-                        )
-                    }
+                    onClick={() => {
+                        void (async () => {
+                            downloadText(
+                                'splitter-session.json',
+                                await exportJson(state),
+                                'application/json',
+                            );
+                        })();
+                    }}
                 >
                     {t('exportJson')}
                 </button>

@@ -15,7 +15,7 @@ const APPS: AppEntry[] = [
         slug: 'splitter',
         title: 'Splitter',
         description:
-            'Who owes whom how much. Per-expense participants, unequal splits, multi-currency, shareable URL sessions.',
+            'Who owes whom how much. Per-expense participants, unequal splits, multi-currency, shareable ?s= URL sessions.',
         icon: '🧮',
     },
 ];

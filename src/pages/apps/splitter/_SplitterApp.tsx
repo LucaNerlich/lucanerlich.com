@@ -2,8 +2,8 @@ import React, {useMemo, useState} from 'react';
 import type {Action, AppState} from './_lib/types';
 import {emptyState} from './_lib/types';
 import {applyAction, expensesPaidBy} from './_lib/model';
-import {encodeState, decodeState} from './_lib/urlState';
-import {localStore, useUrlState} from './_lib/useUrlState';
+import {buildShareUrl, decodeState, encodeState} from './_lib/urlState';
+import {localStore, queryStore, useUrlState} from './_lib/useUrlState';
 import {demoState} from './_lib/demo';
 import {createMessages} from './_lib/messages';
 import PeopleManager from './_components/PeopleManager';
@@ -23,6 +23,9 @@ const SplitterApp: React.FC = () => {
         init: emptyState,
         codec: {encode: encodeState, decode: decodeState},
         hydrate: decoded => ({type: 'HYDRATE', state: decoded}),
+        // Query param (`?s=`) so chat apps that truncate at `#` keep the payload.
+        // queryStore still reads legacy `#…` links.
+        store: queryStore(),
         fallbackStore: localStore('splitter:v1'),
     });
     const [copied, setCopied] = useState(false);
@@ -44,9 +47,10 @@ const SplitterApp: React.FC = () => {
 
     const handleCopyLink = async () => {
         try {
-            const url = new URL(window.location.href);
-            url.hash = encodeState(state);
-            await navigator.clipboard.writeText(url.toString());
+            // Always mint a `?s=` link (never `#…`) so WhatsApp/iMessage keep
+            // the full session when the URL becomes a hyperlink.
+            const shareUrl = await buildShareUrl(window.location.href, state);
+            await navigator.clipboard.writeText(shareUrl);
             setCopied(true);
             window.setTimeout(() => setCopied(false), 1500);
         } catch {
