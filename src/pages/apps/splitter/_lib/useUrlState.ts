@@ -151,7 +151,10 @@ export function useUrlState<S, A>({
     useEffect(() => {
         // Writes go through replaceState. Back/forward between shared links
         // fires popstate (query) and, for legacy links, hashchange.
+        let navigationSequence = 0;
+        let cancelled = false;
         const onNavigate = () => {
+            const sequence = ++navigationSequence;
             void (async () => {
                 const raw = storeRef.current!.read();
                 // An empty URL payload keeps the current state on purpose: it is
@@ -159,12 +162,15 @@ export function useUrlState<S, A>({
                 // would wipe it.
                 if (!raw) return;
                 const decoded = await Promise.resolve(codecRef.current.decode(raw));
-                if (decoded) dispatch(hydrate(decoded));
+                if (!cancelled && sequence === navigationSequence && decoded) {
+                    dispatch(hydrate(decoded));
+                }
             })();
         };
         window.addEventListener('popstate', onNavigate);
         window.addEventListener('hashchange', onNavigate);
         return () => {
+            cancelled = true;
             window.removeEventListener('popstate', onNavigate);
             window.removeEventListener('hashchange', onNavigate);
         };
@@ -182,14 +188,20 @@ export function useUrlState<S, A>({
             return;
         }
         wroteOnceRef.current = true;
+        const scheduledUrl = window.location.href;
+        let cancelled = false;
         const handle = window.setTimeout(() => {
             void (async () => {
                 const encoded = await Promise.resolve(codecRef.current.encode(state));
+                if (cancelled || window.location.href !== scheduledUrl) return;
                 storeRef.current!.write(encoded);
                 fallbackRef.current?.write(encoded);
             })();
         }, debounceMs);
-        return () => window.clearTimeout(handle);
+        return () => {
+            cancelled = true;
+            window.clearTimeout(handle);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state, debounceMs, ready]);
 

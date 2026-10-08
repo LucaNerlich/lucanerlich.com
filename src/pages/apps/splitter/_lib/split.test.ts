@@ -144,6 +144,24 @@ describe('settlement with participants and payer-covers', () => {
 });
 
 describe('url codec', () => {
+    it('discards stale payers while preserving every valid payer index', async () => {
+        const state: AppState = {
+            ...emptyState(),
+            people: [{id: 'a', name: 'A'}, {id: 'b', name: 'B'}],
+            expenses: ['a', 'missing', 'b'].map(paidBy => ({
+                id: paidBy,
+                description: 'Expense',
+                cents: 100,
+                paidBy,
+                participants: ['a', 'b'],
+                split: equalSplit(),
+            })),
+        };
+        const decoded = await decodeState(await encodeState(state));
+        assert.ok(decoded);
+        assert.deepEqual(decoded.expenses, [state.expenses[0], state.expenses[2]]);
+    });
+
     it('round-trips compressed v3 state', async () => {
         const state = demoState();
         state.people[0].name = 'Alice 🏿';

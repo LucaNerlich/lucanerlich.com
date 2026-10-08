@@ -143,7 +143,7 @@ const toWireV3 = (state: AppState): WireV3 => {
             e.id,
             e.description,
             e.cents,
-            indexOf.get(e.paidBy) ?? 0,
+            indexOf.get(e.paidBy) ?? -1,
             participantWire(e.participants),
             splitToWireV3(e.split, indexOf),
         ]),
