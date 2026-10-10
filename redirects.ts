@@ -9,6 +9,9 @@
 type Redirect = {from: string | string[]; to: string};
 
 const entries: Redirect[] = [
+    // Blog temporarily disabled; send list URL to homepage (posts stay in repo).
+    {from: '/blog/', to: '/'},
+
     // Legacy /docs/ prefix redirects
     {from: '/docs/aem/component-dialogs/', to: '/aem/component-dialogs/'},
     {from: '/docs/aem/groovy-console/', to: '/aem/groovy-console/'},
