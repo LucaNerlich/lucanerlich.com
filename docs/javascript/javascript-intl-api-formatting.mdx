@@ -1,7 +1,7 @@
 ---
 title: "JavaScript Intl API: Currency, Date, and Number Formatting (TypeScript)"
 sidebar_label: "Intl API Formatting"
-description: Learn currency formatting, date formatting, number formatting, list formatting, and more with the JavaScript Intl API. Practical TypeScript examples and best practices.
+description: Format currency, dates, numbers, and lists with the JavaScript Intl API. TypeScript examples for the options that change rounding, time zones, plurals, and spacing.
 slug: /javascript/intl-api-formatting
 tags: [javascript, typescript, intl, i18n, localization]
 keywords:
@@ -11,7 +11,7 @@ keywords:
   - number formatting
   - Intl.NumberFormat
   - Intl.DateTimeFormat
-  - list formatting
+  - Intl.ListFormat
   - relative time formatting
   - TypeScript Intl
 sidebar_position: 1
@@ -21,16 +21,22 @@ import IntlFormatDemo from '@site/src/components/demos/javascript/IntlFormatDemo
 
 # JavaScript Intl API: Currency, Date, and Number Formatting (TypeScript)
 
-The JavaScript Intl API is the built-in way to handle **currency formatting**, **date formatting**, **number formatting
-**, and a lot more. This guide walks through the most useful Intl features with expressive TypeScript examples you can
-drop into any app.
+The JavaScript `Intl` API is the built-in way to format **currency**, **dates**, **numbers**, and **lists** for a locale.
+The same `1234.56` and the same instant become different strings for `en-US`, `de-DE`, and `ar-EG`. This guide walks
+through the formatters you actually call, with TypeScript you can drop into an app, and the options that change the
+string in ways tests and layouts notice.
 
-Note: results below show typical output for `en-US` in modern browsers/Node. Minor punctuation or casing can vary by
-runtime and ICU data.
+`Intl` formats and compares. It does not translate your UI copy, and it does not add months on a calendar. Parsing,
+daylight-saving arithmetic, and Temporal are in [Dates and Time](./javascript-dates-and-time.md).
+
+Results below were checked on Node 22.14 with ICU 76. Modern browsers expose the same constructors. Punctuation,
+spacing, and a few legacy time-zone aliases still move between ICU versions. Read `resolvedOptions()` when a string
+surprises you, and avoid `===` against a hand-typed formatted string.
 
 ## Interactive demo
 
-Change locale, currency, amount, and date -- the same values format differently per audience:
+Change locale, currency, amount, and date -- the same values format differently per audience. The demo uses the
+browser time zone. The snippets below pass `timeZone: "UTC"` so the printed results stay put.
 
 <IntlFormatDemo />
 
@@ -63,100 +69,289 @@ USD 1,234.56
 Feb 2, 2026, 2:30 PM
 ```
 
-Note that `Intl` output often contains non-breaking spaces (U+00A0) or narrow no-break spaces (U+202F) instead of
-regular spaces. They look identical, but a string comparison such as `formatted === "USD 1,234.56"` with a typed space
-fails. Avoid asserting exact formatted strings in tests, or normalize whitespace first.
+The space in `USD 1,234.56` is U+00A0 (a non-breaking space), not the space from the keyboard. `fr-FR` grouping and
+some date ranges use U+202F (narrow no-break space) and U+2009 (thin space). They look identical and fail
+`formatted === "USD 1,234.56"`. `\s` matches all three, so a test can normalize with `replaceAll(/\s/g, " ")`.
+Punctuation can still differ by locale and ICU version, so prefer `formatToParts()` when a test needs a specific
+field.
+
+## Intl checklist
+
+- **Pass an explicit locale.** `undefined` selects the runtime default (`en-US` here, whatever the server image uses in production).
+- **Pass `timeZone` for dates.** The default is the host zone. A laptop and a container will disagree.
+- **Keep numbers and `Date` values in your data.** Format at the UI boundary.
+- **Create a formatter once and reuse it.** Construction loads locale data. `format()` itself is safe to call again.
+- **Let the currency pick the fraction digits.** USD has 2, JPY has 0, KWD has 3. `resolvedOptions()` shows the choice.
+- **Pass a fraction to `style: "percent"`.** `0.25` formats as 25%. `25` formats as 2,500%.
+- **Use `Continent/City` time zones.** `EST` is absent from `supportedValuesOf("timeZone")`. On this ICU the constructor still accepts it and resolves it to `America/Panama`.
+- **Fall back when a plural category is missing.** English only uses `one` and `other`. Polish also uses `few` and `many`.
 
 ## Intl.NumberFormat: numbers, currency, units, percent
 
-### Number formatting with locale and grouping
+### Compact notation is locale data
+
+`notation: "compact"` picks a scale from the locale. `en-US` uses K/M/B. `ja-JP` uses 万 (10,000) and does not emit `M`.
 
 ```ts
-const number = 9876543.21;
-
-const compact = new Intl.NumberFormat("en-US", {
+console.log(new Intl.NumberFormat("en-US", {
     notation: "compact",
     compactDisplay: "short",
     maximumFractionDigits: 1,
-});
+}).format(9876543.21));
 
-const noGrouping = new Intl.NumberFormat("en-US", {
-    useGrouping: false,
-    maximumFractionDigits: 2,
-});
+console.log(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    notation: "compact",
+    maximumFractionDigits: 1,
+}).format(1_234_567));
 
-console.log(compact.format(number));
-console.log(noGrouping.format(number));
+console.log(new Intl.NumberFormat("ja-JP", {
+    style: "currency",
+    currency: "JPY",
+    notation: "compact",
+}).format(1_234_567));
 ```
 
 Result:
 
 ```text
 9.9M
-9876543.21
+$1.2M
+￥123万
 ```
 
-### Currency formatting with precise rounding
+`compactDisplay: "long"` spells the unit (`9.9 million`). The short form is what dashboards usually want.
+
+### Grouping and digits
+
+`useGrouping: "auto"` follows the locale. `en-US` groups at 1,000. `es-ES` waits until 10,000. `"min2"` applies that
+higher threshold in any locale. `"always"` groups even a four-digit number. `false` turns grouping off.
+
+`ar-EG` formats with Arabic-Indic digits. Those characters fail a `\d` check and `parseFloat`. Set
+`numberingSystem: "latn"` when the surrounding UI must stay in 0-9. Keep the original number if you need to calculate.
 
 ```ts
-const price = 19.995;
+console.log(new Intl.NumberFormat("en-US", {useGrouping: "min2"}).format(9999));
+console.log(new Intl.NumberFormat("en-US", {useGrouping: "min2"}).format(10000));
+console.log(new Intl.NumberFormat("es-ES").format(1000));
+console.log(new Intl.NumberFormat("es-ES").format(10000));
+console.log(new Intl.NumberFormat("fr-FR").format(1234.56));
+console.log(new Intl.NumberFormat("de-DE").format(1234.56));
+console.log(new Intl.NumberFormat("ar-EG").format(1234.56));
+console.log(new Intl.NumberFormat("ar-EG", {numberingSystem: "latn"}).format(1234.56));
+```
 
-const usd = new Intl.NumberFormat("en-US", {
+Result:
+
+```text
+9999
+10,000
+1000
+10.000
+1 234,56
+1.234,56
+١٬٢٣٤٫٥٦
+1,234.56
+```
+
+The `fr-FR` group separator is U+202F. `de-DE` uses `.` for groups and `,` for the decimal.
+
+### Currency display, fraction digits, and signs
+
+`style: "currency"` requires `currency`. A missing code throws `TypeError`. A code such as `"US"` throws `RangeError`.
+The code is case-insensitive and comes back uppercased from `resolvedOptions()`.
+
+Fraction digits follow the currency. USD has 2, JPY has 0, KWD has 3, so `1234.56` yen rounds to a whole yen and
+`1.2345` dinars keep three places. `en-US` has no narrow glyph for the dinar, so KWD falls back to the code. The space
+after `KWD` is U+00A0. `ja-JP` draws yen with the fullwidth sign `￥` (U+FFE5). `en-US` uses `¥` (U+00A5).
+
+`currencyDisplay: "narrowSymbol"` turns Canadian dollars into `$10.00` in `en-US`, the same glyph as USD. Keep
+`"symbol"` or `"code"` when more than one dollar currency is on screen. `"name"` inserts the CLDR currency name. For
+USD in `en-US` that name is `US dollars` for 0, 1, and 2.
+
+`currencySign: "accounting"` is locale data too. `en-US` wraps a negative in parentheses. `de-DE` still uses a minus
+sign. `signDisplay: "always"` forces a plus on positives. `trailingZeroDisplay: "stripIfInteger"` drops `.00` and
+leaves a fractional price alone. The default USD format of `5` is `$5.00`.
+
+```ts
+console.log(new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    maximumFractionDigits: 2,
-});
-
-const eurCode = new Intl.NumberFormat("en-US", {
+}).format(19.995));
+console.log(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "JPY",
+}).format(1234.56));
+console.log(new Intl.NumberFormat("ja-JP", {
+    style: "currency",
+    currency: "JPY",
+}).format(1234.56));
+console.log(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "KWD",
+}).format(1.2345));
+console.log(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "CAD",
+}).format(10));
+console.log(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "CAD",
+    currencyDisplay: "narrowSymbol",
+}).format(10));
+console.log(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    currencySign: "accounting",
+}).format(-1234.5));
+console.log(new Intl.NumberFormat("de-DE", {
     style: "currency",
     currency: "EUR",
-    currencyDisplay: "code",
-    maximumFractionDigits: 2,
-});
-
-console.log(usd.format(price));
-console.log(eurCode.format(price));
+    currencySign: "accounting",
+}).format(-1234.5));
+console.log(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    signDisplay: "always",
+}).format(1234.5));
+console.log(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    trailingZeroDisplay: "stripIfInteger",
+}).format(5));
+console.log(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    currencyDisplay: "name",
+}).format(1));
 ```
 
 Result:
 
 ```text
 $20.00
-EUR 20.00
+¥1,235
+￥1,235
+KWD 1.235
+CA$10.00
+$10.00
+($1,234.50)
+-1.234,50 €
++$1,234.50
+$5
+1.00 US dollars
 ```
 
-### Unit and percent formatting
+The number literal `19.995` is already a binary approximation (slightly above 19.995 on this engine), and
+`"halfExpand"` rounds the currency value to `$20.00`. Store minor units as integers and format those.
+
+### Rounding and integer minor units
+
+The default `roundingMode` is `"halfExpand"`. `"halfEven"` is banker's rounding: ties go to the even neighbor.
+`minimumFractionDigits` cannot exceed `maximumFractionDigits`. The constructor throws `RangeError` when they conflict.
+Raising the JPY minimum to 2 also means raising the maximum, or that throw is what you get.
 
 ```ts
-const speed = 88.5;
-const ratio = 0.237;
+console.log(new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 0,
+    roundingMode: "halfExpand",
+}).format(2.5));
+console.log(new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 0,
+    roundingMode: "halfEven",
+}).format(2.5));
 
-const kmPerHour = new Intl.NumberFormat("en-US", {
-    style: "unit",
-    unit: "kilometer-per-hour",
-    unitDisplay: "short",
-    maximumFractionDigits: 1,
-});
+function formatUsdFromCents(cents: number): string {
+    if (!Number.isSafeInteger(cents)) {
+        throw new TypeError("Expected an integer number of cents");
+    }
 
-const percent = new Intl.NumberFormat("en-US", {
-    style: "percent",
-    maximumFractionDigits: 1,
-});
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+    }).format(cents / 100);
+}
 
-console.log(kmPerHour.format(speed));
-console.log(percent.format(ratio));
+console.log(formatUsdFromCents(1995));
+console.log(formatUsdFromCents(-50));
 ```
 
 Result:
 
 ```text
-88.5 km/h
-23.7%
+3
+2
+$19.95
+-$0.50
 ```
+
+`cents / 100` is the display step for everyday prices. It is still a binary float. For amounts near
+`Number.MAX_SAFE_INTEGER`, that division is coarser than one cent. Keep the integer until the edge, and refuse values
+that fail `Number.isSafeInteger`.
+
+`format(NaN)` and `format(Infinity)` do not throw. They come back as `$NaN` and `$∞`. `format("")` coerces through
+`ToNumber` and prints `0`. Gate money on `Number.isFinite` before it reaches the formatter.
+
+```ts
+const usd = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+});
+
+console.log(usd.format(NaN));
+console.log(usd.format(Infinity));
+console.log(new Intl.NumberFormat("en-US").format(""));
+```
+
+Result:
+
+```text
+$NaN
+$∞
+0
+```
+
+### Percent and units
+
+`style: "percent"` multiplies by 100. Pass `0.237` when you mean 23.7%. The percent sign's position is locale data:
+`tr` puts it in front. Simple units are the lowercase names from `Intl.supportedValuesOf("unit")`, such as
+`kilometer` and `celsius`. Compound units join those with `-per-`. `kilometer-per-hour` formats, and it is not in
+that list. `"km/h"` throws `RangeError`.
+
+```ts
+const percent = new Intl.NumberFormat("en-US", {
+    style: "percent",
+    maximumFractionDigits: 1,
+});
+
+console.log(percent.format(0.237));
+console.log(percent.format(23.7));
+console.log(new Intl.NumberFormat("tr", {style: "percent"}).format(0.25));
+console.log(new Intl.NumberFormat("en-US", {
+    style: "unit",
+    unit: "kilometer-per-hour",
+    unitDisplay: "short",
+    maximumFractionDigits: 1,
+}).format(88.5));
+```
+
+Result:
+
+```text
+23.7%
+2,370%
+%25
+88.5 km/h
+```
+
+`unitDisplay` is `"short"`, `"long"` (`88.5 kilometers per hour`), or `"narrow"` (`88.5km/h`).
 
 ### Format to parts for custom UI
 
-`formatToParts` is ideal if you need to style currency symbols or decimals separately.
+`formatToParts()` is the way to style the symbol, the groups, or the fraction without parsing the string back.
+`integer` parts are split around `group`. Join both when the UI should keep the thousands separator. Take only
+`integer` when you want the digits. The fraction part is `"50"`, not `0.50`.
 
 ```ts
 const money = new Intl.NumberFormat("en-US", {
@@ -165,43 +360,81 @@ const money = new Intl.NumberFormat("en-US", {
 });
 
 const parts = money.formatToParts(1234.5);
-const currencySymbol = parts.find((p) => p.type === "currency")?.value ?? "";
+const currencySymbol = parts.find((part) => part.type === "currency")?.value ?? "";
 const integer = parts
-    .filter((p) => p.type === "integer" || p.type === "group")
-    .map((p) => p.value)
+    .filter((part) => part.type === "integer" || part.type === "group")
+    .map((part) => part.value)
     .join("");
-const fraction = parts.find((p) => p.type === "fraction")?.value ?? "";
+const fraction = parts.find((part) => part.type === "fraction")?.value ?? "";
 
-console.log({ currencySymbol, integer, fraction });
+console.log({currencySymbol, integer, fraction});
 ```
 
 Result:
 
 ```text
-{ currencySymbol: "$", integer: "1,234", fraction: "50" }
+{ currencySymbol: '$', integer: '1,234', fraction: '50' }
 ```
+
+`formatRange()` prints a span. When the two ends are equal, the engine prefixes an approximation sign instead of
+repeating the value.
+
+```ts
+const range = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+});
+
+console.log(range.formatRange(10, 20));
+console.log(range.formatRange(5, 5));
+```
+
+Result:
+
+```text
+$10.00 – $20.00
+~$5.00
+```
+
+The dash in the first line is U+2013, with normal spaces around it. `formatRangeToParts()` adds a `source` of
+`startRange`, `endRange`, or `shared` when the two ends need different markup.
+
+`NumberFormat` accepts a `bigint`. `DateTimeFormat` does not.
 
 ## Intl.DateTimeFormat: dates, times, time zones
 
 ### Date and time styles
 
+`dateStyle` and `timeStyle` (`full`, `long`, `medium`, `short`) are the short path. They cannot be combined with
+component fields such as `year`, `month`, `day`, `hour`, or `timeZoneName`. The `TypeError` message is
+`Invalid option : option`, which does not name the field. Set `hourCycle` on its own when you need a 24-hour clock in
+an `en-US` locale. `en-GB` already resolves to `h23`. Passing `hour12` and `hourCycle` together is ambiguous. On this
+Node, `hour12: true` wins and the resolved cycle is `h12`. Set one of them.
+
 ```ts
 const now = new Date("2026-02-02T14:30:00Z");
 
-const longDate = new Intl.DateTimeFormat("en-US", {
+console.log(new Intl.DateTimeFormat("en-US", {
     dateStyle: "full",
     timeStyle: "short",
     timeZone: "UTC",
-});
-
-const shortDate = new Intl.DateTimeFormat("en-US", {
+}).format(now));
+console.log(new Intl.DateTimeFormat("en-US", {
     dateStyle: "short",
     timeStyle: "short",
     timeZone: "UTC",
-});
-
-console.log(longDate.format(now));
-console.log(shortDate.format(now));
+}).format(now));
+console.log(new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Europe/Berlin",
+}).format(new Date("2026-02-02T16:00:00Z")));
+console.log(new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hourCycle: "h23",
+    timeZone: "UTC",
+}).format(new Date("2026-02-02T16:00:00Z")));
 ```
 
 Result:
@@ -209,27 +442,46 @@ Result:
 ```text
 Monday, February 2, 2026 at 2:30 PM
 2/2/26, 2:30 PM
+2 Feb 2026, 17:00
+16:00
 ```
 
-### Time zone aware formatting
+Individual fields are the right tool when the style presets are too coarse, and when you need `timeZoneName`.
+
+```ts
+try {
+    new Intl.DateTimeFormat("en-US", {dateStyle: "medium", month: "long"});
+    console.log("constructed");
+} catch (error) {
+    console.log(error instanceof TypeError ? error.message : "unexpected");
+}
+```
+
+Result:
+
+```text
+Invalid option : option
+```
+
+### Time zones
+
+A `Date` is an instant. The calendar day and the clock time come from `timeZone`. Pass an IANA name
+(`America/New_York`, `Europe/Berlin`). The same UTC instant is 11:00 AM in New York and 5:00 PM in Berlin on this
+February date.
 
 ```ts
 const meeting = new Date("2026-02-02T16:00:00Z");
 
-const nyc = new Intl.DateTimeFormat("en-US", {
+console.log(new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: "America/New_York",
-});
-
-const berlin = new Intl.DateTimeFormat("en-US", {
+}).format(meeting));
+console.log(new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: "Europe/Berlin",
-});
-
-console.log(nyc.format(meeting));
-console.log(berlin.format(meeting));
+}).format(meeting));
 ```
 
 Result:
@@ -239,28 +491,158 @@ Feb 2, 2026, 11:00 AM
 Feb 2, 2026, 5:00 PM
 ```
 
-### Range formatting
+Abbreviations are a trap. `supportedValuesOf("timeZone")` does not list `EST`, but the constructor accepts it. On ICU
+76 it resolves to `America/Panama`, a zone that stays on Eastern Standard Time all year. `PST` resolves to
+`America/Los_Angeles` and does observe daylight time. The same abbreviation style means two different things. Prefer
+the canonical list, then check `resolvedOptions().timeZone`.
+
+```ts
+const summer = new Date("2026-08-02T16:00:00Z");
+const eastern = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "EST",
+    timeZoneName: "short",
+});
+
+console.log(Intl.supportedValuesOf("timeZone").includes("EST"));
+console.log(eastern.resolvedOptions().timeZone);
+console.log(eastern.format(summer));
+console.log(new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/New_York",
+    timeZoneName: "short",
+}).format(summer));
+```
+
+Result:
+
+```text
+false
+America/Panama
+11:00 AM EST
+12:00 PM EDT
+```
+
+`timeZoneName: "short"` follows daylight time (`EST` in February, `EDT` in August for New York). `"shortOffset"` prints
+the GMT offset for that instant (`GMT-5`, `GMT-4`). Neither string is a stable identifier. `Etc/GMT+5` is a fixed
+offset with the POSIX sign: it is five hours west of GMT. A city name is easier to explain to the next reader.
+
+A date-only ISO string is UTC midnight. Formatting that instant in `America/New_York` shows February 1. The same
+instant formatted in `UTC` stays February 2. Build the instant with an explicit offset, or format a date-only value in
+`UTC` when it really is a calendar date. The parsing rules are in
+[Dates and Time](./javascript-dates-and-time.md).
+
+```ts
+const dateOnly = new Date("2026-02-02");
+
+console.log(dateOnly.toISOString());
+console.log(new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeZone: "America/New_York",
+}).format(dateOnly));
+console.log(new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeZone: "UTC",
+}).format(dateOnly));
+```
+
+Result:
+
+```text
+2026-02-02T00:00:00.000Z
+Feb 1, 2026
+Feb 2, 2026
+```
+
+### Calendars
+
+The calendar is part of the locale. `th-TH` resolves to the Buddhist calendar, so 2026 formats as 2569. Pass
+`calendar: "gregory"` (or the `-u-ca-gregory` extension) when the number next to a Thai month must be the Gregorian
+year. An unknown calendar name throws `RangeError`.
+
+```ts
+const instant = new Date("2026-02-02T00:00:00Z");
+
+console.log(new Intl.DateTimeFormat("th-TH", {
+    dateStyle: "long",
+    timeZone: "UTC",
+}).format(instant));
+console.log(new Intl.DateTimeFormat("th-TH", {
+    dateStyle: "long",
+    timeZone: "UTC",
+    calendar: "gregory",
+}).format(instant));
+```
+
+Result:
+
+```text
+2 กุมภาพันธ์ 2569
+2 กุมภาพันธ์ ค.ศ. 2026
+```
+
+### Zone names, ranges, and parts
+
+```ts
+const winter = new Date("2026-02-02T16:00:00Z");
+const august = new Date("2026-08-02T16:00:00Z");
+const zoneName = {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/New_York",
+} as const;
+
+console.log(new Intl.DateTimeFormat("en-US", {
+    ...zoneName,
+    timeZoneName: "short",
+}).format(winter));
+console.log(new Intl.DateTimeFormat("en-US", {
+    ...zoneName,
+    timeZoneName: "short",
+}).format(august));
+console.log(new Intl.DateTimeFormat("en-US", {
+    ...zoneName,
+    timeZoneName: "shortOffset",
+}).format(august));
+```
+
+Result:
+
+```text
+11:00 AM EST
+12:00 PM EDT
+12:00 PM GMT-4
+```
+
+`formatRange()` collapses fields that the two instants share. A same-day range keeps one date. A multi-day range
+repeats it. The separator is an en dash (U+2013) surrounded by thin spaces (U+2009). The space before `AM` in this
+pattern is U+202F.
 
 ```ts
 const start = new Date("2026-02-02T08:00:00Z");
-const end = new Date("2026-02-02T10:30:00Z");
-
+const sameDay = new Date("2026-02-02T10:30:00Z");
+const laterDay = new Date("2026-02-04T10:30:00Z");
 const range = new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: "UTC",
 });
 
-console.log(range.formatRange(start, end));
+console.log(range.formatRange(start, sameDay));
+console.log(range.formatRange(start, laterDay));
 ```
 
 Result:
 
 ```text
 Feb 2, 2026, 8:00 – 10:30 AM
+Feb 2, 2026, 8:00 AM – Feb 4, 2026, 10:30 AM
 ```
 
-### Format to parts for dates
+`formatToParts()` splits a date the same way. `literal` parts are the spaces and commas. Use `format()` when you want
+those back. Use the typed parts when you want the day, month, or year alone.
 
 ```ts
 const dateParts = new Intl.DateTimeFormat("en-US", {
@@ -268,74 +650,179 @@ const dateParts = new Intl.DateTimeFormat("en-US", {
     timeZone: "UTC",
 }).formatToParts(new Date("2026-02-02T14:30:00Z"));
 
-const day = dateParts.find((p) => p.type === "day")?.value ?? "";
-const month = dateParts.find((p) => p.type === "month")?.value ?? "";
-const year = dateParts.find((p) => p.type === "year")?.value ?? "";
+const day = dateParts.find((part) => part.type === "day")?.value ?? "";
+const month = dateParts.find((part) => part.type === "month")?.value ?? "";
+const year = dateParts.find((part) => part.type === "year")?.value ?? "";
 
-console.log({ day, month, year });
+console.log({day, month, year});
 ```
 
 Result:
 
 ```text
-{ day: "2", month: "February", year: "2026" }
+{ day: '2', month: 'February', year: '2026' }
 ```
+
+`format(NaN)` and `format(new Date("nope"))` throw `RangeError: Invalid time value`. An invalid money value prints a
+word. An invalid date refuses to format.
 
 ## Intl.ListFormat: list formatting
 
-```ts
-const tools = ["TypeScript", "Docusaurus", "Intl API"];
+`type: "conjunction"` inserts "and". `"disjunction"` inserts "or". `"unit"` joins measurements with no conjunction.
+`style: "long"` is the sentence form. `"short"` can switch in an ampersand. `"narrow"` drops the word.
 
-const list = new Intl.ListFormat("en-US", {
+The serial comma is locale data. `en-US` uses it. `en-GB` does not. An empty list formats as `""`. A single item is
+that item, with no extra word. Handle "none" in your own copy before calling `format()`.
+
+```ts
+const tools = ["TypeScript", "Docusaurus", "Intl"];
+
+console.log(new Intl.ListFormat("en-US", {
     style: "long",
     type: "conjunction",
-});
-
-console.log(list.format(tools));
+}).format(tools));
+console.log(new Intl.ListFormat("en-GB", {
+    style: "long",
+    type: "conjunction",
+}).format(tools));
+console.log(new Intl.ListFormat("en-US", {
+    style: "short",
+    type: "conjunction",
+}).format(tools));
+console.log(new Intl.ListFormat("de-DE", {
+    style: "long",
+    type: "disjunction",
+}).format(["PNG", "JPEG", "WebP"]));
+console.log(new Intl.ListFormat("en-US", {
+    style: "narrow",
+    type: "unit",
+}).format(["2 ft", "3 in"]));
+console.log(JSON.stringify(new Intl.ListFormat("en-US").format([])));
 ```
 
 Result:
 
 ```text
-TypeScript, Docusaurus, and Intl API
+TypeScript, Docusaurus, and Intl
+TypeScript, Docusaurus and Intl
+TypeScript, Docusaurus, & Intl
+PNG, JPEG oder WebP
+2 ft 3 in
+""
 ```
 
 ## Intl.RelativeTimeFormat: relative time
 
+`format(value, unit)` does not accept two dates. You pass the signed number and the unit (`year`, `quarter`, `month`,
+`week`, `day`, `hour`, `minute`, `second`). `numeric: "auto"` replaces some values with a word (`yesterday`, `today`,
+`tomorrow`). Zero seconds is `now`. Zero hours is `this hour`. `"always"` keeps the number (`1 day ago`).
+`style: "narrow"` is the tight form (`3h ago`). An unknown unit such as `"foo"` throws `RangeError`.
+
 ```ts
-const rtf = new Intl.RelativeTimeFormat("en-US", {
+const relative = new Intl.RelativeTimeFormat("en-US", {
     numeric: "auto",
     style: "long",
 });
 
-console.log(rtf.format(-1, "day"));
-console.log(rtf.format(3, "week"));
+console.log(relative.format(-1, "day"));
+console.log(relative.format(0, "day"));
+console.log(relative.format(1, "day"));
+console.log(relative.format(3, "week"));
+console.log(new Intl.RelativeTimeFormat("en-US", {numeric: "always"}).format(-1, "day"));
+console.log(new Intl.RelativeTimeFormat("de-DE", {numeric: "auto"}).format(-1, "day"));
 ```
 
 Result:
 
 ```text
 yesterday
+today
+tomorrow
 in 3 weeks
+1 day ago
+gestern
+```
+
+This helper picks the largest unit that fits and truncates, so ninety minutes becomes `in 1 hour`. Months are 30 days
+and years are 365. That is a display heuristic. Calendar differences belong in
+[Dates and Time](./javascript-dates-and-time.md).
+
+```ts
+const RELATIVE_DIVISIONS: ReadonlyArray<readonly [Intl.RelativeTimeFormatUnit, number]> = [
+    ["year", 365 * 24 * 60 * 60 * 1000],
+    ["month", 30 * 24 * 60 * 60 * 1000],
+    ["week", 7 * 24 * 60 * 60 * 1000],
+    ["day", 24 * 60 * 60 * 1000],
+    ["hour", 60 * 60 * 1000],
+    ["minute", 60 * 1000],
+    ["second", 1000],
+];
+
+function formatRelative(from: Date, to: Date, rtf: Intl.RelativeTimeFormat): string {
+    const delta = to.getTime() - from.getTime();
+    const match = RELATIVE_DIVISIONS.find(([unit, ms]) => Math.abs(delta) >= ms || unit === "second");
+    const [unit, ms] = match ?? ["second", 1000];
+
+    return rtf.format(Math.trunc(delta / ms), unit);
+}
+
+const now = new Date("2026-02-02T14:30:00Z");
+const auto = new Intl.RelativeTimeFormat("en-US", {numeric: "auto"});
+
+console.log(formatRelative(now, new Date("2026-02-01T14:30:00Z"), auto));
+console.log(formatRelative(now, new Date("2026-02-02T17:30:00Z"), auto));
+console.log(formatRelative(now, new Date(now.getTime() + 90 * 60 * 1000), auto));
+console.log(formatRelative(now, now, auto));
+```
+
+Result:
+
+```text
+yesterday
+in 3 hours
+in 1 hour
+now
 ```
 
 ## Intl.PluralRules: pluralization
 
-```ts
-const rule = new Intl.PluralRules("en-US");
+`select(count)` returns a category: `zero`, `one`, `two`, `few`, `many`, or `other`. English cardinals use `one` for
+exactly 1 and `other` for everything else, including 0. Japanese uses only `other`. Polish integers use `one`, `few`,
+and `many`. Polish `1.5` is `other`. A map that only has `one` and `other` throws when you call a string method on the
+missing `few` template.
 
-const messages = {
-    one: "You have 1 message",
+Read `resolvedOptions().pluralCategories` for the set a locale can return, and fall back to `other`. Format the count
+with `NumberFormat` so `1000` stays grouped. `String(count)` skips that.
+
+`type: "ordinal"` is a different set. English ordinals map `one` / `two` / `few` / `other` onto st / nd / rd / th.
+`11` is `other` (`11th`). `21` is `one` (`21st`). `3` is `few` (`3rd`).
+
+```ts
+const templates: Partial<Record<Intl.LDMLPluralRule, string>> = {
+    one: "You have {count} message",
     other: "You have {count} messages",
 };
 
-function formatMessages(count: number): string {
-    const key = rule.select(count);
-    return messages[key as keyof typeof messages].replace("{count}", String(count));
+function formatMessages(count: number, rules: Intl.PluralRules): string {
+    const template = templates[rules.select(count)] ?? templates.other;
+
+    if (template === undefined) {
+        throw new Error("Missing plural template: other");
+    }
+
+    const countText = new Intl.NumberFormat(rules.resolvedOptions().locale).format(count);
+    return template.replace("{count}", countText);
 }
 
-console.log(formatMessages(1));
-console.log(formatMessages(5));
+const english = new Intl.PluralRules("en-US");
+
+console.log(formatMessages(1, english));
+console.log(formatMessages(5, english));
+console.log(english.resolvedOptions().pluralCategories.join(","));
+
+const polish = new Intl.PluralRules("pl");
+console.log(["1", "2", "5", "1.5"].map((value) => `${value}:${polish.select(Number(value))}`).join(" "));
+console.log(`ja ${new Intl.PluralRules("ja").resolvedOptions().pluralCategories.join(",")}`);
 ```
 
 Result:
@@ -343,35 +830,89 @@ Result:
 ```text
 You have 1 message
 You have 5 messages
+one,other
+1:one 2:few 5:many 1.5:other
+ja other
 ```
 
-## Intl.Collator: locale-aware sorting
-
 ```ts
-const items = ["file-2", "file-10", "file-1"];
+const ordinals = new Intl.PluralRules("en-US", {type: "ordinal"});
+const suffixes: Record<Intl.LDMLPluralRule, string> = {
+    zero: "th",
+    one: "st",
+    two: "nd",
+    few: "rd",
+    many: "th",
+    other: "th",
+};
 
-const collator = new Intl.Collator("en-US", {
-    numeric: true,
-    sensitivity: "base",
-});
+function formatOrdinal(value: number): string {
+    return `${value}${suffixes[ordinals.select(value)]}`;
+}
 
-items.sort(collator.compare);
-console.log(items);
+console.log([1, 2, 3, 4, 11, 21].map((value) => formatOrdinal(value)).join(", "));
 ```
 
 Result:
 
 ```text
-[ "file-1", "file-2", "file-10" ]
+1st, 2nd, 3rd, 4th, 11th, 21st
+```
+
+## Intl.Collator: locale-aware sorting
+
+Without `numeric: true`, the collator compares digit characters, so `"file-10"` still sorts before `"file-2"`.
+`numeric: true` compares the integers. Leading zeros remain a tie-break: `"file-02"` sorts before `"file-2"`.
+`sensitivity: "base"` treats `a` and `A` as equal. `sort()` is stable, so ties keep their input order.
+
+Letter order is locale data. German sorts `ä` next to `a`. Swedish sorts `ä` after `z`. Build one `Collator` and pass
+`collator.compare`. `String#localeCompare` constructs a collator on every call.
+
+```ts
+const files = ["file-2", "file-10", "file-1"];
+
+console.log([...files].sort(new Intl.Collator("en-US").compare));
+console.log([...files].sort(new Intl.Collator("en-US", {
+    numeric: true,
+    sensitivity: "base",
+}).compare));
+
+const letters = ["ä", "z", "a"];
+
+console.log([...letters].sort(new Intl.Collator("de-DE").compare));
+console.log([...letters].sort(new Intl.Collator("sv-SE").compare));
+console.log(["file-1", "file-02", "file-2", "file-10"].sort(
+    new Intl.Collator("en-US", {numeric: true}).compare,
+));
+```
+
+Result:
+
+```text
+[ 'file-1', 'file-10', 'file-2' ]
+[ 'file-1', 'file-2', 'file-10' ]
+[ 'a', 'ä', 'z' ]
+[ 'a', 'z', 'ä' ]
+[ 'file-1', 'file-02', 'file-2', 'file-10' ]
 ```
 
 ## Intl.DisplayNames: user-friendly labels
 
-```ts
-const display = new Intl.DisplayNames("en-US", { type: "currency" });
+`DisplayNames` turns a code into a name: currency, language, region, script, calendar, or date-time field.
+`languageDisplay: "dialect"` is the default, so `en-GB` is `British English`. `"standard"` is
+`English (United Kingdom)`. `of()` throws `RangeError` for a code that is not in the set. Currency codes are
+case-insensitive here, same as in `NumberFormat`.
 
-console.log(display.of("USD"));
-console.log(display.of("EUR"));
+```ts
+const currencyNames = new Intl.DisplayNames("en-US", {type: "currency"});
+const dialect = new Intl.DisplayNames("en-US", {type: "language", languageDisplay: "dialect"});
+const standard = new Intl.DisplayNames("en-US", {type: "language", languageDisplay: "standard"});
+
+console.log(currencyNames.of("USD"));
+console.log(currencyNames.of("EUR"));
+console.log(dialect.of("en-GB"));
+console.log(standard.of("en-GB"));
+console.log(new Intl.DisplayNames("en-US", {type: "region"}).of("DE"));
 ```
 
 Result:
@@ -379,39 +920,66 @@ Result:
 ```text
 US Dollar
 Euro
+British English
+English (United Kingdom)
+Germany
 ```
 
-## Intl.Segmenter: split text by words or graphemes
+## Intl.Segmenter: words and graphemes
+
+`granularity: "word"` splits on word boundaries, not on a space character. Filter with `isWordLike` or the array
+includes the gaps. Japanese has no spaces between words. `split(" ")` cannot see them. `granularity: "grapheme"`
+counts what a person sees as one character. The family emoji is one grapheme and eleven UTF-16 code units
+(`"👨‍👩‍👧‍👦".length === 11`). Use the segmenter for limits, avatars, and "characters remaining". Use `split` when you
+already have a delimiter.
 
 ```ts
 const text = "Intl API makes i18n easier.";
-
-const wordSegmenter = new Intl.Segmenter("en-US", { granularity: "word" });
-const words = Array.from(wordSegmenter.segment(text))
+const words = Array.from(new Intl.Segmenter("en-US", {granularity: "word"}).segment(text))
     .filter((segment) => segment.isWordLike)
     .map((segment) => segment.segment);
+const family = "👨‍👩‍👧‍👦";
+const graphemes = Array.from(
+    new Intl.Segmenter("en", {granularity: "grapheme"}).segment(family),
+);
+const japanese = Array.from(
+    new Intl.Segmenter("ja", {granularity: "word"}).segment("私は東京にいます"),
+).filter((segment) => segment.isWordLike).map((segment) => segment.segment);
 
 console.log(words);
+console.log(family.length);
+console.log(graphemes.length);
+console.log(japanese);
 ```
 
 Result:
 
 ```text
-[ "Intl", "API", "makes", "i18n", "easier" ]
+[ 'Intl', 'API', 'makes', 'i18n', 'easier' ]
+11
+1
+[ '私', 'は', '東京', 'に', 'い', 'ます' ]
 ```
 
-## Intl.Locale and supported values
+`granularity: "sentence"` is the third mode. The trailing space stays on the sentence segment that precedes it.
+
+## Locale, supported values, and DurationFormat
+
+`Intl.Locale` parses a language tag and its Unicode extension (`-u-ca-gregory`, `-u-nu-latn`, `-u-hc-h23`).
+`maximize()` and `minimize()` add or drop likely script and region. An unknown locale tag does not throw. The
+formatter falls back, and `resolvedOptions().locale` tells you where it landed. On this machine `xx-YY` becomes
+`en-US` because that is the default locale. `supportedLocalesOf()` drops tags the engine will not use, which is the
+check to make before you cache a formatter under a user-supplied tag.
 
 ```ts
-const locale = new Intl.Locale("en-US", { calendar: "gregory" });
+const locale = new Intl.Locale("en-US", {calendar: "gregory"});
 
 console.log(locale.baseName);
 console.log(locale.calendar);
-
-if (typeof Intl.supportedValuesOf === "function") {
-    const currencies = Intl.supportedValuesOf("currency").slice(0, 5);
-    console.log(currencies);
-}
+console.log(Intl.NumberFormat.supportedLocalesOf(["xx-YY", "de-DE", "en-US"]));
+console.log(new Intl.NumberFormat("xx-YY").resolvedOptions().locale);
+console.log(Intl.supportedValuesOf("currency").includes("USD"));
+console.log(Intl.supportedValuesOf("unit").includes("celsius"));
 ```
 
 Result:
@@ -419,43 +987,136 @@ Result:
 ```text
 en-US
 gregory
-[ "AED", "AFN", "ALL", "AMD", "ANG" ]
+[ 'de-DE', 'en-US' ]
+en-US
+true
+true
 ```
 
-## Practical tips for production usage
+`supportedValuesOf()` accepts `calendar`, `collation`, `currency`, `numberingSystem`, `timeZone`, and `unit`. The
+first five currency codes on this ICU are `AED`, `AFN`, `ALL`, `AMD`, `ANG`. Treat that order as data, not as an API
+contract.
 
-- **Cache formatters**: create them once and reuse, formatters are expensive to construct.
-- **Prefer Intl.*Format over toLocaleString**: formatters are clearer and easier to test.
-- **Store numbers and dates as data**: format at the UI boundary to avoid mixed locales.
-- **Pick explicit locales** when formatting server-side (avoid environment surprises).
+Node 22 exposes `locale.weekInfo` (`firstDay`, `weekend`, `minimalDays`). The spec later replaced that getter with
+`getWeekInfo()`, which this Node does not implement. Feature-detect before reading the first day of the week.
+
+`Intl.DurationFormat` formats a duration record (`hours`, `minutes`, `seconds`, and the other units) and shipped in
+browsers as Baseline in March 2025. The constructor arrived in Node 23. Node 22 does not have it. Guard the lookup.
+The branch below is the one this runtime takes.
+
+```ts
+type DurationFormatter = {
+    format: (duration: {hours?: number; minutes?: number; seconds?: number}) => string;
+};
+
+const DurationFormat = (Intl as unknown as {
+    DurationFormat?: new (
+        locale: string,
+        options: {style: "long" | "short" | "narrow"},
+    ) => DurationFormatter;
+}).DurationFormat;
+
+if (DurationFormat !== undefined) {
+    console.log(new DurationFormat("en", {style: "short"}).format({
+        hours: 1,
+        minutes: 46,
+        seconds: 40,
+    }));
+} else {
+    console.log("DurationFormat is not available on this runtime");
+}
+```
+
+Result on Node 22:
+
+```text
+DurationFormat is not available on this runtime
+```
+
+## Reuse formatters
+
+Formatters are immutable after construction, so one instance can serve every call on the page. `JSON.stringify` on the
+options object is a poor cache key: key order changes the string, and two equal option bags miss. Sort the keys, drop
+`undefined`, and key by locale plus that string.
 
 ```ts
 const numberFormatCache = new Map<string, Intl.NumberFormat>();
 
+function stableOptionsKey(options: Intl.NumberFormatOptions): string {
+    const keys = Object.keys(options).sort() as Array<keyof Intl.NumberFormatOptions>;
+    const stable: Record<string, unknown> = {};
+
+    for (const key of keys) {
+        const value = options[key];
+        if (value !== undefined) {
+            stable[key] = value;
+        }
+    }
+
+    return JSON.stringify(stable);
+}
+
 function getNumberFormat(locale: string, options: Intl.NumberFormatOptions): Intl.NumberFormat {
-    const key = `${locale}:${JSON.stringify(options)}`;
+    const key = `${locale}:${stableOptionsKey(options)}`;
     const cached = numberFormatCache.get(key);
-    if (cached) return cached;
+
+    if (cached) {
+        return cached;
+    }
+
     const formatter = new Intl.NumberFormat(locale, options);
     numberFormatCache.set(key, formatter);
     return formatter;
 }
 
-const cachedUsd = getNumberFormat("en-US", { style: "currency", currency: "USD" });
-console.log(cachedUsd.format(1234.56));
+const first = getNumberFormat("en-US", {style: "currency", currency: "USD"});
+const second = getNumberFormat("en-US", {currency: "USD", style: "currency"});
+
+console.log(first === second);
+console.log(first.format(1234.56));
 ```
 
 Result:
 
 ```text
+true
 $1,234.56
 ```
+
+`Number#toLocaleString` and `Date#toLocaleString` take the same option bags and construct a formatter per call. A log
+line can afford that. A list render should keep the formatter it already built.
+
+## Common pitfalls
+
+- **Comparing formatted strings.** U+00A0 (currency codes), U+202F (`fr-FR` groups and some `AM`/`PM` gaps), U+2009 (date-range dashes), U+2013 (the dash itself), and U+200F (right-to-left marks around `ar-EG` currency) all hide in otherwise familiar output.
+- **Percent input.** `style: "percent"` multiplies by 100.
+- **Currency fraction digits.** JPY rounds away the fraction. Forcing two decimals means setting both the minimum and the maximum.
+- **`narrowSymbol` on CAD in `en-US`.** You get `$`, which collides with USD.
+- **Binary prices.** `19.995` formats as `$20.00` here. Store integer cents.
+- **`NaN`, `Infinity`, and `""`.** Number formatting prints `$NaN`, `$∞`, or `0`. Date formatting throws on an invalid `Date`.
+- **`EST` and friends.** The alias can resolve to a different zone than the abbreviation suggests. `America/Panama` on this ICU.
+- **Date-only strings.** `new Date("2026-02-02")` is UTC midnight and can format as the previous calendar day.
+- **`th-TH` years.** The default calendar is Buddhist unless you pass `calendar: "gregory"`.
+- **`dateStyle` mixed with fields.** Throws `TypeError: Invalid option : option`.
+- **Relative time.** The formatter does not subtract two dates, and a 30-day month ladder is not calendar math.
+- **Plural maps.** English `one` / `other` is not the Polish set. Fall back to `other`.
+- **Unknown locales.** They do not throw. They fall back to the runtime default.
+- **`Intl.DurationFormat` on Node 22.** The constructor is missing. Feature-detect it.
+
+## Best practices
+
+- **Format at the edge** from numbers, bigints, and `Date` instants. Store ISO strings or epoch milliseconds, not already-localized text.
+- **Pass the locale and the time zone in from the request.** Do not inherit the container locale.
+- **Cache formatters** with a stable key. One `NumberFormat`, one `DateTimeFormat`, and one `Collator` per locale is enough for most pages.
+- **Validate codes** with `supportedValuesOf()` and `supportedLocalesOf()` before constructing.
+- **Use `formatToParts()`** when CSS or a test needs one field.
+- **Read `resolvedOptions()`** for the fraction digits, calendar, numbering system, and time zone you actually got.
 
 ## FAQ: Intl API for currency and date formatting
 
 ### How do I format currency in JavaScript?
 
-Use `Intl.NumberFormat` with `style: "currency"` and a `currency` code.
+Use `Intl.NumberFormat` with `style: "currency"` and an ISO currency code. The engine picks the fraction digits.
 
 ```ts
 const usd = new Intl.NumberFormat("en-US", {
@@ -464,17 +1125,23 @@ const usd = new Intl.NumberFormat("en-US", {
 });
 
 console.log(usd.format(1234.56));
+console.log(new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "JPY",
+}).format(1234.56));
 ```
 
 Result:
 
 ```text
 $1,234.56
+¥1,235
 ```
 
 ### How do I format dates with Intl in JavaScript?
 
-Use `Intl.DateTimeFormat` with `dateStyle`, `timeStyle`, and an optional `timeZone`.
+Use `Intl.DateTimeFormat` with `dateStyle`, `timeStyle`, and a `timeZone`. Leave the component fields off when a style
+is set.
 
 ```ts
 const fmt = new Intl.DateTimeFormat("en-US", {
@@ -483,8 +1150,7 @@ const fmt = new Intl.DateTimeFormat("en-US", {
     timeZone: "UTC",
 });
 
-const exampleDate = new Date("2026-02-02T14:30:00Z");
-console.log(fmt.format(exampleDate));
+console.log(fmt.format(new Date("2026-02-02T14:30:00Z")));
 ```
 
 Result:
@@ -492,3 +1158,52 @@ Result:
 ```text
 February 2, 2026 at 2:30 PM
 ```
+
+### Why does a string comparison against formatted output fail?
+
+The visible space is often U+00A0 or U+202F. Normalize whitespace if you must compare, and expect the rest of the
+punctuation to follow the locale.
+
+```ts
+const formatted = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    currencyDisplay: "code",
+}).format(1234.56);
+
+console.log(formatted.includes("\u00a0"));
+console.log(formatted.replaceAll(/\s/g, " ") === "USD 1,234.56");
+```
+
+Result:
+
+```text
+true
+true
+```
+
+### How do I format a list?
+
+`Intl.ListFormat` with `type: "conjunction"` produces the "and" form, including the locale's serial comma.
+
+```ts
+const list = new Intl.ListFormat("en-US", {
+    style: "long",
+    type: "conjunction",
+});
+
+console.log(list.format(["TypeScript", "Docusaurus", "Intl"]));
+```
+
+Result:
+
+```text
+TypeScript, Docusaurus, and Intl
+```
+
+## Summary
+
+Pass a locale, pass a time zone, and format numbers and instants at the edge. Currency fraction digits, compact
+scales, plural categories, and calendar systems come from locale data, which you can read back with
+`resolvedOptions()`. The strings are for people. The values you store should still be numbers, `Date` instants, and
+IANA time zone names.
