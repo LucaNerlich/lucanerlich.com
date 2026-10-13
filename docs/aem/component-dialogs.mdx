@@ -1,110 +1,84 @@
 ---
 title: Touch UI Component Dialogs
+description: "Copy-paste Granite UI / Coral dialog XML for AEM component dialogs -- fields, multifields, show/hide, RTE, design dialogs, and the mistakes that drop authored values."
 sidebar_position: 3
 tags: [aem, dialogs, touch-ui]
+keywords:
+  - aem dialog
+  - "cq:dialog"
+  - granite ui
+  - coral ui
+  - aem multifield
 sidebar_class_name: hero-doc
 ---
 
 
 # Touch UI Component Dialog Examples
 
-The following chapters each present a Coral XML snippet which can be copied into any `/components/mycomponent/_cq_dialog/.content.xml` file.
+The following chapters each present a Coral XML snippet which can be copied into any component's `_cq_dialog/.content.xml`.
 
-[Documentation Overview](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
+A dialog is the form an author gets when they configure a component. Each widget is a Granite UI resource, and the `name` on that widget is the JCR property written on the component content node.
+
+```text
+ui.apps/.../components/teaser/
+  .content.xml                    # cq:Component
+  teaser.html
+  _cq_dialog/.content.xml         # node name: cq:dialog
+  _cq_design_dialog/.content.xml  # template policy
+  _cq_editConfig.xml              # inline editing, drop targets
+```
+
+`_cq_dialog` keeps the colon out of the filename. FileVault turns the underscore into `cq:dialog`. Build new dialogs with Coral 3 resource types (`granite/ui/components/coral/foundation/...`). Coral 2 widgets live under `granite/ui/components/foundation` and still show up in older projects; the pathbrowser section below is the one you will recognise.
+
+A value is stored only when `name` is relative to the component:
+
+```xml
+name="./title"
+```
+
+Without the `./` the POST lands on the wrong resource and the dialog looks like it does not save. The XML element name (`<title>`, `<heading>`, `<alert>`) only has to be unique among siblings. It is not the property name.
+
+```text
+/content/mysite/en/jcr:content/root/teaser
+  title = "Spring collection"
+  fileReference = "/content/dam/spring.jpg"
+  links/            # composite multifield, name="./links"
+    item0/  label, url
+    item1/  label, url
+```
+
+For a first component, the [beginners guide dialog chapter](./beginners-guide/06-component-dialogs.md) walks through one dialog end to end. This page is the catalog you copy from after that. Widget contracts live in the [Granite UI server-side API](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html).
 
 ## TL;DR
 
 - Start from the empty dialog template and evolve it.
 - Use `fieldLabel` + `fieldDescription` consistently for author guidance.
 - Prefer `composite` multifields and `@ChildResource` when you need structured data.
+- Reach for `cq-dialog-dropdown-showhide` before writing a dialog clientlib.
+- Set `uncheckedValue` on checkboxes, and `selected` on the default select option.
 - Keep validation minimal and handle missing values in your Sling Model.
 
 ## Quick navigation
 
-- [AEM Component Help Pages](#aem-component-help-pages)
 - [Best Practices](#best-practices)
+- [Common pitfalls](#common-pitfalls)
 - [Empty Dialog / Starting Point](#empty-dialog--starting-point)
 - [Simple Data Fields](#simple-data-fields)
 - [Complex Data Fields](#complex-data-fields)
   - [Native showhide (`cq-dialog-dropdown-showhide`)](#native-showhide-with-cq-dialog-dropdown-showhide)
+  - [Multifield](#multifield)
   - [FieldSet (grouped fields)](#fieldset-grouped-fields)
   - [Link tuple (label + URL + target)](#link-tuple-label--url--target)
 - [Validation](#validation) (see also the deep dive: [Dialog Validation](./components/dialog-validation.mdx))
 - [Dialog Inheritance](#dialog-inheritance)
 - [cq editConfig - inline editing, listeners, drop targets](#cq-editconfig---inline-editing-listeners-drop-targets)
 - [Design Dialog (Template Policies)](#design-dialog-template-policies)
-- [Layout & Read Only](#layout--read-only)
+- [Rich Text Editor (RTE)](#rich-text-editor-rte)
 - [MSM / Live Copy considerations](#msm--live-copy-considerations)
+- [Dialog cookbook](#dialog-cookbook)
 - [Full XML Example](#full-xml-example)
-
-## AEM Component Help Pages
-
-1. Open the CRXDE Lite [http://localhost:4502/crx/de/index.jsp](http://localhost:4502/crx/de/index.jsp) console.
-2. Go to the component path. Example: `/apps/<projectname>/components/some/text`.
-3. Now create a new markdown file inside the component called **README.md**.
-4. Add any documentation content you need.
-5. Now go to [http://localhost:4502/libs/wcm/core/content/sites/components.html](http://localhost:4502/libs/wcm/core/content/sites/components.html) and select **Title Component** from the list with a valid **Component Group**.
-6. Now copy the URL from the address bar. In my case the URL is `/mnt/overlay/wcm/core/content/sites/components/details.html/apps/<projectname>/components/some/text`.
-7. Go to the **component** within **CRXDE Lite** > **cq:dialog** and set the **helpPath** property to the value of the path copied above.
- - `helpPath="/mnt/overlay/wcm/core/content/sites/components/details.html/apps/<projectname>/components/some/text"`
-8. Now enable and add the component to the page, open the dialog and click on the **Help (?)** icon.
-
-![Dialog help button](/images/aem/components/dialog-help-button.png)
-
-![Dialog README view](/images/aem/components/dialog-readme.png)
-
-### Set Documentation as Default Active Tab
-
-In order to show **documentation** as the **default active tab** when the author clicks on the **Help (?)** icon, We need to overlay an AEM’s node. Just follow these steps.
-
-1.  Go to the CRXDE Lite console [http://localhost:4502/crx/de/index.jsp](http://localhost:4502/crx/de/index.jsp)
-2.  Go to `/libs/wcm/core/content/sites/components/details/jcr:content/content/single/content/items/content/items/tabs/items/documentation`.
-3.  Right click on the **documentation** node and select the **Overlay Node** option.
-- **Path:** `/libs/wcm/core/content/sites/components/details/jcr:content/content/single/content/items/content/items/tabs/items/documentation`
-- **Overlay Location:** `/apps/`
-- **Match node types:** `checked`
-4. Now go to the overlay path inside the /apps folder
-`/apps/wcm/core/content/sites/components/details/jcr:content/content/single/content/items/content/items/tabs/items/documentation`.
-Click on the documentation node and set the following property `sling:orderBefore (String) : fixedColumnContainer`
-
-`ui.apps/src/main/content/jcr_root/apps/wcm/core/content/sites/components/details/.content.xml`
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-          xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
-          jcr:primaryType="cq:Page">
-    <jcr:content
-        jcr:primaryType="nt:unstructured">
-        <content
-            jcr:primaryType="nt:unstructured">
-            <single jcr:primaryType="nt:unstructured">
-                <content
-                    jcr:primaryType="nt:unstructured">
-                    <items jcr:primaryType="nt:unstructured">
-                        <content
-                            jcr:primaryType="nt:unstructured">
-                            <items jcr:primaryType="nt:unstructured">
-                                <tabs
-                                    jcr:primaryType="nt:unstructured">
-                                    <items jcr:primaryType="nt:unstructured">
-                                        <documentation
-                                            jcr:primaryType="nt:unstructured"
-                                            sling:orderBefore="fixedColumnContainer"/>
-                                    </items>
-                                </tabs>
-                            </items>
-                        </content>
-                    </items>
-                </content>
-            </single>
-        </content>
-    </jcr:content>
-</jcr:root>
-
-```
-
-[Source](https://medium.com/@surajkamdi/adding-documentation-for-aem-components-ab0bced28c26)
+- [AEM Component Help Pages](#aem-component-help-pages)
+- [Accessibility](#accessibility)
 
 ## Best Practices
 
@@ -121,10 +95,18 @@ Click on the documentation node and set the following property `sling:orderBefor
 
 ## Common pitfalls
 
-- Missing `name` or missing `./` prefix, which leads to values not being persisted.
-- Forgetting `fieldLabel`, which makes dialogs harder to scan.
-- Overusing multifields instead of grouping into separate components.
-- Applying clientlibs globally instead of using dialog-specific categories.
+- Missing `name`, or a `name` without the `./` prefix. The field renders and the POST goes nowhere useful.
+- A checkbox with no `uncheckedValue`. Clearing it deletes the property, so the model sees `null` instead of `false`.
+- A select or radio with no `selected` item. The closed dialog shows the first option, and nothing is stored until the author changes it.
+- Treating the multifield's own node name as the JCR name. For a composite multifield the stored node is the `name` on the inner `field` container.
+- `min-items` / `max-items` with no validator. Those data attributes are inert until the [multifield validator](./components/dialog-validation.mdx#multifield-min--max-items) is registered.
+- `required` on a field that show/hide can hide. The `hide` class does not turn validation off, so save stays blocked.
+- A numberfield with no `@TypeHint`. The value is stored as a String.
+- Renaming `name` after content exists, with no fallback in the Sling Model.
+- Pasting `sling:hideChildren="[*]"` into a proxy dialog. That drops every inherited tab. See [Dialog Inheritance](#dialog-inheritance).
+- Forgetting `fieldLabel`, which makes the dialog harder to scan and leaves the input unlabelled for assistive tech.
+- A composite multifield where a fixed group of fields would do. A [fieldset](#fieldset-grouped-fields) is the smaller tool.
+- A dialog clientlib on `cq.authoring.dialog`, so the script loads in every dialog. Prefer `extraClientlibs`.
 
 ## Empty Dialog / Starting Point
 
@@ -200,34 +182,15 @@ This is an empty dialog structure and components can be placed in tabs (you can 
 </jcr:root>
 ```
 
-## See also
-
-- [Custom Component Guide](./custom-component.mdx)
-- [Dialog validation](./components/dialog-validation.mdx)
-- [Components](./components/overview.mdx)
-- [Core Components](./components/core-components.mdx)
-- [HTL Templates](./htl-templates.mdx)
-- [Touch UI](./ui/touch-ui.mdx)
-- [Coral UI](./ui/coral-ui.mdx)
-- [Overlays](./ui/overlays.mdx)
-- [Sling Models - reading policy values](./backend/sling-models.mdx#accessing-template-policies)
-- [Custom dialog widgets (dynamic rootpath, asset finder)](./ui/custom-dialog-widgets.md)
-- [Templates and Policies](./components/templates-policies.md) - design dialogs, component policies
-- [Tags and Taxonomies](./content/tags-taxonomies.md) - tag field deep dive
-- [Granite UI Server-side API](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
-- [Coral UI Icon List](https://developer.adobe.com/experience-manager/reference-materials/6-5/coral-ui/coralui3/Coral.Icon.html#availableIcons)
-- [Creating a New Granite UI Field Component (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65-lts/content/implementing/developing/platform/granite-ui-component)
-- [Adding Fields to an AEM Dialog - WKND tutorial](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
-- [Configuring the Rich Text Editor (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/configuring-and-extending/rich-text-editor)
-
 ![Empty dialog](/images/aem/dialogfields/empty.png)
 
-You can write a class or id to your dialog fragment by adding `granite:class="some-css-class"` or `granite:id="some-id"`. Add `
-required="{Boolean}true"` to any component field to mark it as required.
+Authors see one tab per child of `tabs/items`. Put fields in that tab's column `items`. `jcr:title` is the tab label. `margin="{Boolean}true"` is the padding; without it the fields sit on the dialog chrome. `maximized="{Boolean}true"` lets the tab body fill the dialog.
+
+`granite:class` and `granite:id` land on the widget root, which is how dialog CSS and show/hide scripts find a field. `required="{Boolean}true"` on a form field marks it required.
 
 <div class="alert alert-info" role="alert">
-    Note, that the actual xml item element tag name, can be anything, as long as its unique for this component.
-    For example, the Alert field xml does not need to be named `alert`.
+    The XML element name can be anything, as long as it is unique among its siblings.
+    The Alert snippet does not have to be named <code>alert</code>. The <code>name</code> attribute is what gets stored.
 </div>
 
 ## Simple Data Fields
@@ -242,8 +205,11 @@ required="{Boolean}true"` to any component field to mark it as required.
    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
    fieldDescription="The button label"
    fieldLabel="Button Label"
-   name="./label"/>
+   name="./label"
+   emptyText="Learn more"/>
 ```
+
+`emptyText` is the placeholder and is not saved. `value` is submitted with the dialog, so it becomes real content on the first save even when the author never touches the field. Put fallbacks in the Sling Model when they should stay out of the JCR. See [Persisted values and defaults](#persisted-values-and-defaults).
 
 ![Textfield](/images/aem/dialogfields/textfield.png)
 
@@ -289,6 +255,18 @@ You can define the min, max value and the increments, in which the input can be 
     step="{Double}1"/>
 ```
 
+The widget posts a string, so the JCR property is `"1"` unless the submit also carries a Sling type hint. Add a hidden sibling when the property should be a `Long` (or `Double` for decimals):
+
+```xml
+<numberTypeHint
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+    name="./numbervalue@TypeHint"
+    value="Long"/>
+```
+
+A Sling Model `long` converts the string and hides the mismatch until a query or a script compares types.
+
 ![Numberfield](/images/aem/dialogfields/numberfield.png)
 
 ### Pathfield (Pathbrowser)
@@ -303,6 +281,18 @@ You can define the min, max value and the increments, in which the input can be 
    rootPath="/content"
    name="./path"/>
 ```
+
+`rootPath` is case-sensitive. `rootpath` is ignored and the picker opens at `/`.
+
+`filter` limits the picker:
+
+| `filter` | Picker shows |
+|----------|----------------|
+| `hierarchyNotFile` | Pages and folders, not assets |
+| `nosystem` | Hides `/apps`, `/libs`, and other system paths |
+| omitted | Pages and assets |
+
+An asset picker uses `rootPath="/content/dam"` and no `filter`. `hierarchyNotFile` on a DAM root hides the assets you wanted the author to pick.
 
 ![Pathfield](/images/aem/dialogfields/pathfield.png)
 
@@ -353,8 +343,11 @@ In legacy AEM 6.5 codebases you might still encounter the older Coral 2 `pathbro
     fileNameParameter="./fileName"
     fileReferenceParameter="./fileReference"
     mimeTypes="[image/gif,image/jpeg,image/png,image/tiff,image/svg+xml]"
+    fieldLabel="Image"
     name="./file"/>
 ```
+
+`fileReferenceParameter` is the DAM path written when the author picks an existing asset (`./fileReference`). `name="./file"` is the binary child used when they upload from disk. Drag-and-drop from the asset finder also needs a matching [drop target](#drop-target-for-assets) on `cq:editConfig`. Set `allowUpload="{Boolean}false"` when the asset must already live in the DAM.
 
 ![Asset upload](/images/aem/dialogfields/assetupload.png)
 
@@ -373,6 +366,10 @@ In legacy AEM 6.5 codebases you might still encounter the older Coral 2 `pathbro
     value="{Boolean}true"/>
 ```
 
+`text` is the checkbox caption. A `fieldLabel` on the same widget draws a second caption above it.
+
+`value` is written when the box is checked. `uncheckedValue` is written when it is cleared. Omit `uncheckedValue` and clearing the box deletes the property: a primitive `boolean` in the Sling Model reads `false`, a `Boolean` reads `null`. `checked` applies only while the property is missing; once the author has saved, the stored value wins.
+
 ![Checkbox](/images/aem/dialogfields/checkbox.png)
 
 ### Checkbox group
@@ -390,6 +387,8 @@ In legacy AEM 6.5 codebases you might still encounter the older Coral 2 `pathbro
 </checkboxGroup>
 ```
 
+Checked options are stored as a `String[]` on `./options`. Read it with `@ValueMapValue private String[] options`. There is no `uncheckedValue` here: clearing every box removes the property.
+
 ### Switch
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html)
@@ -404,6 +403,8 @@ In legacy AEM 6.5 codebases you might still encounter the older Coral 2 `pathbro
    uncheckedValue="{Boolean}false"
    value="{Boolean}true"/>
 ```
+
+A switch persists the same way as a checkbox: `value` when on, `uncheckedValue` when off, property deleted when `uncheckedValue` is missing. `onText` and `offText` replace the default labels.
 
 ![Switch](/images/aem/dialogfields/switch.png)
 
@@ -435,6 +436,10 @@ In legacy AEM 6.5 codebases you might still encounter the older Coral 2 `pathbro
    type="datetime"
    typeHint="Date"/>
 ```
+
+`displayedFormat` uses [Moment](https://momentjs.com/docs/#/displaying/format/) tokens, not `SimpleDateFormat`. `DD` is the day of the month and `dd` is the day of the week, so a Java-style `dd-MM-yyyy` renders the weekday. `YYYY-MM-DD` is the usual date-only format.
+
+`type` is `date`, `time`, or `datetime`. `typeHint="Date"` stores a JCR Date, which a `Calendar` injection can read. Without the hint the value is an ISO string and the `Calendar` comes back null.
 
 ![Datepicker](/images/aem/dialogfields/datepicker.png)
 
@@ -582,9 +587,7 @@ For client-side toggles (show/hide based on a checkbox or select), prefer dialog
 
 ### Native showhide with cq-dialog-dropdown-showhide
 
-Before writing custom JS, use the script that ships with AEM. Register the clientlib category
-`cq.authoring.dialog` and a select / checkbox with a specific class can toggle any element that
-carries a matching target class and `showhidetargetvalue`.
+The dialog editor already loads `cq.authoring.dialog`, and that clientlib contains Adobe's show/hide script. You do not register anything. A select (or checkbox) with the class below toggles every element that carries the matching target class and `showhidetargetvalue`.
 
 **Dropdown-controlled target**
 
@@ -645,7 +648,11 @@ How Adobe's script resolves it:
 1. The select fires a `change` event; the script reads `cq-dialog-dropdown-showhide-target`.
 2. It queries the document for every element matching that selector (e.g. `.cmp-link-type-target`).
 3. For each target, it reads the target's `showhidetargetvalue` and compares to the current select value.
-4. Matching targets get `.hide` removed; all others get it added.
+4. Matching targets lose the `hide` class; the others gain it. On `dialog-ready` the script runs against the saved value, so a field can start with `hide` and still be visible when the stored value matches.
+
+:::warning[A hidden required field still blocks save]
+The script toggles `hide`. It does not disable Foundation validation. A target with `required="{Boolean}true"` fails the dialog while it is hidden. Leave `required` off fields that can be hidden, or register a validator that skips `.hide` ancestors. See [Dialog Validation](./components/dialog-validation.mdx).
+:::
 
 **Checkbox-controlled target** (same idea, different class)
 
@@ -678,58 +685,46 @@ there's no `showhidetargetvalue` needed.
 Adobe's script queries the **whole document** by default. Inside a composite multifield every item
 has its own controller and target, so a global `.cmp-link-type-target` selector matches rows other
 than the one the author is editing and toggles them all together. For per-row behaviour, use the
-custom JS pattern shown below - it scopes lookups to `closest("coral-multifield-item")`.
+custom JS pattern shown below -- it scopes lookups to `closest("coral-multifield-item")`.
 :::
 
 ### Dynamic show/hide based on a selection
 
-When one widget controls the visibility of another, you can use dialog JS that reacts to the field value and toggles containers.
+Use this when the built-in script is not enough. The usual case is a controller inside a composite multifield: Adobe's script queries the whole document, so every row toggles together. A radiogroup can drive the same script if you listen for `change` and read the group value. The example uses a select.
 
-**1) Add a controller field and a target container**
+**1) Controller and target share a multifield row**
+
+`granite:class="linkType-showhide-source"` is the controller. `linkType-showhide-target` is the field that should appear only for `email`.
 
 ```xml
-<variant
+<linkType
     jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/form/radiogroup"
-    granite:class="some-radiogroup-source"
-    fieldLabel="Variant"
-    name="./variant">
+    sling:resourceType="granite/ui/components/coral/foundation/form/select"
+    granite:class="linkType-showhide-source"
+    fieldLabel="Link type"
+    name="./linkType">
     <items jcr:primaryType="nt:unstructured">
-        <simple jcr:primaryType="nt:unstructured" text="Simple" value="simple"/>
-        <advanced jcr:primaryType="nt:unstructured" text="Advanced" value="advanced"/>
+        <internal jcr:primaryType="nt:unstructured" text="Internal" value="internal"/>
+        <email jcr:primaryType="nt:unstructured" text="Email" value="email"/>
     </items>
-</variant>
-
-<advancedOptions
+</linkType>
+<emailSubject
     jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/container"
-    granite:class="cmp-dialog-advanced"
-    margin="{Boolean}true">
-    <items jcr:primaryType="nt:unstructured">
-        <!-- fields shown only when variant=advanced -->
-    </items>
-</advancedOptions>
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    granite:class="linkType-showhide-target"
+    fieldLabel="Email subject"
+    name="./emailSubject"/>
 ```
 
-**2) Add a dialog-scoped clientlib**
+Both fields sit in the composite multifield's `field/items`, next to each other, so they share one `coral-multifield-item`.
 
-```xml title="ui.apps/.../clientlibs/clientlib-dialog/.content.xml"
-<?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          jcr:primaryType="cq:ClientLibraryFolder"
-          categories="[cq.authoring.dialog]"
-          allowProxy="{Boolean}true"/>
-```
+**2) Load the script in this dialog only**
 
-Alternatively, load the clientlib only in this component's dialog by changing the clientlib category to a custom name such as `categories="[cq.authoring.mycomponent]"` and
-adding `extraClientlibs="[cq.authoring.mycomponent]"` to the component's `_cq_dialog/.content.xml` file.
+Give the clientlib its own category and name it from the dialog with `extraClientlibs`. A category of `cq.authoring.dialog` loads the same file in every dialog in the project.
 
-```xml title="/apps/myproject/components/mycomponent/cq:dialog/.content.xml"
-<?xml version="1.0" encoding="UTF-8"?>
+```xml title="/apps/myproject/components/mycomponent/_cq_dialog/.content.xml"
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
-          xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           jcr:primaryType="nt:unstructured"
           jcr:title="My Component"
           extraClientlibs="[cq.authoring.mycomponent]"
@@ -738,107 +733,73 @@ adding `extraClientlibs="[cq.authoring.mycomponent]"` to the component's `_cq_di
 </jcr:root>
 ```
 
+```xml title="ui.apps/.../clientlibs/clientlib-dialog/.content.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:ClientLibraryFolder"
+          categories="[cq.authoring.mycomponent]"
+          allowProxy="{Boolean}true"/>
+```
+
 ```text title="ui.apps/.../clientlibs/clientlib-dialog/js.txt"
 #base=js
 dialog-visibility.js
 ```
 
-**3) Toggle visibility in JS**
+**3) Toggle the row the author is editing**
 
-Following JQuery Example is for a multifield which has a select dropdown "linkType"
+`granite:class` lands on the field wrapper for some widgets and on `coral-select` for others. Resolve the select either way, then scope the target lookup to `coral-multifield-item`. New rows are inserted after `dialog-ready`, so a `MutationObserver` on the multifield has to run init again. Toggling `display` (instead of adding and removing nodes) keeps a row that was just added in the right state.
 
 ```js title="ui.apps/.../clientlibs/clientlib-dialog/js/dialog-visibility.js"
-(function (window, document, Granite, $) {
+(function (document, $) {
     "use strict";
 
-    /**
-     * Initializes the link type source dropdown elements by attaching event handlers for visibility toggling
-     * and ensuring a proper initial state for target elements based on dropdown values.
-     *
-     * This method performs the following actions:
-     * - Selects all elements matching the selector `.coral-select.linkType-showhide-source`.
-     * - Skips initialization for elements already marked as initialized.
-     * - Toggles the visibility of `.linkType-showhide-target` elements based on the selected dropdown value.
-     * - Handles dynamic multifield scenarios by adjusting the visibility of DOM elements through CSS.
-     *
-     * @return {void} This method does not return a value.
-     */
-    const initializeLinkTypeSources = function () {
-        // Find all .class marked input fields
-        const linkTypeSources = $('coral-select.linkType-showhide-source');
-        if (!linkTypeSources.length) {
-            return;
+    var SOURCE = ".linkType-showhide-source";
+    var TARGET = ".linkType-showhide-target";
+
+    function findSelect(source) {
+        if (source.tagName === "CORAL-SELECT") {
+            return source;
         }
+        return source.querySelector("coral-select");
+    }
 
-        linkTypeSources.each((index, select) => {
-            const $select = $(select);
+    function toggle(select) {
+        var row = $(select).closest("coral-multifield-item");
+        var scope = row.length ? row : $(document);
+        var showEmail = select.value === "email";
 
-            // Skip if already initialized
-            if ($select.data('linktype-initialized')) {
+        scope.find(TARGET).each(function () {
+            var wrapper = $(this).closest("div.coral-Form-fieldwrapper");
+            (wrapper.length ? wrapper : $(this)).toggle(showEmail);
+        });
+    }
+
+    function init(root) {
+        $(root).find(SOURCE).each(function () {
+            var select = findSelect(this);
+            if (!select || select.dataset.linktypeInitialized) {
                 return;
             }
-            $select.data('linktype-initialized', true);
-
-            /**
-             * Controls the visibility of a target element in the DOM based on the selected value
-             * in a dropdown menu. Specifically, this function:
-             * - Finds the closest `.coral-Well` container relative to the selected dropdown.
-             * - Locates the `.linkType-showhide-target` element within the well to determine
-             *   the corresponding target element.
-             * - Toggles the target element's visibility based on the value of the dropdown menu.
-             *
-             * @function toggleTarget
-             * @description Dynamically toggles the visibility of an element, typically used
-             *              in cases such as multifield item handling or conditional UI display.
-             */
-            const toggleTarget = function () {
-                const value = select.value;
-                const well = $select.closest('div.coral-Well');
-                const target = well.find('.linkType-showhide-target').closest('div.coral-Form-fieldwrapper');
-                if (!target.length) {
-                    return;
-                }
-
-                // We have to show/hide via css, since newly added multifield items would otherwise always show the query textarea
-                if (value === 'email') {
-                    target.css('display', 'block');
-                } else {
-                    target.css('display', 'none');
-                }
-            };
-
-            // Show/Hide on Dialog-Ready
-            toggleTarget();
-
-            // Show/Hide on Select Change Events
-            $select.on('change', function (event) {
-                toggleTarget();
+            select.dataset.linktypeInitialized = "true";
+            toggle(select);
+            $(select).on("change", function () {
+                toggle(select);
             });
         });
-    };
+    }
 
-    $(document).on('dialog-ready', (event) => {
-        initializeLinkTypeSources();
+    $(document).on("dialog-ready", function () {
+        init(document);
 
-        // Watch for multifield item changes (add/remove coral-multifield-item)
-        const multifields = document.querySelectorAll('coral-multifield');
-        multifields.forEach((multifield) => {
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.type === 'childList') {
-                        // Re-initialize when coral-multifield-item is added or removed
-                        initializeLinkTypeSources();
-                    }
-                });
-            });
-
-            observer.observe(multifield, {
-                childList: true,
-                subtree: false
-            });
+        document.querySelectorAll("coral-multifield").forEach(function (multifield) {
+            new MutationObserver(function () {
+                init(multifield);
+            }).observe(multifield, { childList: true });
         });
     });
-})(window, document, Granite, $);
+})(document, Granite.$);
 ```
 
 ### Select Dropdown
@@ -855,7 +816,8 @@ Following JQuery Example is for a multifield which has a select dropdown "linkTy
         <children
                 jcr:primaryType="nt:unstructured"
                 text="Child pages"
-                value="children"/>
+                value="children"
+                selected="{Boolean}true"/>
         <static
                 jcr:primaryType="nt:unstructured"
                 text="Fixed list"
@@ -877,6 +839,8 @@ Open
 
 Closed
 ![Select closed](/images/aem/dialogfields/selectclosed.png)
+
+`selected="{Boolean}true"` is the value stored when the author saves without touching the field. With no selected item, Coral shows the first option in the closed dropdown and the property stays missing until they change it. Handle the same fallback in the Sling Model, because content created before the field existed has no property either.
 
 ### Select with datasource
 
@@ -951,12 +915,8 @@ public class CategoryDatasourceServlet extends org.apache.sling.api.servlets.Sli
 }
 ```
 
-:::tip[Preselect the saved value]
-A datasource select does not automatically mark the currently-stored value as selected the way static
-`items` do. To preselect, read the component's saved value from the request
-(`request.getRequestPathInfo()` / the `value` request attribute that Granite sets on the field
-resource) and set a `selected=true` property on the matching item. For most cases the simpler path is
-to let Coral match on `value` - confirm against your AEM version.
+:::tip[The saved value selects itself]
+The select compares each option's `value` with the property already stored on the component. A datasource item with that `value` is selected on open, the same as a static item. Set `selected="{Boolean}true"` only for the default, when the property is still missing.
 :::
 
 ### Radio Select
@@ -974,7 +934,8 @@ to let Coral match on `value` - confirm against your AEM version.
         <vara
                 jcr:primaryType="nt:unstructured"
                 text="Variation A"
-                value="var-a"/>
+                value="var-a"
+                selected="{Boolean}true"/>
         <varb
                 jcr:primaryType="nt:unstructured"
                 text="Variation B"
@@ -982,6 +943,8 @@ to let Coral match on `value` - confirm against your AEM version.
     </items>
 </radio>
 ```
+
+Same rule as a select: set `selected` on the default, or the first radio looks chosen and nothing is written.
 
 ![Radio group](/images/aem/dialogfields/radio.png)
 
@@ -994,7 +957,7 @@ to let Coral match on `value` - confirm against your AEM version.
     fieldLabel="Variant"
     name="./variant">
     <items jcr:primaryType="nt:unstructured">
-        <simple text="Simple" value="simple" jcr:primaryType="nt:unstructured"/>
+        <simple text="Simple" value="simple" selected="{Boolean}true" jcr:primaryType="nt:unstructured"/>
         <advanced text="Advanced" value="advanced" jcr:primaryType="nt:unstructured"/>
     </items>
 </variant>
@@ -1025,11 +988,73 @@ For dynamic values, provide a datasource resource type. This works well for auto
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html)
 
-A multifield wraps a predefined group of components and lets an author create `n` of these sets. The data will be saved to subnodes.
-Access that data via `@ChildResource` Annotation in your Sling Model, as described [here](./components/annotations/child-resource.mdx).
+A multifield lets an author add *n* copies of a field or a field group. There are two storage shapes, and they are not interchangeable.
 
-Add `composite="{Boolean}true"` to save the entries as a child node which in return can easily be injected into a Sling Model via `@ChildResource`.
-Otherwise all values entered will be stored on the node itself as Array Properties.
+**Flat** (no `composite`) stores one multi-value property. The `name` on the inner field is that property:
+
+```xml
+<keywords
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+    fieldLabel="Keywords">
+    <field
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+        name="./keywords"/>
+</keywords>
+```
+
+```text
+teaser
+  keywords = ["spring", "lookbook"]    String[]
+```
+
+Read it with `@ValueMapValue private String[] keywords`.
+
+**Composite** (`composite="{Boolean}true"`) stores ordered child nodes. The JCR name is the `name` on the inner `field` container, not the multifield element's own node name. Inner fields use their own `./` names, relative to each item:
+
+```text
+teaser
+  links/                 # name="./links" on the field container
+    item0/  text = "..."
+    item1/  text = "..."
+```
+
+`@ChildResource` injects that list. The child model adapts from `Resource`, and the list follows JCR child order. Sort by that order. Sorting the node names as strings puts `item10` before `item2`.
+
+```java
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ChildResource;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
+@Model(adaptables = SlingHttpServletRequest.class)
+public class LinkList {
+
+    @ChildResource
+    private List<Link> links;
+
+    public List<Link> getLinks() {
+        return links != null ? links : Collections.emptyList();
+    }
+
+    @Model(adaptables = Resource.class)
+    public static class Link {
+        @ValueMapValue
+        private String text;
+
+        public String getText() {
+            return text;
+        }
+    }
+}
+```
+
+The full pattern, including a multifield of nested models, is on the [`@ChildResource`](./components/annotations/child-resource.mdx) page.
 
 #### Multifield validation (min/max)
 
@@ -1056,6 +1081,8 @@ Otherwise all values entered will be stored on the node itself as Array Properti
     </field>
 </links>
 ```
+
+`min-items` and `max-items` are data attributes. Granite does not enforce them. They start working when a `foundation.validation.validator` reads `data-min-items` and `data-max-items` off the `coral-multifield`. That validator is on the [Dialog Validation](./components/dialog-validation.mdx#multifield-min--max-items) page. `required="{Boolean}true"` on the multifield draws the asterisk and still does not count items.
 
 ```xml
 <myMultifield
@@ -1089,7 +1116,7 @@ Otherwise all values entered will be stored on the node itself as Array Properti
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
 
-A `fieldset` groups related fields under a single legend, and - usefully - prefixes every nested
+A `fieldset` groups related fields under a single legend, and -- usefully -- prefixes every nested
 field's property name so the values land in a subnode of the component. This is the cleanest way
 to persist "a logical sub-object" (e.g. social links, SEO metadata) without reaching for a
 multifield.
@@ -1336,31 +1363,37 @@ private LinkModel link;
 
 ### Content Fragment picker
 
-Select a Content Fragment by path. Useful for headless or structured-content components.
+`dam/cfm/components/cfpicker` is the Content Fragment picker (AEM 6.5 and Cloud Service). It stores the fragment path. A plain pathfield with `filter="hierarchyNotFile"` cannot select one: that filter hides assets, and a content fragment is a `dam:Asset`.
 
 ```xml
 <contentFragment
     jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+    sling:resourceType="dam/cfm/components/cfpicker"
     fieldLabel="Content Fragment"
-    fieldDescription="Select a Content Fragment"
+    fieldDescription="Path to the Content Fragment to display."
+    emptyText="Enter or select Content Fragment"
+    pickerTitle="Select Content Fragment"
     rootPath="/content/dam"
-    filter="hierarchyNotFile"
     name="./fragmentPath"/>
 ```
 
-For a picker that restricts to a specific CF model, use a datasource or render condition in your project.
+`rootPath` limits the browse root. The picker has no model filter of its own; restricting to one Content Fragment Model means a project-specific picker or a datasource. Read `fragmentPath` with `@ValueMapValue` and resolve the asset through the Content Fragment API.
 
 ### Experience Fragment picker
+
+`cq/experience-fragments/editor/components/xffield` is the variation picker Core Components use. `variant="web"` keeps the list to web variations (`cq:xfVariantType`).
 
 ```xml
 <experienceFragment
     jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+    sling:resourceType="cq/experience-fragments/editor/components/xffield"
     fieldLabel="Experience Fragment"
+    name="./fragmentVariationPath"
     rootPath="/content/experience-fragments"
-    name="./experienceFragmentPath"/>
+    variant="web"/>
 ```
+
+A pathfield rooted at `/content/experience-fragments` also works when you only need a path and not the variation filter.
 
 ## Validation
 
@@ -1411,8 +1444,13 @@ Foundation Validation API lifecycle, server-side rules, and multifield patterns,
 
 ### Extending a parent dialog with sling:resourceSuperType
 
-When your component extends another (e.g. a core component), its dialog can inherit from the parent.
-Fields, tabs, and structure are merged automatically.
+When the component sets `sling:resourceSuperType`, the editor loads the dialog through Sling Resource Merger (`/mnt/override`). The child `cq:dialog` is merged onto the parent `cq:dialog`. Same node names merge, properties on the child win, and new nodes are added.
+
+The node names along the path have to match the parent. A standard dialog keeps `content/items/tabs/items`. Rename `tabs` and the merger adds a second tab list instead of a tab.
+
+The component property is what the merger follows. A `sling:resourceSuperType` on the dialog is the other case: point it at a dialog from a component this one does not extend, for example `core/wcm/components/text/v2/text/cq:dialog`.
+
+`sling:orderBefore` names the sibling node that should come after yours. The value is the node name, not the `jcr:title`. Read it off the parent dialog in CRXDE.
 
 ```xml title="components/mytext/_cq_dialog/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1433,6 +1471,7 @@ Fields, tabs, and structure are merged automatically.
                     <analytics
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Analytics"
+                        sling:orderBefore="PARENT_TAB_NODE_NAME"
                         sling:resourceType="granite/ui/components/coral/foundation/container"
                         margin="{Boolean}true">
                         <items jcr:primaryType="nt:unstructured">
@@ -1462,9 +1501,11 @@ The component's `.content.xml` must reference the parent:
           componentGroup="My Project"/>
 ```
 
+Replace `PARENT_TAB_NODE_NAME` with a real sibling, or drop `sling:orderBefore` and the tab is appended.
+
 ### Hiding inherited tabs or fields with sling:hideChildren
 
-To remove specific tabs or fields inherited from a parent dialog, use `sling:hideChildren`:
+`sling:hideChildren` is a merger property. It has to sit on the node whose children you want to drop, at the same path the parent uses. On `content/items/tabs/items` it drops tabs. On a column's `items` it drops fields. The names are node names.
 
 ```xml
 <!-- Hide specific tabs by name -->
@@ -1474,7 +1515,7 @@ To remove specific tabs or fields inherited from a parent dialog, use `sling:hid
 </items>
 ```
 
-To hide all inherited children and start fresh:
+`[*]` drops every inherited child of that node, then your own children are added back:
 
 ```xml
 <items jcr:primaryType="nt:unstructured"
@@ -1483,14 +1524,24 @@ To hide all inherited children and start fresh:
 </items>
 ```
 
-You can also hide individual fields within a tab using the same mechanism deeper in the tree.
+On a dialog that has no super type, `[*]` does nothing. On a proxy it wipes the inherited dialog. Keep it out of the [full example](#full-xml-example) below.
 
 ### Hiding a single field with granite:hide
+
+Two properties hide one node. You only need the node name, at the same path as the parent field. Copying the rest of the field is unnecessary.
 
 ```xml
 <unwantedField
     jcr:primaryType="nt:unstructured"
     granite:hide="{Boolean}true"/>
+```
+
+`granite:hide` leaves the node in the merged tree and tells Granite not to render it, so a further override can show it again. `sling:hideResource="{Boolean}true"` removes the node during the merge.
+
+```xml
+<unwantedField
+    jcr:primaryType="nt:unstructured"
+    sling:hideResource="{Boolean}true"/>
 ```
 
 ## cq editConfig - inline editing, listeners, drop targets
@@ -1599,8 +1650,7 @@ Remove the "Copy" or "Delete" buttons from the component toolbar:
     cq:actions="[edit,insert]"/>
 ```
 
-Omitting `copymove` and `delete` hides those toolbar buttons. The default list is
-`[edit,copymove,delete,insert]`.
+Omitting `copymove` and `delete` hides those toolbar buttons. `cq:actions` replaces the whole list, including `editannotate` on versions that show annotations. The common set is `[edit,copymove,delete,insert]`. Add back any action you still want.
 
 ## Design Dialog (Template Policies)
 
@@ -1664,6 +1714,11 @@ components/
                                                 min="{Long}1"
                                                 max="{Long}20"
                                                 value="{Long}5"/>
+                                            <maxItemsTypeHint
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                                name="./maxItems@TypeHint"
+                                                value="Long"/>
                                         </items>
                                     </column>
                                 </items>
@@ -2044,30 +2099,25 @@ taking updates from the blueprint.
 
 **How the attribute works:**
 
-- The value of `cq-msm-lockable` is the **property name** that should become lockable - use the
-  same name you used in `./propertyName`, without the `./` prefix.
-- In edit mode, the Live Copy author sees a padlock icon next to the field. Clicking it breaks
-  inheritance for this property only; the UI then shows an "Inherit" button to restore it.
-- Broken inheritance is recorded as a mixin (`cq:LiveSyncCancelled`) on the affected property of
-  the Live Copy resource - blueprint rollouts skip any property marked as cancelled.
+Adobe's [MSM lock rules](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/extending-aem/extending-msm) apply to the first child level of the resource being edited:
+
+- A relative value, `ctaText` or `./ctaText`, adds that property name to the multi-value `cq:propertyInheritanceCancelled` on the component node. Both spellings address the same property. Core Components tend to write the `./` form.
+- An absolute value, `/links`, cancels the child **node** `links`: MSM adds the `cq:LiveSyncCancelled` mixin on that child and sets `cq:isCancelledForChildren` to `true`.
+- The chain icon is the Touch UI control. Re-enabling inheritance does not copy the blueprint value back. An author has to roll the page out again.
 
 **Common pitfalls:**
 
-- Forgetting the attribute on a nested field in a composite multifield. MSM can only lock what it
-  knows is lockable - set `cq-msm-lockable` on every field inside the multifield's `items`, not
-  on the multifield node itself.
-- Using a different name than the `./property`. The padlock will render but toggling it won't
-  cancel the right property, so rollouts keep overwriting the "locked" field.
-- Relying on lockable as the only escape hatch for a per-market value. If every market needs its
-  own value, consider a **policy** (Design Dialog) or a different component instead of asking
-  every Live Copy author to manually unlock the same field.
+- The value has to name the same property as `name`. A padlock with a different name still renders, and rollout keeps overwriting the field the author thinks is locked.
+- `cq-msm-lockable` does not work for anything deeper than the first child. `./social/twitter` (a fieldset subnode) and `links/item0/label` (a multifield item) show the chain and are still overwritten. Lock the child node with an absolute value (`/links`, `/social`) if the whole group should break together.
+- A per-market value that every Live Copy must change is a policy or a separate component, not a lock every local author has to open.
 
-```xml title="Multifield with lockable inner fields"
+```xml title="Composite multifield locked as one child node"
 <links
     jcr:primaryType="nt:unstructured"
     sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
     composite="{Boolean}true"
-    cq-msm-lockable="links">
+    fieldLabel="Links"
+    cq-msm-lockable="/links">
     <field
         jcr:primaryType="nt:unstructured"
         sling:resourceType="granite/ui/components/coral/foundation/container"
@@ -2077,14 +2127,12 @@ taking updates from the blueprint.
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                 fieldLabel="Label"
-                name="./label"
-                cq-msm-lockable="label"/>
+                name="./label"/>
             <url
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                 fieldLabel="URL"
-                name="./url"
-                cq-msm-lockable="url"/>
+                name="./url"/>
         </items>
     </field>
 </links>
@@ -2297,9 +2345,11 @@ email) using the native [show/hide script](#native-showhide-with-cq-dialog-dropd
 </email>
 ```
 
+`validation="url"` and `validation="email"` are not built in. They do nothing until the matching validators from [Dialog Validation](./components/dialog-validation.mdx) are registered. Hidden targets should not be `required`; see the [show/hide warning](#native-showhide-with-cq-dialog-dropdown-showhide).
+
 ## Full XML Example
 
-The following `.content.xml` file is a complete `cq:dialog` file for a component dialog that displays all, commonly used, Granite ui fields.
+The following `.content.xml` is a standalone dialog (no `sling:resourceSuperType`) that shows the widgets from this page in one place. It does not set `sling:hideChildren`. Paste it onto a Core Component proxy and that property would wipe the inherited tabs -- the merge rules are in [Dialog Inheritance](#dialog-inheritance).
 
 ![Dialog demo](/images/aem/dialogfields/demo-aem-component.png)
 
@@ -2321,8 +2371,7 @@ The following `.content.xml` file is a complete `cq:dialog` file for a component
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="granite/ui/components/coral/foundation/tabs"
                 maximized="{Boolean}true">
-                <items jcr:primaryType="nt:unstructured"
-                       sling:hideChildren="[*]">
+                <items jcr:primaryType="nt:unstructured">
                     <assetUpload
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Asset Upload"
@@ -2346,7 +2395,7 @@ The following `.content.xml` file is a complete `cq:dialog` file for a component
                                                 class="cq-droptarget"
                                                 fileNameParameter="./fileName"
                                                 fileReferenceParameter="./fileReference"
-                                                mimeTypes="[image/gif,image/apng]"
+                                                mimeTypes="[image/gif,image/jpeg,image/png,image/webp,image/svg+xml]"
                                                 multiple="{Boolean}false"
                                                 name="./file"
                                                 title="Upload Asset"
@@ -2454,27 +2503,27 @@ The following `.content.xml` file is a complete `cq:dialog` file for a component
                                         <items jcr:primaryType="nt:unstructured">
                                             <heading1 jcr:primaryType="nt:unstructured"
                                                       sling:resourceType="granite/ui/components/coral/foundation/heading"
-                                                      level="1"
+                                                      level="{Long}1"
                                                       text="Heading Level 1"/>
                                             <heading2 jcr:primaryType="nt:unstructured"
                                                       sling:resourceType="granite/ui/components/coral/foundation/heading"
-                                                      level="2"
+                                                      level="{Long}2"
                                                       text="Heading Level 2"/>
                                             <heading3 jcr:primaryType="nt:unstructured"
                                                       sling:resourceType="granite/ui/components/coral/foundation/heading"
-                                                      level="3"
+                                                      level="{Long}3"
                                                       text="Heading Level 3"/>
                                             <heading4 jcr:primaryType="nt:unstructured"
                                                       sling:resourceType="granite/ui/components/coral/foundation/heading"
-                                                      level="4"
+                                                      level="{Long}4"
                                                       text="Heading Level 4"/>
                                             <heading5 jcr:primaryType="nt:unstructured"
                                                       sling:resourceType="granite/ui/components/coral/foundation/heading"
-                                                      level="5"
+                                                      level="{Long}5"
                                                       text="Heading Level 5"/>
                                             <heading6 jcr:primaryType="nt:unstructured"
                                                       sling:resourceType="granite/ui/components/coral/foundation/heading"
-                                                      level="6"
+                                                      level="{Long}6"
                                                       text="Heading Level 6"/>
                                             <text jcr:primaryType="nt:unstructured"
                                                   sling:resourceType="granite/ui/components/coral/foundation/text"
@@ -2578,23 +2627,19 @@ The following `.content.xml` file is a complete `cq:dialog` file for a component
                                                          sling:resourceType="granite/ui/components/coral/foundation/form/buttongroup"
                                                          fieldLabel="Button Group"
                                                          selectionMode="single"
-                                                         name="./buttonGroup">
+                                                         name="./buttonGroup"
+                                                         cq-msm-lockable="./buttonGroup">
                                                 <items jcr:primaryType="nt:unstructured">
                                                     <left jcr:primaryType="nt:unstructured"
-                                                          name="./left"
                                                           text="Left"
-                                                          value="left"
-                                                          cq-msm-lockable="left"/>
+                                                          value="left"/>
                                                     <center jcr:primaryType="nt:unstructured"
-                                                            name="./center"
                                                             text="Center"
                                                             value="center"
-                                                            cq-msm-lockable="center"/>
+                                                            checked="{Boolean}true"/>
                                                     <right jcr:primaryType="nt:unstructured"
-                                                           name="./right"
                                                            text="Right"
-                                                           value="right"
-                                                           cq-msm-lockable="right"/>
+                                                           value="right"/>
                                                 </items>
                                             </buttonGroup>
                                         </items>
@@ -2821,3 +2866,90 @@ you use the framework correctly. A few rules keep dialogs usable for everyone on
 See Adobe's [Coral UI](./ui/coral-ui.mdx) notes and the
 [Granite UI server-side API](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
 for the underlying accessibility contracts.
+
+## AEM Component Help Pages
+
+`helpPath` on the dialog root is where the Help (?) icon goes. An `https://` URL is enough. To show the component's own `README.md` inside the product, point `helpPath` at the components console detail view:
+
+1. Open [CRXDE Lite](http://localhost:4502/crx/de/index.jsp) and the component, for example `/apps/<projectname>/components/some/text`.
+2. Add a `README.md` under that component and write the author notes in it.
+3. Open the [components console](http://localhost:4502/libs/wcm/core/content/sites/components.html) and select that component. It is listed only when it has a component group.
+4. Copy the address bar. It looks like `/mnt/overlay/wcm/core/content/sites/components/details.html/apps/<projectname>/components/some/text`.
+5. Set that path as `helpPath` on `cq:dialog`.
+6. Drop the component on a page, open the dialog, and use the Help (?) icon.
+
+![Dialog help button](/images/aem/components/dialog-help-button.png)
+
+![Dialog README view](/images/aem/components/dialog-readme.png)
+
+### Set Documentation as Default Active Tab
+
+The help view opens on the component properties. To make the documentation tab active, overlay the console node and order it first.
+
+:::warning[Do not overlay `/libs` on AEM as a Cloud Service]
+`helpPath` works on 6.5 and on Cloud Service. The overlay copies a `/libs` node into `/apps`, which Cloud Service does not allow. Use it on 6.5 on-prem only. See [AEMaaCS vs AEM 6.5](./infrastructure/aemaacs-vs-aem-65.mdx).
+:::
+
+1. In CRXDE Lite, open `/libs/wcm/core/content/sites/components/details/jcr:content/content/single/content/items/content/items/tabs/items/documentation`.
+2. Overlay that node to `/apps` with **Match node types** checked.
+3. On the overlay, set `sling:orderBefore` (String) to `fixedColumnContainer`.
+
+`ui.apps/src/main/content/jcr_root/apps/wcm/core/content/sites/components/details/.content.xml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content
+        jcr:primaryType="nt:unstructured">
+        <content
+            jcr:primaryType="nt:unstructured">
+            <single jcr:primaryType="nt:unstructured">
+                <content
+                    jcr:primaryType="nt:unstructured">
+                    <items jcr:primaryType="nt:unstructured">
+                        <content
+                            jcr:primaryType="nt:unstructured">
+                            <items jcr:primaryType="nt:unstructured">
+                                <tabs
+                                    jcr:primaryType="nt:unstructured">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <documentation
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:orderBefore="fixedColumnContainer"/>
+                                    </items>
+                                </tabs>
+                            </items>
+                        </content>
+                    </items>
+                </content>
+            </single>
+        </content>
+    </jcr:content>
+</jcr:root>
+```
+
+[Source](https://medium.com/@surajkamdi/adding-documentation-for-aem-components-ab0bced28c26)
+
+## See also
+
+- [Custom Component Guide](./custom-component.mdx)
+- [Dialog validation](./components/dialog-validation.mdx)
+- [Components](./components/overview.mdx)
+- [Core Components](./components/core-components.mdx)
+- [HTL Templates](./htl-templates.mdx)
+- [Touch UI](./ui/touch-ui.mdx)
+- [Coral UI](./ui/coral-ui.mdx)
+- [Overlays](./ui/overlays.mdx)
+- [Sling Models - reading policy values](./backend/sling-models.mdx#accessing-template-policies)
+- [Custom dialog widgets (dynamic rootpath, asset finder)](./ui/custom-dialog-widgets.md)
+- [Templates and Policies](./components/templates-policies.md) - design dialogs, component policies
+- [Tags and Taxonomies](./content/tags-taxonomies.md) - tag field deep dive
+- [Granite UI Server-side API](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/server.html)
+- [Coral UI Icon List](https://developer.adobe.com/experience-manager/reference-materials/6-5/coral-ui/coralui3/Coral.Icon.html#availableIcons)
+- [Creating a New Granite UI Field Component (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-65-lts/content/implementing/developing/platform/granite-ui-component)
+- [Adding Fields to an AEM Dialog - WKND tutorial](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
+- [Configuring the Rich Text Editor (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/configuring-and-extending/rich-text-editor)
+
