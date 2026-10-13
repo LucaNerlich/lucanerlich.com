@@ -94,15 +94,16 @@ echoing the raw value.
 
 ```mermaid
 graph TD
-    input[Untrusted string] --> kind{What will parse it?}
-    kind -->|HTML text| textNode[textContent or JSX text]
-    kind -->|HTML markup| sanitizer[Maintained HTML sanitizer]
-    kind -->|URL| urlParser[URL parser and origin allow-list]
-    kind -->|SQL value| query[Bound parameter]
-    kind -->|SQL identifier| columns[Allow-listed identifier]
-    kind -->|Shell| argv[execFile argument array]
-    kind -->|File path| contained[Path resolved inside the root]
+    input[Untrusted string] --> kind{Which sink?}
+    kind --> html[HTML text]
+    kind --> markup[HTML markup]
+    kind --> url[URL]
+    kind --> sql[SQL]
+    kind --> shell[Shell]
+    kind --> path[File path]
 ```
+
+The diagram only names the sink. The control for each one is in the table.
 
 | Sink | Use | Do not use for untrusted data |
 | --- | --- | --- |
