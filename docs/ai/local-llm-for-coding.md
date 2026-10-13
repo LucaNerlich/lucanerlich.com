@@ -290,24 +290,24 @@ version: 0.0.1
 schema: v1
 
 models:
-    - name: Qwen3-Coder 30B
-      provider: ollama
-      model: qwen3-coder:30b
-      roles:
-          - chat
-          - edit
-          - apply
-      defaultCompletionOptions:
-          contextLength: 32768
-    - name: Qwen2.5-Coder 1.5B
-      provider: ollama
-      model: qwen2.5-coder:1.5b
-      roles:
-          - autocomplete
-      autocompleteOptions:
-          debounceDelay: 250
-          maxPromptTokens: 1024
-          onlyMyCode: true
+    -   name: Qwen3-Coder 30B
+        provider: ollama
+        model: qwen3-coder:30b
+        roles:
+            - chat
+            - edit
+            - apply
+        defaultCompletionOptions:
+            contextLength: 32768
+    -   name: Qwen2.5-Coder 1.5B
+        provider: ollama
+        model: qwen2.5-coder:1.5b
+        roles:
+            - autocomplete
+        autocompleteOptions:
+            debounceDelay: 250
+            maxPromptTokens: 1024
+            onlyMyCode: true
 
 rules:
     - Always respond in English.
@@ -317,38 +317,38 @@ rules:
     - When you are unsure, say what you checked and what is still a guess.
 
 prompts:
-    - name: test
-      description: Generate unit tests for the highlighted code.
-      prompt: |
-          Write unit tests for the provided code. Include setup, the correctness checks that matter, the edge cases that are likely to fail, and teardown. Present the tests as plain text.
-    - name: refactor
-      description: Improve the code's structure for better readability.
-      prompt: |
-          Refactor the provided code to improve its structure and readability without altering its functionality. Include a detailed explanation of your changes and reasoning.
-    - name: optimize
-      description: Enhance code performance with a detailed explanation of changes and trade-offs.
-      prompt: |
-          Optimize the provided code for performance while maintaining its current behavior. Describe any trade-offs involved in your optimization process.
-    - name: explain
-      description: Analyze and explain the code's functionality and potential improvements.
-      prompt: |
-          Explain the logic and functionality of the provided code. Discuss any potential inefficiencies or unnecessary computations that could be improved for better performance.
-    - name: document
-      description: Create clear and concise function documentation using the correct language format.
-      prompt: |
-          Write language-specific documentation for the provided function. Use appropriate formats like Javadoc for Java or JSDoc for JavaScript. Ensure clarity and conciseness in your explanation.
+    -   name: test
+        description: Generate unit tests for the highlighted code.
+        prompt: |
+            Write unit tests for the provided code. Include setup, the correctness checks that matter, the edge cases that are likely to fail, and teardown. Present the tests as plain text.
+    -   name: refactor
+        description: Improve the code's structure for better readability.
+        prompt: |
+            Refactor the provided code to improve its structure and readability without altering its functionality. Include a detailed explanation of your changes and reasoning.
+    -   name: optimize
+        description: Enhance code performance with a detailed explanation of changes and trade-offs.
+        prompt: |
+            Optimize the provided code for performance while maintaining its current behavior. Describe any trade-offs involved in your optimization process.
+    -   name: explain
+        description: Analyze and explain the code's functionality and potential improvements.
+        prompt: |
+            Explain the logic and functionality of the provided code. Discuss any potential inefficiencies or unnecessary computations that could be improved for better performance.
+    -   name: document
+        description: Create clear and concise function documentation using the correct language format.
+        prompt: |
+            Write language-specific documentation for the provided function. Use appropriate formats like Javadoc for Java or JSDoc for JavaScript. Ensure clarity and conciseness in your explanation.
 
 context:
-    - provider: diff
-    - provider: file
-    - provider: code
-    - provider: currentFile
-    - provider: terminal
-    - provider: open
-    - provider: repo-map
-    - provider: tree
-    - provider: problems
-    - provider: os
+    -   provider: diff
+    -   provider: file
+    -   provider: code
+    -   provider: currentFile
+    -   provider: terminal
+    -   provider: open
+    -   provider: repo-map
+    -   provider: tree
+    -   provider: problems
+    -   provider: os
 ```
 
 `onlyMyCode: true` keeps autocomplete out of `node_modules` and other dependencies. The debounce and
@@ -397,11 +397,11 @@ name: Context7
 version: 0.0.1
 schema: v1
 mcpServers:
-    - name: Context7
-      command: npx
-      args:
-          - -y
-          - '@upstash/context7-mcp'
+    -   name: Context7
+        command: npx
+        args:
+            - -y
+            - '@upstash/context7-mcp'
 ```
 
 MCP servers only run in **agent** mode. `npx` needs Node 18 or newer, which this site already assumes.
@@ -412,23 +412,23 @@ this setup was built around (AEM, this site, and the front-end docs used with it
 
 ```yaml
 context:
-    - provider: docs
+    -   provider: docs
 
 docs:
-    - name: aem.live
-      startUrl: https://www.aem.live/docs
-      favicon: https://www.aem.live/favicon.ico
-    - name: AEMaaCS
-      startUrl: https://experienceleague.adobe.com/de/docs/experience-manager-cloud-service
-      favicon: https://experienceleague.adobe.com/favicon.ico
-    - name: lucanerlich
-      startUrl: https://lucanerlich.com
-    - name: react
-      startUrl: https://react.dev/
-    - name: typescript
-      startUrl: https://www.typescriptlang.org/
-    - name: react spectrum
-      startUrl: https://react-spectrum.adobe.com/index.html
+    -   name: aem.live
+        startUrl: https://www.aem.live/docs
+        favicon: https://www.aem.live/favicon.ico
+    -   name: AEMaaCS
+        startUrl: https://experienceleague.adobe.com/de/docs/experience-manager-cloud-service
+        favicon: https://experienceleague.adobe.com/favicon.ico
+    -   name: lucanerlich
+        startUrl: https://lucanerlich.com
+    -   name: react
+        startUrl: https://react.dev/
+    -   name: typescript
+        startUrl: https://www.typescriptlang.org/
+    -   name: react spectrum
+        startUrl: https://react-spectrum.adobe.com/index.html
 ```
 
 If you keep that index, pull an embedding model. `nomic-embed-text` is 274 MB, Apache-2.0, and has a
@@ -439,11 +439,11 @@ ollama pull nomic-embed-text
 ```
 
 ```yaml
-- name: Nomic Embed Text
-  provider: ollama
-  model: nomic-embed-text
-  roles:
-      - embed
+-   name: Nomic Embed Text
+    provider: ollama
+    model: nomic-embed-text
+    roles:
+        - embed
 ```
 
 Skip the reranker until you have measured a retrieval miss. Continue can rerank with Voyage, Cohere,
