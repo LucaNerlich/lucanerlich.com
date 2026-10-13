@@ -1363,7 +1363,7 @@ private LinkModel link;
 
 ### Content Fragment picker
 
-`dam/cfm/components/cfpicker` is the Content Fragment picker (AEM 6.5 and Cloud Service). It stores the fragment path. A plain pathfield with `filter="hierarchyNotFile"` cannot select one: that filter hides assets, and a content fragment is a `dam:Asset`.
+`dam/cfm/components/cfpicker` is the Content Fragment picker (AEM 6.5 and Cloud Service). The attributes below are the ones on the Core Components Content Fragment dialog. A plain pathfield with `filter="hierarchyNotFile"` cannot select a fragment: that filter hides assets, and a content fragment is a `dam:Asset`.
 
 ```xml
 <contentFragment
@@ -1381,19 +1381,22 @@ private LinkModel link;
 
 ### Experience Fragment picker
 
-`cq/experience-fragments/editor/components/xffield` is the variation picker Core Components use. `variant="web"` keeps the list to web variations (`cq:xfVariantType`).
+`cq/experience-fragments/editor/components/xffield` is the variation picker. These attributes are the ones on the Core Components Experience Fragment dialog: `variant="web"` keeps web variations, `filter="folderOrVariant"` is the column-view mode, and `propertyFilter="cq:xfShowInEditor"` hides variations that are not meant for the editor. `rootPath` is the pathfield root, so authors start under Experience Fragments.
 
 ```xml
 <experienceFragment
     jcr:primaryType="nt:unstructured"
     sling:resourceType="cq/experience-fragments/editor/components/xffield"
     fieldLabel="Experience Fragment"
+    fieldDescription="Choose the experience fragment variation to display."
     name="./fragmentVariationPath"
     rootPath="/content/experience-fragments"
+    filter="folderOrVariant"
+    propertyFilter="cq:xfShowInEditor"
     variant="web"/>
 ```
 
-A pathfield rooted at `/content/experience-fragments` also works when you only need a path and not the variation filter.
+A plain pathfield rooted at `/content/experience-fragments` also works when you only need a path and not the variation filter.
 
 ## Validation
 
