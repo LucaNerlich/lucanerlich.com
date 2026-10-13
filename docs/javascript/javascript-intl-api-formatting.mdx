@@ -72,6 +72,8 @@ Feb 2, 2026, 2:30 PM
 The space in `USD 1,234.56` is U+00A0 (a non-breaking space), not the space from the keyboard. `fr-FR` grouping and
 some date ranges use U+202F (narrow no-break space) and U+2009 (thin space). They look identical and fail
 `formatted === "USD 1,234.56"`. `\s` matches all three, so a test can normalize with `replaceAll(/\s/g, " ")`.
+`\s` does not match the U+200F right-to-left mark. If the output contains it, remove it separately with
+`replaceAll(/\u200F/g, "")` when normalizing for a test.
 Punctuation can still differ by locale and ICU version, so prefer `formatToParts()` when a test needs a specific
 field.
 
