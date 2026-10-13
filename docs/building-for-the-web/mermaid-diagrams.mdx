@@ -66,6 +66,18 @@ making them easy to review, diff, and update. No external image files needed.
 | Project milestones | [Timeline](#timeline-diagrams) |
 | Priority matrix | [Quadrant chart](#quadrant-charts) |
 | User experience mapping | [User journey](#user-journey-diagrams) |
+| Blocks in a grid | [Block diagram](#block-diagrams) |
+| People and systems around a product | [C4 diagram](#c4-diagrams) |
+| How much flows between stages | [Sankey diagram](#sankey-diagrams) |
+| A requirement and what meets it | [Requirement diagram](#requirement-diagrams) |
+| Work moving across columns | [Kanban](#kanban) |
+| Fields packed into a fixed width | [Packet diagram](#packet-diagrams) |
+| Scores on several axes | [Radar chart](#radar-charts) |
+| Nested amounts | [Treemap](#treemaps) |
+| Causes of one effect | [Ishikawa diagram](#ishikawa-diagrams) |
+| Overlapping sets | [Venn diagram](#venn-diagrams) |
+| How components evolve | [Wardley map](#wardley-maps) |
+| Actors and what they do | [Use case diagram](#use-case-diagrams) |
 
 ---
 
@@ -1506,6 +1518,413 @@ pain points in the user experience.
 
 ---
 
+## Block Diagrams
+
+A block diagram is a grid. `columns` sets the width. A node can span columns with `:2`. The keyword
+is `block-beta` (`block` is the same detector). Edges use the flowchart arrow.
+
+```mermaid
+block-beta
+    columns 3
+    write["Write"] build["Build"] serve["Serve"]
+    space pages["Pages"]:2
+    write --> build
+    build --> serve
+    serve --> pages
+```
+
+Source:
+
+````markdown
+```mermaid
+block-beta
+    columns 3
+    write["Write"] build["Build"] serve["Serve"]
+    space pages["Pages"]:2
+    write --> build
+    build --> serve
+    serve --> pages
+```
+````
+
+`space` leaves a cell empty. Quote a label that contains a space.
+
+---
+
+## C4 Diagrams
+
+A C4 diagram names people, systems, and the relationships between them. Start a context diagram with
+`C4Context`. The same file also accepts `C4Container`, `C4Component`, `C4Dynamic`, and
+`C4Deployment`.
+
+```mermaid
+C4Context
+    title Docs site context
+    Person(reader, "Reader", "Reads the published site")
+    System(site, "Docs site", "Docusaurus and Mermaid")
+    System_Ext(search, "Search", "Algolia")
+    Rel(reader, site, "Reads")
+    Rel(site, search, "Queries")
+```
+
+Source:
+
+````markdown
+```mermaid
+C4Context
+    title Docs site context
+    Person(reader, "Reader", "Reads the published site")
+    System(site, "Docs site", "Docusaurus and Mermaid")
+    System_Ext(search, "Search", "Algolia")
+    Rel(reader, site, "Reads")
+    Rel(site, search, "Queries")
+```
+````
+
+`Person` is a reader. `System` is yours. `System_Ext` is outside it. `Rel` is the line from the first
+id to the second. Put spaces inside the quoted label, not in the id.
+
+---
+
+## Sankey Diagrams
+
+A Sankey diagram shows how much moves from one stage to another. Each line is
+`source,target,value`. The keyword is `sankey-beta` (`sankey` is the same detector).
+
+```mermaid
+sankey-beta
+Search,Read,30
+Search,Leave,10
+Direct,Read,25
+Referral,Read,8
+```
+
+Source:
+
+````markdown
+```mermaid
+sankey-beta
+Search,Read,30
+Search,Leave,10
+Direct,Read,25
+Referral,Read,8
+```
+````
+
+Quote a name that contains a comma: `"Organic search",Read,30`. There is no header row.
+
+---
+
+## Requirement Diagrams
+
+A requirement diagram ties a requirement to the element that satisfies it. The keyword is
+`requirementDiagram`.
+
+```mermaid
+requirementDiagram
+    requirement render {
+        id: 1
+        text: the diagram renders
+        risk: low
+        verifyMethod: test
+    }
+    element renderer {
+        type: module
+    }
+    renderer - satisfies -> render
+```
+
+Source:
+
+````markdown
+```mermaid
+requirementDiagram
+    requirement render {
+        id: 1
+        text: the diagram renders
+        risk: low
+        verifyMethod: test
+    }
+    element renderer {
+        type: module
+    }
+    renderer - satisfies -> render
+```
+````
+
+`risk` is `low`, `medium`, or `high`. `verifyMethod` is `analysis`, `demonstration`, `inspection`,
+or `test`. The other arrows are `contains`, `copies`, `derives`, `verifies`, `refines`, and
+`traces`, written the same way: `left - traces -> right`.
+
+---
+
+## Kanban
+
+A kanban board is columns of cards. The column name is a heading. A card is `[text]` indented under
+that column. A column name with a space is itself in brackets.
+
+```mermaid
+kanban
+    Todo
+        [Write the example]
+    [In progress]
+        [Check the syntax]
+    Done
+        [Publish the page]
+```
+
+Source:
+
+````markdown
+```mermaid
+kanban
+    Todo
+        [Write the example]
+    [In progress]
+        [Check the syntax]
+    Done
+        [Publish the page]
+```
+````
+
+Indentation is the only structure. A card id is optional: `docs[Write the example]`.
+
+---
+
+## Packet Diagrams
+
+A packet diagram lays fields across a fixed row of bits. Ranges are inclusive and have to be
+contiguous, starting at 0. The keyword is `packet-beta` (`packet` is the same detector).
+
+```mermaid
+packet-beta
+    title TCP header slice
+    0-15: "Source Port"
+    16-31: "Destination Port"
+    32-63: "Sequence Number"
+```
+
+Source:
+
+````markdown
+```mermaid
+packet-beta
+    title TCP header slice
+    0-15: "Source Port"
+    16-31: "Destination Port"
+    32-63: "Sequence Number"
+```
+````
+
+`0-15` is 16 bits. A gap, or a range whose end is below its start, is a parse error.
+
+---
+
+## Radar Charts
+
+A radar chart scores one thing on several axes. The keyword is `radar-beta`. The curve lists one
+number per axis, in the same order.
+
+```mermaid
+radar-beta
+    title Page scores
+    axis accuracy, examples, voice
+    curve current{4, 5, 4}
+    max 5
+    min 0
+```
+
+Source:
+
+````markdown
+```mermaid
+radar-beta
+    title Page scores
+    axis accuracy, examples, voice
+    curve current{4, 5, 4}
+    max 5
+    min 0
+```
+````
+
+A second `curve` draws another shape on the same axes. `min` and `max` are the scale.
+
+---
+
+## Treemaps
+
+A treemap sizes rectangles by a number. Indentation is the nesting. A leaf value follows a colon.
+The keyword is `treemap-beta` (`treemap` is the same detector).
+
+```mermaid
+treemap-beta
+"Docs"
+    "AEM": 40
+    "Web": 25
+    "Languages": 20
+```
+
+Source:
+
+````markdown
+```mermaid
+treemap-beta
+"Docs"
+    "AEM": 40
+    "Web": 25
+    "Languages": 20
+```
+````
+
+A branch can hold deeper leaves. The value belongs on the leaf, not on the parent.
+
+---
+
+## Ishikawa Diagrams
+
+An Ishikawa diagram (a fishbone) puts one effect at the head and causes along the spine. The first
+line is the effect. An indent is a cause. A further indent is a sub-cause. The keyword is
+`ishikawa-beta` (`ishikawa` is the same detector).
+
+```mermaid
+ishikawa-beta
+    Broken link
+        Source
+            Renamed page
+            Typo in the path
+        Build
+            Anchor removed
+            Image moved
+```
+
+Source:
+
+````markdown
+```mermaid
+ishikawa-beta
+    Broken link
+        Source
+            Renamed page
+            Typo in the path
+        Build
+            Anchor removed
+            Image moved
+```
+````
+
+Keep the cause names short. The spine gets hard to read once a cause wraps.
+
+---
+
+## Venn Diagrams
+
+A Venn diagram draws sets and their overlap. The keyword is `venn-beta`. `set` names one circle.
+`union` names an overlap and needs at least two ids. The number after the colon is the weight of
+that region.
+
+```mermaid
+venn-beta
+    title Readers
+    set docs ["Docs"] : 20
+    set search ["Search"] : 15
+    union docs,search ["Both"] : 8
+```
+
+Source:
+
+````markdown
+```mermaid
+venn-beta
+    title Readers
+    set docs ["Docs"] : 20
+    set search ["Search"] : 15
+    union docs,search ["Both"] : 8
+```
+````
+
+The id is a single word. The label in brackets is what the reader sees.
+
+---
+
+## Wardley Maps
+
+A Wardley map places components on visibility and evolution. The keyword is `wardley-beta`. The pair
+is `[visibility, evolution]`, and both numbers are from 0 to 1. Visibility is the vertical axis.
+Evolution is the horizontal axis, from genesis at 0 toward commodity at 1.
+
+```mermaid
+wardley-beta
+    title Docs map
+    anchor Reader [0.95, 0.70]
+    component Site [0.60, 0.55]
+    component Mermaid [0.35, 0.40]
+    evolve Mermaid 0.70
+    Reader->Site
+    Site->Mermaid
+```
+
+Source:
+
+````markdown
+```mermaid
+wardley-beta
+    title Docs map
+    anchor Reader [0.95, 0.70]
+    component Site [0.60, 0.55]
+    component Mermaid [0.35, 0.40]
+    evolve Mermaid 0.70
+    Reader->Site
+    Site->Mermaid
+```
+````
+
+`anchor` is the user. `component` is something you build or buy. `evolve` marks a later position on
+the evolution axis. `A->B` is a dependency.
+
+---
+
+## Use Case Diagrams
+
+A use case diagram shows an actor and the cases they take part in. The keyword is `usecase-beta`.
+A case is `Id("Label")`. `-->` is an association. `..> : include` pulls one case in from another.
+
+```mermaid
+usecase-beta
+    actor Reader
+    actor Author
+    systemBoundary Site
+        ReadPage("Read a page")
+        Search("Search")
+    end
+    Reader --> ReadPage
+    Reader --> Search
+    ReadPage ..> : include Search
+    note for ReadPage "The rendered page"
+```
+
+Source:
+
+````markdown
+```mermaid
+usecase-beta
+    actor Reader
+    actor Author
+    systemBoundary Site
+        ReadPage("Read a page")
+        Search("Search")
+    end
+    Reader --> ReadPage
+    Reader --> Search
+    ReadPage ..> : include Search
+    note for ReadPage "The rendered page"
+```
+````
+
+`systemBoundary` wraps the cases and closes with `end`. Declare a case once. A second label on the
+same id is a parse error. `..> : extend` is the other dependency.
+
+---
+
 ## Tips and Best Practices
 
 ### Keep diagrams focused
@@ -1707,17 +2126,6 @@ layout for the whole site.
 | Notion | No equivalent built-in Mermaid code-block renderer; use an integration or an exported image |
 | VS Code | Via an extension, whose Mermaid version and settings determine support |
 | Confluence | Via an installed app/plugin |
-
-### Diagram types not given a full example
-
-Mermaid 12 also registers `block` / `block-beta`, C4 (`C4Context`, `C4Container`, `C4Component`,
-`C4Dynamic`, `C4Deployment`), `sankey` / `sankey-beta`, `requirement` / `requirementDiagram`,
-`kanban`, `packet` / `packet-beta`, and beta diagrams such as `radar-beta`, `treemap`,
-`ishikawa`, `venn-beta`, `wardley-beta`, and `usecase-beta`. The keyword has to be the first word
-of the block. Syntax for the beta types moves between minor releases. Render one on this site
-before you standardize on it. The
-[syntax reference](https://mermaid.js.org/intro/syntax-reference.html) is the catalog; this page is
-the set that already renders here.
 
 ### Responsive diagrams
 
