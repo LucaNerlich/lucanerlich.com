@@ -1,16 +1,26 @@
 ---
 title: "Mermaid Diagrams Guide"
+description: "Copy-paste Mermaid for this site: the diagram types people actually use, the syntax Mermaid 12 renders here, and the mistakes that fail in the browser."
 sidebar_position: 5
 tags: [mermaid, diagrams, documentation, markdown]
+keywords:
+    - mermaid
+    - mermaid diagrams
+    - docusaurus mermaid
+    - flowchart
+    - sequence diagram
 ---
 
 # Mermaid Diagrams Guide
 
-[Mermaid](https://mermaid.js.org/) is a JavaScript-based diagramming tool that renders diagrams from
-plain-text definitions inside Markdown code blocks. Instead of switching to a visual editor, exporting an
-image, and embedding it, you describe the diagram in text and it renders automatically.
+[Mermaid](https://mermaid.js.org/) renders a diagram from a plain-text definition inside a Markdown code
+block. You describe the picture next to the prose. There is no exported image to keep in sync.
 
-This guide covers every commonly used diagram type with practical, copy-pasteable examples.
+The examples below are the working set for **this site**. They use syntax that Mermaid 12 accepts in the
+Docusaurus theme configured here. Copy the `markdown` block under each diagram. The
+[live editor](https://mermaid.live/) is useful for drafting, and it can be a different Mermaid release
+than the one that publishes this page. Theme, dark mode, and what `pnpm build` does not check are in
+[Mermaid in Docusaurus](#mermaid-in-docusaurus).
 
 ## Getting Started
 
@@ -19,7 +29,7 @@ identifier:
 
 ````markdown
 ```mermaid
-graph LR
+flowchart LR
     A --> B --> C
 ```
 ````
@@ -27,14 +37,35 @@ graph LR
 This renders as:
 
 ```mermaid
-graph LR
+flowchart LR
     A --> B --> C
 ```
+
+A line that starts with `%%` is a comment. Mermaid drops it before parsing.
 
 :::tip
 Mermaid diagrams are **text-based and version-controlled**. They live alongside your documentation in Git,
 making them easy to review, diff, and update. No external image files needed.
 :::
+
+## Diagram type selection guide
+
+| You want to show... | Use |
+|---------------------|-----|
+| A process or decision flow | [Flowchart](#flowcharts) |
+| Interactions between systems over time | [Sequence diagram](#sequence-diagrams) |
+| Code structure and relationships | [Class diagram](#class-diagrams) |
+| Object lifecycle and transitions | [State diagram](#state-diagrams) |
+| Database schema | [ER diagram](#entity-relationship-diagrams) |
+| Systems, groups, and how they connect | [Architecture diagram](#architecture-diagrams) |
+| Project schedule | [Gantt chart](#gantt-charts) |
+| Proportional data | [Pie chart](#pie-charts) |
+| Values across categories | [XY chart](#xy-charts) |
+| Git branching strategy | [Git graph](#gitgraph-diagrams) |
+| Brainstorming / concepts | [Mind map](#mind-maps) |
+| Project milestones | [Timeline](#timeline-diagrams) |
+| Priority matrix | [Quadrant chart](#quadrant-charts) |
+| User experience mapping | [User journey](#user-journey-diagrams) |
 
 ---
 
@@ -44,14 +75,16 @@ Flowcharts are the most common diagram type. They show processes, decisions, and
 
 ### Direction
 
-The first keyword sets the layout direction:
+The first keyword sets the layout direction. `flowchart` is the current keyword. `graph` is the older
+alias and still renders -- both go through the same parser. Prefer `flowchart` in new diagrams. If you
+omit the direction, Mermaid lays the chart out top to bottom.
 
 | Keyword | Direction |
 |---------|-----------|
-| `graph TD` or `graph TB` | Top to bottom |
-| `graph BT` | Bottom to top |
-| `graph LR` | Left to right |
-| `graph RL` | Right to left |
+| `flowchart TD` or `flowchart TB` | Top to bottom |
+| `flowchart BT` | Bottom to top |
+| `flowchart LR` | Left to right |
+| `flowchart RL` | Right to left |
 
 ### Basic flowchart
 
@@ -211,6 +244,41 @@ graph TB
 ```
 ````
 
+### Direction inside a subgraph
+
+A subgraph can set its own direction. Put `direction` on the first line inside the group. The outer
+chart keeps the direction from the first line of the diagram.
+
+```mermaid
+flowchart TB
+    subgraph request [Request]
+        direction LR
+        In[Incoming] --> Auth[Auth]
+    end
+    subgraph work [Work]
+        direction LR
+        Handler[Handler] --> DB[(DB)]
+    end
+    Auth --> Handler
+```
+
+Source:
+
+````markdown
+```mermaid
+flowchart TB
+    subgraph request [Request]
+        direction LR
+        In[Incoming] --> Auth[Auth]
+    end
+    subgraph work [Work]
+        direction LR
+        Handler[Handler] --> DB[(DB)]
+    end
+    Auth --> Handler
+```
+````
+
 ### Practical example: CI/CD pipeline
 
 ```mermaid
@@ -299,6 +367,57 @@ sequenceDiagram
 | `--x` | Dashed with cross |
 | `-)` | Solid with open arrow (async) |
 | `--)` | Dashed with open arrow |
+
+### Numbers, options, and parallel work
+
+`autonumber` prefixes each message with a step number. `opt` is an optional block. `alt` / `else`,
+used in the cache example below, is the branch. `par` / `and` draw messages side by side. `actor`
+draws a person and `participant` draws a box. `box` only groups them on the diagram -- message order
+is still top to bottom.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    box rgb(240, 248, 255) Client
+        actor User
+        participant App
+    end
+    participant API
+
+    User->>App: Open page
+    opt Cached session
+        App-->>User: Render cache
+    end
+    par Load
+        App->>API: GET /session
+    and
+        App->>API: GET /flags
+    end
+```
+
+Source:
+
+````markdown
+```mermaid
+sequenceDiagram
+    autonumber
+    box rgb(240, 248, 255) Client
+        actor User
+        participant App
+    end
+    participant API
+
+    User->>App: Open page
+    opt Cached session
+        App-->>User: Render cache
+    end
+    par Load
+        App->>API: GET /session
+    and
+        App->>API: GET /flags
+    end
+```
+````
 
 ### Notes, loops, and alternatives
 
@@ -562,9 +681,9 @@ Source:
 ````markdown
 ```mermaid
 classDiagram
-    classA -|> classB : Inheritance
-    classC -* classD : Composition
-    classE -o classF : Aggregation
+    classA --|> classB : Inheritance
+    classC --* classD : Composition
+    classE --o classF : Aggregation
     classG --> classH : Association
     classI ..> classJ : Dependency
     classK ..|> classL : Realization
@@ -573,12 +692,16 @@ classDiagram
 
 | Syntax | Relationship |
 |--------|-------------|
-| `<\|--` | Inheritance (extends) |
-| `*--` | Composition (owns, lifecycle-bound) |
-| `o--` | Aggregation (has, independent lifecycle) |
+| `<\|--` or `--\|>` | Inheritance (extends) |
+| `*--` or `--*` | Composition (owns, lifecycle-bound) |
+| `o--` or `--o` | Aggregation (has, independent lifecycle) |
 | `-->` | Association (uses) |
 | `..>` | Dependency (depends on) |
-| `..\|>` | Realization (implements) |
+| `<\|..` or `..\|>` | Realization (implements) |
+
+The arrowhead sits on the parent or the interface, so `<|--` and `--|>` are the same relation written
+in opposite directions. A single dash does not parse: `classA -|> classB`, `classC -* classD`, and
+`classE -o classF` all fail. Use two dashes, as in the diagram above.
 
 ### Practical example: repository pattern
 
@@ -888,6 +1011,47 @@ The symbols read as:
 
 ---
 
+## Architecture Diagrams
+
+An architecture diagram draws services inside groups and connects a side of one service to a side of
+another. Built-in icons on this Mermaid build are `cloud`, `database`, `disk`, `internet`, `server`,
+and `blank`. The first word of the block is `architecture-beta`.
+
+Sides are `L`, `R`, `T`, and `B`. `reader:R -- L:pages` draws an edge from the right of `reader` to
+the left of `pages`.
+
+```mermaid
+architecture-beta
+    group site(cloud)[Docs site]
+
+    service pages(server)[Docusaurus] in site
+    service diagrams(disk)[Mermaid] in site
+
+    service reader(internet)[Reader]
+
+    reader:R -- L:pages
+    pages:B -- T:diagrams
+```
+
+Source:
+
+````markdown
+```mermaid
+architecture-beta
+    group site(cloud)[Docs site]
+
+    service pages(server)[Docusaurus] in site
+    service diagrams(disk)[Mermaid] in site
+
+    service reader(internet)[Reader]
+
+    reader:R -- L:pages
+    pages:B -- T:diagrams
+```
+````
+
+---
+
 ## Gantt Charts
 
 Gantt charts visualize project timelines, task durations, and dependencies.
@@ -969,10 +1133,10 @@ after taskId         After another task completes
 
 ## Pie Charts
 
-Simple proportional data visualization.
+Proportional data. `showData` prints the number next to the slice. Without it, the chart is shapes only.
 
 ```mermaid
-pie title Website Traffic Sources
+pie showData title Website Traffic Sources
     "Organic Search" : 45
     "Direct" : 25
     "Social Media" : 15
@@ -984,7 +1148,7 @@ Source:
 
 ````markdown
 ```mermaid
-pie title Website Traffic Sources
+pie showData title Website Traffic Sources
     "Organic Search" : 45
     "Direct" : 25
     "Social Media" : 15
@@ -995,9 +1159,40 @@ pie title Website Traffic Sources
 
 ---
 
+## XY Charts
+
+A bar or line chart when the point is the values, not the share of a whole. The keyword is
+`xychart-beta`. The axis range is `min --> max`.
+
+```mermaid
+xychart-beta
+    title "Docs build minutes"
+    x-axis [mon, tue, wed, thu, fri]
+    y-axis "minutes" 0 --> 10
+    bar [6, 5, 7, 4, 3]
+    line [5, 5, 6, 4, 3]
+```
+
+Source:
+
+````markdown
+```mermaid
+xychart-beta
+    title "Docs build minutes"
+    x-axis [mon, tue, wed, thu, fri]
+    y-axis "minutes" 0 --> 10
+    bar [6, 5, 7, 4, 3]
+    line [5, 5, 6, 4, 3]
+```
+````
+
+---
+
 ## Gitgraph Diagrams
 
-Visualize Git branching strategies and merge flows.
+Visualize Git branching strategies and merge flows. The first commits sit on `main`. That is Mermaid's
+default branch name here (`gitGraph.mainBranchName`). `checkout main` at the end of the example
+returns to it.
 
 ```mermaid
 gitGraph
@@ -1069,7 +1264,8 @@ gitGraph
 
 ## Mind Maps
 
-Hierarchical brainstorming and concept mapping.
+Hierarchical brainstorming and concept mapping. Indentation is the tree. Use spaces, and keep the
+nesting you see below.
 
 ```mermaid
 mindmap
@@ -1143,7 +1339,8 @@ mindmap
 
 ## Timeline Diagrams
 
-Show events or milestones along a timeline.
+Show events or milestones along a timeline. Each event is indented under its period. A second event
+in the same period is another indented line that starts with `:`.
 
 ```mermaid
 timeline
@@ -1199,7 +1396,16 @@ timeline
 
 ## Quadrant Charts
 
-Position items on a 2D matrix (like priority/effort or impact/urgency).
+Position items on a 2D matrix. Mermaid numbers the quadrants from the top-right, then
+counter-clockwise. With effort on x and impact on y, that is not the Eisenhower reading order:
+quick wins land in quadrant 2.
+
+| Key | Corner | On the axes below |
+|-----|--------|-------------------|
+| `quadrant-1` | Top right | High effort, high impact |
+| `quadrant-2` | Top left | Low effort, high impact |
+| `quadrant-3` | Bottom left | Low effort, low impact |
+| `quadrant-4` | Bottom right | High effort, low impact |
 
 ```mermaid
 quadrantChart
@@ -1207,10 +1413,10 @@ quadrantChart
     x-axis Low Effort --> High Effort
     y-axis Low Impact --> High Impact
 
-    quadrant-1 Do First
-    quadrant-2 Plan Carefully
-    quadrant-3 Consider Dropping
-    quadrant-4 Quick Wins
+    quadrant-1 Plan carefully
+    quadrant-2 Quick wins
+    quadrant-3 Fill-ins
+    quadrant-4 Avoid
 
     Search feature: [0.8, 0.9]
     Dark mode: [0.2, 0.5]
@@ -1231,10 +1437,10 @@ quadrantChart
     x-axis Low Effort --> High Effort
     y-axis Low Impact --> High Impact
 
-    quadrant-1 Do First
-    quadrant-2 Plan Carefully
-    quadrant-3 Consider Dropping
-    quadrant-4 Quick Wins
+    quadrant-1 Plan carefully
+    quadrant-2 Quick wins
+    quadrant-3 Fill-ins
+    quadrant-4 Avoid
 
     Search feature: [0.8, 0.9]
     Dark mode: [0.2, 0.5]
@@ -1353,47 +1559,56 @@ sequenceDiagram
 ```
 ````
 
-### Escape special characters
+### Quote labels that contain shape characters
 
-Node labels with special characters need double quotes:
+Parentheses, brackets, braces, and pipes are shape syntax. In an unquoted node label they end the
+node, and the diagram fails to parse. Put that label in double quotes:
 
 ```text
-A["Step 1: Initialize"]
-B["Process (main)"]
-C["Total = $100"]
+A["Process (main)"]
+B["Use {id}"]
+C["a | b"]
+D["arr[0]"]
 ```
 
-Edge labels with special characters also need quotes:
+An edge label follows the same rule. `A -->|O(n)| B` fails. This works:
 
 ```text
 A -->|"O(n) complexity"| B
 ```
 
+A colon, hash, ampersand, or slash inside a node label does not need quotes: `A[Step 1: Initialize]`.
+A unicode arrow is not a Mermaid edge. `A —> B` and `A → B` are lexical errors. The edge is three
+ASCII characters: `-->`.
+
 ### Avoid common mistakes
 
-| Mistake | Problem | Fix |
-|---------|---------|-----|
-| Spaces in node IDs | Parsing error | Use `camelCase` or underscores |
-| `end` as a node ID | Conflicts with `subgraph end` keyword | Use `endNode` or `processEnd` |
-| Missing direction keyword | Diagram may not render | Always start with `graph TD`, `graph LR`, etc. |
-| Very long labels | Diagram becomes unreadable | Use short labels + a legend or notes |
-| Too many nodes | Visual clutter | Split into multiple diagrams |
+| Mistake | What happens | Fix |
+|---------|--------------|-----|
+| Spaces in a node ID | Parse error | `userInput` or `user_input` |
+| `end` as a node ID | `end` closes a subgraph, `alt`, `loop`, or `par` | `endNode` or `done` |
+| One dash in a class relation | `-|>`, `-*`, and `-o` do not parse | `--|>`, `--*`, `--o` |
+| Unquoted shape characters in a label | `()`, `[]`, `{}`, or a pipe ends the node | Double quotes around the label |
+| `%%{init}%%` that sets `theme` | That diagram ignores the light/dark toggle | Leave the theme to the site config |
+| `click node callback` | Ignored. `securityLevel` is `strict` and a diagram cannot lower it | Link from the prose instead |
+| Omitting `TB` or `LR` | The flowchart defaults to top to bottom | Set the direction when it matters |
+| Very long labels | The diagram becomes unreadable | Short labels, detail in the prose |
+| Too many nodes | Visual clutter | Split into more than one diagram |
 
-### Validate the exact target renderer
+### Check the renderer that publishes the page
 
-The Mermaid Live Editor is useful for quick experiments, but it is not a substitute for rendering in
-the tool that will publish the diagram. Mermaid versions, enabled diagram types, sanitization rules, and
-configuration can differ between Docusaurus, GitHub, GitLab, and editor extensions. Keep each Mermaid
-definition and its adjacent `markdown` source example identical, then run this site's production build
-before publishing:
+The live editor is a draft tool. Mermaid versions, enabled diagram types, and security settings differ
+between this site, GitHub, GitLab, and editor extensions. Keep each diagram and the `markdown` source
+under it identical.
 
 ```bash
 pnpm build
 ```
 
-`pnpm build` compiles the page and recognizes Mermaid blocks, but it does not validate their diagram
-definitions or parse ordinary `markdown` source examples. Inspect each diagram in the published renderer.
-When you update a diagram, keep its adjacent `markdown` source example identical in the same change.
+`pnpm build` compiles the page. It does not parse Mermaid, and it does not parse the `markdown`
+source fences that show the copy-paste text. A bad diagram still builds. Open the page: the theme
+renders in the browser, and a syntax error shows up in the diagram's error boundary. Check light and
+dark.
 
 ### Make diagrams accessible
 
@@ -1409,39 +1624,30 @@ flowchart LR
     Browser --> Application --> Session
 ```
 
+````markdown
+```mermaid
+flowchart LR
+    accTitle: Sign-in request flow
+    accDescr: The browser submits credentials to the application, which validates them and returns a session.
+    Browser --> Application --> Session
+```
+````
+
 For diagrams with operational or security meaning, add a textual sequence or table as well. This also makes
 the content searchable and understandable when SVG rendering is unavailable.
 
 ### Treat diagram input as untrusted
 
-Do not interpolate user-controlled text into a Mermaid definition. Mermaid configuration can enable HTML
-labels and other features that change the browser attack surface; retain the renderer's secure defaults
-unless you have reviewed a specific requirement. If application data must become a diagram, validate and
-escape it first, and render it in the same environment in which users will view it.
-
-### Diagram type selection guide
-
-| You want to show... | Use |
-|---------------------|-----|
-| A process or decision flow | [Flowchart](#flowcharts) |
-| Interactions between systems over time | [Sequence diagram](#sequence-diagrams) |
-| Code structure and relationships | [Class diagram](#class-diagrams) |
-| Object lifecycle and transitions | [State diagram](#state-diagrams) |
-| Database schema | [ER diagram](#entity-relationship-diagrams) |
-| Project schedule | [Gantt chart](#gantt-charts) |
-| Proportional data | [Pie chart](#pie-charts) |
-| Git branching strategy | [Gitgraph](#gitgraph-diagrams) |
-| Brainstorming / concepts | [Mind map](#mind-maps) |
-| Project milestones | [Timeline](#timeline-diagrams) |
-| Priority matrix | [Quadrant chart](#quadrant-charts) |
-| User experience mapping | [User journey](#user-journey-diagrams) |
+Do not interpolate user-controlled text into a Mermaid definition. This site keeps `securityLevel` at
+`strict`, which sanitizes HTML in labels and ignores `click` callbacks. Do not loosen that in
+`themeConfig.mermaid.options` without a reviewed reason. If application data must become a diagram,
+validate and escape it first, and render it in the same environment in which users will view it.
 
 ---
 
 ## Mermaid in Docusaurus
 
-This site uses `@docusaurus/theme-mermaid` to render Mermaid diagrams. The configuration in
-`docusaurus.config.ts` enables it:
+Three settings in `docusaurus.config.ts` turn diagrams on:
 
 ```typescript
 const config = {
@@ -1451,16 +1657,45 @@ const config = {
     themes: ['@docusaurus/theme-mermaid'],
     themeConfig: {
         mermaid: {
-            theme: { light: 'default', dark: 'dark' },
+            theme: {light: 'default', dark: 'dark'},
         },
     },
 };
-
-export default config;
 ```
 
-Diagrams automatically adapt to the site's light/dark theme. No additional configuration is needed
-per diagram.
+`markdown.mermaid` tells the MDX loader to turn a code fence whose language is `mermaid` into a
+diagram. The language has to be exactly that word. A title or a highlight range on the fence is
+ignored: the block still renders, and the title does not appear.
+
+`@docusaurus/theme-mermaid` 3.10 draws each diagram in the browser. It depends on `mermaid`
+`>= 11.6.0`. This repo currently resolves Mermaid 12.0.0. The lockfile is the source of truth for
+the version -- the live editor and a GitHub preview can be a different release.
+
+The theme calls `mermaid.initialize` with `startOnLoad: false` and the theme for the active color
+mode. Light mode uses Mermaid's `default` theme. Dark mode uses `dark`. The site default is dark,
+and the color mode follows the system preference, so a diagram is drawn for the mode the reader
+ends up with. Toggling color mode draws it again. `themeConfig.mermaid.options` is empty, so the
+rest of Mermaid's defaults apply:
+
+| Default | Value here | What it means |
+|---------|------------|---------------|
+| `securityLevel` | `strict` | HTML in labels is sanitized. `click` callbacks are ignored. A diagram cannot lower this with an `init` directive. |
+| `htmlLabels` | `true` | A label may contain `<br/>` for a line break. Other HTML is stripped. |
+| `look` | `classic` | The classic node style. This site does not set `look`. |
+| `layout` | `elk` | Flowcharts use the ELK layout bundled with Mermaid 12. You do not need `@mermaid-js/layout-elk`. |
+| `gitGraph.mainBranchName` | `main` | The first commits in a git graph sit on `main`. |
+
+`securityLevel`, `startOnLoad`, `maxTextSize`, `suppressErrorRendering`, and `maxEdges` are locked.
+An `%%{init}%%` block can still set `theme`, `look`, or `layout` for that one diagram. An init theme
+stays put after the reader switches to dark mode. Leave it out unless you have checked both color
+modes.
+
+`classDef` fill and stroke colors are literal CSS. They do not follow the toggle. Prefer the theme
+colors, and put the meaning in the label when color would otherwise be the only signal.
+
+Diagrams are wrapped in `.docusaurus-mermaid-container`. `useMaxWidth` defaults to true, so the SVG
+scales down to the column. A wide chart becomes unreadably small. Split it instead of overriding
+layout for the whole site.
 
 ### Where Mermaid works
 
@@ -1473,28 +1708,31 @@ per diagram.
 | VS Code | Via an extension, whose Mermaid version and settings determine support |
 | Confluence | Via an installed app/plugin |
 
-### Diagram types not covered here
+### Diagram types not given a full example
 
-This guide focuses on broadly useful diagram types that work well in documentation. Mermaid also offers
-architecture (C4-style), block, requirement, XY, Sankey, and Kanban diagrams. Consult the
-[syntax reference](https://mermaid.js.org/intro/syntax-reference.html), then verify that your target
-renderer supports the specific diagram type before standardizing on it.
+Mermaid 12 also registers `block` / `block-beta`, C4 (`C4Context`, `C4Container`, `C4Component`,
+`C4Dynamic`, `C4Deployment`), `sankey` / `sankey-beta`, `requirement` / `requirementDiagram`,
+`kanban`, `packet` / `packet-beta`, and beta diagrams such as `radar-beta`, `treemap`,
+`ishikawa`, `venn-beta`, `wardley-beta`, and `usecase-beta`. The keyword has to be the first word
+of the block. Syntax for the beta types moves between minor releases. Render one on this site
+before you standardize on it. The
+[syntax reference](https://mermaid.js.org/intro/syntax-reference.html) is the catalog; this page is
+the set that already renders here.
 
 ### Responsive diagrams
 
-Wide diagrams are hard to read on small screens. Prefer several focused diagrams over one dense canvas,
-use short labels, and test the result at narrow viewport widths. For a diagram that needs more space, use
-Mermaid configuration only after checking its impact in Docusaurus; renderer-level configuration can affect
-every diagram on the page.
+Wide diagrams are hard to read on a phone. Several focused diagrams beat one dense canvas. Use short
+labels, and look at the page at a narrow width before you publish it.
 
 ### Live editor
 
-Use the [Mermaid Live Editor](https://mermaid.live/) to prototype diagrams before adding them to your
-documentation. It provides real-time rendering, syntax validation, and export to SVG/PNG.
+Draft in the [Mermaid Live Editor](https://mermaid.live/), then paste the definition here and read
+the page in both color modes. Export to SVG or PNG only when the destination has no Mermaid renderer.
 
 ## External Resources
 
-- [Mermaid Official Documentation](https://mermaid.js.org/intro/)
+- [Mermaid documentation](https://mermaid.js.org/intro/)
+- [Mermaid syntax reference](https://mermaid.js.org/intro/syntax-reference.html)
 - [Mermaid Live Editor](https://mermaid.live/)
-- [Docusaurus Mermaid Plugin](https://docusaurus.io/docs/markdown-features/diagrams)
-- [GitHub Mermaid Support](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/)
+- [Docusaurus diagrams](https://docusaurus.io/docs/markdown-features/diagrams)
+- [GitHub diagrams](https://docs.github.com/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)
