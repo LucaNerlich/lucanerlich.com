@@ -87,6 +87,7 @@ export const sidebarOrder: Record<string, string[]> = {
         'semantic-html',
         'web-performance',
         'build-a-blog',
+        'markdown',
         'docusaurus',
         'mermaid-diagrams',
     ],
