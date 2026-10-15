@@ -469,17 +469,23 @@ Indentation in examples and config snippets is **4 spaces**, matching `.editorco
 ## Quick reference
 
 ```markdown
-# H1  ## H2  ### H3
+# H1
+## H2
+### H3
 Paragraphs separated by a blank line.
 *italic*  **bold**  ~~strike~~  `code`
-- unordered    1. ordered    - [ ] task
+- unordered
+1. ordered
+- [ ] task
 [text](./page.md)   ![alt](/images/x.png)
 > blockquote
 | a | b |
 |---|---|
 | 1 | 2 |
 ---
-[^1] footnote   [^1]: definition
+[^1] footnote
+
+[^1]: definition
 :::tip
 Admonition
 :::
