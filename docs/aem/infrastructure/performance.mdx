@@ -460,7 +460,7 @@ Sort by duration to find the slowest pages:
 
 ```bash
 # Top 20 slowest requests
-sort -t' ' -k5 -rn request.log | head -20
+awk '{print $NF, $0}' request.log | sort -rn | head -20
 ```
 
 ### Slow Query Logging
