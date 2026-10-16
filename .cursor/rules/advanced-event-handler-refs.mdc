@@ -1,12 +1,14 @@
 ---
-description: USE WHEN storing event handlers in refs for stable subscriptions in React components
+description: USE WHEN event handlers change between renders in React subscriptions
 globs: "**/*.tsx,**/*.jsx"
 alwaysApply: false
 ---
 
-## Store Event Handlers in Refs
+## Use useEffectEvent for Stable Subscriptions
 
-Store callbacks in refs when used in effects that shouldn't re-subscribe on callback changes.
+Keep subscriptions stable when the handler changes between renders.
+
+React 19.2+ ships `useEffectEvent`: the returned function always sees the latest props and state and is exempt from the dependency array.
 
 **Incorrect (re-subscribes on every render):**
 
@@ -22,16 +24,17 @@ function useWindowEvent(event: string, handler: () => void) {
 **Correct (stable subscription):**
 
 ```tsx
+import { useEffectEvent } from 'react'
+
 function useWindowEvent(event: string, handler: () => void) {
-  const handlerRef = useRef(handler)
-  useEffect(() => {
-    handlerRef.current = handler
-  }, [handler])
+  const onEvent = useEffectEvent(handler)
 
   useEffect(() => {
-    const listener = () => handlerRef.current()
+    const listener = () => onEvent()
     window.addEventListener(event, listener)
     return () => window.removeEventListener(event, listener)
   }, [event])
 }
 ```
+
+**Pre-19.2 fallback:** store the handler in a ref updated by an effect, and call `ref.current()` from the listener.
