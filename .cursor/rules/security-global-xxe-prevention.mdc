@@ -1,6 +1,5 @@
 ---
-description: 
-globs: 
+description: USE WHEN parsing or processing XML in any language or framework
 alwaysApply: false
 ---
 # XXE Prevention

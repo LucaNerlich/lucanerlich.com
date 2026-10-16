@@ -1,6 +1,6 @@
 ---
 description: 
-globs: **/*.php
+globs: "**/*.php"
 alwaysApply: false
 ---
 # Secure PHP Development

@@ -1,6 +1,6 @@
 ---
 description: 
-globs: **/*.tsx,**/*.ts,**/*.js
+globs: "**/*.tsx,**/*.ts,**/*.js"
 alwaysApply: false
 ---
 # Secure Node.js Development

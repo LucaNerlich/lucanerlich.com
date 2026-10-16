@@ -1,6 +1,6 @@
 ---
 description: 
-globs: **/*.c,**/*.h
+globs: "**/*.c,**/*.h"
 alwaysApply: false
 ---
 # Secure C Development

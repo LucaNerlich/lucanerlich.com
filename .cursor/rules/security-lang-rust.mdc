@@ -1,6 +1,6 @@
 ---
 description: 
-globs: **/*.rs
+globs: "**/*.rs"
 alwaysApply: false
 ---
 # Secure Rust Development
