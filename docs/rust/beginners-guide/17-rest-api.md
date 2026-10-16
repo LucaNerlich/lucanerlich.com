@@ -323,10 +323,12 @@ async fn delete_todo(db: Data<Database>, path: Path<i64>) -> Result<HttpResponse
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::default().default_filter_or("info"));
 
+    let host = std::env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+
     let db = Database::new("todos.db").expect("Failed to initialize database");
     let db_data = Data::new(db);
 
-    println!("Starting server at http://127.0.0.1:8080");
+    println!("Starting server at http://{host}:8080");
 
     HttpServer::new(move || {
         let cors = Cors::default()
@@ -345,7 +347,7 @@ async fn main() -> std::io::Result<()> {
             .route("/todos/{id}", web::put().to(update_todo))
             .route("/todos/{id}", web::delete().to(delete_todo))
     })
-    .bind("127.0.0.1:8080")?
+    .bind((host.as_str(), 8080))?
     .run()
     .await
 }
