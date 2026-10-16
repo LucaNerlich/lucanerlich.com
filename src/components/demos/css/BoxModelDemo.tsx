@@ -25,7 +25,9 @@ export default function BoxModelDemo(): ReactNode {
         boxSizing,
     } as CSSProperties;
 
-    const contentWidth = width;
+    const contentWidth = boxSizing === 'border-box'
+        ? Math.max(0, width - (padding + border) * 2)
+        : width;
     const borderBoxWidth = boxSizing === 'border-box'
         ? width
         : width + padding * 2 + border * 2;
