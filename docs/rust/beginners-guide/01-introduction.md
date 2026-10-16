@@ -395,13 +395,13 @@ cargo run
 ```text
 Hello, Rustacean!
 Rust was first released in 2015.
-That was 11 years ago.
+Rust turned 10 years old in 2025.
 ```
 
 Things to notice:
 
 - Variables are declared with `let`
-- Rust infers the types (`name` is `&str`, `year` is `i32`)
+- Rust infers the types (`name` is `&str`, `first_release_year` and `anniversary_year` are `i32`)
 - `println!` uses `{variable_name}` for inline formatting - no need for placeholder indices
 - Variables are **immutable by default** - you cannot reassign `name` without `mut`
 
