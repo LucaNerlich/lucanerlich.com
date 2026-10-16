@@ -162,7 +162,7 @@ async find(ctx) {
 
 ```javascript
 // src/index.js - Set permissions on bootstrap
-export default {
+module.exports = {
   async bootstrap({ strapi }) {
     const publicRole = await strapi
       .db.query('plugin::users-permissions.role')
@@ -213,7 +213,7 @@ npm run build
 **Solution:**
 ```javascript
 // config/server.js
-export default ({ env }) => ({
+module.exports = ({ env }) => ({
   host: env('HOST', '0.0.0.0'),
   port: env.int('PORT', 1337),
   app: {
@@ -226,7 +226,7 @@ export default ({ env }) => ({
 
 ```javascript
 // config/admin.js
-export default ({ env }) => ({
+module.exports = ({ env }) => ({
   url: env('ADMIN_URL', '/admin'), // Ensure this matches your reverse proxy config
   serveAdminPanel: env.bool('SERVE_ADMIN', true),
   auth: {
@@ -247,7 +247,7 @@ PayloadTooLargeError: request entity too large
 **Solution:**
 ```javascript
 // config/middlewares.js
-export default [
+module.exports = [
   // ... other middleware
   {
     name: 'strapi::body',
@@ -310,7 +310,7 @@ Also check the bucket CORS configuration and Strapi's Content Security Policy if
 
 ```javascript
 // config/logger.js
-export default {
+module.exports = {
   level: process.env.LOG_LEVEL || 'debug',
 };
 ```
@@ -342,7 +342,7 @@ npm run strapi console
 
 ```javascript
 // Add detailed logging to middleware
-export default (config, { strapi }) => {
+module.exports = (config, { strapi }) => {
   return async (ctx, next) => {
     const start = Date.now();
 
@@ -368,7 +368,7 @@ export default (config, { strapi }) => {
 ```javascript
 // Log all database queries
 // config/database.js
-export default ({ env }) => ({
+module.exports = ({ env }) => ({
   connection: {
     client: 'postgres',
     connection: {
@@ -455,7 +455,7 @@ module.exports = {
 document-level behavior, prefer Document Service middleware:
 ```javascript
 // src/index.js
-export default {
+module.exports = {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       if (
@@ -669,7 +669,7 @@ curl http://localhost:1337/api/posts/document-id
 // Enable query logging to find expensive SQL, then use your database slow-query log
 // or APM tool for duration thresholds.
 // config/database.js
-export default ({ env }) => ({
+module.exports = ({ env }) => ({
   connection: {
     client: 'postgres',
     connection: {

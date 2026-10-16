@@ -116,7 +116,7 @@ Configure proper connection pooling:
 
 ```javascript
 // config/database.js
-export default ({ env }) => ({
+module.exports = ({ env }) => ({
   connection: {
     client: 'postgres',
     connection: {
@@ -153,11 +153,11 @@ Create a Redis service:
 
 ```javascript
 // src/services/redis.js
-import Redis from 'ioredis';
+const Redis = require('ioredis');
 
 let redis = null;
 
-export function getRedis() {
+function getRedis() {
   if (!redis) {
     redis = new Redis({
       host: process.env.REDIS_HOST || 'localhost',
@@ -181,7 +181,7 @@ export function getRedis() {
   return redis;
 }
 
-export async function getCached(key) {
+async function getCached(key) {
   try {
     const redis = getRedis();
     const cached = await redis.get(key);
@@ -192,7 +192,7 @@ export async function getCached(key) {
   }
 }
 
-export async function setCached(key, value, ttl = 3600) {
+async function setCached(key, value, ttl = 3600) {
   try {
     const redis = getRedis();
     await redis.set(key, JSON.stringify(value), 'EX', ttl);
@@ -201,7 +201,7 @@ export async function setCached(key, value, ttl = 3600) {
   }
 }
 
-export async function invalidateCache(pattern) {
+async function invalidateCache(pattern) {
   try {
     const redis = getRedis();
     const keys = await redis.keys(pattern);
@@ -212,6 +212,8 @@ export async function invalidateCache(pattern) {
     strapi.log.error('Redis invalidation error:', error);
   }
 }
+
+module.exports = { getRedis, getCached, setCached, invalidateCache };
 ```
 
 ### Cache middleware
@@ -220,9 +222,9 @@ Create a caching middleware for API responses:
 
 ```javascript
 // src/middlewares/cache.js
-import { getCached, setCached } from '../services/redis';
+const { getCached, setCached } = require('../services/redis');
 
-export default (config, { strapi }) => {
+module.exports = (config, { strapi }) => {
   return async (ctx, next) => {
     // Only cache GET requests
     if (ctx.method !== 'GET') {
@@ -262,7 +264,7 @@ Register the middleware:
 
 ```javascript
 // config/middlewares.js
-export default [
+module.exports = [
   // ... other middleware
   {
     name: 'global::cache',
@@ -279,7 +281,7 @@ Invalidate cache when content changes:
 
 ```javascript
 // src/index.js
-export default {
+module.exports = {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       const result = await next();
@@ -309,7 +311,7 @@ Enable Strapi's built-in compression middleware:
 
 ```javascript
 // config/middlewares.js
-export default [
+module.exports = [
   // ... other middleware
   {
     name: 'strapi::compression',
@@ -328,7 +330,7 @@ Only populate relations when needed:
 
 ```javascript
 // src/api/post/controllers/post.js
-export default factories.createCoreController('api::post.post', ({ strapi }) => ({
+module.exports = factories.createCoreController('api::post.post', ({ strapi }) => ({
   async find(ctx) {
     const { populate } = ctx.query;
 
@@ -376,7 +378,7 @@ npm install @strapi/provider-upload-aws-s3
 
 ```javascript
 // config/plugins.js
-export default ({ env }) => ({
+module.exports = ({ env }) => ({
   upload: {
     config: {
       provider: 'aws-s3',
@@ -410,7 +412,7 @@ Set appropriate cache headers:
 
 ```javascript
 // src/api/post/controllers/post.js
-export default factories.createCoreController('api::post.post', ({ strapi }) => ({
+module.exports = factories.createCoreController('api::post.post', ({ strapi }) => ({
   async find(ctx) {
     const response = await super.find(ctx);
 
@@ -445,7 +447,7 @@ Configure responsive image formats:
 
 ```javascript
 // config/plugins.js
-export default ({ env }) => ({
+module.exports = ({ env }) => ({
   upload: {
     config: {
       breakpoints: {
@@ -528,7 +530,7 @@ Track custom performance metrics:
 
 ```javascript
 // src/services/metrics.js
-export class PerformanceTracker {
+class PerformanceTracker {
   constructor() {
     this.metrics = new Map();
   }
@@ -558,6 +560,8 @@ export class PerformanceTracker {
   }
 }
 
+module.exports = PerformanceTracker;
+
 // Usage in controllers
 const tracker = new PerformanceTracker();
 
@@ -574,7 +578,7 @@ Log slow queries:
 
 ```javascript
 // config/database.js
-export default ({ env }) => ({
+module.exports = ({ env }) => ({
   connection: {
     client: 'postgres',
     connection: {
@@ -612,7 +616,7 @@ Lazy load heavy dependencies:
 
 ```javascript
 // Bad: Load at startup
-import heavyLibrary from 'heavy-library';
+const heavyLibrary = require('heavy-library');
 
 // Good: Load when needed
 let heavyLibrary;
@@ -628,7 +632,7 @@ function getHeavyLibrary() {
 
 ```javascript
 // Stream large files instead of loading into memory
-export default {
+module.exports = {
   async downloadLargeFile(ctx) {
     const stream = fs.createReadStream('large-file.csv');
     ctx.type = 'text/csv';
@@ -644,7 +648,7 @@ Prevent overload with rate limiting. Strapi does not include a built-in rate lim
 
 ```javascript
 // config/middlewares.js
-export default [
+module.exports = [
   // ... other middleware
   {
     name: 'global::rate-limit',

@@ -69,7 +69,7 @@ Document Service middleware is registered in the `register` lifecycle function o
 
 ```javascript
 // src/index.js (or src/index.ts)
-export default {
+module.exports = {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       // This runs for ALL content types, ALL actions
@@ -101,7 +101,7 @@ Ensure all post titles are at least 5 characters:
 
 ```javascript
 // src/index.js (or src/index.ts)
-export default {
+module.exports = {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       if (
@@ -133,7 +133,7 @@ function slugify(text) {
     .replace(/(^-|-$)/g, "");
 }
 
-export default {
+module.exports = {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       if (
@@ -158,7 +158,7 @@ Track all changes to content:
 
 ```javascript
 // src/index.js (or src/index.ts)
-export default {
+module.exports = {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       const result = await next();
@@ -181,7 +181,7 @@ export default {
 
 ```javascript
 // src/index.js (or src/index.ts)
-export default {
+module.exports = {
   register({ strapi }) {
     strapi.documents.use(async (context, next) => {
       const result = await next();
@@ -217,7 +217,7 @@ export default {
 Middleware runs in the order it is registered. If you need multiple hooks, register them in the order you want:
 
 ```javascript
-export default {
+module.exports = {
   register({ strapi }) {
     // Runs first: validation
     strapi.documents.use(async (context, next) => {
@@ -247,10 +247,10 @@ For cleaner code, create separate functions for each content type:
 
 ```javascript
 // src/index.js (or src/index.ts)
-import postMiddleware from "./middlewares/post-lifecycle";
-import authorMiddleware from "./middlewares/author-lifecycle";
+const postMiddleware = require("./middlewares/post-lifecycle");
+const authorMiddleware = require("./middlewares/author-lifecycle");
 
-export default {
+module.exports = {
   register({ strapi }) {
     strapi.documents.use(postMiddleware);
     strapi.documents.use(authorMiddleware);
@@ -260,7 +260,7 @@ export default {
 
 ```javascript
 // src/middlewares/post-lifecycle.js (or .ts)
-export default async (context, next) => {
+module.exports = async (context, next) => {
   if (context.uid !== "api::post.post") {
     return await next();
   }
@@ -374,7 +374,7 @@ You can also trigger webhook-like behavior programmatically using lifecycle hook
 
 ```javascript
 // src/middlewares/post-lifecycle.js (or .ts)
-import https from "node:https";
+const https = require("node:https");
 
 function notifySlack(message) {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL;
@@ -399,7 +399,7 @@ function notifySlack(message) {
   req.end();
 }
 
-export default (strapi) => async (context, next) => {
+module.exports = (strapi) => async (context, next) => {
   if (context.uid !== "api::post.post") {
     return await next();
   }
@@ -424,9 +424,9 @@ Register it in `src/index.js`:
 
 ```javascript
 // src/index.js (or src/index.ts)
-import createPostLifecycle from "./middlewares/post-lifecycle";
+const createPostLifecycle = require("./middlewares/post-lifecycle");
 
-export default {
+module.exports = {
   register({ strapi }) {
     strapi.documents.use(createPostLifecycle(strapi));
   },
