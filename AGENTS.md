@@ -16,7 +16,6 @@ with minimal TypeScript/JS configuration and CSS.
 - **TypeScript:** ~7 (dev dependency; no tsconfig in the repo - Docusaurus
   transpiles config files with SWC, `tsc` is not part of the build)
 - **Deployment:** Docker multi-stage build, served via Coolify on port 3000
-- **Note:** `README.md` still says `yarn` - that is outdated. Use `pnpm`.
 
 ## Build / Dev / Serve Commands
 
