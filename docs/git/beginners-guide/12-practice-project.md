@@ -598,8 +598,13 @@ Two commits. Clean and readable.
 
 ### Step 23: Delete the feature branch
 
+The squash merge in Step 20 applied the branch's changes as one commit without
+recording a merge, so `git branch -d` cannot see the branch as merged and
+refuses to delete it. The work is already committed on `main`, so the force
+delete is safe:
+
 ```bash
-git branch -d feature/core-commands
+git branch -D feature/core-commands
 # Skip the next command if you did not create an `origin` remote in Step 7.
 git push origin --delete feature/core-commands
 ```
