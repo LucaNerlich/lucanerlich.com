@@ -310,11 +310,20 @@ if (is_dir('temp')) {
 ```php
 <?php
 
+// glob() matches a single directory level -- there is no ** recursion
 $txtFiles = glob('data/*.txt');
-$allMd = glob('docs/**/*.md');  // Recursive with **
 
 foreach ($txtFiles as $file) {
     echo basename($file) . "\n";
+}
+
+// For a recursive walk, use RecursiveDirectoryIterator
+$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('docs'));
+
+foreach ($it as $file) {
+    if ($file->isFile() && $file->getExtension() === 'md') {
+        echo $file->getPathname() . "\n";
+    }
 }
 ```
 
