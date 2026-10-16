@@ -124,6 +124,7 @@ const config: Config = {
                 redirects,
             },
         ],
+        './plugins/check-llms-urls.js',
     ],
 
     themeConfig: {
