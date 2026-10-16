@@ -214,6 +214,9 @@ public record Task(int id, String description, boolean done) {
     private static final String DELIMITER = "|";
 
     public String toLine() {
+        if (description.contains(DELIMITER) || description.contains("\n") || description.contains("\r")) {
+            throw new IllegalArgumentException("Task description must not contain '|' or line breaks");
+        }
         return id + DELIMITER + description + DELIMITER + done;
     }
 

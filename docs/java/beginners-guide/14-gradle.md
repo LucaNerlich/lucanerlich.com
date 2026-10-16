@@ -177,8 +177,9 @@ Jackson is the industry default for most Java projects.
 
 ### Updated `TaskHandler.java` with Jackson
 
-The source files (`Task.java`, `TaskStore.java`, `ApiServer.java`) are identical to the Maven chapter. Only
-`TaskHandler.java` changes to use Jackson instead of Gson:
+The source files (`Task.java`, `TaskStore.java`, `ApiServer.java`) are identical to the Maven chapter, including the
+`toLine()` guard that rejects descriptions containing `|` or line breaks. Only `TaskHandler.java` changes to use
+Jackson instead of Gson:
 
 ```java
 // src/main/java/taskapi/TaskHandler.java
