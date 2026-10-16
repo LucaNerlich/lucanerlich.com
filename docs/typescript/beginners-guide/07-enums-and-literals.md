@@ -72,7 +72,7 @@ function handleResponse(status: HttpStatus): string {
 
 ### The problem with numeric enums
 
-Numeric enums have a subtle issue: TypeScript allows any number to be assigned to an enum type, which undermines safety:
+Numeric enums have a subtle issue: a value typed as `number` is assignable to an enum type even when it is not one of its members, which undermines safety:
 
 ```typescript
 enum Direction {
@@ -82,8 +82,11 @@ enum Direction {
     West,
 }
 
-const invalid: Direction = 99; // TypeScript allows this - no error!
+let rawValue = 99; // Type is number, not the literal 99
+const invalid: Direction = rawValue; // TypeScript allows this - no error!
 ```
+
+A literal that is not a member is rejected (`const d: Direction = 99;` is a compile error); only `number`-typed values slip through.
 
 This is a known quirk. For most use cases, **string enums** or **const string unions** are safer choices.
 
@@ -418,7 +421,7 @@ for (let i = 0; i < 6; i++) {
 
 ## Summary
 
-- **Numeric enums** auto-assign numbers but allow any number to be assigned - use with caution
+- **Numeric enums** auto-assign numbers but accept any `number`-typed value, even non-members - use with caution
 - **String enums** are safer and more readable; string values appear in logs and debuggers
 - **`const enum`** is a compile-time-only optimization that inlines values - avoid in library code
 - **Literal types** (`"north" | "south"`, `1 | 2 | 3`) are the modern, lightweight alternative to enums
