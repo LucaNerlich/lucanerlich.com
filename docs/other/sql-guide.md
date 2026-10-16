@@ -542,7 +542,7 @@ DELETE FROM users;
 ### `TRUNCATE` - faster bulk delete
 
 ```sql
--- Removes all rows, resets auto-increment (not available in SQLite)
+-- Removes all rows; resets auto-increment on MySQL/SQL Server (not available in SQLite)
 TRUNCATE TABLE users;
 ```
 
@@ -550,7 +550,8 @@ TRUNCATE TABLE users;
 
 - Transactional behavior differs by database. PostgreSQL and SQL Server let you roll back `TRUNCATE` inside an
   explicit transaction; MySQL and Oracle generally do not because DDL auto-commits.
-- `TRUNCATE` resets auto-increment counters; `DELETE` does not.
+- On MySQL and SQL Server, `TRUNCATE` resets auto-increment counters; `DELETE` does not. PostgreSQL keeps
+  sequences unless the statement includes `RESTART IDENTITY` (`TRUNCATE TABLE users RESTART IDENTITY;`).
 - `TRUNCATE` does not fire row-level `DELETE` triggers.
 
 ## Aggregate functions
