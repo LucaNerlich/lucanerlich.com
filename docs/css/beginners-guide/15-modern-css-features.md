@@ -55,10 +55,10 @@ You can now nest selectors inside other selectors, reducing repetition and impro
 ### Nesting rules
 
 - Use `&` when the nested selector would otherwise start with a **type selector** (`& h3`, `& p`)
-- Class, attribute, pseudo-class, and combinator-based relative selectors can usually nest directly (`.badge`,
-  `:hover`, `> img`)
-- Use `&` to reference the parent selector explicitly - required when you want to concatenate selectors (`&--large`,
-  `&:hover`)
+- Class, attribute, and combinator-based relative selectors can nest directly (`.badge`, `> img`)
+- Use `&` to target the parent as a compound selector (`&:hover`, `&.active`). Native CSS has **no selector
+  concatenation** (the Sass shorthand that appends a suffix does not exist here) - write the full class name instead.
+  A bare pseudo-class nests as a descendant (`parent *:hover`), so use `&:hover` for the parent's own hover
 - Do not nest deeper than two or three levels - it hurts readability and increases specificity
 
 ### Before vs after nesting
