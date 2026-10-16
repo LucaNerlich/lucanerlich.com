@@ -158,7 +158,7 @@ EXPOSE 3000
 CMD ["src/index.js"]
 ```
 
-Note: with distroless, `docker exec -it my-app sh` will not work - there is no shell. Use `docker exec my-app node -e "console.log('test')"` for ad-hoc debugging, or temporarily rebuild with a full image.
+Note: with distroless, `docker exec -it my-app sh` will not work - there is no shell. Use `docker exec my-app /nodejs/bin/node -e "console.log('test')"` for ad-hoc debugging (the distroless runtime lives at `/nodejs/bin/node`, which is not on `PATH`), or temporarily rebuild with a full image.
 
 ---
 
