@@ -230,13 +230,13 @@ By default, a pipe's exit code is the exit code of the **last** command. This me
 
 ```bash
 # Without pipefail:
-cat /nonexistent | grep "something"
-echo $?   # 1 (grep's exit code - nothing found)
+cat /nonexistent | wc -l
+echo $?   # 0 (wc's exit code - it counted zero lines)
 # cat's failure was silently swallowed
 
 # With pipefail, the pipe fails if ANY command in it fails
 set -o pipefail
-cat /nonexistent | grep "something"
+cat /nonexistent | wc -l
 echo $?   # 1 (from cat)
 ```
 
