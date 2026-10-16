@@ -5,7 +5,7 @@
   [github.com](https://github.com/goldbergyoni/javascript-testing-best-practices)
 
 - Redux Essentials
-  [redux.js.org]https://redux.js.org/tutorials/essentials/part-1-overview-concepts)
+  [redux.js.org](https://redux.js.org/tutorials/essentials/part-1-overview-concepts)
 
 - DIY Video Hosting
   [tyler.io](https://tyler.io/diy-video-hosting/)
