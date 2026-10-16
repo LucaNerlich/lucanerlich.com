@@ -5,6 +5,7 @@ import {computeBalances, computeSettlement, summarize} from './settlement';
 import {applyAction} from './model';
 import {
     COMPRESSED_PREFIX,
+    MAX_INFLATED_BYTES,
     SHARE_PARAM,
     buildShareUrl,
     decodeState,
@@ -168,6 +169,28 @@ describe('url codec', () => {
         const encoded = await encodeState(state);
         assert.ok(encoded.startsWith(COMPRESSED_PREFIX));
         assert.deepEqual(await decodeState(encoded), state);
+    });
+
+    it('rejects payloads that inflate past the size cap', async () => {
+        // A valid v3 wire whose expense description is past the cap: without
+        // the cap this would decode to a state, so null here proves it fired.
+        const wire = [
+            3,
+            'EUR',
+            [['a', 'A']],
+            [['e1', 'x'.repeat(MAX_INFLATED_BYTES + 1024), 100, 0, 0, 'eq']],
+            [],
+        ];
+        const stream = new Blob([new TextEncoder().encode(JSON.stringify(wire))])
+            .stream()
+            .pipeThrough(new CompressionStream('deflate-raw'));
+        const compressed = new Uint8Array(await new Response(stream).arrayBuffer());
+        let binary = '';
+        for (let i = 0; i < compressed.length; i++) binary += String.fromCharCode(compressed[i]);
+        const payload =
+            COMPRESSED_PREFIX +
+            btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        assert.equal(await decodeState(payload), null);
     });
 
     it('falls back to equal when decoded splits are invalid after filtering participants', async () => {

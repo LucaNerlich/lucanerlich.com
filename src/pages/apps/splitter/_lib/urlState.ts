@@ -296,9 +296,35 @@ const deflateRaw = async (bytes: Uint8Array): Promise<Uint8Array> => {
     return new Uint8Array(await new Response(stream).arrayBuffer());
 };
 
-const inflateRaw = async (bytes: Uint8Array): Promise<Uint8Array> => {
+/**
+ * Cap on the decompressed size of a `?s=` payload. Sessions are a few KB;
+ * anything past this is corrupt or abusive, and DEFLATE can expand ~1000x,
+ * so an unbounded decode would let a crafted link allocate hundreds of MB.
+ */
+export const MAX_INFLATED_BYTES = 8 * 1024 * 1024;
+
+const inflateRaw = async (bytes: Uint8Array): Promise<Uint8Array | null> => {
     const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
-    return new Uint8Array(await new Response(stream).arrayBuffer());
+    const reader = stream.getReader();
+    const chunks: Uint8Array[] = [];
+    let total = 0;
+    for (;;) {
+        const {done, value} = await reader.read();
+        if (done) break;
+        total += value.byteLength;
+        if (total > MAX_INFLATED_BYTES) {
+            await reader.cancel();
+            return null;
+        }
+        chunks.push(value);
+    }
+    const out = new Uint8Array(total);
+    let offset = 0;
+    for (const chunk of chunks) {
+        out.set(chunk, offset);
+        offset += chunk.byteLength;
+    }
+    return out;
 };
 
 /** Encode session for URLs: compressed v3 (`z.` + base64url(deflate-raw(json))). */
@@ -318,8 +344,9 @@ export const decodeState = async (encoded: string): Promise<AppState | null> => 
     try {
         if (encoded.startsWith(COMPRESSED_PREFIX)) {
             const compressed = fromBase64Url(encoded.slice(COMPRESSED_PREFIX.length));
-            const json = new TextDecoder().decode(await inflateRaw(compressed));
-            return parseWire(json);
+            const inflated = await inflateRaw(compressed);
+            if (!inflated) return null;
+            return parseWire(new TextDecoder().decode(inflated));
         }
         const bytes = fromBase64Url(encoded);
         const json = new TextDecoder().decode(bytes);
