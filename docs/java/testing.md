@@ -494,7 +494,7 @@ User user = TestUsers.aUser().name("Custom").build();
 ## Testing exceptions
 
 ```java
-// JUnit 5
+// Pick one: JUnit 5
 @Test
 void shouldThrowOnInvalidInput() {
     IllegalArgumentException ex = assertThrows(
@@ -504,9 +504,9 @@ void shouldThrowOnInvalidInput() {
     assertEquals("Input must not be null", ex.getMessage());
 }
 
-// AssertJ (more fluent)
+// ...or AssertJ (more fluent)
 @Test
-void shouldThrowOnInvalidInput() {
+void shouldThrowOnInvalidInputWithAssertJ() {
     assertThatThrownBy(() -> service.process(null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Input must not be null")
