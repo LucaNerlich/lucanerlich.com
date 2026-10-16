@@ -158,7 +158,7 @@ This installs:
 Verify the installation:
 
 ```bash
-npx tsc --version   # Version 5.x.x
+npx tsc --version   # Version 7.x.x
 ```
 
 > **Tip:** Always use `npx tsc` (not a globally installed `tsc`) to ensure you are using the project's TypeScript
