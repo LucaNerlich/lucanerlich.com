@@ -9,7 +9,6 @@ type Bar = {
     label: string;
     start: number;
     duration: number;
-    ok: boolean;
 };
 
 function wait(ms: number): Promise<void> {
@@ -50,7 +49,7 @@ export default function AsyncTimelineDemo(): ReactNode {
                 const nextBars: Bar[] = [];
                 for (let index = 0; index < delays.length; index += 1) {
                     const duration = delays[index];
-                    nextBars.push({label: labels[index], start: cursor, duration, ok: true});
+                    nextBars.push({label: labels[index], start: cursor, duration});
                     setBars([...nextBars]);
                     await wait(duration);
                     cursor += duration;
@@ -60,7 +59,6 @@ export default function AsyncTimelineDemo(): ReactNode {
                     label: labels[index],
                     start: 0,
                     duration,
-                    ok: true,
                 })));
                 await Promise.all(delays.map((duration) => wait(duration)));
             } else {
@@ -68,7 +66,6 @@ export default function AsyncTimelineDemo(): ReactNode {
                     label: labels[index],
                     start: 0,
                     duration,
-                    ok: true,
                 })));
                 await Promise.race(delays.map((duration) => wait(duration)));
             }
@@ -143,13 +140,12 @@ export default function AsyncTimelineDemo(): ReactNode {
             <div className={styles.chart} aria-live="polite">
                 {(bars.length === 0
                     ? [
-                        {label: 'task A', start: 0, duration: delayA, ok: true},
-                        {label: 'task B', start: mode === 'sequential' ? delayA : 0, duration: delayB, ok: true},
+                        {label: 'task A', start: 0, duration: delayA},
+                        {label: 'task B', start: mode === 'sequential' ? delayA : 0, duration: delayB},
                         {
                             label: 'task C',
                             start: mode === 'sequential' ? delayA + delayB : 0,
                             duration: delayC,
-                            ok: true,
                         },
                     ]
                     : bars
