@@ -666,11 +666,12 @@ tail -f /var/log/apache2/dispatcher.log
 
 1. **Was the request a `GET` or `HEAD`?** The Dispatcher only caches safe methods.
 2. **Did the response carry a `Set-Cookie` header?** Responses with cookies are never cached. Strip the cookie in a Sling filter or at the CDN.
-3. **Did the response include `Dispatcher: no-cache`?** That header is an opt-out - remove it or understand why it's set.
-4. **Did the URL contain a query string?** By default, any `?` in the URL skips the cache. Use `/ignoreUrlParams` in the farm to allowlist known params.
-5. **Was the status `200`?** Only `200` and (if enabled) `404` are cached.
-6. **Did a filter rule `deny` the path?** Check `dispatcher.log` for `deny` lines.
-7. **Was the cache directory writable?** `ls -la /mnt/var/www/html` inside the container - permission errors here are silent in older dispatcher versions.
+3. **Did the request carry an `Authorization` header?** Authenticated responses are not cached by default.
+4. **Did the response include `Dispatcher: no-cache`?** That header is an opt-out - remove it or understand why it's set.
+5. **Did the URL contain a query string?** By default, any `?` in the URL skips the cache. Use `/ignoreUrlParams` in the farm to allowlist known params.
+6. **Was the status `200`?** Only `200` and (if enabled) `404` are cached.
+7. **Did a filter rule `deny` the path?** Check `dispatcher.log` for `deny` lines.
+8. **Was the cache directory writable?** `ls -la /mnt/var/www/html` inside the container - permission errors here are silent in older dispatcher versions.
 
 ### Useful inspection commands
 

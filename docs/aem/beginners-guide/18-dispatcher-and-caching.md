@@ -87,118 +87,30 @@ dispatcher/
 
 ## Cache rules
 
-Cache rules define which responses the Dispatcher stores:
-
-```apache
-# cache/rules.any
-
-# Cache HTML pages
-/0000 { /type "allow" /glob "*.html" }
-
-# Cache clientlibs (CSS, JS)
-/0001 { /type "allow" /glob "/etc.clientlibs/*" }
-
-# Cache static assets
-/0002 { /type "allow" /glob "*.css" }
-/0003 { /type "allow" /glob "*.js" }
-/0004 { /type "allow" /glob "*.gif" }
-/0005 { /type "allow" /glob "*.ico" }
-/0006 { /type "allow" /glob "*.jpg" }
-/0007 { /type "allow" /glob "*.jpeg" }
-/0008 { /type "allow" /glob "*.png" }
-/0009 { /type "allow" /glob "*.svg" }
-/0010 { /type "allow" /glob "*.webp" }
-/0011 { /type "allow" /glob "*.woff2" }
-
-# Do not cache JSON API responses (dynamic)
-/0100 { /type "deny" /glob "*.json" }
-
-# Exception: cache persisted GraphQL query responses
-/0101 { /type "allow" /glob "/graphql/execute.json/*" }
-```
-
-> **Tip:** In AEMaaCS, the default rules are already good. Customize only when needed. Note that the blanket JSON deny
-> above would also block caching of GraphQL persisted query responses. If you use headless delivery (chapter 13), add
-> an explicit allow rule for the persisted query path as shown.
-
-### Cacheable responses
-
-The Dispatcher only caches responses that:
-
-1. Return **HTTP 200**
-2. Are **GET requests** (POST, PUT, DELETE are never cached)
-3. Do **not** have `Set-Cookie` headers
-4. Do **not** have `Authorization` headers
-5. Match the **cache rules** (`/cache` section)
-
-> **Query strings:** By default, the Dispatcher does not cache a request whose URI contains a question mark -
-> `/page.html?v=1` and `/page.html?v=2` each bypass the cache. To cache requests carrying selected parameters,
-> list those parameter names under `/ignoreUrlParams` in the farm config: a request whose parameters are all
-> ignored is served from the cache as if it had no query string, while any parameter not on the list still
-> bypasses the cache.
+Cache rules decide which responses the Dispatcher stores on disk. The rule set, the persisted-query exception, and
+the full list of conditions a response must meet (status, method, cookies, auth, query strings) live in the
+[Dispatcher Configuration reference](/aem/infrastructure/dispatcher-configuration#cache-rules).
 
 ## Filters
 
-Filters control which requests reach AEM:
-
-```apache
-# filters/filters.any
-
-# Start from deny-by-default and allow only what is required
-/0000 { /type "deny" /url "*" }
-
-# Allow basic delivery paths
-/0001 { /type "allow" /method "GET" /url "/content/*" }
-/0002 { /type "allow" /method "GET" /url "/etc.clientlibs/*" }
-
-# Allow GraphQL persisted queries
-/0010 { /type "allow" /method "GET" /url "/graphql/execute.json/*" }
-
-# Block sensitive paths explicitly
-/0100 { /type "deny" /url "/system/*" }
-/0101 { /type "deny" /url "/crx/*" }
-/0102 { /type "deny" /url "/bin/*" }
-/0103 { /type "deny" /url "*.infinity.json" }
-/0104 { /type "deny" /url "*.tidy.json" }
-/0105 { /type "deny" /url "*.sysview.xml" }
-/0106 { /type "deny" /url "*.docview.xml" }
-/0107 { /type "deny" /url "*.query.json" }
-
-# Block selectors that expose raw content
-/0200 { /type "deny" /selectors '(feed|rss|pages|languages|blueprint|infinity)' }
-```
+Filters control which requests reach AEM: they run before the cache, so a denied request never reaches Publish. The
+deny-by-default rule set and the common-paths table live in the [Dispatcher Configuration
+reference](/aem/infrastructure/dispatcher-configuration#filter-rules).
 
 ### Filter order matters
 
-Filters are evaluated **top to bottom** and the **last matching rule wins** (not the first). This means later rules
-override earlier ones. A common pattern:
-
-1. **Deny all** baseline (`/0000`)
-2. **Allow** only explicit delivery paths (`/0001`, `/0002`, ...)
-3. **Deny** sensitive selectors/paths explicitly (`/0100+`) - these override the allows above because they come later
-
-Because of last-match semantics, the position of your deny rules relative to allow rules is critical. A deny rule placed
-before an allow will be overridden by that allow.
+Filters are evaluated **top to bottom** and the **last matching rule wins** (not the first). Because of that
+last-match semantics, the position of your deny rules relative to allow rules is critical: a deny rule placed before
+an allow will be overridden by that allow. That is why the recommended pattern starts from a deny-all baseline and
+allows explicit delivery paths before denying sensitive paths.
 
 > **Security:** Always deny access to `/crx/*`, `/system/console/*`, and other admin paths on Publish.
 
 ## URL rewrites
 
-Rewrite rules map vanity URLs and handle redirects:
-
-```apache
-# rewrites/rewrite.rules
-
-# Remove /content/mysite/en prefix for clean URLs
-RewriteRule ^/content/mysite/en/(.*)$ /$1 [PT,L]
-
-# Redirect www to non-www
-RewriteCond %{HTTP_HOST} ^www\.mysite\.com$
-RewriteRule ^(.*)$ https://mysite.com$1 [R=301,L]
-
-# Redirect old URLs
-RewriteRule ^/old-page$ /new-page [R=301,L]
-```
+Rewrite rules map vanity URLs and handle redirects. The full rule examples (content path shortening, `.html`
+extension, trailing-slash normalisation) live in the [Dispatcher Configuration
+reference](/aem/infrastructure/dispatcher-configuration#rewrite-rules).
 
 ### Vanity URLs
 
@@ -241,22 +153,9 @@ The Dispatcher uses a `.stat` file mechanism for age-based invalidation:
 
 ### Stat file level
 
-The `statfileslevel` setting controls how broadly invalidation spreads:
-
-| Level | Behavior                                                             |
-|-------|----------------------------------------------------------------------|
-| 0     | One `.stat` at the root - all content invalidated on any publish    |
-| 1     | `.stat` per first-level directory (`/content/`)                      |
-| 2     | `.stat` per site (`/content/mysite/`)                                |
-| 3     | `.stat` per language - `/en/` and `/de/` independent                 |
-| 4     | `.stat` per section - `/en/blog/` and `/en/about/` independent       |
-
-Higher levels = more granular invalidation = better cache hit ratio.
-
-```apache
-# In the farm config
-/statfileslevel "2"
-```
+The `statfileslevel` setting controls how broadly invalidation spreads: the higher the level, the more granular the
+invalidation. The full level table and tuning guidance live in the [Dispatcher Configuration
+reference](/aem/infrastructure/dispatcher-configuration#statfileslevel).
 
 ## Local Dispatcher testing with the SDK
 
