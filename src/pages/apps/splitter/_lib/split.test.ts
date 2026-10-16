@@ -2,7 +2,7 @@ import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
 import {allocateByWeights, allocateEqual, allocateExpense, validateSplit} from './split';
 import {computeBalances, computeSettlement, summarize} from './settlement';
-import {applyAction} from './model';
+import {applyAction, expensesAffectedByRemoval} from './model';
 import {
     COMPRESSED_PREFIX,
     SHARE_PARAM,
@@ -301,6 +301,20 @@ describe('model', () => {
         assert.deepEqual(applyAction(state, {type: 'SET_CURRENCY', currency: 'USD'}), {
             ...state, currency: 'USD', paidTransferKeys: [],
         });
+    });
+
+    it('counts the full removal cascade for the demo trip', () => {
+        // The dialog derives its counts from this set: deleted (paid) vs
+        // re-split (only joined). Carol: Taxi is deleted, Dinner and
+        // Groceries are re-split.
+        const state = demoState();
+        const carol = state.people.find(p => p.name === 'Carol')!.id;
+        const affected = expensesAffectedByRemoval(state, carol);
+        const deleted = affected.filter(e => e.paidBy === carol);
+        const resplit = affected.filter(e => e.paidBy !== carol);
+        assert.equal(affected.length, 3);
+        assert.deepEqual(deleted.map(e => e.description), ['Taxi']);
+        assert.deepEqual(resplit.map(e => e.description), ['Dinner', 'Groceries for cabin']);
     });
 
     it('renames and duplicates', () => {

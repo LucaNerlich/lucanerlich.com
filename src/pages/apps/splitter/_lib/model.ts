@@ -6,13 +6,18 @@ import type {Action, AppState, Expense, ExpenseInput} from './types';
 import {equalSplit, newId} from './types';
 import {validateSplit} from './split';
 
-/**
- * Every expense the given person paid. Removing a person cascades to exactly
- * these expenses, so the reducer and any "what will this delete?" preview share
- * one definition of the cascade instead of each re-deriving it from raw state.
- */
+/** Every expense the given person paid. */
 export const expensesPaidBy = (state: AppState, personId: string): Expense[] =>
     state.expenses.filter(e => e.paidBy === personId);
+
+/**
+ * Every expense the given person paid or participates in. Removing a person
+ * deletes the ones they paid and re-splits the ones they only joined, so a
+ * "what will this change?" preview must warn about this whole set, not just
+ * the paid ones.
+ */
+export const expensesAffectedByRemoval = (state: AppState, personId: string): Expense[] =>
+    state.expenses.filter(e => e.paidBy === personId || e.participants.includes(personId));
 
 const normalizeExpenseInput = (
     state: AppState,
