@@ -182,7 +182,7 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 | **Best for**            | CPU-bound work               | I/O-bound work (HTTP, DB, file)                        |
 | **Blocking cost**       | Expensive (blocks OS thread) | Cheap (JVM parks the virtual thread)                   |
 | **Thread pool needed**  | Yes                          | No (one per task is fine)                              |
-| **Synchronized blocks** | Fine                         | Can "pin" carrier thread (use `ReentrantLock` instead) |
+| **Synchronized blocks** | Fine                         | Pins only on Java 21; unpinned from JDK 24 (JEP 491)     |
 
 ### When to use virtual threads
 
@@ -205,16 +205,19 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 
 ### Avoiding pinning
 
-Virtual threads are **pinned** (cannot be parked) inside `synchronized` blocks when
-they perform blocking operations. Use `ReentrantLock` instead:
+On **Java 21**, virtual threads are **pinned** (cannot be parked) inside
+`synchronized` blocks when they perform blocking operations. Since **JDK 24**,
+[JEP 491](https://openjdk.org/jeps/491) removes that pinning, so blocking inside
+`synchronized` no longer needs a workaround. On Java 21, use `ReentrantLock`
+instead:
 
 ```java
-// BAD: can pin the carrier thread
+// BAD on Java 21: can pin the carrier thread
 synchronized (lock) {
     connection.query("SELECT ...");  // blocking I/O inside synchronized
 }
 
-// GOOD: ReentrantLock does not pin
+// GOOD on Java 21: ReentrantLock does not pin
 private final ReentrantLock lock = new ReentrantLock();
 
 lock.lock();
@@ -224,6 +227,10 @@ try {
     lock.unlock();
 }
 ```
+
+`ReentrantLock` is still worth using for its own features -- `tryLock()`, timed
+and interruptible locking, multiple condition variables -- but it is no longer a
+pinning workaround on JDK 24+.
 
 ---
 
@@ -332,7 +339,7 @@ List<UrlResult> fetchAll(List<String> urls) {
 | Not shutting down ExecutorService                      | Thread pool keeps the JVM alive               | Call `shutdown()` in a finally block or use try-with-resources (Java 21+) |
 | Catching `InterruptedException` and ignoring it        | Breaks interrupt-based cancellation           | Re-interrupt: `Thread.currentThread().interrupt()`                        |
 | Deadlock                                               | Two threads each waiting for the other's lock | Lock ordering, timeout-based locking, or lock-free designs                |
-| `synchronized` with virtual threads                    | Pins the carrier thread during blocking I/O   | Use `ReentrantLock` instead                                               |
+| `synchronized` with virtual threads                    | Pins the carrier thread only on Java 21       | JDK 24+ (JEP 491) does not pin; on Java 21 use `ReentrantLock`            |
 | Thread pool sized to available processors for I/O work | Threads block on I/O, pool is underutilised   | Use virtual threads or a larger cached pool for I/O                       |
 | `Future.get()` without timeout                         | Blocks forever if the task never completes    | Always use `get(timeout, unit)`                                           |
 
