@@ -705,6 +705,13 @@ name, `dompurify`, in the CSP `trusted-types` directive. Use one of those shapes
 Content-Security-Policy: require-trusted-types-for 'script'; trusted-types app-html
 ```
 
+`TrustedHTML` and `window.trustedTypes` come from the `@types/trusted-types` package, which `lib.dom` does not include.
+Add it in a TypeScript project:
+
+```bash
+pnpm add -D @types/trusted-types
+```
+
 ```ts
 type TrustedHtmlPolicy = { createHTML: (input: string) => TrustedHTML };
 
