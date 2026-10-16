@@ -162,7 +162,11 @@ Every time any child component changes, this snapshot breaks. Developers run `je
 it('renders a pill badge', () => {
     const { container } = render(<PillBadge color="green">Active</PillBadge>);
     expect(container.firstChild).toMatchInlineSnapshot(`
-        <span class="pill pill--green">Active</span>
+        <span
+          class="pill pill--green"
+        >
+          Active
+        </span>
     `);
 });
 ```
