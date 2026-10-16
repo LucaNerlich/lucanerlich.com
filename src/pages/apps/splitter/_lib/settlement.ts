@@ -37,12 +37,17 @@ export const expenseBreakdowns = (state: AppState): ExpenseBreakdown[] => {
 };
 
 // Returns a Map<personId, netCents> where positive = is owed, negative = owes.
-// Balances sum to 0 when every expense allocates cleanly.
-export const computeBalances = (state: AppState): Map<string, number> => {
+// Balances sum to 0 when every expense allocates cleanly. Callers that already
+// hold the breakdowns (e.g. `summarize`) pass them in to avoid a second
+// traversal of the expenses.
+export const computeBalances = (
+    state: AppState,
+    breakdowns: ExpenseBreakdown[] = expenseBreakdowns(state),
+): Map<string, number> => {
     const balances = new Map<string, number>();
     for (const p of state.people) balances.set(p.id, 0);
 
-    for (const {expense, shares} of expenseBreakdowns(state)) {
+    for (const {expense, shares} of breakdowns) {
         balances.set(expense.paidBy, (balances.get(expense.paidBy) ?? 0) + expense.cents);
         for (const [id, share] of shares) {
             balances.set(id, (balances.get(id) ?? 0) - share);
@@ -94,7 +99,7 @@ export type Summary = {
 export const summarize = (state: AppState): Summary => {
     const breakdowns = expenseBreakdowns(state);
     const totalCents = breakdowns.reduce((acc, b) => acc + b.expense.cents, 0);
-    const balances = computeBalances(state);
+    const balances = computeBalances(state, breakdowns);
     const transfers = computeSettlement(balances);
     const N = state.people.length;
     // Display-only average. Exact obligations live in `balances` / breakdowns.
