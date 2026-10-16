@@ -122,7 +122,10 @@ Not every CSS property can be smoothly animated. Properties that can be transiti
 - **Opacity:** `opacity`
 - **Shadow:** `box-shadow`, `text-shadow`
 
-Properties that **cannot** be transitioned: `display`, `font-family`, `background-image`, `position`.
+Properties that **cannot** be transitioned: `font-family`, `background-image`, `position`.
+
+Discrete properties such as `display` need `transition-behavior: allow-discrete` to transition
+(Chrome 117+, Safari 17.4+; not yet for `display` in Firefox).
 
 ## CSS transforms
 
