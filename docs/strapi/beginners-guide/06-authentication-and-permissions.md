@@ -138,8 +138,9 @@ curl -X POST http://localhost:1337/api/posts \
   }'
 ```
 
-If the token is missing or invalid, Strapi returns a `401 Unauthorized` error. If the user's role lacks the required
-permission, it returns `403 Forbidden`.
+Requests without valid credentials are handled as the **Public** role: if that role lacks the required permission,
+Strapi returns `403 Forbidden`. A `401 Unauthorized` appears when the credentials themselves are rejected, for
+example an invalid or expired token.
 
 ## JWT configuration
 
