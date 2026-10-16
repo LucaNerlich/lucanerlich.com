@@ -221,14 +221,15 @@ exit 0
 #!/bin/sh
 # .git/hooks/pre-push
 
-REMOTE="$1"
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
-
-if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
-    echo "ERROR: Direct push to $BRANCH is not allowed."
-    echo "Please create a feature branch and open a pull request."
-    exit 1
-fi
+while read -r local_ref local_sha remote_ref remote_sha; do
+    case "$remote_ref" in
+        refs/heads/main|refs/heads/master)
+            echo "ERROR: Direct push to $remote_ref is not allowed."
+            echo "Please create a feature branch and open a pull request."
+            exit 1
+            ;;
+    esac
+done
 
 exit 0
 ```
