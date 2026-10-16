@@ -26,10 +26,10 @@ import { Button, TextField } from '@mui/material'
 **Correct (imports only what you need):**
 
 ```tsx
-import Check from 'lucide-react/dist/esm/icons/check'
-import X from 'lucide-react/dist/esm/icons/x'
-import Menu from 'lucide-react/dist/esm/icons/menu'
-// Loads only 3 modules (~2KB vs ~1MB)
+// lucide-react 1.x ships per-icon ESM modules with `sideEffects: false`,
+// so the named import tree-shakes (the old /dist/esm/icons/* deep-import
+// paths no longer exist in 1.x):
+import { Check, X, Menu } from 'lucide-react'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
