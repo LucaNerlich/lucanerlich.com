@@ -77,6 +77,10 @@ module.exports = createCoreController('api::article.article', ({ strapi }) => ({
   },
 
   async create(ctx) {
+    if (!ctx.state.user) {
+      return ctx.unauthorized('You must be logged in');
+    }
+
     const sanitizedInput = await this.sanitizeInput(ctx.request.body, ctx);
 
     const document = await strapi.documents('api::article.article').create({
