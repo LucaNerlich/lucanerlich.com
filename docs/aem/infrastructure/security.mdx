@@ -444,7 +444,7 @@ On publish, most paths should only respond to `GET` and `HEAD`. Allowing `POST`,
 
 ```text
 # Only allow safe methods for general content
-/0010 { /type "allow" /method "(GET|HEAD)" /url "/content/*" }
+/0010 { /type "allow" /method '(GET|HEAD)' /url "/content/*" }
 ```
 
 :::tip
