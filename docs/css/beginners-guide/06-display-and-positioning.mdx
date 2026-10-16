@@ -298,7 +298,7 @@ When positioned elements overlap, `z-index` controls which one appears on top:
 
 Important rules:
 
-- `z-index` only works on **positioned** elements (anything except `static`)
+- `z-index` works on **positioned** elements (`relative`, `absolute`, `fixed`, `sticky`) and on **flex or grid items**
 - Higher values appear on top of lower values
 - Negative values are allowed
 - `z-index` creates **stacking contexts** - a `z-index` on a parent element groups all its children into a single
@@ -398,7 +398,7 @@ z-index management.
 - `position: relative` shifts an element from its normal position and serves as a positioning context
 - `position: absolute` removes an element from flow and positions it relative to a positioned ancestor
 - `position: fixed` pins an element to the viewport; `position: sticky` pins it after scrolling past a threshold
-- `z-index` controls stacking order but only works on positioned elements
+- `z-index` controls stacking order and works on positioned elements and on flex or grid items
 
 ## Next step
 
