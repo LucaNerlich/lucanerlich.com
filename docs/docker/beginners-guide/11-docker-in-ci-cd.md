@@ -93,7 +93,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}   # e.g. myorg/my-app
 
 jobs:
   build:
@@ -108,11 +107,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Set up Docker Buildx (enables BuildKit and layer caching)
+      # 2. Lowercase the image name - Docker requires lowercase repository
+      #    names, while github.repository preserves the owner's casing
+      - name: Set lowercase image name
+        run: echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
+      # 3. Set up Docker Buildx (enables BuildKit and layer caching)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 3. Authenticate to GHCR
+      # 4. Authenticate to GHCR
       #    Only runs on push (not pull_request from forks, for security)
       - name: Log in to GitHub Container Registry
         if: github.event_name != 'pull_request'
@@ -122,7 +126,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 4. Generate image tags and labels from git context
+      # 5. Generate image tags and labels from git context
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -140,7 +144,7 @@ jobs:
             # Tag PR number on pull requests
             type=ref,event=pr
 
-      # 5. Build (and push on main/tag)
+      # 6. Build (and push on main/tag)
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v6
@@ -155,7 +159,7 @@ jobs:
           # Build for multiple platforms
           platforms: linux/amd64,linux/arm64
 
-      # 6. Scan the built image for CVEs
+      # 7. Scan the built image for CVEs
       - name: Run Docker Scout scan
         if: github.event_name != 'pull_request'
         uses: docker/scout-action@v1
@@ -266,8 +270,9 @@ The simplest deployment strategy for a single server is to SSH in and `docker pu
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
               -u ${{ github.actor }} --password-stdin
 
+            export IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')
             export IMAGE_TAG=sha-${{ github.sha }}
-            docker pull ghcr.io/${{ github.repository }}:$IMAGE_TAG
+            docker pull ghcr.io/$IMAGE_NAME:$IMAGE_TAG
 
             # Restart the service with the exact image tag that CI just built
             docker compose -f /opt/my-app/docker-compose.yml up -d --no-deps api
@@ -320,6 +325,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set lowercase image name
+        run: echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
       - uses: docker/setup-buildx-action@v3
 
       - uses: docker/login-action@v3
@@ -333,7 +341,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name == 'push' }}
-          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          tags: ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -345,7 +353,7 @@ jobs:
           username: deploy
           key: ${{ secrets.PROD_SSH_KEY }}
           script: |
-            docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
+            docker pull ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
             docker stop my-app || true
             docker rm my-app || true
             docker run -d \
@@ -353,7 +361,7 @@ jobs:
               --restart unless-stopped \
               -p 3000:3000 \
               --env-file /opt/my-app/.env \
-              ghcr.io/${{ github.repository }}:${{ github.sha }}
+              ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
 ```
 
 ---
