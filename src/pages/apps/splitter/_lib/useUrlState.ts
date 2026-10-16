@@ -12,7 +12,7 @@
 // same interface drives the live URL in production and an in-memory store
 // in tests or future apps. Encode/decode may be async (compressed payloads).
 
-import {useEffect, useReducer, useRef, useState} from 'react';
+import {useCallback, useEffect, useReducer, useRef, useState} from 'react';
 import type {Dispatch, Reducer} from 'react';
 import {readEncodedFromUrl, writeEncodedToUrl} from './urlState';
 
@@ -66,6 +66,43 @@ export const localStore = (key: string): StateStore => ({
     },
 });
 
+type MountHydrateArgs<S> = {
+    /** Stores in priority order; the first decodable payload wins. */
+    stores: Array<StateStore | undefined>;
+    decode: (raw: string) => S | null | Promise<S | null>;
+    hydrate: (decoded: S) => void;
+    /** True when the mount effect has been torn down. */
+    isCancelled: () => boolean;
+    /** True once the user dispatched an action of their own. */
+    hasUserActed: () => boolean;
+};
+
+/**
+ * Mount hydrate: read the first decodable payload from the stores and apply
+ * it, unless the effect was cancelled or the user already acted while a slow
+ * decode was pending - a late hydrate must not clobber user input. Returns
+ * true when a payload decoded (whether or not it was applied).
+ */
+export const hydrateFromStores = async <S>({
+    stores,
+    decode,
+    hydrate,
+    isCancelled,
+    hasUserActed,
+}: MountHydrateArgs<S>): Promise<boolean> => {
+    for (const source of stores) {
+        const raw = source?.read();
+        if (!raw) continue;
+        const decoded = await Promise.resolve(decode(raw));
+        if (isCancelled()) return false;
+        if (decoded) {
+            if (!hasUserActed()) hydrate(decoded);
+            return true;
+        }
+    }
+    return false;
+};
+
 type UseUrlStateArgs<S, A> = {
     reducer: Reducer<S, A>;
     init: () => S;
@@ -96,6 +133,7 @@ export function useUrlState<S, A>({
     const fallbackRef = useRef<StateStore | undefined>(fallbackStore);
     const hadInitialStateRef = useRef(false);
     const wroteOnceRef = useRef(false);
+    const userActedRef = useRef(false);
     const codecRef = useRef(codec);
     codecRef.current = codec;
 
@@ -105,22 +143,29 @@ export function useUrlState<S, A>({
         storeRef.current = store ?? queryStore();
     }
 
+    // Any dispatch coming from the UI marks the user as having taken over, so
+    // the mount hydrate skips a late decode result instead of clobbering it.
+    const dispatchUser = useCallback<Dispatch<A>>(
+        action => {
+            userActedRef.current = true;
+            dispatch(action);
+        },
+        [dispatch],
+    );
+
     useEffect(() => {
         let cancelled = false;
         void (async () => {
             // A valid shared link always wins; the fallback store only restores
             // the last session when the URL carries no usable state.
-            for (const source of [storeRef.current!, fallbackRef.current]) {
-                const raw = source?.read();
-                if (!raw) continue;
-                const decoded = await Promise.resolve(codecRef.current.decode(raw));
-                if (cancelled) return;
-                if (decoded) {
-                    hadInitialStateRef.current = true;
-                    dispatch(hydrate(decoded));
-                    break;
-                }
-            }
+            const hydrated = await hydrateFromStores({
+                stores: [storeRef.current!, fallbackRef.current],
+                decode: raw => codecRef.current.decode(raw),
+                hydrate: decoded => dispatch(hydrate(decoded)),
+                isCancelled: () => cancelled,
+                hasUserActed: () => userActedRef.current,
+            });
+            if (hydrated) hadInitialStateRef.current = true;
             if (!cancelled) setReady(true);
         })();
         return () => {
@@ -161,11 +206,11 @@ export function useUrlState<S, A>({
 
     useEffect(() => {
         if (!ready) return;
-        // Skip the initial write unless a valid state was hydrated: an empty
-        // URL must stay empty and a foreign/corrupt fragment (anchors, links
-        // from other apps or versions) must not be clobbered. All writes
-        // after user interaction behave as before.
-        if (!wroteOnceRef.current && !hadInitialStateRef.current) {
+        // Skip the initial write unless a valid state was hydrated or the user
+        // has taken over: an empty URL must stay empty and a foreign/corrupt
+        // fragment (anchors, links from other apps or versions) must not be
+        // clobbered. All writes after user interaction behave as before.
+        if (!wroteOnceRef.current && !hadInitialStateRef.current && !userActedRef.current) {
             wroteOnceRef.current = true;
             return;
         }
@@ -187,5 +232,5 @@ export function useUrlState<S, A>({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state, debounceMs, ready]);
 
-    return [state, dispatch];
+    return [state, dispatchUser];
 }
