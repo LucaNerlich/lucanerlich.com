@@ -162,7 +162,7 @@ $text = 'Hello';
 echo strlen($text);  // Output: 5
 ```
 
-`strlen()` returns the number of characters in a string. We cover more string functions in chapter 6.
+`strlen()` returns the number of bytes in a string - use `mb_strlen()` to count characters. We cover more string functions in chapter 6.
 
 ## Integers
 
