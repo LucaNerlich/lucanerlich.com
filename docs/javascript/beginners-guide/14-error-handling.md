@@ -561,7 +561,7 @@ async function fetchWithRetry(url, maxRetries = 3) {
                 throw new Error(`Failed after ${maxRetries} attempts`, { cause: error });
             }
             // Wait before retrying (exponential backoff)
-            await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+            await new Promise(resolve => setTimeout(resolve, 1000 * 2 ** (attempt - 1)));
         }
     }
 }
