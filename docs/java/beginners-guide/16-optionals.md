@@ -23,8 +23,8 @@ String name = null;
 System.out.println(name.length()); // NullPointerException
 ```
 
-`Optional<T>` is a container that either holds a value or is empty. It forces you to explicitly handle the "no value"
-case instead of hoping `null` never shows up.
+`Optional<T>` is a container that either holds a value or is empty. It makes the "no value" case visible in the
+signature and encourages you to handle it explicitly instead of hoping `null` never shows up.
 
 ## The problem with `null`
 
@@ -280,8 +280,9 @@ Task task = manager.findById(id)
     .orElseThrow(() -> new IllegalArgumentException("Task " + id + " not found"));
 ```
 
-The return type `Optional<Task>` makes it clear that the task might not exist. The compiler forces the caller to handle
-it.
+The return type `Optional<Task>` makes it clear that the task might not exist and encourages the caller to handle the
+empty case. The compiler does not enforce it -- calling `get()` on an empty `Optional` compiles and throws
+`NoSuchElementException` at runtime.
 
 ### Using Optional with streams
 
