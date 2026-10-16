@@ -6,10 +6,19 @@ import styles from './StorageDemo.module.css';
 
 const LOCAL_KEY = 'docs-demo:local-note';
 const SESSION_KEY = 'docs-demo:session-note';
+const BLOCKED_STATUS = 'Storage write failed (blocked or full).';
 
-function readStore(store: Storage, key: string): string {
+function getStore(kind: 'local' | 'session'): Storage | null {
     try {
-        return store.getItem(key) ?? '';
+        return kind === 'local' ? window.localStorage : window.sessionStorage;
+    } catch {
+        return null;
+    }
+}
+
+function readStore(store: Storage | null, key: string): string {
+    try {
+        return store?.getItem(key) ?? '';
     } catch {
         return '';
     }
@@ -25,27 +34,48 @@ export default function StorageDemo(): ReactNode {
     const [status, setStatus] = useState('Notes stay in this browser only.');
 
     useEffect(() => {
-        setLocalNote(readStore(window.localStorage, LOCAL_KEY));
-        setSessionNote(readStore(window.sessionStorage, SESSION_KEY));
+        const localStore = getStore('local');
+        const sessionStore = getStore('session');
+        setLocalNote(readStore(localStore, LOCAL_KEY));
+        setSessionNote(readStore(sessionStore, SESSION_KEY));
+        if (!localStore || !sessionStore) {
+            setStatus(BLOCKED_STATUS);
+        }
     }, []);
 
     const save = (target: 'local' | 'session') => {
+        const store = getStore(target);
+        if (!store) {
+            setStatus(BLOCKED_STATUS);
+            return;
+        }
         try {
             if (target === 'local') {
-                window.localStorage.setItem(LOCAL_KEY, localNote);
+                store.setItem(LOCAL_KEY, localNote);
                 setStatus('Saved to localStorage. Reload the page -- it should still be here.');
             } else {
-                window.sessionStorage.setItem(SESSION_KEY, sessionNote);
+                store.setItem(SESSION_KEY, sessionNote);
                 setStatus('Saved to sessionStorage. Reload keeps it; a new tab starts empty.');
             }
         } catch {
-            setStatus('Storage write failed (blocked or full).');
+            setStatus(BLOCKED_STATUS);
         }
     };
 
     const clearAll = () => {
-        window.localStorage.removeItem(LOCAL_KEY);
-        window.sessionStorage.removeItem(SESSION_KEY);
+        const localStore = getStore('local');
+        const sessionStore = getStore('session');
+        if (!localStore || !sessionStore) {
+            setStatus(BLOCKED_STATUS);
+            return;
+        }
+        try {
+            localStore.removeItem(LOCAL_KEY);
+            sessionStore.removeItem(SESSION_KEY);
+        } catch {
+            setStatus(BLOCKED_STATUS);
+            return;
+        }
         setLocalNote('');
         setSessionNote('');
         setStatus('Cleared both demo keys.');
