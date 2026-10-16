@@ -287,7 +287,7 @@ Fibers provide cooperative multitasking - lightweight, user-space threads that y
 
 ### Readonly Properties
 
-A `readonly` property can be assigned only once - in the constructor or at declaration:
+A `readonly` property can be assigned only once - from inside the declaring class, in practice the constructor (or a method it calls):
 
 ```php
 <?php
