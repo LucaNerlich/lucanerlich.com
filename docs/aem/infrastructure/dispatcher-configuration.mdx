@@ -435,12 +435,13 @@ The `statfileslevel` setting controls how deep in the directory tree `.stat` fil
 | Level | Behaviour | Trade-off |
 |---|---|---|
 | `"0"` | Single `.stat` at the docroot - every flush invalidates the entire cache | Simple but aggressive |
-| `"1"` | `.stat` per first-level directory (e.g., `/content/mysite/`) | Balanced for single-site setups |
-| `"2"` | `.stat` per second-level directory (e.g., `/content/mysite/en/`) | Good for multi-language sites |
-| `"3"+` | Deeper granularity - only nearby cached files are invalidated | Precise but more `.stat` file overhead |
+| `"1"` | `.stat` per first-level directory (e.g., `/content/`) | Balanced for single-site setups |
+| `"2"` | `.stat` per second-level directory (e.g., `/content/mysite/`) | Good for site-level granularity |
+| `"3"` | `.stat` per third-level directory (e.g., `/content/mysite/en/`) | Good for multi-language sites |
+| `"4"+` | Deeper granularity - only nearby cached files are invalidated | Precise but more `.stat` file overhead |
 
 :::tip
-For a typical multi-language site, `statfileslevel "2"` is a good starting point. It ensures that flushing an English page does not invalidate cached German pages.
+For a typical multi-language site with content under `/content/<site>/<language>/`, `statfileslevel "3"` is a good starting point. It ensures that flushing an English page does not invalidate cached German pages.
 :::
 
 ### Flush Agent Configuration

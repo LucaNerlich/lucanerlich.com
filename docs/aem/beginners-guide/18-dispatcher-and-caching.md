@@ -246,8 +246,10 @@ The `statfileslevel` setting controls how broadly invalidation spreads:
 | Level | Behavior                                                             |
 |-------|----------------------------------------------------------------------|
 | 0     | One `.stat` at the root - all content invalidated on any publish    |
-| 1     | `.stat` per first-level directory - `/en/` and `/de/` independent   |
-| 2     | `.stat` per second-level - `/en/blog/` and `/en/about/` independent |
+| 1     | `.stat` per first-level directory (`/content/`)                      |
+| 2     | `.stat` per site (`/content/mysite/`)                                |
+| 3     | `.stat` per language - `/en/` and `/de/` independent                 |
+| 4     | `.stat` per section - `/en/blog/` and `/en/about/` independent       |
 
 Higher levels = more granular invalidation = better cache hit ratio.
 
