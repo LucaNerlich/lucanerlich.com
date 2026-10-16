@@ -351,7 +351,7 @@ Access logs from Cloud Manager:
 Use the CLI to tail logs in real time:
 
 ```bash
-aio aem:log:tail --environment <env-id> --service author --name aemerror
+aio cloudmanager:tail-logs <env-id> author aemerror
 ```
 
 ## Going to production - checklist
