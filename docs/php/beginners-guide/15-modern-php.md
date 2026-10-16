@@ -400,8 +400,8 @@ function isValid(string $input): bool
     return strlen($input) > 0;
 }
 
-// More precise: returns true on success, false on failure
-function tryParse(string $input): true|false
+// Note: a union of true and false is not allowed - use bool instead
+function tryParse(string $input): bool
 {
     // ...
 }
