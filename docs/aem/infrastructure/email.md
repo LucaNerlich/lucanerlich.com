@@ -70,6 +70,30 @@ For AEM 6.5 or AMS environments with direct network access, point at your SMTP r
 
 ```json title="ui.config/.../config.publish/com.day.cq.mailer.DefaultMailService.cfg.json"
 {
+    "smtp.host": "smtp.sendgrid.net",
+    "smtp.port": 587,
+    "smtp.user": "apikey",
+    "smtp.password": "your-smtp-password",
+    "from.address": "noreply@example.com",
+    "smtp.ssl": false,
+    "smtp.starttls": true,
+    "smtp.requiretls": true,
+    "debug.email": false,
+    "oauth.flow": false
+}
+```
+
+> ConfigAdmin on AEM 6.5/AMS stores the value exactly as written - there is no placeholder
+> interpolation, so put the real (or encrypted) credential here. The secret and environment
+> placeholder syntax used on AEM as a Cloud Service does not resolve on 6.5/AMS.
+
+### Stage / Production (AEMaaCS)
+
+On AEM as a Cloud Service, keep credentials out of the repository with **secret environment
+variables**:
+
+```json title="ui.config/.../config.publish/com.day.cq.mailer.DefaultMailService.cfg.json"
+{
     "smtp.host": "$[secret:smtp_host]",
     "smtp.port": 587,
     "smtp.user": "$[secret:smtp_user]",
@@ -83,9 +107,8 @@ For AEM 6.5 or AMS environments with direct network access, point at your SMTP r
 }
 ```
 
-> Use **secret environment variables** (`$[secret:...]`) in AEMaaCS to keep credentials
-> out of the code repository. See the [OSGi configuration](../backend/osgi-configuration.mdx)
-> page for details.
+> See the [OSGi configuration](../backend/osgi-configuration.mdx) page for details on secret
+> and environment variables.
 
 > On AEMaaCS, do not point `smtp.host` directly at the external SMTP host. Use the
 > Advanced Networking proxy pattern shown below.
