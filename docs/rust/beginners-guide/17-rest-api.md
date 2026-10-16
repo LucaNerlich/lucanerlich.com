@@ -114,7 +114,9 @@ impl ResponseError for ApiError {
 
 impl From<rusqlite::Error> for ApiError {
     fn from(err: rusqlite::Error) -> Self {
-        ApiError::Internal(err.to_string())
+        // Log the driver error, but never send its details to the client.
+        eprintln!("Database error: {err}");
+        ApiError::Internal("Internal server error".to_string())
     }
 }
 ```
@@ -217,7 +219,7 @@ impl Database {
             rusqlite::Error::QueryReturnedNoRows => {
                 ApiError::NotFound(format!("Todo {id} not found"))
             }
-            other => ApiError::Internal(other.to_string()),
+            other => ApiError::from(other),
         })
     }
 
