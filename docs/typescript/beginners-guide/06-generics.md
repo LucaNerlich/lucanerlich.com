@@ -408,11 +408,13 @@ class EventEmitter<Events extends Record<string, unknown[]> = Record<string, unk
     }
 }
 
-interface AppEvents {
+// A type alias, not an interface: interfaces do not satisfy Record-style
+// constraints because they can be augmented later.
+type AppEvents = {
     userLoggedIn: [user: User];
     pageViewed: [path: string, duration: number];
     error: [message: string, code?: number];
-}
+};
 
 const emitter = new EventEmitter<AppEvents>();
 emitter.on("userLoggedIn", (user) => console.log(`Welcome, ${user.name}`));
