@@ -1067,6 +1067,9 @@ async function fetchWithRetry(url, options, maxRetries = 3) {
         try {
             const response = await fetch(url, options);
             if (response.ok || response.status < 500) return response;
+            if (attempt === maxRetries) {
+                throw new Error(`Upstream failed after ${maxRetries} retries: HTTP ${response.status}`);
+            }
         } catch (error) {
             if (attempt === maxRetries) throw error;
         }
