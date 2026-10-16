@@ -18,11 +18,15 @@ function CodePanel({ code }: { code: string }) {
 }
 ```
 
-**Correct (Monaco loads on demand):**
+**Correct (Monaco loads on demand, in a Client Component):**
 
 ```tsx
+'use client'
+
 import dynamic from 'next/dynamic'
 
+// ssr: false is only allowed in Client Components; the parent can still
+// be a Server Component.
 const MonacoEditor = dynamic(
   () => import('./monaco-editor').then(m => m.MonacoEditor),
   { ssr: false }
