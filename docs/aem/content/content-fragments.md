@@ -695,7 +695,7 @@ Content Fragments are the primary data source for AEM's built-in GraphQL API. Se
 Example persisted query:
 
 ```graphql
-# Persisted query: /content/cq:graphql/myproject/endpoint/articles
+# Persisted query (repository path): /content/cq:graphql/myproject/endpoint/articles
 {
     articleList(
         filter: {
@@ -728,7 +728,7 @@ production because they are **cacheable** by the Dispatcher and CDN and they kee
 
 Enabling a model generates its GraphQL schema (e.g. an `Article` model creates the `articleByPath` and
 `articleList` entry points). Create a project GraphQL endpoint so queries resolve at
-`/content/cq:graphql/myproject/endpoint.json` (see
+`/content/_cq_graphql/myproject/endpoint.json` (see
 [AEM GraphQL API](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/headless/graphql-api/content-fragments)).
 
 ### 2. Save a persisted query
