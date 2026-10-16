@@ -733,6 +733,9 @@ const query = new QueryBuilder("users")
 // "SELECT * FROM users WHERE active = true AND age > 18 ORDER BY name ASC LIMIT 20"
 ```
 
+> **Warning:** This builder assembles SQL text. `where` and `orderBy` interpolate their arguments verbatim, so never
+> pass request data to them: bind values with placeholders and allow-list identifiers instead.
+
 ### Type-safe event bus
 
 ```typescript
