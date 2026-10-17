@@ -372,7 +372,7 @@ Admins can block users to prevent them from authenticating:
 3. Toggle **Blocked** to `true`
 4. Click **Save**
 
-Blocked users receive a `401 Unauthorized` response when trying to log in.
+Blocked users receive a `400 Bad Request` response when trying to log in (`Your account has been blocked by an administrator`). A blocked OAuth login returns `400` as well.
 
 ## Permission flow diagram
 
