@@ -196,7 +196,7 @@ module.exports = ({ strapi }) => ({
   },
 
   async notifyAdmins(message) {
-    const admins = await strapi.query('admin::user').findMany({
+    const admins = await strapi.db.query('admin::user').findMany({
       where: { isActive: true },
     });
 
