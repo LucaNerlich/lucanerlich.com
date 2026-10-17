@@ -39,9 +39,11 @@ RUN pnpm build
 FROM node:22-alpine
 
 # curl: required by Coolify's container healthcheck (alpine has no curl, and
-# busybox wget does not fall back from IPv6 ::1 to IPv4). serve: static host.
+# busybox wget does not fall back from IPv6 ::1 to IPv4). serve: static host,
+# installed with --ignore-scripts so the runtime install honors the same
+# lifecycle-script guard as the builder (.npmrc ignore-scripts).
 # app: unprivileged runtime user (no root in the runtime container).
-RUN apk add --no-cache curl && npm install -g serve@14.2.6 \
+RUN apk add --no-cache curl && npm install -g serve@14.2.6 --ignore-scripts \
     && addgroup -S app && adduser -S app -G app
 
 WORKDIR /app
