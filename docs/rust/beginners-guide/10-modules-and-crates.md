@@ -319,7 +319,7 @@ cargo add tokio --features full
 | Syntax     | Meaning                        | Example                |
 |-----------|--------------------------------|------------------------|
 | `"1"`     | Any 1.x.y (SemVer compatible) | 1.0.0, 1.5.3, 1.99.0  |
-| `"1.2"`   | Any 1.2.x                     | 1.2.0, 1.2.15         |
+| `"1.2"`   | Any compatible (^1.2)         | 1.2.0, 1.5.3, 1.99.0  |
 | `"1.2.3"` | Any compatible (^1.2.3)       | 1.2.3, 1.3.0, 1.99.0  |
 | `"=1.2.3"`| Exactly this version           | 1.2.3 only            |
 
