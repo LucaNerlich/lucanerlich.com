@@ -31,7 +31,6 @@ These rules apply to Secure API design and implementation and it is critical for
 ## Security Headers
 - Set `X-Content-Type-Options: nosniff`
 - Set `X-Frame-Options: DENY` or `X-Frame-Options: SAMEORIGIN`
-- Set `X-XSS-Protection: 1; mode=block`
 - Implement Content Security Policy (CSP) headers
 - Use `Strict-Transport-Security` for HTTPS enforcement
 
