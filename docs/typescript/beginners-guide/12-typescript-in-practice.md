@@ -763,11 +763,13 @@ class TypedEventBus<Events extends Record<string, unknown>> {
     }
 }
 
-interface DomainEvents {
+// A type alias, not an interface: interfaces do not satisfy Record-style
+// constraints because they can be augmented later.
+type DomainEvents = {
     "user.created": { userId: number; name: string };
     "order.placed": { orderId: number; amount: number };
     "session.expired": { sessionId: string };
-}
+};
 
 const bus = new TypedEventBus<DomainEvents>();
 
