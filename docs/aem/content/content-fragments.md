@@ -701,8 +701,8 @@ Example persisted query:
         filter: {
             featured: { _expressions: [{ value: true }] }
         }
-        _sort: "publishDate"
-        _limit: 10
+        sort: "publishDate"
+        limit: 10
     ) {
         items {
             _path
