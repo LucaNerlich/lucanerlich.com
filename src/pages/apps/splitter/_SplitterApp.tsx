@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import type {Action, AppState} from './_lib/types';
 import {emptyState} from './_lib/types';
-import {applyAction, expensesPaidBy} from './_lib/model';
+import {applyAction, expensesAffectedByRemoval, expensesDeletedByRemoval} from './_lib/model';
 import {buildShareUrl, decodeState, encodeState} from './_lib/urlState';
 import {localStore, queryStore, useUrlState} from './_lib/useUrlState';
 import {demoState} from './_lib/demo';
@@ -14,6 +14,9 @@ import SessionBar from './_components/SessionBar';
 import styles from './splitter.module.css';
 
 const pluralRules = new Intl.PluralRules('en', {type: 'cardinal'});
+
+const expenseCount = (n: number): string =>
+    `${n} ${pluralRules.select(n) === 'one' ? 'expense' : 'expenses'}`;
 
 const SplitterApp: React.FC = () => {
     const messages = useMemo(() => createMessages(), []);
@@ -34,12 +37,17 @@ const SplitterApp: React.FC = () => {
     const handleRemovePerson = (id: string) => {
         const person = state.people.find(p => p.id === id);
         if (!person) return;
-        const expenseCount = expensesPaidBy(state, id).length;
-        if (expenseCount > 0) {
-            const expenseWord = pluralRules.select(expenseCount) === 'one' ? 'expense' : 'expenses';
-            const ok = window.confirm(
-                `${person.name} paid ${expenseCount} ${expenseWord}. Remove them and those expenses?`,
-            );
+        // Warn about the whole cascade: paid expenses are deleted, the ones
+        // the person only joined are re-split.
+        const affected = expensesAffectedByRemoval(state, id);
+        if (affected.length > 0) {
+            const deleted = expensesDeletedByRemoval(state, id).length;
+            const resplit = affected.length - deleted;
+            const parts = [
+                deleted > 0 ? `${expenseCount(deleted)} they paid will be deleted` : '',
+                resplit > 0 ? `${expenseCount(resplit)} they joined will be re-split` : '',
+            ].filter(Boolean);
+            const ok = window.confirm(`${person.name}: ${parts.join(' and ')}. Remove them?`);
             if (!ok) return;
         }
         dispatch({type: 'REMOVE_PERSON', id});
