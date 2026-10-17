@@ -1,6 +1,6 @@
 # Impressum
 
-Nachstehende Informationen erteilen wir gemäß § 5 Telemediengesetz (TMG):
+Nachstehende Informationen erteilen wir gemäß § 5 Digitale-Dienste-Gesetz (DDG):
 
 Diese Webseite wird vertreten durch die Person
 
@@ -12,9 +12,9 @@ luca.nerlich at gmail.com
 
 Dispute Resolution Information
 
-Die EU-Kommission bietet die Möglichkeit zur Online-Streitbeilegung auf einer von ihr betriebenen Online-Plattform. Diese Plattform ist über den externen Link http://ec.europa.eu/consumers/odr/ zu erreichen. Zu einer Teilnahme an einem Schlichtungsverfahren sind wir nicht verpflichtet und können die Teilnahme an einem solchen Verfahren leider auch nicht anbieten.
+Wir sind nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen (§ 36 VSBG).
 
-The European Commission offers an Online Dispute Resolution (ODR) Platform at http://ec.europa.eu/consumers/odr/. However, we are neither obliged nor willing to participate in a dispute resolution procedure before a consumer mediation entity.
+We are neither obliged nor willing to participate in dispute resolution proceedings before a consumer arbitration board (§ 36 VSBG).
 
 ## Datenschutzhinweis (Tracking)
 
