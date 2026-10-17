@@ -278,10 +278,12 @@ set_error_handler(function (int $severity, string $message, string $file, int $l
     throw new ErrorException($message, 0, $severity, $file, $line);
 });
 
+$data = [];
+
 try {
-    $result = 1 / 0;  // Triggers a DivisionByZeroError in PHP 8
+    $value = $data['missing'];  // Warning: Undefined array key "missing"
 } catch (ErrorException $e) {
-    echo 'Caught: ' . $e->getMessage();
+    echo 'Caught: ' . $e->getMessage();  // Caught: Undefined array key "missing"
 }
 
 restore_error_handler();
