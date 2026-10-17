@@ -159,7 +159,7 @@ Serve the best format the browser supports:
     <source srcset="hero.webp" type="image/webp">
     <img src="hero.jpg" alt="Hero image"
          width="1200" height="600"
-         loading="lazy"
+         fetchpriority="high"
          decoding="async">
 </picture>
 ```
