@@ -116,7 +116,7 @@ docker run -d \
   -e POSTGRES_USER=myuser \
   -e POSTGRES_PASSWORD=secret \
   -e POSTGRES_DB=mydb \
-  -p 5432:5432 \
+  -p 127.0.0.1:5432:5432 \
   --name pg \
   postgres:16
 ```
