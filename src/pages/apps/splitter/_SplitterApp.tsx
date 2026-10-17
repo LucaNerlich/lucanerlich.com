@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import type {Action, AppState} from './_lib/types';
 import {emptyState} from './_lib/types';
-import {applyAction, expensesAffectedByRemoval, expensesPaidBy} from './_lib/model';
+import {applyAction, expensesAffectedByRemoval, expensesDeletedByRemoval} from './_lib/model';
 import {buildShareUrl, decodeState, encodeState} from './_lib/urlState';
 import {localStore, queryStore, useUrlState} from './_lib/useUrlState';
 import {demoState} from './_lib/demo';
@@ -41,7 +41,7 @@ const SplitterApp: React.FC = () => {
         // the person only joined are re-split.
         const affected = expensesAffectedByRemoval(state, id);
         if (affected.length > 0) {
-            const deleted = expensesPaidBy(state, id).length;
+            const deleted = expensesDeletedByRemoval(state, id).length;
             const resplit = affected.length - deleted;
             const parts = [
                 deleted > 0 ? `${expenseCount(deleted)} they paid will be deleted` : '',
