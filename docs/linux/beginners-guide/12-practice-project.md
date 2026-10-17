@@ -545,7 +545,7 @@ log "Running health check..."
 ATTEMPTS=0
 until curl -sf "http://localhost:3000/health" > /dev/null; do
     ATTEMPTS=$((ATTEMPTS + 1))
-    [ $ATTEMPTS -ge 15 ] && exit 1
+    [ $ATTEMPTS -ge 15 ] && rollback
     log "Waiting for service... (${ATTEMPTS}/15)"
     sleep 2
 done
