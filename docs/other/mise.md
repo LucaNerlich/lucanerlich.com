@@ -110,16 +110,20 @@ global. `node` in the parent directory is still 22 -- only the `node` entry is
 overridden, everything else is inherited (tools and env vars merge per-key;
 tasks from a deeper file replace same-named ones entirely).
 
-Where this bites people: **`mise use` always writes to the directory you are
-standing in**. `cd ~/projects/site && mise use node@20` creates
-`~/projects/site/mise.toml` -- but run the same command in your home directory
-by accident and you have just created `~/mise.toml`, which now shadows your
-global config for every subdirectory of `$HOME`. Use:
+Where this bites people: **`mise use` does not always write to the directory
+you are standing in**. It walks up to the nearest directory that has a config
+file and edits that directory's lowest-precedence file -- so
+`cd ~/projects/site && mise use node@20` inside a tree with a parent
+`mise.toml` edits the parent's shared file, not a new file in `site/`. Only
+when no config exists up the tree does it create `mise.toml` in the current
+directory; run from your home directory, it writes the global config instead.
+Use:
 
 - `mise use -g ...` / `mise use --global ...` -- write to
   `~/.config/mise/config.toml` (system-wide tooling)
-- `mise use ...` (no flag) -- write to `./mise.toml` in the current directory
-  (local workdir, commit it)
+- `mise use ...` (no flag) -- write to the nearest existing config file
+  (usually `mise.toml`); creates `mise.toml` in the current directory only
+  when nothing above has config
 - `mise use --env local ...` -- write to `mise.local.toml`, a personal override
   file you git-ignore (e.g. your own preferred python version on top of the
   team's pin)
