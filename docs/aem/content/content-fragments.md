@@ -695,7 +695,7 @@ Content Fragments are the primary data source for AEM's built-in GraphQL API. Se
 Example persisted query:
 
 ```graphql
-# Persisted query (repository path): /content/cq:graphql/myproject/endpoint/articles
+# Persisted query (stored at /conf/myproject/settings/graphql/persistentQueries/articles)
 {
     articleList(
         filter: {
