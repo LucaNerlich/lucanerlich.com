@@ -466,7 +466,7 @@ describe("Post API", () => {
       expect(response.body.data.featured).toBe(true);
     });
 
-    it("should return 401 without authentication", async () => {
+    it("should return 403 without authentication", async () => {
       await request(app)
         .post("/api/posts")
         .send({
@@ -475,7 +475,7 @@ describe("Post API", () => {
             slug: "unauthorized-post",
           },
         })
-        .expect(401);
+        .expect(403);
     });
   });
 
