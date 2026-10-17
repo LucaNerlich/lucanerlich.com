@@ -8,28 +8,13 @@ alwaysApply: false
 
 Analytics, logging, and error tracking don't block user interaction. Load them after hydration.
 
-**Incorrect (blocks initial bundle):**
-
-```tsx
-import { Analytics } from '@vercel/analytics/react'
-
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  )
-}
-```
-
-**Correct (loads after hydration):**
+**Incorrect (ssr: false in a Server Component - next build rejects it):**
 
 ```tsx
 import dynamic from 'next/dynamic'
 
+// RootLayout is a Server Component; ssr: false is only allowed in
+// Client Components.
 const Analytics = dynamic(
   () => import('@vercel/analytics/react').then(m => m.Analytics),
   { ssr: false }
@@ -46,3 +31,22 @@ export default function RootLayout({ children }) {
   )
 }
 ```
+
+**Correct (the component defers itself after hydration):**
+
+```tsx
+import { Analytics } from '@vercel/analytics/react'
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <Analytics />
+      </body>
+    </html>
+  )
+}
+```
+
+`@vercel/analytics` ships a Client Component that loads after hydration, so the static import is the App Router setup - `dynamic(..., { ssr: false })` inside a Server Component is a build error.
