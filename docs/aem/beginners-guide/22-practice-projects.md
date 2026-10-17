@@ -261,8 +261,8 @@ Starting from the archetype defaults, harden your Dispatcher configuration for a
 - Block selectors like `infinity`, `tidy`, `feed`, `query`, and `sysview` to prevent content exposure.
 - For cache rules, allow `*.html`, `/etc.clientlibs/*`, and common static file extensions. Add an explicit allow for
   persisted GraphQL paths if you did Project 4.
-- Set `statfileslevel` to `2` for a site like `/content/mysite/en/` - this means publishing an article under
-  `/en/blog/` does not invalidate the cache for `/en/about/`.
+- Set `statfileslevel` to `3` for a site like `/content/mysite/en/` - this means publishing an article under
+  `/en/blog/` does not invalidate the cached pages under `/de/`.
 - Validate with `./bin/validator full dispatcher/src` from the Dispatcher SDK directory. Fix every warning - the Cloud
   Manager pipeline rejects invalid configs.
 - Test locally with `./bin/docker_run.sh dispatcher/src host.docker.internal:4503` and verify that admin paths return
