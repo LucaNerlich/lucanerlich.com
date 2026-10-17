@@ -91,7 +91,7 @@ const filePath = path.join(uploadDir, filename);
 // Ensure path is within intended directory (segment-aware, not a string
 // prefix: ".." segments cannot escape the base)
 const rel = path.relative(uploadDir, filePath);
-if (rel.startsWith('..') || path.isAbsolute(rel)) {
+if (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel)) {
     return res.status(403).send('Access denied');
 }
 
@@ -274,7 +274,7 @@ const filePath = path.join(uploadDir, filename);
 
 // Validate final path (segment-aware)
 const rel = path.relative(uploadDir, filePath);
-if (rel.startsWith('..') || path.isAbsolute(rel)) {
+if (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel)) {
     throw new Error('Path traversal detected');
 }
 ```
