@@ -1,8 +1,7 @@
 ---
-title: Rule Title Here
-impact: MEDIUM
-impactDescription: Optional description of impact (e.g., "20-50% improvement")
-tags: tag1, tag2
+description: USE WHEN <trigger condition for this rule>
+globs: <optional file pattern, e.g. **/*.tsx - remove this line when the rule is not file-scoped>
+alwaysApply: false
 ---
 
 ## Rule Title Here

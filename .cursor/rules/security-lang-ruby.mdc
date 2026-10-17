@@ -1,6 +1,6 @@
 ---
 description: 
-globs: **/*.rb,**/*.erb
+globs: "**/*.rb,**/*.erb"
 alwaysApply: false
 ---
 # Secure Ruby Development

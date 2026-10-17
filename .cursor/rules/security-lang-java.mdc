@@ -1,5 +1,5 @@
 ---
-globs: **/*.java
+globs: "**/*.java"
 alwaysApply: false
 ---
 # Secure Java Development
