@@ -398,16 +398,20 @@ ui.config/src/main/content/jcr_root/apps/myproject/osgiconfig/
 ├── config.publish/            ← Publish tier only
 │   └── com.myproject.PublishOnlyService.cfg.json
 ├── config.dev/                ← Dev environment only
-│   └── com.myproject.MyService~dev.cfg.json
+│   └── com.myproject.MyService.cfg.json
 ├── config.stage/              ← Stage environment only
-│   └── com.myproject.MyService~stage.cfg.json
+│   └── com.myproject.MyService.cfg.json
 ├── config.prod/               ← Production only
-│   └── com.myproject.MyService~prod.cfg.json
+│   └── com.myproject.MyService.cfg.json
 ├── config.author.dev/         ← Author tier, dev environment
 │   └── ...
 └── config.publish.prod/       ← Publish tier, production
     └── ...
 ```
+
+> The tilde suffix (`~name`) marks a **factory** configuration instance, for example
+> `com.myproject.MyService~worker-a.cfg.json`. Never use it for a plain service PID - the
+> service's own configuration lookup does not read a factory configuration.
 
 ### Secret configurations
 
