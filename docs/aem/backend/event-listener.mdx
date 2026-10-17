@@ -333,6 +333,8 @@ package com.myproject.core.listeners;
 
 import com.day.cq.replication.ReplicationAction;
 import com.day.cq.replication.ReplicationActionType;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -364,6 +366,7 @@ import java.util.Arrays;
 public class ReplicationWebhookHandler implements EventHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReplicationWebhookHandler.class);
+    private static final Gson GSON = new Gson();
 
     @ObjectClassDefinition(
         name = "Replication Webhook Handler",
@@ -478,14 +481,14 @@ public class ReplicationWebhookHandler implements EventHandler {
     }
 
     private void triggerWebhook(String path, String action, String userId) {
-        String payload = String.format(
-            "{\"path\":\"%s\",\"action\":\"%s\",\"user\":\"%s\"}",
-            path, action, userId
-        );
+        JsonObject payload = new JsonObject();
+        payload.addProperty("path", path);
+        payload.addProperty("action", action);
+        payload.addProperty("user", userId);
 
         HttpPost post = new HttpPost(webhookUrl);
         post.setHeader("Content-Type", "application/json");
-        post.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));
+        post.setEntity(new StringEntity(GSON.toJson(payload), StandardCharsets.UTF_8));
 
         try (CloseableHttpResponse response = httpClient.execute(post)) {
             int status = response.getStatusLine().getStatusCode();
