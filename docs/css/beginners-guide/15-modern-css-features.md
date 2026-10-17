@@ -210,7 +210,7 @@ element**. This makes components truly self-contained - they adapt to wherever t
     }
 }
 
-@container card (max-width: 399px) {
+@container card (width < 400px) {
     .card img {
         width: 100%;
     }
