@@ -8,9 +8,12 @@ tags: [java, optional, null-safety]
 
 # Optionals: Avoiding NullPointerException
 
-`Optional<T>` is a container that may or may not hold a value. It forces callers to
-explicitly handle the "no value" case instead of silently passing `null` around until
-something throws a `NullPointerException`.
+`Optional<T>` is a container that may or may not hold a value. It makes the "no
+value" case visible in the method signature and encourages callers to handle it
+explicitly instead of silently passing `null` around until something throws a
+`NullPointerException`. The compiler does not enforce that handling -- calling
+`get()` on an empty `Optional` compiles and throws `NoSuchElementException` at
+runtime.
 
 ## Quick start
 
@@ -21,7 +24,7 @@ Optional<String> findUserName(int id) {
     return Optional.ofNullable(user).map(User::name);
 }
 
-// Caller is forced to handle the empty case
+// Caller handles the empty case explicitly
 String name = findUserName(42).orElse("Unknown");
 ```
 
