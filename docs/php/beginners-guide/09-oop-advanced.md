@@ -479,17 +479,22 @@ PHP's `spl_autoload_register()` lets you register a function that is called when
 <?php
 
 spl_autoload_register(function (string $class): void {
-    $file = __DIR__ . '/src/' . str_replace('\\', '/', $class) . '.php';
+    $prefix = 'App\\';
+    if (!str_starts_with($class, $prefix)) {
+        return;
+    }
+    $relative = str_replace('\\', '/', substr($class, strlen($prefix)));
+    $file = __DIR__ . '/src/' . $relative . '.php';
     if (file_exists($file)) {
         require $file;
     }
 });
 
 use App\Services\EmailService;
-$service = new EmailService();  // Autoloader loads App/Services/EmailService.php
+$service = new EmailService();  // Autoloader loads src/Services/EmailService.php
 ```
 
-The autoloader receives the fully qualified class name. It converts backslashes to forward slashes and looks for a matching file. This connects namespaces directly to the filesystem.
+The autoloader receives the fully qualified class name. It strips the registered `App\` prefix, converts backslashes to forward slashes, and looks for the file under `src/`. This connects namespaces directly to the filesystem.
 
 ### Composer autoloading preview
 
