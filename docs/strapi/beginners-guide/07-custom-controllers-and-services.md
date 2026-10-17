@@ -44,15 +44,15 @@ When you create a content type, Strapi generates a controller like this:
 
 ```javascript
 // src/api/post/controllers/post.js
-import { factories } from "@strapi/strapi";
+const { factories } = require("@strapi/strapi");
 
-export default factories.createCoreController("api::post.post");
+module.exports = factories.createCoreController("api::post.post");
 ```
 
 This one line gives you all five CRUD actions: `find`, `findOne`, `create`, `update`, `delete`. The
 `createCoreController` factory creates them automatically.
 
-> **Note:** While Strapi still supports CommonJS (`require`/`module.exports`), ES modules (`import`/`export`) are recommended for better TypeScript support and modern JavaScript practices.
+> **Note:** The examples in this guide use CommonJS (`require`/`module.exports`) because Strapi loads `.js` files as CommonJS. TypeScript projects use ES modules (`import`/`export`) instead - see chapter 11.
 
 ## Extending a core controller
 
@@ -65,9 +65,9 @@ You can extend the core controller by passing a function that receives the paren
 
 ```javascript
 // src/api/post/controllers/post.js
-import { factories } from "@strapi/strapi";
+const { factories } = require("@strapi/strapi");
 
-export default factories.createCoreController("api::post.post", ({ strapi }) => ({
+module.exports = factories.createCoreController("api::post.post", ({ strapi }) => ({
   // Override the find action
   async find(ctx) {
     // Add custom logic before the default behavior
@@ -90,7 +90,7 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
 #### Restrict results to published posts only
 
 ```javascript
-export default factories.createCoreController("api::post.post", ({ strapi }) => ({
+module.exports = factories.createCoreController("api::post.post", ({ strapi }) => ({
   async find(ctx) {
     // Force published-only for public requests
     ctx.query = {
@@ -106,7 +106,7 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
 #### Add default population
 
 ```javascript
-export default factories.createCoreController("api::post.post", ({ strapi }) => ({
+module.exports = factories.createCoreController("api::post.post", ({ strapi }) => ({
   async findOne(ctx) {
     // Always populate author and category
     ctx.query = {
@@ -127,7 +127,7 @@ export default factories.createCoreController("api::post.post", ({ strapi }) => 
 #### Transform the response
 
 ```javascript
-export default factories.createCoreController("api::post.post", ({ strapi }) => ({
+module.exports = factories.createCoreController("api::post.post", ({ strapi }) => ({
   async find(ctx) {
     const response = await super.find(ctx);
 
@@ -150,9 +150,9 @@ You can add entirely new actions to a controller:
 
 ```javascript
 // src/api/post/controllers/post.js
-import { factories } from "@strapi/strapi";
+const { factories } = require("@strapi/strapi");
 
-export default factories.createCoreController("api::post.post", ({ strapi }) => ({
+module.exports = factories.createCoreController("api::post.post", ({ strapi }) => ({
   // Custom action: find featured posts
   async findFeatured(ctx) {
     const posts = await strapi.documents("api::post.post").findMany({
@@ -213,9 +213,9 @@ Like controllers, services are generated automatically:
 
 ```javascript
 // src/api/post/services/post.js
-import { factories } from "@strapi/strapi";
+const { factories } = require("@strapi/strapi");
 
-export default factories.createCoreService("api::post.post");
+module.exports = factories.createCoreService("api::post.post");
 ```
 
 The core service provides: `find`, `findOne`, `create`, `update`, `delete`.
@@ -226,9 +226,9 @@ Move business logic out of controllers and into services:
 
 ```javascript
 // src/api/post/services/post.js
-import { factories } from "@strapi/strapi";
+const { factories } = require("@strapi/strapi");
 
-export default factories.createCoreService("api::post.post", ({ strapi }) => ({
+module.exports = factories.createCoreService("api::post.post", ({ strapi }) => ({
   // Find the most popular posts (by a hypothetical viewCount field)
   async findPopular(limit = 5) {
     return await strapi.documents("api::post.post").findMany({
@@ -281,9 +281,9 @@ export default factories.createCoreService("api::post.post", ({ strapi }) => ({
 
 ```javascript
 // src/api/post/controllers/post.js
-import { factories } from "@strapi/strapi";
+const { factories } = require("@strapi/strapi");
 
-export default factories.createCoreController("api::post.post", ({ strapi }) => ({
+module.exports = factories.createCoreController("api::post.post", ({ strapi }) => ({
   async findPopular(ctx) {
     const limit = ctx.query.limit || 5;
     const posts = await strapi
@@ -399,7 +399,7 @@ When returning data from custom controllers, you should sanitize the output to r
 relation permissions:
 
 ```javascript
-export default factories.createCoreController("api::post.post", ({ strapi }) => ({
+module.exports = factories.createCoreController("api::post.post", ({ strapi }) => ({
   async findFeatured(ctx) {
     const posts = await strapi.documents("api::post.post").findMany({
       filters: { featured: true },
@@ -428,9 +428,9 @@ Here is a full example combining everything:
 
 ```javascript
 // src/api/post/controllers/post.js
-import { factories } from "@strapi/strapi";
+const { factories } = require("@strapi/strapi");
 
-export default factories.createCoreController("api::post.post", ({ strapi }) => ({
+module.exports = factories.createCoreController("api::post.post", ({ strapi }) => ({
   // Override find to always populate essential relations
   async find(ctx) {
     ctx.query = {

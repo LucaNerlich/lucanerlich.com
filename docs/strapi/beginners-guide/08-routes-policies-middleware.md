@@ -50,9 +50,9 @@ Strapi auto-generates routes for every content type:
 
 ```javascript
 // src/api/post/routes/post.js
-import { factories } from "@strapi/strapi";
+const { factories } = require("@strapi/strapi");
 
-export default factories.createCoreRouter("api::post.post");
+module.exports = factories.createCoreRouter("api::post.post");
 ```
 
 This creates the standard REST routes:
@@ -71,9 +71,9 @@ You can customize the core routes without replacing them:
 
 ```javascript
 // src/api/post/routes/post.js
-import { factories } from "@strapi/strapi";
+const { factories } = require("@strapi/strapi");
 
-export default factories.createCoreRouter("api::post.post", {
+module.exports = factories.createCoreRouter("api::post.post", {
   config: {
     find: {
       // Attach middleware to the find route
@@ -100,7 +100,7 @@ file:
 
 ```javascript
 // src/api/post/routes/custom-post.js
-export default {
+module.exports = {
   routes: [
     {
       method: "GET",
@@ -220,7 +220,7 @@ Let's create an **is-owner** policy that ensures users can only update or delete
 
 ```javascript
 // src/api/post/policies/is-owner.js
-export default async (policyContext, config, { strapi }) => {
+module.exports = async (policyContext, config, { strapi }) => {
   const user = policyContext.state.user;
 
   // No user = not authenticated
@@ -255,7 +255,7 @@ Reference the policy in your route configuration:
 
 ```javascript
 // In core routes
-export default factories.createCoreRouter("api::post.post", {
+module.exports = factories.createCoreRouter("api::post.post", {
   config: {
     update: {
       policies: ["api::post.is-owner"],
@@ -283,7 +283,7 @@ Policies shared across content types go in `src/policies/`:
 
 ```javascript
 // src/policies/is-authenticated.js
-export default (policyContext, config, { strapi }) => {
+module.exports = (policyContext, config, { strapi }) => {
   if (policyContext.state.user) {
     return true;
   }
@@ -306,7 +306,7 @@ Policies can accept configuration:
 
 ```javascript
 // src/policies/rate-limit.js
-export default (policyContext, config, { strapi }) => {
+module.exports = (policyContext, config, { strapi }) => {
   const maxRequests = config.max || 100;
   const windowMs = config.window || 60000;
 
@@ -337,7 +337,7 @@ request, add headers, log data, or modify the response.
 
 ```javascript
 // src/api/post/middlewares/log-request.js
-export default (config, { strapi }) => {
+module.exports = (config, { strapi }) => {
   return async (ctx, next) => {
     const start = Date.now();
 
@@ -362,7 +362,7 @@ Reference middleware in route configuration:
 
 ```javascript
 // Core routes
-export default factories.createCoreRouter("api::post.post", {
+module.exports = factories.createCoreRouter("api::post.post", {
   config: {
     find: {
       middlewares: ["api::post.log-request"],
@@ -383,11 +383,11 @@ export default factories.createCoreRouter("api::post.post", {
 
 ### Global middleware
 
-Global middleware runs on every request. It is configured in `config/middlewares.ts`:
+Global middleware runs on every request. It is configured in `config/middlewares.js`:
 
-```typescript
-// config/middlewares.ts
-export default [
+```javascript
+// config/middlewares.js
+module.exports = [
   "strapi::logger",
   "strapi::errors",
   "strapi::security",
@@ -413,7 +413,7 @@ Create a global middleware:
 
 ```javascript
 // src/middlewares/request-timer.js
-export default (config, { strapi }) => {
+module.exports = (config, { strapi }) => {
   return async (ctx, next) => {
     const start = Date.now();
     await next();
@@ -425,9 +425,9 @@ export default (config, { strapi }) => {
 
 Add it to the middleware stack:
 
-```typescript
-// config/middlewares.ts
-export default [
+```javascript
+// config/middlewares.js
+module.exports = [
   "strapi::logger",
   "strapi::errors",
   "strapi::security",
@@ -446,9 +446,9 @@ export default [
 
 You can customize built-in middleware by passing configuration:
 
-```typescript
-// config/middlewares.ts
-export default [
+```javascript
+// config/middlewares.js
+module.exports = [
   "strapi::logger",
   "strapi::errors",
   {
@@ -487,7 +487,7 @@ A simple in-memory rate limiter:
 // src/middlewares/rate-limit.js
 const requestCounts = new Map();
 
-export default (config, { strapi }) => {
+module.exports = (config, { strapi }) => {
   const maxRequests = config.max || 100;
   const windowMs = config.window || 60 * 1000;
 
@@ -527,9 +527,9 @@ export default (config, { strapi }) => {
 
 Add to the middleware stack:
 
-```typescript
-// config/middlewares.ts
-export default [
+```javascript
+// config/middlewares.js
+module.exports = [
   "strapi::logger",
   "strapi::errors",
   {
