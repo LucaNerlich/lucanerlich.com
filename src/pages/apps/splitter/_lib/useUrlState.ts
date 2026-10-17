@@ -27,24 +27,6 @@ export type StateStore = {
 };
 
 /**
- * Legacy store backed by the URL hash. Prefer `queryStore` for shareable
- * links -- chat apps often truncate clickable URLs at `#`.
- */
-export const hashStore = (): StateStore => ({
-    read: () => window.location.hash.slice(1),
-    write: encoded => {
-        const newHash = encoded ? '#' + encoded : '';
-        if (window.location.hash !== newHash) {
-            window.history.replaceState(
-                null,
-                '',
-                window.location.pathname + window.location.search + newHash,
-            );
-        }
-    },
-});
-
-/**
  * Store backed by the `?s=` query param (see `SHARE_PARAM`). Reads fall back
  * to a legacy `#…` hash so older shared links still open. Writes always use
  * the query param and clear the hash.

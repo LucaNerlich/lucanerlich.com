@@ -9,9 +9,6 @@ import {allocateExpense} from './split';
 
 export type Transfer = {from: string; to: string; cents: number};
 
-/** @deprecated Prefer allocateEqual from ./split - kept as a thin alias for tests/callers. */
-export {allocateEqual as fairShares} from './split';
-
 export type ExpenseBreakdown = {
     expense: Expense;
     shares: Map<string, number>;

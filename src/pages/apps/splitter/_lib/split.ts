@@ -6,7 +6,7 @@ import type {Expense, Split} from './types';
 
 const collator = new Intl.Collator('en', {sensitivity: 'variant'});
 
-export const sortIds = (ids: Iterable<string>): string[] =>
+const sortIds = (ids: Iterable<string>): string[] =>
     [...ids].sort(collator.compare);
 
 /**
