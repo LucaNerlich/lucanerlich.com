@@ -43,8 +43,8 @@ npm install --save-dev typescript vitest @vitest/coverage-v8 @types/node
 {
     "compilerOptions": {
         "target": "ES2022",
-        "module": "ESNext",
-        "moduleResolution": "bundler",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "strict": true,
         "declaration": true,
         "declarationDir": "dist/types",
@@ -99,6 +99,7 @@ export default defineConfig({
     },
     "scripts": {
         "build": "tsc",
+        "test:dist": "node -e \"import('./dist/index.js')\"",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage"
@@ -238,11 +239,11 @@ export function formatList(
 ### src/index.ts
 
 ```typescript
-export { formatCurrency } from './formatCurrency';
-export { formatRelativeTime } from './formatRelativeTime';
-export { formatList } from './formatList';
-export type { CurrencyOptions } from './formatCurrency';
-export type { ListStyle, ListOptions } from './formatList';
+export { formatCurrency } from './formatCurrency.js';
+export { formatRelativeTime } from './formatRelativeTime.js';
+export { formatList } from './formatList.js';
+export type { CurrencyOptions } from './formatCurrency.js';
+export type { ListStyle, ListOptions } from './formatList.js';
 ```
 
 ## The Tests
@@ -251,7 +252,7 @@ export type { ListStyle, ListOptions } from './formatList';
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import { formatCurrency } from './formatCurrency';
+import { formatCurrency } from './formatCurrency.js';
 
 describe('formatCurrency', () => {
     describe('default options (EUR, en-US)', () => {
@@ -325,7 +326,7 @@ describe('formatCurrency', () => {
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import { formatRelativeTime } from './formatRelativeTime';
+import { formatRelativeTime } from './formatRelativeTime.js';
 
 const BASE = new Date('2025-01-15T12:00:00Z');
 
@@ -404,7 +405,7 @@ describe('formatRelativeTime', () => {
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import { formatList } from './formatList';
+import { formatList } from './formatList.js';
 
 describe('formatList', () => {
     describe('conjunction (default - "and")', () => {
@@ -567,6 +568,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Smoke test the built package
+        run: npm run test:dist
+
       - name: Upload dist
         uses: actions/upload-artifact@v4
         with:
@@ -579,7 +583,7 @@ This workflow:
 2. Tests against Node.js 20 and 22 in parallel
 3. Uploads the HTML coverage report as an artifact
 4. Pushes coverage data to Codecov (optional - remove if not used)
-5. Runs a build step after tests pass to verify the TypeScript compiles cleanly
+5. Runs a build step after tests pass, then imports the built package to verify it resolves cleanly
 
 ## What You Have Built
 
