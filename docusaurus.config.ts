@@ -51,6 +51,14 @@ const config: Config = {
                 crossorigin: 'anonymous',
             },
         },
+        // Web app manifest
+        {
+            tagName: 'link',
+            attributes: {
+                rel: 'manifest',
+                href: '/manifest.json',
+            },
+        },
         // Default Open Graph metadata for social sharing
         {
             tagName: 'meta',
@@ -91,7 +99,6 @@ const config: Config = {
                     editUrl: 'https://github.com/LucaNerlich/lucanerlich.com/tree/main',
                     showLastUpdateAuthor: false,
                     showLastUpdateTime: false,
-                    remarkPlugins: [],
                     routeBasePath: '/',
                     async sidebarItemsGenerator({defaultSidebarItemsGenerator, categoriesMetadata, ...args}) {
                         const items = await defaultSidebarItemsGenerator({categoriesMetadata, ...args});
