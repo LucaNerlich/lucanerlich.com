@@ -501,6 +501,25 @@ type SidebarItem = any;
 type CategoriesMetadata = Record<string, {label?: string; [k: string]: unknown}>;
 
 /**
+ * Whether a category subtree contains a doc whose id lives under `catPath`.
+ * Same-labelled sibling categories are told apart by where their docs live.
+ */
+function subtreeBelongsTo(items: SidebarItem[], catPath: string): boolean {
+    const belongs = (id: unknown): boolean =>
+        typeof id === 'string' && (id === catPath || id.startsWith(`${catPath}/`));
+
+    return items.some((item: SidebarItem) => {
+        if (item.type === 'doc') {
+            return belongs(item.id);
+        }
+        if (item.type === 'category') {
+            return belongs(item.link?.id) || (item.items ? subtreeBelongsTo(item.items, catPath) : false);
+        }
+        return false;
+    });
+}
+
+/**
  * Recursively sorts sidebar items according to the ordered arrays in
  * `sidebarOrder`. Items not listed in the constants are appended at the end
  * in their default (alphabetical / sidebar_position) order.
@@ -510,23 +529,34 @@ export function sortSidebarItems(
     currentDir: string,
     categoriesMetadata: CategoriesMetadata,
 ): SidebarItem[] {
-    // Build a label → directory-name mapping for categories in this directory
-    const labelToDirname: Record<string, string> = {};
+    // Build a label → full category paths mapping for categories in this directory.
+    // A label may repeat under one parent; the item's subtree is then used to tell
+    // the candidates apart (see `categoryPathForItem`).
+    const labelToPaths: Record<string, string[]> = {};
     for (const [catPath, catMeta] of Object.entries(categoriesMetadata)) {
         const lastSlash = catPath.lastIndexOf('/');
         const parent = lastSlash === -1 ? '.' : catPath.substring(0, lastSlash);
         if (parent === currentDir && catMeta.label) {
-            labelToDirname[catMeta.label] = lastSlash === -1 ? catPath : catPath.substring(lastSlash + 1);
+            labelToPaths[catMeta.label] = [...(labelToPaths[catMeta.label] ?? []), catPath];
         }
     }
+
+    // Resolve a category item to its full directory path. A unique label maps
+    // straight to its path; with duplicate labels, the docs in the item's
+    // subtree identify which sibling directory it belongs to.
+    const categoryPathForItem = (item: SidebarItem): string | null => {
+        const candidates = labelToPaths[item.label!] ?? [];
+        if (candidates.length === 0) return null;
+        if (candidates.length === 1) return candidates[0];
+        return candidates.find((catPath) => subtreeBelongsTo(item.items ?? [], catPath)) ?? null;
+    };
 
     // Recurse into category children first
     const processed = items.map((item: SidebarItem) => {
         if (item.type === 'category' && item.items) {
-            const dirname = labelToDirname[item.label!];
-            if (dirname) {
-                const childDir = currentDir === '.' ? dirname : `${currentDir}/${dirname}`;
-                return {...item, items: sortSidebarItems(item.items, childDir, categoriesMetadata)};
+            const catPath = categoryPathForItem(item);
+            if (catPath) {
+                return {...item, items: sortSidebarItems(item.items, catPath, categoriesMetadata)};
             }
         }
         return item;
@@ -543,7 +573,9 @@ export function sortSidebarItems(
             return parts[parts.length - 1];
         }
         if (item.type === 'category') {
-            return labelToDirname[item.label!] ?? null;
+            const catPath = categoryPathForItem(item);
+            if (!catPath) return null;
+            return catPath.substring(catPath.lastIndexOf('/') + 1);
         }
         return null;
     };
