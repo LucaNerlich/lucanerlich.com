@@ -175,67 +175,11 @@ Reduce the margin under an `<h2>` when it is immediately followed by a `.subtitl
 
 ## Container queries
 
-Media queries respond to the **viewport** size. Container queries respond to the size of a **specific container
-element**. This makes components truly self-contained - they adapt to wherever they are placed.
+Media queries respond to the **viewport** size; container queries respond to the size of a **specific container
+element**, so components adapt to wherever they are placed.
 
-> **Deep dive:** For interactive demos, container query units, and a full comparison with media queries, see
-> [CSS Container Queries](../container-queries.mdx).
-
-### Defining a container
-
-```css
-.card-wrapper {
-    container-type: inline-size;
-    container-name: card;
-}
-```
-
-| Property         | Value          | Meaning                                    |
-|------------------|----------------|--------------------------------------------|
-| `container-type` | `inline-size`  | Track the container's inline (width) size  |
-| `container-type` | `size`         | Track both width and height                |
-| `container-name` | any name       | Optional name for targeted queries         |
-
-### Querying the container
-
-```css
-@container card (min-width: 400px) {
-    .card {
-        display: flex;
-        gap: 16px;
-    }
-
-    .card img {
-        width: 150px;
-    }
-}
-
-@container card (width < 400px) {
-    .card img {
-        width: 100%;
-    }
-}
-```
-
-When the `.card-wrapper` is 400px or wider, the card switches to a horizontal layout. When it is narrower, the image
-takes full width. This happens regardless of the viewport size.
-
-### Container query units
-
-| Unit   | Relative to                    |
-|--------|--------------------------------|
-| `cqw`  | 1% of the container's width    |
-| `cqh`  | 1% of the container's height   |
-| `cqi`  | 1% of the container's inline size |
-| `cqb`  | 1% of the container's block size  |
-
-```css
-.card-title {
-    font-size: clamp(1rem, 3cqi, 1.5rem);
-}
-```
-
-The title scales with the container's width, not the viewport.
+> **Deep dive:** For the syntax (`container-type`, `@container`, query units), interactive demos, and a full
+> comparison with media queries, see [CSS Container Queries](../container-queries.mdx).
 
 ## Logical properties
 
