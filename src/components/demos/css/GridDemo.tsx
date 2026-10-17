@@ -4,12 +4,12 @@ import {useId, useState} from 'react';
 import DemoShell, {demoShellStyles as shell} from '../DemoShell';
 import styles from './GridDemo.module.css';
 
-const TEMPLATES = {
-    '1fr 1fr 1fr': '1fr 1fr 1fr',
-    '1fr 2fr 1fr': '1fr 2fr 1fr',
-    'repeat(auto-fit, minmax(120px, 1fr))': 'repeat(auto-fit, minmax(120px, 1fr))',
-    '200px 1fr': '200px 1fr',
-} as const;
+const TEMPLATES = [
+    '1fr 1fr 1fr',
+    '1fr 2fr 1fr',
+    'repeat(auto-fit, minmax(120px, 1fr))',
+    '200px 1fr',
+] as const;
 
 export default function GridDemo(): ReactNode {
     const ids = {
@@ -17,12 +17,12 @@ export default function GridDemo(): ReactNode {
         gap: useId(),
         width: useId(),
     };
-    const [template, setTemplate] = useState<keyof typeof TEMPLATES>('1fr 1fr 1fr');
+    const [template, setTemplate] = useState<(typeof TEMPLATES)[number]>('1fr 1fr 1fr');
     const [gap, setGap] = useState(12);
     const [width, setWidth] = useState(100);
 
     const gridStyle = {
-        gridTemplateColumns: TEMPLATES[template],
+        gridTemplateColumns: template,
         gap: `${gap}px`,
         width: `${width}%`,
     } as CSSProperties;
@@ -42,7 +42,7 @@ export default function GridDemo(): ReactNode {
                             value={template}
                             onChange={(event) => setTemplate(event.target.value as typeof template)}
                         >
-                            {Object.keys(TEMPLATES).map((value) => (
+                            {TEMPLATES.map((value) => (
                                 <option key={value} value={value}>{value}</option>
                             ))}
                         </select>
