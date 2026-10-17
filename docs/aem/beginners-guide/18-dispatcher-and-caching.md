@@ -87,9 +87,9 @@ dispatcher/
 
 ## Cache rules
 
-Cache rules decide which responses the Dispatcher stores on disk. The rule set, the persisted-query exception, and
-the full list of conditions a response must meet (status, method, cookies, auth, query strings) live in the
-[Dispatcher Configuration reference](/aem/infrastructure/dispatcher-configuration#cache-rules).
+Cache rules decide which responses the Dispatcher stores on disk. The rule set and the full list of conditions a
+response must meet (status, method, cookies, auth, query strings) live in the [Dispatcher Configuration
+reference](/aem/infrastructure/dispatcher-configuration#cache-rules).
 
 ## Filters
 
