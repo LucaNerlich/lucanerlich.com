@@ -875,7 +875,9 @@ you have the basics working.
    sudo cp ~/blog-upload/* /var/www/blog/
    ```
 
-7. **Tell nginx about your site.** Create `/etc/nginx/sites-available/blog` with this content:
+7. **Tell nginx about your site.** Create `/etc/nginx/sites-available/blog` with this content. You are writing under
+   `/etc/nginx`, which is owned by root, so run your editor with `sudo` (for example,
+   `sudo nano /etc/nginx/sites-available/blog`):
 
    ```nginx
    server {
@@ -896,10 +898,10 @@ you have the basics working.
 8. **Turn the site on:**
 
    ```bash
-   ln -s /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/
-   rm -f /etc/nginx/sites-enabled/default
-   nginx -t
-   systemctl reload nginx
+   sudo ln -s /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/
+   sudo rm -f /etc/nginx/sites-enabled/default
+   sudo nginx -t
+   sudo systemctl reload nginx
    ```
 
    `nginx -t` checks the config for typos before reloading. If it prints `syntax is ok` and `test is successful`, you
