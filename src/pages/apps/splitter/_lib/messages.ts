@@ -96,7 +96,7 @@ const de: Dict = {
 
 const catalogs: Record<Locale, Dict> = {en, de};
 
-export const detectLocale = (): Locale => {
+const detectLocale = (): Locale => {
     const browserLang = typeof navigator !== 'undefined' ? navigator.language : '';
     const htmlLang = typeof document !== 'undefined' ? document.documentElement.lang : '';
     const lang = (browserLang || htmlLang || 'en').toLowerCase();
@@ -104,14 +104,12 @@ export const detectLocale = (): Locale => {
 };
 
 export type Messages = {
-    locale: Locale;
     t: (key: keyof typeof en) => string;
 };
 
 export const createMessages = (locale: Locale = detectLocale()): Messages => {
     const dict = catalogs[locale] ?? en;
     return {
-        locale,
         t: key => dict[key] ?? en[key] ?? String(key),
     };
 };
