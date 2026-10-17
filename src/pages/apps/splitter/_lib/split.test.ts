@@ -117,6 +117,21 @@ describe('settlement with participants and payer-covers', () => {
         assert.ok(computeSettlement(balances).length === transfers.length);
     });
 
+    it('derives the per-expense breakdown once per summarize', () => {
+        // summarize must pass its breakdowns to computeBalances instead of
+        // letting it re-derive them: a second traversal reads state.expenses.
+        let expenseReads = 0;
+        const counted = new Proxy(demoState(), {
+            get(target, prop, receiver) {
+                if (prop === 'expenses') expenseReads += 1;
+                return Reflect.get(target, prop, receiver);
+            },
+        });
+        const summary = summarize(counted);
+        assert.equal(expenseReads, 1);
+        assert.ok(summary.breakdowns.length > 0);
+    });
+
     it('payer outside participants is owed the full expense', () => {
         const state: AppState = {
             v: 2,
