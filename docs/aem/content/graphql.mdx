@@ -57,20 +57,19 @@ No manual schema writing is needed.
 2. Click **Create** and configure:
 - **Name**: e.g., `myproject`
 - **Configuration**: Select the site configuration that holds your CF Models (e.g., `/conf/myproject`)
-3. The endpoint becomes available at:
+3. The endpoint is stored at the repository path and served at the request URL (`:` is escaped to `_` in the URL):
 
 ```text
-/content/cq:graphql/myproject/endpoint.json
-# or (JCR-safe encoding):
-/content/_cq_graphql/myproject/endpoint.json
+Repository path: /content/cq:graphql/myproject/endpoint
+Request URL:     /content/_cq_graphql/myproject/endpoint.json
 ```
 
 ### Global vs site-specific endpoints
 
 | Endpoint | Path | Use case |
 |----------|------|----------|
-| **Global** | `/content/cq:graphql/global/endpoint.json` | Access models from all configurations |
-| **Site-specific** | `/content/cq:graphql/myproject/endpoint.json` | Only models from `/conf/myproject` |
+| **Global** | `/content/_cq_graphql/global/endpoint.json` | Access models from all configurations |
+| **Site-specific** | `/content/_cq_graphql/myproject/endpoint.json` | Only models from `/conf/myproject` |
 
 :::tip
 Use site-specific endpoints in production to limit the schema scope and improve security. The global
@@ -645,7 +644,6 @@ Configure CORS to allow cross-origin GraphQL requests from your frontend domains
         "http://localhost:.*"
     ],
     "allowedpaths": [
-        "/content/cq:graphql/myproject/endpoint.json",
         "/content/_cq_graphql/myproject/endpoint.json",
         "/graphql/execute.json/.*"
     ],
