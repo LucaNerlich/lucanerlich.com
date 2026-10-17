@@ -164,38 +164,6 @@ public class NavigationModel {
 }
 ```
 
-### Avoid Injecting Heavy Services You Don't Always Use
-
-If a service is only needed in one code path, look it up lazily via the OSGi `BundleContext` instead of injecting it at model construction time. This avoids the cost of the service's `@Reference` chain being resolved on every model adaptation, even when the code path is never taken.
-
-```java
-// BAD - SearchService is injected (and its @Reference chain resolved) on every adaptation
-@OSGiService
-private SearchService searchService;
-
-// GOOD - resolve only when the search path is actually taken
-public List<Result> search(String term) {
-    Bundle bundle = FrameworkUtil.getBundle(getClass());
-    BundleContext ctx = bundle != null ? bundle.getBundleContext() : null;
-    if (ctx == null) {
-        return List.of();
-    }
-    ServiceReference<SearchService> ref = ctx.getServiceReference(SearchService.class);
-    if (ref == null) {
-        return List.of();
-    }
-    SearchService service = ctx.getService(ref);
-    if (service == null) {
-        return List.of();
-    }
-    try {
-        return service.search(term);
-    } finally {
-        ctx.ungetService(ref);
-    }
-}
-```
-
 ### Don't Do Queries in `@PostConstruct`
 
 Queries in `@PostConstruct` run on every request regardless of whether the result is consumed. Move them into lazy getters or dedicated methods.
