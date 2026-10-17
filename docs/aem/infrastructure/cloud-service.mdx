@@ -218,8 +218,9 @@ aio aem:rde:install target/myproject.ui.apps-1.0-SNAPSHOT.zip
 # Deploy an OSGi bundle
 aio aem:rde:install target/myproject.core-1.0-SNAPSHOT.jar
 
-# Deploy Dispatcher configuration
-aio aem:rde:install dispatcher/src --type dispatcher
+# Deploy Dispatcher configuration (build the dispatcher module first)
+mvn -f dispatcher/pom.xml clean package
+aio aem:rde:install dispatcher/target/myproject.dispatcher.cloud-1.0-SNAPSHOT.zip --type dispatcher-config
 
 # Deploy an OSGi config file
 aio aem:rde:install ui.config/src/.../com.myproject.MyConfig.cfg.json --type osgi-config
