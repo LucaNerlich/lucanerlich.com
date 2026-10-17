@@ -317,7 +317,7 @@ Use [caniuse.com](https://caniuse.com) to check browser support before using new
 - **Margin collapse** causes unexpected spacing - use `gap`, Flexbox/Grid, or one-direction margins
 - **Overflow** happens when content exceeds fixed dimensions - use `max-width` and `min-height`
 - **Centring** is solved with `display: flex; justify-content: center; align-items: center`
-- **z-index** requires a `position` value and respects stacking contexts
+- **z-index** applies to positioned elements and flex/grid items, and respects stacking contexts
 - **Specificity conflicts** are visible in DevTools - simplify selectors instead of escalating
 - **inline-block gaps** come from HTML whitespace - use Flexbox instead
 - Use a **systematic debugging checklist** instead of random trial and error
