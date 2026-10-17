@@ -11,13 +11,18 @@ import styles from './ResizableDemoShell.module.css';
 // Prop types
 // ------------------------------------------------------------------
 
+type RenderPanel = (content: ReactNode, className?: string) => ReactNode;
+
 type ResizableDemoShellProps = {
     title: string;
+    ariaLabel?: string;
     hint?: string;
     initialWidth?: number;
     minWidth?: number;
     maxWidth?: number;
-    children: ReactNode;
+    sliderLabel?: string;
+    lockedPanel?: boolean;
+    children: ReactNode | ((renderPanel: RenderPanel) => ReactNode);
     footer?: ReactNode;
 };
 
@@ -31,10 +36,13 @@ function clamp(value: number, min: number, max: number): number {
 
 export default function ResizableDemoShell({
     title,
+    ariaLabel,
     hint = 'Drag the right edge of the panel, or use the slider.',
     initialWidth = 420,
     minWidth = 180,
     maxWidth = 720,
+    sliderLabel = 'Width',
+    lockedPanel = false,
     children,
     footer,
 }: ResizableDemoShellProps): ReactNode {
@@ -64,7 +72,7 @@ export default function ResizableDemoShell({
 
     useEffect(() => {
         const panel = panelRef.current;
-        if (!panel || typeof ResizeObserver === 'undefined') {
+        if (lockedPanel || !panel || typeof ResizeObserver === 'undefined') {
             return undefined;
         }
 
@@ -84,21 +92,34 @@ export default function ResizableDemoShell({
 
         observer.observe(panel);
         return () => observer.disconnect();
-    }, [effectiveMinWidth, effectiveMaxWidth]);
+    }, [effectiveMinWidth, effectiveMaxWidth, lockedPanel]);
 
     const panelStyle = {
         width: `${width}px`,
         '--demo-min-width': `${effectiveMinWidth}px`,
     } as CSSProperties;
 
+    const panelClassName = lockedPanel
+        ? `${styles.panel} ${styles.panelLocked}`
+        : styles.panel;
+
+    const renderPanel: RenderPanel = (content, className) => (
+        <div
+            className={className ? `${panelClassName} ${className}` : panelClassName}
+            style={panelStyle}
+        >
+            {content}
+        </div>
+    );
+
     return (
-        <section className={styles.shell} aria-label={title}>
+        <section className={styles.shell} aria-label={ariaLabel ?? title}>
             <div className={styles.header}>
                 <h3 className={styles.title}>{title}</h3>
                 <p className={styles.hint}>{hint}</p>
                 <div className={styles.controls}>
                     <label className={styles.sliderLabel} htmlFor={sliderId}>
-                        Width
+                        {sliderLabel}
                         <input
                             id={sliderId}
                             className={styles.slider}
@@ -122,15 +143,19 @@ export default function ResizableDemoShell({
                 </div>
             </div>
             <div className={styles.body}>
-                <div
-                    ref={panelRef}
-                    className={styles.panel}
-                    style={panelStyle}
-                    onPointerUp={syncWidthFromPanel}
-                    onTouchEnd={syncWidthFromPanel}
-                >
-                    {children}
-                </div>
+                {typeof children === 'function'
+                    ? children(renderPanel)
+                    : (
+                        <div
+                            ref={panelRef}
+                            className={panelClassName}
+                            style={panelStyle}
+                            onPointerUp={lockedPanel ? undefined : syncWidthFromPanel}
+                            onTouchEnd={lockedPanel ? undefined : syncWidthFromPanel}
+                        >
+                            {children}
+                        </div>
+                    )}
                 {footer ? <p className={styles.footer}>{footer}</p> : null}
             </div>
         </section>
