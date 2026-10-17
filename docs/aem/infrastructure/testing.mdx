@@ -147,11 +147,11 @@ root path in the test repository where the tree is mounted.
 For fixtures you already author in CRXDE, `.content.xml` snapshots work too:
 
 ```java
-ctx.load().filevault("/content/teaser-tree", "/content/site/en");
+ctx.load().fileVaultXml("/content/teaser-tree/.content.xml", "/content/site/en");
 ```
 
-The source folder must be a standard Jackrabbit FileVault tree (`.content.xml` at the root of the
-fragment).
+The first argument points at a single `.content.xml` file relative to `src/test/resources`; use
+`folderFileVaultXml` to import a whole FileVault folder tree instead.
 
 ### Binary content
 
