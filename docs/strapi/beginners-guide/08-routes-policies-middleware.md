@@ -383,11 +383,11 @@ module.exports = factories.createCoreRouter("api::post.post", {
 
 ### Global middleware
 
-Global middleware runs on every request. It is configured in `config/middlewares.ts`:
+Global middleware runs on every request. It is configured in `config/middlewares.js`:
 
-```typescript
-// config/middlewares.ts
-export default [
+```javascript
+// config/middlewares.js
+module.exports = [
   "strapi::logger",
   "strapi::errors",
   "strapi::security",
@@ -425,9 +425,9 @@ module.exports = (config, { strapi }) => {
 
 Add it to the middleware stack:
 
-```typescript
-// config/middlewares.ts
-export default [
+```javascript
+// config/middlewares.js
+module.exports = [
   "strapi::logger",
   "strapi::errors",
   "strapi::security",
@@ -446,9 +446,9 @@ export default [
 
 You can customize built-in middleware by passing configuration:
 
-```typescript
-// config/middlewares.ts
-export default [
+```javascript
+// config/middlewares.js
+module.exports = [
   "strapi::logger",
   "strapi::errors",
   {
@@ -527,9 +527,9 @@ module.exports = (config, { strapi }) => {
 
 Add to the middleware stack:
 
-```typescript
-// config/middlewares.ts
-export default [
+```javascript
+// config/middlewares.js
+module.exports = [
   "strapi::logger",
   "strapi::errors",
   {
