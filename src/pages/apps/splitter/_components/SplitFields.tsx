@@ -1,17 +1,9 @@
 import React from 'react';
 import type {Currency, Person, Split} from '../_lib/types';
-import {equalSplit} from '../_lib/types';
-import {amountPlaceholder, centsToInput, currencySymbol, toCents} from '../_lib/money';
+import type {SplitDraft} from '../_lib/expenseInput';
+import {amountPlaceholder, centsToInput, currencySymbol} from '../_lib/money';
 import type {Messages} from '../_lib/messages';
 import styles from '../splitter.module.css';
-
-export type SplitDraft = {
-    participants: string[];
-    splitMode: Split['mode'];
-    weights: Record<string, string>;
-    percents: Record<string, string>;
-    amounts: Record<string, string>;
-};
 
 export const draftFromPeople = (people: Person[], previous?: SplitDraft): SplitDraft => {
     const ids = people.map(p => p.id);
@@ -70,47 +62,6 @@ export const draftFromExpense = (
         }
     }
     return draft;
-};
-
-export const buildSplit = (draft: SplitDraft): {split: Split; error: string | null} => {
-    if (draft.participants.length === 0) {
-        return {split: equalSplit(), error: 'Pick at least one participant.'};
-    }
-    if (draft.splitMode === 'equal') return {split: equalSplit(), error: null};
-
-    if (draft.splitMode === 'shares') {
-        const weights: Record<string, number> = {};
-        for (const id of draft.participants) {
-            const w = Number(draft.weights[id]);
-            if (!Number.isFinite(w) || w <= 0) {
-                return {split: equalSplit(), error: 'Every participant needs a positive share weight.'};
-            }
-            weights[id] = w;
-        }
-        return {split: {mode: 'shares', weights}, error: null};
-    }
-
-    if (draft.splitMode === 'percent') {
-        const percents: Record<string, number> = {};
-        for (const id of draft.participants) {
-            const p = Number(String(draft.percents[id]).replace(',', '.'));
-            if (!Number.isFinite(p) || p < 0) {
-                return {split: equalSplit(), error: 'Every participant needs a non-negative percent.'};
-            }
-            percents[id] = p;
-        }
-        return {split: {mode: 'percent', percents}, error: null};
-    }
-
-    const amounts: Record<string, number> = {};
-    for (const id of draft.participants) {
-        const cents = toCents(draft.amounts[id] ?? '');
-        if (cents === null || cents < 0) {
-            return {split: equalSplit(), error: 'Every participant needs a valid exact amount.'};
-        }
-        amounts[id] = cents;
-    }
-    return {split: {mode: 'exact', amounts}, error: null};
 };
 
 type Props = {

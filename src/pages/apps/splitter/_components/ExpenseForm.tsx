@@ -1,13 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import type {Currency, ExpenseInput, Person} from '../_lib/types';
-import {amountExample, amountPlaceholder, currencySymbol, toCents} from '../_lib/money';
-import {validateSplit} from '../_lib/split';
+import {amountPlaceholder, currencySymbol} from '../_lib/money';
+import {buildExpenseInput, type SplitDraft} from '../_lib/expenseInput';
 import type {Messages} from '../_lib/messages';
-import SplitFields, {
-    buildSplit,
-    draftFromPeople,
-    type SplitDraft,
-} from './SplitFields';
+import SplitFields, {draftFromPeople} from './SplitFields';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -47,38 +43,18 @@ const ExpenseForm: React.FC<Props> = ({
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
-        const cents = toCents(amount);
-        if (cents === null) {
-            setError(
-                `Enter an amount like ${amountExample(currency)} (at most two decimals, no thousands separators).`,
-            );
-            return;
-        }
-        if (cents <= 0) {
-            setError('Amount must be greater than 0.');
-            return;
-        }
-        if (!paidBy) {
-            setError('Choose who paid.');
-            return;
-        }
-        const {split, error: splitBuildError} = buildSplit(draft);
-        if (splitBuildError) {
-            setError(splitBuildError);
-            return;
-        }
-        const splitError = validateSplit(split, draft.participants, cents);
-        if (splitError) {
-            setError(splitError);
-            return;
-        }
-        onAdd({
-            description: description.trim(),
-            cents,
+        const {input, error: inputError} = buildExpenseInput(
+            draft,
+            description,
+            amount,
             paidBy,
-            participants: draft.participants,
-            split,
-        });
+            currency,
+        );
+        if (!input) {
+            setError(inputError);
+            return;
+        }
+        onAdd(input);
         setDescription('');
         setAmount('');
         // Keep paidBy + split draft for "same as last" speed.

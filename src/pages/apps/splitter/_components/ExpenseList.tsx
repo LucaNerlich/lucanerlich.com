@@ -1,11 +1,11 @@
 import React, {useMemo, useState} from 'react';
 import type {Currency, Expense, ExpenseInput, Person} from '../_lib/types';
 import {indexPeople, nameFrom} from '../_lib/people';
-import {amountExample, centsToInput, currencySymbol, formatMoney, toCents} from '../_lib/money';
-import {validateSplit} from '../_lib/split';
+import {centsToInput, currencySymbol, formatMoney} from '../_lib/money';
 import {payerCoversOthers} from '../_lib/split';
+import {buildExpenseInput, type SplitDraft} from '../_lib/expenseInput';
 import type {Messages} from '../_lib/messages';
-import SplitFields, {buildSplit, draftFromExpense, type SplitDraft} from './SplitFields';
+import SplitFields, {draftFromExpense} from './SplitFields';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -151,28 +151,18 @@ const ExpenseEditor: React.FC<EditorProps> = ({
 
     const save = (e: React.FormEvent) => {
         e.preventDefault();
-        const cents = toCents(amount);
-        if (cents === null || cents <= 0) {
-            setError(`Enter an amount like ${amountExample(currency)}.`);
-            return;
-        }
-        const {split, error: buildError} = buildSplit(draft);
-        if (buildError) {
-            setError(buildError);
-            return;
-        }
-        const splitError = validateSplit(split, draft.participants, cents);
-        if (splitError) {
-            setError(splitError);
-            return;
-        }
-        onSave({
-            description: description.trim(),
-            cents,
+        const {input, error: inputError} = buildExpenseInput(
+            draft,
+            description,
+            amount,
             paidBy,
-            participants: draft.participants,
-            split,
-        });
+            currency,
+        );
+        if (!input) {
+            setError(inputError);
+            return;
+        }
+        onSave(input);
     };
 
     return (
