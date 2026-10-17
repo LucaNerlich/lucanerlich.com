@@ -400,16 +400,24 @@ function isValid(string $input): bool
     return strlen($input) > 0;
 }
 
-// Note: a union of true and false is not allowed - use bool instead
-function tryParse(string $input): bool
+// true and false as standalone return types
+function isFinished(): true
 {
-    // ...
+    return true;
 }
 
-// Null as a standalone type
-function getConfig(): Config|null
+function hasFailed(): false
 {
-    return $config ?? null;
+    return false;
+}
+
+// Note: a union of true and false is not allowed - use bool instead
+
+// null as a standalone return type (the function only ever returns null)
+function logEvent(string $event): null
+{
+    error_log($event);
+    return null;
 }
 ```
 
