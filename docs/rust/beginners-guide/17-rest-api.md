@@ -42,7 +42,6 @@ cargo add actix-cors
 cargo add serde --features derive
 cargo add serde_json
 cargo add rusqlite --features bundled
-cargo add tokio --features full
 cargo add thiserror
 cargo add env_logger
 ```
@@ -56,7 +55,6 @@ actix-cors = "0.7"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 rusqlite = { version = "0.32", features = ["bundled"] }
-tokio = { version = "1", features = ["full"] }
 thiserror = "2"
 env_logger = "0.11"
 ```
