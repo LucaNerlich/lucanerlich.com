@@ -371,7 +371,9 @@ export default async function ArticlePage({ params }: Props) {
 
   const { data } = await res.json();
 
-  if (!data?.length) {
+  let article = data?.[0];
+
+  if (!article) {
     // Try fallback locale
     const fallbackRes = await fetch(
       `${process.env.STRAPI_URL}/api/articles?` +
@@ -379,12 +381,12 @@ export default async function ArticlePage({ params }: Props) {
       { next: { revalidate: 60 } }
     );
     const fallbackData = await fallbackRes.json();
-
-    if (!fallbackData.data?.length) return notFound();
-    // Render with fallback indicator
+    article = fallbackData?.data?.[0];
+    // article now holds the fallback entry - render it with a fallback indicator
   }
 
-  const article = data[0];
+  if (!article) return notFound();
+
   return <article><h1>{article.title}</h1></article>;
 }
 
