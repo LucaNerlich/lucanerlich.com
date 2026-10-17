@@ -131,9 +131,11 @@ The Dispatcher only caches responses that:
 4. Do **not** have `Authorization` headers
 5. Match the **cache rules** (`/cache` section)
 
-> **Query strings:** By default, the Dispatcher ignores query parameters for caching - `/page.html?v=1` and
-> `/page.html?v=2` serve the same cached file. This is configurable via the `/ignoreUrlParams` setting in the farm
-> config. Only add parameters to the allow list if you genuinely need parameter-specific caching.
+> **Query strings:** By default, the Dispatcher does not cache a request whose URI contains a question mark -
+> `/page.html?v=1` and `/page.html?v=2` each bypass the cache. To cache requests carrying selected parameters,
+> list those parameter names under `/ignoreUrlParams` in the farm config: a request whose parameters are all
+> ignored is served from the cache as if it had no query string, while any parameter not on the list still
+> bypasses the cache.
 
 ## Filters
 
