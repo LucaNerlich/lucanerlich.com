@@ -31,10 +31,6 @@
     border: 0;
 }
 
-.shell {
-    margin: 0;
-}
-
 .panel {
     container-type: inline-size;
     container-name: compare-slot;
