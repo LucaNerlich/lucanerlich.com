@@ -642,7 +642,7 @@ module.exports = (config, { strapi }) => {
   const { maxRequests = 100, windowMs = 60000 } = config;
 
   return async (ctx, next) => {
-    if (ctx.url !== '/graphql') {
+    if (ctx.path !== '/graphql') {
       return next();
     }
 
