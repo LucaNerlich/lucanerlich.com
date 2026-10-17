@@ -551,14 +551,16 @@ echo $p->name;       // Allowed
 
 ### new Without Parentheses
 
-In PHP 8.4 you can omit parentheses when instantiating with `new` in many contexts:
+Before PHP 8.4, accessing a property or method of a newly created object required wrapping the instantiation in parentheses. PHP 8.4 lets you drop them:
 
 ```php
 <?php
 
-$obj = new MyClass;
-$items = [new Item, new Item, new Item];
+$obj = new MyClass()->init();    // PHP 8.4
+$obj = (new MyClass())->init();  // Before 8.4
 ```
+
+> **Note:** Omitting the constructor parentheses themselves (`new MyClass`) has always been valid - the 8.4 change is about accessing members directly on the new object.
 
 ### Lazy Objects
 
