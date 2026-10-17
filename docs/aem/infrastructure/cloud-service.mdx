@@ -473,15 +473,17 @@ requests to public internet endpoints. For connecting to private services, Adobe
 | **Dedicated egress IP**  | Whitelist a fixed IP for outbound connections to firewalled services   |
 | **VPN**                  | Site-to-site VPN for connecting to private corporate networks          |
 
-Configure via Cloud Manager API or CLI:
+Configure it in Cloud Manager, not the CLI:
 
-```bash
-# Enable flexible port egress
-aio cloudmanager:set-environment-advanced-networking \
-  --type flexiblePortEgress \
-  --program-id 12345 \
-  --environment-id 67890
-```
+1. **Program level** - add a network infrastructure under **Environments > Network
+   Infrastructures** (for example **Flexible port egress**) and choose the region.
+2. **Environment level** - open the environment's **Advanced network configuration** tab,
+   enable the infrastructure, and add port forwarding rules as needed.
+
+Both steps are also available through the Cloud Manager API: `POST
+/api/program/{programId}/networkInfrastructures` for the program, then `PUT
+/api/program/{programId}/environment/{environmentId}/advancedNetworking` for each
+environment.
 
 For SMTP (email sending), flexible port egress with port forwarding is required. See
 the [E-Mail Service](./email.md) page for a detailed setup guide.
