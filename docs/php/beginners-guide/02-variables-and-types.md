@@ -375,14 +375,15 @@ PHP also **automatically converts** types when needed. This is called **type jug
 <?php
 
 $result = '10' + 5;        // '10' is converted to integer 10, result is 15
-$result = '10 apples' + 5; // '10 apples' is converted to 10, result is 15
+$result = '10 apples' + 5; // '10 apples' is converted to 10 (with a warning), result is 15
 $result = true + true;     // true is 1, result is 2
-$result = 'hello' + 5;     // 'hello' is 0, result is 5
+$result = 'hello' + 5;     // PHP 7: 'hello' was converted to 0, result was 5
+                           // PHP 8: throws TypeError (Unsupported operand types)
 ```
 
-> **Warning:** Type juggling can cause subtle bugs. The string `'10 apples'` silently becomes the number `10`. In
-> modern PHP (8.0+), some of these conversions emit deprecation notices. Always be explicit about conversions when the
-> intent is not obvious.
+> **Warning:** Type juggling can cause subtle bugs. The string `'10 apples'` becomes the number `10` (with a warning).
+> In PHP 8, arithmetic on a non-numeric string such as `'hello'` throws a `TypeError` instead of converting it to `0`.
+> Always be explicit about conversions when the intent is not obvious.
 
 ### Explicit type casting
 
