@@ -158,9 +158,10 @@ static/                # Static assets (images, favicon, manifest.json)
 The repo includes 62 Cursor rule files in two categories. These should be
 treated as project-level coding guidelines:
 
-### Performance Rules (`.md` files)
+### Performance Rules (`.mdc` files)
 Organized into 8 sections: async, bundle, server, client, rerender, rendering,
-js, advanced. Key rules include:
+js, advanced. Each carries Cursor frontmatter (`description`/`globs`/`alwaysApply`)
+so it activates per file scope. Key rules include:
 - Eliminate async waterfalls (parallelize with `Promise.all`)
 - Avoid barrel imports; use direct path imports
 - Use dynamic imports / `React.lazy` for code splitting
