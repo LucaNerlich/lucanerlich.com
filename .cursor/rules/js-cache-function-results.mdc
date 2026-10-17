@@ -29,14 +29,15 @@ function ProjectList({ projects }: { projects: Project[] }) {
 
 ```typescript
 // Module-level cache
-const cachedSlugify = new Map<string, any>()
+const slugCache = new Map<string, string>()
 
 function cachedSlugify(text: string): string {
-  if (cachedSlugify.has(text)) {
-    return cachedSlugify.get(text)
+  const cached = slugCache.get(text)
+  if (cached !== undefined) {
+    return cached
   }
   const result = slugify(text)
-  cachedSlugify.set(text, result)
+  slugCache.set(text, result)
   return result
 }
 
