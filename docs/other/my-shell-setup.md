@@ -40,7 +40,7 @@ the [shell info for Ghostty](https://ghostty.org/docs/help/terminfo#copy-ghostty
 You can copy them with the following command
 
 ```bash
-infocmp -x | ssh YOUR-SERVER - tic -x -
+infocmp -x | ssh YOUR-SERVER -- tic -x -
 ```
 
 ## Ghostty Config
