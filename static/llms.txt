@@ -6,18 +6,18 @@ This site provides reference documentation and practical guides aimed at develop
 
 ## Beginners' Guides
 
-- [AEM Beginners' Guide](https://lucanerlich.com/aem/beginners-guide/01-introduction/): 15 chapters covering JCR, Sling, OSGi, components, HTL, Sling Models, templates, clientlibs, and deployment
-- [Java Beginners' Guide](https://lucanerlich.com/java/beginners-guide/01-introduction/): 17 chapters from variables and control flow through streams, testing, and build tools
-- [JavaScript Beginners' Guide](https://lucanerlich.com/javascript/beginners-guide/01-introduction/): 15 chapters covering fundamentals, the DOM, events, TypeScript, error handling, and deployment
-- [TypeScript Beginners' Guide](https://lucanerlich.com/typescript/beginners-guide/01-introduction/): 12 chapters from basic types through advanced mapped types, utility types, and real-world usage with React and Node.js
-- [CSS Beginners' Guide](https://lucanerlich.com/css/beginners-guide/01-introduction/): 18 chapters on selectors, box model, flexbox, grid, responsive design, animations, and best practices
-- [PHP Beginners' Guide](https://lucanerlich.com/php/beginners-guide/01-introduction/): 17 chapters from variables through OOP, databases, Composer, and building a web application
-- [Rust Beginners' Guide](https://lucanerlich.com/rust/beginners-guide/01-introduction/): 19 chapters covering ownership, borrowing, lifetimes, traits, concurrency, and deployment
-- [Docker Beginners' Guide](https://lucanerlich.com/docker/beginners-guide/01-introduction/): 12 chapters from first container through multi-stage builds, Docker Compose, secrets, registries, and production hardening
-- [Git Beginners' Guide](https://lucanerlich.com/git/beginners-guide/01-introduction/): 12 chapters from first commit through rebasing, collaborative workflows (GitHub Flow, GitFlow, trunk-based), and hooks
-- [Testing Beginners' Guide](https://lucanerlich.com/testing/beginners-guide/01-introduction/): 12 chapters on Jest/Vitest and JUnit 5, mocking with Mockito, TDD, React Testing Library, Playwright e2e, and coverage
-- [Linux Beginners' Guide](https://lucanerlich.com/linux/beginners-guide/01-introduction/): 12 chapters from filesystem navigation through bash scripting, networking, package management, and VPS hardening
-- [Strapi Beginners' Guide](https://lucanerlich.com/strapi/beginners-guide/01-introduction/): 12 chapters on content modeling, REST API, authentication, lifecycle hooks, and deployment
+- [AEM Beginners' Guide](https://lucanerlich.com/aem/beginners-guide/introduction/): 15 chapters covering JCR, Sling, OSGi, components, HTL, Sling Models, templates, clientlibs, and deployment
+- [Java Beginners' Guide](https://lucanerlich.com/java/beginners-guide/introduction/): 17 chapters from variables and control flow through streams, testing, and build tools
+- [JavaScript Beginners' Guide](https://lucanerlich.com/javascript/beginners-guide/introduction/): 15 chapters covering fundamentals, the DOM, events, TypeScript, error handling, and deployment
+- [TypeScript Beginners' Guide](https://lucanerlich.com/typescript/beginners-guide/introduction/): 12 chapters from basic types through advanced mapped types, utility types, and real-world usage with React and Node.js
+- [CSS Beginners' Guide](https://lucanerlich.com/css/beginners-guide/introduction/): 18 chapters on selectors, box model, flexbox, grid, responsive design, animations, and best practices
+- [PHP Beginners' Guide](https://lucanerlich.com/php/beginners-guide/introduction/): 17 chapters from variables through OOP, databases, Composer, and building a web application
+- [Rust Beginners' Guide](https://lucanerlich.com/rust/beginners-guide/introduction/): 19 chapters covering ownership, borrowing, lifetimes, traits, concurrency, and deployment
+- [Docker Beginners' Guide](https://lucanerlich.com/docker/beginners-guide/introduction/): 12 chapters from first container through multi-stage builds, Docker Compose, secrets, registries, and production hardening
+- [Git Beginners' Guide](https://lucanerlich.com/git/beginners-guide/introduction/): 12 chapters from first commit through rebasing, collaborative workflows (GitHub Flow, GitFlow, trunk-based), and hooks
+- [Testing Beginners' Guide](https://lucanerlich.com/testing/beginners-guide/introduction/): 12 chapters on Jest/Vitest and JUnit 5, mocking with Mockito, TDD, React Testing Library, Playwright e2e, and coverage
+- [Linux Beginners' Guide](https://lucanerlich.com/linux/beginners-guide/introduction/): 12 chapters from filesystem navigation through bash scripting, networking, package management, and VPS hardening
+- [Strapi Beginners' Guide](https://lucanerlich.com/strapi/beginners-guide/introduction/): 12 chapters on content modeling, REST API, authentication, lifecycle hooks, and deployment
 
 ## AEM
 
@@ -46,9 +46,9 @@ This site provides reference documentation and practical guides aimed at develop
 
 ## JavaScript
 
-- [Async/Await Patterns](https://lucanerlich.com/javascript/async-await-guide/): Promises, error handling, concurrency control, and pitfalls
-- [Intl API Formatting](https://lucanerlich.com/javascript/javascript-intl-api-formatting/): Locale-aware number, date, and currency formatting
-- [Error Handling](https://lucanerlich.com/javascript/javascript-error-handling/): Custom error classes, global handlers, and structured reporting
+- [Async/Await Patterns](https://lucanerlich.com/javascript/async-await/): Promises, error handling, concurrency control, and pitfalls
+- [Intl API Formatting](https://lucanerlich.com/javascript/intl-api-formatting/): Locale-aware number, date, and currency formatting
+- [Error Handling](https://lucanerlich.com/javascript/error-handling/): Custom error classes, global handlers, and structured reporting
 
 ## Strapi
 
