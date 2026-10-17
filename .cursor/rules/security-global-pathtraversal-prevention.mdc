@@ -63,8 +63,11 @@ if not filename or not filename.replace('.', '').replace('_', '').replace('-', '
 upload_dir = Path("/uploads")
 file_path = upload_dir / filename
 
-# Ensure the final path is within the intended directory
-if not str(file_path.resolve()).startswith(str(upload_dir.resolve())):
+# Ensure the final path is within the intended directory (segment-aware,
+# not a string prefix: ".." segments cannot escape the base)
+try:
+    file_path.resolve().relative_to(upload_dir.resolve())
+except ValueError:
     abort(403, "Access denied")
 
 with open(file_path, 'r') as f:
@@ -85,8 +88,10 @@ if (!filename || !/^[a-zA-Z0-9._-]+$/.test(filename)) {
 const uploadDir = path.resolve('./uploads');
 const filePath = path.join(uploadDir, filename);
 
-// Ensure path is within intended directory
-if (!filePath.startsWith(uploadDir)) {
+// Ensure path is within intended directory (segment-aware, not a string
+// prefix: ".." segments cannot escape the base)
+const rel = path.relative(uploadDir, filePath);
+if (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel)) {
     return res.status(403).send('Access denied');
 }
 
@@ -109,8 +114,9 @@ if (!preg_match('/^[a-zA-Z0-9._-]+$/', $filename)) {
 $uploadDir = realpath('/uploads');
 $filePath = realpath('/uploads/' . $filename);
 
-// Ensure path is within intended directory
-if (!$filePath || strpos($filePath, $uploadDir) !== 0) {
+// Ensure path is within intended directory (compare against the base plus
+// a separator, so a sibling like "uploads-secret" cannot pass as a prefix)
+if (!$filePath || strpos($filePath, $uploadDir . DIRECTORY_SEPARATOR) !== 0) {
     http_response_code(403);
     die('Access denied');
 }
@@ -151,8 +157,10 @@ base_dir = Path("/uploads")
 user_file = Path(filename)
 full_path = (base_dir / user_file).resolve()
 
-# Check if final path is within intended directory
-if not str(full_path).startswith(str(base_dir.resolve())):
+# Check if final path is within intended directory (segment-aware)
+try:
+    full_path.relative_to(base_dir.resolve())
+except ValueError:
     raise SecurityError("Path traversal detected")
 
 # Path.parts - Check for dangerous components
@@ -186,9 +194,11 @@ normalized = os.path.normpath(dangerous)  # Still "../../../etc/passwd"
 # os.path.join() doesn't prevent path traversal
 joined = os.path.join("/uploads", "../../../etc/passwd")  # Still dangerous
 
-# You MUST validate the final path
+# You MUST validate the final path (segment-aware, via pathlib)
 final_path = os.path.abspath(joined)
-if not final_path.startswith("/uploads"):
+try:
+    Path(final_path).relative_to(Path("/uploads").resolve())
+except ValueError:
     raise SecurityError("Path traversal detected")
 ```
 
@@ -213,8 +223,10 @@ def secure_file_path(base_dir, user_filename):
     base_path = Path(base_dir).resolve()
     full_path = (base_path / normalized_filename).resolve()
     
-    # 4. Validate the final path is within intended directory
-    if not str(full_path).startswith(str(base_path)):
+    # 4. Validate the final path is within intended directory (segment-aware)
+    try:
+        full_path.relative_to(base_path)
+    except ValueError:
         raise SecurityError("Path traversal detected")
     
     # 5. Additional validation - check for dangerous patterns
@@ -245,8 +257,10 @@ import os
 base_dir = Path("/uploads")
 file_path = base_dir / filename
 
-# Validate final path
-if not str(file_path.resolve()).startswith(str(base_dir.resolve())):
+# Validate final path (segment-aware)
+try:
+    file_path.resolve().relative_to(base_dir.resolve())
+except ValueError:
     raise SecurityError("Path traversal detected")
 ```
 
@@ -258,8 +272,9 @@ const path = require('path');
 const uploadDir = path.resolve('./uploads');
 const filePath = path.join(uploadDir, filename);
 
-// Validate final path
-if (!filePath.startsWith(uploadDir)) {
+// Validate final path (segment-aware)
+const rel = path.relative(uploadDir, filePath);
+if (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel)) {
     throw new Error('Path traversal detected');
 }
 ```
@@ -270,8 +285,8 @@ if (!filePath.startsWith(uploadDir)) {
 $uploadDir = realpath('/uploads');
 $filePath = realpath('/uploads/' . $filename);
 
-// Validate final path
-if (!$filePath || strpos($filePath, $uploadDir) !== 0) {
+// Validate final path (base + separator, not a bare prefix)
+if (!$filePath || strpos($filePath, $uploadDir . DIRECTORY_SEPARATOR) !== 0) {
     throw new Exception('Path traversal detected');
 }
 ```
