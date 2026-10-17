@@ -1,5 +1,7 @@
 // Lightweight UI copy. The docs site is English-first; German is offered when
-// the page/browser locale starts with `de`. No i18n framework required.
+// the browser locale starts with `de` (the html lang attribute is only a
+// fallback -- Docusaurus renders the site's single locale there).
+// No i18n framework required.
 
 export type Locale = 'en' | 'de';
 
@@ -95,11 +97,10 @@ const de: Dict = {
 const catalogs: Record<Locale, Dict> = {en, de};
 
 export const detectLocale = (): Locale => {
-    if (typeof document !== 'undefined') {
-        const lang = (document.documentElement.lang || navigator.language || 'en').toLowerCase();
-        if (lang.startsWith('de')) return 'de';
-    }
-    return 'en';
+    const browserLang = typeof navigator !== 'undefined' ? navigator.language : '';
+    const htmlLang = typeof document !== 'undefined' ? document.documentElement.lang : '';
+    const lang = (browserLang || htmlLang || 'en').toLowerCase();
+    return lang.startsWith('de') ? 'de' : 'en';
 };
 
 export type Messages = {
