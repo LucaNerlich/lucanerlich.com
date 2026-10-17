@@ -602,24 +602,30 @@ $include "./default_clientheaders.any"
 
 ### Dispatcher caching for persisted queries
 
-Persisted queries are served via GET and can be cached by Dispatcher. Add cache rules:
+Persisted-query responses are served via GET and can be cached by Dispatcher. First enable AEM's
+persisted-query cache headers in `global.vars`:
+
+```text title="dispatcher/src/conf.d/global.vars"
+# Let AEM compute the cache headers for persisted queries
+Define CACHE_GRAPHQL_PERSISTED_QUERIES
+```
+
+Then allow only the persisted-query path in the cache rules - a broad `*.json` glob would also cache
+JSON endpoints that must not be cached:
 
 ```text title="dispatcher/src/conf.dispatcher.d/cache/rules.any"
-# Cache persisted query responses
+# Cache persisted query responses only
 /0100 {
-    /glob "*.json"
+    /glob "/graphql/execute.json/*"
     /type "allow"
 }
 ```
 
-Set a TTL for GraphQL responses in the vhost:
-
-```apache title="dispatcher/src/conf.d/available_vhosts/myproject.vhost"
-<LocationMatch "^/graphql/execute.json/.*$">
-    Header set Cache-Control "public, max-age=300" # 5 minutes
-    Header set Surrogate-Control "max-age=600"     # CDN: 10 minutes
-</LocationMatch>
-```
+:::note
+With `CACHE_GRAPHQL_PERSISTED_QUERIES` defined, AEM sets the `Cache-Control` and
+`Surrogate-Control` headers for persisted queries itself. Do not override them with manual
+`Header set` directives in the vhost.
+:::
 
 ### CORS configuration
 
