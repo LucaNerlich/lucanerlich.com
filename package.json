@@ -14,7 +14,7 @@
         "serve": "docusaurus serve",
         "write-translations": "docusaurus write-translations",
         "write-heading-ids": "docusaurus write-heading-ids",
-        "test": "node --experimental-loader ./scripts/ts-ext-resolve.mjs --experimental-strip-types --test src/pages/apps/splitter/_lib/*.test.ts"
+        "test": "node --experimental-loader ./scripts/ts-ext-resolve.mjs --experimental-strip-types --test src/pages/apps/splitter/_lib/*.test.ts sidebar-order.test.ts"
     },
     "dependencies": {
         "@docusaurus/core": "^3.10.2",
