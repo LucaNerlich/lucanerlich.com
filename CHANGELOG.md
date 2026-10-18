@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.33.0] - 2026-10-18
+
+### Added
+- New guide: [Markdown syntax](/building-for-the-web/markdown/) - CommonMark blocks, tables, and the Docusaurus-specific extensions this site uses
+- `llms.txt` is validated at build time: the build fails when a listed URL has no route
+- Sidebar ordering has regression tests, and `pnpm test` now covers the resolver
+
+### Fixed
+- Full content audit across every guide (107 fixes):
+    - AEM: Dispatcher caching semantics (query strings, `statfileslevel`, filter quoting), GraphQL endpoint URLs and persisted-query paths, RDE/Cloud Manager CLI commands, AEM Mocks API, AEM 6.5 SMTP secrets, webhook serialization, and de-duplicated Dispatcher rules
+    - Strapi: chapters 7-9 use CommonJS like the guide's own project setup, consistent 400/401/403 status codes, i18n fallback rendering, and auth guards in the hardening examples
+    - JavaScript/TypeScript: non-compiling generics, enum, and Trusted Types examples; SQL-builder caveat; sanitization and retry/backoff corrections
+    - Java: JDK 24 virtual-thread pinning (JEP 491), `Optional` claims, duplicate test methods, and the task app's delimiter guard
+    - PHP/Rust: PHP 8 semantics (`strlen`, string arithmetic, standalone types, 8.4 `new` without parentheses), glob recursion, and error handling; Rust Docker bind address, sample output, Cargo version ranges, and an unused dependency
+    - CSS/web: native nesting rules, discrete transitions, container-query edge cases, custom-checkbox accessibility, and LCP image guidance
+    - Docker/Git/Linux: lowercase GHCR refs, the distroless debug command, deploy-script rollback, squash-merge branch deletion, and the pipefail example
+    - Tooling: mise write targets, SSH terminfo, SQL `TRUNCATE`, Jest snapshot format, malformed links; the README now uses pnpm
+- Guide refreshes: the local coding assistant guide is rewritten for current hardware; the JavaScript Intl-formatting and input-sanitization guides, the Mermaid diagrams guide, and the Touch UI component-dialogs reference are corrected
+- Splitter app: the remove-person dialog warns about the full cascade, sole-participant expenses count as deleted, share-link decoding is capped against decompression bombs, and blocked-storage browsers no longer crash the page
+- CI: the workflow no longer conflicts with the pinned pnpm version and now runs the test suite
+
+### Changed
+- The blog plugin is disabled; `blog/` content is kept for a future re-enable
+- `.cursor` rules: the 37 performance rules load again as `.mdc` with Cursor frontmatter, broken examples are fixed, and React guidance uses `useEffectEvent`
+- Dispatcher chapter 18 keeps the concepts and links to the reference instead of restating the rules
+
 ## [1.32.1] - 2026-10-08
 
 ### Fixed
