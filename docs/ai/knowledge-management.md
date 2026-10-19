@@ -89,7 +89,7 @@ new mechanism that can help with that missing piece.
 
 A proposed standard: publish a Markdown file at `/llms.txt` that gives an LLM-friendly overview and index of
 a website, with an optional section whose links can be skipped when a shorter context is needed. It differs
-from `robots.txt` (crawler exclusion, advisory only) and `sitemap.xml` (exhaustive, often too large for a context window) by
+from `robots.txt` (crawler exclusion, advisory only - see [AI Search & llms.txt](./ai-search-and-llms-txt.md)) and `sitemap.xml` (exhaustive, often too large for a context window) by
 being a *curated, LLM-readable* overview for inference-time consumption. Maintenance moves to the publisher,
 who curates once.
 
