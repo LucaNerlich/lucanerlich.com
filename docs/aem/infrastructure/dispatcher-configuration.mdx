@@ -262,19 +262,19 @@ Filter rules are evaluated **top-to-bottom**, but the **last matching rule wins*
 /0001 { /type "deny"  /url "*" }
 
 # Allow content pages
-/0002 { /type "allow" /url "/content/*" }
+/0002 { /type "allow" /url "/content/*" /method '(GET|HEAD)' }
 
 # Allow client libraries
-/0003 { /type "allow" /url "/etc.clientlibs/*" }
+/0003 { /type "allow" /url "/etc.clientlibs/*" /method '(GET|HEAD)' }
 
 # Allow static media
-/0004 { /type "allow" /url "/content/dam/*" }
+/0004 { /type "allow" /url "/content/dam/*" /method '(GET|HEAD)' }
 
 # Allow GraphQL persisted queries
-/0005 { /type "allow" /url "/graphql/execute.json/*" }
+/0005 { /type "allow" /url "/graphql/execute.json/*" /method '(GET|HEAD)' }
 
 # Allow Experience Fragments
-/0006 { /type "allow" /url "/content/experience-fragments/*" }
+/0006 { /type "allow" /url "/content/experience-fragments/*" /method '(GET|HEAD)' }
 
 # Deny access to admin and system paths
 /0100 { /type "deny"  /url "/admin/*" }
@@ -284,6 +284,9 @@ Filter rules are evaluated **top-to-bottom**, but the **last matching rule wins*
 /0104 { /type "deny"  /url "/crx/*" }
 /0105 { /type "deny"  /url "/libs/*" }
 /0106 { /type "deny"  /url "/etc/*" }
+
+# Allow the CSRF token endpoint public forms need (after the /libs deny)
+/0107 { /type "allow" /url "/libs/granite/csrf/token.json" /method '(GET|HEAD)' }
 
 # Deny query strings that reveal selectors or suffixes
 /0200 { /type "deny"  /method "GET" /query "debug=*" }
@@ -333,6 +336,8 @@ Cache rules determine which response types are stored on disk and served for sub
 /0010 { /glob "*.ico"  /type "allow" }
 /0011 { /glob "*.woff2" /type "allow" }
 /0012 { /glob "*.webp" /type "allow" }
+# The CSRF token is per-session and must never be cached
+/0013 { /glob "/libs/granite/csrf/token.json" /type "deny" }
 ```
 
 ### Auto-Invalidation Rules
@@ -1352,7 +1357,7 @@ Forgetting to allow `/etc.clientlibs/*` causes all JavaScript and CSS to fail on
 
 ```apacheconf
 # Always include this
-/0003 { /type "allow" /url "/etc.clientlibs/*" }
+/0003 { /type "allow" /url "/etc.clientlibs/*" /method '(GET|HEAD)' }
 ```
 
 ### 4. Forgetting to Invalidate
