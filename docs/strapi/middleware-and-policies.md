@@ -195,7 +195,8 @@ module.exports = (config, { strapi }) => {
       return next();
     }
 
-    const key = ctx.url;
+    // Auth changes the response body, so it must be part of the key.
+    const key = `${ctx.url}|${ctx.get('Authorization') || 'anonymous'}`;
     const cached = cache.get(key);
 
     if (cached && Date.now() - cached.timestamp < ttl) {

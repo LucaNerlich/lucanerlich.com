@@ -102,6 +102,7 @@ npm install ioredis
 
 ```js
 // src/api/article/middlewares/redis-cache.js
+const crypto = require('node:crypto');
 const Redis = require('ioredis');
 
 let redis;
@@ -136,7 +137,13 @@ module.exports = (config, { strapi }) => {
       return;
     }
 
-    const key = `${prefix}${ctx.url}`;
+    // Auth changes the populated fields and permissions, so key on a hash of
+    // it. Keep the URL next to the prefix so deleteByPattern still matches.
+    const auth = crypto
+      .createHash('sha256')
+      .update(ctx.get('Authorization') || 'anonymous')
+      .digest('hex');
+    const key = `${prefix}${ctx.url}|${auth}`;
 
     try {
       const cached = await redis.get(key);
