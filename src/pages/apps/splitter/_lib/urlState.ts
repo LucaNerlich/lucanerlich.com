@@ -109,7 +109,7 @@ const splitToWireV3 = (split: Split, indexOf: Map<string, number>): WireSplitV3 
     return ['ex', entries(split.amounts)];
 };
 
-const splitFromWireV3 = (wire: WireSplitV3, people: Person[]): Split => {
+const splitFromWireV3 = (wire: WireSplitV3, indexToId: Map<number, string>): Split => {
     if (wire === 'eq' || wire == null) return equalSplit();
     if (!Array.isArray(wire)) return equalSplit();
     const [kind, entries] = wire;
@@ -117,8 +117,8 @@ const splitFromWireV3 = (wire: WireSplitV3, people: Person[]): Split => {
     const toRecord = (): Record<string, number> => {
         const record: Record<string, number> = {};
         for (const [idx, value] of entries) {
-            const person = people[Number(idx)];
-            if (person) record[person.id] = Number(value);
+            const personId = indexToId.get(Number(idx));
+            if (personId) record[personId] = Number(value);
         }
         return record;
     };
@@ -254,7 +254,7 @@ const fromWireV3 = (w: WireV3): AppState => {
                 // resolves empty is malformed, so drop the expense.
                 if (participants.length === 0) return null;
             }
-            const split = splitFromWireV3(splitRaw, people);
+            const split = splitFromWireV3(splitRaw, indexToId);
             return {
                 id: String(id),
                 description: String(description),

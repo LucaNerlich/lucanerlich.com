@@ -264,20 +264,31 @@ describe('url codec', () => {
                 {id: 'a', name: 'A duplicate'},
                 {id: 'b', name: 'B'},
             ],
-            expenses: [{
-                id: 'e',
-                description: 'Lunch',
-                cents: 1000,
-                paidBy: 'a',
-                participants: ['a', 'b'],
-                split: equalSplit(),
-            }],
+            expenses: [
+                {
+                    id: 'e',
+                    description: 'Lunch',
+                    cents: 1000,
+                    paidBy: 'a',
+                    participants: ['a', 'b'],
+                    split: equalSplit(),
+                },
+                {
+                    id: 'e2',
+                    description: 'Fuel',
+                    cents: 2000,
+                    paidBy: 'a',
+                    participants: ['a', 'b'],
+                    split: {mode: 'shares', weights: {a: 1, b: 9}},
+                },
+            ],
         };
         const decoded = await decodeState(await encodeState(state));
         assert.ok(decoded);
         assert.equal(decoded.people.length, 2);
         assert.equal(decoded.expenses[0].paidBy, 'a');
         assert.deepEqual([...decoded.expenses[0].participants].sort(), ['a', 'b']);
+        assert.deepEqual(decoded.expenses[1].split, {mode: 'shares', weights: {a: 1, b: 9}});
     });
 
     it('drops a legacy expense whose participant list resolves empty', async () => {
