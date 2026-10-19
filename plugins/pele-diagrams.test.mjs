@@ -134,7 +134,8 @@ test('an invalid diagram fails the build with file and line', async () => {
 });
 
 test('every mermaid fence in the repository renders', () => {
-    const files = ['docs', 'blog', 'src/pages'].flatMap((dir) => markdownFiles(path.join(ROOT, dir)));
+    // The blog is disabled in docusaurus.config.ts, so its fences are not built.
+    const files = ['docs', 'src/pages'].flatMap((dir) => markdownFiles(path.join(ROOT, dir)));
     const fences = files.flatMap((file) => {
         const relative = path.relative(ROOT, file);
         return extractFences(fs.readFileSync(file, 'utf8')).map((fence) => ({...fence, file: relative}));
@@ -144,7 +145,9 @@ test('every mermaid fence in the repository renders', () => {
     const failures = [];
     for (const fence of fences) {
         try {
-            render(fence.source);
+            // Run the fence through the plugin, not render() alone, so the
+            // wiring and the file:line error path are exercised too.
+            peleDiagrams()(fenceTree(fence.source, fence.line), {path: fence.file});
         } catch (error) {
             failures.push(`${fence.file}:${fence.line}${fence.quoted ? ' (copy-paste source)' : ''}: ${error.message}`);
         }
