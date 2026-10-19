@@ -619,7 +619,8 @@ runs on **exactly one node**:
 
 - Sling Jobs work on AEMaaCS, but the **underlying storage differs** from on-prem
 - Jobs are still persisted and survive restarts
-- The Felix console (`/system/console/slingevent`) is available on author via Developer Console
+- The Felix console (`/system/console/slingevent`) is not exposed on Cloud Service; use Developer Console
+  logs (or the local SDK) to monitor jobs
 - **Scheduler frequency limits**: avoid scheduling tasks more frequently than every 5 minutes
   on AEMaaCS; the infrastructure may throttle or de-duplicate
 - For heavy background work, consider **Adobe I/O App Builder** actions triggered by I/O Events
