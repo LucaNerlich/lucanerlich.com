@@ -117,7 +117,7 @@ const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
                                         type="checkbox"
                                         checked={paid}
                                         onChange={() => onTogglePaid(key)}
-                                        aria-label={t('markPaid')}
+                                        aria-label={`${t('markPaid')}: ${nameOf(tr.from)} → ${nameOf(tr.to)}`}
                                     />
                                     <span className={styles.paidLabel}>{t('markPaid')}</span>
                                 </label>
