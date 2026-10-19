@@ -353,6 +353,8 @@ jobs:
           username: deploy
           key: ${{ secrets.PROD_SSH_KEY }}
           script: |
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
+              -u ${{ github.actor }} --password-stdin
             docker pull ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
             docker stop my-app || true
             docker rm my-app || true
