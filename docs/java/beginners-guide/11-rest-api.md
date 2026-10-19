@@ -194,6 +194,10 @@ public class JsonHelper {
                     case 'b' -> sb.append('\b');
                     case 'f' -> sb.append('\f');
                     case 'u' -> {
+                        if (i + 4 >= s.length()) {
+                            throw new IllegalArgumentException(
+                                    "Invalid JSON: incomplete unicode escape");
+                        }
                         sb.append((char) Integer.parseInt(s.substring(i + 1, i + 5), 16));
                         i += 4;
                     }
