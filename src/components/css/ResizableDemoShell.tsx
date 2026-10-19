@@ -53,6 +53,9 @@ export default function ResizableDemoShell({
     const sliderId = useId();
     const panelRef = useRef<HTMLDivElement>(null);
     const [width, setWidth] = useState(effectiveInitialWidth);
+    // Width the two-column grid actually offers; the slider must not claim
+    // more than the panel can occupy.
+    const [slotMax, setSlotMax] = useState(effectiveMaxWidth);
 
     const applyObservedWidth = (rawWidth: number) => {
         if (!Number.isFinite(rawWidth)) {
@@ -72,30 +75,30 @@ export default function ResizableDemoShell({
 
     useEffect(() => {
         const panel = panelRef.current;
-        if (lockedPanel || !panel || typeof ResizeObserver === 'undefined') {
+        if (!panel || typeof ResizeObserver === 'undefined') {
             return undefined;
         }
+        const column = panel.parentElement ?? panel;
 
-        const observer = new ResizeObserver((entries) => {
-            const entry = entries[0];
-            if (!entry) {
+        const updateSlot = () => {
+            const available = Math.floor(column.getBoundingClientRect().width);
+            if (!Number.isFinite(available) || available <= 0) {
                 return;
             }
-            const observed = entry.borderBoxSize?.[0]?.inlineSize
-                ?? entry.contentRect.width;
-            if (!Number.isFinite(observed)) {
-                return;
-            }
-            const next = clamp(Math.round(observed), effectiveMinWidth, effectiveMaxWidth);
-            setWidth((current) => (current === next ? current : next));
-        });
+            const next = clamp(available, effectiveMinWidth, effectiveMaxWidth);
+            setSlotMax((current) => (current === next ? current : next));
+        };
 
-        observer.observe(panel);
+        updateSlot();
+        const observer = new ResizeObserver(updateSlot);
+        observer.observe(column);
         return () => observer.disconnect();
-    }, [effectiveMinWidth, effectiveMaxWidth, lockedPanel]);
+    }, [effectiveMinWidth, effectiveMaxWidth]);
+
+    const visibleWidth = Math.min(width, slotMax);
 
     const panelStyle = {
-        width: `${width}px`,
+        width: `${visibleWidth}px`,
         '--demo-min-width': `${effectiveMinWidth}px`,
     } as CSSProperties;
 
@@ -105,6 +108,7 @@ export default function ResizableDemoShell({
 
     const renderPanel: RenderPanel = (content, className) => (
         <div
+            ref={panelRef}
             className={className ? `${panelClassName} ${className}` : panelClassName}
             style={panelStyle}
         >
@@ -125,11 +129,11 @@ export default function ResizableDemoShell({
                             className={styles.slider}
                             type="range"
                             min={effectiveMinWidth}
-                            max={effectiveMaxWidth}
+                            max={slotMax}
                             step={1}
-                            value={width}
+                            value={visibleWidth}
                             onChange={(event) => {
-                                const next = Number(event.target.value);
+                                const next = Math.min(Number(event.target.value), slotMax);
                                 setWidth(next);
                                 // Native resize mutates the inline width; write it back so the
                                 // slider always reclaims control even before React commits.
@@ -139,7 +143,7 @@ export default function ResizableDemoShell({
                             }}
                         />
                     </label>
-                    <span className={styles.widthBadge}>{width}px</span>
+                    <span className={styles.widthBadge}>{visibleWidth}px</span>
                 </div>
             </div>
             <div className={styles.body}>
