@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react';
-import {useId, useState} from 'react';
+import {useEffect, useId, useState} from 'react';
 
 import DemoShell, {demoShellStyles as shell} from '../DemoShell';
 import styles from './AsyncTimelineDemo.module.css';
@@ -31,6 +31,14 @@ export default function AsyncTimelineDemo(): ReactNode {
     const [bars, setBars] = useState<Bar[]>([]);
     const [elapsed, setElapsed] = useState<number | null>(null);
     const [running, setRunning] = useState(false);
+
+    // After a run the chart and elapsed time are frozen. Changing the
+    // scenario must drop that stale result, otherwise the demo shows
+    // sequential bars under a Promise.all selection.
+    useEffect(() => {
+        setBars([]);
+        setElapsed(null);
+    }, [mode, delayA, delayB, delayC]);
 
     const run = async () => {
         if (running) {
@@ -94,6 +102,7 @@ export default function AsyncTimelineDemo(): ReactNode {
                             id={ids.mode}
                             className={shell.select}
                             value={mode}
+                            disabled={running}
                             onChange={(event) => setMode(event.target.value as Mode)}
                         >
                             <option value="sequential">sequential await</option>
@@ -104,21 +113,21 @@ export default function AsyncTimelineDemo(): ReactNode {
                     <label className={shell.control} htmlFor={ids.a}>
                         <span className={shell.controlLabel}>task A delay</span>
                         <div className={shell.controlRow}>
-                            <input id={ids.a} className={shell.range} type="range" min={100} max={1500} step={100} value={delayA} onChange={(e) => setDelayA(Number(e.target.value))} />
+                            <input id={ids.a} className={shell.range} type="range" min={100} max={1500} step={100} value={delayA} disabled={running} onChange={(e) => setDelayA(Number(e.target.value))} />
                             <span className={shell.value}>{delayA}ms</span>
                         </div>
                     </label>
                     <label className={shell.control} htmlFor={ids.b}>
                         <span className={shell.controlLabel}>task B delay</span>
                         <div className={shell.controlRow}>
-                            <input id={ids.b} className={shell.range} type="range" min={100} max={1500} step={100} value={delayB} onChange={(e) => setDelayB(Number(e.target.value))} />
+                            <input id={ids.b} className={shell.range} type="range" min={100} max={1500} step={100} value={delayB} disabled={running} onChange={(e) => setDelayB(Number(e.target.value))} />
                             <span className={shell.value}>{delayB}ms</span>
                         </div>
                     </label>
                     <label className={shell.control} htmlFor={ids.c}>
                         <span className={shell.controlLabel}>task C delay</span>
                         <div className={shell.controlRow}>
-                            <input id={ids.c} className={shell.range} type="range" min={100} max={1500} step={100} value={delayC} onChange={(e) => setDelayC(Number(e.target.value))} />
+                            <input id={ids.c} className={shell.range} type="range" min={100} max={1500} step={100} value={delayC} disabled={running} onChange={(e) => setDelayC(Number(e.target.value))} />
                             <span className={shell.value}>{delayC}ms</span>
                         </div>
                     </label>
