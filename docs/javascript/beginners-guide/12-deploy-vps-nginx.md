@@ -508,11 +508,14 @@ sudo nano /etc/systemd/system/ssh.socket.d/10-port.conf
 ```ini
 [Socket]
 ListenStream=
-ListenStream=2222
+ListenStream=0.0.0.0:2222
+ListenStream=[::]:2222
 ```
 
-The empty `ListenStream=` clears the inherited port 22 before the new one is set. A `Port` line in `sshd_config`
-is ignored while sshd is socket-activated.
+The empty `ListenStream=` clears the inherited port 22 before the new listeners are set; binding both families
+keeps the IPv4 test below working. A `Port` line in `sshd_config` also works on Ubuntu 24.04 -
+`sshd-socket-generator` turns it into socket listeners on `daemon-reload` - but the drop-in makes the port
+explicit.
 
 If you created the Fail2Ban jail above, update its SSH port too:
 
@@ -525,9 +528,10 @@ Test the SSH configuration, allow the new port, and apply the change:
 
 ```bash
 sudo ufw allow 2222/tcp
-sudo sshd -t
+sudo systemd-analyze verify ssh.socket
 sudo systemctl daemon-reload
 sudo systemctl restart ssh.socket
+ss -tlnp | grep 2222
 ```
 
 Open a new terminal and test the new port before closing your existing SSH session:
@@ -541,6 +545,13 @@ After the new connection works, remove the old firewall rule and reload Fail2Ban
 ```bash
 sudo ufw delete allow OpenSSH
 sudo fail2ban-client reload
+```
+
+To reuse the new port for `rsync` and `scp`, add it to `~/.ssh/config`:
+
+```text
+Host YOUR_SERVER_IP
+    Port 2222
 ```
 
 ## Deploying updates
