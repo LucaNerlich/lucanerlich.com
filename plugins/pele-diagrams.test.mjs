@@ -15,7 +15,7 @@ const TITLED_FENCE =
  * ````markdown block, and honours the fence length so nesting is not mistaken
  * for a diagram.
  */
-function extractFences(text, quoted = false, out = []) {
+function extractFences(text, quoted = false, out = [], lineOffset = 0) {
     const lines = text.split('\n');
     let index = 0;
     while (index < lines.length) {
@@ -43,14 +43,31 @@ function extractFences(text, quoted = false, out = []) {
             continue;
         }
         if (lang === 'mermaid') {
-            out.push({quoted, line: index + 1, source: body.join('\n')});
+            out.push({quoted, line: lineOffset + index + 1, source: body.join('\n')});
         } else if (['markdown', 'md', ''].includes(lang)) {
-            extractFences(body.join('\n'), true, out);
+            extractFences(body.join('\n'), true, out, lineOffset + index + 1);
         }
         index = end + 1;
     }
     return out;
 }
+
+test('reports nested fence lines relative to the file', () => {
+    const markdown = [
+        '# Title',
+        '',
+        '````markdown',
+        '```mermaid',
+        'flowchart LR',
+        '    A -->',
+        '```',
+        '````',
+    ].join('\n');
+
+    const [fence] = extractFences(markdown);
+    assert.equal(fence.line, 4);
+    assert.equal(fence.quoted, true);
+});
 
 function markdownFiles(dir) {
     return fs.readdirSync(dir, {withFileTypes: true}).flatMap((entry) => {
