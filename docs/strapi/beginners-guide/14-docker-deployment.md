@@ -420,7 +420,6 @@ on:
 env:
   NODE_VERSION: '22'
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   lint-and-test:
@@ -507,6 +506,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Normalize image name
+        run: echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -557,7 +559,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   deploy-staging:
@@ -711,6 +712,7 @@ COPY --from=builder /app/dist ./dist
 Add security scanning to your CI pipeline:
 
 ```yaml
+# IMAGE_NAME must be the lowercase value written by the Normalize image name step.
 - name: Run Trivy vulnerability scanner
   uses: aquasecurity/trivy-action@master
   with:
