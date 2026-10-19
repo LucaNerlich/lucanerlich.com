@@ -569,9 +569,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Normalize image name
-        run: echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
-
       - name: Deploy to staging server
         uses: appleboy/ssh-action@v1.0.0
         with:
