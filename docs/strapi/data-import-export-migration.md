@@ -227,48 +227,90 @@ module.exports = ({ strapi }) => ({
 const fs = require('fs');
 const path = require('path');
 
-function parseCSV(content, delimiter = ',') {
-  const lines = content.split('\n').filter(line => line.trim());
-  const headers = lines[0].split(delimiter).map(h => h.trim().replace(/^"|"$/g, ''));
+module.exports = ({ strapi }) => ({
 
-  return lines.slice(1).map(line => {
-    // Handle quoted fields with commas inside
-    const values = [];
-    let current = '';
-    let inQuotes = false;
+  async importFromJSON(filePath, uid, options = {}) {
+    const {
+      batchSize = 50,
+      onProgress,
+      dryRun = false,
+      locale = 'en',
+      items: preloadedItems,
+    } = options;
 
-    for (const char of line) {
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === delimiter && !inQuotes) {
-        values.push(current.trim());
-        current = '';
-      } else {
-        current += char;
+    // Accept either a filePath or a preloaded items array
+    const items = preloadedItems ?? JSON.parse(
+      fs.readFileSync(path.resolve(filePath), 'utf-8')
+    );
+
+    const results = { created: 0, errors: 0, skipped: 0 };
+
+    for (let i = 0; i < items.length; i += batchSize) {
+      const batch = items.slice(i, i + batchSize);
+
+      for (const item of batch) {
+        try {
+          // Check for duplicates (by slug or unique field)
+          if (item.slug) {
+            const existing = await strapi.documents(uid).findMany({
+              filters: { slug: { $eq: item.slug } },
+              locale,
+              limit: 1,
+            });
+
+            if (existing.length > 0) {
+              results.skipped++;
+              continue;
+            }
+          }
+
+          if (!dryRun) {
+            await strapi.documents(uid).create({
+              data: item,
+              locale,
+            });
+          }
+
+          results.created++;
+        } catch (error) {
+          results.errors++;
+          strapi.log.error(`[import] Failed to import item: ${error.message}`, {
+            item: item.title || item.name || JSON.stringify(item).substring(0, 100),
+          });
+        }
+      }
+
+      if (onProgress) {
+        onProgress({
+          processed: Math.min(i + batchSize, items.length),
+          total: items.length,
+          ...results,
+        });
       }
     }
-    values.push(current.trim());
 
-    const obj = {};
-    headers.forEach((header, i) => {
-      let value = values[i] || '';
-      // Auto-convert types
-      if (value === 'true') value = true;
-      else if (value === 'false') value = false;
-      else if (/^\d+$/.test(value)) value = parseInt(value, 10);
-      else if (/^\d+\.\d+$/.test(value)) value = parseFloat(value);
+    return results;
+  },
+});
+```
 
-      obj[header] = value;
-    });
+### CSV import service
 
-    return obj;
-  });
-}
+```js
+// src/api/import/services/csv-import.js
+const fs = require('fs');
+const path = require('path');
+const { parse } = require('csv-parse/sync');
 
 module.exports = ({ strapi }) => ({
   async importCSV(filePath, uid, options = {}) {
     const content = fs.readFileSync(path.resolve(filePath), 'utf-8');
-    const items = parseCSV(content, options.delimiter || ',');
+    const items = parse(content, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+      delimiter: options.delimiter || ',',
+    });
 
     strapi.log.info(`[csv-import] Parsed ${items.length} rows from ${filePath}`);
 
