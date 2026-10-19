@@ -81,8 +81,16 @@ export default function IntlFormatDemo(): ReactNode {
                             className={shell.input}
                             type="number"
                             step="0.01"
-                            value={amount}
-                            onChange={(event) => setAmount(Number(event.target.value))}
+                            defaultValue={1234.56}
+                            onChange={(event) => {
+                                // Keep the field uncontrolled so React does not
+                                // restore a committed value mid-keystroke. The
+                                // browser reports an in-progress decimal or
+                                // minus as badInput; only update on valid text.
+                                if (!event.target.validity.badInput) {
+                                    setAmount(event.target.value === '' ? 0 : Number(event.target.value));
+                                }
+                            }}
                         />
                     </label>
                     <label className={shell.control} htmlFor={ids.date}>
