@@ -532,6 +532,9 @@ UPDATE users SET active = TRUE WHERE age < 60;
 ### `DELETE`
 
 ```sql
+-- posts reference users with the default RESTRICT, so clear them first
+DELETE FROM posts;
+
 -- Delete specific rows
 DELETE FROM users WHERE name = 'Alan Turing';
 
@@ -556,8 +559,8 @@ TRUNCATE TABLE users;
   sequences unless the statement includes `RESTART IDENTITY` (`TRUNCATE TABLE users RESTART IDENTITY;`).
 - `TRUNCATE` does not fire row-level `DELETE` triggers.
 
-The `DELETE FROM users;` and `TRUNCATE` examples empty the users table. Restore the five users before
-continuing; the posts survive because the examples never delete them:
+The `DELETE FROM users;` and `TRUNCATE` examples empty the table. Restore the five users and their
+posts before continuing, so the result tables in later sections match:
 
 ```sql
 INSERT INTO users (id, name, email, age, active) VALUES
@@ -566,6 +569,13 @@ INSERT INTO users (id, name, email, age, active) VALUES
     (3, 'Alan Turing', 'alan@example.com', 41, TRUE),
     (4, 'Linus Torvalds', 'linus@example.com', 54, TRUE),
     (5, 'Margaret Hamilton', 'margaret@example.com', 88, TRUE);
+
+INSERT INTO posts (user_id, title, body, published, created_at) VALUES
+    (1, 'Introduction to SQL', 'SQL is the language of databases...', TRUE, '2025-01-10 08:00:00'),
+    (1, 'Advanced Joins', 'Understanding join types...', TRUE, '2025-01-15 10:30:00'),
+    (2, 'COBOL to SQL', 'Migrating legacy systems...', TRUE, '2025-01-12 14:00:00'),
+    (3, 'Turing Machines', 'A theoretical framework...', FALSE, '2025-01-11 09:00:00'),
+    (4, 'Linux Kernel Design', 'How the kernel handles...', TRUE, '2025-01-14 16:00:00');
 ```
 
 ## Aggregate functions
@@ -1642,27 +1652,6 @@ SELECT title FROM posts
 WHERE to_tsvector('english', title || ' ' || body) @@ to_tsquery('english', 'SQL & joins');
 ```
 
-### Upsert (INSERT or UPDATE)
-
-```sql
--- PostgreSQL
-INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
-ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
-
--- MySQL
-INSERT INTO users (email, name)
-VALUES ('ada@example.com', 'Ada L.') AS incoming
-ON DUPLICATE KEY UPDATE name = incoming.name;
-
--- SQLite (3.24+, true upsert using ON CONFLICT)
-INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
-ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
-
--- SQLite (older versions - caution: deletes then re-inserts the row)
--- This resets the rowid, fires DELETE triggers, and cascades foreign keys
-INSERT OR REPLACE INTO users (email, name) VALUES ('ada@example.com', 'Ada L.');
-```
-
 ## NULL handling functions
 
 `NULL` represents missing or unknown data. It is not the same as zero or an empty string. Two functions make working
@@ -1963,6 +1952,27 @@ LIMIT count OFFSET skip;
 | `RIGHT JOIN`      | All right rows + matching left rows (NULL if no match) |
 | `FULL OUTER JOIN` | All rows from both tables (NULL where no match)        |
 | `CROSS JOIN`      | Every combination of rows                              |
+
+### Upsert (INSERT or UPDATE)
+
+```sql
+-- PostgreSQL
+INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
+ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
+
+-- MySQL
+INSERT INTO users (email, name)
+VALUES ('ada@example.com', 'Ada L.') AS incoming
+ON DUPLICATE KEY UPDATE name = incoming.name;
+
+-- SQLite (3.24+, true upsert using ON CONFLICT)
+INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
+ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
+
+-- SQLite (older versions - caution: deletes then re-inserts the row)
+-- This resets the rowid, fires DELETE triggers, and cascades foreign keys
+INSERT OR REPLACE INTO users (email, name) VALUES ('ada@example.com', 'Ada L.');
+```
 
 ## Summary
 
