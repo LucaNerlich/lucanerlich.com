@@ -30,4 +30,83 @@ export default function DemoShell({
     );
 }
 
+type RangeControlProps = {
+    id: string;
+    label: string;
+    min: number;
+    max: number;
+    step?: number;
+    value: number;
+    unit?: string;
+    disabled?: boolean;
+    onChange: (value: number) => void;
+};
+
+export function RangeControl({
+    id,
+    label,
+    min,
+    max,
+    step = 1,
+    value,
+    unit = '',
+    disabled,
+    onChange,
+}: RangeControlProps): ReactNode {
+    return (
+        <label className={styles.control} htmlFor={id}>
+            <span className={styles.controlLabel}>{label}</span>
+            <div className={styles.controlRow}>
+                <input
+                    id={id}
+                    className={styles.range}
+                    type="range"
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={value}
+                    disabled={disabled}
+                    onChange={(event) => onChange(Number(event.target.value))}
+                />
+                <span className={styles.value}>{value}{unit}</span>
+            </div>
+        </label>
+    );
+}
+
+type SelectControlProps = {
+    id: string;
+    label: string;
+    value: string;
+    options: Array<{value: string; label: string}>;
+    disabled?: boolean;
+    onChange: (value: string) => void;
+};
+
+export function SelectControl({
+    id,
+    label,
+    value,
+    options,
+    disabled,
+    onChange,
+}: SelectControlProps): ReactNode {
+    return (
+        <label className={styles.control} htmlFor={id}>
+            <span className={styles.controlLabel}>{label}</span>
+            <select
+                id={id}
+                className={styles.select}
+                value={value}
+                disabled={disabled}
+                onChange={(event) => onChange(event.target.value)}
+            >
+                {options.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+            </select>
+        </label>
+    );
+}
+
 export {styles as demoShellStyles};

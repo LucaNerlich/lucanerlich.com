@@ -1,7 +1,7 @@
 import type {CSSProperties, ReactNode} from 'react';
 import {useId, useState} from 'react';
 
-import DemoShell, {demoShellStyles as shell} from '../DemoShell';
+import DemoShell, {RangeControl, SelectControl} from '../DemoShell';
 import styles from './GridDemo.module.css';
 
 const TEMPLATES = [
@@ -34,49 +34,31 @@ export default function GridDemo(): ReactNode {
             footer="With auto-fit and minmax, columns drop as the container gets narrower -- no media query required."
             controls={
                 <>
-                    <label className={shell.control} htmlFor={ids.template}>
-                        <span className={shell.controlLabel}>grid-template-columns</span>
-                        <select
+                    <SelectControl
                             id={ids.template}
-                            className={shell.select}
+                            label="grid-template-columns"
                             value={template}
-                            onChange={(event) => setTemplate(event.target.value as typeof template)}
-                        >
-                            {TEMPLATES.map((value) => (
-                                <option key={value} value={value}>{value}</option>
-                            ))}
-                        </select>
-                    </label>
-                    <label className={shell.control} htmlFor={ids.gap}>
-                        <span className={shell.controlLabel}>gap</span>
-                        <div className={shell.controlRow}>
-                            <input
-                                id={ids.gap}
-                                className={shell.range}
-                                type="range"
-                                min={0}
-                                max={32}
-                                value={gap}
-                                onChange={(event) => setGap(Number(event.target.value))}
-                            />
-                            <span className={shell.value}>{gap}px</span>
-                        </div>
-                    </label>
-                    <label className={shell.control} htmlFor={ids.width}>
-                        <span className={shell.controlLabel}>container width</span>
-                        <div className={shell.controlRow}>
-                            <input
-                                id={ids.width}
-                                className={shell.range}
-                                type="range"
-                                min={40}
-                                max={100}
-                                value={width}
-                                onChange={(event) => setWidth(Number(event.target.value))}
-                            />
-                            <span className={shell.value}>{width}%</span>
-                        </div>
-                    </label>
+                            options={TEMPLATES.map((option) => ({value: option, label: option}))}
+                            onChange={(next) => setTemplate(next as typeof template)}
+                        />
+                    <RangeControl
+                            id={ids.gap}
+                            label="gap"
+                            min={0}
+                            max={32}
+                            value={gap}
+                            unit="px"
+                            onChange={setGap}
+                        />
+                    <RangeControl
+                            id={ids.width}
+                            label="container width"
+                            min={40}
+                            max={100}
+                            value={width}
+                            unit="%"
+                            onChange={setWidth}
+                        />
                 </>
             }
         >

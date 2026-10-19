@@ -1,7 +1,7 @@
 import type {CSSProperties, ReactNode} from 'react';
 import {useId, useState} from 'react';
 
-import DemoShell, {demoShellStyles as shell} from '../DemoShell';
+import DemoShell, {demoShellStyles as shell, RangeControl, SelectControl} from '../DemoShell';
 import styles from './TransitionDemo.module.css';
 
 const EASINGS = ['ease', 'linear', 'ease-in', 'ease-out', 'ease-in-out'] as const;
@@ -27,35 +27,23 @@ export default function TransitionDemo(): ReactNode {
             footer="transition: transform, box-shadow, and background-color use the same duration and easing."
             controls={
                 <>
-                    <label className={shell.control} htmlFor={ids.duration}>
-                        <span className={shell.controlLabel}>duration</span>
-                        <div className={shell.controlRow}>
-                            <input
-                                id={ids.duration}
-                                className={shell.range}
-                                type="range"
-                                min={50}
-                                max={1200}
-                                step={50}
-                                value={duration}
-                                onChange={(event) => setDuration(Number(event.target.value))}
-                            />
-                            <span className={shell.value}>{duration}ms</span>
-                        </div>
-                    </label>
-                    <label className={shell.control} htmlFor={ids.easing}>
-                        <span className={shell.controlLabel}>easing</span>
-                        <select
+                    <RangeControl
+                            id={ids.duration}
+                            label="duration"
+                            min={50}
+                            max={1200}
+                            step={50}
+                            value={duration}
+                            unit="ms"
+                            onChange={setDuration}
+                        />
+                    <SelectControl
                             id={ids.easing}
-                            className={shell.select}
+                            label="easing"
                             value={easing}
-                            onChange={(event) => setEasing(event.target.value as typeof easing)}
-                        >
-                            {EASINGS.map((value) => (
-                                <option key={value} value={value}>{value}</option>
-                            ))}
-                        </select>
-                    </label>
+                            options={EASINGS.map((option) => ({value: option, label: option}))}
+                            onChange={(next) => setEasing(next as typeof easing)}
+                        />
                     <div className={shell.buttonRow}>
                         <button
                             type="button"

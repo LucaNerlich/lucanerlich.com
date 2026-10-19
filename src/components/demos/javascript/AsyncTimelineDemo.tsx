@@ -1,7 +1,7 @@
 import type {ReactNode} from 'react';
 import {useEffect, useId, useState} from 'react';
 
-import DemoShell, {demoShellStyles as shell} from '../DemoShell';
+import DemoShell, {demoShellStyles as shell, RangeControl, SelectControl} from '../DemoShell';
 import styles from './AsyncTimelineDemo.module.css';
 
 type Mode = 'sequential' | 'all' | 'race';
@@ -96,41 +96,51 @@ export default function AsyncTimelineDemo(): ReactNode {
             footer={elapsed === null ? 'Press Run to compare wall-clock time.' : `Finished in about ${elapsed} ms`}
             controls={
                 <>
-                    <label className={shell.control} htmlFor={ids.mode}>
-                        <span className={shell.controlLabel}>mode</span>
-                        <select
-                            id={ids.mode}
-                            className={shell.select}
-                            value={mode}
-                            disabled={running}
-                            onChange={(event) => setMode(event.target.value as Mode)}
-                        >
-                            <option value="sequential">sequential await</option>
-                            <option value="all">Promise.all</option>
-                            <option value="race">Promise.race</option>
-                        </select>
-                    </label>
-                    <label className={shell.control} htmlFor={ids.a}>
-                        <span className={shell.controlLabel}>task A delay</span>
-                        <div className={shell.controlRow}>
-                            <input id={ids.a} className={shell.range} type="range" min={100} max={1500} step={100} value={delayA} disabled={running} onChange={(e) => setDelayA(Number(e.target.value))} />
-                            <span className={shell.value}>{delayA}ms</span>
-                        </div>
-                    </label>
-                    <label className={shell.control} htmlFor={ids.b}>
-                        <span className={shell.controlLabel}>task B delay</span>
-                        <div className={shell.controlRow}>
-                            <input id={ids.b} className={shell.range} type="range" min={100} max={1500} step={100} value={delayB} disabled={running} onChange={(e) => setDelayB(Number(e.target.value))} />
-                            <span className={shell.value}>{delayB}ms</span>
-                        </div>
-                    </label>
-                    <label className={shell.control} htmlFor={ids.c}>
-                        <span className={shell.controlLabel}>task C delay</span>
-                        <div className={shell.controlRow}>
-                            <input id={ids.c} className={shell.range} type="range" min={100} max={1500} step={100} value={delayC} disabled={running} onChange={(e) => setDelayC(Number(e.target.value))} />
-                            <span className={shell.value}>{delayC}ms</span>
-                        </div>
-                    </label>
+                    <SelectControl
+                        id={ids.mode}
+                        label="mode"
+                        value={mode}
+                        disabled={running}
+                        options={[
+                            {value: 'sequential', label: 'sequential await'},
+                            {value: 'all', label: 'Promise.all'},
+                            {value: 'race', label: 'Promise.race'},
+                        ]}
+                        onChange={(next) => setMode(next as Mode)}
+                    />
+                    <RangeControl
+                        id={ids.a}
+                        label="task A delay"
+                        min={100}
+                        max={1500}
+                        step={100}
+                        value={delayA}
+                        unit="ms"
+                        disabled={running}
+                        onChange={setDelayA}
+                    />
+                    <RangeControl
+                        id={ids.b}
+                        label="task B delay"
+                        min={100}
+                        max={1500}
+                        step={100}
+                        value={delayB}
+                        unit="ms"
+                        disabled={running}
+                        onChange={setDelayB}
+                    />
+                    <RangeControl
+                        id={ids.c}
+                        label="task C delay"
+                        min={100}
+                        max={1500}
+                        step={100}
+                        value={delayC}
+                        unit="ms"
+                        disabled={running}
+                        onChange={setDelayC}
+                    />
                     <div className={shell.buttonRow}>
                         <button
                             type="button"

@@ -1,7 +1,7 @@
 import type {CSSProperties, ReactNode} from 'react';
 import {useId, useState} from 'react';
 
-import DemoShell, {demoShellStyles as shell} from '../DemoShell';
+import DemoShell, {RangeControl, SelectControl} from '../DemoShell';
 import styles from './PositionDemo.module.css';
 
 const POSITIONS = ['static', 'relative', 'absolute', 'sticky'] as const;
@@ -32,66 +32,42 @@ export default function PositionDemo(): ReactNode {
             footer="The pink box is the positioned element. Grey siblings stay in normal document flow."
             controls={
                 <>
-                    <label className={shell.control} htmlFor={ids.position}>
-                        <span className={shell.controlLabel}>position</span>
-                        <select
+                    <SelectControl
                             id={ids.position}
-                            className={shell.select}
+                            label="position"
                             value={position}
-                            onChange={(event) => setPosition(event.target.value as typeof position)}
-                        >
-                            {POSITIONS.map((value) => (
-                                <option key={value} value={value}>{value}</option>
-                            ))}
-                        </select>
-                    </label>
-                    <label className={shell.control} htmlFor={ids.top}>
-                        <span className={shell.controlLabel}>top</span>
-                        <div className={shell.controlRow}>
-                            <input
-                                id={ids.top}
-                                className={shell.range}
-                                type="range"
-                                min={0}
-                                max={120}
-                                value={top}
-                                disabled={position === 'static'}
-                                onChange={(event) => setTop(Number(event.target.value))}
-                            />
-                            <span className={shell.value}>{top}px</span>
-                        </div>
-                    </label>
-                    <label className={shell.control} htmlFor={ids.left}>
-                        <span className={shell.controlLabel}>left</span>
-                        <div className={shell.controlRow}>
-                            <input
-                                id={ids.left}
-                                className={shell.range}
-                                type="range"
-                                min={0}
-                                max={160}
-                                value={left}
-                                disabled={position === 'static'}
-                                onChange={(event) => setLeft(Number(event.target.value))}
-                            />
-                            <span className={shell.value}>{left}px</span>
-                        </div>
-                    </label>
-                    <label className={shell.control} htmlFor={ids.z}>
-                        <span className={shell.controlLabel}>z-index</span>
-                        <div className={shell.controlRow}>
-                            <input
-                                id={ids.z}
-                                className={shell.range}
-                                type="range"
-                                min={0}
-                                max={5}
-                                value={zIndex}
-                                onChange={(event) => setZIndex(Number(event.target.value))}
-                            />
-                            <span className={shell.value}>{zIndex}</span>
-                        </div>
-                    </label>
+                            options={POSITIONS.map((option) => ({value: option, label: option}))}
+                            onChange={(next) => setPosition(next as typeof position)}
+                        />
+                    <RangeControl
+                            id={ids.top}
+                            label="top"
+                            min={0}
+                            max={120}
+                            value={top}
+                            unit="px"
+                            disabled={position === 'static'}
+                            onChange={setTop}
+                        />
+                    <RangeControl
+                            id={ids.left}
+                            label="left"
+                            min={0}
+                            max={160}
+                            value={left}
+                            unit="px"
+                            disabled={position === 'static'}
+                            onChange={setLeft}
+                        />
+                    <RangeControl
+                            id={ids.z}
+                            label="z-index"
+                            min={0}
+                            max={5}
+                            value={zIndex}
+                            unit=""
+                            onChange={setZIndex}
+                        />
                 </>
             }
         >
