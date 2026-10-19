@@ -57,7 +57,7 @@ async function setupStrapi() {
     process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-jwt-secret';
     process.env.DATABASE_CLIENT = process.env.DATABASE_CLIENT || 'sqlite';
     process.env.DATABASE_FILENAME = process.env.DATABASE_FILENAME || '.tmp/test.db';
-    process.env.STRAPI_DISABLE_CRON = 'true';
+    // Disable cron in the test env: config/env/test/server.js -> { cron: { enabled: false } }
     process.env.PORT = process.env.PORT || '0';
 
     fs.mkdirSync('.tmp', { recursive: true });
@@ -492,6 +492,17 @@ module.exports = ({ env }) => ({
     useNullAsDefault: true,
   },
 });
+```
+
+Disable cron in the same environment, so scheduled tasks do not mutate the test database:
+
+```js
+// config/env/test/server.js
+module.exports = {
+  cron: {
+    enabled: false,
+  },
+};
 ```
 
 ```bash
