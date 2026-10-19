@@ -222,7 +222,6 @@ Create a caching middleware for API responses:
 
 ```javascript
 // src/middlewares/cache.js
-const crypto = require('node:crypto');
 const { getCached, setCached } = require('../services/redis');
 
 module.exports = (config, { strapi }) => {
@@ -232,18 +231,15 @@ module.exports = (config, { strapi }) => {
       return await next();
     }
 
-    // Public means no credentials; API-token requests also set ctx.state.auth.
-    if (ctx.state.auth?.credentials) {
+    // Global middleware runs before the route's authenticate step, so
+    // ctx.state.auth does not exist yet. Gate on the raw header instead; only
+    // anonymous requests share a cache entry.
+    ctx.vary('Authorization');
+    if (ctx.get('Authorization')) {
       return await next();
     }
 
-    // Include caller identity so one response cannot be replayed to another.
-    const auth = crypto
-      .createHash('sha256')
-      .update(ctx.get('Authorization') || 'anonymous')
-      .digest('hex');
-    const cacheKey = `api:${ctx.url}|${auth}`;
-    ctx.set('Vary', 'Authorization');
+    const cacheKey = `api:${ctx.url}`;
 
     // Check cache
     const cached = await getCached(cacheKey);
@@ -422,10 +418,15 @@ module.exports = factories.createCoreController('api::post.post', ({ strapi }) =
   async find(ctx) {
     const response = await super.find(ctx);
 
-    // Cache public list views
-    if (!ctx.state.user) {
+    ctx.vary('Authorization');
+
+    // Cache public list views; API-token requests are not public
+    if (!ctx.state.user && !ctx.state.auth?.credentials) {
       ctx.set('Cache-Control', 'public, max-age=300, s-maxage=600');
-      ctx.set('Vary', 'Accept-Encoding, Accept');
+      ctx.vary('Accept-Encoding');
+      ctx.vary('Accept');
+    } else {
+      ctx.set('Cache-Control', 'private, no-cache');
     }
 
     return response;
@@ -434,10 +435,15 @@ module.exports = factories.createCoreController('api::post.post', ({ strapi }) =
   async findOne(ctx) {
     const response = await super.findOne(ctx);
 
-    // Cache individual posts longer
-    if (!ctx.state.user && response.data) {
+    ctx.vary('Authorization');
+
+    // Cache individual posts longer; API-token requests are not public
+    if (!ctx.state.user && !ctx.state.auth?.credentials && response.data) {
       ctx.set('Cache-Control', 'public, max-age=3600, s-maxage=86400');
-      ctx.set('Vary', 'Accept-Encoding, Accept');
+      ctx.vary('Accept-Encoding');
+      ctx.vary('Accept');
+    } else {
+      ctx.set('Cache-Control', 'private, no-cache');
     }
 
     return response;
