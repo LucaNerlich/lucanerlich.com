@@ -81,7 +81,7 @@ module.exports = createCoreController('api::article.article', ({ strapi }) => ({
       return ctx.unauthorized('You must be logged in');
     }
 
-    const { data } = ctx.request.body;
+    const { data } = ctx.request.body || {};
 
     if (!data || typeof data !== 'object') {
       return ctx.badRequest('Missing data object');
