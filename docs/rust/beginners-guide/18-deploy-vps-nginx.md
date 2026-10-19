@@ -235,7 +235,10 @@ let port: u16 = env::var("PORT")
     .ok()
     .and_then(|value| value.parse().ok())
     .unwrap_or(8080);
-let db_path = env::var("DATABASE_PATH").unwrap_or_else(|_| "todos.db".to_string());
+let db_path = env::var("DATABASE_PATH")
+    .ok()
+    .filter(|path| !path.is_empty())
+    .unwrap_or_else(|| "todos.db".to_string());
 ```
 
 Set them in the systemd service file:

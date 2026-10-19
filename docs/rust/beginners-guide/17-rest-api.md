@@ -328,8 +328,10 @@ async fn main() -> std::io::Result<()> {
         .ok()
         .and_then(|value| value.parse().ok())
         .unwrap_or(8080);
-    let db_path =
-        std::env::var("DATABASE_PATH").unwrap_or_else(|_| "todos.db".to_string());
+    let db_path = std::env::var("DATABASE_PATH")
+        .ok()
+        .filter(|path| !path.is_empty())
+        .unwrap_or_else(|| "todos.db".to_string());
 
     let db = Database::new(&db_path).expect("Failed to initialize database");
     let db_data = Data::new(db);
