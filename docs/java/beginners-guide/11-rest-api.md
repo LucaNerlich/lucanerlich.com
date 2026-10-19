@@ -297,13 +297,19 @@ public class TaskHandler implements HttpHandler {
     // ── Handlers ──────────────────────────────────────────────
 
     private void handleListTasks(HttpExchange exchange) throws IOException {
-        List<Task> tasks = store.load();
+        List<Task> tasks;
+        synchronized (storeLock) {
+            tasks = store.load();
+        }
         String json = JsonHelper.tasksToJson(tasks);
         sendResponse(exchange, 200, json);
     }
 
     private void handleGetTask(HttpExchange exchange, int id) throws IOException {
-        List<Task> tasks = store.load();
+        List<Task> tasks;
+        synchronized (storeLock) {
+            tasks = store.load();
+        }
         Task task = findTask(tasks, id);
 
         if (task == null) {
