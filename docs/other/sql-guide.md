@@ -318,26 +318,26 @@ remove thousands of related rows. `RESTRICT` is the safest default.
 
 ```sql
 -- Single row
-INSERT INTO users (id, name, email, age)
-VALUES (1, 'Ada Lovelace', 'ada@example.com', 36);
+INSERT INTO users (id, name, email, age, active)
+VALUES (1, 'Ada Lovelace', 'ada@example.com', 36, TRUE);
 
 -- Multiple rows
-INSERT INTO users (id, name, email, age) VALUES
-    (2, 'Grace Hopper', 'grace@example.com', 85),
-    (3, 'Alan Turing', 'alan@example.com', 41),
-    (4, 'Linus Torvalds', 'linus@example.com', 54),
-    (5, 'Margaret Hamilton', 'margaret@example.com', 88);
+INSERT INTO users (id, name, email, age, active) VALUES
+    (2, 'Grace Hopper', 'grace@example.com', 85, FALSE),
+    (3, 'Alan Turing', 'alan@example.com', 41, TRUE),
+    (4, 'Linus Torvalds', 'linus@example.com', 54, TRUE),
+    (5, 'Margaret Hamilton', 'margaret@example.com', 88, TRUE);
 ```
 
 Insert posts:
 
 ```sql
-INSERT INTO posts (user_id, title, body, published) VALUES
-    (1, 'Introduction to SQL', 'SQL is the language of databases...', TRUE),
-    (1, 'Advanced Joins', 'Understanding join types...', TRUE),
-    (2, 'COBOL to SQL', 'Migrating legacy systems...', TRUE),
-    (3, 'Turing Machines', 'A theoretical framework...', FALSE),
-    (4, 'Linux Kernel Design', 'How the kernel handles...', TRUE);
+INSERT INTO posts (user_id, title, body, published, created_at) VALUES
+    (1, 'Introduction to SQL', 'SQL is the language of databases...', TRUE, '2025-01-10 08:00:00'),
+    (1, 'Advanced Joins', 'Understanding join types...', TRUE, '2025-01-15 10:30:00'),
+    (2, 'COBOL to SQL', 'Migrating legacy systems...', TRUE, '2025-01-12 14:00:00'),
+    (3, 'Turing Machines', 'A theoretical framework...', FALSE, '2025-01-11 09:00:00'),
+    (4, 'Linux Kernel Design', 'How the kernel handles...', TRUE, '2025-01-14 16:00:00');
 ```
 
 ### `INSERT INTO ... SELECT` - inserting from a query
@@ -398,7 +398,7 @@ Result of `WHERE age > 50`:
 
 | id | name              | email                | age | active |
 |----|-------------------|----------------------|-----|--------|
-| 2  | Grace Hopper      | grace@example.com    | 85  | TRUE   |
+| 2  | Grace Hopper      | grace@example.com    | 85  | FALSE  |
 | 4  | Linus Torvalds    | linus@example.com    | 54  | TRUE   |
 | 5  | Margaret Hamilton | margaret@example.com | 88  | TRUE   |
 
@@ -464,7 +464,7 @@ Result of `ORDER BY age DESC`:
 | id | name              | email                | age | active |
 |----|-------------------|----------------------|-----|--------|
 | 5  | Margaret Hamilton | margaret@example.com | 88  | TRUE   |
-| 2  | Grace Hopper      | grace@example.com    | 85  | TRUE   |
+| 2  | Grace Hopper      | grace@example.com    | 85  | FALSE  |
 | 4  | Linus Torvalds    | linus@example.com    | 54  | TRUE   |
 | 3  | Alan Turing       | alan@example.com     | 41  | TRUE   |
 | 1  | Ada Lovelace      | ada@example.com      | 36  | TRUE   |
@@ -484,7 +484,7 @@ Result of `LIMIT 3`:
 | id | name         | email             | age | active |
 |----|--------------|-------------------|-----|--------|
 | 1  | Ada Lovelace | ada@example.com   | 36  | TRUE   |
-| 2  | Grace Hopper | grace@example.com | 85  | TRUE   |
+| 2  | Grace Hopper | grace@example.com | 85  | FALSE  |
 | 3  | Alan Turing  | alan@example.com  | 41  | TRUE   |
 
 Result of `LIMIT 3 OFFSET 2`:
@@ -532,6 +532,9 @@ UPDATE users SET active = TRUE WHERE age < 60;
 ### `DELETE`
 
 ```sql
+-- posts reference users with the default RESTRICT, so clear them first
+DELETE FROM posts;
+
 -- Delete specific rows
 DELETE FROM users WHERE name = 'Alan Turing';
 
@@ -555,6 +558,25 @@ TRUNCATE TABLE users;
 - On MySQL and SQL Server, `TRUNCATE` resets auto-increment counters; `DELETE` does not. PostgreSQL keeps
   sequences unless the statement includes `RESTART IDENTITY` (`TRUNCATE TABLE users RESTART IDENTITY;`).
 - `TRUNCATE` does not fire row-level `DELETE` triggers.
+
+The `DELETE FROM users;` and `TRUNCATE` examples empty the table. Restore the five users and their
+posts before continuing, so the result tables in later sections match:
+
+```sql
+INSERT INTO users (id, name, email, age, active) VALUES
+    (1, 'Ada Lovelace', 'ada@example.com', 36, TRUE),
+    (2, 'Grace Hopper', 'grace@example.com', 85, FALSE),
+    (3, 'Alan Turing', 'alan@example.com', 41, TRUE),
+    (4, 'Linus Torvalds', 'linus@example.com', 54, TRUE),
+    (5, 'Margaret Hamilton', 'margaret@example.com', 88, TRUE);
+
+INSERT INTO posts (user_id, title, body, published, created_at) VALUES
+    (1, 'Introduction to SQL', 'SQL is the language of databases...', TRUE, '2025-01-10 08:00:00'),
+    (1, 'Advanced Joins', 'Understanding join types...', TRUE, '2025-01-15 10:30:00'),
+    (2, 'COBOL to SQL', 'Migrating legacy systems...', TRUE, '2025-01-12 14:00:00'),
+    (3, 'Turing Machines', 'A theoretical framework...', FALSE, '2025-01-11 09:00:00'),
+    (4, 'Linux Kernel Design', 'How the kernel handles...', TRUE, '2025-01-14 16:00:00');
+```
 
 ## Aggregate functions
 
@@ -1630,27 +1652,6 @@ SELECT title FROM posts
 WHERE to_tsvector('english', title || ' ' || body) @@ to_tsquery('english', 'SQL & joins');
 ```
 
-### Upsert (INSERT or UPDATE)
-
-```sql
--- PostgreSQL
-INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
-ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
-
--- MySQL
-INSERT INTO users (email, name)
-VALUES ('ada@example.com', 'Ada L.') AS incoming
-ON DUPLICATE KEY UPDATE name = incoming.name;
-
--- SQLite (3.24+, true upsert using ON CONFLICT)
-INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
-ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
-
--- SQLite (older versions - caution: deletes then re-inserts the row)
--- This resets the rowid, fires DELETE triggers, and cascades foreign keys
-INSERT OR REPLACE INTO users (email, name) VALUES ('ada@example.com', 'Ada L.');
-```
-
 ## NULL handling functions
 
 `NULL` represents missing or unknown data. It is not the same as zero or an empty string. Two functions make working
@@ -1817,7 +1818,7 @@ UNION
 SELECT name FROM users WHERE active = TRUE;
 ```
 
-Result (Grace, Linus, and Margaret appear in both queries but are listed only once):
+Result (Linus and Margaret appear in both queries but are listed only once):
 
 | name              |
 |-------------------|
@@ -1834,7 +1835,7 @@ UNION ALL
 SELECT name FROM users WHERE active = TRUE;
 ```
 
-Result (duplicates preserved - 8 rows instead of 5):
+Result (duplicates preserved - 7 rows instead of 5):
 
 | name              |
 |-------------------|
@@ -1842,7 +1843,6 @@ Result (duplicates preserved - 8 rows instead of 5):
 | Linus Torvalds    |
 | Margaret Hamilton |
 | Ada Lovelace      |
-| Grace Hopper      |
 | Alan Turing       |
 | Linus Torvalds    |
 | Margaret Hamilton |
@@ -1952,6 +1952,27 @@ LIMIT count OFFSET skip;
 | `RIGHT JOIN`      | All right rows + matching left rows (NULL if no match) |
 | `FULL OUTER JOIN` | All rows from both tables (NULL where no match)        |
 | `CROSS JOIN`      | Every combination of rows                              |
+
+### Upsert (INSERT or UPDATE)
+
+```sql
+-- PostgreSQL
+INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
+ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
+
+-- MySQL
+INSERT INTO users (email, name)
+VALUES ('ada@example.com', 'Ada L.') AS incoming
+ON DUPLICATE KEY UPDATE name = incoming.name;
+
+-- SQLite (3.24+, true upsert using ON CONFLICT)
+INSERT INTO users (email, name) VALUES ('ada@example.com', 'Ada L.')
+ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
+
+-- SQLite (older versions - caution: deletes then re-inserts the row)
+-- This resets the rowid, fires DELETE triggers, and cascades foreign keys
+INSERT OR REPLACE INTO users (email, name) VALUES ('ada@example.com', 'Ada L.');
+```
 
 ## Summary
 
