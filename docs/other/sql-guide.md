@@ -332,12 +332,12 @@ INSERT INTO users (id, name, email, age, active) VALUES
 Insert posts:
 
 ```sql
-INSERT INTO posts (user_id, title, body, published) VALUES
-    (1, 'Introduction to SQL', 'SQL is the language of databases...', TRUE),
-    (1, 'Advanced Joins', 'Understanding join types...', TRUE),
-    (2, 'COBOL to SQL', 'Migrating legacy systems...', TRUE),
-    (3, 'Turing Machines', 'A theoretical framework...', FALSE),
-    (4, 'Linux Kernel Design', 'How the kernel handles...', TRUE);
+INSERT INTO posts (user_id, title, body, published, created_at) VALUES
+    (1, 'Introduction to SQL', 'SQL is the language of databases...', TRUE, '2025-01-10 08:00:00'),
+    (1, 'Advanced Joins', 'Understanding join types...', TRUE, '2025-01-15 10:30:00'),
+    (2, 'COBOL to SQL', 'Migrating legacy systems...', TRUE, '2025-01-12 14:00:00'),
+    (3, 'Turing Machines', 'A theoretical framework...', FALSE, '2025-01-11 09:00:00'),
+    (4, 'Linux Kernel Design', 'How the kernel handles...', TRUE, '2025-01-14 16:00:00');
 ```
 
 ### `INSERT INTO ... SELECT` - inserting from a query
@@ -398,7 +398,7 @@ Result of `WHERE age > 50`:
 
 | id | name              | email                | age | active |
 |----|-------------------|----------------------|-----|--------|
-| 2  | Grace Hopper      | grace@example.com    | 85  | TRUE   |
+| 2  | Grace Hopper      | grace@example.com    | 85  | FALSE  |
 | 4  | Linus Torvalds    | linus@example.com    | 54  | TRUE   |
 | 5  | Margaret Hamilton | margaret@example.com | 88  | TRUE   |
 
@@ -464,7 +464,7 @@ Result of `ORDER BY age DESC`:
 | id | name              | email                | age | active |
 |----|-------------------|----------------------|-----|--------|
 | 5  | Margaret Hamilton | margaret@example.com | 88  | TRUE   |
-| 2  | Grace Hopper      | grace@example.com    | 85  | TRUE   |
+| 2  | Grace Hopper      | grace@example.com    | 85  | FALSE  |
 | 4  | Linus Torvalds    | linus@example.com    | 54  | TRUE   |
 | 3  | Alan Turing       | alan@example.com     | 41  | TRUE   |
 | 1  | Ada Lovelace      | ada@example.com      | 36  | TRUE   |
@@ -484,7 +484,7 @@ Result of `LIMIT 3`:
 | id | name         | email             | age | active |
 |----|--------------|-------------------|-----|--------|
 | 1  | Ada Lovelace | ada@example.com   | 36  | TRUE   |
-| 2  | Grace Hopper | grace@example.com | 85  | TRUE   |
+| 2  | Grace Hopper | grace@example.com | 85  | FALSE  |
 | 3  | Alan Turing  | alan@example.com  | 41  | TRUE   |
 
 Result of `LIMIT 3 OFFSET 2`:
@@ -556,8 +556,8 @@ TRUNCATE TABLE users;
   sequences unless the statement includes `RESTART IDENTITY` (`TRUNCATE TABLE users RESTART IDENTITY;`).
 - `TRUNCATE` does not fire row-level `DELETE` triggers.
 
-The `DELETE FROM users;` and `TRUNCATE` examples empty the table. Restore the five-row practice dataset before
-continuing, so the result tables in later sections match:
+The `DELETE FROM users;` and `TRUNCATE` examples empty the users table. Restore the five users before
+continuing; the posts survive because the examples never delete them:
 
 ```sql
 INSERT INTO users (id, name, email, age, active) VALUES
@@ -566,13 +566,6 @@ INSERT INTO users (id, name, email, age, active) VALUES
     (3, 'Alan Turing', 'alan@example.com', 41, TRUE),
     (4, 'Linus Torvalds', 'linus@example.com', 54, TRUE),
     (5, 'Margaret Hamilton', 'margaret@example.com', 88, TRUE);
-
-INSERT INTO posts (user_id, title, body, published) VALUES
-    (1, 'Introduction to SQL', 'SQL is the language of databases...', TRUE),
-    (1, 'Advanced Joins', 'Understanding join types...', TRUE),
-    (2, 'COBOL to SQL', 'Migrating legacy systems...', TRUE),
-    (3, 'Turing Machines', 'A theoretical framework...', FALSE),
-    (4, 'Linux Kernel Design', 'How the kernel handles...', TRUE);
 ```
 
 ## Aggregate functions
@@ -1836,7 +1829,7 @@ UNION
 SELECT name FROM users WHERE active = TRUE;
 ```
 
-Result (Grace, Linus, and Margaret appear in both queries but are listed only once):
+Result (Linus and Margaret appear in both queries but are listed only once):
 
 | name              |
 |-------------------|
@@ -1853,7 +1846,7 @@ UNION ALL
 SELECT name FROM users WHERE active = TRUE;
 ```
 
-Result (duplicates preserved - 8 rows instead of 5):
+Result (duplicates preserved - 7 rows instead of 5):
 
 | name              |
 |-------------------|
@@ -1861,7 +1854,6 @@ Result (duplicates preserved - 8 rows instead of 5):
 | Linus Torvalds    |
 | Margaret Hamilton |
 | Ada Lovelace      |
-| Grace Hopper      |
 | Alan Turing       |
 | Linus Torvalds    |
 | Margaret Hamilton |
