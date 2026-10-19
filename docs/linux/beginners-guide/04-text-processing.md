@@ -319,7 +319,7 @@ sed -i 's/^DANGEROUS_SETTING/#DANGEROUS_SETTING/' config.conf
 sed -i 's/[[:space:]]*$//' file.txt
 
 # Insert a line after a match
-sed -i '/^Host myserver$/a\    StrictHostKeyChecking no' ~/.ssh/config
+sed -i '/^Host myserver$/a\    StrictHostKeyChecking accept-new' ~/.ssh/config
 
 # Replace a specific config value
 sed -i "s|max_connections = .*|max_connections = 200|" /etc/postgresql/14/main/postgresql.conf
