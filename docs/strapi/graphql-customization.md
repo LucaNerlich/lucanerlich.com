@@ -669,45 +669,15 @@ module.exports = (config, { strapi }) => {
 
 ---
 
-## Solving N+1 with DataLoader
+## N+1 queries
 
-The auto-generated schema can cause N+1 queries when resolving relations. For custom resolvers, use DataLoader:
+Strapi's generated GraphQL schema resolves relations with its own batched association resolver, so the
+usual "replace the relation resolver with a DataLoader" advice does not apply to the built-in types. A
+root resolver returns documents without their relations populated, which means `parent.author` is
+`undefined` in a relation resolver and a loader keyed on it batches `undefined` for every row.
 
-```js
-const DataLoader = require('dataloader');
-
-// Create a loader per request
-function createAuthorLoader(strapi) {
-  return new DataLoader(async (authorIds) => {
-    const authors = await strapi.documents('api::author.author').findMany({
-      filters: { documentId: { $in: authorIds } },
-    });
-
-    // Return in the same order as the input IDs
-    const authorMap = new Map(authors.map(a => [a.documentId, a]));
-    return authorIds.map(id => authorMap.get(id) || null);
-  });
-}
-
-// Use in resolver
-extensionService.use(({ strapi }) => ({
-  resolvers: {
-    Article: {
-      author: {
-        resolve: async (parent, args, context) => {
-          if (!context.loaders) {
-            context.loaders = {};
-          }
-          if (!context.loaders.author) {
-            context.loaders.author = createAuthorLoader(strapi);
-          }
-          return context.loaders.author.load(parent.author?.documentId);
-        },
-      },
-    },
-  },
-}));
-```
+Batch from a custom root field (or a service query that selects the ids you need), and keep the
+built-in association resolvers in place.
 
 ---
 
@@ -782,7 +752,7 @@ query ArticleBySlug($slug: String!) {
 | Introspection enabled in production     | Schema leaks to attackers                   | Set `introspection: false` in production config         |
 | No depth limit                          | Malicious nested queries crash the server   | Set `depthLimit: 5-7`                                   |
 | Trusting REST checks alone for GraphQL  | GraphQL has its own schema/resolver config | Configure `resolversConfig` and `shadowCRUD` separately |
-| N+1 queries on relations                | Slow list queries                           | Use DataLoader or ensure population is optimized        |
+| N+1 queries on relations                | Slow list queries                           | Batch custom root fields or optimize population         |
 | Missing `auth: false` on public queries | 403 for anonymous users                     | Set `auth: false` in `resolversConfig`                  |
 | Sandbox enabled in production           | Security and information disclosure risk    | Set `landingPage: false`                                |
 | Sensitive user fields exposed           | Email, password hash visible in schema      | `field('email').disable()` on user type                 |
