@@ -45,9 +45,9 @@ type Num = Flatten<number>;      // number
 type Obj = Flatten<{ a: 1 }[]>; // { a: 1 }
 
 // Unwrap a Promise
-type Awaited<T> = T extends Promise<infer U> ? Awaited<U> : T;
+type MyAwaited<T> = T extends Promise<infer U> ? MyAwaited<U> : T;
 
-type Result = Awaited<Promise<Promise<string>>>; // string
+type Result = MyAwaited<Promise<Promise<string>>>; // string
 ```
 
 ### Distributive conditional types
@@ -394,31 +394,31 @@ interface AppEventMap {
 
 type EventName = keyof AppEventMap;
 type EventPayload<E extends EventName> = AppEventMap[E];
-type EventListener<E extends EventName> = (payload: EventPayload<E>) => void;
+type AppEventListener<E extends EventName> = (payload: EventPayload<E>) => void;
 
 class TypedEventEmitter {
-    private listeners = new Map<string, EventListener<EventName>[]>();
+    private listeners = new Map<string, AppEventListener<EventName>[]>();
 
-    on<E extends EventName>(event: E, listener: EventListener<E>): void {
-        const existing = (this.listeners.get(event) ?? []) as EventListener<E>[];
-        this.listeners.set(event, [...existing, listener] as EventListener<EventName>[]);
+    on<E extends EventName>(event: E, listener: AppEventListener<E>): void {
+        const existing = (this.listeners.get(event) ?? []) as AppEventListener<E>[];
+        this.listeners.set(event, [...existing, listener] as AppEventListener<EventName>[]);
     }
 
-    off<E extends EventName>(event: E, listener: EventListener<E>): void {
+    off<E extends EventName>(event: E, listener: AppEventListener<E>): void {
         const existing = this.listeners.get(event) ?? [];
         this.listeners.set(
             event,
-            existing.filter(l => l !== listener) as EventListener<EventName>[],
+            existing.filter(l => l !== listener) as AppEventListener<EventName>[],
         );
     }
 
     emit<E extends EventName>(event: E, payload: EventPayload<E>): void {
         const handlers = this.listeners.get(event) ?? [];
-        handlers.forEach(handler => (handler as EventListener<E>)(payload));
+        handlers.forEach(handler => (handler as AppEventListener<E>)(payload));
     }
 
-    once<E extends EventName>(event: E, listener: EventListener<E>): void {
-        const wrapper: EventListener<E> = (payload) => {
+    once<E extends EventName>(event: E, listener: AppEventListener<E>): void {
+        const wrapper: AppEventListener<E> = (payload) => {
             listener(payload);
             this.off(event, wrapper);
         };
