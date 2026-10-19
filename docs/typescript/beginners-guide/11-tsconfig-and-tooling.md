@@ -227,6 +227,7 @@ Path aliases reduce relative import hell. The `baseUrl` is the base directory fo
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "lib": ["ES2022"],
+        "types": ["node"],
         "outDir": "./dist",
         "rootDir": "./src",
         "strict": true,
