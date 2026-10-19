@@ -219,7 +219,7 @@ declare module "my-database" {
 
 ### Ambient declarations
 
-Use `declare` without a module block to describe global variables or functions:
+Use `declare` without a module block to describe global variables:
 
 ```typescript
 // types/globals.d.ts
