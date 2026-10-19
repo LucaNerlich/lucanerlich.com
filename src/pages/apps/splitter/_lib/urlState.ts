@@ -191,14 +191,20 @@ const fromWireV2 = (w: WireV2): AppState => {
             const paidBy = String(row[3]);
             return Number.isSafeInteger(cents) && cents > 0 && personIds.has(paidBy);
         })
-        .map((row): Expense => {
+        .map((row): Expense | null => {
             const [id, description, cents, paidBy, participantsRaw, splitRaw] = row;
             const participants = (Array.isArray(participantsRaw) ? participantsRaw : [])
                 .map(String)
                 .filter(pid => personIds.has(pid));
+            // A present-but-empty participant list is malformed, not
+            // "everyone": only a non-array (absent) field keeps the legacy
+            // default.
             const filteredParticipants = participants.length > 0
                 ? [...new Set(participants)]
-                : people.map(p => p.id);
+                : Array.isArray(participantsRaw)
+                    ? []
+                    : people.map(p => p.id);
+            if (filteredParticipants.length === 0) return null;
             const split = splitFromWire(splitRaw);
             return {
                 id: String(id),
@@ -208,7 +214,8 @@ const fromWireV2 = (w: WireV2): AppState => {
                 participants: filteredParticipants,
                 split: validateSplit(split, filteredParticipants, cents) ? equalSplit() : split,
             };
-        });
+        })
+        .filter((expense): expense is Expense => expense !== null);
     const currency: Currency = isCurrency(w.c) ? w.c : 'EUR';
     const paidTransferKeys = Array.isArray(w.t)
         ? w.t.map(String).filter(Boolean)
@@ -227,7 +234,7 @@ const fromWireV3 = (w: WireV3): AppState => {
             const paidBy = people[Number(row[3])]?.id;
             return Number.isSafeInteger(cents) && cents > 0 && !!paidBy && personIds.has(paidBy);
         })
-        .map((row): Expense => {
+        .map((row): Expense | null => {
             const [id, description, cents, paidByIdx, participantsRaw, splitRaw] = row;
             const paidBy = people[Number(paidByIdx)].id;
             let participants: string[];
@@ -238,7 +245,9 @@ const fromWireV3 = (w: WireV3): AppState => {
                     .map(idx => people[Number(idx)]?.id)
                     .filter((pid): pid is string => !!pid && personIds.has(pid));
                 participants = [...new Set(participants)];
-                if (participants.length === 0) participants = people.map(p => p.id);
+                // 0 is the only "everyone" sentinel; an explicit list that
+                // resolves empty is malformed, so drop the expense.
+                if (participants.length === 0) return null;
             }
             const split = splitFromWireV3(splitRaw, people);
             return {
@@ -249,7 +258,8 @@ const fromWireV3 = (w: WireV3): AppState => {
                 participants,
                 split: validateSplit(split, participants, cents) ? equalSplit() : split,
             };
-        });
+        })
+        .filter((expense): expense is Expense => expense !== null);
     const currency: Currency = isCurrency(String(w[1])) ? (w[1] as Currency) : 'EUR';
     const paidTransferKeys = (Array.isArray(w[4]) ? w[4] : [])
         .map(row => {
