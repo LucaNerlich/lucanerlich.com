@@ -596,7 +596,7 @@ println "Can write /content/mysite: $canWrite"
 - **Repoinit** is the preferred approach for service users and baseline ACLs on AEMaaCS
 - The Netcentric ACL Tool works on AEMaaCS (deployed as a content package)
 - CRXDE Lite is not available in production; all permission management must be code-driven
-- The Felix console is accessible via the **Developer Console** (limited)
+- The Felix console is **not** available on AEMaaCS; inspect OSGi state read-only in the Developer Console. The ACL Tool dump page is local SDK / AEM 6.5 only
 - Cloud Manager pipelines run repoinit scripts on deployment
 - Use **repoinit for service users** and **ACL Tool for content-level permissions**
 
