@@ -205,6 +205,8 @@ CREATE TABLE users (
     id        INTEGER PRIMARY KEY,
     name      TEXT NOT NULL,
     email     TEXT NOT NULL UNIQUE,
+    nickname  TEXT,
+    category  TEXT,
     age       INTEGER,
     active    BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -1487,6 +1489,7 @@ CREATE TABLE customers (
 CREATE TABLE products (
     id    INTEGER PRIMARY KEY,
     name  TEXT NOT NULL,
+    stock INTEGER DEFAULT 0,
     price DECIMAL(10,2) NOT NULL
 );
 
@@ -1671,7 +1674,7 @@ Result (all users here have an age, so `COALESCE` has no effect - but if any had
 SELECT COALESCE(nickname, name, email) AS display_name FROM users;
 ```
 
-Result (assuming Ada has no `nickname` column set):
+Result (assuming Ada's `nickname` is NULL):
 
 | display_name      |
 |-------------------|
