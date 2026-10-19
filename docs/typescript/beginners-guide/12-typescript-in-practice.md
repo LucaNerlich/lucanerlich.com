@@ -41,6 +41,7 @@ npx tsc --init
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "lib": ["ES2022"],
+        "types": ["node"],
         "outDir": "dist",
         "rootDir": "src",
         "strict": true,
