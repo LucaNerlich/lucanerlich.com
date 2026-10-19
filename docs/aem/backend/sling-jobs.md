@@ -547,9 +547,10 @@ public class ContentCleanupJobConsumer implements JobConsumer {
 
 ## Monitoring Jobs
 
-### Felix Web Console
+### Felix Web Console (local SDK / AEM 6.5)
 
-Navigate to `/system/console/slingevent` to see:
+Not available on AEM as a Cloud Service - see the AEMaaCS Considerations below. On the local SDK or AEM 6.5,
+navigate to `/system/console/slingevent` to see:
 
 - Active queues and their configuration
 - Queued, active, and finished jobs
