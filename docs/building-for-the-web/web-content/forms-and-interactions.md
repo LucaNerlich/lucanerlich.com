@@ -66,7 +66,7 @@ Every control needs a **visible label**. Placeholder text is **not** a label. As
             type="email"
             autocomplete="email"
             required
-            aria-describedby="email-hint"
+            aria-describedby="email-hint email-error"
         >
         <p id="email-hint" class="hint">We send receipts and security alerts here.</p>
         <p id="email-error" class="error" hidden><!-- filled when invalid --></p>
