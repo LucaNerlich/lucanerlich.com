@@ -381,7 +381,7 @@ Configure how CA Config finds the "site root" for a given resource:
     "levels": [3],
     "contextPathRegex": "^/content/([^/]+)/[^/]+$",
     "configPathPatterns": ["/conf/$1"],
-    "templatePaths": ["/conf/myproject/settings/wcm/templates/.*"]
+    "templatePathsBlacklist": ["/conf/myproject/settings/wcm/templates/.*"]
 }
 ```
 
