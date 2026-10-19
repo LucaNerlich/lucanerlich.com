@@ -46,7 +46,8 @@ extended support.
 On AEMaaCS the repository is split:
 
 - **Immutable** - `/apps` and `/libs` are read-only at runtime and replaced only by a deployment. You
-  cannot write to them from running code, and you cannot overlay `/libs`.
+  cannot write to them from running code. Overlays are supported: they live under `/apps` and ship
+  with the pipeline.
 - **Mutable** - `/content`, `/conf`, `/home`, `/var` are writable at runtime.
 
 Consequences for your code:
