@@ -201,7 +201,6 @@ public class SecurityHeaderFilter implements Filter {
         // Security headers
         httpResponse.setHeader("X-Content-Type-Options", "nosniff");
         httpResponse.setHeader("X-Frame-Options", "SAMEORIGIN");
-        httpResponse.setHeader("X-XSS-Protection", "1; mode=block");
         httpResponse.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
         httpResponse.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
 
