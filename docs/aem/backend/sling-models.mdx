@@ -700,6 +700,12 @@ see [OSGi Configuration](./osgi-configuration.mdx).
 A `TransportHandler` intercepts the replication pipeline and lets you route content to external
 systems (CI/CD pipelines, CDNs, search indexes, etc.) during activation:
 
+:::warning[AEM as a Cloud Service]
+Cloud Service has no configurable replication agents, so a `TransportHandler` cannot be wired there.
+Use Sling Content Distribution, eventing, or the CDN invalidation APIs instead. The sample below
+targets AEM 6.5 and AMS.
+:::
+
 ```java title="core/.../replication/ExternalCDNTransportHandler.java"
 @Component(
     service = TransportHandler.class,
