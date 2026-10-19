@@ -164,8 +164,8 @@ COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 # Examples: feat(auth): add login, fix: handle null pointer
 PATTERN='^(feat|fix|docs|style|refactor|test|chore|perf|ci|revert|build)(\([a-z0-9-]+\))?(!)?: .{1,100}$'
 
-# Allow merge commits and revert commits
-if echo "$COMMIT_MSG" | grep -qE '^(Merge|Revert|fixup!|squash!)'; then
+# Allow merge/revert commits and fixup!/squash! autosquash commits
+if echo "$COMMIT_MSG" | head -1 | grep -qE '^(Merge|Revert|fixup!|squash!)'; then
     exit 0
 fi
 
