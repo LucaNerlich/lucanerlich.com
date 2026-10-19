@@ -11,7 +11,7 @@ All violations must include a clear explanation of which rule was triggered and 
 Generated code must not violate these rules. If a rule is violated, a comment must be added explaining the issue and suggesting a correction.
 
 ## 1. Avoid Unsafe Functions
-- **Rule:** Do not use functions like `gets`, `strcpy`, `sprintf`, or `scanf` with `%s`. Use bounded or safer alternatives like `fgets`, `strncpy`, or `snprintf`.
+- **Rule:** Do not use functions like `gets`, `strcpy`, `sprintf`, or `scanf` with `%s`. Use bounded or safer alternatives like `fgets` or `snprintf`.
 
 ## 2. Always Validate Input Lengths
 - **Rule:** Validate the length of user or external input before copying, storing, or processing it to prevent buffer overflows.
