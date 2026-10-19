@@ -497,17 +497,22 @@ sudo systemctl start fail2ban
 
 ### Change the SSH port (optional)
 
-Changing the default SSH port (22) reduces automated login attempts:
+Changing the default SSH port (22) reduces automated login attempts. Ubuntu 24.04 starts SSH through systemd socket
+activation, so the listening port lives in the socket unit, not in `sshd_config`:
 
 ```bash
-sudo nano /etc/ssh/sshd_config.d/00-hardening.conf
+sudo mkdir -p /etc/systemd/system/ssh.socket.d
+sudo nano /etc/systemd/system/ssh.socket.d/10-port.conf
 ```
 
-Add a `Port` line (e.g., `Port 2222`):
-
-```text
-Port 2222
+```ini
+[Socket]
+ListenStream=
+ListenStream=2222
 ```
+
+The empty `ListenStream=` clears the inherited port 22 before the new one is set. A `Port` line in `sshd_config`
+is ignored while sshd is socket-activated.
 
 If you created the Fail2Ban jail above, update its SSH port too:
 
@@ -516,8 +521,7 @@ If you created the Fail2Ban jail above, update its SSH port too:
 port = 2222
 ```
 
-Test the SSH configuration, allow the new port, and apply the change. Ubuntu 24.04 starts SSH through systemd socket
-activation, so the listening port is controlled by `ssh.socket` and a plain reload is not enough:
+Test the SSH configuration, allow the new port, and apply the change:
 
 ```bash
 sudo ufw allow 2222/tcp
