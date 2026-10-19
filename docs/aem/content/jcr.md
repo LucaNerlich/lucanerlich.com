@@ -31,9 +31,9 @@ properties.put("group.1_property.value", "some-property-value1");
 properties.put("group.2_property", "some-property-name2");
 properties.put("group.2_property.value", "some-property-value2");
 
-// config
+// config - always bound the result set
 properties.put("p.offset", "0");
-properties.put("p.limit", "-1");
+properties.put("p.limit", "50");
 ```
 
 The above configuration can be passed to the QueryBuilder.
