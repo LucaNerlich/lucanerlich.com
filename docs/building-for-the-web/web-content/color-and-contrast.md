@@ -17,7 +17,7 @@ sidebar_position: 6
 
 # Color and contrast
 
-Body text must meet **contrast** expectations against its background. WCAG 2.x commonly cites **4.5:1** for normal text and **3:1** for large text (roughly 18px+ regular or 14px+ bold). Interactive components and **focus indicators** also need visible contrast - see WCAG 2.2. Back to the [section overview](./overview.md).
+Body text must meet **contrast** expectations against its background. WCAG 2.x commonly cites **4.5:1** for normal text and **3:1** for large text (roughly 24px+ regular or 18.66px+ bold; WCAG 18pt/14pt). Interactive components and **focus indicators** also need visible contrast - see WCAG 2.2. Back to the [section overview](./overview.md).
 
 ## Text and UI colors
 
