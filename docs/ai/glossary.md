@@ -683,8 +683,9 @@ from the user-visible output. See [Cost, Latency & Model Routing](./cost-and-lat
 
 ## Recall@k {#recall-at-k}
 
-The fraction of queries where at least one relevant item appears in the top `k` results. In RAG, low
-recall@k means the generator never sees the needed fact, no matter how good the model is. See
+The fraction of known-relevant documents retrieved in the top `k` results. In RAG, low recall@k means
+the generator never sees the needed fact, no matter how good the model is. Do not confuse it with hit
+rate, which counts queries with at least one relevant result. See
 [RAG](./rag.md).
 
 ## Red-teaming {#red-teaming}
