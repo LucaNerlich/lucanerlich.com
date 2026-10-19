@@ -284,13 +284,22 @@ export default {
           policies: ['admin::isAuthenticatedAdmin'],
         },
       },
+      {
+        method: 'DELETE',
+        path: '/bookmarks/:id',
+        handler: 'bookmark.delete',
+        config: {
+          policies: ['admin::isAuthenticatedAdmin'],
+        },
+      },
     ],
   },
 };
 ```
 
-The named router format makes the route surface explicit. Content API routes and admin routes are both prefixed with
-`/<plugin-name>/`, so the public endpoints above become `/my-plugin/bookmarks`.
+The named router format makes the route surface explicit. Content API routes are served under
+`/api/<plugin-name>/`; admin routes are served under `/<plugin-name>/`, which is the path the admin panel
+component calls.
 
 If the plugin only exposes admin-panel endpoints, keep them in the `admin` router. Use `content-api` only for endpoints
 intended to be called by frontends through Strapi's Content API authentication.
@@ -401,10 +410,10 @@ const App = () => {
     fetchBookmarks();
   }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (documentId: string) => {
     try {
-      await del(`/${pluginId}/bookmarks/${id}`);
-      setBookmarks((prev) => prev.filter((b) => b.id !== id));
+      await del(`/${pluginId}/bookmarks/${documentId}`);
+      setBookmarks((prev) => prev.filter((b) => b.documentId !== documentId));
     } catch (error) {
       console.error('Delete failed:', error);
     }
@@ -426,12 +435,12 @@ const App = () => {
         </Thead>
         <Tbody>
           {bookmarks.map((bookmark) => (
-            <Tr key={bookmark.id}>
+            <Tr key={bookmark.documentId}>
               <Td><Typography>{bookmark.title}</Typography></Td>
               <Td><a href={bookmark.url} target="_blank" rel="noopener noreferrer">{bookmark.url}</a></Td>
               <Td><Typography>{new Date(bookmark.createdAt).toLocaleDateString()}</Typography></Td>
               <Td>
-                <Button variant="danger-light" onClick={() => handleDelete(bookmark.id)}>
+                <Button variant="danger-light" onClick={() => handleDelete(bookmark.documentId)}>
                   Delete
                 </Button>
               </Td>
