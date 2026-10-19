@@ -244,8 +244,11 @@ function mockFetch(body: unknown, status = 200) {
     } as unknown as Response);
 }
 
+const originalFetch = global.fetch;
+
 afterEach(() => {
-    jest.restoreAllMocks();
+    // restoreAllMocks only restores spies; reassign the original directly.
+    global.fetch = originalFetch;
 });
 
 it('returns post data on success', async () => {

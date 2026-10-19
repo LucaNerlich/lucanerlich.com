@@ -302,7 +302,10 @@ function mockFetch(data: unknown, ok = true) {
     } as unknown as Response);
 }
 
-afterEach(() => jest.restoreAllMocks());
+const originalFetch = global.fetch;
+afterEach(() => {
+    global.fetch = originalFetch;
+});
 
 it('shows the user name and email after loading', async () => {
     mockFetch({ id: 1, name: 'Alice', email: 'alice@example.com' });
