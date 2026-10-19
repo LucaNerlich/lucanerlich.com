@@ -222,79 +222,9 @@ module.exports = ({ strapi }) => ({
 
 ### CSV import service
 
-```js
-// src/api/import/services/csv-import.js
-const fs = require('fs');
-const path = require('path');
-
-module.exports = ({ strapi }) => ({
-
-  async importFromJSON(filePath, uid, options = {}) {
-    const {
-      batchSize = 50,
-      onProgress,
-      dryRun = false,
-      locale = 'en',
-      items: preloadedItems,
-    } = options;
-
-    // Accept either a filePath or a preloaded items array
-    const items = preloadedItems ?? JSON.parse(
-      fs.readFileSync(path.resolve(filePath), 'utf-8')
-    );
-
-    const results = { created: 0, errors: 0, skipped: 0 };
-
-    for (let i = 0; i < items.length; i += batchSize) {
-      const batch = items.slice(i, i + batchSize);
-
-      for (const item of batch) {
-        try {
-          // Check for duplicates (by slug or unique field)
-          if (item.slug) {
-            const existing = await strapi.documents(uid).findMany({
-              filters: { slug: { $eq: item.slug } },
-              locale,
-              limit: 1,
-            });
-
-            if (existing.length > 0) {
-              results.skipped++;
-              continue;
-            }
-          }
-
-          if (!dryRun) {
-            await strapi.documents(uid).create({
-              data: item,
-              locale,
-            });
-          }
-
-          results.created++;
-        } catch (error) {
-          results.errors++;
-          strapi.log.error(`[import] Failed to import item: ${error.message}`, {
-            item: item.title || item.name || JSON.stringify(item).substring(0, 100),
-          });
-        }
-      }
-
-      if (onProgress) {
-        onProgress({
-          processed: Math.min(i + batchSize, items.length),
-          total: items.length,
-          ...results,
-        });
-      }
-    }
-
-    return results;
-  },
-});
+```bash
+npm install csv-parse
 ```
-
-### CSV import service
 
 ```js
 // src/api/import/services/csv-import.js
