@@ -18,7 +18,7 @@ export default function EventBubblingDemo(): ReactNode {
     const push = (label: string) => {
         nextIdRef.current += 1;
         const id = nextIdRef.current;
-        setLogs((current) => [{id, label}, ...current].slice(0, 8));
+        setLogs((current) => [...current, {id, label}].slice(-8));
     };
 
     return (
