@@ -696,13 +696,13 @@ Example persisted query:
 
 ```graphql
 # Persisted query (stored at /conf/myproject/settings/graphql/persistentQueries/articles)
-{
+query FeaturedArticles($limit: Int = 10) {
     articleList(
         filter: {
             featured: { _expressions: [{ value: true }] }
         }
         sort: "publishDate"
-        limit: 10
+        limit: $limit
     ) {
         items {
             _path
