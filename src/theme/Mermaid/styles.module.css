@@ -1,5 +1,8 @@
+/* The zoomed diagram pans inside this box instead of stretching the page. */
 .container {
+    position: relative;
     max-width: 100%;
+    overflow: hidden;
 }
 
 .container > svg {
