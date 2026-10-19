@@ -2,6 +2,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import {sortSidebarItems} from './sidebar-order';
 import {redirects} from './redirects';
+import peleDiagrams from './plugins/pele-diagrams.mjs';
 
 // ---------------------------------------------------------------------------
 // Docusaurus configuration
@@ -17,7 +18,10 @@ const config: Config = {
     onBrokenAnchors: 'throw',
     markdown: {
         format: 'detect',
-        mermaid: true,
+        // Diagrams become static SVG at build time through
+        // ./plugins/pele-diagrams.mjs, so Docusaurus's own Mermaid transform --
+        // which defers every diagram to a browser-side renderer -- stays off.
+        mermaid: false,
         remarkRehypeOptions: {
             footnoteLabel: 'Quellen / Fußnoten',
         },
@@ -31,7 +35,6 @@ const config: Config = {
     organizationName: 'LucaNerlich',
     projectName: 'blog-3.0',
     trailingSlash: true,
-    themes: ['@docusaurus/theme-mermaid'],
 
     headTags: [
         // Preconnect to Algolia DocSearch domains to reduce search latency
@@ -100,6 +103,7 @@ const config: Config = {
                     showLastUpdateAuthor: false,
                     showLastUpdateTime: false,
                     routeBasePath: '/',
+                    remarkPlugins: [peleDiagrams],
                     async sidebarItemsGenerator({defaultSidebarItemsGenerator, categoriesMetadata, ...args}) {
                         const items = await defaultSidebarItemsGenerator({categoriesMetadata, ...args});
                         return sortSidebarItems(items, args.item.dirName, categoriesMetadata);
@@ -267,9 +271,6 @@ const config: Config = {
         },
         prism: {
             additionalLanguages: ['groovy', 'java', 'rust', 'python', 'bash', 'yaml', 'csv', 'php'],
-        },
-        mermaid: {
-            theme: {light: 'default', dark: 'dark'},
         },
     } satisfies Preset.ThemeConfig,
 };
