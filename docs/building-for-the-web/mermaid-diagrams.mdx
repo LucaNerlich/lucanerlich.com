@@ -1,6 +1,6 @@
 ---
 title: "Mermaid Diagrams Guide"
-description: "Copy-paste Mermaid for this site: the diagram types people actually use, the syntax Mermaid 12 renders here, and the mistakes that fail in the browser."
+description: "Copy-paste Mermaid for this site: the diagram types people actually use, the syntax Pele draws at build time, and the mistakes that fail the build."
 sidebar_position: 5
 tags: [mermaid, diagrams, documentation, markdown]
 keywords:
@@ -13,14 +13,14 @@ keywords:
 
 # Mermaid Diagrams Guide
 
-[Mermaid](https://mermaid.js.org/) renders a diagram from a plain-text definition inside a Markdown code
-block. You describe the picture next to the prose. There is no exported image to keep in sync.
+[Mermaid](https://mermaid.js.org/) describes a diagram as plain text inside a Markdown code block.
+You describe the picture next to the prose. There is no exported image to keep in sync.
 
-The examples below are the working set for **this site**. They use syntax that Mermaid 12 accepts in the
-Docusaurus theme configured here. Copy the `markdown` block under each diagram. The
-[live editor](https://mermaid.live/) is useful for drafting, and it can be a different Mermaid release
-than the one that publishes this page. Theme, dark mode, and what `pnpm build` does not check are in
-[Mermaid in Docusaurus](#mermaid-in-docusaurus).
+The examples below are the working set for **this site**. They use the syntax that Pele, the renderer
+here, accepts in the Mermaid 12.1 language. Copy the `markdown` block under each diagram. The
+[live editor](https://mermaid.live/) is useful for drafting, but it draws with Mermaid, not Pele, so
+spacing and layout differ. Rendering, theming, and the build checks are in
+[How this site renders Mermaid](#how-this-site-renders-mermaid).
 
 ## Getting Started
 
@@ -1202,9 +1202,8 @@ xychart-beta
 
 ## Gitgraph Diagrams
 
-Visualize Git branching strategies and merge flows. The first commits sit on `main`. That is Mermaid's
-default branch name here (`gitGraph.mainBranchName`). `checkout main` at the end of the example
-returns to it.
+Visualize Git branching strategies and merge flows. The first commits sit on `main`, the default
+branch name Pele uses for a git graph. `checkout main` at the end of the example returns to it.
 
 ```mermaid
 gitGraph
@@ -2008,8 +2007,9 @@ ASCII characters: `-->`.
 | `end` as a node ID | `end` closes a subgraph, `alt`, `loop`, or `par` | `endNode` or `done` |
 | One dash in a class relation | `-|>`, `-*`, and `-o` do not parse | `--|>`, `--*`, `--o` |
 | Unquoted shape characters in a label | `()`, `[]`, `{}`, or a pipe ends the node | Double quotes around the label |
-| `%%{init}%%` that sets `theme` | That diagram ignores the light/dark toggle | Leave the theme to the site config |
-| `click node callback` | Ignored. `securityLevel` is `strict` and a diagram cannot lower it | Link from the prose instead |
+| `%%{init}%%` that sets `theme` | Pele takes its colors from the site stylesheet, so an init theme has no effect | Leave the theme to `src/css/custom.css` |
+| `click node callback` | Ignored. Pele renders `click node "https://..."` links only | Link from the prose instead |
+| HTML in a label | Labels are SVG text: line breaks, bold, and italic render, other tags show as text | Keep labels plain |
 | Omitting `TB` or `LR` | The flowchart defaults to top to bottom | Set the direction when it matters |
 | Very long labels | The diagram becomes unreadable | Short labels, detail in the prose |
 | Too many nodes | Visual clutter | Split into more than one diagram |
@@ -2024,17 +2024,28 @@ under it identical.
 pnpm build
 ```
 
-`pnpm build` compiles the page. It does not parse Mermaid, and it does not parse the `markdown`
-source fences that show the copy-paste text. A bad diagram still builds. Open the page: the theme
-renders in the browser, and a syntax error shows up in the diagram's error boundary. Check light and
-dark.
+`pnpm build` draws every diagram with Pele. A diagram that does not parse stops the build and names
+the file and the line:
+
+```text
+docs/example.mdx:42: invalid Mermaid diagram (syntax)
+...
+```
+
+```bash
+pnpm test
+```
+
+`pnpm test` renders the `markdown` fences that hold the copy-paste text as well, so a broken example
+fails CI too. Neither command tells you how a diagram looks: open the page, and check light and dark.
 
 ### Make diagrams accessible
 
 Do not make a diagram the sole way to convey important information. Introduce it with a useful heading,
 explain the conclusion in nearby prose, and give dense diagrams a caption or a short text alternative.
 Use meaningful labels instead of anonymous node IDs, keep color from being the only signal, and check both
-light and dark themes. Mermaid supports accessibility directives for diagram types that implement them:
+light and dark themes. Pele turns `accTitle` and `accDescr` into the SVG's `title`, `desc`, and ARIA
+references, and gives every diagram on a page its own ids:
 
 ```mermaid
 flowchart LR
@@ -2057,70 +2068,82 @@ the content searchable and understandable when SVG rendering is unavailable.
 
 ### Treat diagram input as untrusted
 
-Do not interpolate user-controlled text into a Mermaid definition. This site keeps `securityLevel` at
-`strict`, which sanitizes HTML in labels and ignores `click` callbacks. Do not loosen that in
-`themeConfig.mermaid.options` without a reviewed reason. If application data must become a diagram,
-validate and escape it first, and render it in the same environment in which users will view it.
+Diagrams are part of the site, not reader input: Pele draws them at build time and the page ships the
+resulting SVG. Do not interpolate user-controlled text into a diagram definition. Pele escapes label
+text, never turns diagram source into scripts, event handlers, or HTML labels, filters links to `http`,
+`https`, `mailto`, and `tel`, and ignores JavaScript callbacks in `click` statements. Error messages can
+quote the diagram source, so keep them in the build log rather than showing them to readers. If
+application data must become a diagram, validate and escape it first, and review the page after the
+build.
 
 ---
 
-## Mermaid in Docusaurus
+## How this site renders Mermaid
 
-Three settings in `docusaurus.config.ts` turn diagrams on:
+Diagrams are drawn by [Pele](https://pele.run/), a Mermaid renderer that runs in Node. It draws during
+the same pass as the rest of the site, so every page ships plain SVG:
+
+- No diagram code runs in the browser. The page is complete before any JavaScript loads.
+- The site does not install Mermaid at all.
+- The color mode switches with CSS variables. A diagram does not redraw.
+- A diagram that does not parse fails `pnpm build`.
+
+`plugins/pele-diagrams.mjs` renders each fence, and `src/theme/Mermaid` prints the SVG Docusaurus
+produces for a `mermaid` code block. Two settings in `docusaurus.config.ts` wire it up:
 
 ```typescript
 const config = {
     markdown: {
-        mermaid: true,
+        // Off: plugins/pele-diagrams.mjs renders the fences itself.
+        mermaid: false,
     },
-    themes: ['@docusaurus/theme-mermaid'],
-    themeConfig: {
-        mermaid: {
-            theme: {light: 'default', dark: 'dark'},
-        },
-    },
+    presets: [
+        ['classic', {
+            docs: {
+                remarkPlugins: [peleDiagrams],
+            },
+        }],
+    ],
 };
 ```
 
-`markdown.mermaid` tells the MDX loader to turn a code fence whose language is `mermaid` into a
-diagram. The language has to be exactly that word. A title or a highlight range on the fence is
-ignored: the block still renders, and the title does not appear.
+The language has to be exactly `mermaid`. A title or a highlight range on the fence is ignored: the
+block still renders, and the title does not appear.
 
-`@docusaurus/theme-mermaid` 3.10 draws each diagram in the browser. It depends on `mermaid`
-`>= 11.6.0`. This repo currently resolves Mermaid 12.0.0. The lockfile is the source of truth for
-the version -- the live editor and a GitHub preview can be a different release.
+Pele uses its own layout engine, and it covers every diagram type built into Mermaid 12.1. The colors
+and fonts come from CSS, not from the diagram:
 
-The theme calls `mermaid.initialize` with `startOnLoad: false` and the theme for the active color
-mode. Light mode uses Mermaid's `default` theme. Dark mode uses `dark`. The site default is dark,
-and the color mode follows the system preference, so a diagram is drawn for the mode the reader
-ends up with. Toggling color mode draws it again. `themeConfig.mermaid.options` is empty, so the
-rest of Mermaid's defaults apply:
+| Item | Value here |
+|------|------------|
+| Renderer | Pele, every Mermaid 12.1 diagram type |
+| Labels | SVG text: line breaks, bold, and italic; other HTML is not supported |
+| Colors | `--pele-*` variables, mapped to the Infima palette in `src/css/custom.css` |
+| Color mode | Follows the theme toggle, without a re-render |
+| `%%{init}%%` | Parsed, but `theme` and `themeVariables` do not apply |
+| `click node "https://..."` | Rendered as a link; JavaScript callbacks are ignored |
+| Sizing | The SVG scales down to the column |
 
-| Default | Value here | What it means |
-|---------|------------|---------------|
-| `securityLevel` | `strict` | HTML in labels is sanitized. `click` callbacks are ignored. A diagram cannot lower this with an `init` directive. |
-| `htmlLabels` | `true` | A label may contain `<br/>` for a line break. Other HTML is stripped. |
-| `look` | `neo` | Mermaid 12's flowchart default. This site does not set `look`. |
-| `layout` | `elk` | Flowcharts use the ELK layout bundled with Mermaid 12. You do not need `@mermaid-js/layout-elk`. |
-| `gitGraph.mainBranchName` | `main` | The first commits in a git graph sit on `main`. |
+The root of every diagram is `<svg class="pele">`. Style a diagram, or one element of it, through the
+variables and classes from the [Pele theming page](https://pele.run/theming):
 
-`securityLevel`, `startOnLoad`, `maxTextSize`, `suppressErrorRendering`, and `maxEdges` are locked.
-An `%%{init}%%` block can still set `theme`, `look`, or `layout` for that one diagram. An init theme
-stays put after the reader switches to dark mode. Leave it out unless you have checked both color
-modes.
+```css
+.pele {
+    --pele-accent: var(--ifm-color-primary);
+}
+
+.pele-node[data-id="start"] .pele-label {
+    fill: var(--pele-accent);
+}
+```
 
 `classDef` fill and stroke colors are literal CSS. They do not follow the toggle. Prefer the theme
 colors, and put the meaning in the label when color would otherwise be the only signal.
-
-Diagrams are wrapped in `.docusaurus-mermaid-container`. `useMaxWidth` defaults to true, so the SVG
-scales down to the column. A wide chart becomes unreadably small. Split it instead of overriding
-layout for the whole site.
 
 ### Where Mermaid works
 
 | Platform | Support |
 |----------|---------|
-| Docusaurus (with theme) | This site's configured renderer |
+| Docusaurus (this site) | Pele draws the fences at build time |
 | GitHub Markdown | Native Mermaid rendering; supported syntax can differ from this site |
 | GitLab Markdown | Native rendering on supported GitLab versions; verify the instance configuration |
 | Notion | No equivalent built-in Mermaid code-block renderer; use an integration or an exported image |
@@ -2130,17 +2153,26 @@ layout for the whole site.
 ### Responsive diagrams
 
 Wide diagrams are hard to read on a phone. Several focused diagrams beat one dense canvas. Use short
-labels, and look at the page at a narrow width before you publish it.
+labels, and look at the page at a narrow width before you publish it. A diagram scales down to the
+column, so a wide chart becomes unreadably small: split it instead.
+
+Pele can re-layout a diagram for the available width (`maxWidth`, `autoDirection`), but that runs in the
+browser of every reader. This site draws once at build time and scales the result.
 
 ### Live editor
 
 Draft in the [Mermaid Live Editor](https://mermaid.live/), then paste the definition here and read
-the page in both color modes. Export to SVG or PNG only when the destination has no Mermaid renderer.
+the page in both color modes. Check the [Pele playground](https://pele.run/playground) to see what this
+site draws. Export to SVG or PNG only when the destination has no Mermaid renderer.
 
 ## External Resources
 
 - [Mermaid documentation](https://mermaid.js.org/intro/)
 - [Mermaid syntax reference](https://mermaid.js.org/intro/syntax-reference.html)
 - [Mermaid Live Editor](https://mermaid.live/)
+- [Pele documentation](https://pele.run/)
+- [Pele API](https://pele.run/api)
+- [Pele theming](https://pele.run/theming)
+- [Pele compatibility](https://pele.run/compatibility)
 - [Docusaurus diagrams](https://docusaurus.io/docs/markdown-features/diagrams)
 - [GitHub diagrams](https://docs.github.com/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)
