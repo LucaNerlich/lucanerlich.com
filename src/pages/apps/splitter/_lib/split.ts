@@ -42,12 +42,16 @@ export const allocateByWeights = (
     if (entries.length === 0) return shares;
 
     const sorted = entries.sort((a, b) => collator.compare(a[0], b[0]));
-    const totalWeight = sorted.reduce((acc, [, w]) => acc + w, 0);
+    // Normalize by the largest weight before summing: multiplying
+    // totalCents by a huge weight first overflows to Infinity (or past
+    // 2^53) and Math.floor stops tracking the true quotient.
+    const maxWeight = sorted.reduce((acc, [, w]) => Math.max(acc, w), 0);
+    const totalWeight = sorted.reduce((acc, [, w]) => acc + w / maxWeight, 0);
     if (!(totalWeight > 0)) return shares;
 
     type Row = {id: string; base: number; frac: number};
     const rows: Row[] = sorted.map(([id, w]) => {
-        const exact = (totalCents * w) / totalWeight;
+        const exact = (totalCents * (w / maxWeight)) / totalWeight;
         const base = Math.floor(exact);
         return {id, base, frac: exact - base};
     });
@@ -60,6 +64,18 @@ export const allocateByWeights = (
         if (left <= 0) break;
         row.base += 1;
         left -= 1;
+    }
+
+    // Floating-point quotes can overshoot by a cent; take it back from the
+    // rows with the smallest fractional part so the sum stays exact.
+    if (left < 0) {
+        for (const row of [...order].reverse()) {
+            if (left === 0) break;
+            if (row.base > 0) {
+                row.base -= 1;
+                left += 1;
+            }
+        }
     }
     for (const row of rows) shares.set(row.id, row.base);
     return shares;

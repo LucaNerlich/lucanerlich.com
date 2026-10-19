@@ -64,6 +64,30 @@ describe('allocateByWeights', () => {
         assert.equal(shares.get('a'), 200);
         assert.equal(shares.get('b'), 100);
     });
+
+    it('does not overflow on extreme weights', () => {
+        const shares = allocateByWeights(
+            1000,
+            new Map([
+                ['a', 1e308],
+                ['b', 1e308],
+            ]),
+        );
+        for (const value of shares.values()) assert.ok(Number.isFinite(value));
+        assert.equal([...shares.values()].reduce((a, b) => a + b, 0), 1000);
+    });
+
+    it('keeps the sum exact for amounts above 2^53 when dividing', () => {
+        const total = 9007199254740162;
+        const shares = allocateByWeights(
+            total,
+            new Map([
+                ['a', 2],
+                ['b', 3],
+            ]),
+        );
+        assert.equal([...shares.values()].reduce((a, b) => a + b, 0), total);
+    });
 });
 
 describe('allocateExpense modes', () => {
