@@ -134,7 +134,7 @@ omarchy plugin validate .
 qmllint -I "$OMARCHY_PATH/shell" omarchy/BarWidget.qml omarchy/Panel.qml
 ```
 
-`make bundle` rebuilds the statically linked backend into `omarchy/bin/`. `make verify-bundle` is the marketplace gate: non-stripped ELF, matching SHA-256, and a byte-identical musl rebuild (the ring TLS backend compiles C sources, so a musl C cross-compiler is needed -- `pacman -S musl` on Arch or the musl.cc toolchain on PATH).
+`make bundle` rebuilds the statically linked backend into `omarchy/bin/`. `make verify-bundle` is the marketplace gate: non-stripped ELF, matching SHA-256, and a byte-identical musl rebuild (the backend uses the pure-Rust oxitls provider, so no musl C cross-compiler is needed).
 
 Release checklist:
 
