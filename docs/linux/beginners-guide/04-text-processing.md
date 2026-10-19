@@ -538,8 +538,8 @@ find /var/log -name "*.log" -type f -size +1M \
 ### Replace a Config Value Across Multiple Files
 
 ```bash
-grep -rl "old.database.host" /etc/myapp/ \
-  | xargs sed -i 's/old.database.host/new.database.host/g'
+grep -rlF --null -- 'old.database.host' /etc/myapp/ \
+  | xargs -0 -r sed -i 's/old\.database\.host/new.database.host/g'
 ```
 
 ### Parse a CSV Report
