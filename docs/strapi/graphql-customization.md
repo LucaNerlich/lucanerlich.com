@@ -671,13 +671,13 @@ module.exports = (config, { strapi }) => {
 
 ## N+1 queries
 
-Strapi's generated GraphQL schema resolves relations with its own batched association resolver, so the
-usual "replace the relation resolver with a DataLoader" advice does not apply to the built-in types. A
-root resolver returns documents without their relations populated, which means `parent.author` is
+Strapi's generated schema resolves relations one parent at a time - the association resolver calls
+`strapi.db.query(uid).load(parent, attribute, query)` - so there is no built-in batching. A root
+resolver returns documents without their relations populated, which means `parent.author` is
 `undefined` in a relation resolver and a loader keyed on it batches `undefined` for every row.
 
-Batch from a custom root field (or a service query that selects the ids you need), and keep the
-built-in association resolvers in place.
+Keep the built-in association resolvers. When you need to avoid N+1, resolve the relation in a custom
+root field (or a service query) that selects the ids you need and populates the relation in one query.
 
 ---
 
