@@ -284,13 +284,22 @@ export default {
           policies: ['admin::isAuthenticatedAdmin'],
         },
       },
+      {
+        method: 'DELETE',
+        path: '/bookmarks/:id',
+        handler: 'bookmark.delete',
+        config: {
+          policies: ['admin::isAuthenticatedAdmin'],
+        },
+      },
     ],
   },
 };
 ```
 
-The named router format makes the route surface explicit. Content API routes and admin routes are both prefixed with
-`/<plugin-name>/`, so the public endpoints above become `/my-plugin/bookmarks`.
+The named router format makes the route surface explicit. Content API routes are served under
+`/api/<plugin-name>/`; admin routes are served under `/<plugin-name>/`, which is the path the admin panel
+component calls.
 
 If the plugin only exposes admin-panel endpoints, keep them in the `admin` router. Use `content-api` only for endpoints
 intended to be called by frontends through Strapi's Content API authentication.
