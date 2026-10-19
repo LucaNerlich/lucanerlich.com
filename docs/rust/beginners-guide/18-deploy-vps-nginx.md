@@ -231,7 +231,10 @@ Use environment variables for configuration instead of hardcoding values:
 use std::env;
 
 let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
-let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+let port: u16 = env::var("PORT")
+    .ok()
+    .and_then(|value| value.parse().ok())
+    .unwrap_or(8080);
 let db_path = env::var("DATABASE_PATH").unwrap_or_else(|_| "todos.db".to_string());
 ```
 
