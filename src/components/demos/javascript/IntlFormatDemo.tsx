@@ -81,14 +81,14 @@ export default function IntlFormatDemo(): ReactNode {
                             className={shell.input}
                             type="number"
                             step="0.01"
-                            value={amount}
+                            defaultValue={1234.56}
                             onChange={(event) => {
-                                // An in-progress decimal ("9.") or minus is
-                                // reported as an empty value (badInput).
-                                // Number('') is 0, so ignore it instead of
-                                // resetting the field mid-keystroke.
-                                if (event.target.value !== '') {
-                                    setAmount(Number(event.target.value));
+                                // Keep the field uncontrolled so React does not
+                                // restore a committed value mid-keystroke. The
+                                // browser reports an in-progress decimal or
+                                // minus as badInput; only update on valid text.
+                                if (!event.target.validity.badInput) {
+                                    setAmount(event.target.value === '' ? 0 : Number(event.target.value));
                                 }
                             }}
                         />
