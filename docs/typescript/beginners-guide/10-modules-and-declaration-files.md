@@ -233,14 +233,11 @@ declare global {
         };
         __APP_VERSION__: string;
     }
+
+    // Globals injected by a build tool (ambient inside declare global)
+    const __DEV__: boolean;
+    const __API_URL__: string;
 }
-
-// Declare a global variable injected by a build tool
-declare const __DEV__: boolean;
-declare const __API_URL__: string;
-
-// Declare a global function
-declare function require(module: string): unknown;
 
 export {}; // Make this file a module (required when using declare global)
 ```
