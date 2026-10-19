@@ -401,10 +401,10 @@ const App = () => {
     fetchBookmarks();
   }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (documentId: string) => {
     try {
-      await del(`/${pluginId}/bookmarks/${id}`);
-      setBookmarks((prev) => prev.filter((b) => b.id !== id));
+      await del(`/${pluginId}/bookmarks/${documentId}`);
+      setBookmarks((prev) => prev.filter((b) => b.documentId !== documentId));
     } catch (error) {
       console.error('Delete failed:', error);
     }
@@ -426,12 +426,12 @@ const App = () => {
         </Thead>
         <Tbody>
           {bookmarks.map((bookmark) => (
-            <Tr key={bookmark.id}>
+            <Tr key={bookmark.documentId}>
               <Td><Typography>{bookmark.title}</Typography></Td>
               <Td><a href={bookmark.url} target="_blank" rel="noopener noreferrer">{bookmark.url}</a></Td>
               <Td><Typography>{new Date(bookmark.createdAt).toLocaleDateString()}</Typography></Td>
               <Td>
-                <Button variant="danger-light" onClick={() => handleDelete(bookmark.id)}>
+                <Button variant="danger-light" onClick={() => handleDelete(bookmark.documentId)}>
                   Delete
                 </Button>
               </Td>
