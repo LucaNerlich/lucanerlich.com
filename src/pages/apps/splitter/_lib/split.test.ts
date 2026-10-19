@@ -256,6 +256,30 @@ describe('url codec', () => {
         }
     });
 
+    it('resolves v3 references through deduplicated person ids', async () => {
+        const state: AppState = {
+            ...emptyState(),
+            people: [
+                {id: 'a', name: 'A'},
+                {id: 'a', name: 'A duplicate'},
+                {id: 'b', name: 'B'},
+            ],
+            expenses: [{
+                id: 'e',
+                description: 'Lunch',
+                cents: 1000,
+                paidBy: 'a',
+                participants: ['a', 'b'],
+                split: equalSplit(),
+            }],
+        };
+        const decoded = await decodeState(await encodeState(state));
+        assert.ok(decoded);
+        assert.equal(decoded.people.length, 2);
+        assert.equal(decoded.expenses[0].paidBy, 'a');
+        assert.deepEqual([...decoded.expenses[0].participants].sort(), ['a', 'b']);
+    });
+
     it('drops a legacy expense whose participant list resolves empty', async () => {
         const v2 = {
             v: 2 as const,

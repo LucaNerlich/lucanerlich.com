@@ -78,15 +78,20 @@ const splitFromWire = (wire: WireSplit): Split => {
     return equalSplit();
 };
 
-const peopleFromWire = (rows: WirePerson[]): Person[] => {
+const peopleFromWire = (
+    rows: WirePerson[],
+): {people: Person[]; indexToId: Map<number, string>} => {
+    const people: Person[] = [];
+    const indexToId = new Map<number, string>();
     const seen = new Set<string>();
-    return rows
-        .map(([id, name]): Person => ({id: String(id), name: String(name)}))
-        .filter(p => {
-            if (seen.has(p.id)) return false;
-            seen.add(p.id);
-            return true;
-        });
+    rows.forEach(([id, name], index) => {
+        const personId = String(id);
+        indexToId.set(index, personId);
+        if (seen.has(personId)) return;
+        seen.add(personId);
+        people.push({id: personId, name: String(name)});
+    });
+    return {people, indexToId};
 };
 
 const splitToWireV3 = (split: Split, indexOf: Map<string, number>): WireSplitV3 => {
@@ -163,7 +168,7 @@ const toWireV3 = (state: AppState): WireV3 => {
 };
 
 const fromWireV1 = (w: WireV1): AppState => {
-    const people = peopleFromWire(w.p);
+    const {people} = peopleFromWire(w.p);
     const personIds = new Set(people.map(p => p.id));
     const allIds = people.map(p => p.id);
     const expenses = w.e
@@ -183,7 +188,7 @@ const fromWireV1 = (w: WireV1): AppState => {
 };
 
 const fromWireV2 = (w: WireV2): AppState => {
-    const people = peopleFromWire(w.p);
+    const {people} = peopleFromWire(w.p);
     const personIds = new Set(people.map(p => p.id));
     const expenses = w.e
         .filter(row => {
@@ -224,25 +229,25 @@ const fromWireV2 = (w: WireV2): AppState => {
 };
 
 const fromWireV3 = (w: WireV3): AppState => {
-    const people = peopleFromWire(w[2] ?? []);
+    const {people, indexToId} = peopleFromWire(w[2] ?? []);
     const personIds = new Set(people.map(p => p.id));
     const expensesRaw = Array.isArray(w[3]) ? w[3] : [];
     const expenses = expensesRaw
         .filter(row => {
             if (!Array.isArray(row)) return false;
             const cents = row[2];
-            const paidBy = people[Number(row[3])]?.id;
+            const paidBy = indexToId.get(Number(row[3]));
             return Number.isSafeInteger(cents) && cents > 0 && !!paidBy && personIds.has(paidBy);
         })
         .map((row): Expense | null => {
             const [id, description, cents, paidByIdx, participantsRaw, splitRaw] = row;
-            const paidBy = people[Number(paidByIdx)].id;
+            const paidBy = indexToId.get(Number(paidByIdx))!;
             let participants: string[];
             if (participantsRaw === 0) {
                 participants = people.map(p => p.id);
             } else {
                 participants = (Array.isArray(participantsRaw) ? participantsRaw : [])
-                    .map(idx => people[Number(idx)]?.id)
+                    .map(idx => indexToId.get(Number(idx)))
                     .filter((pid): pid is string => !!pid && personIds.has(pid));
                 participants = [...new Set(participants)];
                 // 0 is the only "everyone" sentinel; an explicit list that
@@ -264,8 +269,8 @@ const fromWireV3 = (w: WireV3): AppState => {
     const paidTransferKeys = (Array.isArray(w[4]) ? w[4] : [])
         .map(row => {
             if (!Array.isArray(row) || row.length < 3) return null;
-            const from = people[Number(row[0])]?.id;
-            const to = people[Number(row[1])]?.id;
+            const from = indexToId.get(Number(row[0]));
+            const to = indexToId.get(Number(row[1]));
             const cents = Number(row[2]);
             if (!from || !to || !Number.isSafeInteger(cents) || cents <= 0) return null;
             return transferKey(from, to, cents);
