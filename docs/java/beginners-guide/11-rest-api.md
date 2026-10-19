@@ -331,6 +331,13 @@ public class TaskHandler implements HttpHandler {
             return;
         }
 
+        if (description.contains("|") || description.contains("\n")
+                || description.contains("\r")) {
+            sendResponse(exchange, 400,
+                    JsonHelper.errorJson("Description cannot contain '|' or line breaks"));
+            return;
+        }
+
         Task task;
         synchronized (storeLock) {
             List<Task> tasks = store.load();

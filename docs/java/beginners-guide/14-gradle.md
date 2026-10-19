@@ -185,6 +185,7 @@ Jackson instead of Gson:
 // src/main/java/taskapi/TaskHandler.java
 package taskapi;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -258,7 +259,13 @@ public class TaskHandler implements HttpHandler {
         String body = readRequestBody(exchange);
 
         // Jackson's tree model for flexible parsing
-        JsonNode node = mapper.readTree(body);
+        JsonNode node;
+        try {
+            node = mapper.readTree(body);
+        } catch (JsonProcessingException e) {
+            sendError(exchange, 400, "Invalid JSON");
+            return;
+        }
         JsonNode descNode = node.get("description");
 
         if (descNode == null || descNode.asText().isBlank()) {
@@ -267,6 +274,12 @@ public class TaskHandler implements HttpHandler {
         }
 
         String description = descNode.asText();
+        if (description.contains("|") || description.contains("\n")
+                || description.contains("\r")) {
+            sendError(exchange, 400, "Description cannot contain '|' or line breaks");
+            return;
+        }
+
         List<Task> tasks = store.load();
         int nextId = tasks.stream().mapToInt(Task::id).max().orElse(0) + 1;
         Task task = new Task(nextId, description, false);
