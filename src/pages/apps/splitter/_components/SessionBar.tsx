@@ -34,7 +34,7 @@ const SessionBar: React.FC<Props> = ({
         const text = await file.text();
         const next = await importJson(text);
         if (!next) {
-            window.alert('Could not import that JSON file.');
+            window.alert(t('importError'));
             return;
         }
         onImport(next);

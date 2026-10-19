@@ -68,20 +68,21 @@ const ExpenseForm: React.FC<Props> = ({
             <div className={styles.expenseFormGrid}>
                 <label className={styles.fieldLabel}>
                     <span>
-                        Description <span className={styles.optional}>(optional)</span>
+                        {messages.t('description')}{' '}
+                        <span className={styles.optional}>{messages.t('optional')}</span>
                     </span>
                     <input
                         ref={descriptionRef}
                         type="text"
                         value={description}
                         onChange={e => setDescription(e.target.value)}
-                        placeholder="Dinner, taxi, groceries…"
+                        placeholder={messages.t('descriptionPlaceholder')}
                         disabled={disabled}
                         className={styles.input}
                     />
                 </label>
                 <label className={styles.fieldLabel}>
-                    <span>Amount ({currencySymbol(currency)})</span>
+                    <span>{messages.t('amount')} ({currencySymbol(currency)})</span>
                     <input
                         type="text"
                         value={amount}
@@ -94,7 +95,7 @@ const ExpenseForm: React.FC<Props> = ({
                     />
                 </label>
                 <label className={styles.fieldLabel}>
-                    <span>Paid by</span>
+                    <span>{messages.t('paidBy')}</span>
                     <select
                         value={paidBy}
                         onChange={e => setPaidBy(e.target.value)}
@@ -108,7 +109,7 @@ const ExpenseForm: React.FC<Props> = ({
                         }}
                     >
                         {people.length === 0 ? (
-                            <option value="">- add people first -</option>
+                            <option value="">{messages.t('noPeopleOption')}</option>
                         ) : (
                             people.map(p => (
                                 <option key={p.id} value={p.id}>
@@ -141,7 +142,7 @@ const ExpenseForm: React.FC<Props> = ({
                     {messages.t('addExpense')}
                 </button>
                 {disabled && (
-                    <span className={styles.mutedInline}>Add at least one person first.</span>
+                    <span className={styles.mutedInline}>{messages.t('addPersonFirst')}</span>
                 )}
             </div>
         </form>
