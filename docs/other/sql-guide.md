@@ -1212,8 +1212,10 @@ ALTER TABLE users RENAME COLUMN bio TO biography;
 -- Drop a column
 ALTER TABLE users DROP COLUMN biography;
 
--- Add a constraint
+-- Add a constraint (PostgreSQL / MySQL)
 ALTER TABLE users ADD CONSTRAINT unique_email UNIQUE (email);
+-- SQLite has no ADD CONSTRAINT; create a unique index instead:
+-- CREATE UNIQUE INDEX users_email_unique ON users(email);
 ```
 
 ### `DROP TABLE`
@@ -1304,11 +1306,15 @@ CREATE INDEX idx_posts_user ON posts(user_id) INCLUDE (title, created_at);
 ### `EXPLAIN` - understanding query plans
 
 ```sql
+-- PostgreSQL / MySQL
 EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'ada@example.com';
+-- SQLite:
+-- EXPLAIN QUERY PLAN SELECT * FROM users WHERE email = 'ada@example.com';
 ```
 
-This shows how the database executes the query - whether it uses an index, a full table scan, and how long each step
-takes. Use it to diagnose slow queries.
+This shows how the database executes the query - whether it uses an index or a full table scan. `EXPLAIN ANALYZE`
+also reports how long each step takes; SQLite's `EXPLAIN QUERY PLAN` shows the plan only. Use it to diagnose slow
+queries.
 
 ## Transactions
 
