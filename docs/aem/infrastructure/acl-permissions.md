@@ -564,7 +564,8 @@ Use **User Admin** or the Impersonate feature to test as a specific user:
 
 ### Permission checker
 
-AEM provides a permission check endpoint:
+On the local SDK or AEM 6.5, AEM provides a permission check endpoint (on AEMaaCS the
+Felix console is not exposed):
 
 ```http
 GET /system/console/jcr?path=/content/mysite&user=content-author-user
@@ -596,7 +597,7 @@ println "Can write /content/mysite: $canWrite"
 - **Repoinit** is the preferred approach for service users and baseline ACLs on AEMaaCS
 - The Netcentric ACL Tool works on AEMaaCS (deployed as a content package)
 - CRXDE Lite is not available in production; all permission management must be code-driven
-- The Felix console is accessible via the **Developer Console** (limited)
+- The Felix console is **not** available on AEMaaCS; inspect OSGi state read-only in the Developer Console. The ACL Tool dump page is local SDK / AEM 6.5 only
 - Cloud Manager pipelines run repoinit scripts on deployment
 - Use **repoinit for service users** and **ACL Tool for content-level permissions**
 
@@ -640,7 +641,7 @@ users only need to edit existing content, not create or delete nodes.
 | Pitfall                                    | Solution                                                                                  |
 |--------------------------------------------|-------------------------------------------------------------------------------------------|
 | Users can't see pages after deployment     | Check that the group has `jcr:read` on `/content` and all ancestor nodes                  |
-| ACL Tool runs but permissions don't apply  | Verify the YAML is syntactically correct; check the ACL Tool log in Felix console         |
+| ACL Tool runs but permissions don't apply  | Verify the YAML is syntactically correct; check the ACL Tool log in the local SDK/6.5 Felix console (use Cloud Manager logs on AEMaaCS) |
 | Service user gets `LoginException`         | Check the service user mapping and ensure the user exists (repoinit must run first)       |
 | Deny ACE has no effect                     | Deny does not win by itself: at one path the entry listed later takes precedence, and user ACEs beat group ACEs. Check for a closer allow or an allow listed after the deny |
 | CUG blocks all anonymous access            | CUGs deny `jcr:read` to everyone not in the principal list; verify the group membership   |
