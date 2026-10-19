@@ -547,9 +547,10 @@ public class ContentCleanupJobConsumer implements JobConsumer {
 
 ## Monitoring Jobs
 
-### Felix Web Console
+### Felix Web Console (local SDK / AEM 6.5)
 
-Navigate to `/system/console/slingevent` to see:
+Not available on AEM as a Cloud Service - see the AEMaaCS Considerations below. On the local SDK or AEM 6.5,
+navigate to `/system/console/slingevent` to see:
 
 - Active queues and their configuration
 - Queued, active, and finished jobs
@@ -619,7 +620,8 @@ runs on **exactly one node**:
 
 - Sling Jobs work on AEMaaCS, but the **underlying storage differs** from on-prem
 - Jobs are still persisted and survive restarts
-- The Felix console (`/system/console/slingevent`) is available on author via Developer Console
+- The Felix console (`/system/console/slingevent`) is not exposed on Cloud Service; use Developer Console
+  logs (or the local SDK) to monitor jobs
 - **Scheduler frequency limits**: avoid scheduling tasks more frequently than every 5 minutes
   on AEMaaCS; the infrastructure may throttle or de-duplicate
 - For heavy background work, consider **Adobe I/O App Builder** actions triggered by I/O Events
