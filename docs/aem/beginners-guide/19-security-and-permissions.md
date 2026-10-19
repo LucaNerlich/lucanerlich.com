@@ -65,8 +65,8 @@ path). The classic **useradmin**/**Permissions** UIs both work.
 
 - ACLs **inherit down** the tree: a grant on `/content/mysite` applies to everything beneath it unless
   overridden.
-- **Deny entries win** over allow at the same specificity; more specific (deeper) entries override
-  ancestors.
+- At one path, the **later** ACE is evaluated first, and direct user ACEs beat group ACEs regardless
+  of order or depth. More specific (deeper) entries override ancestors.
 - Keep it simple: grant broadly at a high level for a role, then add narrow deny/allow only where a
   team genuinely needs an exception. Deep, conflicting ACL trees are the main source of "why can't
   this author edit?" tickets.
@@ -132,7 +132,7 @@ On AEM as a Cloud Service, user **authentication** for authors is handled by **A
 You learned:
 
 - Assign permissions to **groups**, not users; model groups as roles
-- **ACLs** grant **privileges** on paths, and **inherit** down the tree (deny wins, deeper wins)
+- **ACLs** grant **privileges** on paths, and **inherit** down the tree (later ACE wins, deeper wins)
 - Define permissions as code with **repoinit** so environments stay consistent
 - Use least-privilege **service users** instead of admin sessions
 - **Closed User Groups** gate published content to authorized visitors

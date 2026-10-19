@@ -67,7 +67,7 @@ Every JCR node can have a `rep:policy` child node containing **Access Control En
 
 1. Effective permissions are resolved from the repository root down to the target path
 2. ACEs on **child paths** are more specific than inherited parent ACEs
-3. Matching **deny** entries take precedence over matching **allow** entries for the same privilege
+3. At the same path, the ACE listed **later** in the ACL is evaluated first; direct user ACEs beat group ACEs regardless of order or depth
 4. Direct user ACEs and all group memberships are combined; avoid contradictory ACEs
 5. The `admin` user bypasses ACL checks
 6. `everyone` applies to every session, including anonymous
@@ -642,7 +642,7 @@ users only need to edit existing content, not create or delete nodes.
 | Users can't see pages after deployment     | Check that the group has `jcr:read` on `/content` and all ancestor nodes                  |
 | ACL Tool runs but permissions don't apply  | Verify the YAML is syntactically correct; check the ACL Tool log in Felix console         |
 | Service user gets `LoginException`         | Check the service user mapping and ensure the user exists (repoinit must run first)       |
-| Deny ACE has no effect                     | Deny is evaluated in order; ensure it comes after (or at the same level as) the allow ACE |
+| Deny ACE has no effect                     | Deny does not win by itself: at one path the entry listed later takes precedence, and user ACEs beat group ACEs. Check for a closer allow or an allow listed after the deny |
 | CUG blocks all anonymous access            | CUGs deny `jcr:read` to everyone not in the principal list; verify the group membership   |
 | `rep:glob` matches too broadly             | Test glob patterns carefully; empty string `""` matches only the node itself              |
 | Permissions work on author but not publish | Ensure ACLs are also set for publish-side groups; check if CUGs are enabled on publish    |
