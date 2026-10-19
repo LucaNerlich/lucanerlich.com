@@ -318,15 +318,15 @@ remove thousands of related rows. `RESTRICT` is the safest default.
 
 ```sql
 -- Single row
-INSERT INTO users (id, name, email, age)
-VALUES (1, 'Ada Lovelace', 'ada@example.com', 36);
+INSERT INTO users (id, name, email, age, active)
+VALUES (1, 'Ada Lovelace', 'ada@example.com', 36, TRUE);
 
 -- Multiple rows
-INSERT INTO users (id, name, email, age) VALUES
-    (2, 'Grace Hopper', 'grace@example.com', 85),
-    (3, 'Alan Turing', 'alan@example.com', 41),
-    (4, 'Linus Torvalds', 'linus@example.com', 54),
-    (5, 'Margaret Hamilton', 'margaret@example.com', 88);
+INSERT INTO users (id, name, email, age, active) VALUES
+    (2, 'Grace Hopper', 'grace@example.com', 85, FALSE),
+    (3, 'Alan Turing', 'alan@example.com', 41, TRUE),
+    (4, 'Linus Torvalds', 'linus@example.com', 54, TRUE),
+    (5, 'Margaret Hamilton', 'margaret@example.com', 88, TRUE);
 ```
 
 Insert posts:
@@ -555,6 +555,25 @@ TRUNCATE TABLE users;
 - On MySQL and SQL Server, `TRUNCATE` resets auto-increment counters; `DELETE` does not. PostgreSQL keeps
   sequences unless the statement includes `RESTART IDENTITY` (`TRUNCATE TABLE users RESTART IDENTITY;`).
 - `TRUNCATE` does not fire row-level `DELETE` triggers.
+
+The `DELETE FROM users;` and `TRUNCATE` examples empty the table. Restore the five-row practice dataset before
+continuing, so the result tables in later sections match:
+
+```sql
+INSERT INTO users (id, name, email, age, active) VALUES
+    (1, 'Ada Lovelace', 'ada@example.com', 36, TRUE),
+    (2, 'Grace Hopper', 'grace@example.com', 85, FALSE),
+    (3, 'Alan Turing', 'alan@example.com', 41, TRUE),
+    (4, 'Linus Torvalds', 'linus@example.com', 54, TRUE),
+    (5, 'Margaret Hamilton', 'margaret@example.com', 88, TRUE);
+
+INSERT INTO posts (user_id, title, body, published) VALUES
+    (1, 'Introduction to SQL', 'SQL is the language of databases...', TRUE),
+    (1, 'Advanced Joins', 'Understanding join types...', TRUE),
+    (2, 'COBOL to SQL', 'Migrating legacy systems...', TRUE),
+    (3, 'Turing Machines', 'A theoretical framework...', FALSE),
+    (4, 'Linux Kernel Design', 'How the kernel handles...', TRUE);
+```
 
 ## Aggregate functions
 
