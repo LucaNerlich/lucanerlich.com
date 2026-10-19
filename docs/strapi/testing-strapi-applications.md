@@ -494,6 +494,17 @@ module.exports = ({ env }) => ({
 });
 ```
 
+Disable cron in the same environment, so scheduled tasks do not mutate the test database:
+
+```js
+// config/env/test/server.js
+module.exports = {
+  cron: {
+    enabled: false,
+  },
+};
+```
+
 ```bash
 # Run tests with test environment
 NODE_ENV=test npx jest
