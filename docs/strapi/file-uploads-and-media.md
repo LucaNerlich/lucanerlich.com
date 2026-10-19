@@ -419,32 +419,36 @@ roles that need frontend uploads. Admin panel uploads are controlled by admin ro
 
 Strapi does not ship with malware scanning. Add it as a custom workflow around uploads. Because the Upload
 plugin writes file records through the Query Engine, Document Service middleware never sees an upload; wrap
-the Upload plugin service instead, where `add()` turns an upload into a file record:
+the Upload plugin's exported `upload()` method instead:
 
 ```js
 // src/index.js
 module.exports = {
   register({ strapi }) {
     const upload = strapi.plugin('upload').service('upload');
-    const add = upload.add.bind(upload);
+    const uploadFiles = upload.upload.bind(upload);
 
-    upload.add = async (...args) => {
-      const file = await add(...args);
+    upload.upload = async (...args) => {
+      const result = await uploadFiles(...args);
+      const files = Array.isArray(result) ? result : [result];
 
-      // Example only: implement scanFile() for your storage provider.
-      const clean = await scanFile(file);
-      if (!clean) {
-        throw new Error('Upload failed malware scanning.');
+      for (const file of files) {
+        // Example only: implement scanFile() for your storage provider.
+        const clean = await scanFile(file);
+        if (!clean) {
+          await upload.remove(file);
+          throw new Error('Upload failed malware scanning.');
+        }
       }
 
-      return file;
+      return result;
     };
   },
 };
 ```
 
-The wrapper runs after the record exists, so complete the failure path in your implementation (remove or
-mark the file in the same wrapper) rather than deleting it through `strapi.documents`.
+The wrapper removes the provider object and the database row through the
+plugin's own `remove()` before throwing, so a failed scan does not leave the file in place.
 
 For high-volume sites, queue the scan, mark files as `pending_scan`, and keep them out of API responses until the scan
 passes.
