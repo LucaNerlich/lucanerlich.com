@@ -275,8 +275,9 @@ fn main() {
 ```
 
 Run `cargo doc --open` to generate and view HTML documentation for your project. Documentation comments support
-Markdown formatting and the code examples inside `/// ```...` blocks are actually compiled and run as tests when
-you run `cargo test` (these are called **doc tests** - more in chapter 15).
+Markdown formatting and the code examples inside `/// ```...` blocks are compiled and run as tests by
+`cargo test` when the crate has a library target (these are called **doc tests** - more in chapter 15). This
+project is a binary, so move shared code to `src/lib.rs` to get doc tests.
 
 ### Module-level documentation
 
