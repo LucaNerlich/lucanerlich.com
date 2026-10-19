@@ -157,7 +157,7 @@ double average = List.of("hello", "world", "hi")
     .mapToInt(String::length)
     .average()
     .orElse(0.0);
-// 3.666...
+// 4.0
 ```
 
 ---
