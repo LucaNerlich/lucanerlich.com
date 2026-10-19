@@ -173,6 +173,7 @@ StandardError=journal
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
+PrivateTmp=true
 ReadWritePaths=/opt/task-api
 
 [Install]
@@ -185,6 +186,7 @@ Key settings:
 - `Restart=on-failure` - automatically restarts on crashes
 - `WorkingDirectory` - sets the working directory so `tasks.dat` is stored in `/opt/task-api/`
 - `ReadWritePaths` - allows writing only to the app directory (systemd security)
+- `PrivateTmp` - gives the service its own writable `/tmp`, which `jcmd` needs for its attach socket
 - `ExecStart=... -Xms64m -Xmx256m ...` - simple JVM memory settings inline (64MB initial, 256MB max - more than
   enough for this app)
 
@@ -468,7 +470,8 @@ sudo journalctl -u task-api -p err
 # Memory and CPU
 ps -C java -o pid,%cpu,%mem,cmd
 
-# Detailed JVM info
+# Detailed JVM info -- jcmd ships with the JDK, not the JRE
+sudo apt install openjdk-21-jdk-headless -y
 jcmd $(pgrep -f task-api) VM.info
 ```
 
