@@ -313,7 +313,7 @@ List<User> users = gson.fromJson(json, new TypeToken<List<User>>() {}.getType())
 | **Tree model**         | `JsonNode`                              | `JsonElement`                |
 | **Module system**      | Yes (Java 8 dates, Kotlin, etc.)        | Limited                      |
 | **Streaming API**      | `JsonParser` / `JsonGenerator`          | `JsonReader` / `JsonWriter`  |
-| **Null handling**      | Omits nulls by default                  | Includes nulls by default    |
+| **Null handling**      | Includes nulls by default               | Omits nulls by default       |
 | **Bundle size**        | ~1.5 MB (core + databind + annotations) | ~300 KB                      |
 | **Default in Spring**  | Yes                                     | No                           |
 | **Default in Android** | No                                      | Common                       |
