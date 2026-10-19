@@ -148,12 +148,13 @@ npm init -y
 ### Install TypeScript as a dev dependency
 
 ```bash
-npm install --save-dev typescript
+npm install --save-dev typescript @types/node
 ```
 
 This installs:
 - `tsc` - the TypeScript compiler
 - The TypeScript language server (used by editors)
+- `@types/node` - the Node.js globals (`console`, `process`, ...) that the `lib: ["ES2022"]` config below does not declare
 
 Verify the installation:
 
