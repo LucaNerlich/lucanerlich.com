@@ -52,7 +52,7 @@ module.exports = createCoreRouter('api::article.article', {
     },
     // Only owners can update
     update: {
-      middlewares: ['api::article.is-owner'],
+      policies: ['global::is-owner'],
     },
     // Only admins can delete
     delete: {
