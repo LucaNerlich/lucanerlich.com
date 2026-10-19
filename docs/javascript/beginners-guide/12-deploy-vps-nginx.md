@@ -497,17 +497,25 @@ sudo systemctl start fail2ban
 
 ### Change the SSH port (optional)
 
-Changing the default SSH port (22) reduces automated login attempts:
+Changing the default SSH port (22) reduces automated login attempts. Ubuntu 24.04 starts SSH through systemd socket
+activation, so the listening port lives in the socket unit, not in `sshd_config`:
 
 ```bash
-sudo nano /etc/ssh/sshd_config.d/00-hardening.conf
+sudo mkdir -p /etc/systemd/system/ssh.socket.d
+sudo nano /etc/systemd/system/ssh.socket.d/10-port.conf
 ```
 
-Add a `Port` line (e.g., `Port 2222`):
-
-```text
-Port 2222
+```ini
+[Socket]
+ListenStream=
+ListenStream=0.0.0.0:2222
+ListenStream=[::]:2222
 ```
+
+The empty `ListenStream=` clears the inherited port 22 before the new listeners are set; binding both families
+keeps the IPv4 test below working. A `Port` line in `sshd_config` also works on Ubuntu 24.04 -
+`sshd-socket-generator` turns it into socket listeners on `daemon-reload` - but the drop-in makes the port
+explicit.
 
 If you created the Fail2Ban jail above, update its SSH port too:
 
@@ -516,14 +524,14 @@ If you created the Fail2Ban jail above, update its SSH port too:
 port = 2222
 ```
 
-Test the SSH configuration, allow the new port, and apply the change. Ubuntu 24.04 starts SSH through systemd socket
-activation, so the listening port is controlled by `ssh.socket` and a plain reload is not enough:
+Test the SSH configuration, allow the new port, and apply the change:
 
 ```bash
 sudo ufw allow 2222/tcp
-sudo sshd -t
+sudo systemd-analyze verify ssh.socket
 sudo systemctl daemon-reload
 sudo systemctl restart ssh.socket
+ss -tlnp | grep 2222
 ```
 
 Open a new terminal and test the new port before closing your existing SSH session:
@@ -537,6 +545,13 @@ After the new connection works, remove the old firewall rule and reload Fail2Ban
 ```bash
 sudo ufw delete allow OpenSSH
 sudo fail2ban-client reload
+```
+
+To reuse the new port for `rsync` and `scp`, add it to `~/.ssh/config`:
+
+```text
+Host YOUR_SERVER_IP
+    Port 2222
 ```
 
 ## Deploying updates
