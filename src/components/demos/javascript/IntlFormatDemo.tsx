@@ -82,7 +82,15 @@ export default function IntlFormatDemo(): ReactNode {
                             type="number"
                             step="0.01"
                             value={amount}
-                            onChange={(event) => setAmount(Number(event.target.value))}
+                            onChange={(event) => {
+                                // An in-progress decimal ("9.") or minus is
+                                // reported as an empty value (badInput).
+                                // Number('') is 0, so ignore it instead of
+                                // resetting the field mid-keystroke.
+                                if (event.target.value !== '') {
+                                    setAmount(Number(event.target.value));
+                                }
+                            }}
                         />
                     </label>
                     <label className={shell.control} htmlFor={ids.date}>
