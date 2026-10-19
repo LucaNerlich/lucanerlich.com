@@ -133,7 +133,7 @@ Edit the SSH daemon configuration to disable root login and password authenticat
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 
 # See what the drop-ins set
-sudo grep -rE '^\s*(PasswordAuthentication|PermitRootLogin|ChallengeResponseAuthentication|PermitEmptyPasswords)' /etc/ssh/sshd_config.d/ 2>/dev/null
+sudo grep -rE '^\s*(PasswordAuthentication|PermitRootLogin|ChallengeResponseAuthentication|KbdInteractiveAuthentication|PermitEmptyPasswords)' /etc/ssh/sshd_config.d/ 2>/dev/null
 
 # Edit the config
 sudo vim /etc/ssh/sshd_config
@@ -176,7 +176,7 @@ sudo systemctl restart sshd
 sudo systemctl status sshd
 
 # Check the effective config, not just the file you edited
-sudo sshd -T | grep -E '^(permitrootlogin|passwordauthentication|permitemptypasswords|challengeresponseauthentication)'
+sudo sshd -T | grep -E '^(permitrootlogin|passwordauthentication|permitemptypasswords|kbdinteractiveauthentication)'
 ```
 
 **Test again in a new terminal.** Confirm root login is rejected and deploy key login works.
