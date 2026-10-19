@@ -277,7 +277,8 @@ fn main() {
 Run `cargo doc --open` to generate and view HTML documentation for your project. Documentation comments support
 Markdown formatting and the code examples inside `/// ```...` blocks are compiled and run as tests by
 `cargo test` when the crate has a library target (these are called **doc tests** - more in chapter 15). This
-project is a binary, so move shared code to `src/lib.rs` to get doc tests.
+project is a binary; to get doc tests, move the function to `src/lib.rs`, mark it `pub`, and import it in the
+example (`use <crate>::calculate_area;`).
 
 ### Module-level documentation
 
