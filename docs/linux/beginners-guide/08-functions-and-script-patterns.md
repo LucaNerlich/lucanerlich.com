@@ -292,26 +292,26 @@ trap cleanup EXIT INT TERM
 trap 'echo "Error on line $LINENO" >&2; cleanup; exit 1' ERR
 ```
 
-### Lock File Pattern with Trap
+### Lock File Pattern with `flock`
 
 ```bash
 #!/bin/bash
 set -euo pipefail
 
-LOCK_FILE="/tmp/deploy.lock"
+LOCK_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/deploy.lock"
+mkdir -p "$(dirname "$LOCK_FILE")"
 
-if [ -f "$LOCK_FILE" ]; then
+# flock holds the lock for the lifetime of file descriptor 9 and releases
+# it on any exit, including SIGKILL - no stale lock to remove by hand.
+exec 9>>"$LOCK_FILE"
+if ! flock -n 9; then
     echo "Another deployment is running (lock file: $LOCK_FILE)" >&2
     exit 1
 fi
 
-touch "$LOCK_FILE"
-trap 'rm -f "$LOCK_FILE"' EXIT
-
 echo "Running deployment..."
 # ... deploy commands ...
 echo "Deployment complete"
-# Lock file is removed automatically when the script exits
 ```
 
 ### Rollback Pattern with Trap
@@ -495,24 +495,22 @@ if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 # ---------- Setup & Cleanup --------------------------------------------------
-LOCK_FILE="/tmp/deploy-${ENVIRONMENT}.lock"
+LOCK_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/deploy-${ENVIRONMENT}.lock"
 TEMP_DIR=""
 
 cleanup() {
     local exit_code=$?
     [ -n "$TEMP_DIR" ] && rm -rf "$TEMP_DIR"
-    rm -f "$LOCK_FILE"
     if [ $exit_code -ne 0 ]; then
         log_error "Deployment failed (exit code: $exit_code)"
     fi
 }
 trap cleanup EXIT
 
-# Prevent concurrent deployments
-if [ -f "$LOCK_FILE" ]; then
-    die "Another deployment is already running for $ENVIRONMENT (lock: $LOCK_FILE)"
-fi
-touch "$LOCK_FILE"
+# Prevent concurrent deployments; the lock releases when this process exits
+mkdir -p "$(dirname "$LOCK_FILE")"
+exec 9>>"$LOCK_FILE"
+flock -n 9 || die "Another deployment is already running for $ENVIRONMENT (lock: $LOCK_FILE)"
 
 # ---------- Main Logic -------------------------------------------------------
 TEMP_DIR=$(mktemp -d)
