@@ -600,8 +600,8 @@ import org.slf4j.LoggerFactory;
     immediate = true,
     property = {
         EventConstants.EVENT_TOPIC + "=" + DamEvent.EVENT_TOPIC,
-        // Filter to a specific DAM folder
-        EventConstants.EVENT_FILTER + "=(path=/content/dam/myproject/*)"
+        // Filter to a specific DAM folder (DamEvent exposes assetPath)
+        EventConstants.EVENT_FILTER + "=(assetPath=/content/dam/myproject/*)"
     }
 )
 public class AssetEventHandler implements EventHandler {

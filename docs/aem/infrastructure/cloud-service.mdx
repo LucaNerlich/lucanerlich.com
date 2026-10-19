@@ -138,12 +138,8 @@ Initialisation (repoinit)** scripts to bootstrap required structures:
 {
     "scripts": [
         "ensure nodes (sling:OrderedFolder) /content/mysite,/content/dam/mysite",
-        "",
         "create service user myproject-service with path system/cq:services/myproject",
-        "set ACL for myproject-service",
-        "    allow jcr:read on /content/mysite",
-        "    allow rep:write on /content/mysite",
-        "end"
+        "set ACL for myproject-service\n    allow jcr:read on /content/mysite\n    allow rep:write on /content/mysite\nend"
     ]
 }
 ```
