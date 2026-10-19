@@ -349,11 +349,7 @@ Create `/etc/logrotate.d/myapp`:
     compress
     delaycompress
     notifempty
-    create 0640 deploy adm
-    sharedscripts
-    postrotate
-        systemctl reload myapp 2>/dev/null || true
-    endscript
+    copytruncate
 }
 ```
 

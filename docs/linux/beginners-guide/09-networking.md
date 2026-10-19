@@ -518,7 +518,7 @@ deploy_to_server() {
 
     echo "Updating symlink..."
     ssh -i ~/.ssh/deploy_key "deploy@${HOST}" \
-        "ln -sfn $REMOTE_PATH /opt/myapp/current && sudo systemctl reload myapp"
+        "ln -sfn $REMOTE_PATH /opt/myapp/current && sudo systemctl restart myapp"
 }
 
 deploy_to_server "prod.example.com" "1.2.3"
