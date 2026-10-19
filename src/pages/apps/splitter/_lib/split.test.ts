@@ -256,6 +256,30 @@ describe('url codec', () => {
         }
     });
 
+    it('drops a legacy expense whose participant list resolves empty', async () => {
+        const v2 = {
+            v: 2 as const,
+            c: 'EUR',
+            p: [
+                ['a', 'Ann'],
+                ['b', 'Ben'],
+            ] as [string, string][],
+            e: [['e1', 'Lunch', 1000, 'a', [], 'eq']] as [
+                string,
+                string,
+                number,
+                string,
+                string[],
+                'eq',
+            ][],
+            t: [] as string[],
+        };
+        const encoded = btoa(JSON.stringify(v2)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const state = await decodeState(encoded);
+        assert.ok(state);
+        assert.equal(state!.expenses.length, 0);
+    });
+
     it('migrates legacy uncompressed v1 and v2 base64url payloads', async () => {
         const v1 = {
             v: 1 as const,
