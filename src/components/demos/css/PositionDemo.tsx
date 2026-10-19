@@ -1,7 +1,7 @@
 import type {CSSProperties, ReactNode} from 'react';
 import {useId, useState} from 'react';
 
-import DemoShell, {demoShellStyles as shell, RangeControl, SelectControl} from '../DemoShell';
+import DemoShell, {RangeControl, SelectControl} from '../DemoShell';
 import styles from './PositionDemo.module.css';
 
 const POSITIONS = ['static', 'relative', 'absolute', 'sticky'] as const;
