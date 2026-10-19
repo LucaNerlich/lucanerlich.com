@@ -145,14 +145,18 @@ const sources = [
     Promise.reject(new Error("Network failed")),
 ];
 
-try {
-    await Promise.any(sources);
-} catch (error) {
-    if (error instanceof AggregateError) {
-        console.log("All options failed");
-        console.log(error.errors.map((err) => err.message).join(", "));
+async function main() {
+    try {
+        await Promise.any(sources);
+    } catch (error) {
+        if (error instanceof AggregateError) {
+            console.log("All options failed");
+            console.log(error.errors.map((err) => err.message).join(", "));
+        }
     }
 }
+
+main();
 ```
 
 Result:
@@ -272,12 +276,16 @@ async function loadUserProfile(userId) {
     }
 }
 
-try {
-    await loadUserProfile(42);
-} catch (error) {
-    console.log(error.message);       // "Failed to load user profile"
-    console.log(error.cause.message); // "HTTP 404" (the original error)
+async function main() {
+    try {
+        await loadUserProfile(42);
+    } catch (error) {
+        console.log(error.message);       // "Failed to load user profile"
+        console.log(error.cause.message); // "HTTP 404" (the original error)
+    }
 }
+
+main();
 ```
 
 `cause` preserves the original error while wrapping it in a higher-level message. This is useful when a low-level
@@ -301,7 +309,12 @@ async function fetchData(url) {
     }
 }
 
-const data = await fetchData("https://api.example.com/items");
+async function main() {
+    const data = await fetchData("https://api.example.com/items");
+    console.log(data);
+}
+
+main();
 ```
 
 ### `.catch()` on promises
@@ -344,19 +357,23 @@ async function loadDashboard() {
 If you need partial results even when some requests fail, use `Promise.allSettled`:
 
 ```js
-const results = await Promise.allSettled([
-    fetch("/api/users").then(r => r.json()),
-    fetch("/api/posts").then(r => r.json()),
-    fetch("/api/comments").then(r => r.json()),
-]);
+async function main() {
+    const results = await Promise.allSettled([
+        fetch("/api/users").then(r => r.json()),
+        fetch("/api/posts").then(r => r.json()),
+        fetch("/api/comments").then(r => r.json()),
+    ]);
 
-for (const result of results) {
-    if (result.status === "fulfilled") {
-        console.log("Data:", result.value);
-    } else {
-        console.log("Failed:", result.reason.message);
+    for (const result of results) {
+        if (result.status === "fulfilled") {
+            console.log("Data:", result.value);
+        } else {
+            console.log("Failed:", result.reason.message);
+        }
     }
 }
+
+main();
 ```
 
 ### Unhandled promise rejections

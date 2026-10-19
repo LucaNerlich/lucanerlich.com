@@ -147,11 +147,15 @@ User: Leanne Graham
 With an invalid ID (the API returns 404):
 
 ```js
-try {
-    const user = await getUser(9999);
-} catch (error) {
-    console.error(error.message);
+async function main() {
+    try {
+        const user = await getUser(9999);
+    } catch (error) {
+        console.error(error.message);
+    }
 }
+
+main();
 ```
 
 Result:
@@ -238,24 +242,28 @@ Created post: { title: 'My Title', body: 'My post content', userId: 1, id: 101 }
 ### Other HTTP methods
 
 ```js
-// PUT - replace a resource
-await fetch("https://api.example.com/users/1", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name: "Updated Name" }),
-});
+async function updateUser() {
+    // PUT - replace a resource
+    await fetch("https://api.example.com/users/1", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "Updated Name" }),
+    });
 
-// PATCH - partially update a resource
-await fetch("https://api.example.com/users/1", {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name: "Updated Name" }),
-});
+    // PATCH - partially update a resource
+    await fetch("https://api.example.com/users/1", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "Updated Name" }),
+    });
 
-// DELETE - remove a resource
-await fetch("https://api.example.com/users/1", {
-    method: "DELETE",
-});
+    // DELETE - remove a resource
+    await fetch("https://api.example.com/users/1", {
+        method: "DELETE",
+    });
+}
+
+updateUser();
 ```
 
 ## Query parameters
