@@ -397,7 +397,6 @@ User=deploy
 Group=deploy
 WorkingDirectory=/opt/myapp/current
 ExecStart=/usr/bin/node server.js
-ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartSec=5s
 
@@ -574,7 +573,6 @@ Give the deploy user permission to restart the service without a password:
 ```bash
 sudo tee /etc/sudoers.d/myapp > /dev/null << 'EOF'
 deploy ALL=(ALL) NOPASSWD: /bin/systemctl restart myapp, \
-                           /bin/systemctl reload myapp, \
                            /bin/systemctl status myapp
 EOF
 sudo chmod 440 /etc/sudoers.d/myapp
