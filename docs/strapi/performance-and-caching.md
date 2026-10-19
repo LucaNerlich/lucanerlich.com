@@ -136,7 +136,8 @@ module.exports = (config, { strapi }) => {
       return;
     }
 
-    const key = `${prefix}${ctx.url}`;
+    // Auth changes the populated fields and permissions, so key on it.
+    const key = `${prefix}${ctx.get('Authorization') || 'anonymous'}:${ctx.url}`;
 
     try {
       const cached = await redis.get(key);
