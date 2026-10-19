@@ -424,8 +424,8 @@ ssh -N db-tunnel  # Establish the tunnel (no shell)
 # Enable compression (useful over slow connections)
 ssh -C ubuntu@myserver
 
-# Disable strict host key checking (ONLY in automation)
-ssh -o StrictHostKeyChecking=no ubuntu@myserver
+# Trust a new host key on first contact (still refuses a changed key)
+ssh -o StrictHostKeyChecking=accept-new ubuntu@myserver
 
 # Forward the SSH agent (so you can SSH from the server to other servers)
 ssh -A ubuntu@myserver
@@ -512,7 +512,7 @@ deploy_to_server() {
     rsync -av --delete \
         --exclude='*.map' \
         --exclude='.git/' \
-        -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+        -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new" \
         "$LOCAL_BUILD/" \
         "deploy@${HOST}:${REMOTE_PATH}/"
 
