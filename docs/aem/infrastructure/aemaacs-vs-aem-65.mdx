@@ -54,8 +54,8 @@ Consequences for your code:
 
 - **No runtime writes to `/apps`.** Patterns that wrote nodes under `/apps` at startup must move to
   `/conf` or `/var`.
-- **No `/libs` overlays.** Customize via `sling:resourceSuperType`, render conditions, and supported
-  extension points instead of overlaying `/libs`.
+- **No runtime writes to `/libs`; overlays live under `/apps`.** Create overlays under `/apps` and ship
+  them with the pipeline (see [Overlays](../ui/overlays.mdx)).
 - **`repoinit`** is the supported way to create service users, paths, and ACLs deterministically on
   every startup (see [Security & Permissions](/aem/beginners-guide/security-and-permissions)).
 
