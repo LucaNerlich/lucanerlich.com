@@ -540,5 +540,5 @@ Enable temporarily with `DATABASE_DEBUG=true` to find slow queries.
 
 - [Relations and Population](relations-and-population.md) - population strategies that directly impact performance
 - [Configuration and Deployment](configuration-and-deployment.md) - database and server configuration
-- [GraphQL Customization](graphql-customization.md) - GraphQL-specific performance patterns (DataLoader)
+- [GraphQL Customization](graphql-customization.md) - GraphQL-specific performance patterns
 - [Middleware and Policies](middleware-and-policies.md) - applying cache middleware to routes
