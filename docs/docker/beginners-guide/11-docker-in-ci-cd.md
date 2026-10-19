@@ -376,5 +376,5 @@ jobs:
 4. **Store credentials in GitHub Secrets** - Never hardcode registry credentials in YAML.
 5. **Use environments with protection rules** - Require approval for production deployments.
 6. **Keep build and deploy jobs separate** - Build once, deploy the same image to staging and then production.
-7. **Clean up old images** - Add `docker image prune -a --filter "until=168h"` to your deployment script.
+7. **Clean up old images** - Add `docker image prune -a -f --filter "until=168h"` to your deployment script.
 8. **Test rollback** - Have a documented and tested procedure for reverting to the previous image tag.
