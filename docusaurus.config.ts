@@ -111,6 +111,9 @@ const config: Config = {
                 },
                 // Blog content stays in `blog/`; re-enable by restoring a `blog: { ... }` block.
                 blog: false,
+                pages: {
+                    remarkPlugins: [peleDiagrams],
+                },
                 theme: {
                     customCss: ['./src/css/custom.css'],
                 },
