@@ -94,8 +94,9 @@ docker run -d --name db \
   -e POSTGRES_PASSWORD=secret \
   postgres:16
 
-# From 'web', ping 'db' by name - this WORKS on a custom bridge
-docker exec web ping db
+# Ping 'db' by name from another container on the custom bridge.
+# The nginx image has no ping, so use alpine for the test.
+docker run --rm --network my-app-net alpine ping -c 1 db
 # PING db (192.168.10.3): 56 data bytes
 # 64 bytes from 192.168.10.3: seq=0 ttl=64 time=0.125 ms
 ```
