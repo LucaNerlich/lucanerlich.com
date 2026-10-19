@@ -610,7 +610,7 @@ Common status codes:
 | `200` | Success                                 |
 | `201` | Created                                 |
 | `400` | Bad request (validation error)          |
-| `401` | Unauthorized (missing or invalid token) |
+| `401` | Unauthorized (invalid or expired token) |
 | `403` | Forbidden (insufficient permissions)    |
 | `404` | Not found                               |
 | `500` | Internal server error                   |
