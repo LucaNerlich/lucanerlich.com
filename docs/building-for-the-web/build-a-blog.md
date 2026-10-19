@@ -137,8 +137,8 @@ Look up any of them in [Semantic HTML](./semantic-html.mdx) for details on what 
             </p>
             <footer>
                 <ul class="tags" aria-label="Tags">
-                    <li><button type="button" class="tag">html</button></li>
-                    <li><button type="button" class="tag">beginners</button></li>
+                    <li><button type="button" class="tag" aria-pressed="false">html</button></li>
+                    <li><button type="button" class="tag" aria-pressed="false">beginners</button></li>
                 </ul>
             </footer>
         </article>
@@ -158,8 +158,8 @@ Look up any of them in [Semantic HTML](./semantic-html.mdx) for details on what 
             </p>
             <footer>
                 <ul class="tags" aria-label="Tags">
-                    <li><button type="button" class="tag">css</button></li>
-                    <li><button type="button" class="tag">beginners</button></li>
+                    <li><button type="button" class="tag" aria-pressed="false">css</button></li>
+                    <li><button type="button" class="tag" aria-pressed="false">beginners</button></li>
                 </ul>
             </footer>
         </article>
@@ -647,7 +647,7 @@ async function loadPosts() {
             ${p.body.map((para) => `<p>${para}</p>`).join("")}
             <footer>
                 <ul class="tags" aria-label="Tags">
-                    ${p.tags.map((t) => `<li><button type="button" class="tag">${t}</button></li>`).join("")}
+                    ${p.tags.map((t) => `<li><button type="button" class="tag" aria-pressed="false">${t}</button></li>`).join("")}
                 </ul>
             </footer>
         </article>
