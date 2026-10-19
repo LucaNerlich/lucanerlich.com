@@ -165,7 +165,7 @@ COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 PATTERN='^(feat|fix|docs|style|refactor|test|chore|perf|ci|revert|build)(\([a-z0-9-]+\))?(!)?: .{1,100}$'
 
 # Allow merge commits and revert commits
-if echo "$COMMIT_MSG" | grep -qE '^(Merge|Revert)'; then
+if echo "$COMMIT_MSG" | grep -qE '^(Merge|Revert|fixup!|squash!)'; then
     exit 0
 fi
 
