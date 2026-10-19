@@ -361,8 +361,7 @@ Create `/etc/logrotate.d/myapp`:
 | `delaycompress` | Compress on the next rotation (not immediately - useful for services that keep file handles) |
 | `missingok` | Don't error if the log file is missing |
 | `notifempty` | Skip rotation if the file is empty |
-| `create 0640 deploy adm` | Create the new log file with these permissions |
-| `postrotate` | Shell commands to run after rotation (signal the app to reopen log files) |
+| `copytruncate` | Copy the log, then truncate the original in place so the service's open file descriptor keeps working |
 
 ### Testing logrotate
 
