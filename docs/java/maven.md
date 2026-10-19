@@ -390,7 +390,7 @@ mvn help:active-profiles    # see which profiles are active
         </execution>
     </executions>
 </plugin>
-<!-- Integration tests follow *IT.java, *ITCase.java (Failsafe defaults) -->
+<!-- Integration tests follow the Failsafe defaults: IT*.java, *IT.java, *ITCase.java -->
 ```
 
 ### Shade (fat JAR)
