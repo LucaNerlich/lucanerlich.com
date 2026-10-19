@@ -468,7 +468,8 @@ sudo journalctl -u task-api -p err
 # Memory and CPU
 ps -C java -o pid,%cpu,%mem,cmd
 
-# Detailed JVM info
+# Detailed JVM info -- jcmd ships with the JDK, not the JRE
+sudo apt install openjdk-21-jdk-headless -y
 jcmd $(pgrep -f task-api) VM.info
 ```
 
