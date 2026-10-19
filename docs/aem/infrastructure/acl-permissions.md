@@ -118,29 +118,13 @@ manage users, groups, service users, and ACLs declaratively:
 ```text title="ui.config/.../org.apache.sling.jcr.repoinit.RepositoryInitializer~myproject.cfg.json"
 {
     "scripts": [
-        "ensure nodes (sling:OrderedFolder) /content/mysite,/content/dam/mysite",
-        "",
+        "ensure nodes (sling:OrderedFolder) /content/mysite /content/dam/mysite",
         "create service user myproject-service-user with path system/cq:services/myproject",
-        "",
-        "set ACL for myproject-service-user",
-        "    allow jcr:read on /content/mysite",
-        "    allow rep:write on /content/mysite",
-        "    allow jcr:read on /content/dam/mysite",
-        "end",
-        "",
+        "set ACL for myproject-service-user\n    allow jcr:read on /content/mysite\n    allow rep:write on /content/mysite\n    allow jcr:read on /content/dam/mysite\nend",
         "create group content-authors with path /home/groups/myproject",
         "create group dam-contributors with path /home/groups/myproject",
-        "",
-        "set ACL for content-authors",
-        "    allow jcr:read,rep:write,crx:replicate on /content/mysite",
-        "    deny jcr:removeNode on /content/mysite",
-        "    allow jcr:read on /content/dam/mysite",
-        "end",
-        "",
-        "set ACL for dam-contributors",
-        "    allow jcr:read,rep:write on /content/dam/mysite",
-        "    deny crx:replicate on /content/dam/mysite",
-        "end"
+        "set ACL for content-authors\n    allow jcr:read,rep:write,crx:replicate on /content/mysite\n    deny jcr:removeNode on /content/mysite\n    allow jcr:read on /content/dam/mysite\nend",
+        "set ACL for dam-contributors\n    allow jcr:read,rep:write on /content/dam/mysite\n    deny crx:replicate on /content/dam/mysite\nend"
     ]
 }
 ```
