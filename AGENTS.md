@@ -139,7 +139,7 @@ docs/                  # All documentation content (one top-level dir per catego
   projects/            # Project showcases
 blog/                  # Blog posts (Docusaurus blog plugin, served at /blog)
 static/                # Static assets (images, favicon, manifest.json)
-.cursor/rules/         # 61 Cursor AI rules (performance + security)
+.cursor/rules/         # 59 Cursor AI rules (performance + security), plus the index and template
 ```
 
 ## Key Configuration Details
@@ -159,7 +159,7 @@ static/                # Static assets (images, favicon, manifest.json)
 
 ## Cursor Rules (`.cursor/rules/`)
 
-The repo includes 61 Cursor rule files in two categories. These should be
+The repo includes 59 Cursor rule files in two categories (plus the section index and template). These should be
 treated as project-level coding guidelines:
 
 ### Performance Rules (`.mdc` files)
