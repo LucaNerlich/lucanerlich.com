@@ -21,17 +21,19 @@ export default function IntlFormatDemo(): ReactNode {
 
     const outputs = useMemo(() => {
         const date = new Date(dateValue);
-        const safeDate = Number.isNaN(date.getTime()) ? new Date() : date;
+        const hasDate = dateValue !== '' && !Number.isNaN(date.getTime());
         return {
             number: new Intl.NumberFormat(locale).format(amount),
             currency: new Intl.NumberFormat(locale, {
                 style: 'currency',
                 currency,
             }).format(amount),
-            date: new Intl.DateTimeFormat(locale, {
-                dateStyle: 'full',
-                timeStyle: 'short',
-            }).format(safeDate),
+            date: hasDate
+                ? new Intl.DateTimeFormat(locale, {
+                    dateStyle: 'full',
+                    timeStyle: 'short',
+                }).format(date)
+                : '-- pick a date --',
             relative: new Intl.RelativeTimeFormat(locale, {numeric: 'auto'}).format(-3, 'day'),
             list: new Intl.ListFormat(locale, {style: 'long', type: 'conjunction'}).format([
                 'React',
