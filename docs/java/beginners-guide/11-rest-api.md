@@ -240,6 +240,10 @@ import java.util.List;
 public class TaskHandler implements HttpHandler {
 
     private final TaskStore store;
+    // Guards the read-modify-write cycles below: handlers run on virtual
+    // threads, and loading and saving the whole file without a lock lets
+    // two concurrent requests overwrite each other's changes.
+    private final Object storeLock = new Object();
 
     public TaskHandler(Path dataFile) {
         this.store = new TaskStore(dataFile);
@@ -293,13 +297,19 @@ public class TaskHandler implements HttpHandler {
     // ── Handlers ──────────────────────────────────────────────
 
     private void handleListTasks(HttpExchange exchange) throws IOException {
-        List<Task> tasks = store.load();
+        List<Task> tasks;
+        synchronized (storeLock) {
+            tasks = store.load();
+        }
         String json = JsonHelper.tasksToJson(tasks);
         sendResponse(exchange, 200, json);
     }
 
     private void handleGetTask(HttpExchange exchange, int id) throws IOException {
-        List<Task> tasks = store.load();
+        List<Task> tasks;
+        synchronized (storeLock) {
+            tasks = store.load();
+        }
         Task task = findTask(tasks, id);
 
         if (task == null) {
@@ -321,41 +331,59 @@ public class TaskHandler implements HttpHandler {
             return;
         }
 
-        List<Task> tasks = store.load();
-        int nextId = tasks.stream()
-                .mapToInt(Task::id)
-                .max()
-                .orElse(0) + 1;
+        Task task;
+        synchronized (storeLock) {
+            List<Task> tasks = store.load();
+            int nextId = tasks.stream()
+                    .mapToInt(Task::id)
+                    .max()
+                    .orElse(0) + 1;
 
-        Task task = new Task(nextId, description, false);
-        tasks.add(task);
-        store.save(tasks);
+            task = new Task(nextId, description, false);
+            tasks.add(task);
+            store.save(tasks);
+        }
 
         sendResponse(exchange, 201, JsonHelper.taskToJson(task));
     }
 
     private void handleUpdateTask(HttpExchange exchange, int id)
             throws IOException {
-        List<Task> tasks = store.load();
+        Task completed = null;
 
-        for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).id() == id) {
-                Task completed = tasks.get(i).complete();
-                tasks.set(i, completed);
-                store.save(tasks);
-                sendResponse(exchange, 200, JsonHelper.taskToJson(completed));
-                return;
+        synchronized (storeLock) {
+            List<Task> tasks = store.load();
+
+            for (int i = 0; i < tasks.size(); i++) {
+                if (tasks.get(i).id() == id) {
+                    completed = tasks.get(i).complete();
+                    tasks.set(i, completed);
+                    store.save(tasks);
+                    break;
+                }
             }
         }
 
-        sendResponse(exchange, 404,
-                JsonHelper.errorJson("Task not found: " + id));
+        if (completed == null) {
+            sendResponse(exchange, 404,
+                    JsonHelper.errorJson("Task not found: " + id));
+            return;
+        }
+
+        sendResponse(exchange, 200, JsonHelper.taskToJson(completed));
     }
 
     private void handleDeleteTask(HttpExchange exchange, int id)
             throws IOException {
-        List<Task> tasks = store.load();
-        boolean removed = tasks.removeIf(t -> t.id() == id);
+        boolean removed;
+
+        synchronized (storeLock) {
+            List<Task> tasks = store.load();
+            removed = tasks.removeIf(t -> t.id() == id);
+            if (removed) {
+                store.save(tasks);
+            }
+        }
 
         if (!removed) {
             sendResponse(exchange, 404,
@@ -363,7 +391,6 @@ public class TaskHandler implements HttpHandler {
             return;
         }
 
-        store.save(tasks);
         sendResponse(exchange, 200,
                 JsonHelper.messageJson("Deleted task " + id));
     }
