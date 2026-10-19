@@ -308,33 +308,9 @@ module.exports = ({ env }) => ({
 });
 ```
 
-For business-specific rules, add Document Service middleware for the Upload plugin file content type:
-
-```js
-// src/index.js
-module.exports = {
-  register({ strapi }) {
-    strapi.documents.use(async (context, next) => {
-      if (context.uid === 'plugin::upload.file' && context.action === 'create') {
-        const { mime } = context.params.data || {};
-        const allowedMimes = [
-          'image/jpeg',
-          'image/png',
-          'image/webp',
-          'image/svg+xml',
-          'application/pdf',
-        ];
-
-        if (mime && !allowedMimes.includes(mime)) {
-          throw new Error(`File type ${mime} is not allowed`);
-        }
-      }
-
-      return next();
-    });
-  },
-};
-```
+For business-specific rules, extend the `allowedTypes`/`deniedTypes` lists above. The Upload plugin writes
+file records through the Query Engine, not the Document Service, so `strapi.documents.use` middleware never
+observes an upload - do not rely on it for upload control.
 
 ### File size limits
 
@@ -441,40 +417,38 @@ roles that need frontend uploads. Admin panel uploads are controlled by admin ro
 
 ### Malware scanning pattern
 
-Strapi does not ship with malware scanning. Add it as a custom workflow around uploads. For example, use Document
-Service middleware for `plugin::upload.file` to scan or quarantine files with ClamAV after metadata is created:
+Strapi does not ship with malware scanning. Add it as a custom workflow around uploads. Because the Upload
+plugin writes file records through the Query Engine, Document Service middleware never sees an upload; wrap
+the Upload plugin's exported `upload()` method instead:
 
 ```js
 // src/index.js
 module.exports = {
   register({ strapi }) {
-    strapi.documents.use(async (context, next) => {
-      const result = await next();
+    const upload = strapi.plugin('upload').service('upload');
+    const uploadFiles = upload.upload.bind(upload);
 
-      if (
-        context.uid === 'plugin::upload.file' &&
-        context.action === 'create'
-      ) {
-        const file = Array.isArray(result) ? result[0] : result;
+    upload.upload = async (...args) => {
+      const result = await uploadFiles(...args);
+      const files = Array.isArray(result) ? result : [result];
 
-        // Example only: implement downloadFromProvider() and scanWithClamAv()
-        // for your storage provider and deployment model.
-        const localPath = await downloadFromProvider(file);
-        const clean = await scanWithClamAv(localPath);
-
+      for (const file of files) {
+        // Example only: implement scanFile() for your storage provider.
+        const clean = await scanFile(file);
         if (!clean) {
-          await strapi.documents('plugin::upload.file').delete({
-            documentId: file.documentId,
-          });
+          await upload.remove(file);
           throw new Error('Upload failed malware scanning.');
         }
       }
 
       return result;
-    });
+    };
   },
 };
 ```
+
+The wrapper removes the provider object and the database row through the
+plugin's own `remove()` before throwing, so a failed scan does not leave the file in place.
 
 For high-volume sites, queue the scan, mark files as `pending_scan`, and keep them out of API responses until the scan
 passes.
