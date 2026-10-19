@@ -236,7 +236,7 @@ docker images -q
 # Remove an image
 docker rmi nginx:1.27-alpine
 
-# Remove all unused images (not referenced by any container)
+# Remove dangling (untagged) images
 docker image prune
 
 # Remove all images not currently referenced by any container (running or stopped)
