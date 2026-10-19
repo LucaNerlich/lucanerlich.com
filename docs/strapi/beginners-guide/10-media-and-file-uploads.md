@@ -342,6 +342,7 @@ not just the file extension:
 module.exports = ({ env }) => ({
   upload: {
     config: {
+      sizeLimit: 10 * 1024 * 1024, // 10 MB
       security: {
         allowedTypes: [
           "image/*",
@@ -358,45 +359,10 @@ module.exports = ({ env }) => ({
 });
 ```
 
-For business-specific rules, you can also add Document Service middleware for the upload file content type:
-
-```javascript
-// src/index.js
-module.exports = {
-  register({ strapi }) {
-    strapi.documents.use(async (context, next) => {
-      if (
-        context.uid === "plugin::upload.file" &&
-        context.action === "create"
-      ) {
-        const file = context.params.data;
-
-        // file.size is stored in kilobytes; reject files larger than 5 MB
-        if (file.size > 5 * 1024) {
-          throw new Error("File too large. Maximum size is 5 MB.");
-        }
-
-        // Only allow specific MIME types
-        const allowedTypes = [
-          "image/jpeg",
-          "image/png",
-          "image/webp",
-          "image/gif",
-          "application/pdf",
-        ];
-
-        if (!allowedTypes.includes(file.mime)) {
-          throw new Error(
-            `File type ${file.mime} is not allowed. Allowed: ${allowedTypes.join(", ")}`
-          );
-        }
-      }
-
-      return await next();
-    });
-  },
-};
-```
+The plugin `sizeLimit` above caps the stored file; the body parser's `maxFileSize` in the earlier section
+still caps the multipart request, so keep both. The Upload plugin writes file records through the Query
+Engine, not the Document Service, so `strapi.documents.use` middleware never sees a
+`plugin::upload.file` create - keep validation in the plugin configuration.
 
 ## Media in API responses
 
@@ -554,7 +520,7 @@ You learned:
 - The **local provider** for development
 - **S3** and **Cloudinary** providers for production
 - **Upload configuration** - size limits, responsive breakpoints
-- **Upload validation** with security rules and optional Document Service middleware
+- **Upload validation** with plugin security rules and size limits
 - How media appears in **API responses** and how to use responsive images
 - **Managing media** via the API and admin panel
 - **Best practices** - alt text, optimization, CDN, CORS
