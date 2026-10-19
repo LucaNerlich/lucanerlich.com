@@ -208,7 +208,7 @@ const ExpenseEditor: React.FC<EditorProps> = ({
                 onChange={setDraft}
                 messages={messages}
             />
-            {error && <p className={styles.error}>{error}</p>}
+            {error && <p className={styles.error} role="alert">{error}</p>}
             <div className={styles.headerActions}>
                 <button type="submit" className={styles.primaryButton}>
                     {messages.t('save')}
