@@ -161,8 +161,6 @@ export const applyAction = (state: AppState, action: Action): AppState => {
                     : [...state.paidTransferKeys, action.key],
             };
         }
-        case 'CLEAR_PAID_TRANSFERS':
-            return {...state, paidTransferKeys: []};
         default:
             return state;
     }

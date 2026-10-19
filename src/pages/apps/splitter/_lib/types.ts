@@ -72,8 +72,7 @@ export type Action =
     | {type: 'REMOVE_EXPENSE'; id: string}
     | {type: 'DUPLICATE_EXPENSE'; id: string}
     | {type: 'SET_CURRENCY'; currency: Currency}
-    | {type: 'TOGGLE_TRANSFER_PAID'; key: string}
-    | {type: 'CLEAR_PAID_TRANSFERS'};
+    | {type: 'TOGGLE_TRANSFER_PAID'; key: string};
 
 export const emptyState = (): AppState => ({
     v: 2,
