@@ -451,8 +451,10 @@ describe('UserService', () => {
         service = new UserService(BASE_URL);
     });
 
+    const originalFetch = global.fetch;
+
     afterEach(() => {
-        jest.restoreAllMocks();
+        global.fetch = originalFetch;
     });
 
     describe('findById', () => {
