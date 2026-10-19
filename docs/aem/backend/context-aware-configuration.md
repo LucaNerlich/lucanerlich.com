@@ -378,15 +378,17 @@ Configure how CA Config finds the "site root" for a given resource:
 
 ```json title="ui.config/.../config/io.wcm.caconfig.extensions.contextpath.impl.AbsoluteParentContextPathStrategy~site.cfg.json"
 {
-    "levels": [3],
+    "levels": [2],
     "contextPathRegex": "^/content/([^/]+)/[^/]+$",
     "configPathPatterns": ["/conf/$1"],
-    "templatePathsBlacklist": ["/conf/myproject/settings/wcm/templates/.*"]
+    "templatePathsBlacklist": ["/conf/myproject/settings/wcm/templates/config-editor"]
 }
 ```
 
-This tells CA Config: "The site root is always at depth 3 (e.g., `/content/brand/language`),
-and its config lives under `/conf/brand/`."
+This tells CA Config: "The site root is the absolute parent at level 2 (counting `/content` as level 0,
+e.g. `/content/brand/language`), and its config lives under `/conf/brand/`." Entries in
+`templatePathsBlacklist` are compared for exact equality with the page's `cq:template`; they are not
+regular expressions.
 
 ---
 
