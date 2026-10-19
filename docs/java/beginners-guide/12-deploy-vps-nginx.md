@@ -173,6 +173,7 @@ StandardError=journal
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
+PrivateTmp=true
 ReadWritePaths=/opt/task-api
 
 [Install]
@@ -185,6 +186,7 @@ Key settings:
 - `Restart=on-failure` - automatically restarts on crashes
 - `WorkingDirectory` - sets the working directory so `tasks.dat` is stored in `/opt/task-api/`
 - `ReadWritePaths` - allows writing only to the app directory (systemd security)
+- `PrivateTmp` - gives the service its own writable `/tmp`, which `jcmd` needs for its attach socket
 - `ExecStart=... -Xms64m -Xmx256m ...` - simple JVM memory settings inline (64MB initial, 256MB max - more than
   enough for this app)
 
