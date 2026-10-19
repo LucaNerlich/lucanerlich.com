@@ -642,7 +642,7 @@ users only need to edit existing content, not create or delete nodes.
 | Users can't see pages after deployment     | Check that the group has `jcr:read` on `/content` and all ancestor nodes                  |
 | ACL Tool runs but permissions don't apply  | Verify the YAML is syntactically correct; check the ACL Tool log in Felix console         |
 | Service user gets `LoginException`         | Check the service user mapping and ensure the user exists (repoinit must run first)       |
-| Deny ACE has no effect                     | Deny is evaluated in order; ensure it comes after (or at the same level as) the allow ACE |
+| Deny ACE has no effect                     | Deny wins at the same path; check for a more specific allow closer to the node. Order does not matter |
 | CUG blocks all anonymous access            | CUGs deny `jcr:read` to everyone not in the principal list; verify the group membership   |
 | `rep:glob` matches too broadly             | Test glob patterns carefully; empty string `""` matches only the node itself              |
 | Permissions work on author but not publish | Ensure ACLs are also set for publish-side groups; check if CUGs are enabled on publish    |
