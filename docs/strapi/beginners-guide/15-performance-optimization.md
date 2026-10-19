@@ -222,6 +222,7 @@ Create a caching middleware for API responses:
 
 ```javascript
 // src/middlewares/cache.js
+const crypto = require('node:crypto');
 const { getCached, setCached } = require('../services/redis');
 
 module.exports = (config, { strapi }) => {
@@ -231,13 +232,18 @@ module.exports = (config, { strapi }) => {
       return await next();
     }
 
-    // Skip cache for authenticated requests
-    if (ctx.state.user) {
+    // Public means no credentials; API-token requests also set ctx.state.auth.
+    if (ctx.state.auth?.credentials) {
       return await next();
     }
 
-    // Generate cache key
-    const cacheKey = `api:${ctx.url}`;
+    // Include caller identity so one response cannot be replayed to another.
+    const auth = crypto
+      .createHash('sha256')
+      .update(ctx.get('Authorization') || 'anonymous')
+      .digest('hex');
+    const cacheKey = `api:${ctx.url}|${auth}`;
+    ctx.set('Vary', 'Authorization');
 
     // Check cache
     const cached = await getCached(cacheKey);
