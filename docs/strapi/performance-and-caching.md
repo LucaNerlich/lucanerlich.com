@@ -429,10 +429,11 @@ module.exports = (config, { strapi }) => {
     await next();
 
     if (ctx.method === 'GET' && ctx.status === 200) {
-      // Public endpoints can be cached by CDN
-      if (!ctx.state.user) {
+      // Anonymous Public-role requests carry ctx.state.auth with
+      // credentials: null; API-token and JWT requests carry credentials.
+      if (!ctx.state.auth?.credentials) {
         ctx.set('Cache-Control', `public, max-age=${maxAge}, s-maxage=${maxAge * 2}`);
-        ctx.set('Vary', 'Accept, Accept-Encoding');
+        ctx.set('Vary', 'Authorization, Accept, Accept-Encoding');
       } else {
         ctx.set('Cache-Control', 'private, no-cache');
       }
