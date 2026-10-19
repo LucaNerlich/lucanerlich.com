@@ -115,7 +115,7 @@
     background: color-mix(in srgb, var(--custom-accent-amber) 8%, var(--ifm-background-surface-color));
 }
 
-@container compare-slot (min-width: 320px) {
+@container compare-slot (min-width: 290px) {
     .containerWidget {
         flex-direction: row;
         align-items: center;

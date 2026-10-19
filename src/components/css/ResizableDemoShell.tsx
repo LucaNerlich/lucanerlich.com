@@ -81,7 +81,12 @@ export default function ResizableDemoShell({
         const column = panel.parentElement ?? panel;
 
         const updateSlot = () => {
-            const available = Math.floor(column.getBoundingClientRect().width);
+            const style = window.getComputedStyle(column);
+            const available = Math.floor(
+                column.clientWidth
+                - parseFloat(style.paddingLeft || '0')
+                - parseFloat(style.paddingRight || '0'),
+            );
             if (!Number.isFinite(available) || available <= 0) {
                 return;
             }
