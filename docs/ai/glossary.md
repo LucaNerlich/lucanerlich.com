@@ -764,9 +764,9 @@ type. LLM APIs often use SSE to stream generated tokens or events. See [LLM Serv
 
 ## Streamable HTTP {#streamable-http}
 
-The MCP transport that uses a single HTTP endpoint for POST and GET JSON-RPC messages, optionally
-streaming server messages with SSE. It replaced the older MCP HTTP+SSE transport in newer MCP protocol
-versions. See [MCP and A2A in Production](./mcp-and-a2a-in-production.md).
+The MCP transport that uses a single HTTP endpoint for POST JSON-RPC messages, returning JSON or a
+request-scoped SSE stream. The 2026-07-28 revision removed the GET stream endpoint and added
+`subscriptions/listen`. Streamable HTTP replaced the older MCP HTTP+SSE transport. See [MCP and A2A in Production](./mcp-and-a2a-in-production.md).
 
 ## Structured note-taking {#structured-note-taking}
 
