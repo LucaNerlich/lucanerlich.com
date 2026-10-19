@@ -297,9 +297,10 @@ module.exports = {
         const wordCount = content.split(/\s+/).filter(Boolean).length;
         const readingTime = Math.ceil(wordCount / 200);
 
-        // Update silently without re-triggering middleware
+        // Update silently without re-triggering middleware. Key on the row
+        // id: documentId matches both the draft and published versions.
         await strapi.db.query('api::article.article').update({
-          where: { documentId: result.documentId },
+          where: { id: result.id },
           data: { readingTime, wordCount },
         });
       }
