@@ -531,11 +531,13 @@ docker compose ps
 docker inspect "$(docker compose ps -q api)" --format '{{.State.Health.Status}}'
 ```
 
-Scaling a service works only if it has no fixed host-port binding (change the
-`ports:` mapping to a range like `"3000-3010:3000"` or drop it and put a load
-balancer in front). With the fixed `127.0.0.1:${APP_PORT:-3000}:3000` above,
-`docker compose up -d --scale api=3` will fail because all replicas try to
-bind the same host port.
+Scaling a service works only if it has no fixed host-port binding. Drop the
+`ports:` mapping and put a reverse proxy in front, or publish an ephemeral host
+port (`ports: - "3000"`) so Docker picks one per replica. A host range such as
+`"3000-3010:3000"` is not valid: Docker requires matching host and container
+ranges, and the app still listens on 3000 inside each replica. With the fixed
+`127.0.0.1:${APP_PORT:-3000}:3000` above, `docker compose up -d --scale api=3`
+fails because all replicas try to bind the same host port.
 
 ---
 

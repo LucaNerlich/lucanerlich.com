@@ -299,7 +299,7 @@ docker compose down --volumes
 # Remove orphan containers (from services no longer in the Compose file)
 docker compose down --remove-orphans
 
-# Scale a service to N replicas (stateless services only)
+# Scale a service to N replicas (no fixed host port; stateless only)
 docker compose up -d --scale api=3
 
 # Restart a single service
