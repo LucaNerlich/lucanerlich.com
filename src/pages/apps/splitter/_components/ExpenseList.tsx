@@ -93,7 +93,7 @@ const ExpenseList: React.FC<Props> = ({
                                             type="button"
                                             className={styles.chipRemove}
                                             onClick={() => onRemove(e.id)}
-                                            aria-label={`${messages.t('removeExpense')} ${label}`}
+                                            aria-label={messages.t('removeExpense').replace('{name}', () => label)}
                                             title={messages.t('remove')}
                                         >
                                             ×
