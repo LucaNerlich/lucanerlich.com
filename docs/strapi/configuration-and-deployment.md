@@ -430,16 +430,32 @@ module.exports = ({ env }) => ({
       // Run every day at midnight
       '0 0 * * *': async ({ strapi }) => {
         strapi.log.info('Running daily cleanup...');
-        // Delete drafts older than 30 days
+
+        // Strapi 5 keeps a draft row for every published entry, so
+        // filtering on `publishedAt: null` alone also matches the draft
+        // side of a live entry and would discard unpublished edits.
+        // Purge only drafts of documents that were never published.
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-        await strapi.db.query('api::article.article').deleteMany({
-          where: {
-            publishedAt: null,
-            createdAt: { $lt: thirtyDaysAgo.toISOString() },
-          },
+        const drafts = await strapi.documents('api::article.article').findMany({
+          status: 'draft',
+          filters: { createdAt: { $lt: thirtyDaysAgo.toISOString() } },
+          fields: ['documentId'],
+          limit: 100,
         });
+
+        for (const { documentId } of drafts) {
+          const published = await strapi.documents('api::article.article').findOne({
+            documentId,
+            status: 'published',
+          });
+
+          if (!published) {
+            await strapi.documents('api::article.article').delete({ documentId });
+            strapi.log.info(`Deleted never-published draft ${documentId}`);
+          }
+        }
       },
       // Run every hour
       '0 * * * *': async ({ strapi }) => {
