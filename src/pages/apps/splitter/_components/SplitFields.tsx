@@ -11,7 +11,7 @@ export const draftFromPeople = (people: Person[], previous?: SplitDraft): SplitD
         previous?.participants.filter(id => ids.includes(id)) ??
         ids;
     const next: SplitDraft = {
-        participants: participants.length > 0 ? participants : ids,
+        participants: participants.length > 0 ? participants : previous ? [] : ids,
         splitMode: previous?.splitMode ?? 'equal',
         weights: {},
         percents: {},

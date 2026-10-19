@@ -1,11 +1,11 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import type {Currency, Expense, ExpenseInput, Person} from '../_lib/types';
 import {indexPeople, nameFrom} from '../_lib/people';
 import {centsToInput, currencySymbol, formatMoney} from '../_lib/money';
 import {payerCoversOthers} from '../_lib/split';
 import {buildExpenseInput, type SplitDraft} from '../_lib/expenseInput';
 import type {Messages} from '../_lib/messages';
-import SplitFields, {draftFromExpense} from './SplitFields';
+import SplitFields, {draftFromExpense, draftFromPeople} from './SplitFields';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -148,6 +148,19 @@ const ExpenseEditor: React.FC<EditorProps> = ({
     const [paidBy, setPaidBy] = useState(expense.paidBy);
     const [draft, setDraft] = useState<SplitDraft>(() => draftFromExpense(people, expense));
     const [error, setError] = useState<string | null>(null);
+
+    // The people list can change while this editor is open (for example a
+    // participant is removed). Drop ids that no longer exist and keep the
+    // user's in-progress values for the ones that do.
+    useEffect(() => {
+        setDraft(prev => draftFromPeople(people, prev));
+    }, [people]);
+
+    useEffect(() => {
+        if (!people.some(p => p.id === paidBy)) {
+            setPaidBy(people[0]?.id ?? '');
+        }
+    }, [people, paidBy]);
 
     const save = (e: React.FormEvent) => {
         e.preventDefault();
