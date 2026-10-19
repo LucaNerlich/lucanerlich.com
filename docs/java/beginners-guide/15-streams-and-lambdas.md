@@ -367,7 +367,7 @@ Map<String, Integer> nameLengths = names.stream()
         name -> name,         // key
         String::length        // value
     ));
-// {Alice=5, Bob=3, Charlie=7}
+// {Alice=5, Bob=3, Charlie=7, Diana=5, Eve=3}
 ```
 
 If duplicate keys are possible, pass a merge function to `toMap(...)`; otherwise the collector throws
@@ -378,11 +378,11 @@ If duplicate keys are possible, pass a merge function to `toMap(...)`; otherwise
 ```java
 String csv = names.stream()
     .collect(Collectors.joining(", "));
-// "Alice, Bob, Charlie"
+// "Alice, Bob, Charlie, Diana, Eve"
 
 String withBrackets = names.stream()
     .collect(Collectors.joining(", ", "[", "]"));
-// "[Alice, Bob, Charlie]"
+// "[Alice, Bob, Charlie, Diana, Eve]"
 ```
 
 ### `groupingBy()`

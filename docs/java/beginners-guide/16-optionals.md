@@ -174,7 +174,7 @@ Optional<String> trimmed = name.map(String::trim);
 // Optional[Ada Lovelace]
 
 Optional<Integer> length = name.map(String::trim).map(String::length);
-// Optional[13]
+// Optional[12]
 
 // If the Optional is empty, map returns empty
 Optional<String> empty = Optional.<String>empty().map(String::trim);
