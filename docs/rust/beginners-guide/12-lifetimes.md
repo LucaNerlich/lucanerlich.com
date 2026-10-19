@@ -174,9 +174,9 @@ fn main() {
 compiler enforces this:
 
 ```rust
-fn broken() -> Excerpt {
+fn broken<'a>() -> Excerpt<'a> {
     let text = String::from("temporary");
-    Excerpt::new(&text) // Error: text does not live long enough
+    Excerpt::new(&text) // Error: cannot return value referencing local `text`
 }
 ```
 
