@@ -324,11 +324,17 @@ async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::default().default_filter_or("info"));
 
     let host = std::env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let port: u16 = std::env::var("PORT")
+        .ok()
+        .and_then(|value| value.parse().ok())
+        .unwrap_or(8080);
+    let db_path =
+        std::env::var("DATABASE_PATH").unwrap_or_else(|_| "todos.db".to_string());
 
-    let db = Database::new("todos.db").expect("Failed to initialize database");
+    let db = Database::new(&db_path).expect("Failed to initialize database");
     let db_data = Data::new(db);
 
-    println!("Starting server at http://{host}:8080");
+    println!("Starting server at http://{host}:{port}");
 
     HttpServer::new(move || {
         let cors = Cors::default()
@@ -347,7 +353,7 @@ async fn main() -> std::io::Result<()> {
             .route("/todos/{id}", web::put().to(update_todo))
             .route("/todos/{id}", web::delete().to(delete_todo))
     })
-    .bind((host.as_str(), 8080))?
+    .bind((host.as_str(), port))?
     .run()
     .await
 }
