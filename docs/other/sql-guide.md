@@ -1312,8 +1312,9 @@ EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'ada@example.com';
 -- EXPLAIN QUERY PLAN SELECT * FROM users WHERE email = 'ada@example.com';
 ```
 
-This shows how the database executes the query - whether it uses an index, a full table scan, and how long each step
-takes. Use it to diagnose slow queries.
+This shows how the database executes the query - whether it uses an index or a full table scan. `EXPLAIN ANALYZE`
+also reports how long each step takes; SQLite's `EXPLAIN QUERY PLAN` shows the plan only. Use it to diagnose slow
+queries.
 
 ## Transactions
 
