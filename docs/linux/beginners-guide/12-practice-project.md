@@ -124,17 +124,23 @@ Only proceed if this works. If it does not, debug before continuing.
 
 ## Phase 3: Harden SSH
 
-Edit the SSH daemon configuration to disable root login and password authentication:
+Edit the SSH daemon configuration to disable root login and password authentication. On cloud images,
+`/etc/ssh/sshd_config.d/*.conf` is read first and cloud-init's `50-cloud-init.conf` often sets
+`PasswordAuthentication yes`, so check the drop-ins as well as the main file:
 
 ```bash
 # Back up the original config first
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 
+# See what the drop-ins set
+sudo grep -rE '^\s*(PasswordAuthentication|PermitRootLogin|ChallengeResponseAuthentication|PermitEmptyPasswords)' /etc/ssh/sshd_config.d/ 2>/dev/null
+
 # Edit the config
 sudo vim /etc/ssh/sshd_config
 ```
 
-Find and update (or add) these lines:
+Find and update (or add) these lines. A drop-in such as `/etc/ssh/sshd_config.d/00-hardening.conf` also works
+and takes precedence over `50-cloud-init.conf`:
 
 ```
 # Disable root login
@@ -168,6 +174,9 @@ sudo systemctl restart sshd
 
 # Verify SSH is running
 sudo systemctl status sshd
+
+# Check the effective config, not just the file you edited
+sudo sshd -T | grep -E '^(permitrootlogin|passwordauthentication|permitemptypasswords|challengeresponseauthentication)'
 ```
 
 **Test again in a new terminal.** Confirm root login is rejected and deploy key login works.
@@ -590,8 +599,8 @@ HTTP_CODE=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:3000/health)
 # 3. Firewall is active with correct rules
 sudo ufw status
 
-# 4. SSH root login is disabled
-grep "^PermitRootLogin" /etc/ssh/sshd_config
+# 4. SSH hardening is effective (includes sshd_config.d drop-ins)
+sudo sshd -T | grep -E '^(permitrootlogin|passwordauthentication)'
 
 # 5. fail2ban is running
 sudo systemctl is-active fail2ban
