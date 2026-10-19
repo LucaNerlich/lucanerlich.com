@@ -474,10 +474,11 @@ function applySidebarGroups(items: SidebarItem[], currentDir: string): SidebarIt
             const parts = item.id.split('/');
             key = parts[parts.length - 1];
         }
-        if (key === null || consumed.has(key)) {
+        if (key === null) {
             result.push(item);
             continue;
         }
+        if (consumed.has(key)) continue;
 
         const group = groups.find((g) => g.items.includes(key!));
         if (!group) {
