@@ -460,7 +460,12 @@ function initTheme() {
     const toggle = document.querySelector("#theme-toggle");
     if (!toggle) return;
 
-    const savedTheme = localStorage.getItem("theme");
+    let savedTheme = null;
+    try {
+        savedTheme = localStorage.getItem("theme");
+    } catch {
+        // Storage can be blocked (Safari, sandboxed iframes); keep defaults.
+    }
     toggle.setAttribute("aria-pressed", "false");
 
     if (savedTheme === "dark") {
@@ -474,7 +479,11 @@ function initTheme() {
         const isDark = document.body.classList.contains("dark-theme");
         toggle.textContent = isDark ? "Light Mode" : "Dark Mode";
         toggle.setAttribute("aria-pressed", String(isDark));
-        localStorage.setItem("theme", isDark ? "dark" : "light");
+        try {
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+        } catch {
+            // Blocked storage only loses the preference, not the toggle.
+        }
     });
 }
 
