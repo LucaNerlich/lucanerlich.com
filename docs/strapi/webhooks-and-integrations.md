@@ -377,6 +377,21 @@ module.exports = ({ strapi }) => ({
 
 ### Consuming inbound webhooks (e.g., Stripe)
 
+`stripe.webhooks.constructEvent` needs the exact request bytes. Strapi's default `strapi::body`
+middleware does not attach them, so enable `includeUnparsed` in `config/middlewares.js`:
+
+```js
+// config/middlewares.js
+module.exports = [
+  // ...
+  {
+    name: 'strapi::body',
+    config: { includeUnparsed: true },
+  },
+  // ...
+];
+```
+
 ```js
 // src/api/stripe/routes/stripe.js
 module.exports = {
