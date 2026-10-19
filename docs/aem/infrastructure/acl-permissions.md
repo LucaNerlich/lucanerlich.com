@@ -118,7 +118,7 @@ manage users, groups, service users, and ACLs declaratively:
 ```text title="ui.config/.../org.apache.sling.jcr.repoinit.RepositoryInitializer~myproject.cfg.json"
 {
     "scripts": [
-        "ensure nodes (sling:OrderedFolder) /content/mysite,/content/dam/mysite",
+        "ensure nodes (sling:OrderedFolder) /content/mysite /content/dam/mysite",
         "create service user myproject-service-user with path system/cq:services/myproject",
         "set ACL for myproject-service-user\n    allow jcr:read on /content/mysite\n    allow rep:write on /content/mysite\n    allow jcr:read on /content/dam/mysite\nend",
         "create group content-authors with path /home/groups/myproject",
