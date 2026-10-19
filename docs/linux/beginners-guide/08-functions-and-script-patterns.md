@@ -292,17 +292,18 @@ trap cleanup EXIT INT TERM
 trap 'echo "Error on line $LINENO" >&2; cleanup; exit 1' ERR
 ```
 
-### Lock File Pattern with Trap
+### Lock File Pattern with `flock`
 
 ```bash
 #!/bin/bash
 set -euo pipefail
 
-LOCK_FILE="/tmp/deploy.lock"
+LOCK_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/deploy.lock"
+mkdir -p "$(dirname "$LOCK_FILE")"
 
 # flock holds the lock for the lifetime of file descriptor 9 and releases
 # it on any exit, including SIGKILL - no stale lock to remove by hand.
-exec 9>"$LOCK_FILE"
+exec 9>>"$LOCK_FILE"
 if ! flock -n 9; then
     echo "Another deployment is running (lock file: $LOCK_FILE)" >&2
     exit 1
@@ -494,7 +495,7 @@ if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 # ---------- Setup & Cleanup --------------------------------------------------
-LOCK_FILE="/tmp/deploy-${ENVIRONMENT}.lock"
+LOCK_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/deploy-${ENVIRONMENT}.lock"
 TEMP_DIR=""
 
 cleanup() {
@@ -507,7 +508,8 @@ cleanup() {
 trap cleanup EXIT
 
 # Prevent concurrent deployments; the lock releases when this process exits
-exec 9>"$LOCK_FILE"
+mkdir -p "$(dirname "$LOCK_FILE")"
+exec 9>>"$LOCK_FILE"
 flock -n 9 || die "Another deployment is already running for $ENVIRONMENT (lock: $LOCK_FILE)"
 
 # ---------- Main Logic -------------------------------------------------------
