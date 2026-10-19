@@ -197,7 +197,8 @@ const fromWireV2 = (w: WireV2): AppState => {
                 .map(String)
                 .filter(pid => personIds.has(pid));
             // A present-but-empty participant list is malformed, not
-            // "everyone": only a missing field keeps the legacy default.
+            // "everyone": only a non-array (absent) field keeps the legacy
+            // default.
             const filteredParticipants = participants.length > 0
                 ? [...new Set(participants)]
                 : Array.isArray(participantsRaw)

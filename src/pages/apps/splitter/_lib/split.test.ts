@@ -280,6 +280,42 @@ describe('url codec', () => {
         assert.equal(state!.expenses.length, 0);
     });
 
+    it('drops a v3 expense whose explicit participant list resolves empty', async () => {
+        const encodeWire = async (value: unknown) => {
+            const compressed = new Uint8Array(
+                await new Response(
+                    new Blob([JSON.stringify(value)]).stream().pipeThrough(new CompressionStream('deflate-raw')),
+                ).arrayBuffer(),
+            );
+            let binary = '';
+            for (const byte of compressed) binary += String.fromCharCode(byte);
+            return COMPRESSED_PREFIX + btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        };
+
+        const state = await decodeState(await encodeWire([
+            3,
+            'EUR',
+            [['a', 'A'], ['b', 'B']],
+            [
+                ['good', 'Lunch', 1000, 0, [1], 'eq'],
+                ['bad', 'Broken', 500, 0, [], 'eq'],
+            ],
+            [],
+        ]));
+        assert.ok(state);
+        assert.deepEqual(state.expenses.map((expense) => expense.id), ['good']);
+
+        const allPeople = await decodeState(await encodeWire([
+            3,
+            'EUR',
+            [['a', 'A'], ['b', 'B']],
+            [['everyone', 'Lunch', 1000, 0, 0, 'eq']],
+            [],
+        ]));
+        assert.ok(allPeople);
+        assert.deepEqual(allPeople.expenses[0].participants, ['a', 'b']);
+    });
+
     it('migrates legacy uncompressed v1 and v2 base64url payloads', async () => {
         const v1 = {
             v: 1 as const,
