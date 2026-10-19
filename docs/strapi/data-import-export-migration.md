@@ -222,53 +222,25 @@ module.exports = ({ strapi }) => ({
 
 ### CSV import service
 
+```bash
+npm install csv-parse
+```
+
 ```js
 // src/api/import/services/csv-import.js
 const fs = require('fs');
 const path = require('path');
-
-function parseCSV(content, delimiter = ',') {
-  const lines = content.split('\n').filter(line => line.trim());
-  const headers = lines[0].split(delimiter).map(h => h.trim().replace(/^"|"$/g, ''));
-
-  return lines.slice(1).map(line => {
-    // Handle quoted fields with commas inside
-    const values = [];
-    let current = '';
-    let inQuotes = false;
-
-    for (const char of line) {
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === delimiter && !inQuotes) {
-        values.push(current.trim());
-        current = '';
-      } else {
-        current += char;
-      }
-    }
-    values.push(current.trim());
-
-    const obj = {};
-    headers.forEach((header, i) => {
-      let value = values[i] || '';
-      // Auto-convert types
-      if (value === 'true') value = true;
-      else if (value === 'false') value = false;
-      else if (/^\d+$/.test(value)) value = parseInt(value, 10);
-      else if (/^\d+\.\d+$/.test(value)) value = parseFloat(value);
-
-      obj[header] = value;
-    });
-
-    return obj;
-  });
-}
+const { parse } = require('csv-parse/sync');
 
 module.exports = ({ strapi }) => ({
   async importCSV(filePath, uid, options = {}) {
     const content = fs.readFileSync(path.resolve(filePath), 'utf-8');
-    const items = parseCSV(content, options.delimiter || ',');
+    const items = parse(content, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+      delimiter: options.delimiter || ',',
+    });
 
     strapi.log.info(`[csv-import] Parsed ${items.length} rows from ${filePath}`);
 
