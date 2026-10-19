@@ -63,8 +63,9 @@ files. Feel free to explore!
 ## Option 2 - GoAccess Dashboard
 
 To run the generation commands successfully, make sure that you have `zcat` and `goaccess` installed and available on
-your `$PATH`. The scheduled script below reads its settings from `.env` with Node's built-in `--env-file` flag
-(Node 20+), so no extra dependency is needed.
+your `$PATH`. The scheduled script below reads its settings from `.env` when the file is present with Node's
+built-in `--env-file-if-exists` flag (Node 20.19+), so no extra dependency is needed and the defaults still apply
+without a `.env`.
 
 ### Simple CLI static generation
 
@@ -105,7 +106,7 @@ server {
 ![GoAccess browser breakdown chart](/images/tech/goaccess-browser.png)
 
 ```javascript
-// Run with: node --env-file=.env scripts/goaccess-report.js
+// Run with: node --env-file-if-exists=.env scripts/goaccess-report.js
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
