@@ -14,6 +14,8 @@
     --custom-accent-gold: #a67c00;
     --custom-accent-amber: #c08800;
     --custom-muted: #606060;
+    /* Pele draws on this colour: --ifm-background-color is transparent in light mode. */
+    --custom-diagram-bg: #ffffff;
 }
 
 html[data-theme='dark'] {
@@ -23,6 +25,7 @@ html[data-theme='dark'] {
     --custom-accent-gold: #daa520;
     --custom-accent-amber: #ffb000;
     --custom-muted: #999999;
+    --custom-diagram-bg: var(--ifm-background-color);
 }
 
 @view-transition {
@@ -61,7 +64,7 @@ p img {
    mapping them to the Infima palette makes both color modes work without a
    re-render: the theme toggle only swaps the values below. */
 .pele {
-    --pele-bg: var(--ifm-background-color);
+    --pele-bg: var(--custom-diagram-bg);
     --pele-fg: var(--ifm-font-color-base);
     --pele-muted: var(--ifm-color-emphasis-600);
     --pele-line: var(--ifm-font-color-base);

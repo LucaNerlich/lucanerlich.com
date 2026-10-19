@@ -98,7 +98,8 @@ Styles: Microsoft, write-good, Vale built-ins. Applied to `*.md` and `*.mdx`.
 - **Headings:** Start content with `# Title` (H1), use H2/H3 for sections
 - **Code blocks:** Always include a language tag (```java, ```typescript, etc.)
 - **Diagrams:** Use Mermaid fenced code blocks (```mermaid); Pele renders them to
-  static SVG at build time (`markdown.mermaid` stays `false`)
+  static SVG at build time (`markdown.mermaid` stays `false`), and `src/theme/Mermaid`
+  adds pan/zoom to diagrams that had to shrink
 - **Links:** Use relative paths to other docs (`./aem/architecture.mdx`)
 - **Em dashes:** Use `--` (double hyphen), not the Unicode em dash character
 - **Categories:** Define via `_category_.json` with `label` and optional

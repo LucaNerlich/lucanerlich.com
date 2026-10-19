@@ -2064,7 +2064,8 @@ flowchart LR
 ````
 
 For diagrams with operational or security meaning, add a textual sequence or table as well. This also makes
-the content searchable and understandable when SVG rendering is unavailable.
+the content searchable and understandable when SVG rendering is unavailable. A diagram that offers zoom
+is reachable by keyboard: tab to it, then use `+`, `-`, `0`, and the arrow keys.
 
 ### Treat diagram input as untrusted
 
@@ -2083,10 +2084,12 @@ build.
 Diagrams are drawn by [Pele](https://pele.run/), a Mermaid renderer that runs in Node. It draws during
 the same pass as the rest of the site, so every page ships plain SVG:
 
-- No diagram code runs in the browser. The page is complete before any JavaScript loads.
+- The diagram is in the HTML. Nothing has to run before it appears.
 - The site does not install Mermaid at all.
 - The color mode switches with CSS variables. A diagram does not redraw.
 - A diagram that does not parse fails `pnpm build`.
+- A diagram that had to shrink to fit its column gets pan and zoom. That fragment loads on demand, so a
+  diagram that fits stays a plain SVG.
 
 `plugins/pele-diagrams.mjs` renders each fence, and `src/theme/Mermaid` prints the SVG Docusaurus
 produces for a `mermaid` code block. Two settings in `docusaurus.config.ts` wire it up:
@@ -2122,6 +2125,7 @@ and fonts come from CSS, not from the diagram:
 | `%%{init}%%` | Parsed, but `theme` and `themeVariables` do not apply |
 | `click node "https://..."` | Rendered as a link; JavaScript callbacks are ignored |
 | Sizing | The SVG scales down to the column |
+| Zoom | Only for diagrams that had to shrink; see [Responsive diagrams](#responsive-diagrams) |
 
 The root of every diagram is `<svg class="pele">`. Style a diagram, or one element of it, through the
 variables and classes from the [Pele theming page](https://pele.run/theming):
@@ -2156,8 +2160,25 @@ Wide diagrams are hard to read on a phone. Several focused diagrams beat one den
 labels, and look at the page at a narrow width before you publish it. A diagram scales down to the
 column, so a wide chart becomes unreadably small: split it instead.
 
-Pele can re-layout a diagram for the available width (`maxWidth`, `autoDirection`), but that runs in the
-browser of every reader. This site draws once at build time and scales the result.
+A diagram that had to shrink gets zoom controls. Pele's zoom is a lazily loaded fragment, and it only
+activates when a diagram is wider than its column: every other diagram stays a plain SVG with no
+controls and no script.
+
+| Input | Action |
+|-------|--------|
+| `+`, `-`, `0` | Zoom in, zoom out, and reset, with the diagram focused |
+| Arrow keys | Pan, with the diagram focused |
+| Pinch, or `Ctrl`/`Cmd` + wheel | Zoom at the pointer |
+| Drag | Pan a zoomed diagram |
+| Double-click | Zoom in, or reset |
+| The three buttons | Zoom in, zoom out, and reset |
+
+The wheel without a modifier key keeps scrolling the page. The controls take their colors from the
+`--pele-*` variables above, and `--pele-zoom-top`, `--pele-zoom-right`, `--pele-zoom-bottom`, and
+`--pele-zoom-left` move them.
+
+Pele can also re-layout a diagram for the available width (`maxWidth`, `autoDirection`), but that runs in
+the browser of every reader. This site draws once at build time and scales the result.
 
 ### Live editor
 
