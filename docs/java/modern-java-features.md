@@ -239,11 +239,11 @@ record Customer(String name, Address address) {}
 
 String greeting(Customer c) {
     return switch (c) {
-        case Customer(var name, Address(_, var country))
+        case Customer(var name, Address(var city, var country))
             when country.equals("DE") -> "Hallo " + name;
-        case Customer(var name, Address(_, var country))
+        case Customer(var name, Address(var city, var country))
             when country.equals("FR") -> "Bonjour " + name;
-        case Customer(var name, _) -> "Hello " + name;
+        case Customer(var name, var address) -> "Hello " + name;
     };
 }
 ```
