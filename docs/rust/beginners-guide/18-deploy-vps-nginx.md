@@ -359,6 +359,10 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+
+      - name: Normalize image name
+        run: echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -367,7 +371,7 @@ jobs:
       - uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/${{ env.IMAGE_NAME }}:latest
 ```
 
 ## Deployment checklist
