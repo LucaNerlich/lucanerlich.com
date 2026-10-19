@@ -36,16 +36,16 @@ const ExpenseList: React.FC<Props> = ({
             <table className={styles.table}>
                 <thead>
                     <tr>
-                        <th>Description</th>
-                        <th className={styles.numCell}>Amount</th>
-                        <th>Paid by</th>
-                        <th>Split</th>
-                        <th aria-label="Actions" />
+                        <th>{messages.t('description')}</th>
+                        <th className={styles.numCell}>{messages.t('amount')}</th>
+                        <th>{messages.t('paidBy')}</th>
+                        <th>{messages.t('split')}</th>
+                        <th aria-label={messages.t('actions')} />
                     </tr>
                 </thead>
                 <tbody>
                     {expenses.map(e => {
-                        const label = e.description || 'Untitled expense';
+                        const label = e.description || messages.t('untitledExpense');
                         const participantNames = e.participants
                             .map(id => nameOf(id))
                             .join(', ');
@@ -93,7 +93,7 @@ const ExpenseList: React.FC<Props> = ({
                                             type="button"
                                             className={styles.chipRemove}
                                             onClick={() => onRemove(e.id)}
-                                            aria-label={`Remove expense ${label}`}
+                                            aria-label={messages.t('removeExpense').replace('{name}', () => label)}
                                             title={messages.t('remove')}
                                         >
                                             ×
@@ -182,7 +182,7 @@ const ExpenseEditor: React.FC<EditorProps> = ({
         <form onSubmit={save} className={styles.expenseEditor}>
             <div className={styles.expenseFormGrid}>
                 <label className={styles.fieldLabel}>
-                    <span>Description</span>
+                    <span>{messages.t('description')}</span>
                     <input
                         className={styles.input}
                         value={description}
@@ -190,7 +190,7 @@ const ExpenseEditor: React.FC<EditorProps> = ({
                     />
                 </label>
                 <label className={styles.fieldLabel}>
-                    <span>Amount ({currencySymbol(currency)})</span>
+                    <span>{messages.t('amount')} ({currencySymbol(currency)})</span>
                     <input
                         className={styles.input}
                         value={amount}
@@ -199,7 +199,7 @@ const ExpenseEditor: React.FC<EditorProps> = ({
                     />
                 </label>
                 <label className={styles.fieldLabel}>
-                    <span>Paid by</span>
+                    <span>{messages.t('paidBy')}</span>
                     <select
                         className={styles.select}
                         value={paidBy}

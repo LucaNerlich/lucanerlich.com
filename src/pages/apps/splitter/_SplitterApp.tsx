@@ -97,7 +97,6 @@ const SplitterApp: React.FC = () => {
                         type="button"
                         className={styles.linkButton}
                         onClick={handleReset}
-                        aria-label="Reset session"
                     >
                         {t('reset')}
                     </button>

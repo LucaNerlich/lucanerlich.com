@@ -30,7 +30,7 @@ const PeopleManager: React.FC<Props> = ({
         if (!trimmed) return;
         const lower = trimmed.toLocaleLowerCase();
         if (people.some(p => p.name.toLocaleLowerCase() === lower)) {
-            setError(`${trimmed} is already in the list.`);
+            setError(messages.t('alreadyInList').replace('{name}', () => trimmed));
             return;
         }
         setError(null);
@@ -58,7 +58,7 @@ const PeopleManager: React.FC<Props> = ({
                 p => p.id !== editingId && p.name.toLocaleLowerCase() === lower,
             )
         ) {
-            setError(`${trimmed} is already in the list.`);
+            setError(messages.t('alreadyInList').replace('{name}', () => trimmed));
             return;
         }
         onRename(editingId, trimmed);
@@ -75,7 +75,7 @@ const PeopleManager: React.FC<Props> = ({
                                 className={styles.tagInput}
                                 value={editName}
                                 autoFocus
-                                aria-label={`Rename ${p.name}`}
+                                aria-label={messages.t('renamePerson').replace('{name}', () => p.name)}
                                 onChange={e => setEditName(e.target.value)}
                                 onBlur={() => {
                                     if (renameCancelled.current) {
@@ -110,8 +110,8 @@ const PeopleManager: React.FC<Props> = ({
                                 type="button"
                                 className={styles.chipRemove}
                                 onClick={() => onRemove(p.id)}
-                                aria-label={`Remove ${p.name}`}
-                                title={`Remove ${p.name}`}
+                                aria-label={messages.t('removePerson').replace('{name}', () => p.name)}
+                                title={messages.t('removePerson').replace('{name}', () => p.name)}
                             >
                                 ×
                             </button>
@@ -121,17 +121,17 @@ const PeopleManager: React.FC<Props> = ({
                 <input
                     type="text"
                     value={name}
-                    placeholder={people.length === 0 ? 'Add first person…' : 'Add another…'}
+                    placeholder={people.length === 0 ? messages.t('addFirstPersonPlaceholder') : messages.t('addAnotherPlaceholder')}
                     onChange={e => {
                         setName(e.target.value);
                         if (error) setError(null);
                     }}
                     className={styles.tagInput}
-                    aria-label="Person's name"
+                    aria-label={messages.t('personName')}
                     aria-invalid={error ? true : undefined}
                 />
                 <button type="submit" className={styles.primaryButton}>
-                    Add
+                    {messages.t('add')}
                 </button>
             </form>
             {error && (

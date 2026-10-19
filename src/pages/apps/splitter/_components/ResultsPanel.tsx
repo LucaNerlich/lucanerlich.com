@@ -30,8 +30,8 @@ const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
                 <h2 className={styles.sectionTitle}>{t('settlement')}</h2>
                 <p className={styles.muted}>
                     {state.people.length < 2
-                        ? 'Add at least two people to see who owes whom.'
-                        : 'Add an expense to see the settlement.'}
+                        ? t('emptyTwoPeople')
+                        : t('emptyAddExpense')}
                 </p>
             </section>
         );
