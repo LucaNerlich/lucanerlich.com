@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.34.0] - 2026-10-20
+
+### Added
+- Mermaid diagrams are rendered at build time with Pele, and diagrams that had to shrink can be panned and zoomed
+
+### Fixed
+- The 107 content corrections described under 1.33.0: those pull requests merged after that tag, so this is the first release that ships them
+- Splitter app: paid marks reset when obligations change, zero-value shares survive a person removal, imports reject files that would drop or rewrite rows, a blank percent is rejected, the split draft seeds everyone until edited, an import asks before replacing the session, copy failures report instead of doing nothing, and the CSV export carries a UTF-8 BOM
+- Splitter app: the German locale covers the calculation panel and the removal dialog, and the participant group and row actions are labelled for screen readers
+- Mermaid: zoom controls no longer clip on short diagrams or overlap the next block
+- Tooling: the llms.txt guard checks every link form, the container-query demo reaches its threshold, the resize handle stops at its cap, and blocked-storage browsers no longer abort hydration
+
+### Changed
+- CI and the container image pin their base refs and actions, the runtime npm install honours the 7-day release-age gate, and the install-script allowlist is limited to `@swc/core`; Dependabot keeps the pins current
+- The personal `pi` pin was removed from `mise.toml`
+
 ## [1.33.0] - 2026-10-18
 
 ### Added
