@@ -55,11 +55,17 @@ const SplitterApp: React.FC = () => {
     };
 
     const handleCopyLink = async () => {
-        let shareUrl = window.location.href;
+        let shareUrl: string;
         try {
             // Always mint a `?s=` link (never `#…`) so WhatsApp/iMessage keep
             // the full session when the URL becomes a hyperlink.
             shareUrl = await buildShareUrl(window.location.href, state);
+        } catch {
+            // Without a payload there is nothing shareable to offer.
+            window.alert(t('copyLinkFailed'));
+            return;
+        }
+        try {
             await navigator.clipboard.writeText(shareUrl);
             setCopied(true);
             window.setTimeout(() => setCopied(false), 1500);

@@ -12,6 +12,7 @@ const en: Dict = {
     subtitle:
         'Who owes whom how much. Your session lives in the page URL (?s=…) and is also saved in this browser -- share the link to send it to others (works in WhatsApp and similar apps).',
     copyLink: 'Copy share link',
+    copyLinkFailed: 'Could not build the share link for this session.',
     copied: 'Copied!',
     reset: 'Reset',
     people: 'People',
@@ -103,6 +104,7 @@ const de: Dict = {
     subtitle:
         'Wer wem wie viel schuldet. Die Sitzung steckt in der URL (?s=…) und wird auch lokal gespeichert -- Link teilen (auch in WhatsApp).',
     copyLink: 'Link kopieren',
+    copyLinkFailed: 'Der Freigabe-Link für diese Sitzung konnte nicht erstellt werden.',
     copied: 'Kopiert!',
     reset: 'Zurücksetzen',
     people: 'Personen',
