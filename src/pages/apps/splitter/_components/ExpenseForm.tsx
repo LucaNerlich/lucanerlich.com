@@ -3,7 +3,8 @@ import type {Currency, ExpenseInput, Person} from '../_lib/types';
 import {amountPlaceholder, currencySymbol} from '../_lib/money';
 import {buildExpenseInput, type SplitDraft} from '../_lib/expenseInput';
 import type {Messages} from '../_lib/messages';
-import SplitFields, {draftFromPeople} from './SplitFields';
+import SplitFields from './SplitFields';
+import {draftFromPeople} from '../_lib/splitDraft';
 import styles from '../splitter.module.css';
 
 type Props = {
