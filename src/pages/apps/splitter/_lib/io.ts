@@ -1,10 +1,39 @@
-import type {AppState, Currency} from './types';
+import type {AppState, Currency, Expense} from './types';
 import {decodeState, encodeState} from './urlState';
 import {formatMoney, formatSignedMoney} from './money';
 import {indexPeople, nameFrom} from './people';
 import type {Transfer} from './settlement';
 import {summarize} from './settlement';
+import {validateSplit} from './split';
 import {transferKey} from './types';
+
+// Normalization drops anything it cannot resolve, so a file must be valid
+// before it is encoded: otherwise a restore reports success after losing rows
+// or silently rewriting a split. Leniency stays in decodeState for shared links.
+const isRestorable = (state: {
+    people: AppState['people'];
+    expenses: Expense[];
+    paidTransferKeys: string[];
+}): boolean => {
+    const ids = new Set(state.people.map(p => p.id));
+    if (ids.size !== state.people.length) return false;
+    const validExpense = (e: Expense): boolean =>
+        Number.isSafeInteger(e.cents)
+        && e.cents > 0
+        && ids.has(e.paidBy)
+        && e.participants.length > 0
+        && new Set(e.participants).size === e.participants.length
+        && e.participants.every(id => ids.has(id))
+        && !validateSplit(e.split, e.participants, e.cents);
+    const validKey = (key: string): boolean => {
+        const [from, to, cents] = key.split('|');
+        return ids.has(from)
+            && ids.has(to)
+            && Number.isSafeInteger(Number(cents))
+            && Number(cents) > 0;
+    };
+    return state.expenses.every(validExpense) && state.paidTransferKeys.every(validKey);
+};
 
 export const exportJson = async (state: AppState): Promise<string> =>
     JSON.stringify(
@@ -32,29 +61,40 @@ export const importJson = async (raw: string): Promise<AppState | null> => {
             if (!data.state || !Array.isArray(data.state.people) || !Array.isArray(data.state.expenses)) {
                 return null;
             }
+            const source = {
+                ...data.state,
+                v: 2 as const,
+                paidTransferKeys: data.state.paidTransferKeys ?? [],
+            };
+            if (!isRestorable(source)) return null;
             // Prefer the editable `state` object (may be newer than `encoded`),
             // and normalize through encode/decode so invariants hold.
-            return decodeState(
-                await encodeState({
-                    ...data.state,
-                    v: 2,
-                    paidTransferKeys: data.state.paidTransferKeys ?? [],
-                }),
-            );
+            const decoded = await decodeState(await encodeState(source));
+            // Counts are a backstop for anything normalization still drops.
+            return decoded
+                && decoded.people.length === source.people.length
+                && decoded.expenses.length === source.expenses.length
+                ? decoded
+                : null;
         }
         if (typeof data.encoded === 'string') {
             return decodeState(data.encoded);
         }
         if (Array.isArray(data.people) && Array.isArray(data.expenses)) {
-            return decodeState(
-                await encodeState({
-                    v: 2,
-                    currency: data.currency ?? 'EUR',
-                    people: data.people,
-                    expenses: data.expenses,
-                    paidTransferKeys: data.paidTransferKeys ?? [],
-                }),
-            );
+            const source = {
+                v: 2 as const,
+                currency: data.currency ?? ('EUR' as const),
+                people: data.people,
+                expenses: data.expenses,
+                paidTransferKeys: data.paidTransferKeys ?? [],
+            };
+            if (!isRestorable(source)) return null;
+            const decoded = await decodeState(await encodeState(source));
+            return decoded
+                && decoded.people.length === source.people.length
+                && decoded.expenses.length === source.expenses.length
+                ? decoded
+                : null;
         }
         return null;
     } catch {
