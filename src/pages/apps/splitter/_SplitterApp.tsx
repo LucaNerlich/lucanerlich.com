@@ -55,15 +55,18 @@ const SplitterApp: React.FC = () => {
     };
 
     const handleCopyLink = async () => {
+        let shareUrl = window.location.href;
         try {
             // Always mint a `?s=` link (never `#…`) so WhatsApp/iMessage keep
             // the full session when the URL becomes a hyperlink.
-            const shareUrl = await buildShareUrl(window.location.href, state);
+            shareUrl = await buildShareUrl(window.location.href, state);
             await navigator.clipboard.writeText(shareUrl);
             setCopied(true);
             window.setTimeout(() => setCopied(false), 1500);
         } catch {
-            // clipboard blocked - no-op
+            // Clipboard blocked: offer the URL for manual copying instead of
+            // leaving the button looking dead.
+            window.prompt(t('copyLink'), shareUrl);
         }
     };
 
