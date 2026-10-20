@@ -536,6 +536,21 @@ describe('session files', () => {
         }
     });
 
+    it('rejects an import that would drop rows instead of reporting success', async () => {
+        const data = JSON.parse(await exportJson(demoState()));
+        data.state.expenses[0].paidBy = 'typo';
+        assert.equal(await importJson(JSON.stringify(data)), null);
+
+        const flat = JSON.parse(await exportJson(demoState()));
+        flat.state.expenses[0].paidBy = 'typo';
+        assert.equal(
+            await importJson(
+                JSON.stringify({people: flat.state.people, expenses: flat.state.expenses}),
+            ),
+            null,
+        );
+    });
+
     it('quotes CSV text and neutralizes formula prefixes in descriptions and names', () => {
         for (const prefix of ['=', '+', '-', '@', '\t', '\r', '\n']) {
             const state = demoState();

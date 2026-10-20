@@ -34,19 +34,26 @@ export const importJson = async (raw: string): Promise<AppState | null> => {
             }
             // Prefer the editable `state` object (may be newer than `encoded`),
             // and normalize through encode/decode so invariants hold.
-            return decodeState(
+            const decoded = await decodeState(
                 await encodeState({
                     ...data.state,
                     v: 2,
                     paidTransferKeys: data.state.paidTransferKeys ?? [],
                 }),
             );
+            // Normalization drops rows it cannot resolve. A restore must not
+            // report success after losing data, so the counts have to match.
+            return decoded
+                && decoded.people.length === data.state.people.length
+                && decoded.expenses.length === data.state.expenses.length
+                ? decoded
+                : null;
         }
         if (typeof data.encoded === 'string') {
             return decodeState(data.encoded);
         }
         if (Array.isArray(data.people) && Array.isArray(data.expenses)) {
-            return decodeState(
+            const decoded = await decodeState(
                 await encodeState({
                     v: 2,
                     currency: data.currency ?? 'EUR',
@@ -55,6 +62,11 @@ export const importJson = async (raw: string): Promise<AppState | null> => {
                     paidTransferKeys: data.paidTransferKeys ?? [],
                 }),
             );
+            return decoded
+                && decoded.people.length === data.people.length
+                && decoded.expenses.length === data.expenses.length
+                ? decoded
+                : null;
         }
         return null;
     } catch {
