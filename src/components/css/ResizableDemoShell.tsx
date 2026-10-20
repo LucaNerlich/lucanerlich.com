@@ -73,6 +73,19 @@ export default function ResizableDemoShell({
         applyObservedWidth(panel.getBoundingClientRect().width);
     };
 
+    // The inline max-width stops a native drag at the cap, so the release can
+    // land outside the panel; listen on the window or the width state stays
+    // stale while the panel renders the clamped width.
+    const armWidthSync = () => {
+        const done = () => {
+            window.removeEventListener('pointerup', done);
+            window.removeEventListener('pointercancel', done);
+            syncWidthFromPanel();
+        };
+        window.addEventListener('pointerup', done);
+        window.addEventListener('pointercancel', done);
+    };
+
     useEffect(() => {
         const panel = panelRef.current;
         if (!panel || typeof ResizeObserver === 'undefined') {
@@ -104,6 +117,9 @@ export default function ResizableDemoShell({
 
     const panelStyle = {
         width: `${visibleWidth}px`,
+        // Bound the native resize handle too; JS clamping on pointer-up alone
+        // lets the panel grow past the cap and jump back.
+        maxWidth: `min(100%, ${effectiveMaxWidth}px)`,
         '--demo-min-width': `${effectiveMinWidth}px`,
     } as CSSProperties;
 
@@ -159,6 +175,7 @@ export default function ResizableDemoShell({
                             ref={panelRef}
                             className={panelClassName}
                             style={panelStyle}
+                            onPointerDown={lockedPanel ? undefined : armWidthSync}
                             onPointerUp={lockedPanel ? undefined : syncWidthFromPanel}
                             onTouchEnd={lockedPanel ? undefined : syncWidthFromPanel}
                         >
