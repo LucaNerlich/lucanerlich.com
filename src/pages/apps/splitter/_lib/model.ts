@@ -61,12 +61,15 @@ const stripPersonFromExpenses = (expenses: Expense[], personId: string): Expense
                 return validateSplit(next.split, participants, next.cents) ? null : next;
             }
             if (e.split.mode === 'percent') {
-                // A zero share can simply go; only a non-zero one breaks the total.
+                // A zero share can simply go; a non-zero one breaks the total,
+                // and an invalid kept split falls back like any other change.
                 const percents = {...e.split.percents};
                 if ((percents[personId] ?? 0) === 0) {
                     delete percents[personId];
                     const next = {...e, participants, split: {mode: 'percent' as const, percents}};
-                    return validateSplit(next.split, participants, next.cents) ? null : next;
+                    return validateSplit(next.split, participants, next.cents)
+                        ? {...e, participants, split: equalSplit()}
+                        : next;
                 }
                 return {...e, participants, split: equalSplit()};
             }
@@ -75,7 +78,9 @@ const stripPersonFromExpenses = (expenses: Expense[], personId: string): Expense
             if ((amounts[personId] ?? 0) === 0) {
                 delete amounts[personId];
                 const next = {...e, participants, split: {mode: 'exact' as const, amounts}};
-                return validateSplit(next.split, participants, next.cents) ? null : next;
+                return validateSplit(next.split, participants, next.cents)
+                    ? {...e, participants, split: equalSplit()}
+                    : next;
             }
             return {...e, participants, split: equalSplit()};
         })

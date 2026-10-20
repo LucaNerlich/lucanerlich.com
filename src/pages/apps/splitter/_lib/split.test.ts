@@ -527,6 +527,40 @@ describe('model', () => {
             {mode: 'exact', amounts: {[a]: 800, [b]: 0}},
         );
 
+        // Removing someone who was not in the expense must not rewrite it.
+        const unrelated: AppState = {
+            ...state,
+            expenses: [{
+                id: 'p3',
+                description: 'Percent',
+                cents: 10000,
+                paidBy: a,
+                participants: [a, b],
+                split: {mode: 'percent', percents: {[a]: 60, [b]: 40}},
+            }],
+        };
+        assert.deepEqual(
+            applyAction(unrelated, {type: 'REMOVE_PERSON', id: c}).expenses[0].split,
+            {mode: 'percent', percents: {[a]: 60, [b]: 40}},
+        );
+
+        // A hand-built state whose kept split no longer validates falls back
+        // to equal instead of dropping the expense.
+        const invalid: AppState = {
+            ...state,
+            expenses: [{
+                id: 'p4',
+                description: 'Percent',
+                cents: 10000,
+                paidBy: a,
+                participants: [a, b, c],
+                split: {mode: 'percent', percents: {[a]: 40, [b]: 40, [c]: 0}},
+            }],
+        };
+        const invalidResult = applyAction(invalid, {type: 'REMOVE_PERSON', id: c}).expenses;
+        assert.equal(invalidResult.length, 1);
+        assert.deepEqual(invalidResult[0].split, equalSplit());
+
         // A non-zero share still invalidates the total, so it falls back to equal.
         const nonZeroPercent: AppState = {
             ...state,
