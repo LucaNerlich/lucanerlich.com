@@ -9,17 +9,17 @@ const people: Person[] = [
 ];
 
 describe('draftFromPeople', () => {
-    it('seeds every person when the first draft is built before hydration', () => {
-        // The add form builds its first draft while `people` is still empty.
+    it('seeds every person while the draft is untouched', () => {
+        // Every people change before the user edits the split passes no
+        // previous draft, so people added one at a time all get checked.
         assert.deepEqual(draftFromPeople([]).participants, []);
-        assert.deepEqual(draftFromPeople(people, draftFromPeople([])).participants, ['a', 'b']);
+        assert.deepEqual(draftFromPeople([people[0]]).participants, ['a']);
+        assert.deepEqual(draftFromPeople(people).participants, ['a', 'b']);
     });
 
-    it('re-seeds everyone after a people change, even when the list was emptied', () => {
-        // No touched flag: a cleared list re-checks everyone on the next people
-        // change. Safer than submitting an empty split.
+    it('keeps a deliberately emptied list once the draft is touched', () => {
         const emptied = {...draftFromPeople(people), participants: []};
-        assert.deepEqual(draftFromPeople(people, emptied).participants, ['a', 'b']);
+        assert.deepEqual(draftFromPeople(people, emptied).participants, []);
     });
 
     it('drops people who no longer exist', () => {

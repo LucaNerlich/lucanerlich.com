@@ -7,18 +7,12 @@ import {centsToInput} from './money';
 
 export const draftFromPeople = (people: Person[], previous?: SplitDraft): SplitDraft => {
     const ids = people.map(p => p.id);
-    const participants =
-        previous?.participants.filter(id => ids.includes(id)) ??
-        ids;
     const next: SplitDraft = {
-        // An empty list counts as deliberate only when the previous draft had
-        // participants; the pre-hydration empty people list must not win.
-        participants:
-            participants.length > 0
-                ? participants
-                : previous?.participants.length
-                  ? []
-                  : ids,
+        // No previous draft means "untouched": seed everyone. With a previous
+        // draft the selection is the user's, including a deliberately empty one.
+        participants: previous
+            ? previous.participants.filter(id => ids.includes(id))
+            : ids,
         splitMode: previous?.splitMode ?? 'equal',
         weights: {},
         percents: {},

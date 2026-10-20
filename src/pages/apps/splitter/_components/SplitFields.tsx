@@ -26,10 +26,12 @@ const SplitFields: React.FC<Props> = ({
     const {t} = messages;
     const toggle = (id: string) => {
         const has = draft.participants.includes(id);
+        // A user edit keeps exactly what the user selected, including an empty
+        // list; only a people change re-runs the seeding rules.
         const participants = has
             ? draft.participants.filter(x => x !== id)
             : [...draft.participants, id];
-        onChange(draftFromPeople(people, {...draft, participants}));
+        onChange({...draft, participants});
     };
 
     const payerInSplit = draft.participants.includes(paidBy);
