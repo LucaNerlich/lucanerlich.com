@@ -14,9 +14,9 @@ WORKDIR /app
 
 # Copy dependency files first - this layer is cached until these files change.
 # .npmrc carries the supply-chain protections (7-day minimum release age,
-# exotic-subdependency block) and must be in place before pnpm install so the
-# install layer honors them. Lifecycle scripts stay off except the allowlist
-# in pnpm-workspace.yaml.
+# exotic-subdependency block). They apply when the lockfile is resolved; this
+# build installs the committed lockfile as-is under --frozen-lockfile.
+# Lifecycle scripts stay off except the allowlist in pnpm-workspace.yaml.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 # Install all dependencies (dev + prod, needed for the build).
@@ -41,8 +41,8 @@ FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18
 
 # curl: required by Coolify's container healthcheck (alpine has no curl, and
 # busybox wget does not fall back from IPv6 ::1 to IPv4). serve: static host,
-# installed with --ignore-scripts so the runtime install honors the same
-# lifecycle-script guard as the builder (.npmrc ignore-scripts).
+# installed with --ignore-scripts so the global install never runs package
+# lifecycle code.
 # app: unprivileged runtime user (no root in the runtime container).
 RUN apk add --no-cache curl && npm install -g serve@14.2.6 --ignore-scripts \
     && addgroup -S app && adduser -S app -G app

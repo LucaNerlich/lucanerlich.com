@@ -250,9 +250,8 @@ There is no test suite. The verification steps are:
   `minimum-release-age=10080` and `block-exotic-subdeps=true` (supply-chain
   hardening). pnpm 10 runs no dependency lifecycle scripts by default; a
   package's build runs only when it is allowlisted in `pnpm-workspace.yaml`
-  under `onlyBuiltDependencies` (currently `@swc/core`, `core-js`,
-  `core-js-pure`). Add a package there if a dependency fails to build its
-  native bindings.
+  under `onlyBuiltDependencies` (currently `@swc/core`). Add a package there
+  if a dependency fails to build its native bindings.
 - **Lockfile is committed**: `pnpm-lock.yaml` is tracked in git and must be
   committed alongside dependency changes.
 - **`.nvmrc` says v16**: Ignore it. The correct Node version is `^22` per
