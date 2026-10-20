@@ -143,6 +143,7 @@ const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
                     balances={balances}
                     transfers={transfers}
                     breakdowns={breakdowns}
+                    messages={messages}
                 />
             </details>
         </section>

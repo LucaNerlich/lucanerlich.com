@@ -4,6 +4,7 @@ import type {ExpenseBreakdown, Transfer} from '../_lib/settlement';
 import {indexPeople, nameFrom} from '../_lib/people';
 import {formatMoney, formatSignedMoney} from '../_lib/money';
 import {payerCoversOthers} from '../_lib/split';
+import type {Messages} from '../_lib/messages';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
     balances: Map<string, number>;
     transfers: Transfer[];
     breakdowns: ExpenseBreakdown[];
+    messages: Messages;
 };
 
 const Formula: React.FC<{children: React.ReactNode; ariaLabel: string}> = ({
@@ -23,13 +25,22 @@ const Formula: React.FC<{children: React.ReactNode; ariaLabel: string}> = ({
     </div>
 );
 
+const splitKeys = {
+    equal: 'splitEqual',
+    shares: 'splitShares',
+    percent: 'splitPercent',
+    exact: 'splitExact',
+} as const;
+
 const CalculationSteps: React.FC<Props> = ({
     state,
     totalCents,
     balances,
     transfers,
     breakdowns,
+    messages,
 }) => {
+    const {t} = messages;
     const peopleIndex = useMemo(() => indexPeople(state.people), [state.people]);
     const nameOf = (id: string) => nameFrom(peopleIndex, id);
     const currency = state.currency;
@@ -60,13 +71,9 @@ const CalculationSteps: React.FC<Props> = ({
 
     return (
         <div className={styles.calcBlock}>
-            <p className={styles.muted}>
-                Each expense is allocated to its participants (equal, shares, percent, or
-                exact amounts) in integer cents. Balance = paid − obligation. Positive means
-                owed money; negative means they owe.
-            </p>
+            <p className={styles.muted}>{t('calcIntro')}</p>
 
-            <h4 className={styles.calcHeading}>Formulas</h4>
+            <h4 className={styles.calcHeading}>{t('calcFormulas')}</h4>
             <div className={styles.formulaList}>
                 <Formula ariaLabel="Total T equals the sum of all expense amounts">
                     <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
@@ -114,10 +121,7 @@ const CalculationSteps: React.FC<Props> = ({
                             <mtext>&nbsp;(+ remainder cents)</mtext>
                         </mrow>
                     </math>
-                    <span className={styles.formulaCaption}>
-                        Unequal modes use weights / percents (largest remainder) or exact
-                        cent amounts. Obligation is the sum of shares across expenses.
-                    </span>
+                    <span className={styles.formulaCaption}>{t('calcUnequalNote')}</span>
                 </Formula>
                 <Formula ariaLabel="Balance equals amount paid minus total obligation">
                     <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
@@ -141,19 +145,19 @@ const CalculationSteps: React.FC<Props> = ({
                 </Formula>
             </div>
 
-            <h4 className={styles.calcHeading}>Calculation steps</h4>
+            <h4 className={styles.calcHeading}>{t('calcSteps')}</h4>
             <ol className={styles.calcSteps}>
                 <li>
-                    <span className={styles.calcStepLabel}>Total spent</span>
+                    <span className={styles.calcStepLabel}>{t('calcTotalSpent')}</span>
                     <code className={styles.calcInline}>
                         T = {expenseTerms} = {formatMoney(totalCents, currency)}
                     </code>
                 </li>
                 <li>
-                    <span className={styles.calcStepLabel}>Per-expense shares</span>
+                    <span className={styles.calcStepLabel}>{t('calcPerExpenseShares')}</span>
                     <ul className={styles.calcSubList}>
                         {breakdowns.map(({expense, shares}) => {
-                            const label = expense.description || 'Untitled expense';
+                            const label = expense.description || t('calcUntitledExpense');
                             const parts = [...shares.entries()]
                                 .map(
                                     ([id, cents]) =>
@@ -164,8 +168,8 @@ const CalculationSteps: React.FC<Props> = ({
                                 <li key={expense.id}>
                                     <code className={styles.calcInline}>
                                         {label} ({formatMoney(expense.cents, currency)},{' '}
-                                        {expense.split.mode}
-                                        {payerCoversOthers(expense) ? ', payer covers' : ''}):{' '}
+                                        {t(splitKeys[expense.split.mode])}
+                                        {payerCoversOthers(expense) ? t('calcPayerCovers') : ''}):{' '}
                                         {parts}
                                     </code>
                                 </li>
@@ -174,9 +178,7 @@ const CalculationSteps: React.FC<Props> = ({
                     </ul>
                 </li>
                 <li>
-                    <span className={styles.calcStepLabel}>
-                        Balance (paid − obligation)
-                    </span>
+                    <span className={styles.calcStepLabel}>{t('calcBalance')}</span>
                     <ul className={styles.calcSubList}>
                         {state.people.map(p => {
                             const paidAmt = paid.get(p.id) ?? 0;
@@ -195,17 +197,12 @@ const CalculationSteps: React.FC<Props> = ({
                     </ul>
                 </li>
                 <li>
-                    <span className={styles.calcStepLabel}>Transfers</span>
+                    <span className={styles.calcStepLabel}>{t('calcTransfers')}</span>
                     {transfers.length === 0 ? (
-                        <span className={styles.calcNote}>
-                            All balances are zero, so no transfers are needed.
-                        </span>
+                        <span className={styles.calcNote}>{t('calcAllZero')}</span>
                     ) : (
                         <>
-                            <span className={styles.calcNote}>
-                                Match largest debtors with largest creditors until everyone
-                                is settled (at most N − 1 transfers).
-                            </span>
+                            <span className={styles.calcNote}>{t('calcMatchNote')}</span>
                             <ul className={styles.calcSubList}>
                                 {transfers.map(tr => (
                                     <li key={`${tr.from}-${tr.to}-${tr.cents}`}>
