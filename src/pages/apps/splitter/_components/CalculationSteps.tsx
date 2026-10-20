@@ -75,7 +75,7 @@ const CalculationSteps: React.FC<Props> = ({
 
             <h4 className={styles.calcHeading}>{t('calcFormulas')}</h4>
             <div className={styles.formulaList}>
-                <Formula ariaLabel="Total T equals the sum of all expense amounts">
+                <Formula ariaLabel={t('calcAriaTotal')}>
                     <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
                         <mrow>
                             <mi>T</mi>
@@ -96,7 +96,7 @@ const CalculationSteps: React.FC<Props> = ({
                         </mrow>
                     </math>
                 </Formula>
-                <Formula ariaLabel="For an equal split, share is floor of expense over participants">
+                <Formula ariaLabel={t('calcAriaEqualSplit')}>
                     <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
                         <mrow>
                             <msub>
@@ -118,12 +118,12 @@ const CalculationSteps: React.FC<Props> = ({
                                 </mfrac>
                                 <mo fence="true" stretchy="false">⌋</mo>
                             </mrow>
-                            <mtext>&nbsp;(+ remainder cents)</mtext>
+                            <mtext>&nbsp;{t('calcRemainderNote')}</mtext>
                         </mrow>
                     </math>
                     <span className={styles.formulaCaption}>{t('calcUnequalNote')}</span>
                 </Formula>
-                <Formula ariaLabel="Balance equals amount paid minus total obligation">
+                <Formula ariaLabel={t('calcAriaBalance')}>
                     <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
                         <mrow>
                             <msub>

@@ -90,6 +90,10 @@ const en: Dict = {
     calcMatchNote:
         'Match largest debtors with largest creditors until everyone is settled (at most N - 1 transfers).',
     calcPayerCovers: ', payer covers',
+    calcRemainderNote: '(+ remainder cents)',
+    calcAriaTotal: 'Total T equals the sum of all expense amounts',
+    calcAriaEqualSplit: 'For an equal split, share is floor of expense over participants',
+    calcAriaBalance: 'Balance equals amount paid minus total obligation',
     removePerson: 'Remove {name}',
 };
 
@@ -177,6 +181,10 @@ const de: Dict = {
     calcMatchNote:
         'Größte Schuldner mit größten Gläubigern ausgleichen, bis alle beglichen sind (höchstens N - 1 Überweisungen).',
     calcPayerCovers: ', Zahler legt aus',
+    calcRemainderNote: '(+ Rest-Cent)',
+    calcAriaTotal: 'Summe T entspricht der Summe aller Ausgaben',
+    calcAriaEqualSplit: 'Bei gleicher Aufteilung ist der Anteil die Abrundung der Ausgabe geteilt durch die Beteiligten',
+    calcAriaBalance: 'Saldo entspricht dem bezahlten Betrag minus dem gesamten Anteil',
     removePerson: '{name} entfernen',
 };
 

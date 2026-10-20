@@ -46,8 +46,8 @@ const SplitterApp: React.FC = () => {
             ].filter(Boolean);
             const ok = window.confirm(
                 t('removePersonConfirm')
-                    .replace('{name}', () => person.name)
-                    .replace('{parts}', () => parts.join(t('listJoin'))),
+                    .replace('{parts}', () => parts.join(t('listJoin')))
+                    .replace('{name}', () => person.name),
             );
             if (!ok) return;
         }
