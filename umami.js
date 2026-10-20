@@ -1,5 +1,16 @@
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment'
 
+// Storage access throws when the browser blocks persistence (Safari "Block
+// All Cookies", sandboxed iframes). This module gates hydration, so never let
+// the read escape.
+const hasRecordingConsent = () => {
+    try {
+        return localStorage.getItem('umami-recording-consent') === 'granted'
+    } catch {
+        return false
+    }
+}
+
 // https://stackoverflow.com/questions/57859350/how-can-i-add-custom-scripts-in-index-htmls-head-part-in-docusaurus-v2
 if (ExecutionEnvironment.canUseDOM) {
     const {hostname} = window.location
@@ -27,7 +38,7 @@ if (ExecutionEnvironment.canUseDOM) {
         // Session recording is opt-in: the recorder script is only loaded when
         // the visitor has explicitly granted consent ('umami-recording-consent'
         // in localStorage). See the privacy note in the imprint.
-        if (localStorage.getItem('umami-recording-consent') === 'granted') {
+        if (hasRecordingConsent()) {
             const recorderScript = document.createElement('script')
             recorderScript.src = `${umamiHost}/recorder.js`
             recorderScript.async = false
