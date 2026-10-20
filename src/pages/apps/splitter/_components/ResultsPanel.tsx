@@ -40,14 +40,14 @@ const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
     const nameOf = (id: string) => nameFrom(peopleIndex, id);
 
     const copyTransfers = async () => {
+        const text = transfersAsText(state, transfers, state.currency);
         try {
-            await navigator.clipboard.writeText(
-                transfersAsText(state, transfers, state.currency),
-            );
+            await navigator.clipboard.writeText(text);
             setCopied(true);
             window.setTimeout(() => setCopied(false), 1500);
         } catch {
-            // clipboard blocked
+            // Clipboard blocked: show the text so the action is not a no-op.
+            window.prompt(t('copyTransfers'), text);
         }
     };
 
