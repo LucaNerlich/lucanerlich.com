@@ -1,8 +1,14 @@
-/* The zoomed diagram pans inside this box instead of stretching the page. */
+/* Pele crops a zoomed diagram through its viewBox, so the container clips to
+   stop the page widening. The zoom button stack is appended inside this box
+   and is taller than a short diagram, so reserve its height instead. */
 .container {
     position: relative;
     max-width: 100%;
     overflow: hidden;
+}
+
+.container:has(> :global(.pele-zoom)) {
+    padding-bottom: 6rem;
 }
 
 .container > svg {
