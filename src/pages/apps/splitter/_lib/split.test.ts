@@ -486,6 +486,65 @@ describe('model', () => {
         assert.deepEqual(reAdded.paidTransferKeys, []);
     });
 
+    it('keeps a still-valid percent or exact split when a zero share leaves', () => {
+        const base = emptyState();
+        const state = [ 'A', 'B', 'C' ].reduce(
+            (acc, name) => applyAction(acc, {type: 'ADD_PERSON', name}),
+            base,
+        );
+        const [a, b, c] = state.people.map(p => p.id);
+
+        const percentState: AppState = {
+            ...state,
+            expenses: [{
+                id: 'p1',
+                description: 'Percent',
+                cents: 10000,
+                paidBy: a,
+                participants: [a, b, c],
+                split: {mode: 'percent', percents: {[a]: 100, [b]: 0, [c]: 0}},
+            }],
+        };
+        const afterPercent = applyAction(percentState, {type: 'REMOVE_PERSON', id: c});
+        assert.deepEqual(afterPercent.expenses[0].split, {
+            mode: 'percent',
+            percents: {[a]: 100, [b]: 0},
+        });
+
+        const exactState: AppState = {
+            ...state,
+            expenses: [{
+                id: 'e1',
+                description: 'Exact',
+                cents: 800,
+                paidBy: a,
+                participants: [a, b, c],
+                split: {mode: 'exact', amounts: {[a]: 800, [b]: 0, [c]: 0}},
+            }],
+        };
+        assert.deepEqual(
+            applyAction(exactState, {type: 'REMOVE_PERSON', id: c}).expenses[0].split,
+            {mode: 'exact', amounts: {[a]: 800, [b]: 0}},
+        );
+
+        // A non-zero share still invalidates the total, so it falls back to equal.
+        const nonZeroPercent: AppState = {
+            ...state,
+            expenses: [{
+                id: 'p2',
+                description: 'Percent',
+                cents: 10000,
+                paidBy: a,
+                participants: [a, b],
+                split: {mode: 'percent', percents: {[a]: 50, [b]: 50}},
+            }],
+        };
+        assert.deepEqual(
+            applyAction(nonZeroPercent, {type: 'REMOVE_PERSON', id: b}).expenses[0].split,
+            equalSplit(),
+        );
+    });
+
     it('counts the full removal cascade for the demo trip', () => {
         // The dialog derives its counts from these helpers: deleted (paid or
         // sole participant) vs re-split (only joined). Carol: Taxi is deleted,
