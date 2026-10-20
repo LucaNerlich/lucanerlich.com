@@ -551,6 +551,23 @@ describe('session files', () => {
         );
     });
 
+    it('rejects rows normalization would silently rewrite', async () => {
+        const participantTypo = JSON.parse(await exportJson(demoState()));
+        participantTypo.state.expenses[0].participants.push('typo');
+        assert.equal(await importJson(JSON.stringify(participantTypo)), null);
+
+        const splitTypo = JSON.parse(await exportJson(demoState()));
+        const source = splitTypo.state.expenses.find(
+            (e: {split: {mode: string}}) => e.split.mode === 'shares',
+        );
+        source.split.weights.typo = 2;
+        assert.equal(await importJson(JSON.stringify(splitTypo)), null);
+
+        const keyTypo = JSON.parse(await exportJson(demoState()));
+        keyTypo.state.paidTransferKeys = ['typo|typo|100'];
+        assert.equal(await importJson(JSON.stringify(keyTypo)), null);
+    });
+
     it('quotes CSV text and neutralizes formula prefixes in descriptions and names', () => {
         for (const prefix of ['=', '+', '-', '@', '\t', '\r', '\n']) {
             const state = demoState();
