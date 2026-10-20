@@ -37,6 +37,12 @@ const SessionBar: React.FC<Props> = ({
             window.alert(t('importError'));
             return;
         }
+        if (
+            (state.people.length > 0 || state.expenses.length > 0)
+            && !window.confirm(t('importConfirm'))
+        ) {
+            return;
+        }
         onImport(next);
     };
 
