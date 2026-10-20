@@ -1,12 +1,9 @@
 .grid {
     display: grid;
+    /* Stack the panels until each can exceed the 290px container query; a
+       viewport media query split them before they could ever flip. */
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
     gap: 1rem;
-}
-
-@media (min-width: 700px) {
-    .grid {
-        grid-template-columns: 1fr 1fr;
-    }
 }
 
 .column {

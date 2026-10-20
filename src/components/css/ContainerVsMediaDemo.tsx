@@ -53,8 +53,9 @@ export default function ContainerVsMediaDemo(): ReactNode {
                                 <div>
                                     <h4 className={styles.title}>Container-driven</h4>
                                     <p className={styles.copy}>
-                                        This widget flips layout around 290px of panel width -- useful
-                                        for sidebars, cards, and reusable components.
+                                        This widget flips layout when the panel is about 320px
+                                        wide (a 290px container) -- useful for sidebars, cards,
+                                        and reusable components.
                                     </p>
                                 </div>
                             </article>,
