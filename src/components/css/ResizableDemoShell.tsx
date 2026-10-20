@@ -104,6 +104,9 @@ export default function ResizableDemoShell({
 
     const panelStyle = {
         width: `${visibleWidth}px`,
+        // Bound the native resize handle too; JS clamping on pointer-up alone
+        // lets the panel grow past the cap and jump back.
+        maxWidth: `min(100%, ${effectiveMaxWidth}px)`,
         '--demo-min-width': `${effectiveMinWidth}px`,
     } as CSSProperties;
 
