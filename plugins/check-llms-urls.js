@@ -29,7 +29,10 @@ module.exports = function checkLlmsUrlsPlugin() {
         name: 'check-llms-urls',
         async postBuild({siteDir, routesPaths}) {
             const content = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
-            const listedPaths = [...content.matchAll(LINK_PATTERN)].map((match) => new URL(match[0]).pathname);
+            const listedPaths = [...content.matchAll(LINK_PATTERN)].map((match) =>
+                // A prose URL can be followed by sentence punctuation or quotes.
+                new URL(match[0].replace(/[.,;:"'`]+$/, '')).pathname,
+            );
             // An empty match set would make the guard pass vacuously.
             if (listedPaths.length === 0) {
                 throw new Error('static/llms.txt lists no lucanerlich.com URLs');
