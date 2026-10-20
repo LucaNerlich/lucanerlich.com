@@ -8,7 +8,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const LINK_PATTERN = /\]\((https:\/\/lucanerlich\.com[^)\s]*)\)/g;
+// Match the host independently of the link notation: markdown links,
+// autolinks, http:// or a www. prefix are all entries the guard must see.
+const LINK_PATTERN = /https?:\/\/(?:www\.)?lucanerlich\.com[^)\s>]*/g;
 
 /**
  * Route paths and llms.txt URLs may differ only by a trailing slash;
@@ -27,7 +29,14 @@ module.exports = function checkLlmsUrlsPlugin() {
         name: 'check-llms-urls',
         async postBuild({siteDir, routesPaths}) {
             const content = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
-            const listedPaths = [...content.matchAll(LINK_PATTERN)].map((match) => new URL(match[1]).pathname);
+            const listedPaths = [...content.matchAll(LINK_PATTERN)].map((match) =>
+                // A prose URL can be followed by sentence punctuation or quotes.
+                new URL(match[0].replace(/[.,;:"'`]+$/, '')).pathname,
+            );
+            // An empty match set would make the guard pass vacuously.
+            if (listedPaths.length === 0) {
+                throw new Error('static/llms.txt lists no lucanerlich.com URLs');
+            }
             const routePaths = new Set(routesPaths.map(normalizePathname));
             const missing = listedPaths.filter((listed) => !routePaths.has(normalizePathname(listed)));
             if (missing.length > 0) {
