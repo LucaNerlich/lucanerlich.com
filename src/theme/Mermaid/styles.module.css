@@ -1,8 +1,9 @@
-/* The zoomed diagram pans inside this box instead of stretching the page. */
+/* Pele crops a zoomed diagram through its viewBox, so the container must not
+   clip: the zoom button stack it appends here is taller than a short diagram
+   and would lose its bottom buttons. */
 .container {
     position: relative;
     max-width: 100%;
-    overflow: hidden;
 }
 
 .container > svg {
