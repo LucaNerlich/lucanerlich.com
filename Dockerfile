@@ -14,8 +14,9 @@ WORKDIR /app
 
 # Copy dependency files first - this layer is cached until these files change.
 # .npmrc carries the supply-chain protections (7-day minimum release age,
-# exotic-subdependency block, ignored lifecycle scripts) and must be in place
-# before pnpm install so the install layer honors them.
+# exotic-subdependency block) and must be in place before pnpm install so the
+# install layer honors them. Lifecycle scripts stay off except the allowlist
+# in pnpm-workspace.yaml.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 # Install all dependencies (dev + prod, needed for the build).
