@@ -452,12 +452,33 @@ describe('url codec', () => {
 });
 
 describe('model', () => {
-    it('clears paid transfers only when currency changes', () => {
+    it('clears paid transfers on the currency switch and on obligation changes', () => {
         const state = {...demoState(), paidTransferKeys: ['a|b|100']};
         assert.equal(applyAction(state, {type: 'SET_CURRENCY', currency: 'EUR'}), state);
         assert.deepEqual(applyAction(state, {type: 'SET_CURRENCY', currency: 'USD'}), {
             ...state, currency: 'USD', paidTransferKeys: [],
         });
+
+        // Re-creating an identical debt must not inherit the old paid mark.
+        const alice = state.people[0].id;
+        const bob = state.people[1].id;
+        const paid = {...state, expenses: [] as Expense[], paidTransferKeys: ['a|b|100']};
+        const reAdded = applyAction(paid, {
+            type: 'ADD_EXPENSE',
+            expense: {
+                description: 'Dinner',
+                cents: 1000,
+                paidBy: alice,
+                participants: [alice, bob],
+                split: equalSplit(),
+            },
+        });
+        assert.deepEqual(reAdded.paidTransferKeys, []);
+        assert.deepEqual(
+            applyAction(reAdded, {type: 'REMOVE_EXPENSE', id: reAdded.expenses[0].id})
+                .paidTransferKeys,
+            [],
+        );
     });
 
     it('counts the full removal cascade for the demo trip', () => {

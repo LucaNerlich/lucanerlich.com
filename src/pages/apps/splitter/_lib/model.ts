@@ -69,6 +69,10 @@ const stripPersonFromExpenses = (expenses: Expense[], personId: string): Expense
         })
         .filter((e): e is Expense => e !== null);
 
+// A paid mark is keyed by from|to|cents, so it cannot outlive the obligations
+// it settled: any expense or people edit clears them (fail closed).
+const withoutPaidMarks = (next: AppState): AppState => ({...next, paidTransferKeys: []});
+
 /**
  * Applies a domain action to the current state and returns the next state.
  */
@@ -84,15 +88,11 @@ export const applyAction = (state: AppState, action: Action): AppState => {
             return {...state, people: [...state.people, {id: newId(), name}]};
         }
         case 'REMOVE_PERSON': {
-            return {
+            return withoutPaidMarks({
                 ...state,
                 people: state.people.filter(p => p.id !== action.id),
                 expenses: stripPersonFromExpenses(state.expenses, action.id),
-                paidTransferKeys: state.paidTransferKeys.filter(key => {
-                    const [from, to] = key.split('|');
-                    return from !== action.id && to !== action.id;
-                }),
-            };
+            });
         }
         case 'RENAME_PERSON': {
             const name = action.name.trim();
@@ -113,23 +113,26 @@ export const applyAction = (state: AppState, action: Action): AppState => {
         case 'ADD_EXPENSE': {
             const normalized = normalizeExpenseInput(state, action.expense);
             if (!normalized) return state;
-            return {
+            return withoutPaidMarks({
                 ...state,
                 expenses: [...state.expenses, {id: newId(), ...normalized}],
-            };
+            });
         }
         case 'UPDATE_EXPENSE': {
             const normalized = normalizeExpenseInput(state, action.expense);
             if (!normalized) return state;
-            return {
+            return withoutPaidMarks({
                 ...state,
                 expenses: state.expenses.map(e =>
                     e.id === action.id ? {id: e.id, ...normalized} : e,
                 ),
-            };
+            });
         }
         case 'REMOVE_EXPENSE':
-            return {...state, expenses: state.expenses.filter(e => e.id !== action.id)};
+            return withoutPaidMarks({
+                ...state,
+                expenses: state.expenses.filter(e => e.id !== action.id),
+            });
         case 'DUPLICATE_EXPENSE': {
             const source = state.expenses.find(e => e.id === action.id);
             if (!source) return state;
@@ -146,7 +149,7 @@ export const applyAction = (state: AppState, action: Action): AppState => {
                             : {mode: 'exact', amounts: {...source.split.amounts}},
                 participants: [...source.participants],
             };
-            return {...state, expenses: [...state.expenses, copy]};
+            return withoutPaidMarks({...state, expenses: [...state.expenses, copy]});
         }
         case 'SET_CURRENCY':
             return state.currency === action.currency
