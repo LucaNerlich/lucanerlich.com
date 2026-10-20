@@ -47,8 +47,9 @@ FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18
 # --before is npm's release-age gate: .npmrc's minimum-release-age does not
 # apply here (npm, no lockfile), so pin the window explicitly (7 days).
 RUN apk add --no-cache curl \
-    && npm install -g --before="$(date -u -d "@$(( $(date +%s) - 604800 ))" +%Y-%m-%d)" \
-        serve@14.2.6 --ignore-scripts \
+    && CUTOFF="$(date -u -d "@$(( $(date +%s) - 604800 ))" +%Y-%m-%d)" \
+    && test -n "$CUTOFF" \
+    && npm install -g --before="$CUTOFF" serve@14.2.6 --ignore-scripts \
     && addgroup -S app && adduser -S app -G app
 
 WORKDIR /app
