@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useId} from 'react';
 import type {Currency, Person, Split} from '../_lib/types';
 import type {SplitDraft} from '../_lib/expenseInput';
 import {draftFromPeople} from '../_lib/splitDraft';
@@ -24,6 +24,7 @@ const SplitFields: React.FC<Props> = ({
     messages,
 }) => {
     const {t} = messages;
+    const groupId = useId();
     const toggle = (id: string) => {
         const has = draft.participants.includes(id);
         // A user edit keeps exactly what the user selected, including an empty
@@ -38,8 +39,8 @@ const SplitFields: React.FC<Props> = ({
 
     return (
         <div className={styles.splitFields}>
-            <div className={styles.fieldLabel}>
-                <span>{t('participants')}</span>
+            <div className={styles.fieldLabel} role="group" aria-labelledby={groupId}>
+                <span id={groupId}>{t('participants')}</span>
                 <div className={styles.participantToggles}>
                     {people.map(p => {
                         const checked = draft.participants.includes(p.id);

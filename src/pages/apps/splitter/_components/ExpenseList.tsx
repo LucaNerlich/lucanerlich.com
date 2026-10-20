@@ -80,6 +80,9 @@ const ExpenseList: React.FC<Props> = ({
                                             onClick={() =>
                                                 setEditingId(editingId === e.id ? null : e.id)
                                             }
+                                            aria-label={messages
+                                                .t('editExpense')
+                                                .replace('{name}', () => label)}
                                         >
                                             {messages.t('edit')}
                                         </button>
@@ -87,6 +90,9 @@ const ExpenseList: React.FC<Props> = ({
                                             type="button"
                                             className={styles.linkButton}
                                             onClick={() => onDuplicate(e.id)}
+                                            aria-label={messages
+                                                .t('duplicateExpense')
+                                                .replace('{name}', () => label)}
                                         >
                                             {messages.t('duplicate')}
                                         </button>
