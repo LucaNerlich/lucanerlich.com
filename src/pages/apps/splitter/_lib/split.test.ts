@@ -16,7 +16,7 @@ import {
 import {demoState} from './demo';
 import {exportCsv, exportJson, importJson} from './io';
 import type {AppState, Expense, Split} from './types';
-import {emptyState, equalSplit} from './types';
+import {emptyState, equalSplit, transferKey} from './types';
 
 describe('allocateEqual', () => {
     it('distributes remainder cents to first sorted ids', () => {
@@ -452,12 +452,38 @@ describe('url codec', () => {
 });
 
 describe('model', () => {
-    it('clears paid transfers only when currency changes', () => {
+    it('clears paid transfers on the currency switch and on obligation changes', () => {
         const state = {...demoState(), paidTransferKeys: ['a|b|100']};
         assert.equal(applyAction(state, {type: 'SET_CURRENCY', currency: 'EUR'}), state);
         assert.deepEqual(applyAction(state, {type: 'SET_CURRENCY', currency: 'USD'}), {
             ...state, currency: 'USD', paidTransferKeys: [],
         });
+
+        // Re-creating an identical debt must not inherit the old paid mark.
+        const alice = state.people[0].id;
+        const bob = state.people[1].id;
+        let paid = {...state, expenses: [] as Expense[], paidTransferKeys: []};
+        const dinner = {
+            type: 'ADD_EXPENSE' as const,
+            expense: {
+                description: 'Dinner',
+                cents: 1000,
+                paidBy: alice,
+                participants: [alice, bob],
+                split: equalSplit(),
+            },
+        };
+        paid = applyAction(paid, dinner);
+        const [transfer] = computeSettlement(computeBalances(paid));
+        const key = transferKey(transfer.from, transfer.to, transfer.cents);
+        paid = applyAction(paid, {type: 'TOGGLE_TRANSFER_PAID', key});
+        assert.deepEqual(paid.paidTransferKeys, [key]);
+        // Any obligation edit clears the marks, including deleting the expense.
+        paid = applyAction(paid, {type: 'REMOVE_EXPENSE', id: paid.expenses[0].id});
+        assert.deepEqual(paid.paidTransferKeys, []);
+        // Re-adding an identical debt does not bring the old mark back.
+        const reAdded = applyAction(paid, dinner);
+        assert.deepEqual(reAdded.paidTransferKeys, []);
     });
 
     it('counts the full removal cascade for the demo trip', () => {
