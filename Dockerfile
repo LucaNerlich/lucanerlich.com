@@ -3,7 +3,7 @@
 # -------------------------
 # 1) Build stage
 # -------------------------
-FROM node:22-alpine AS builder
+FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 AS builder
 
 # Use pnpm via corepack; the packageManager field in package.json pins the version
 ENV PNPM_HOME="/pnpm"
@@ -36,7 +36,7 @@ RUN pnpm build
 # enforces trailingSlash to match the Docusaurus config. Only `serve` and the
 # static build/ are present - none of the ~1.5GB build toolchain.
 # -------------------------
-FROM node:22-alpine
+FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
 
 # curl: required by Coolify's container healthcheck (alpine has no curl, and
 # busybox wget does not fall back from IPv6 ::1 to IPv4). serve: static host,
