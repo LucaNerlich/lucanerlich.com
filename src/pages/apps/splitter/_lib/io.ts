@@ -117,7 +117,8 @@ export const exportCsv = (state: AppState): string => {
             e.split.mode,
         ].join(',');
     });
-    return [header.join(','), ...rows].join('\n') + '\n';
+    // Excel on Windows reads a BOM-less UTF-8 CSV with the ANSI codepage.
+    return '\uFEFF' + [header.join(','), ...rows].join('\n') + '\n';
 };
 
 const csvEscape = (value: string): string => {

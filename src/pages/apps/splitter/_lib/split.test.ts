@@ -580,6 +580,7 @@ describe('session files', () => {
         const state = demoState();
         state.expenses = [state.expenses[0]];
         state.expenses[0].description = 'Tea, "cake"';
+        assert.ok(exportCsv(state).startsWith('\uFEFFdescription'), 'BOM for Excel');
         assert.ok(exportCsv(state).includes('"Tea, ""cake""",72.00'));
     });
 });
