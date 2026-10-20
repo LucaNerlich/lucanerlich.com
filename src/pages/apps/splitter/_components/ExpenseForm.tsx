@@ -3,7 +3,8 @@ import type {Currency, ExpenseInput, Person} from '../_lib/types';
 import {amountPlaceholder, currencySymbol} from '../_lib/money';
 import {buildExpenseInput, type SplitDraft} from '../_lib/expenseInput';
 import type {Messages} from '../_lib/messages';
-import SplitFields, {draftFromPeople} from './SplitFields';
+import SplitFields from './SplitFields';
+import {draftFromPeople} from '../_lib/splitDraft';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -27,6 +28,9 @@ const ExpenseForm: React.FC<Props> = ({
     const [draft, setDraft] = useState<SplitDraft>(() => draftFromPeople(people));
     const [error, setError] = useState<string | null>(null);
     const descriptionRef = useRef<HTMLInputElement>(null);
+    // Until the user edits the split, every people change re-seeds all of them:
+    // the first draft is built before hydration, and people arrive one at a time.
+    const touched = useRef(false);
 
     useEffect(() => {
         if (!people.some(p => p.id === paidBy)) {
@@ -37,7 +41,9 @@ const ExpenseForm: React.FC<Props> = ({
     }, [people, paidBy, lastPaidBy]);
 
     useEffect(() => {
-        setDraft(prev => draftFromPeople(people, prev));
+        setDraft(prev =>
+            touched.current ? draftFromPeople(people, prev) : draftFromPeople(people),
+        );
     }, [people]);
 
     const submit = (e: React.FormEvent) => {
@@ -127,7 +133,10 @@ const ExpenseForm: React.FC<Props> = ({
                     paidBy={paidBy}
                     currency={currency}
                     draft={draft}
-                    onChange={setDraft}
+                    onChange={next => {
+                        touched.current = true;
+                        setDraft(next);
+                    }}
                     messages={messages}
                 />
             )}

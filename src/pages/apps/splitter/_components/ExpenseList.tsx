@@ -5,7 +5,8 @@ import {centsToInput, currencySymbol, formatMoney} from '../_lib/money';
 import {payerCoversOthers} from '../_lib/split';
 import {buildExpenseInput, type SplitDraft} from '../_lib/expenseInput';
 import type {Messages} from '../_lib/messages';
-import SplitFields, {draftFromExpense, draftFromPeople} from './SplitFields';
+import SplitFields from './SplitFields';
+import {draftFromExpense, draftFromPeople} from '../_lib/splitDraft';
 import styles from '../splitter.module.css';
 
 type Props = {
