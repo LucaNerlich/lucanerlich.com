@@ -69,6 +69,31 @@ const en: Dict = {
     emptyTwoPeople: 'Add at least two people to see who owes whom.',
     emptyAddExpense: 'Add an expense to see the settlement.',
     renamePerson: 'Rename {name}',
+    removePersonPaidDeleted: '{count} expenses they paid will be deleted',
+    removePersonPaidDeletedOne: '1 expense they paid will be deleted',
+    removePersonJoinedResplit: '{count} expenses they joined will be re-split',
+    removePersonJoinedResplitOne: '1 expense they joined will be re-split',
+    removePersonConfirm: '{name}: {parts}. Remove them?',
+    listJoin: ' and ',
+    calcIntro:
+        'Each expense is allocated to its participants (equal, shares, percent, or exact amounts) in integer cents. Balance = paid - obligation. Positive means owed money; negative means they owe.',
+    calcFormulas: 'Formulas',
+    calcUnequalNote:
+        'Unequal modes use weights / percents (largest remainder) or exact cent amounts. Obligation is the sum of shares across expenses.',
+    calcSteps: 'Calculation steps',
+    calcTotalSpent: 'Total spent',
+    calcPerExpenseShares: 'Per-expense shares',
+    calcUntitledExpense: 'Untitled expense',
+    calcBalance: 'Balance (paid - obligation)',
+    calcTransfers: 'Transfers',
+    calcAllZero: 'All balances are zero, so no transfers are needed.',
+    calcMatchNote:
+        'Match largest debtors with largest creditors until everyone is settled (at most N - 1 transfers).',
+    calcPayerCovers: ', payer covers',
+    calcRemainderNote: '(+ remainder cents)',
+    calcAriaTotal: 'Total T equals the sum of all expense amounts',
+    calcAriaEqualSplit: 'For an equal split, share is floor of expense over participants',
+    calcAriaBalance: 'Balance equals amount paid minus total obligation',
     removePerson: 'Remove {name}',
 };
 
@@ -135,6 +160,31 @@ const de: Dict = {
     emptyTwoPeople: 'Füge mindestens zwei Personen hinzu, um die Schulden zu sehen.',
     emptyAddExpense: 'Füge eine Ausgabe hinzu, um den Ausgleich zu sehen.',
     renamePerson: '{name} umbenennen',
+    removePersonPaidDeleted: '{count} Ausgaben, die die Person bezahlt hat, werden gelöscht',
+    removePersonPaidDeletedOne: '1 Ausgabe, die die Person bezahlt hat, wird gelöscht',
+    removePersonJoinedResplit: '{count} Ausgaben, an denen die Person beteiligt war, werden neu aufgeteilt',
+    removePersonJoinedResplitOne: '1 Ausgabe, an der die Person beteiligt war, wird neu aufgeteilt',
+    removePersonConfirm: '{name}: {parts}. Person entfernen?',
+    listJoin: ' und ',
+    calcIntro:
+        'Jede Ausgabe wird in ganzen Cent auf die Beteiligten verteilt (gleich, Anteile, Prozent oder genaue Beträge). Saldo = bezahlt - Anteil. Positiv heißt Guthaben, negativ heißt Schulden.',
+    calcFormulas: 'Formeln',
+    calcUnequalNote:
+        'Ungleiche Modi nutzen Gewichte / Prozente (größter Rest) oder genaue Cent-Beträge. Der Anteil ist die Summe über alle Ausgaben.',
+    calcSteps: 'Rechenschritte',
+    calcTotalSpent: 'Gesamt ausgegeben',
+    calcPerExpenseShares: 'Anteile pro Ausgabe',
+    calcUntitledExpense: 'Unbenannte Ausgabe',
+    calcBalance: 'Saldo (bezahlt - Anteil)',
+    calcTransfers: 'Überweisungen',
+    calcAllZero: 'Alle Salden sind null, es sind keine Überweisungen nötig.',
+    calcMatchNote:
+        'Größte Schuldner mit größten Gläubigern ausgleichen, bis alle beglichen sind (höchstens N - 1 Überweisungen).',
+    calcPayerCovers: ', Zahler legt aus',
+    calcRemainderNote: '(+ Rest-Cent)',
+    calcAriaTotal: 'Summe T entspricht der Summe aller Ausgaben',
+    calcAriaEqualSplit: 'Bei gleicher Aufteilung ist der Anteil die Abrundung der Ausgabe geteilt durch die Beteiligten',
+    calcAriaBalance: 'Saldo entspricht dem bezahlten Betrag minus dem gesamten Anteil',
     removePerson: '{name} entfernen',
 };
 

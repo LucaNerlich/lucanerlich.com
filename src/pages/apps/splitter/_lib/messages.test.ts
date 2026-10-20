@@ -52,4 +52,20 @@ describe('createMessages locale detection', () => {
         setLocaleSignals(undefined, 'de');
         assert.equal(createMessages().t('reset'), 'Zurücksetzen');
     });
+
+    it('translates the calculation panel and removal-sentence keys', () => {
+        const de = createMessages('de');
+        const en = createMessages('en');
+        assert.equal(de.t('calcFormulas'), 'Formeln');
+        assert.equal(de.t('calcSteps'), 'Rechenschritte');
+        assert.match(de.t('removePersonPaidDeleted'), /Ausgabe/);
+        assert.match(de.t('removePersonJoinedResplitOne'), /Ausgabe/);
+        // The removal sentence is filled by two replacements, so both slots
+        // must survive in both catalogs.
+        for (const t of [en, de]) {
+            assert.match(t.t('removePersonConfirm'), /\{name\}/);
+            assert.match(t.t('removePersonConfirm'), /\{parts\}/);
+        }
+        assert.notEqual(de.t('calcAriaTotal'), en.t('calcAriaTotal'));
+    });
 });

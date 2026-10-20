@@ -13,11 +13,6 @@ import ResultsPanel from './_components/ResultsPanel';
 import SessionBar from './_components/SessionBar';
 import styles from './splitter.module.css';
 
-const pluralRules = new Intl.PluralRules('en', {type: 'cardinal'});
-
-const expenseCount = (n: number): string =>
-    `${n} ${pluralRules.select(n) === 'one' ? 'expense' : 'expenses'}`;
-
 const SplitterApp: React.FC = () => {
     const messages = useMemo(() => createMessages(), []);
     const {t} = messages;
@@ -43,11 +38,17 @@ const SplitterApp: React.FC = () => {
         if (affected.length > 0) {
             const deleted = expensesDeletedByRemoval(state, id).length;
             const resplit = affected.length - deleted;
+            const count = (one: string, many: string, n: number): string =>
+                n === 1 ? t(one) : t(many).replace('{count}', String(n));
             const parts = [
-                deleted > 0 ? `${expenseCount(deleted)} they paid will be deleted` : '',
-                resplit > 0 ? `${expenseCount(resplit)} they joined will be re-split` : '',
+                deleted > 0 ? count('removePersonPaidDeletedOne', 'removePersonPaidDeleted', deleted) : '',
+                resplit > 0 ? count('removePersonJoinedResplitOne', 'removePersonJoinedResplit', resplit) : '',
             ].filter(Boolean);
-            const ok = window.confirm(`${person.name}: ${parts.join(' and ')}. Remove them?`);
+            const ok = window.confirm(
+                t('removePersonConfirm')
+                    .replace('{parts}', () => parts.join(t('listJoin')))
+                    .replace('{name}', () => person.name),
+            );
             if (!ok) return;
         }
         dispatch({type: 'REMOVE_PERSON', id});
