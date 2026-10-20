@@ -48,6 +48,28 @@ describe('buildExpenseInput error precedence', () => {
         assert.equal(result.error, 'Percents must sum to 100 (currently 90).');
     });
 
+    it('rejects a blank percent instead of saving it as a zero share', () => {
+        const result = buildExpenseInput(
+            draft({splitMode: 'percent', percents: {a: '100', b: ''}}),
+            '',
+            '12.50',
+            'a',
+            'EUR',
+        );
+        assert.equal(result.input, null);
+        assert.equal(result.error, 'Every participant needs a percent.');
+
+        const explicitZero = buildExpenseInput(
+            draft({splitMode: 'percent', percents: {a: '100', b: '0'}}),
+            '',
+            '12.50',
+            'a',
+            'EUR',
+        );
+        assert.equal(explicitZero.error, null);
+        assert.deepEqual(explicitZero.input?.split, {mode: 'percent', percents: {a: 100, b: 0}});
+    });
+
     it('builds the trimmed input on success', () => {
         const result = buildExpenseInput(draft(), '  Dinner  ', '12.50', 'a', 'EUR');
         assert.equal(result.error, null);

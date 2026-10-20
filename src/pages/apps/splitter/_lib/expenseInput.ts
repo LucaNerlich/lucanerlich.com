@@ -36,7 +36,12 @@ export const buildSplit = (draft: SplitDraft): {split: Split; error: string | nu
     if (draft.splitMode === 'percent') {
         const percents: Record<string, number> = {};
         for (const id of draft.participants) {
-            const p = Number(String(draft.percents[id]).replace(',', '.'));
+            const raw = draft.percents[id];
+            // Empty is not 0: Number('') would allocate a silent zero share.
+            if (raw === undefined || String(raw).trim() === '') {
+                return {split: equalSplit(), error: 'Every participant needs a percent.'};
+            }
+            const p = Number(String(raw).replace(',', '.'));
             if (!Number.isFinite(p) || p < 0) {
                 return {split: equalSplit(), error: 'Every participant needs a non-negative percent.'};
             }
