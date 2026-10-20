@@ -175,5 +175,7 @@ export const downloadText = (filename: string, text: string, mime: string): void
     a.href = url;
     a.download = filename;
     a.click();
-    URL.revokeObjectURL(url);
+    // Revoking in the same task can cancel a download the browser has not
+    // started yet (Chromium 41380177, Mozilla 1282407).
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
 };
