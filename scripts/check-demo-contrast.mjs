@@ -1,13 +1,20 @@
 #!/usr/bin/env node
-// Recomputes WCAG AA contrast for every accent fill used by the demo modules
-// (FlexboxDemo, GridDemo, TransitionDemo). The foregrounds below are the ones
-// those modules set; update a pair when a module changes a colour, then run:
+// Guards the demo colour contract in two ways:
+//
+// 1. WCAG AA contrast for every accent fill used by the demo modules
+//    (FlexboxDemo, GridDemo, TransitionDemo). The foregrounds below are the
+//    ones those modules set; update a pair when a module changes a colour.
+// 2. No demo label may paint itself in an accent token. Those tokens are tuned
+//    as fills; used as text on a same-hue tint they measured 2.28-3.59:1
+//    (issue #618), so the rule is banned rather than modelled per selector.
+//
+// Run it (also part of `pnpm test`):
 //
 //     node scripts/check-demo-contrast.mjs
 //
 // The accent values are read from src/css/custom.css, so a token change is
 // picked up here without editing this file.
-import {readFileSync} from 'node:fs';
+import {readFileSync, readdirSync} from 'node:fs';
 
 const AA_NORMAL_TEXT = 4.5;
 
@@ -71,3 +78,24 @@ if (failed > 0) {
     process.exit(1);
 }
 console.log(`all ${pairs.length} accent pairs >= ${AA_NORMAL_TEXT}:1`);
+
+// A demo label must inherit its colour. An accent token as `color` has no
+// contrast guarantee against the tint it sits on, and modelling six
+// `color-mix` backgrounds here would drift from the CSS it guards (#618).
+const offenders = [];
+for (const file of readdirSync(new URL('../src/components', import.meta.url), {recursive: true})) {
+    if (!file.endsWith('.module.css')) continue;
+    const text = readFileSync(new URL(`../src/components/${file}`, import.meta.url), 'utf8');
+    text.split('\n').forEach((line, index) => {
+        if (/^\s*color:\s*var\(--custom-accent-/.test(line)) {
+            offenders.push(`src/components/${file}:${index + 1}`);
+        }
+    });
+}
+
+if (offenders.length > 0) {
+    console.error('demo labels must not use an accent token as text colour:');
+    for (const where of offenders) console.error(`  ${where}`);
+    process.exit(1);
+}
+console.log('no demo label paints itself in an accent token');

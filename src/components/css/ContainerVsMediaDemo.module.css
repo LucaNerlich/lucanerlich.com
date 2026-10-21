@@ -70,7 +70,6 @@
 /* Media-query widget: reacts to the viewport, not the demo panel. */
 .mediaWidget .badge {
     background: color-mix(in srgb, var(--custom-accent-red) 18%, transparent);
-    color: var(--custom-accent-red);
 }
 
 .mediaWidget .badge::before {
@@ -90,7 +89,6 @@
 
     .mediaWidget .badge {
         background: color-mix(in srgb, var(--custom-accent-green) 18%, transparent);
-        color: var(--custom-accent-green);
     }
 
     .mediaWidget .badge::before {
@@ -101,7 +99,6 @@
 /* Container-query widget: reacts to the resizable panel. */
 .containerWidget .badge {
     background: color-mix(in srgb, var(--custom-accent-amber) 20%, transparent);
-    color: var(--custom-accent-amber);
 }
 
 .containerWidget .badge::before {
@@ -121,7 +118,6 @@
 
     .containerWidget .badge {
         background: color-mix(in srgb, var(--custom-accent-purple) 18%, transparent);
-        color: var(--custom-accent-purple);
     }
 
     .containerWidget .badge::before {
