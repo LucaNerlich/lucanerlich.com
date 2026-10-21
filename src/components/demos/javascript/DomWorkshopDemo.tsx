@@ -19,7 +19,7 @@ export default function DomWorkshopDemo(): ReactNode {
         <DemoShell
             title="DOM workshop"
             hint="Each control mirrors a common DOM API. The sample tree updates immediately."
-            footer={log}
+            footer={<span role="status">{log}</span>}
             controls={
                 <>
                     <label className={shell.control} htmlFor={ids.text}>

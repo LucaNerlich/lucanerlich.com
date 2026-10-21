@@ -93,7 +93,15 @@ export default function AsyncTimelineDemo(): ReactNode {
         <DemoShell
             title="Sequential vs parallel timeline"
             hint="Run the same three fake tasks sequentially, with Promise.all, or with Promise.race."
-            footer={elapsed === null ? 'Press Run to compare wall-clock time.' : `Finished in about ${elapsed} ms`}
+            footer={
+                <span role="status">
+                    {running
+                        ? 'Running…'
+                        : elapsed === null
+                            ? 'Press Run to compare wall-clock time.'
+                            : `Finished in about ${elapsed} ms`}
+                </span>
+            }
             controls={
                 <>
                     <SelectControl
@@ -156,7 +164,7 @@ export default function AsyncTimelineDemo(): ReactNode {
                 </>
             }
         >
-            <div className={styles.chart} aria-live="polite">
+            <div className={styles.chart}>
                 {(bars.length === 0
                     ? [
                         {label: 'task A', start: 0, duration: delayA},
