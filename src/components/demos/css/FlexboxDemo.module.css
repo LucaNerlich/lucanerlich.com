@@ -1,3 +1,4 @@
+/* Accent pairs and their ratios: node scripts/check-demo-contrast.mjs */
 .container {
     display: flex;
     min-height: 180px;
@@ -18,6 +19,8 @@
     height: 200px;
 }
 
+/* The dark-theme accents are light and the light-theme amber is dark, so the
+   foreground is paired per accent instead of a single white. */
 .item {
     display: flex;
     align-items: center;
@@ -33,10 +36,16 @@
 
 .item:nth-child(2) {
     background: var(--custom-accent-green);
+    color: #000;
 }
 
 .item:nth-child(3) {
     background: var(--custom-accent-amber);
+    color: #111;
+}
+
+html[data-theme='dark'] .item {
+    color: #111;
 }
 
 .item:nth-child(4) {
