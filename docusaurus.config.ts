@@ -37,23 +37,6 @@ const config: Config = {
     trailingSlash: true,
 
     headTags: [
-        // Preconnect to Algolia DocSearch domains to reduce search latency
-        {
-            tagName: 'link',
-            attributes: {
-                rel: 'preconnect',
-                href: 'https://9BZ1Z8DOXB-dsn.algolia.net',
-                crossorigin: 'anonymous',
-            },
-        },
-        {
-            tagName: 'link',
-            attributes: {
-                rel: 'preconnect',
-                href: 'https://9BZ1Z8DOXB.algolia.net',
-                crossorigin: 'anonymous',
-            },
-        },
         // Web app manifest
         {
             tagName: 'link',
