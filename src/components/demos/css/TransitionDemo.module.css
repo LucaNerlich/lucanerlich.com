@@ -1,3 +1,4 @@
+/* Accent pairs and their ratios: node scripts/check-demo-contrast.mjs */
 .stage {
     display: flex;
     justify-content: center;
@@ -29,4 +30,6 @@ html[data-theme='dark'] .card {
     transform: translateY(-12px) scale(1.06);
     background: var(--custom-accent-green);
     box-shadow: 0 14px 28px rgb(0 0 0 / 22%);
+    /* Light-theme green is dark: white would be 4.44:1. */
+    color: #000;
 }
