@@ -8,14 +8,13 @@
 }
 
 /* flex-wrap needs a constrained main size to break against; without one the
-   control silently does nothing on a desktop column. */
-.container[data-direction='row'],
-.container[data-direction='row-reverse'] {
+   control silently does nothing on a desktop column. Only constrain while
+   wrapping: in nowrap the items must fit and flex-grow needs free space. */
+.container:is([data-direction='row'], [data-direction='row-reverse']):is([data-wrap='wrap'], [data-wrap='wrap-reverse']) {
     max-width: 18rem;
 }
 
-.container[data-direction='column'],
-.container[data-direction='column-reverse'] {
+.container:is([data-direction='column'], [data-direction='column-reverse']):is([data-wrap='wrap'], [data-wrap='wrap-reverse']) {
     height: 200px;
 }
 

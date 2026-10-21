@@ -89,7 +89,12 @@ export default function FlexboxDemo(): ReactNode {
                 </>
             }
         >
-            <div className={styles.container} style={containerStyle} data-direction={direction}>
+            <div
+                className={styles.container}
+                style={containerStyle}
+                data-direction={direction}
+                data-wrap={wrap}
+            >
                 <div className={styles.item}>1</div>
                 <div className={`${styles.item} ${styles.itemTall}`} style={{flexGrow: growSecond ? 1 : 0}}>
                     2
