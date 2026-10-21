@@ -100,7 +100,8 @@ const en = {
     calcAriaBalance: 'Balance equals amount paid minus total obligation',
     removePerson: 'Remove {name}',
     weight: 'weight',
-    removeExpenseConfirm: 'Remove "{name}" and every mark it paid?',
+    removeExpenseConfirm:
+        'Remove "{name}"? Every "paid" mark in the settlement is cleared too.',
     errorPickParticipant: 'Pick at least one participant.',
     errorParticipantsUnique: 'Participants must be unique.',
     errorPositiveWeight: 'Every participant needs a positive share weight.',
@@ -219,7 +220,8 @@ const de: Record<keyof typeof en, string> = {
     calcAriaBalance: 'Saldo entspricht dem bezahlten Betrag minus dem gesamten Anteil',
     removePerson: '{name} entfernen',
     weight: 'Gewicht',
-    removeExpenseConfirm: '"{name}" und die zugehörigen Bezahlt-Markierungen entfernen?',
+    removeExpenseConfirm:
+        '"{name}" entfernen? Alle Bezahlt-Markierungen im Ausgleich werden ebenfalls gelöscht.',
     errorPickParticipant: 'Wähle mindestens eine beteiligte Person aus.',
     errorParticipantsUnique: 'Die beteiligten Personen müssen eindeutig sein.',
     errorPositiveWeight: 'Jede beteiligte Person braucht ein positives Gewicht.',

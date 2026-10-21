@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import type {Action, AppState} from './_lib/types';
 import {emptyState} from './_lib/types';
 import {applyAction, expensesAffectedByRemoval, expensesDeletedByRemoval} from './_lib/model';
@@ -27,6 +27,8 @@ const SplitterApp: React.FC = () => {
         fallbackStore: localStore('splitter:v1'),
     });
     const [copied, setCopied] = useState(false);
+    // The expenses section unmounts with its last row; focus lands here instead.
+    const addExpenseHeadingRef = useRef<HTMLHeadingElement>(null);
     const lastPaidBy = state.expenses[state.expenses.length - 1]?.paidBy;
 
     const handleRemovePerson = (id: string) => {
@@ -135,7 +137,9 @@ const SplitterApp: React.FC = () => {
             </section>
 
             <section className={`${styles.card} ${styles.noPrint}`}>
-                <h2 className={styles.sectionTitle}>{t('addExpense')}</h2>
+                <h2 ref={addExpenseHeadingRef} tabIndex={-1} className={styles.sectionTitle}>
+                    {t('addExpense')}
+                </h2>
                 <ExpenseForm
                     people={state.people}
                     currency={state.currency}
@@ -158,6 +162,7 @@ const SplitterApp: React.FC = () => {
                         onUpdate={(id, expense) =>
                             dispatch({type: 'UPDATE_EXPENSE', id, expense})
                         }
+                        emptyFocusRef={addExpenseHeadingRef}
                     />
                 </section>
             )}

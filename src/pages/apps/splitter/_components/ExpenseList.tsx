@@ -18,6 +18,8 @@ type Props = {
     onRemove: (id: string) => void;
     onDuplicate: (id: string) => void;
     onUpdate: (id: string, expense: ExpenseInput) => void;
+    /** Always-mounted target for focus when the last row goes. */
+    emptyFocusRef?: React.RefObject<HTMLHeadingElement | null>;
 };
 
 const ExpenseList: React.FC<Props> = ({
@@ -28,6 +30,7 @@ const ExpenseList: React.FC<Props> = ({
     onRemove,
     onDuplicate,
     onUpdate,
+    emptyFocusRef,
 }) => {
     const peopleIndex = useMemo(() => indexPeople(people), [people]);
     const nameOf = (id: string) => nameFrom(peopleIndex, id);
@@ -54,7 +57,9 @@ const ExpenseList: React.FC<Props> = ({
         const survivor = expenses[index + 1] ?? expenses[index - 1];
         onRemove(expense.id);
         const target = survivor ? rowRefs.current.get(survivor.id) : undefined;
-        (target ?? listRef.current)?.focus();
+        // The list unmounts with its last row, so that case needs a target
+        // outside this section.
+        (target ?? emptyFocusRef?.current ?? listRef.current)?.focus();
     };
 
     return (
@@ -118,7 +123,7 @@ const ExpenseList: React.FC<Props> = ({
                                                 setEditingId(editingId === e.id ? null : e.id);
                                             }}
                                             aria-expanded={editingId === e.id}
-                                            aria-controls={editorId}
+                                            aria-controls={editingId === e.id ? editorId : undefined}
                                             aria-label={messages
                                                 .t('editExpense')
                                                 .replace('{name}', () => label)}
