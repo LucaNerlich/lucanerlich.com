@@ -7,6 +7,18 @@
     background: var(--ifm-background-color);
 }
 
+/* flex-wrap needs a constrained main size to break against; without one the
+   control silently does nothing on a desktop column. */
+.container[data-direction='row'],
+.container[data-direction='row-reverse'] {
+    max-width: 18rem;
+}
+
+.container[data-direction='column'],
+.container[data-direction='column-reverse'] {
+    height: 200px;
+}
+
 .item {
     display: flex;
     align-items: center;
