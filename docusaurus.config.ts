@@ -16,6 +16,7 @@ const config: Config = {
     baseUrl: '/',
     onBrokenLinks: 'throw',
     onBrokenAnchors: 'throw',
+    onDuplicateRoutes: 'throw',
     markdown: {
         format: 'detect',
         // Diagrams become static SVG at build time through

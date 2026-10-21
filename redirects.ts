@@ -2,9 +2,9 @@
 // list has one home and one place to be validated. Consumed by
 // @docusaurus/plugin-client-redirects.
 //
-// To add a redirect: append an entry below. The duplicate-`from` guard at the
-// bottom fails the build if two entries claim the same source path, so a new
-// redirect can never silently shadow an existing one.
+// To add a redirect: append an entry below. `onDuplicateRoutes: 'throw'` in
+// docusaurus.config.ts fails the build when two entries claim the same source
+// path or a redirect shadows an existing route.
 
 type Redirect = {from: string | string[]; to: string};
 
@@ -129,18 +129,5 @@ const entries: Redirect[] = [
     {from: '/category/beginners-guide-10/', to: '/testing/beginners-guide/'},
     {from: '/category/beginners-guide-11/', to: '/typescript/beginners-guide/'},
 ];
-
-// One place to catch a duplicate source path before it ships a silently
-// shadowed redirect. Runs when the config is evaluated at build time.
-const seen = new Set<string>();
-for (const entry of entries) {
-    const froms = Array.isArray(entry.from) ? entry.from : [entry.from];
-    for (const from of froms) {
-        if (seen.has(from)) {
-            throw new Error(`Duplicate redirect "from": ${from}`);
-        }
-        seen.add(from);
-    }
-}
 
 export const redirects: Redirect[] = entries;
