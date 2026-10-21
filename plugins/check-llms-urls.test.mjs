@@ -63,3 +63,21 @@ test('rejects a lookalike host instead of checking only its path', async () => {
 test('accepts the www host', async () => {
     await run('[A](https://www.lucanerlich.com/a/)\n', ['/a']);
 });
+
+test('accepts the DNS-absolute form of the host', async () => {
+    await run('[A](https://lucanerlich.com./a/)\n', ['/a']);
+});
+
+test('rejects a non-default port on the site host', async () => {
+    await assert.rejects(
+        run('[A](https://lucanerlich.com:8080/a/)\n', ['/a']),
+        /lucanerlich\.com:8080/,
+    );
+});
+
+test('route-checks a mixed-case site URL instead of skipping it', async () => {
+    await assert.rejects(
+        run('[A](https://LUCANERLICH.COM/missing/)\n', ['/a']),
+        /no matching route/,
+    );
+});
