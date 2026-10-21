@@ -20,6 +20,11 @@
     transition-property: transform, box-shadow, background-color;
 }
 
+/* The dark-theme purple is light enough to need dark text. */
+html[data-theme='dark'] .card {
+    color: #111;
+}
+
 .cardActive {
     transform: translateY(-12px) scale(1.06);
     background: var(--custom-accent-green);

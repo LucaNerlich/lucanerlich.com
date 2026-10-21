@@ -24,8 +24,15 @@
 
 .item:nth-child(2n) {
     background: var(--custom-accent-green);
+    color: #000;
 }
 
 .item:nth-child(3n) {
     background: var(--custom-accent-amber);
+    color: #111;
+}
+
+/* Every accent is light in the dark theme. */
+html[data-theme='dark'] .item {
+    color: #111;
 }
