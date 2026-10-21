@@ -85,7 +85,7 @@ export default function StorageDemo(): ReactNode {
         <DemoShell
             title="localStorage vs sessionStorage"
             hint="Save a note in each store, then reload or open a new tab to compare persistence."
-            footer={status}
+            footer={<span role="status">{status}</span>}
             controls={
                 <div className={shell.buttonRow}>
                     <button type="button" className={shell.button} onClick={clearAll}>
