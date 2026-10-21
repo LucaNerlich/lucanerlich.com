@@ -151,8 +151,8 @@ static/                # Static assets (images, favicon, manifest.json)
 - **Client redirects** live in `redirects.ts` (imported into the config and
   consumed by `@docusaurus/plugin-client-redirects`), not in
   `docusaurus.config.ts`. To move/rename a doc, append a `{from, to}` entry
-  there. A duplicate-`from` guard throws at build time, so two entries can
-  never silently shadow each other.
+  there. `onDuplicateRoutes: 'throw'` fails the build when a redirect
+  duplicates another or shadows an existing route.
 - **Algolia search** is configured - no action needed from agents.
 - **Future flags:** `future.faster` (SWC via `@docusaurus/faster`) and
   `future.v4`.
