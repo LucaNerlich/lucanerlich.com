@@ -95,8 +95,8 @@ export default function StorageDemo(): ReactNode {
             }
         >
             <div className={styles.grid}>
-                <label className={styles.card} htmlFor={ids.local}>
-                    <span className={styles.label}>localStorage</span>
+                <div className={styles.card}>
+                    <label className={styles.label} htmlFor={ids.local}>localStorage</label>
                     <textarea
                         id={ids.local}
                         className={styles.textarea}
@@ -112,9 +112,9 @@ export default function StorageDemo(): ReactNode {
                     >
                         Save local
                     </button>
-                </label>
-                <label className={styles.card} htmlFor={ids.session}>
-                    <span className={styles.label}>sessionStorage</span>
+                </div>
+                <div className={styles.card}>
+                    <label className={styles.label} htmlFor={ids.session}>sessionStorage</label>
                     <textarea
                         id={ids.session}
                         className={styles.textarea}
@@ -130,7 +130,7 @@ export default function StorageDemo(): ReactNode {
                     >
                         Save session
                     </button>
-                </label>
+                </div>
             </div>
         </DemoShell>
     );
