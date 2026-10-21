@@ -126,6 +126,18 @@ const csvEscape = (value: string): string => {
     return `"${literal.replace(/"/g, '""')}"`;
 };
 
+const transferLine = (
+    state: AppState,
+    names: ReturnType<typeof indexPeople>,
+    transfer: Transfer,
+    currency: Currency,
+): string => {
+    const line = `${nameFrom(names, transfer.from)} → ${nameFrom(names, transfer.to)}: ${formatMoney(transfer.cents, currency)}`;
+    return state.paidTransferKeys.includes(transferKey(transfer.from, transfer.to, transfer.cents))
+        ? `${line} (paid)`
+        : line;
+};
+
 export const transfersAsText = (
     state: AppState,
     transfers: Transfer[],
@@ -133,13 +145,7 @@ export const transfersAsText = (
 ): string => {
     const names = indexPeople(state.people);
     if (transfers.length === 0) return 'Everyone is settled up.';
-    return transfers
-        .map(t => {
-            const paid = state.paidTransferKeys.includes(transferKey(t.from, t.to, t.cents));
-            const line = `${nameFrom(names, t.from)} → ${nameFrom(names, t.to)}: ${formatMoney(t.cents, currency)}`;
-            return paid ? `${line} (paid)` : line;
-        })
-        .join('\n');
+    return transfers.map(t => transferLine(state, names, t, currency)).join('\n');
 };
 
 export const settlementSummaryText = (state: AppState): string => {
@@ -161,9 +167,7 @@ export const settlementSummaryText = (state: AppState): string => {
         lines.push('- Everyone is settled up.');
     } else {
         for (const t of transfers) {
-            lines.push(
-                `- ${nameFrom(names, t.from)} → ${nameFrom(names, t.to)}: ${formatMoney(t.cents, state.currency)}`,
-            );
+            lines.push(`- ${transferLine(state, names, t, state.currency)}`);
         }
     }
     return lines.join('\n');
