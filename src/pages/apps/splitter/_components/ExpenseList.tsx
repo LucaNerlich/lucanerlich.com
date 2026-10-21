@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import type {Currency, Expense, ExpenseInput, Person} from '../_lib/types';
 import {indexPeople, nameFrom} from '../_lib/people';
 import {centsToInput, currencySymbol, formatMoney} from '../_lib/money';
@@ -31,6 +31,14 @@ const ExpenseList: React.FC<Props> = ({
     const peopleIndex = useMemo(() => indexPeople(people), [people]);
     const nameOf = (id: string) => nameFrom(peopleIndex, id);
     const [editingId, setEditingId] = useState<string | null>(null);
+    const openerRef = useRef<HTMLButtonElement | null>(null);
+
+    // Closing the editor unmounts the focused control; hand focus back to the
+    // row button that opened it instead of dropping it on <body>.
+    const closeEditor = () => {
+        openerRef.current?.focus();
+        setEditingId(null);
+    };
 
     return (
         <div className={styles.tableWrap}>
@@ -77,9 +85,10 @@ const ExpenseList: React.FC<Props> = ({
                                         <button
                                             type="button"
                                             className={styles.linkButton}
-                                            onClick={() =>
-                                                setEditingId(editingId === e.id ? null : e.id)
-                                            }
+                                            onClick={event => {
+                                                openerRef.current = event.currentTarget;
+                                                setEditingId(editingId === e.id ? null : e.id);
+                                            }}
                                             aria-label={messages
                                                 .t('editExpense')
                                                 .replace('{name}', () => label)}
@@ -115,10 +124,10 @@ const ExpenseList: React.FC<Props> = ({
                                                 people={people}
                                                 currency={currency}
                                                 messages={messages}
-                                                onCancel={() => setEditingId(null)}
+                                                onCancel={closeEditor}
                                                 onSave={input => {
                                                     onUpdate(e.id, input);
-                                                    setEditingId(null);
+                                                    closeEditor();
                                                 }}
                                             />
                                         </td>

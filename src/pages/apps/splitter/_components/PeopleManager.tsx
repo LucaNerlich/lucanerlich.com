@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import type {Person} from '../_lib/types';
 import type {Messages} from '../_lib/messages';
 import styles from '../splitter.module.css';
@@ -23,6 +23,16 @@ const PeopleManager: React.FC<Props> = ({
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editName, setEditName] = useState('');
     const renameCancelled = useRef(false);
+    // The chip button is replaced by the rename input, so the opener is a new
+    // element after every close; keep the mounted ones and focus after render.
+    const openerRefs = useRef(new Map<string, HTMLButtonElement>());
+    const [refocusId, setRefocusId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!refocusId) return;
+        openerRefs.current.get(refocusId)?.focus();
+        setRefocusId(null);
+    }, [refocusId]);
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -45,10 +55,13 @@ const PeopleManager: React.FC<Props> = ({
         setError(null);
     };
 
-    const commitRename = () => {
+    // refocus is false for the blur path: the user moved focus somewhere
+    // deliberate, so only Enter/Escape hand it back to the chip.
+    const commitRename = (refocus = false) => {
         if (!editingId) return;
         const trimmed = editName.trim();
         if (!trimmed) {
+            if (refocus) setRefocusId(editingId);
             setEditingId(null);
             return;
         }
@@ -62,6 +75,7 @@ const PeopleManager: React.FC<Props> = ({
             return;
         }
         onRename(editingId, trimmed);
+        if (refocus) setRefocusId(editingId);
         setEditingId(null);
     };
 
@@ -87,10 +101,11 @@ const PeopleManager: React.FC<Props> = ({
                                 onKeyDown={e => {
                                     if (e.key === 'Enter') {
                                         e.preventDefault();
-                                        commitRename();
+                                        commitRename(true);
                                     }
                                     if (e.key === 'Escape') {
                                         renameCancelled.current = true;
+                                        setRefocusId(editingId);
                                         setEditingId(null);
                                     }
                                 }}
@@ -101,6 +116,9 @@ const PeopleManager: React.FC<Props> = ({
                             <button
                                 type="button"
                                 className={styles.chipName}
+                                ref={el => {
+                                    if (el) openerRefs.current.set(p.id, el);
+                                }}
                                 onClick={() => startRename(p)}
                                 title={messages.t('rename')}
                             >
