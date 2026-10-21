@@ -41,12 +41,7 @@ export const formattersFor = (currency: Currency): Formatters => {
     return cached;
 };
 
-export const toCents = (value: string | number): number | null => {
-    if (typeof value === 'number') {
-        if (!Number.isFinite(value)) return null;
-        const cents = Math.round(value * 100);
-        return Number.isSafeInteger(cents) ? cents : null;
-    }
+export const toCents = (value: string): number | null => {
     // Parse the decimal string directly so locale decimals ('1,5') and float
     // rounding errors cannot silently produce wrong amounts. Only digits with
     // an optional '.' or ',' separator and at most two fraction digits are
