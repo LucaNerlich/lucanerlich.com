@@ -11,7 +11,6 @@
     --custom-accent-red: #d40000;
     --custom-accent-green: #148a3c;
     --custom-accent-purple: #2d2aa8;
-    --custom-accent-gold: #a67c00;
     --custom-accent-amber: #c08800;
     --custom-muted: #606060;
     /* Pele draws on this colour: --ifm-background-color is transparent in light mode. */
@@ -22,7 +21,6 @@ html[data-theme='dark'] {
     --custom-accent-red: #ff4040;
     --custom-accent-green: #2dd460;
     --custom-accent-purple: #6c68ff;
-    --custom-accent-gold: #daa520;
     --custom-accent-amber: #ffb000;
     --custom-muted: #999999;
     --custom-diagram-bg: var(--ifm-background-color);
