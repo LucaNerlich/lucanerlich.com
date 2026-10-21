@@ -14,3 +14,9 @@
 .container > svg {
     max-width: 100%;
 }
+
+/* overflow: hidden clips a zoomed diagram, and the default outline paints
+   outside it; keep the keyboard focus ring inside the box. */
+.container > svg:focus-visible {
+    outline-offset: -2px;
+}
