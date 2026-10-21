@@ -63,7 +63,14 @@ const ExpenseForm: React.FC<Props> = ({
         onAdd(input);
         setDescription('');
         setAmount('');
-        // Keep paidBy + split draft for "same as last" speed.
+        // Keep paidBy + split draft for "same as last" speed. Exact amounts are
+        // absolute cents, valid only for the total just added, so they are
+        // cleared and the mode falls back to the reusable default.
+        setDraft(prev =>
+            prev.splitMode === 'exact'
+                ? {...prev, splitMode: 'equal', amounts: {}}
+                : prev,
+        );
         descriptionRef.current?.focus();
     };
 
