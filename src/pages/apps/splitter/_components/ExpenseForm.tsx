@@ -4,7 +4,7 @@ import {amountPlaceholder, currencySymbol} from '../_lib/money';
 import {buildExpenseInput, type SplitDraft} from '../_lib/expenseInput';
 import type {Messages} from '../_lib/messages';
 import SplitFields from './SplitFields';
-import {draftFromPeople} from '../_lib/splitDraft';
+import {draftAfterAdd, draftFromPeople} from '../_lib/splitDraft';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -64,6 +64,7 @@ const ExpenseForm: React.FC<Props> = ({
         setDescription('');
         setAmount('');
         // Keep paidBy + split draft for "same as last" speed.
+        setDraft(draftAfterAdd);
         descriptionRef.current?.focus();
     };
 

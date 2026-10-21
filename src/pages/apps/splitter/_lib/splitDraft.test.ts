@@ -1,6 +1,6 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {draftFromExpense, draftFromPeople} from './splitDraft';
+import {draftAfterAdd, draftFromExpense, draftFromPeople} from './splitDraft';
 import type {Person} from './types';
 
 const people: Person[] = [
@@ -36,6 +36,40 @@ describe('draftFromPeople', () => {
         assert.deepEqual(filled.percents, {a: '50.00', b: '50.00'});
         const kept = draftFromPeople(people, {...filled, percents: {a: '70', b: '30'}});
         assert.deepEqual(kept.percents, {a: '70', b: '30'});
+    });
+});
+
+describe('draftAfterAdd', () => {
+    it('drops exact amounts and falls back to the equal mode', () => {
+        const exact = {
+            ...draftFromPeople(people),
+            splitMode: 'exact' as const,
+            amounts: {a: '15.00', b: '15.00'},
+        };
+        const next = draftAfterAdd(exact);
+        assert.deepEqual(next.amounts, {});
+        assert.equal(next.splitMode, 'equal');
+    });
+
+    it('clears stale exact amounts even when the mode was switched back', () => {
+        const equalWithAmounts = {
+            ...draftFromPeople(people),
+            amounts: {a: '15.00', b: '15.00'},
+        };
+        assert.deepEqual(draftAfterAdd(equalWithAmounts).amounts, {});
+        assert.equal(draftAfterAdd(equalWithAmounts).splitMode, 'equal');
+    });
+
+    it('keeps the reusable weight modes as they are', () => {
+        for (const mode of ['equal', 'shares', 'percent'] as const) {
+            const draft = {...draftFromPeople(people), splitMode: mode};
+            const next = draftAfterAdd(draft);
+            assert.equal(next.splitMode, mode);
+            assert.deepEqual(next.participants, draft.participants);
+            assert.deepEqual(next.weights, draft.weights);
+            assert.deepEqual(next.percents, draft.percents);
+            assert.deepEqual(next.amounts, {});
+        }
     });
 });
 
