@@ -14,6 +14,15 @@ describe('import validation', () => {
         assert.equal(await importJson(fileWith({...state, expenses: [first, duplicate]})), null);
     });
 
+    it('rejects ids that only differ by JSON type', async () => {
+        const state = demoState();
+        const [first, second] = state.expenses;
+        assert.equal(
+            await importJson(fileWith({...state, expenses: [{...first, id: 5}, {...second, id: '5'}]})),
+            null,
+        );
+    });
+
     it('rejects an unknown currency instead of rewriting it to EUR', async () => {
         assert.equal(await importJson(fileWith({...demoState(), currency: 'XYZ'})), null);
     });
