@@ -95,7 +95,11 @@ export default function AsyncTimelineDemo(): ReactNode {
             hint="Run the same three fake tasks sequentially, with Promise.all, or with Promise.race."
             footer={
                 <span role="status">
-                    {elapsed === null ? 'Press Run to compare wall-clock time.' : `Finished in about ${elapsed} ms`}
+                    {running
+                        ? 'Running…'
+                        : elapsed === null
+                            ? 'Press Run to compare wall-clock time.'
+                            : `Finished in about ${elapsed} ms`}
                 </span>
             }
             controls={
