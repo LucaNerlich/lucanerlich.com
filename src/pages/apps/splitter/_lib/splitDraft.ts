@@ -38,6 +38,14 @@ export const draftFromPeople = (people: Person[], previous?: SplitDraft): SplitD
     return next;
 };
 
+export const draftAfterAdd = (draft: SplitDraft): SplitDraft => ({
+    // Exact amounts are absolute cents and only fit the total just added, so
+    // they are never reusable; the weight modes carry over.
+    ...draft,
+    amounts: {},
+    splitMode: draft.splitMode === 'exact' ? 'equal' : draft.splitMode,
+});
+
 export const draftFromExpense = (
     people: Person[],
     expense: {
