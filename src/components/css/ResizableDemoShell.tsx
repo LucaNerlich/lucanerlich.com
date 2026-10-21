@@ -132,6 +132,9 @@ export default function ResizableDemoShell({
             ref={panelRef}
             className={className ? `${panelClassName} ${className}` : panelClassName}
             style={panelStyle}
+            onPointerDown={lockedPanel ? undefined : armWidthSync}
+            onPointerUp={lockedPanel ? undefined : syncWidthFromPanel}
+            onTouchEnd={lockedPanel ? undefined : syncWidthFromPanel}
         >
             {content}
         </div>
@@ -170,18 +173,7 @@ export default function ResizableDemoShell({
             <div className={styles.body}>
                 {typeof children === 'function'
                     ? children(renderPanel)
-                    : (
-                        <div
-                            ref={panelRef}
-                            className={panelClassName}
-                            style={panelStyle}
-                            onPointerDown={lockedPanel ? undefined : armWidthSync}
-                            onPointerUp={lockedPanel ? undefined : syncWidthFromPanel}
-                            onTouchEnd={lockedPanel ? undefined : syncWidthFromPanel}
-                        >
-                            {children}
-                        </div>
-                    )}
+                    : renderPanel(children)}
                 {footer ? <p className={styles.footer}>{footer}</p> : null}
             </div>
         </section>
