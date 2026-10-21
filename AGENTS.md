@@ -41,7 +41,7 @@ Primary verification is `pnpm build`, which fails on:
 The Splitter app also has Node built-in tests (no extra test runner dependency):
 
 ```bash
-pnpm test # node:test: splitter/_lib, sidebar-order, plugins/ (diagram render check)
+pnpm test # node:test (splitter/_lib, sidebar-order, redirects, plugins) + demo contrast check
 ```
 
 ### Prose Linting
