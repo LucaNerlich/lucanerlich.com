@@ -55,7 +55,7 @@ export default function StorageDemo(): ReactNode {
                 setStatus('Saved to localStorage. Reload the page -- it should still be here.');
             } else {
                 store.setItem(SESSION_KEY, sessionNote);
-                setStatus('Saved to sessionStorage. Reload keeps it; a tab opened without an opener starts empty.');
+                setStatus('Saved to sessionStorage. Reload keeps it; a fresh tab you open with this URL starts empty.');
             }
         } catch {
             setStatus(BLOCKED_STATUS);
@@ -121,7 +121,7 @@ export default function StorageDemo(): ReactNode {
                         rows={3}
                         value={sessionNote}
                         onChange={(event) => setSessionNote(event.target.value)}
-                        placeholder="Survives reload (and tabs opened from this page)"
+                        placeholder="Survives reload"
                     />
                     <button
                         type="button"
