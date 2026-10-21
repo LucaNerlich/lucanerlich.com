@@ -9,8 +9,12 @@
 type Redirect = {from: string | string[]; to: string};
 
 const entries: Redirect[] = [
-    // Blog temporarily disabled; send list URL to homepage (posts stay in repo).
+    // Blog temporarily disabled; send list URL and the three post URLs it
+    // served to the homepage (posts stay in repo).
     {from: '/blog/', to: '/'},
+    {from: '/blog/welcome/', to: '/'},
+    {from: '/blog/directwerk/', to: '/'},
+    {from: '/blog/agentic-coding-quality-harness/', to: '/'},
 
     // Legacy /docs/ prefix redirects
     {from: '/docs/aem/component-dialogs/', to: '/aem/component-dialogs/'},
