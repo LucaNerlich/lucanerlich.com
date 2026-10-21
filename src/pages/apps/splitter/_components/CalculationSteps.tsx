@@ -11,6 +11,8 @@ type Props = {
     state: AppState;
     totalCents: number;
     balances: Map<string, number>;
+    paid: Map<string, number>;
+    owed: Map<string, number>;
     transfers: Transfer[];
     breakdowns: ExpenseBreakdown[];
     messages: Messages;
@@ -36,6 +38,8 @@ const CalculationSteps: React.FC<Props> = ({
     state,
     totalCents,
     balances,
+    paid,
+    owed,
     transfers,
     breakdowns,
     messages,
@@ -44,26 +48,6 @@ const CalculationSteps: React.FC<Props> = ({
     const peopleIndex = useMemo(() => indexPeople(state.people), [state.people]);
     const nameOf = (id: string) => nameFrom(peopleIndex, id);
     const currency = state.currency;
-
-    const paid = useMemo(() => {
-        const paidMap = new Map<string, number>();
-        for (const p of state.people) paidMap.set(p.id, 0);
-        for (const {expense} of breakdowns) {
-            paidMap.set(expense.paidBy, (paidMap.get(expense.paidBy) ?? 0) + expense.cents);
-        }
-        return paidMap;
-    }, [state.people, breakdowns]);
-
-    const obligation = useMemo(() => {
-        const map = new Map<string, number>();
-        for (const p of state.people) map.set(p.id, 0);
-        for (const {shares} of breakdowns) {
-            for (const [id, cents] of shares) {
-                map.set(id, (map.get(id) ?? 0) + cents);
-            }
-        }
-        return map;
-    }, [state.people, breakdowns]);
 
     const expenseTerms = breakdowns
         .map(b => formatMoney(b.expense.cents, currency))
@@ -182,7 +166,7 @@ const CalculationSteps: React.FC<Props> = ({
                     <ul className={styles.calcSubList}>
                         {state.people.map(p => {
                             const paidAmt = paid.get(p.id) ?? 0;
-                            const owedAmt = obligation.get(p.id) ?? 0;
+                            const owedAmt = owed.get(p.id) ?? 0;
                             const net = balances.get(p.id) ?? 0;
                             return (
                                 <li key={p.id}>
