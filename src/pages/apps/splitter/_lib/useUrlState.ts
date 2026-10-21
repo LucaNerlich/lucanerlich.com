@@ -91,16 +91,31 @@ export const hydrateFromStores = async <S>({
     hasUserActed,
 }: MountHydrateArgs<S>): Promise<boolean> => {
     for (const source of stores) {
-        const raw = source?.read();
-        if (!raw) continue;
-        const decoded = await Promise.resolve(decode(raw));
-        if (isCancelled()) return false;
-        if (decoded) {
-            if (!hasUserActed()) hydrate(decoded);
-            return true;
+        try {
+            const raw = source?.read();
+            if (!raw) continue;
+            const decoded = await Promise.resolve(decode(raw));
+            if (isCancelled()) return false;
+            if (decoded) {
+                if (!hasUserActed()) hydrate(decoded);
+                return true;
+            }
+        } catch {
+            // A throwing store or decoder is skipped, not fatal: the next
+            // store may still hold the session.
+            continue;
         }
     }
     return false;
+};
+
+/** Encodes without rejecting, so a throwing codec cannot abort persistence. */
+export const encodeQuietly = async <S>(codec: Codec<S>, state: S): Promise<string | null> => {
+    try {
+        return await Promise.resolve(codec.encode(state));
+    } catch {
+        return null;
+    }
 };
 
 /**
@@ -242,14 +257,8 @@ export function useUrlState<S, A>({
         let cancelled = false;
         const handle = window.setTimeout(() => {
             void (async () => {
-                let encoded: string;
-                try {
-                    encoded = await Promise.resolve(codecRef.current.encode(state));
-                } catch {
-                    // No encoder in this browser (no CompressionStream): there is
-                    // nothing the stores could hold.
-                    return;
-                }
+                const encoded = await encodeQuietly(codecRef.current, state);
+                if (!encoded) return;
                 if (cancelled || window.location.href !== scheduledUrl) return;
                 writeToStores([storeRef.current, fallbackRef.current], encoded);
             })();

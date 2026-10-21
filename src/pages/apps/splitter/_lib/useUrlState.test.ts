@@ -1,6 +1,6 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {hydrateFromStores, writeToStores} from './useUrlState';
+import {encodeQuietly, hydrateFromStores, writeToStores} from './useUrlState';
 import {demoState} from './demo';
 
 describe('mount hydrate', () => {
@@ -61,5 +61,47 @@ describe('store writes', () => {
             'payload',
         );
         assert.deepEqual(written, ['payload']);
+    });
+});
+
+describe('store reads', () => {
+    it('skips a throwing store and hydrates from the next one', async () => {
+        let applied = 0;
+        const hydrated = await hydrateFromStores({
+            stores: [
+                {
+                    read: () => {
+                        throw new Error('SecurityError');
+                    },
+                    write: () => {},
+                },
+                {read: () => 'payload', write: () => {}},
+            ],
+            decode: () => demoState(),
+            hydrate: () => {
+                applied += 1;
+            },
+            isCancelled: () => false,
+            hasUserActed: () => false,
+        });
+        assert.equal(hydrated, true);
+        assert.equal(applied, 1);
+    });
+});
+
+describe('encodeQuietly', () => {
+    it('returns null instead of rejecting when the codec throws', async () => {
+        const codec = {
+            encode: () => {
+                throw new Error('CompressionStream is not defined');
+            },
+            decode: () => null,
+        };
+        assert.equal(await encodeQuietly(codec, {}), null);
+    });
+
+    it('passes an async codec payload through', async () => {
+        const codec = {encode: async () => 'z.payload', decode: () => null};
+        assert.equal(await encodeQuietly(codec, {}), 'z.payload');
     });
 });

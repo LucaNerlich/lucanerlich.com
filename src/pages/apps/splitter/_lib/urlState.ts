@@ -351,8 +351,11 @@ const inflateRaw = async (bytes: Uint8Array): Promise<Uint8Array | null> => {
 /** Encode session for URLs: compressed v3 (`z.` + base64url(deflate-raw(json))). */
 export const encodeState = async (state: AppState): Promise<string> => {
     const json = JSON.stringify(toWireV3(state));
-    const compressed = await deflateRaw(new TextEncoder().encode(json));
-    return COMPRESSED_PREFIX + toBase64Url(compressed);
+    const bytes = new TextEncoder().encode(json);
+    // Browsers without CompressionStream (Safari < 16.4, Firefox < 113) still
+    // need a payload; decodeState accepts the uncompressed base64url form.
+    if (typeof CompressionStream === 'undefined') return toBase64Url(bytes);
+    return COMPRESSED_PREFIX + toBase64Url(await deflateRaw(bytes));
 };
 
 /**
