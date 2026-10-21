@@ -75,11 +75,15 @@ const SessionBar: React.FC<Props> = ({
                     className={styles.secondaryButton}
                     onClick={() => {
                         void (async () => {
-                            downloadText(
-                                'splitter-session.json',
-                                await exportJson(state),
-                                'application/json',
-                            );
+                            try {
+                                downloadText(
+                                    'splitter-session.json',
+                                    await exportJson(state),
+                                    'application/json',
+                                );
+                            } catch {
+                                window.alert(t('exportFailed'));
+                            }
                         })();
                     }}
                 >
