@@ -23,8 +23,7 @@ with minimal TypeScript/JS configuration and CSS.
 pnpm install          # Install dependencies (always use pnpm, never npm/yarn)
 pnpm start            # Local dev server with hot reload
 pnpm build            # Production build (strict: throws on broken links/anchors)
-pnpm serve            # Serve production build locally
-pnpm run coolify      # Serve on port 3000 (production Docker target)
+pnpm serve            # Serve production build locally on port 3000
 pnpm run clear        # Clear Docusaurus cache (.docusaurus/)
 ```
 

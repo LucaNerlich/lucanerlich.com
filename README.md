@@ -26,4 +26,4 @@ This command generates static content into the `build` directory and can be serv
 
 ### Deployment
 
-The site is deployed as a multi-stage Docker image served via Coolify on port 3000. There is no `gh-pages` deploy; `pnpm run coolify` serves the production build on port 3000.
+The site is deployed as a multi-stage Docker image served via Coolify on port 3000. There is no `gh-pages` deploy; `pnpm serve` serves the production build locally.
