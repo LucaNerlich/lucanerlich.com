@@ -52,3 +52,14 @@ test('fails when a listed URL has no route', async () => {
 test('fails when no site URL matched at all', async () => {
     await assert.rejects(run('no links here\n', ['/a']), /lists no lucanerlich\.com URLs/);
 });
+
+test('rejects a lookalike host instead of checking only its path', async () => {
+    await assert.rejects(
+        run('[A](https://lucanerlich.com.example.com/a/)\n', ['/a']),
+        /lucanerlich\.com\.example\.com/,
+    );
+});
+
+test('accepts the www host', async () => {
+    await run('[A](https://www.lucanerlich.com/a/)\n', ['/a']);
+});
