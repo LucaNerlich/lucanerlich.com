@@ -1,6 +1,6 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {hydrateFromStores} from './useUrlState';
+import {hydrateFromStores, writeToStores} from './useUrlState';
 import {demoState} from './demo';
 
 describe('mount hydrate', () => {
@@ -42,5 +42,24 @@ describe('mount hydrate', () => {
         });
         assert.equal(hydrated, true);
         assert.equal(applied, 1);
+    });
+});
+
+describe('store writes', () => {
+    it('still writes the fallback when the primary store throws', () => {
+        const written: string[] = [];
+        writeToStores(
+            [
+                {
+                    read: () => '',
+                    write: () => {
+                        throw new Error('QuotaExceededError');
+                    },
+                },
+                {read: () => '', write: encoded => written.push(encoded)},
+            ],
+            'payload',
+        );
+        assert.deepEqual(written, ['payload']);
     });
 });
