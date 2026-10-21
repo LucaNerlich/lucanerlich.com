@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.34.1] - 2026-10-21
+
+### Fixed
+- Splitter app: closing the expense editor or a rename returns focus to the opener, exact-amount drafts reset after every add, a failed JSON export reports instead of doing nothing, paid transfers are marked on the printed summary, `toCents` has one string-only parser, the resizable demo has a single panel render path, and the storage fields keep their own accessible names
+- Accessibility: diagram strokes clear 3:1 in light mode, the diagram focus ring is no longer clipped, demo items meet 4.5:1 in both themes, and the async, storage, and DOM demos announce their results
+- Site and tooling: directory listings are disabled on the static server, the three retired blog URLs redirect, the Apps index is linked from the footer, duplicate Algolia preconnects are gone, redirect duplicates fail the build, the Flexbox wrap control works, the unused accent token is deleted, and `scripts/check-demo-contrast.mjs` recomputes the demo contrast ratios
+
 ## [1.34.0] - 2026-10-20
 
 ### Added
