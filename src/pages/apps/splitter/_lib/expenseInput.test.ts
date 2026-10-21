@@ -15,25 +15,26 @@ describe('buildExpenseInput error precedence', () => {
     it('rejects a malformed amount before every other check', () => {
         const result = buildExpenseInput(draft({participants: []}), '', 'abc', '', 'EUR');
         assert.equal(result.input, null);
-        assert.match(result.error ?? '', /^Enter an amount like /);
+        assert.equal(result.error?.key, 'errorAmountFormat');
+        assert.match(String(result.error?.params?.example), /^\d/);
     });
 
     it('rejects a non-positive amount before the payer check', () => {
         const result = buildExpenseInput(draft(), '', '0', '', 'EUR');
         assert.equal(result.input, null);
-        assert.equal(result.error, 'Amount must be greater than 0.');
+        assert.equal(result.error?.key, 'errorAmountPositive');
     });
 
     it('requires a payer before building the split', () => {
         const result = buildExpenseInput(draft({participants: []}), '', '12.50', '', 'EUR');
         assert.equal(result.input, null);
-        assert.equal(result.error, 'Choose who paid.');
+        assert.equal(result.error?.key, 'errorChoosePayer');
     });
 
     it('reports split build errors after the payer check', () => {
         const result = buildExpenseInput(draft({participants: []}), '', '12.50', 'a', 'EUR');
         assert.equal(result.input, null);
-        assert.equal(result.error, 'Pick at least one participant.');
+        assert.equal(result.error?.key, 'errorPickParticipant');
     });
 
     it('reports split validation errors last', () => {
@@ -45,7 +46,8 @@ describe('buildExpenseInput error precedence', () => {
             'EUR',
         );
         assert.equal(result.input, null);
-        assert.equal(result.error, 'Percents must sum to 100 (currently 90).');
+        assert.equal(result.error?.key, 'errorPercentSum');
+        assert.equal(result.error?.params?.sum, 90);
     });
 
     it('rejects a blank percent instead of saving it as a zero share', () => {
@@ -57,7 +59,7 @@ describe('buildExpenseInput error precedence', () => {
             'EUR',
         );
         assert.equal(result.input, null);
-        assert.equal(result.error, 'Every participant needs a percent.');
+        assert.equal(result.error?.key, 'errorMissingPercent');
 
         const explicitZero = buildExpenseInput(
             draft({splitMode: 'percent', percents: {a: '100', b: '0'}}),

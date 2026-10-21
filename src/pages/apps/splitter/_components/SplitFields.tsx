@@ -82,7 +82,7 @@ const SplitFields: React.FC<Props> = ({
                         if (draft.splitMode === 'shares') {
                             return (
                                 <label key={id} className={styles.fieldLabel}>
-                                    <span>{person.name} (weight)</span>
+                                    <span>{person.name} ({t('weight')})</span>
                                     <input
                                         className={styles.input}
                                         type="number"

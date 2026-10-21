@@ -4,8 +4,9 @@
 
 import type {Currency, ExpenseInput, Split} from './types';
 import {equalSplit} from './types';
-import {amountExample, toCents} from './money';
+import {amountExample, formatMoney, toCents} from './money';
 import {validateSplit} from './split';
+import type {MessageError} from './messages';
 
 export type SplitDraft = {
     participants: string[];
@@ -15,9 +16,9 @@ export type SplitDraft = {
     amounts: Record<string, string>;
 };
 
-export const buildSplit = (draft: SplitDraft): {split: Split; error: string | null} => {
+export const buildSplit = (draft: SplitDraft): {split: Split; error: MessageError | null} => {
     if (draft.participants.length === 0) {
-        return {split: equalSplit(), error: 'Pick at least one participant.'};
+        return {split: equalSplit(), error: {key: 'errorPickParticipant'}};
     }
     if (draft.splitMode === 'equal') return {split: equalSplit(), error: null};
 
@@ -26,7 +27,7 @@ export const buildSplit = (draft: SplitDraft): {split: Split; error: string | nu
         for (const id of draft.participants) {
             const w = Number(draft.weights[id]);
             if (!Number.isFinite(w) || w <= 0) {
-                return {split: equalSplit(), error: 'Every participant needs a positive share weight.'};
+                return {split: equalSplit(), error: {key: 'errorPositiveWeight'}};
             }
             weights[id] = w;
         }
@@ -39,11 +40,11 @@ export const buildSplit = (draft: SplitDraft): {split: Split; error: string | nu
             const raw = draft.percents[id];
             // Empty is not 0: Number('') would allocate a silent zero share.
             if (raw === undefined || String(raw).trim() === '') {
-                return {split: equalSplit(), error: 'Every participant needs a percent.'};
+                return {split: equalSplit(), error: {key: 'errorMissingPercent'}};
             }
             const p = Number(String(raw).replace(',', '.'));
             if (!Number.isFinite(p) || p < 0) {
-                return {split: equalSplit(), error: 'Every participant needs a non-negative percent.'};
+                return {split: equalSplit(), error: {key: 'errorNegativePercent'}};
             }
             percents[id] = p;
         }
@@ -54,7 +55,7 @@ export const buildSplit = (draft: SplitDraft): {split: Split; error: string | nu
     for (const id of draft.participants) {
         const cents = toCents(draft.amounts[id] ?? '');
         if (cents === null || cents < 0) {
-            return {split: equalSplit(), error: 'Every participant needs a valid exact amount.'};
+            return {split: equalSplit(), error: {key: 'errorExactInvalid'}};
         }
         amounts[id] = cents;
     }
@@ -72,25 +73,27 @@ export const buildExpenseInput = (
     amount: string,
     paidBy: string,
     currency: Currency,
-): {input: ExpenseInput | null; error: string | null} => {
+): {input: ExpenseInput | null; error: MessageError | null} => {
     const cents = toCents(amount);
     if (cents === null) {
         return {
             input: null,
-            error: `Enter an amount like ${amountExample(currency)} (at most two decimals, no thousands separators).`,
+            error: {key: 'errorAmountFormat', params: {example: amountExample(currency)}},
         };
     }
     if (cents <= 0) {
-        return {input: null, error: 'Amount must be greater than 0.'};
+        return {input: null, error: {key: 'errorAmountPositive'}};
     }
     if (!paidBy) {
-        return {input: null, error: 'Choose who paid.'};
+        return {input: null, error: {key: 'errorChoosePayer'}};
     }
     const {split, error} = buildSplit(draft);
     if (error) {
         return {input: null, error};
     }
-    const splitError = validateSplit(split, draft.participants, cents);
+    const splitError = validateSplit(split, draft.participants, cents, value =>
+        formatMoney(value, currency),
+    );
     if (splitError) {
         return {input: null, error: splitError};
     }

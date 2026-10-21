@@ -703,3 +703,16 @@ describe('session files', () => {
         assert.ok(exportCsv(state).includes('"Tea, ""cake""",72.00'));
     });
 });
+
+describe('validateSplit error format', () => {
+    it('formats exact-sum errors with the caller formatter', () => {
+        const error = validateSplit(
+            {mode: 'exact', amounts: {a: 250, b: 700}},
+            ['a', 'b'],
+            1000,
+            cents => `${(cents / 100).toFixed(2)} EUR`,
+        );
+        assert.equal(error?.key, 'errorExactSum');
+        assert.deepEqual(error?.params, {total: '10.00 EUR', got: '9.50 EUR'});
+    });
+});

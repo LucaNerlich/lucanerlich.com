@@ -4,7 +4,8 @@ import {indexPeople, nameFrom} from '../_lib/people';
 import {centsToInput, currencySymbol, formatMoney} from '../_lib/money';
 import {payerCoversOthers} from '../_lib/split';
 import {buildExpenseInput, type SplitDraft} from '../_lib/expenseInput';
-import type {Messages} from '../_lib/messages';
+import type {Messages, MessageError} from '../_lib/messages';
+import {formatError} from '../_lib/messages';
 import SplitFields from './SplitFields';
 import {draftFromExpense, draftFromPeople} from '../_lib/splitDraft';
 import styles from '../splitter.module.css';
@@ -32,6 +33,8 @@ const ExpenseList: React.FC<Props> = ({
     const nameOf = (id: string) => nameFrom(peopleIndex, id);
     const [editingId, setEditingId] = useState<string | null>(null);
     const openerRef = useRef<HTMLButtonElement | null>(null);
+    const listRef = useRef<HTMLDivElement>(null);
+    const rowRefs = useRef(new Map<string, HTMLButtonElement>());
 
     // Closing the editor unmounts the focused control; hand focus back to the
     // row button that opened it instead of dropping it on <body>.
@@ -40,8 +43,28 @@ const ExpenseList: React.FC<Props> = ({
         setEditingId(null);
     };
 
+    // Deleting removes the focused row too, so focus moves to the next row's
+    // Edit button (or the previous one, or the list itself for the last row).
+    const remove = (expense: Expense): void => {
+        const label = expense.description || messages.t('untitledExpense');
+        if (!window.confirm(messages.t('removeExpenseConfirm').replace('{name}', () => label))) {
+            return;
+        }
+        const index = expenses.findIndex(e => e.id === expense.id);
+        const survivor = expenses[index + 1] ?? expenses[index - 1];
+        onRemove(expense.id);
+        const target = survivor ? rowRefs.current.get(survivor.id) : undefined;
+        (target ?? listRef.current)?.focus();
+    };
+
     return (
-        <div className={styles.tableWrap}>
+        <div
+            className={styles.tableWrap}
+            ref={listRef}
+            tabIndex={-1}
+            role="group"
+            aria-label={messages.t('expenses')}
+        >
             <table className={styles.table}>
                 <thead>
                     <tr>
@@ -55,6 +78,7 @@ const ExpenseList: React.FC<Props> = ({
                 <tbody>
                     {expenses.map(e => {
                         const label = e.description || messages.t('untitledExpense');
+                        const editorId = `expense-editor-${e.id}`;
                         const participantNames = e.participants
                             .map(id => nameOf(id))
                             .join(', ');
@@ -85,10 +109,16 @@ const ExpenseList: React.FC<Props> = ({
                                         <button
                                             type="button"
                                             className={styles.linkButton}
+                                            ref={el => {
+                                                if (el) rowRefs.current.set(e.id, el);
+                                                else rowRefs.current.delete(e.id);
+                                            }}
                                             onClick={event => {
                                                 openerRef.current = event.currentTarget;
                                                 setEditingId(editingId === e.id ? null : e.id);
                                             }}
+                                            aria-expanded={editingId === e.id}
+                                            aria-controls={editorId}
                                             aria-label={messages
                                                 .t('editExpense')
                                                 .replace('{name}', () => label)}
@@ -108,7 +138,7 @@ const ExpenseList: React.FC<Props> = ({
                                         <button
                                             type="button"
                                             className={styles.chipRemove}
-                                            onClick={() => onRemove(e.id)}
+                                            onClick={() => remove(e)}
                                             aria-label={messages.t('removeExpense').replace('{name}', () => label)}
                                             title={messages.t('remove')}
                                         >
@@ -117,7 +147,7 @@ const ExpenseList: React.FC<Props> = ({
                                     </td>
                                 </tr>
                                 {editingId === e.id && (
-                                    <tr>
+                                    <tr id={editorId}>
                                         <td colSpan={5}>
                                             <ExpenseEditor
                                                 expense={e}
@@ -163,7 +193,7 @@ const ExpenseEditor: React.FC<EditorProps> = ({
     const [amount, setAmount] = useState(centsToInput(expense.cents));
     const [paidBy, setPaidBy] = useState(expense.paidBy);
     const [draft, setDraft] = useState<SplitDraft>(() => draftFromExpense(people, expense));
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<MessageError | null>(null);
 
     // The people list can change while this editor is open (for example a
     // participant is removed). Drop ids that no longer exist and keep the
@@ -237,7 +267,7 @@ const ExpenseEditor: React.FC<EditorProps> = ({
                 onChange={setDraft}
                 messages={messages}
             />
-            {error && <p className={styles.error} role="alert">{error}</p>}
+            {error && <p className={styles.error} role="alert">{formatError(messages, error)}</p>}
             <div className={styles.headerActions}>
                 <button type="submit" className={styles.primaryButton}>
                     {messages.t('save')}
