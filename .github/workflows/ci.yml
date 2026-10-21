@@ -31,3 +31,6 @@ jobs:
 
       - name: Test
         run: pnpm test
+
+      - name: Build image
+        run: docker build -t site .
