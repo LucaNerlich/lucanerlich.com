@@ -1,24 +1,25 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {paidAndOwed, summarize} from './settlement';
+import {computeBalances, paidAndOwed, summarize} from './settlement';
 import {demoState} from './demo';
 
-describe('paid and owed', () => {
-    it('nets to the balances the settlement uses', () => {
+describe('balances', () => {
+    it('agree between summarize and computeBalances', () => {
         const state = demoState();
-        const summary = summarize(state);
-        for (const person of state.people) {
-            const paid = summary.paid.get(person.id) ?? 0;
-            const owed = summary.owed.get(person.id) ?? 0;
-            assert.equal(paid - owed, summary.balances.get(person.id) ?? 0);
-        }
+        assert.deepEqual([...summarize(state).balances], [...computeBalances(state)]);
     });
 
-    it('is the same map summarize exposes when called directly', () => {
+    it('sum to zero', () => {
         const state = demoState();
-        const summary = summarize(state);
+        const total = [...summarize(state).balances.values()].reduce((a, b) => a + b, 0);
+        assert.equal(total, 0);
+    });
+
+    it('net paid minus owed', () => {
+        const state = demoState();
         const {paid, owed} = paidAndOwed(state);
-        assert.deepEqual([...paid], [...summary.paid]);
-        assert.deepEqual([...owed], [...summary.owed]);
+        for (const [id, cents] of summarize(state).balances) {
+            assert.equal((paid.get(id) ?? 0) - (owed.get(id) ?? 0), cents);
+        }
     });
 });

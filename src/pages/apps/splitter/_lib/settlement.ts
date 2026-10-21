@@ -70,8 +70,9 @@ const balancesFrom = (paid: Map<string, number>, owed: Map<string, number>): Map
 
 // Returns a Map<personId, netCents> where positive = is owed, negative = owes.
 // Balances sum to 0 when every expense allocates cleanly. Callers that already
-// hold the breakdowns (e.g. `summarize`) pass them in to avoid a second
-// traversal of the expenses.
+// hold the breakdowns pass them in to avoid a second traversal of the expenses;
+// the balance rule itself lives in `paidAndOwed` + `balancesFrom`, which
+// `summarize` uses so the calculation panel and the settlement cannot drift.
 export const computeBalances = (
     state: AppState,
     breakdowns: ExpenseBreakdown[] = expenseBreakdowns(state),
