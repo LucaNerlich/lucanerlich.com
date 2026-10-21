@@ -238,6 +238,7 @@ const config: Config = {
                 {
                     title: 'More',
                     items: [
+                        {label: 'Apps', to: '/apps'},
                         {label: 'Projects', to: '/projects'},
                         {label: 'Other', to: '/other'},
                         {label: 'Changelog', to: '/changelog'},
