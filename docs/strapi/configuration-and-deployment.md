@@ -82,7 +82,7 @@ module.exports = ({ env }) => ({
       user: env('DATABASE_USERNAME', 'strapi'),
       password: env('DATABASE_PASSWORD'),
       ssl: env.bool('DATABASE_SSL', false) && {
-        rejectUnauthorized: env.bool('DATABASE_SSL_REJECT', true),
+        rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
       },
     },
     pool: {
@@ -372,31 +372,9 @@ volumes:
 
 ## PM2 deployment (VPS)
 
-```js
-// ecosystem.config.js
-module.exports = {
-  apps: [
-    {
-      name: 'strapi',
-      cwd: '/srv/strapi',
-      script: 'yarn',
-      args: 'start',
-      env: {
-        NODE_ENV: 'production',
-      },
-      instances: 1,          // Strapi does not support clustering
-      max_memory_restart: '1G',
-      watch: false,
-    },
-  ],
-};
-```
-
-```bash
-pm2 start ecosystem.config.js
-pm2 save
-pm2 startup
-```
+The full PM2 recipe - `ecosystem.config.js`, the log directory, `pm2 save` and
+`pm2 startup`, plus the systemd alternative - lives in the
+[beginner deployment walkthrough](/strapi/beginners-guide/configuration-and-deployment#process-management-with-pm2).
 
 ---
 
