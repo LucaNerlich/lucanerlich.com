@@ -59,6 +59,9 @@ const PeopleManager: React.FC<Props> = ({
     // deliberate, so only Enter/Escape hand it back to the chip.
     const commitRename = (refocus = false) => {
         if (!editingId) return;
+        // Every path that closes the editor clears the shared error; the
+        // duplicate branch below re-sets it in the same event.
+        setError(null);
         const trimmed = editName.trim();
         if (!trimmed) {
             if (refocus) setRefocusId(editingId);
@@ -90,6 +93,7 @@ const PeopleManager: React.FC<Props> = ({
                                 value={editName}
                                 autoFocus
                                 aria-label={messages.t('renamePerson').replace('{name}', () => p.name)}
+                                aria-invalid={error ? true : undefined}
                                 onChange={e => setEditName(e.target.value)}
                                 onBlur={() => {
                                     if (renameCancelled.current) {
@@ -107,6 +111,7 @@ const PeopleManager: React.FC<Props> = ({
                                         renameCancelled.current = true;
                                         setRefocusId(editingId);
                                         setEditingId(null);
+                                        setError(null);
                                     }
                                 }}
                             />
@@ -142,11 +147,11 @@ const PeopleManager: React.FC<Props> = ({
                     placeholder={people.length === 0 ? messages.t('addFirstPersonPlaceholder') : messages.t('addAnotherPlaceholder')}
                     onChange={e => {
                         setName(e.target.value);
-                        if (error) setError(null);
+                        if (error && !editingId) setError(null);
                     }}
                     className={styles.tagInput}
                     aria-label={messages.t('personName')}
-                    aria-invalid={error ? true : undefined}
+                    aria-invalid={error && !editingId ? true : undefined}
                 />
                 <button type="submit" className={styles.primaryButton}>
                     {messages.t('add')}
