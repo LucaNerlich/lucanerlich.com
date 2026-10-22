@@ -5,18 +5,26 @@ import {indexPeople, nameFrom} from './people';
 import type {Transfer} from './settlement';
 import {summarize} from './settlement';
 import {validateSplit} from './split';
-import {transferKey} from './types';
+import {isCurrency, transferKey} from './types';
 
 // Normalization drops anything it cannot resolve, so a file must be valid
 // before it is encoded: otherwise a restore reports success after losing rows
 // or silently rewriting a split. Leniency stays in decodeState for shared links.
 const isRestorable = (state: {
+    currency: Currency;
     people: AppState['people'];
     expenses: Expense[];
     paidTransferKeys: string[];
 }): boolean => {
     const ids = new Set(state.people.map(p => p.id));
     if (ids.size !== state.people.length) return false;
+    // A duplicate expense id makes the reducer edit and delete both rows at once.
+    // Compare the normalized form: the wire format stringifies ids, so `5` and
+    // `'5'` would import as the same row.
+    if (new Set(state.expenses.map(e => String(e.id))).size !== state.expenses.length) {
+        return false;
+    }
+    if (!isCurrency(state.currency)) return false;
     const validExpense = (e: Expense): boolean =>
         Number.isSafeInteger(e.cents)
         && e.cents > 0
