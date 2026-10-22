@@ -318,7 +318,6 @@ export const sidebarOrder: Record<string, string[]> = {
 export const sidebarGroups: Record<string, {label: string; items: string[]}[]> = {
     'java': [
         {label: 'Core Language', items: ['java-streams', 'collections', 'optionals', 'functional-interfaces', 'generics']},
-        {label: 'Concurrency', items: ['concurrency']},
         {label: 'Data & I/O', items: ['http-clients', 'json-processing']},
         {label: 'Robustness', items: ['error-handling', 'logging', 'testing']},
         {label: 'Design & Tooling', items: ['dependency-injection', 'maven', 'modern-java-features']},
@@ -465,7 +464,6 @@ function applySidebarGroups(items: SidebarItem[], currentDir: string): SidebarIt
     }
 
     const consumed = new Set<string>();
-    const emittedLabels = new Set<string>();
     const result: SidebarItem[] = [];
 
     for (const item of items) {
@@ -498,25 +496,6 @@ function applySidebarGroups(items: SidebarItem[], currentDir: string): SidebarIt
             items: groupItems,
         });
         group.items.forEach((memberKey) => consumed.add(memberKey));
-        emittedLabels.add(group.label);
-    }
-
-    // Safety net: emit any configured group that never appeared in the
-    // sorted list (e.g. every member is missing from the sidebar).
-    for (const group of groups) {
-        if (emittedLabels.has(group.label)) continue;
-        const groupItems = group.items
-            .map((memberKey) => docKeyToItem[memberKey])
-            .filter((member): member is SidebarItem => Boolean(member));
-        if (groupItems.length > 0) {
-            result.push({
-                type: 'category',
-                label: group.label,
-                collapsible: true,
-                collapsed: false,
-                items: groupItems,
-            });
-        }
     }
 
     return result;
