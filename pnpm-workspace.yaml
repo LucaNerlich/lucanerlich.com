@@ -1,3 +1,6 @@
 allowBuilds:
   '@swc/core': true
   core-js: true
+
+minimumReleaseAge: 10080
+blockExoticSubdeps: true
