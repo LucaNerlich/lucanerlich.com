@@ -38,6 +38,15 @@ export const draftFromPeople = (people: Person[], previous?: SplitDraft): SplitD
     return next;
 };
 
+// Checking a participant is a people change: seed their values through the
+// same rules as a fresh draft, or the shares form shows a weight the draft
+// does not have and refuses to submit. Unchecking only drops the id, so a
+// misclick does not discard a typed value.
+export const toggleParticipant = (people: Person[], draft: SplitDraft, id: string): SplitDraft =>
+    draft.participants.includes(id)
+        ? {...draft, participants: draft.participants.filter(x => x !== id)}
+        : draftFromPeople(people, {...draft, participants: [...draft.participants, id]});
+
 export const draftAfterAdd = (draft: SplitDraft): SplitDraft => ({
     // Exact amounts are absolute cents and only fit the total just added, so
     // they are never reusable; the weight modes carry over.
