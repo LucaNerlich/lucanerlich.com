@@ -8,7 +8,7 @@
 }
 
 .container:has(> :global(.pele-zoom)) {
-    padding-bottom: 6rem;
+    min-height: 6rem;
 }
 
 .container > svg {
