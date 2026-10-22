@@ -84,8 +84,9 @@
     padding: 0.125rem 0.25rem;
 }
 
-/* Only the wrapper restores a ring, so the rename input keeps the browser's. */
-.tagInputWrap .tagInput {
+/* Only the add-name field is a direct child of the wrapper that restores a
+   ring; the rename input keeps the browser's own. */
+.tagInputWrap > .tagInput {
     outline: none;
 }
 
