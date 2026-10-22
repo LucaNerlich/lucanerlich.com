@@ -85,6 +85,14 @@ describe('formatError', () => {
         );
     });
 
+    it('rounds a float sum instead of printing its noise', () => {
+        const sum = 33.34 + 33.34 + 33.34;
+        assert.match(
+            formatError(createMessages('en'), {key: 'errorPercentSum', params: {sum}}),
+            /\(currently 100[.,]02\)/,
+        );
+    });
+
     it('fills every placeholder in both catalogs', () => {
         const params = {total: '25,00 €', got: '24,00 €', example: '12,50', sum: 90};
         for (const messages of [createMessages('en'), createMessages('de')]) {

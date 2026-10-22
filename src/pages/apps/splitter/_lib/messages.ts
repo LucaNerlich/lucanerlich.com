@@ -264,7 +264,11 @@ export const createMessages = (locale: Locale = detectLocale()): Messages => {
 export const formatError = (messages: Messages, error: MessageError): string => {
     let text = messages.t(error.key);
     for (const [name, value] of Object.entries(error.params ?? {})) {
-        text = text.replace(`{${name}}`, () => String(value));
+        // A raw float would print rounding noise (33.34 * 3 = 100.02000000000001).
+        const rendered = typeof value === 'number'
+            ? value.toLocaleString(undefined, {maximumFractionDigits: 2})
+            : String(value);
+        text = text.replace(`{${name}}`, () => rendered);
     }
     return text;
 };

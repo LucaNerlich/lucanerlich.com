@@ -40,8 +40,11 @@ const SplitterApp: React.FC = () => {
         if (affected.length > 0) {
             const deleted = expensesDeletedByRemoval(state, id).length;
             const resplit = affected.length - deleted;
-            const count = (one: string, many: string, n: number): string =>
-                n === 1 ? t(one) : t(many).replace('{count}', String(n));
+            const count = (
+                one: Parameters<typeof t>[0],
+                many: Parameters<typeof t>[0],
+                n: number,
+            ): string => n === 1 ? t(one) : t(many).replace('{count}', String(n));
             const parts = [
                 deleted > 0 ? count('removePersonPaidDeletedOne', 'removePersonPaidDeleted', deleted) : '',
                 resplit > 0 ? count('removePersonJoinedResplitOne', 'removePersonJoinedResplit', resplit) : '',
