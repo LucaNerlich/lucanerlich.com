@@ -157,8 +157,10 @@ if (assetResource != null) {
 }
 ```
 
-To create or modify assets, use the `AssetManager` service (see Adobe's
+To create or modify assets on AEM 6.5 or AMS, use the `AssetManager` service (see Adobe's
 [Assets API](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/assets/extending/mac-api-assets)).
+On AEM as a Cloud Service that path is legacy: streaming a binary through the JVM is not the
+recommended ingestion route, so use [direct binary upload](../content/asset-processing.mdx) instead.
 For one-off bulk changes, the [Groovy Console](../groovy-console.mdx) is often the fastest route.
 
 ## Best practices
