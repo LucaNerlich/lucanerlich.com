@@ -79,10 +79,15 @@
     min-width: 0;
     background: transparent;
     border: none;
-    outline: none;
     color: var(--ifm-font-color-base);
     font: inherit;
     padding: 0.125rem 0.25rem;
+}
+
+/* Only the add-name field is a direct child of the wrapper that restores a
+   ring; the rename input keeps the browser's own. */
+.tagInputWrap > .tagInput {
+    outline: none;
 }
 
 .tagInput::placeholder {
