@@ -10,10 +10,9 @@ const path = require('path');
 
 // Match the host independently of the link notation: markdown links,
 // autolinks, http:// or a www. prefix are all entries the guard must see.
-// Lookalike hosts (`lucanerlich.com.example.com`) are matched on purpose so
-// the hostname check below can reject them instead of treating them as
-// external links the guard never sees.
-const LINK_PATTERN = /https?:\/\/(?:www\.)?lucanerlich\.com[^)\s>]*/gi;
+// Subdomains are matched too, so the hostname check below rejects them
+// instead of treating them as external links the guard never sees.
+const LINK_PATTERN = /https?:\/\/(?:[\w-]+\.)*lucanerlich\.com[^)\s>]*/gi;
 
 /** Hosts the guard accepts as the site's own. */
 const SITE_HOSTS = new Set(['lucanerlich.com', 'www.lucanerlich.com']);
@@ -47,8 +46,9 @@ module.exports = function checkLlmsUrlsPlugin() {
         async postBuild({siteDir, routesPaths}) {
             const content = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
             const listed = [...content.matchAll(LINK_PATTERN)].map((match) =>
-                // A prose URL can be followed by sentence punctuation or quotes.
-                new URL(match[0].replace(/[.,;:"'`]+$/, '')),
+                // A prose URL can be followed by sentence punctuation, quotes
+                // or markdown emphasis.
+                new URL(match[0].replace(/[.,;:"'`*_!?]+$/, '')),
             );
             // A non-default port is a different origin even on the right host.
             const foreign = listed.find((url) => !SITE_HOSTS.has(hostOf(url)) || url.port !== '');

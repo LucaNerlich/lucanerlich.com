@@ -42,6 +42,20 @@ test('trims sentence punctuation from a prose URL', async () => {
     await run('See https://lucanerlich.com/aem/, which covers it.\n', ['/aem']);
 });
 
+test('trims markdown emphasis and sentence marks from a valid URL', async () => {
+    await run(
+        'This is **https://lucanerlich.com/aem/** and see https://lucanerlich.com/ai/!\n',
+        ['/aem', '/ai'],
+    );
+});
+
+test('rejects a subdomain host instead of skipping it', async () => {
+    await assert.rejects(
+        run('[A](https://lucanerlich.com/a/)\n[B](https://docs.lucanerlich.com/other/)\n', ['/a']),
+        /docs\.lucanerlich\.com/,
+    );
+});
+
 test('fails when a listed URL has no route', async () => {
     await assert.rejects(
         run('[A](https://lucanerlich.com/missing/)\n', ['/a']),
