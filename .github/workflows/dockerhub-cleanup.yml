@@ -1,0 +1,48 @@
+name: Docker Hub cleanup
+
+# Deletes old tags on Docker Hub for the repositories listed in
+# .github/dockerhub-cleanup.json. One run covers every project - no per-project
+# workflow. Scheduled runs delete; a manual run defaults to a dry run so the
+# plan can be inspected first.
+#
+# Required repository secrets: DOCKERHUB_USERNAME (the namespace owner) and
+# DOCKERHUB_TOKEN (a personal access token with read/write/delete on those
+# repositories).
+#
+# Note: this workflow only runs while GitHub Actions is enabled for the repo
+# (Settings -> Actions -> General, or PUT /repos/{owner}/{repo}/actions/permissions).
+
+on:
+    schedule:
+        - cron: '17 3 * * 1'
+    workflow_dispatch:
+        inputs:
+            dry_run:
+                description: Only report the tags that would be deleted
+                type: boolean
+                default: true
+
+permissions:
+    contents: read
+
+concurrency:
+    group: dockerhub-cleanup
+    cancel-in-progress: false
+
+jobs:
+    cleanup:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+
+            - name: Delete old tags
+              env:
+                  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+                  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+                  DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+              run: node scripts/dockerhub-cleanup.mjs
