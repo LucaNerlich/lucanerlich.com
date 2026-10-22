@@ -372,7 +372,8 @@ public class CacheHeaderFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
-        // Static assets: cache for 1 year
+        // Only safe with versioned clientlib URLs: the path changes when the
+        // content does. AEM's default clientlib paths do not.
         if (req.getRequestURI().startsWith("/etc.clientlibs/")) {
             response.setHeader("Cache-Control", "public, max-age=31536000, immutable");
         }
@@ -383,6 +384,8 @@ public class CacheHeaderFilter implements Filter {
     @Override public void destroy() {}
 }
 ```
+
+A year of `immutable` is only correct when the clientlib URL changes with its content - with ACS Commons versioned clientlibs or an equivalent content hash in the path. AEM's default `/etc.clientlibs/<site>/clientlibs/<name>.js` paths are stable across deploys, and `immutable` tells the browser not to revalidate, so returning visitors would keep the previous CSS/JS for up to a year. Without versioning, use a short `max-age` or `no-cache` instead, and set the header at the Dispatcher or CDN where the asset is actually cached.
 
 ---
 
