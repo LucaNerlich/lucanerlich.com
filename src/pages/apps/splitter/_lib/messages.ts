@@ -7,7 +7,7 @@ export type Locale = 'en' | 'de';
 
 type Dict = Record<string, string>;
 
-const en: Dict = {
+const en = {
     title: 'Splitter',
     subtitle:
         'Who owes whom how much. Your session lives in the page URL (?s=…) and is also saved in this browser -- share the link to send it to others (works in WhatsApp and similar apps).',
@@ -99,9 +99,34 @@ const en: Dict = {
     calcAriaEqualSplit: 'For an equal split, share is floor of expense over participants',
     calcAriaBalance: 'Balance equals amount paid minus total obligation',
     removePerson: 'Remove {name}',
+    weight: 'weight',
+    removeExpenseConfirm:
+        'Remove "{name}"? Every "paid" mark in the settlement is cleared too.',
+    errorPickParticipant: 'Pick at least one participant.',
+    errorParticipantsUnique: 'Participants must be unique.',
+    errorPositiveWeight: 'Every participant needs a positive share weight.',
+    errorWeightsOutside: 'Share weights include someone outside the split.',
+    errorMissingPercent: 'Every participant needs a percent.',
+    errorNegativePercent: 'Every participant needs a non-negative percent.',
+    errorPercentsOutside: 'Percents include someone outside the split.',
+    errorPercentSum: 'Percents must sum to 100 (currently {sum}).',
+    errorExactCents: 'Every participant needs an exact amount in cents.',
+    errorExactOutside: 'Exact amounts include someone outside the split.',
+    errorExactSum: 'Exact amounts must sum to the expense ({total}, got {got}).',
+    errorExactInvalid: 'Every participant needs a valid exact amount.',
+    errorAmountFormat:
+        'Enter an amount like {example} (at most two decimals, no thousands separators).',
+    errorAmountPositive: 'Amount must be greater than 0.',
+    errorChoosePayer: 'Choose who paid.',
+} satisfies Dict;
+
+/** A catalog message plus the values its `{placeholders}` take. */
+export type MessageError = {
+    key: keyof typeof en;
+    params?: Record<string, string | number>;
 };
 
-const de: Dict = {
+const de: Record<keyof typeof en, string> = {
     ...en,
     title: 'Splitter',
     subtitle:
@@ -194,6 +219,25 @@ const de: Dict = {
     calcAriaEqualSplit: 'Bei gleicher Aufteilung ist der Anteil die Abrundung der Ausgabe geteilt durch die Beteiligten',
     calcAriaBalance: 'Saldo entspricht dem bezahlten Betrag minus dem gesamten Anteil',
     removePerson: '{name} entfernen',
+    weight: 'Gewicht',
+    removeExpenseConfirm:
+        '"{name}" entfernen? Alle Bezahlt-Markierungen im Ausgleich werden ebenfalls gelöscht.',
+    errorPickParticipant: 'Wähle mindestens eine beteiligte Person aus.',
+    errorParticipantsUnique: 'Die beteiligten Personen müssen eindeutig sein.',
+    errorPositiveWeight: 'Jede beteiligte Person braucht ein positives Gewicht.',
+    errorWeightsOutside: 'Die Gewichte enthalten jemanden außerhalb der Aufteilung.',
+    errorMissingPercent: 'Jede beteiligte Person braucht einen Prozentwert.',
+    errorNegativePercent: 'Jede beteiligte Person braucht einen Prozentwert von mindestens 0.',
+    errorPercentsOutside: 'Die Prozentwerte enthalten jemanden außerhalb der Aufteilung.',
+    errorPercentSum: 'Die Prozentwerte müssen 100 ergeben (aktuell {sum}).',
+    errorExactCents: 'Jede beteiligte Person braucht einen genauen Betrag in Cent.',
+    errorExactOutside: 'Die genauen Beträge enthalten jemanden außerhalb der Aufteilung.',
+    errorExactSum: 'Die genauen Beträge müssen die Ausgabe ergeben ({total}, erhalten {got}).',
+    errorExactInvalid: 'Jede beteiligte Person braucht einen gültigen genauen Betrag.',
+    errorAmountFormat:
+        'Gib einen Betrag wie {example} ein (höchstens zwei Nachkommastellen, keine Tausendertrennzeichen).',
+    errorAmountPositive: 'Der Betrag muss größer als 0 sein.',
+    errorChoosePayer: 'Wähle aus, wer bezahlt hat.',
 };
 
 const catalogs: Record<Locale, Dict> = {en, de};
@@ -214,4 +258,17 @@ export const createMessages = (locale: Locale = detectLocale()): Messages => {
     return {
         t: key => dict[key] ?? en[key] ?? String(key),
     };
+};
+
+/** Render a validator error, filling its `{placeholders}` from `params`. */
+export const formatError = (messages: Messages, error: MessageError): string => {
+    let text = messages.t(error.key);
+    for (const [name, value] of Object.entries(error.params ?? {})) {
+        // A raw float would print rounding noise (33.34 * 3 = 100.02000000000001).
+        const rendered = typeof value === 'number'
+            ? value.toLocaleString(undefined, {maximumFractionDigits: 2})
+            : String(value);
+        text = text.replace(`{${name}}`, () => rendered);
+    }
+    return text;
 };

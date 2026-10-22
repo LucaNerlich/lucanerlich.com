@@ -2,7 +2,9 @@ import React, {useEffect, useRef, useState} from 'react';
 import type {Currency, ExpenseInput, Person} from '../_lib/types';
 import {amountPlaceholder, currencySymbol} from '../_lib/money';
 import {buildExpenseInput, type SplitDraft} from '../_lib/expenseInput';
+import type {MessageError} from '../_lib/messages';
 import type {Messages} from '../_lib/messages';
+import {formatError} from '../_lib/messages';
 import SplitFields from './SplitFields';
 import {draftAfterAdd, draftFromPeople} from '../_lib/splitDraft';
 import styles from '../splitter.module.css';
@@ -26,7 +28,7 @@ const ExpenseForm: React.FC<Props> = ({
     const [amount, setAmount] = useState('');
     const [paidBy, setPaidBy] = useState<string>(lastPaidBy ?? people[0]?.id ?? '');
     const [draft, setDraft] = useState<SplitDraft>(() => draftFromPeople(people));
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<MessageError | null>(null);
     const descriptionRef = useRef<HTMLInputElement>(null);
     // Until the user edits the split, every people change re-seeds all of them:
     // the first draft is built before hydration, and people arrive one at a time.
@@ -142,7 +144,7 @@ const ExpenseForm: React.FC<Props> = ({
                 />
             )}
 
-            {error && <p className={styles.error} role="alert">{error}</p>}
+            {error && <p className={styles.error} role="alert">{formatError(messages, error)}</p>}
             <div>
                 <button
                     type="submit"

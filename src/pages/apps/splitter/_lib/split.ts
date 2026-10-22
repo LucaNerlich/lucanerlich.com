@@ -3,6 +3,7 @@
 // (or an empty map when allocation is impossible), so settlement never drifts.
 
 import type {Expense, Split} from './types';
+import type {MessageError} from './messages';
 
 const collator = new Intl.Collator('en', {sensitivity: 'variant'});
 
@@ -85,11 +86,12 @@ export const validateSplit = (
     split: Split,
     participants: string[],
     totalCents: number,
-): string | null => {
+    formatCents: (cents: number) => string = String,
+): MessageError | null => {
     const set = new Set(participants);
-    if (participants.length === 0) return 'Pick at least one participant.';
+    if (participants.length === 0) return {key: 'errorPickParticipant'};
     if (new Set(participants).size !== participants.length) {
-        return 'Participants must be unique.';
+        return {key: 'errorParticipantsUnique'};
     }
 
     if (split.mode === 'equal') return null;
@@ -98,11 +100,11 @@ export const validateSplit = (
         for (const id of participants) {
             const w = split.weights[id];
             if (!Number.isFinite(w) || w <= 0) {
-                return 'Every participant needs a positive share weight.';
+                return {key: 'errorPositiveWeight'};
             }
         }
         for (const id of Object.keys(split.weights)) {
-            if (!set.has(id)) return 'Share weights include someone outside the split.';
+            if (!set.has(id)) return {key: 'errorWeightsOutside'};
         }
         return null;
     }
@@ -112,16 +114,16 @@ export const validateSplit = (
         for (const id of participants) {
             const p = split.percents[id];
             if (!Number.isFinite(p) || p < 0) {
-                return 'Every participant needs a non-negative percent.';
+                return {key: 'errorNegativePercent'};
             }
             sum += p;
         }
         for (const id of Object.keys(split.percents)) {
-            if (!set.has(id)) return 'Percents include someone outside the split.';
+            if (!set.has(id)) return {key: 'errorPercentsOutside'};
         }
         // Allow tiny float noise around 100.
         if (Math.abs(sum - 100) > 0.001) {
-            return `Percents must sum to 100 (currently ${sum}).`;
+            return {key: 'errorPercentSum', params: {sum}};
         }
         return null;
     }
@@ -131,15 +133,18 @@ export const validateSplit = (
     for (const id of participants) {
         const a = split.amounts[id];
         if (!Number.isSafeInteger(a) || a < 0) {
-            return 'Every participant needs an exact amount in cents.';
+            return {key: 'errorExactCents'};
         }
         sum += a;
     }
     for (const id of Object.keys(split.amounts)) {
-        if (!set.has(id)) return 'Exact amounts include someone outside the split.';
+        if (!set.has(id)) return {key: 'errorExactOutside'};
     }
     if (sum !== totalCents) {
-        return `Exact amounts must sum to the expense (${totalCents} cents, got ${sum}).`;
+        return {
+            key: 'errorExactSum',
+            params: {total: formatCents(totalCents), got: formatCents(sum)},
+        };
     }
     return null;
 };
