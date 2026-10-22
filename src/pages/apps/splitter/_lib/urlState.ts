@@ -86,6 +86,18 @@ const peopleFromWire = (
     return {people, indexToId};
 };
 
+// The reducer edits and deletes by id, so a repeated id from a crafted or
+// legacy link would act on every row that shares it.
+const dedupeExpenseIds = (expenses: Expense[]): Expense[] => {
+    const seen = new Set<string>();
+    return expenses.filter(expense => {
+        const key = String(expense.id);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+};
+
 const splitToWireV3 = (split: Split, indexOf: Map<string, number>): WireSplitV3 => {
     if (split.mode === 'equal') return 'eq';
     const entries = (record: Record<string, number>): [number, number][] => {
@@ -165,7 +177,7 @@ const fromWireV1 = (w: WireV1): AppState => {
     const {people} = peopleFromWire(w.p);
     const personIds = new Set(people.map(p => p.id));
     const allIds = people.map(p => p.id);
-    const expenses = w.e
+    const expenses = dedupeExpenseIds(w.e
         .filter(([, , cents, paidBy]) =>
             Number.isSafeInteger(cents) && cents > 0 && personIds.has(String(paidBy)),
         )
@@ -176,7 +188,7 @@ const fromWireV1 = (w: WireV1): AppState => {
             paidBy: String(paidBy),
             participants: [...allIds],
             split: equalSplit(),
-        }));
+        })));
     const currency: Currency = isCurrency(w.c) ? w.c : 'EUR';
     return {v: 2, currency, people, expenses, paidTransferKeys: []};
 };
@@ -184,7 +196,7 @@ const fromWireV1 = (w: WireV1): AppState => {
 const fromWireV2 = (w: WireV2): AppState => {
     const {people} = peopleFromWire(w.p);
     const personIds = new Set(people.map(p => p.id));
-    const expenses = w.e
+    const expenses = dedupeExpenseIds(w.e
         .filter(row => {
             const cents = row[2];
             const paidBy = String(row[3]);
@@ -214,7 +226,7 @@ const fromWireV2 = (w: WireV2): AppState => {
                 split: validateSplit(split, filteredParticipants, cents) ? equalSplit() : split,
             };
         })
-        .filter((expense): expense is Expense => expense !== null);
+        .filter((expense): expense is Expense => expense !== null));
     const currency: Currency = isCurrency(w.c) ? w.c : 'EUR';
     const paidTransferKeys = Array.isArray(w.t)
         ? w.t.map(String).filter(Boolean)
@@ -226,7 +238,7 @@ const fromWireV3 = (w: WireV3): AppState => {
     const {people, indexToId} = peopleFromWire(w[2] ?? []);
     const personIds = new Set(people.map(p => p.id));
     const expensesRaw = Array.isArray(w[3]) ? w[3] : [];
-    const expenses = expensesRaw
+    const expenses = dedupeExpenseIds(expensesRaw
         .filter(row => {
             if (!Array.isArray(row)) return false;
             const cents = row[2];
@@ -258,7 +270,7 @@ const fromWireV3 = (w: WireV3): AppState => {
                 split: validateSplit(split, participants, cents) ? equalSplit() : split,
             };
         })
-        .filter((expense): expense is Expense => expense !== null);
+        .filter((expense): expense is Expense => expense !== null));
     const currency: Currency = isCurrency(String(w[1])) ? (w[1] as Currency) : 'EUR';
     const paidTransferKeys = (Array.isArray(w[4]) ? w[4] : [])
         .map(row => {
