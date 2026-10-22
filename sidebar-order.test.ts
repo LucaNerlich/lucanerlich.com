@@ -3,7 +3,8 @@
 // last-written label mapping.
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {sidebarGroups, sortSidebarItems} from './sidebar-order';
+import {readdirSync, statSync} from 'node:fs';
+import {sidebarGroups, sidebarOrder, sortSidebarItems} from './sidebar-order';
 
 const category = (label: string, docId: string) => ({
     type: 'category',
@@ -64,5 +65,47 @@ describe('sortSidebarItems', () => {
         );
         assert.ok(core);
         assert.equal(core.items.length, sidebarGroups.java[0].items.length);
+    });
+});
+
+// Regression test for #660: `sidebarOrder` and `sidebarGroups` name docs by
+// hand, and a renamed page otherwise drops silently to the end of its section.
+const baseDir = (dir: string): string => (dir === '.' ? 'docs' : `docs/${dir}`);
+
+const isDirectory = (path: string): boolean => {
+    try {
+        return statSync(path).isDirectory();
+    } catch {
+        return false;
+    }
+};
+
+const hasDoc = (dir: string, key: string): boolean => {
+    const entries = new Set(readdirSync(baseDir(dir)));
+    return entries.has(`${key}.md`) || entries.has(`${key}.mdx`);
+};
+
+describe('sidebar configuration', () => {
+    it('resolves every ordered key to a doc or a category directory', () => {
+        const stale: string[] = [];
+        for (const [dir, keys] of Object.entries(sidebarOrder)) {
+            for (const key of keys) {
+                const categoryDir = isDirectory(`${baseDir(dir)}/${key}`);
+                if (!hasDoc(dir, key) && !categoryDir) stale.push(`${baseDir(dir)}/${key}`);
+            }
+        }
+        assert.deepEqual(stale, [], `sidebarOrder keys with no doc or directory: ${stale.join(', ')}`);
+    });
+
+    it('resolves every visual group member to a doc', () => {
+        const missing: string[] = [];
+        for (const [dir, groups] of Object.entries(sidebarGroups)) {
+            for (const group of groups) {
+                for (const key of group.items) {
+                    if (!hasDoc(dir, key)) missing.push(`${baseDir(dir)}/${key}`);
+                }
+            }
+        }
+        assert.deepEqual(missing, [], `sidebarGroups members with no doc: ${missing.join(', ')}`);
     });
 });
