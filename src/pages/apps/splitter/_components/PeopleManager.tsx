@@ -90,6 +90,7 @@ const PeopleManager: React.FC<Props> = ({
                                 value={editName}
                                 autoFocus
                                 aria-label={messages.t('renamePerson').replace('{name}', () => p.name)}
+                                aria-invalid={error ? true : undefined}
                                 onChange={e => setEditName(e.target.value)}
                                 onBlur={() => {
                                     if (renameCancelled.current) {
@@ -107,6 +108,7 @@ const PeopleManager: React.FC<Props> = ({
                                         renameCancelled.current = true;
                                         setRefocusId(editingId);
                                         setEditingId(null);
+                                        setError(null);
                                     }
                                 }}
                             />
@@ -146,7 +148,7 @@ const PeopleManager: React.FC<Props> = ({
                     }}
                     className={styles.tagInput}
                     aria-label={messages.t('personName')}
-                    aria-invalid={error ? true : undefined}
+                    aria-invalid={error && !editingId ? true : undefined}
                 />
                 <button type="submit" className={styles.primaryButton}>
                     {messages.t('add')}
