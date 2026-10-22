@@ -5,7 +5,7 @@ import {indexPeople, nameFrom} from './people';
 import type {Transfer} from './settlement';
 import {summarize} from './settlement';
 import {validateSplit} from './split';
-import {isCurrency, transferKey} from './types';
+import {isCurrency, isWireSafePersonId, transferKey} from './types';
 
 // Normalization drops anything it cannot resolve, so a file must be valid
 // before it is encoded: otherwise a restore reports success after losing rows
@@ -18,6 +18,8 @@ const isRestorable = (state: {
 }): boolean => {
     const ids = new Set(state.people.map(p => p.id));
     if (ids.size !== state.people.length) return false;
+    // An id the codecs cannot carry would be dropped on the next round-trip.
+    if (!state.people.every(p => isWireSafePersonId(p.id))) return false;
     // A duplicate expense id makes the reducer edit and delete both rows at once.
     // Compare the normalized form: the wire format stringifies ids, so `5` and
     // `'5'` would import as the same row.
@@ -86,7 +88,8 @@ export const importJson = async (raw: string): Promise<AppState | null> => {
                 : null;
         }
         if (typeof data.encoded === 'string') {
-            return decodeState(data.encoded);
+            const decoded = await decodeState(data.encoded);
+            return decoded && decoded.people.every(p => isWireSafePersonId(p.id)) ? decoded : null;
         }
         if (Array.isArray(data.people) && Array.isArray(data.expenses)) {
             const source = {
