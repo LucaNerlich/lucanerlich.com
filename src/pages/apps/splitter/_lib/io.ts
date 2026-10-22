@@ -88,7 +88,8 @@ export const importJson = async (raw: string): Promise<AppState | null> => {
                 : null;
         }
         if (typeof data.encoded === 'string') {
-            return decodeState(data.encoded);
+            const decoded = await decodeState(data.encoded);
+            return decoded && decoded.people.every(p => isWireSafePersonId(p.id)) ? decoded : null;
         }
         if (Array.isArray(data.people) && Array.isArray(data.expenses)) {
             const source = {

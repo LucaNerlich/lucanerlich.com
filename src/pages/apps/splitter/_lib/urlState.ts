@@ -60,21 +60,13 @@ const splitFromWire = (wire: WireSplit): Split => {
     if (!Array.isArray(wire)) return equalSplit();
     const [kind, entries] = wire;
     if (!Array.isArray(entries)) return equalSplit();
-    if (kind === 'sh') {
-        const weights: Record<string, number> = {};
-        for (const [id, w] of entries) weights[String(id)] = Number(w);
-        return {mode: 'shares', weights};
-    }
-    if (kind === 'pct') {
-        const percents: Record<string, number> = {};
-        for (const [id, p] of entries) percents[String(id)] = Number(p);
-        return {mode: 'percent', percents};
-    }
-    if (kind === 'ex') {
-        const amounts: Record<string, number> = {};
-        for (const [id, a] of entries) amounts[String(id)] = Number(a);
-        return {mode: 'exact', amounts};
-    }
+    // fromEntries defines own properties, so a `__proto__` id is kept as data
+    // instead of setting the prototype.
+    const toRecord = (): Record<string, number> =>
+        Object.fromEntries(entries.map(([id, value]) => [String(id), Number(value)]));
+    if (kind === 'sh') return {mode: 'shares', weights: toRecord()};
+    if (kind === 'pct') return {mode: 'percent', percents: toRecord()};
+    if (kind === 'ex') return {mode: 'exact', amounts: toRecord()};
     return equalSplit();
 };
 
@@ -115,12 +107,14 @@ const splitFromWireV3 = (wire: WireSplitV3, indexToId: Map<number, string>): Spl
     const [kind, entries] = wire;
     if (!Array.isArray(entries)) return equalSplit();
     const toRecord = (): Record<string, number> => {
-        const record: Record<string, number> = {};
+        // fromEntries defines own properties, so a `__proto__` id is kept as
+        // data instead of setting the prototype.
+        const rows: [string, number][] = [];
         for (const [idx, value] of entries) {
             const personId = indexToId.get(Number(idx));
-            if (personId !== undefined) record[personId] = Number(value);
+            if (personId !== undefined) rows.push([personId, Number(value)]);
         }
-        return record;
+        return Object.fromEntries(rows);
     };
     if (kind === 'sh') return {mode: 'shares', weights: toRecord()};
     if (kind === 'pct') return {mode: 'percent', percents: toRecord()};
