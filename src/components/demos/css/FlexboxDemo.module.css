@@ -6,6 +6,8 @@
     border: 1px dashed var(--ifm-color-emphasis-400);
     border-radius: 8px;
     background: var(--ifm-background-color);
+    /* The shell clips its rounded corners, so the row scrolls here instead. */
+    overflow-x: auto;
 }
 
 /* flex-wrap needs a constrained main size to break against; without one the
