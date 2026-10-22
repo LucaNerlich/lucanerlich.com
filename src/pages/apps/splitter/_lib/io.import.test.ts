@@ -27,6 +27,18 @@ describe('import validation', () => {
         assert.equal(await importJson(fileWith({...demoState(), currency: 'XYZ'})), null);
     });
 
+    it('rejects a person id the wire format cannot carry', async () => {
+        const state = demoState();
+        const [first, ...rest] = state.people;
+        for (const id of ['', `${first.id}|extra`]) {
+            assert.equal(
+                await importJson(fileWith({...state, people: [{...first, id}, ...rest]})),
+                null,
+                `id ${JSON.stringify(id)} must be rejected`,
+            );
+        }
+    });
+
     it('imports the same session when ids and currency are valid', async () => {
         const state = demoState();
         const imported = await importJson(fileWith(state));

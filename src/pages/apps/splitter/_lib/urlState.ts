@@ -118,7 +118,7 @@ const splitFromWireV3 = (wire: WireSplitV3, indexToId: Map<number, string>): Spl
         const record: Record<string, number> = {};
         for (const [idx, value] of entries) {
             const personId = indexToId.get(Number(idx));
-            if (personId) record[personId] = Number(value);
+            if (personId !== undefined) record[personId] = Number(value);
         }
         return record;
     };
@@ -237,7 +237,7 @@ const fromWireV3 = (w: WireV3): AppState => {
             if (!Array.isArray(row)) return false;
             const cents = row[2];
             const paidBy = indexToId.get(Number(row[3]));
-            return Number.isSafeInteger(cents) && cents > 0 && !!paidBy && personIds.has(paidBy);
+            return Number.isSafeInteger(cents) && cents > 0 && paidBy !== undefined && personIds.has(paidBy);
         })
         .map((row): Expense | null => {
             const [id, description, cents, paidByIdx, participantsRaw, splitRaw] = row;
@@ -248,7 +248,7 @@ const fromWireV3 = (w: WireV3): AppState => {
             } else {
                 participants = (Array.isArray(participantsRaw) ? participantsRaw : [])
                     .map(idx => indexToId.get(Number(idx)))
-                    .filter((pid): pid is string => !!pid && personIds.has(pid));
+                    .filter((pid): pid is string => pid !== undefined && personIds.has(pid));
                 participants = [...new Set(participants)];
                 // 0 is the only "everyone" sentinel; an explicit list that
                 // resolves empty is malformed, so drop the expense.
@@ -272,7 +272,7 @@ const fromWireV3 = (w: WireV3): AppState => {
             const from = indexToId.get(Number(row[0]));
             const to = indexToId.get(Number(row[1]));
             const cents = Number(row[2]);
-            if (!from || !to || !Number.isSafeInteger(cents) || cents <= 0) return null;
+            if (from === undefined || to === undefined || !Number.isSafeInteger(cents) || cents <= 0) return null;
             return transferKey(from, to, cents);
         })
         .filter((key): key is string => !!key);

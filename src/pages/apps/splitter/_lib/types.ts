@@ -85,6 +85,11 @@ export const emptyState = (): AppState => ({
 export const newId = (): string =>
     Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 4);
 
+// Transfer keys join the ids with `|`, and the wire codecs read an empty id as
+// "missing", so a person id must be non-empty and free of the delimiter.
+export const isWireSafePersonId = (id: string): boolean =>
+    id.length > 0 && !id.includes('|');
+
 export const transferKey = (from: string, to: string, cents: number): string =>
     `${from}|${to}|${cents}`;
 
