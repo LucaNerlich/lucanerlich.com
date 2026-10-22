@@ -288,7 +288,7 @@ the entire Rust toolchain.
 
 ```bash
 docker build -t todo-api .
-docker run -p 8080:8080 -v todo-data:/data -e HOST=0.0.0.0 -e DATABASE_PATH=/data/todos.db todo-api
+docker run -p 127.0.0.1:8080:8080 -v todo-data:/data -e HOST=0.0.0.0 -e DATABASE_PATH=/data/todos.db todo-api
 ```
 
 > **Note:** `HOST=0.0.0.0` is required inside a container: the published port forwards to the container's external interface,
@@ -301,7 +301,8 @@ services:
   api:
     build: .
     ports:
-      - "8080:8080"
+      # Loopback only: nginx is the public entry point.
+      - "127.0.0.1:8080:8080"
     environment:
       - HOST=0.0.0.0
       - DATABASE_PATH=/data/todos.db
