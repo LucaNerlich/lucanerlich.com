@@ -113,8 +113,8 @@ Every package in a base image is a potential vulnerability. Smaller base images 
 | `debian:bookworm-slim` | ~74 MB | Minimal Debian |
 | `node:22` | ~1.1 GB | Full Debian + Node.js |
 | `node:22-slim` | ~230 MB | Slim Debian + Node.js |
-| `node:22-alpine` | ~60 MB | Alpine Linux + Node.js |
-| `gcr.io/distroless/nodejs22-debian12` | ~110 MB | No shell, no package manager |
+| `node:22-alpine` | ~170 MB | Alpine Linux + Node.js |
+| `gcr.io/distroless/nodejs22-debian12` | ~150 MB | No shell, no package manager |
 | `scratch` | 0 B | Empty - for static binaries only |
 
 ### Alpine
