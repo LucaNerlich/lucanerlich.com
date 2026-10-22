@@ -79,10 +79,14 @@
     min-width: 0;
     background: transparent;
     border: none;
-    outline: none;
     color: var(--ifm-font-color-base);
     font: inherit;
     padding: 0.125rem 0.25rem;
+}
+
+/* Only the wrapper restores a ring, so the rename input keeps the browser's. */
+.tagInputWrap .tagInput {
+    outline: none;
 }
 
 .tagInput::placeholder {
