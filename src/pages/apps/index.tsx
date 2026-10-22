@@ -34,7 +34,7 @@ export default function AppsIndex(): React.ReactElement {
                         state lives entirely in your browser or its URL.
                     </p>
                 </header>
-                <ul className={styles.grid}>
+                <ul className={styles.grid} role="list">
                     {APPS.map(app => (
                         <li key={app.slug}>
                             <Link to={`/apps/${app.slug}/`} className={styles.card}>
