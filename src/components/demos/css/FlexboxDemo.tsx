@@ -94,6 +94,8 @@ export default function FlexboxDemo(): ReactNode {
                 style={containerStyle}
                 data-direction={direction}
                 data-wrap={wrap}
+                // The stage scrolls in nowrap; focusable so Safari can reach it.
+                tabIndex={0}
             >
                 <div className={styles.item}>1</div>
                 <div className={`${styles.item} ${styles.itemTall}`} style={{flexGrow: growSecond ? 1 : 0}}>
