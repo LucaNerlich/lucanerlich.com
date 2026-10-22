@@ -3,7 +3,7 @@
 # -------------------------
 # 1) Build stage
 # -------------------------
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 # Use pnpm via corepack; the packageManager field in package.json pins the version
 ENV PNPM_HOME="/pnpm"
@@ -30,13 +30,13 @@ RUN pnpm build
 
 # -------------------------
 # 2) Runtime stage - static files served by a tiny Node static server.
-# Reuses the node:22-alpine base (already pulled reliably in this env) so no
+# Reuses the node:24-alpine base (already pulled reliably in this env) so no
 # extra base image is needed. `serve` uses serve-handler - the same engine
 # `docusaurus serve` uses - so it auto-serves build/404.html, and serve.json
 # enforces trailingSlash to match the Docusaurus config. Only `serve` and the
 # static build/ are present - none of the ~1.5GB build toolchain.
 # -------------------------
-FROM node:22-alpine
+FROM node:24-alpine
 
 # curl: required by Coolify's container healthcheck (alpine has no curl, and
 # busybox wget does not fall back from IPv6 ::1 to IPv4). serve: static host,
