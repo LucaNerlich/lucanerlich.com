@@ -1,7 +1,7 @@
 import React, {useId} from 'react';
 import type {Currency, Person, Split} from '../_lib/types';
 import type {SplitDraft} from '../_lib/expenseInput';
-import {draftFromPeople} from '../_lib/splitDraft';
+import {draftFromPeople, toggleParticipant} from '../_lib/splitDraft';
 import {amountPlaceholder, currencySymbol} from '../_lib/money';
 import type {Messages} from '../_lib/messages';
 import styles from '../splitter.module.css';
@@ -25,15 +25,7 @@ const SplitFields: React.FC<Props> = ({
 }) => {
     const {t} = messages;
     const groupId = useId();
-    const toggle = (id: string) => {
-        const has = draft.participants.includes(id);
-        // A user edit keeps exactly what the user selected, including an empty
-        // list; only a people change re-runs the seeding rules.
-        const participants = has
-            ? draft.participants.filter(x => x !== id)
-            : [...draft.participants, id];
-        onChange({...draft, participants});
-    };
+    const toggle = (id: string) => onChange(toggleParticipant(people, draft, id));
 
     const payerInSplit = draft.participants.includes(paidBy);
 

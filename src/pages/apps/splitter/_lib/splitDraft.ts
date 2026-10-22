@@ -38,8 +38,18 @@ export const draftFromPeople = (people: Person[], previous?: SplitDraft): SplitD
     return next;
 };
 
-export const draftAfterAdd = (draft: SplitDraft): SplitDraft => ({
-    // Exact amounts are absolute cents and only fit the total just added, so
+// Checking a participant is a people change: seed their values through the
+// same rules as a fresh draft, or the shares form shows a weight the draft
+// does not have and refuses to submit.
+export const toggleParticipant = (people: Person[], draft: SplitDraft, id: string): SplitDraft =>
+    draftFromPeople(people, {
+        ...draft,
+        participants: draft.participants.includes(id)
+            ? draft.participants.filter(x => x !== id)
+            : [...draft.participants, id],
+    });
+
+export const draftAfterAdd = (draft: SplitDraft): SplitDraft => ({    // Exact amounts are absolute cents and only fit the total just added, so
     // they are never reusable; the weight modes carry over.
     ...draft,
     amounts: {},

@@ -1,6 +1,6 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {draftAfterAdd, draftFromExpense, draftFromPeople} from './splitDraft';
+import {draftAfterAdd, draftFromExpense, draftFromPeople, toggleParticipant} from './splitDraft';
 import type {Person} from './types';
 
 const people: Person[] = [
@@ -36,6 +36,22 @@ describe('draftFromPeople', () => {
         assert.deepEqual(filled.percents, {a: '50.00', b: '50.00'});
         const kept = draftFromPeople(people, {...filled, percents: {a: '70', b: '30'}});
         assert.deepEqual(kept.percents, {a: '70', b: '30'});
+    });
+});
+
+describe('toggleParticipant', () => {
+    const three = [...people, {id: 'c', name: 'Cleo'}];
+    const shares = {...draftFromPeople(people), splitMode: 'shares' as const};
+
+    it('seeds the value the shares field displays for a new participant', () => {
+        const next = toggleParticipant(three, shares, 'c');
+        assert.deepEqual(next.participants, ['a', 'b', 'c']);
+        assert.equal(next.weights.c, '1');
+    });
+
+    it('keeps the existing values and drops the unchecked participant', () => {
+        const edited = {...shares, weights: {a: '2', b: '3'}};
+        assert.deepEqual(toggleParticipant(three, edited, 'b').weights, {a: '2'});
     });
 });
 
