@@ -35,7 +35,6 @@
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--custom-accent-amber);
 }
 
 .title {
@@ -58,6 +57,12 @@
     color: var(--ifm-color-primary);
 }
 
+/* The stacked label is the base state: a fractional container width cannot
+   fall between two complementary queries and lose it. */
+.meta::before {
+    content: 'Stacked layout · ';
+}
+
 @container card-demo (min-width: 380px) {
     .card {
         flex-direction: row;
@@ -74,8 +79,3 @@
     }
 }
 
-@container card-demo (max-width: 379px) {
-    .meta::before {
-        content: 'Stacked layout · ';
-    }
-}
