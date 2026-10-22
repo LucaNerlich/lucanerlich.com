@@ -332,7 +332,8 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - '1337:1337'
+      # Loopback only: the TLS reverse proxy is the public entry point.
+      - '127.0.0.1:1337:1337'
     environment:
       NODE_ENV: production
       DATABASE_CLIENT: postgres
