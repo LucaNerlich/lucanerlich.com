@@ -1,4 +1,3 @@
-onlyBuiltDependencies:
-  - '@swc/core'
-  - core-js
-  - core-js-pure
+allowBuilds:
+  '@swc/core': true
+  core-js: true
