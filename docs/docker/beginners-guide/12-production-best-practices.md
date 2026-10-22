@@ -27,7 +27,7 @@ By default, processes inside a container run as `root` (UID 0). If an attacker e
 ### In the Dockerfile
 
 ```dockerfile
-FROM node:20-alpine
+FROM node:22-alpine
 
 # Option A: Use the pre-created 'node' user that official Node images ship with
 WORKDIR /app
@@ -111,10 +111,10 @@ Every package in a base image is a potential vulnerability. Smaller base images 
 |---|---|---|
 | `ubuntu:24.04` | ~77 MB | Full OS, hundreds of packages |
 | `debian:bookworm-slim` | ~74 MB | Minimal Debian |
-| `node:20` | ~1.1 GB | Full Debian + Node.js |
-| `node:20-slim` | ~230 MB | Slim Debian + Node.js |
-| `node:20-alpine` | ~60 MB | Alpine Linux + Node.js |
-| `gcr.io/distroless/nodejs20-debian12` | ~110 MB | No shell, no package manager |
+| `node:22` | ~1.1 GB | Full Debian + Node.js |
+| `node:22-slim` | ~230 MB | Slim Debian + Node.js |
+| `node:22-alpine` | ~60 MB | Alpine Linux + Node.js |
+| `gcr.io/distroless/nodejs22-debian12` | ~110 MB | No shell, no package manager |
 | `scratch` | 0 B | Empty - for static binaries only |
 
 ### Alpine
@@ -122,7 +122,7 @@ Every package in a base image is a potential vulnerability. Smaller base images 
 Alpine uses `musl` libc instead of `glibc`. This is usually fine for interpreted languages and most compiled software, but some native Node.js addons (e.g., some image processing libraries) require `glibc` and will fail on Alpine. Test thoroughly before using Alpine in production.
 
 ```dockerfile
-FROM node:20-alpine
+FROM node:22-alpine
 
 RUN apk add --no-cache dumb-init
 
@@ -145,13 +145,13 @@ Google's distroless images contain only the language runtime and your applicatio
 # Multi-stage: build with a full image, run with distroless.
 # Use a Debian-based builder (glibc) so native modules match the
 # distroless runtime, which is also glibc-based (debian12).
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY . .
 
-FROM gcr.io/distroless/nodejs20-debian12
+FROM gcr.io/distroless/nodejs22-debian12
 WORKDIR /app
 COPY --from=builder /app .
 EXPOSE 3000
@@ -383,7 +383,7 @@ process.on('SIGTERM', () => {
 # ============================================================
 # Stage 1: Install ALL dependencies
 # ============================================================
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -391,7 +391,7 @@ RUN npm ci
 # ============================================================
 # Stage 2: Install PROD dependencies only
 # ============================================================
-FROM node:20-alpine AS prod-deps
+FROM node:22-alpine AS prod-deps
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
@@ -399,7 +399,7 @@ RUN npm ci --omit=dev && npm cache clean --force
 # ============================================================
 # Stage 3: Production runtime
 # ============================================================
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 # Use dumb-init to handle signals properly
 RUN apk add --no-cache dumb-init
