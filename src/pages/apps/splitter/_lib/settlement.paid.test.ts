@@ -17,9 +17,12 @@ describe('balances', () => {
 
     it('net paid minus owed', () => {
         const state = demoState();
-        const {paid, owed} = paidAndOwed(state);
-        for (const [id, cents] of summarize(state).balances) {
-            assert.equal((paid.get(id) ?? 0) - (owed.get(id) ?? 0), cents);
+        const summary = summarize(state);
+        const direct = paidAndOwed(state);
+        for (const [id, cents] of summary.balances) {
+            // The panel reads these maps off the summary, so assert that pair too.
+            assert.equal((summary.paid.get(id) ?? 0) - (summary.owed.get(id) ?? 0), cents);
+            assert.equal((direct.paid.get(id) ?? 0) - (direct.owed.get(id) ?? 0), cents);
         }
     });
 });
