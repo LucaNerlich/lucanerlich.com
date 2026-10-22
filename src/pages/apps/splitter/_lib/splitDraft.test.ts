@@ -1,6 +1,7 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
 import {draftAfterAdd, draftFromExpense, draftFromPeople, toggleParticipant} from './splitDraft';
+import {buildSplit} from './expenseInput';
 import type {Person} from './types';
 
 const people: Person[] = [
@@ -49,9 +50,32 @@ describe('toggleParticipant', () => {
         assert.equal(next.weights.c, '1');
     });
 
-    it('keeps the existing values and drops the unchecked participant', () => {
+    it('seeds every value map for the new participant in all modes', () => {
+        for (const mode of ['equal', 'shares', 'percent', 'exact'] as const) {
+            const draft = {...draftFromPeople(people), splitMode: mode};
+            const next = toggleParticipant(three, draft, 'c');
+            assert.equal(next.weights.c, '1', mode);
+            assert.ok('c' in next.percents, mode);
+            assert.ok('c' in next.amounts, mode);
+        }
+    });
+
+    it('submits the toggled shares split', () => {
+        const next = toggleParticipant(three, shares, 'c');
+        assert.equal(buildSplit(next).error, null);
+    });
+
+    it('keeps the stored value when a participant is unchecked', () => {
         const edited = {...shares, weights: {a: '2', b: '3'}};
-        assert.deepEqual(toggleParticipant(three, edited, 'b').weights, {a: '2'});
+        const next = toggleParticipant(three, edited, 'b');
+        assert.deepEqual(next.participants, ['a']);
+        assert.equal(next.weights.b, '3');
+    });
+
+    it('restores an edited value when a participant is rechecked', () => {
+        const edited = {...shares, weights: {a: '5', b: '1'}};
+        const off = toggleParticipant(three, edited, 'a');
+        assert.deepEqual(toggleParticipant(three, off, 'a').weights.a, '5');
     });
 });
 
