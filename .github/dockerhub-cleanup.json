@@ -1,6 +1,6 @@
 {
     "namespace": "lnhh",
-    "keep_last": 1,
+    "keep_last": 2,
     "min_age_days": 0,
     "protected": ["latest"],
     "repositories": [
