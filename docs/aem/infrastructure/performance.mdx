@@ -372,10 +372,11 @@ public class CacheHeaderFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
-        // Only safe with versioned clientlib URLs: the path changes when the
-        // content does. AEM's default clientlib paths do not.
+        // Unversioned clientlibs must revalidate: a deploy changes the file but
+        // not the URL. Versioned URLs only (ACS Commons or AEMaaCS .lc-<hash>):
+        // Cache-Control: public, max-age=31536000, immutable
         if (req.getRequestURI().startsWith("/etc.clientlibs/")) {
-            response.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+            response.setHeader("Cache-Control", "public, max-age=300");
         }
         chain.doFilter(req, res);
     }
@@ -385,7 +386,7 @@ public class CacheHeaderFilter implements Filter {
 }
 ```
 
-A year of `immutable` is only correct when the clientlib URL changes with its content - with ACS Commons versioned clientlibs or an equivalent content hash in the path. AEM's default `/etc.clientlibs/<site>/clientlibs/<name>.js` paths are stable across deploys, and `immutable` tells the browser not to revalidate, so returning visitors would keep the previous CSS/JS for up to a year. Without versioning, use a short `max-age` or `no-cache` instead, and set the header at the Dispatcher or CDN where the asset is actually cached.
+A year of `immutable` is only correct when the clientlib URL changes with its content. On AEM as a Cloud Service the default URLs already carry a content hash (`clientlib-site.lc-abc123def456-lc.min.css`), so the aggressive header fits there; on AEM 6.5/AMS the default `/etc.clientlibs/<site>/clientlibs/<name>.js` paths are stable across deploys, so the snippet above sends a short `max-age` unless you enable versioned clientlibs (ACS Commons or equivalent). `immutable` also tells the browser not to revalidate, so a stable URL would keep the previous CSS/JS until it expires - see [Client libraries › Versioning and Cache Busting](../client-libraries.mdx#versioning-and-cache-busting). Where the Dispatcher or CDN caches the asset, it is the better place to set the header.
 
 ---
 
