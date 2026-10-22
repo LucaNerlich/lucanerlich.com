@@ -1,6 +1,6 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {encodeQuietly, hydrateFromStores, writeToStores} from './useUrlState';
+import {encodeQuietly, hydrateFromStores, queryStore, writeToStores} from './useUrlState';
 import {demoState} from './demo';
 
 describe('mount hydrate', () => {
@@ -61,6 +61,30 @@ describe('store writes', () => {
             'payload',
         );
         assert.deepEqual(written, ['payload']);
+    });
+
+    it('drops a stale URL payload when replaceState fails', () => {
+        const calls: string[] = [];
+        let failNext = true;
+        const win = {
+            location: {href: 'https://example.test/apps/splitter/?s=stale'},
+            history: {
+                replaceState: (_state: unknown, _title: string, next: string) => {
+                    calls.push(next);
+                    if (failNext) {
+                        failNext = false;
+                        throw new Error('URL too long');
+                    }
+                },
+            },
+        };
+        (globalThis as {window?: unknown}).window = win;
+        try {
+            queryStore().write('fresh');
+        } finally {
+            delete (globalThis as {window?: unknown}).window;
+        }
+        assert.deepEqual(calls, ['/apps/splitter/?s=fresh', '/apps/splitter/']);
     });
 });
 

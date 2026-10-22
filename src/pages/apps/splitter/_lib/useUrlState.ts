@@ -38,8 +38,23 @@ export const queryStore = (): StateStore => ({
         const href = next.pathname + next.search + next.hash;
         const current =
             window.location.pathname + window.location.search + window.location.hash;
-        if (href !== current) {
-            window.history.replaceState(null, '', href);
+        try {
+            if (href !== current) {
+                window.history.replaceState(null, '', href);
+            }
+        } catch {
+            // URL over the browser limit or a restricted document: a stale
+            // payload would win over localStorage on the next load, so drop it.
+            try {
+                const cleared = writeEncodedToUrl(new URL(window.location.href), '');
+                window.history.replaceState(
+                    null,
+                    '',
+                    cleared.pathname + cleared.search + cleared.hash,
+                );
+            } catch {
+                // Nothing more the URL can do; the fallback store still has it.
+            }
         }
     },
 });
