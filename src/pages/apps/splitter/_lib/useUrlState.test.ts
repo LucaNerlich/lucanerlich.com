@@ -1,6 +1,6 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {hydrateFromStores} from './useUrlState';
+import {encodeQuietly, hydrateFromStores, queryStore, writeToStores} from './useUrlState';
 import {demoState} from './demo';
 
 describe('mount hydrate', () => {
@@ -42,5 +42,90 @@ describe('mount hydrate', () => {
         });
         assert.equal(hydrated, true);
         assert.equal(applied, 1);
+    });
+});
+
+describe('store writes', () => {
+    it('still writes the fallback when the primary store throws', () => {
+        const written: string[] = [];
+        writeToStores(
+            [
+                {
+                    read: () => '',
+                    write: () => {
+                        throw new Error('QuotaExceededError');
+                    },
+                },
+                {read: () => '', write: encoded => written.push(encoded)},
+            ],
+            'payload',
+        );
+        assert.deepEqual(written, ['payload']);
+    });
+
+    it('drops a stale URL payload when replaceState fails', () => {
+        const calls: string[] = [];
+        let failNext = true;
+        const win = {
+            location: {href: 'https://example.test/apps/splitter/?s=stale'},
+            history: {
+                replaceState: (_state: unknown, _title: string, next: string) => {
+                    calls.push(next);
+                    if (failNext) {
+                        failNext = false;
+                        throw new Error('URL too long');
+                    }
+                },
+            },
+        };
+        (globalThis as {window?: unknown}).window = win;
+        try {
+            queryStore().write('fresh');
+        } finally {
+            delete (globalThis as {window?: unknown}).window;
+        }
+        assert.deepEqual(calls, ['/apps/splitter/?s=fresh', '/apps/splitter/']);
+    });
+});
+
+describe('store reads', () => {
+    it('skips a throwing store and hydrates from the next one', async () => {
+        let applied = 0;
+        const hydrated = await hydrateFromStores({
+            stores: [
+                {
+                    read: () => {
+                        throw new Error('SecurityError');
+                    },
+                    write: () => {},
+                },
+                {read: () => 'payload', write: () => {}},
+            ],
+            decode: () => demoState(),
+            hydrate: () => {
+                applied += 1;
+            },
+            isCancelled: () => false,
+            hasUserActed: () => false,
+        });
+        assert.equal(hydrated, true);
+        assert.equal(applied, 1);
+    });
+});
+
+describe('encodeQuietly', () => {
+    it('returns null instead of rejecting when the codec throws', async () => {
+        const codec = {
+            encode: () => {
+                throw new Error('CompressionStream is not defined');
+            },
+            decode: () => null,
+        };
+        assert.equal(await encodeQuietly(codec, {}), null);
+    });
+
+    it('passes an async codec payload through', async () => {
+        const codec = {encode: async () => 'z.payload', decode: () => null};
+        assert.equal(await encodeQuietly(codec, {}), 'z.payload');
     });
 });

@@ -38,8 +38,23 @@ export const queryStore = (): StateStore => ({
         const href = next.pathname + next.search + next.hash;
         const current =
             window.location.pathname + window.location.search + window.location.hash;
-        if (href !== current) {
-            window.history.replaceState(null, '', href);
+        try {
+            if (href !== current) {
+                window.history.replaceState(null, '', href);
+            }
+        } catch {
+            // URL over the browser limit or a restricted document: a stale
+            // payload would win over localStorage on the next load, so drop it.
+            try {
+                const cleared = writeEncodedToUrl(new URL(window.location.href), '');
+                window.history.replaceState(
+                    null,
+                    '',
+                    cleared.pathname + cleared.search + cleared.hash,
+                );
+            } catch {
+                // Nothing more the URL can do; the fallback store still has it.
+            }
         }
     },
 });
@@ -91,16 +106,49 @@ export const hydrateFromStores = async <S>({
     hasUserActed,
 }: MountHydrateArgs<S>): Promise<boolean> => {
     for (const source of stores) {
-        const raw = source?.read();
-        if (!raw) continue;
-        const decoded = await Promise.resolve(decode(raw));
-        if (isCancelled()) return false;
-        if (decoded) {
-            if (!hasUserActed()) hydrate(decoded);
-            return true;
+        try {
+            const raw = source?.read();
+            if (!raw) continue;
+            const decoded = await Promise.resolve(decode(raw));
+            if (isCancelled()) return false;
+            if (decoded) {
+                if (!hasUserActed()) hydrate(decoded);
+                return true;
+            }
+        } catch {
+            // A throwing store or decoder is skipped, not fatal: the next
+            // store may still hold the session.
+            continue;
         }
     }
     return false;
+};
+
+/** Encodes without rejecting, so a throwing codec cannot abort persistence. */
+export const encodeQuietly = async <S>(codec: Codec<S>, state: S): Promise<string | null> => {
+    try {
+        return await Promise.resolve(codec.encode(state));
+    } catch {
+        return null;
+    }
+};
+
+/**
+ * Writes one payload to every store. One store throwing (quota, blocked
+ * storage, oversized URL) must not stop the others: the fallback store exists
+ * for exactly the case where the primary is unusable.
+ */
+export const writeToStores = (
+    stores: Array<StateStore | undefined>,
+    encoded: string,
+): void => {
+    for (const store of stores) {
+        try {
+            store?.write(encoded);
+        } catch {
+            // Store unavailable; the remaining stores still get the payload.
+        }
+    }
 };
 
 type UseUrlStateArgs<S, A> = {
@@ -156,17 +204,22 @@ export function useUrlState<S, A>({
     useEffect(() => {
         let cancelled = false;
         void (async () => {
-            // A valid shared link always wins; the fallback store only restores
-            // the last session when the URL carries no usable state.
-            const hydrated = await hydrateFromStores({
-                stores: [storeRef.current!, fallbackRef.current],
-                decode: raw => codecRef.current.decode(raw),
-                hydrate: decoded => dispatch(hydrate(decoded)),
-                isCancelled: () => cancelled,
-                hasUserActed: () => userActedRef.current,
-            });
-            if (hydrated) hadInitialStateRef.current = true;
-            if (!cancelled) setReady(true);
+            try {
+                // A valid shared link always wins; the fallback store only restores
+                // the last session when the URL carries no usable state.
+                const hydrated = await hydrateFromStores({
+                    stores: [storeRef.current!, fallbackRef.current],
+                    decode: raw => codecRef.current.decode(raw),
+                    hydrate: decoded => dispatch(hydrate(decoded)),
+                    isCancelled: () => cancelled,
+                    hasUserActed: () => userActedRef.current,
+                });
+                if (hydrated) hadInitialStateRef.current = true;
+            } catch {
+                // A failing store or decode leaves the app usable, not un-ready.
+            } finally {
+                if (!cancelled) setReady(true);
+            }
         })();
         return () => {
             cancelled = true;
@@ -219,10 +272,10 @@ export function useUrlState<S, A>({
         let cancelled = false;
         const handle = window.setTimeout(() => {
             void (async () => {
-                const encoded = await Promise.resolve(codecRef.current.encode(state));
+                const encoded = await encodeQuietly(codecRef.current, state);
+                if (!encoded) return;
                 if (cancelled || window.location.href !== scheduledUrl) return;
-                storeRef.current!.write(encoded);
-                fallbackRef.current?.write(encoded);
+                writeToStores([storeRef.current, fallbackRef.current], encoded);
             })();
         }, debounceMs);
         return () => {
