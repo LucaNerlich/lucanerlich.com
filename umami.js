@@ -1,16 +1,5 @@
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment'
 
-// Storage access throws when the browser blocks persistence (Safari "Block
-// All Cookies", sandboxed iframes). This module gates hydration, so never let
-// the read escape.
-const hasRecordingConsent = () => {
-    try {
-        return localStorage.getItem('umami-recording-consent') === 'granted'
-    } catch {
-        return false
-    }
-}
-
 // https://stackoverflow.com/questions/57859350/how-can-i-add-custom-scripts-in-index-htmls-head-part-in-docusaurus-v2
 if (ExecutionEnvironment.canUseDOM) {
     const {hostname} = window.location
@@ -33,21 +22,11 @@ if (ExecutionEnvironment.canUseDOM) {
         umamiScript.async = false
         umamiScript.defer = true
         umamiScript.setAttribute('data-website-id', websiteId)
+        // The splitter keeps a whole session in `?s=` (people's names and
+        // amounts); a shared link must never reach analytics or the stored
+        // pageview. Legacy `#…` payloads are excluded for the same reason.
+        umamiScript.setAttribute('data-exclude-search', 'true')
+        umamiScript.setAttribute('data-exclude-hash', 'true')
         document.head.appendChild(umamiScript)
-
-        // Session recording is opt-in: the recorder script is only loaded when
-        // the visitor has explicitly granted consent ('umami-recording-consent'
-        // in localStorage). See the privacy note in the imprint.
-        if (hasRecordingConsent()) {
-            const recorderScript = document.createElement('script')
-            recorderScript.src = `${umamiHost}/recorder.js`
-            recorderScript.async = false
-            recorderScript.defer = true
-            recorderScript.setAttribute('data-website-id', websiteId)
-            recorderScript.setAttribute('data-sample-rate', '0.25')
-            recorderScript.setAttribute('data-mask-level', 'moderate')
-            recorderScript.setAttribute('data-max-duration', '300000')
-            document.head.appendChild(recorderScript)
-        }
     }
 }
