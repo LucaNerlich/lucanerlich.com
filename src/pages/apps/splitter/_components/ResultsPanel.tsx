@@ -16,7 +16,7 @@ type Props = {
 };
 
 const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
-    const {balances, transfers, totalCents, perPersonCents, breakdowns} = useMemo(
+    const {balances, transfers, totalCents, perPersonCents, breakdowns, paid, owed} = useMemo(
         () => summarize(state),
         [state],
     );
@@ -141,6 +141,8 @@ const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
                     state={state}
                     totalCents={totalCents}
                     balances={balances}
+                    paid={paid}
+                    owed={owed}
                     transfers={transfers}
                     breakdowns={breakdowns}
                     messages={messages}

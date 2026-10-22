@@ -33,25 +33,52 @@ export const expenseBreakdowns = (state: AppState): ExpenseBreakdown[] => {
     return out;
 };
 
+/**
+ * Paid and owed per person, the two quantities `computeBalances` nets out.
+ * Exported so the calculation panel can show the same numbers the settlement
+ * used instead of re-accumulating the expenses.
+ */
+export const paidAndOwed = (
+    state: AppState,
+    breakdowns: ExpenseBreakdown[] = expenseBreakdowns(state),
+): {paid: Map<string, number>; owed: Map<string, number>} => {
+    const paid = new Map<string, number>();
+    const owed = new Map<string, number>();
+    for (const p of state.people) {
+        paid.set(p.id, 0);
+        owed.set(p.id, 0);
+    }
+
+    for (const {expense, shares} of breakdowns) {
+        paid.set(expense.paidBy, (paid.get(expense.paidBy) ?? 0) + expense.cents);
+        for (const [id, share] of shares) {
+            owed.set(id, (owed.get(id) ?? 0) + share);
+        }
+    }
+
+    return {paid, owed};
+};
+
+const balancesFrom = (paid: Map<string, number>, owed: Map<string, number>): Map<string, number> => {
+    const balances = new Map<string, number>();
+    for (const [id, cents] of paid) balances.set(id, cents - (owed.get(id) ?? 0));
+    for (const [id, cents] of owed) {
+        if (!balances.has(id)) balances.set(id, -cents);
+    }
+    return balances;
+};
+
 // Returns a Map<personId, netCents> where positive = is owed, negative = owes.
 // Balances sum to 0 when every expense allocates cleanly. Callers that already
-// hold the breakdowns (e.g. `summarize`) pass them in to avoid a second
-// traversal of the expenses.
+// hold the breakdowns pass them in to avoid a second traversal of the expenses;
+// the balance rule itself lives in `paidAndOwed` + `balancesFrom`, which
+// `summarize` uses so the calculation panel and the settlement cannot drift.
 export const computeBalances = (
     state: AppState,
     breakdowns: ExpenseBreakdown[] = expenseBreakdowns(state),
 ): Map<string, number> => {
-    const balances = new Map<string, number>();
-    for (const p of state.people) balances.set(p.id, 0);
-
-    for (const {expense, shares} of breakdowns) {
-        balances.set(expense.paidBy, (balances.get(expense.paidBy) ?? 0) + expense.cents);
-        for (const [id, share] of shares) {
-            balances.set(id, (balances.get(id) ?? 0) - share);
-        }
-    }
-
-    return balances;
+    const {paid, owed} = paidAndOwed(state, breakdowns);
+    return balancesFrom(paid, owed);
 };
 
 export const computeSettlement = (balances: Map<string, number>): Transfer[] => {
@@ -89,6 +116,8 @@ export type Summary = {
     totalCents: number;
     perPersonCents: number;
     balances: Map<string, number>;
+    paid: Map<string, number>;
+    owed: Map<string, number>;
     transfers: Transfer[];
     breakdowns: ExpenseBreakdown[];
 };
@@ -96,10 +125,11 @@ export type Summary = {
 export const summarize = (state: AppState): Summary => {
     const breakdowns = expenseBreakdowns(state);
     const totalCents = breakdowns.reduce((acc, b) => acc + b.expense.cents, 0);
-    const balances = computeBalances(state, breakdowns);
+    const {paid, owed} = paidAndOwed(state, breakdowns);
+    const balances = balancesFrom(paid, owed);
     const transfers = computeSettlement(balances);
     const N = state.people.length;
     // Display-only average. Exact obligations live in `balances` / breakdowns.
     const perPersonCents = N > 0 ? Math.round(totalCents / N) : 0;
-    return {totalCents, perPersonCents, balances, transfers, breakdowns};
+    return {totalCents, perPersonCents, balances, paid, owed, transfers, breakdowns};
 };

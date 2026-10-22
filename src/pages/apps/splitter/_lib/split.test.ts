@@ -143,8 +143,8 @@ describe('settlement with participants and payer-covers', () => {
     });
 
     it('derives the per-expense breakdown once per summarize', () => {
-        // summarize must pass its breakdowns to computeBalances instead of
-        // letting it re-derive them: a second traversal reads state.expenses.
+        // summarize must pass its breakdowns to paidAndOwed instead of letting
+        // it re-derive them: a second traversal reads state.expenses.
         let expenseReads = 0;
         const counted = new Proxy(demoState(), {
             get(target, prop, receiver) {
