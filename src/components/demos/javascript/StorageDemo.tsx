@@ -55,7 +55,7 @@ export default function StorageDemo(): ReactNode {
                 setStatus('Saved to localStorage. Reload the page -- it should still be here.');
             } else {
                 store.setItem(SESSION_KEY, sessionNote);
-                setStatus('Saved to sessionStorage. Reload keeps it; a new tab starts empty.');
+                setStatus('Saved to sessionStorage. Reload keeps it; a fresh tab you open with this URL starts empty.');
             }
         } catch {
             setStatus(BLOCKED_STATUS);
@@ -84,7 +84,7 @@ export default function StorageDemo(): ReactNode {
     return (
         <DemoShell
             title="localStorage vs sessionStorage"
-            hint="Save a note in each store, then reload or open a new tab to compare persistence."
+            hint="Save a note in each store, then reload, then open this URL in a fresh tab to compare persistence."
             footer={<span role="status">{status}</span>}
             controls={
                 <div className={shell.buttonRow}>
@@ -121,7 +121,7 @@ export default function StorageDemo(): ReactNode {
                         rows={3}
                         value={sessionNote}
                         onChange={(event) => setSessionNote(event.target.value)}
-                        placeholder="Survives reload, not a new tab"
+                        placeholder="Survives reload"
                     />
                     <button
                         type="button"
