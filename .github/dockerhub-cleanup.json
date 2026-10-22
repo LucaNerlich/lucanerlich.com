@@ -1,0 +1,19 @@
+{
+    "namespace": "lnhh",
+    "keep_last": 1,
+    "min_age_days": 0,
+    "protected": ["latest"],
+    "repositories": [
+        "lucanerlichcom",
+        "rssanalyzer",
+        "steam5-frontend",
+        "steam5-backend",
+        "directwerk-web",
+        "directwerk-studio",
+        "directwerk",
+        "ezbudget",
+        "directwerk-homepage",
+        "directwerk-admin",
+        "directwerk-docs"
+    ]
+}
