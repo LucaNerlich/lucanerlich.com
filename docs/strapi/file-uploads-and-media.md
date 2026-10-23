@@ -115,7 +115,7 @@ module.exports = ({ env }) => ({
           region: env('AWS_REGION', 'eu-central-1'),
           params: {
             Bucket: env('AWS_BUCKET'),
-            ACL: env('AWS_ACL', 'public-read'),
+            ACL: env('AWS_ACL', 'private'),
             signedUrlExpires: env.int('AWS_SIGNED_URL_EXPIRES', 15 * 60),
           },
         },
