@@ -206,9 +206,12 @@ Two layers of virtual host matching exist side-by-side: one at the Apache `httpd
     ServerAlias  mysite.com
     ServerAlias  *.preview.mysite.com
 
-    DocumentRoot /mnt/var/www/html
+    DocumentRoot "${DOCROOT}"
 
-    <Directory /mnt/var/www/html>
+    <Directory "${DOCROOT}">
+        <IfModule disp_apache2.c>
+            SetHandler dispatcher-handler
+        </IfModule>
         Require all granted
     </Directory>
 
@@ -287,6 +290,9 @@ Filter rules are evaluated **top-to-bottom**, but the **last matching rule wins*
 
 # Allow the CSRF token endpoint public forms need (after the /libs deny)
 /0107 { /type "allow" /url "/libs/granite/csrf/token.json" /method '(GET|HEAD)' }
+
+# Deny content grabbing for greedy queries and prevent unintended self-DoS attacks
+/0108 { /type "deny" /selectors '(feed|rss|pages|languages|blueprint|infinity|tidy|sysview|docview|query|[0-9-]+|jcr:content)' /extension '(json|xml|html|feed)' }
 
 # Deny query strings that reveal selectors or suffixes
 /0200 { /type "deny"  /method "GET" /query "debug=*" }
@@ -382,12 +388,13 @@ Strip `/content/mysite` from URLs so that `/content/mysite/en/products.html` bec
 
 RewriteEngine On
 
-# Shorten /content/mysite to root
-RewriteRule ^/content/mysite/(.*)$ /$1 [PT,L]
-
 # Redirect old URLs to shortened form (301)
-RewriteCond %{REQUEST_URI} ^/content/mysite/(.*)$
 RewriteRule ^/content/mysite/(.*)$ /$1 [R=301,L]
+
+# Map incoming shortened URLs to the internal content path
+RewriteCond %{REQUEST_URI} !^/(apps|bin|content|etc|libs|conf|graphql|system)
+RewriteCond %{REQUEST_URI} \.html$
+RewriteRule ^/(.*)$ /content/mysite/$1 [PT,L]
 ```
 
 ### Append `.html` Extension
@@ -492,14 +499,7 @@ The `-P 8` flag runs eight parallel workers - enough to saturate the Dispatcher 
 
 ### Post-deploy warming
 
-In a blue/green deploy, warm the new stack **before** flipping the load balancer:
-
-```yaml
-# cloud-manager post-deploy step (example)
-- name: warm-cache
-  run: ./ops/warm-cache.sh https://dispatcher-green.internal
-  timeout_minutes: 10
-```
+In a blue/green deploy, warm the new stack **before** flipping the load balancer.
 
 ### Targeted warming
 
@@ -548,13 +548,19 @@ Use a Sling Rewriter or an OSGi configuration to inject headers:
 public class CacheControlFilter implements Filter {
 
     @Override
+    public void init(FilterConfig cfg) {}
+
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
-        chain.doFilter(request, response);
         if (response instanceof HttpServletResponse httpResp) {
             httpResp.setHeader("Cache-Control", "max-age=300, s-maxage=3600");
         }
+        chain.doFilter(request, response);
     }
+
+    @Override
+    public void destroy() {}
 }
 ```
 
@@ -593,12 +599,12 @@ Adobe provides a Docker-based Dispatcher SDK so you can validate your configurat
 ### Running the Dispatcher Locally
 
 ```bash
-# Extract the SDK
-unzip aem-sdk-dispatcher-tools-*.zip -d dispatcher-sdk
+# Extract the SDK (on Windows, extract the zip archive instead)
+chmod +x aem-sdk-dispatcher-tools-*-unix.sh && ./aem-sdk-dispatcher-tools-*-unix.sh
 
 # Validate the configuration
 cd dispatcher-sdk
-./bin/validator full dispatcher/src
+./bin/validate.sh dispatcher/src
 
 # Run Dispatcher in Docker (forwards to local Publish on port 4503)
 ./bin/docker_run.sh dispatcher/src host.docker.internal:4503 8080
@@ -610,7 +616,8 @@ After the container starts, your site is available at `http://localhost:8080`. A
 
 | Command | Purpose |
 |---|---|
-| `./bin/validator full dispatcher/src` | Full validation of all Dispatcher configs (same checks as Cloud Manager) |
+| `./bin/validate.sh dispatcher/src` | Full validation including `httpd -t` and immutability checks |
+| `./bin/validator full dispatcher/src` | Phase 1 only (directive allowlist, farm checks); `validate.sh` adds `httpd -t` and the immutability check |
 | `./bin/validator httpd dispatcher/src` | Validate Apache httpd configs only |
 | `./bin/validator dispatcher dispatcher/src` | Validate Dispatcher module configs only |
 | `./bin/docker_run.sh dispatcher/src host.docker.internal:4503 8080` | Start Dispatcher container on port 8080 |
@@ -637,7 +644,7 @@ Run the validator as a Git pre-commit hook so that broken configurations never r
 ```bash
 #!/bin/sh
 # .git/hooks/pre-commit
-./dispatcher-sdk/bin/validator full dispatcher/src || exit 1
+./dispatcher-sdk/bin/validate.sh dispatcher/src || exit 1
 ```
 :::
 
@@ -653,11 +660,11 @@ Set `DISP_LOG_LEVEL=debug` on the Dispatcher container (or vhost `LogLevel`) to 
 
 | Level | What it logs |
 |---|---|
-| `error` | Failures only - default for prod |
-| `warn` | Plus warnings (cache write failures, missing renders) |
+| `error` | Failures only |
+| `warn` | Plus warnings (cache write failures, missing renders) - default |
 | `info` | Plus cache hits/misses and rule matches |
 | `debug` | Plus per-rule evaluation trace |
-| `trace1` … `trace8` | Internal dispatcher state - use sparingly |
+| `trace1` | Internal dispatcher state (local SDK only; cloud environments max out at `debug`) |
 
 ```bash
 # Inside the Dispatcher container
@@ -685,8 +692,8 @@ tail -f /var/log/apache2/dispatcher.log
 docker exec -it <cid> tail -f /var/log/apache2/dispatcher.log
 
 # Show the cache hit for one URL
-curl -I -H "Host: www.mysite.com" http://localhost:8080/en/about.html
-# Look for the X-Cache or X-Dispatcher-Info header
+curl -I -H "Host: www.mysite.com" -H "X-Dispatcher-Info: true" http://localhost:8080/en/about.html
+# Look for the X-Cache-Info response header (needs /info "1" in the farm)
 
 # Inspect what's cached on disk
 docker exec -it <cid> find /mnt/var/www/html -name "*.html" | head
@@ -769,7 +776,8 @@ An end-to-end check verifies that the Dispatcher can reach the publish tier and 
 ```apacheconf
 # conf.d/available_vhosts/default.vhost
 <Location /libs/granite/core/content/login.html>
-    Require ip 10.20.30.0/24   # the load balancer's actual subnet, not a broad RFC1918 block
+    # the load balancer's actual subnet, not a broad RFC1918 block
+    Require ip 10.20.30.0/24
 </Location>
 ```
 
@@ -852,10 +860,10 @@ When a request arrives at the CDN, rules are evaluated in this order:
 
 ```mermaid
 graph TD
-    A["1. Traffic Filter Rules (WAF)"] --> B["2. Request Transformations"]
-    B --> C["3. Origin Selectors"]
-    C --> D["4. Response Transformations"]
-    D --> E["5. Server-side Redirects"]
+    A["1. Request Transformations"] --> B["2. Traffic Filter Rules (WAF)"]
+    B --> C["3. Server-side Redirects"]
+    C --> D["4. Origin Selectors"]
+    D --> E["5. Response Transformations"]
 ```
 
 ---
@@ -1128,7 +1136,6 @@ data:
 
       - name: eds-origin
         domain: main--repo--owner.aem.live
-        forwardHost: true
         forwardCookie: true
 ```
 
@@ -1373,7 +1380,7 @@ Many issues (broken links, missing assets, redirect loops) only surface when the
 Setting `statfileslevel "0"` in a multi-site installation means **every flush nukes the entire cache** across all sites. Review the level carefully based on your content tree depth.
 
 :::warning
-Always run `./bin/validator full` before committing. Cloud Manager will reject deployments with invalid Dispatcher configs, and a broken pipeline blocks all teams from deploying.
+Always run `./bin/validate.sh` before committing. Cloud Manager will reject deployments with invalid Dispatcher configs, and a broken pipeline blocks all teams from deploying.
 :::
 
 ---
