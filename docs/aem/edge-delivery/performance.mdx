@@ -16,7 +16,7 @@ unless you actively work against them.
 graph TD
     LCP["1. Eager: first section + LCP image"]
     Lazy["2. Lazy: remaining sections, header, footer, fonts"]
-    Delayed["3. Delayed: delayed.js after ~3s"]
+    Delayed["3. Delayed: consent-check.js / consented.js"]
 
     LCP --> Lazy
     Lazy --> Delayed
@@ -31,12 +31,14 @@ The boilerplate splits page loading into three phases ("E-L-D"):
    header and footer are loaded, and `lazy-styles.css` and fonts are fetched. Web fonts are
    normally loaded in this phase, with size-adjusted fallback fonts in `styles.css`, so they
    don't delay LCP or cause layout shift.
-3. **Delayed** - `delayed.js` is imported by a fixed `setTimeout` (3 seconds by default) in
-   `loadDelayed()`. Analytics, chat widgets, and marketing tags belong here.
+3. **Delayed** - `loadDelayed()` imports `consent-check.js`, which imports `consented.js` once
+   consent is granted (projects created before August 2026: `delayed.js` after a 3-second
+   `setTimeout`). The boilerplate no longer enforces a minimum delay. Analytics, chat widgets,
+   and marketing tags belong here.
 
-The phases are wired in `scripts/scripts.js` via `loadEager()`, `loadLazy()`, and
-`loadDelayed()` from `aem.js`. See [Blocks](./blocks.mdx#block-lifecycle) for how a
-block participates and [Customizing](./customizing.mdx#decoration-overrides) for how
+The phases are wired in `scripts/scripts.js` via its own `loadEager()`, `loadLazy()`, and
+`loadDelayed()` functions, built on helpers from `aem.js`. See [Blocks](./blocks.mdx#block-lifecycle)
+for how a block participates and [Customizing](./customizing.mdx#decoration-overrides) for how
 to extend each phase.
 
 ## What EDS does automatically
@@ -54,12 +56,12 @@ to extend each phase.
 
 The single biggest determinant of Lighthouse score is the LCP element. The runtime waits for
 the first image in the first section and switches it to eager loading. When you build your own
-hero markup, keep that first image eager and consider `fetchpriority="high"`:
+hero markup, keep that first image eager (do not add `fetchpriority="high"` or preload hints):
 
 ```html
 <picture>
   <source type="image/webp" srcset="..." />
-  <img loading="eager" fetchpriority="high" alt="..." />
+  <img loading="eager" alt="..." />
 </picture>
 ```
 
@@ -72,14 +74,13 @@ Things that hurt LCP:
 
 ## Measuring on every PR
 
-Install the **AEM PSI Check** GitHub App on the repository. It runs PageSpeed Insights
-against the branch preview URLs listed in the pull request description (the boilerplate's PR
-template has a "Test URLs" section for this) and fails the check when the performance score
-regresses. A score below 100 should be investigated before merging.
+The AEM GitHub bot runs PageSpeed Insights against the test URLs in the pull request
+description (the boilerplate's PR template has a "Test URLs" section for this) and fails the
+PR if the score is below 100 (with a small buffer).
 
 ## The delayed-loading rule of thumb
 
-Anything not needed for the first meaningful paint belongs in `delayed.js`:
+Anything not needed for the first meaningful paint belongs in `consented.js`:
 
 - Analytics (Adobe Analytics, Adobe Launch, Google Analytics, Plausible, etc.)
 - Chat widgets (Intercom, Drift)
@@ -96,13 +97,13 @@ Anything not needed for the first meaningful paint belongs in `delayed.js`:
 | LCP > 2.5s | LCP image is not in the first section, or too much code runs before it | Make sure the hero block is the first block on the page; keep pre-LCP payload small |
 | CLS > 0.1 | Block decoration adds elements after layout | Reserve space with CSS (`min-height`, `aspect-ratio`) before decoration runs |
 | TBT > 200ms | Heavy JS in eager phase | Move work to `lazy` or `delayed` |
-| FCP slow | Render-blocking third-party script in `<head>` | Move it to `delayed.js` |
+| FCP slow | Render-blocking third-party script in `<head>` | Move it to `consented.js` |
 | Score drops on one page only | A specific block regressed | Bisect by removing blocks until score recovers |
 
 ## See also
 
 - [Blocks](./blocks.mdx) - block lifecycle and the eager / lazy / delayed phases
-- [Customizing](./customizing.mdx) - `head.html`, `scripts.js`, `delayed.js`
+- [Customizing](./customizing.mdx) - `head.html`, `scripts.js`, `consented.js`
 - [Architecture](./architecture.mdx) - pipeline-level optimisations
 - [Keeping it 100 (aem.live)](https://www.aem.live/developer/keeping-it-100) - official performance guidance and Core Web Vitals targets
 - [web.dev Lighthouse](https://web.dev/measure/) - measure and analyse Lighthouse scores
