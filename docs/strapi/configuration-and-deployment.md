@@ -372,9 +372,140 @@ volumes:
 
 ## PM2 deployment (VPS)
 
-The full PM2 recipe - `ecosystem.config.js`, the log directory, `pm2 save` and
-`pm2 startup`, plus the systemd alternative - lives in the
-[beginner deployment walkthrough](/strapi/beginners-guide/configuration-and-deployment#process-management-with-pm2).
+PM2 keeps Strapi running, restarts it on crash, and manages logs.
+
+### Ecosystem file
+
+```javascript
+// /var/www/strapi/ecosystem.config.js
+module.exports = {
+  apps: [
+    {
+      name: 'strapi',
+      cwd: '/var/www/strapi',
+      script: 'npm',
+      args: 'start',
+      env: {
+        NODE_ENV: 'production',
+      },
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G',
+      error_file: '/var/log/strapi/error.log',
+      out_file: '/var/log/strapi/out.log',
+    },
+  ],
+};
+```
+
+```bash
+sudo mkdir -p /var/log/strapi
+sudo chown strapi:strapi /var/log/strapi
+
+cd /var/www/strapi
+pm2 start ecosystem.config.js
+pm2 save
+pm2 startup systemd
+# Follow the command it prints (run as root)
+```
+
+| Command | Description |
+|---|---|
+| `pm2 list` | Show running processes |
+| `pm2 logs strapi` | View live logs |
+| `pm2 restart strapi` | Restart the app |
+| `pm2 stop strapi` | Stop the app |
+
+### Alternative: systemd
+
+```ini
+# /etc/systemd/system/strapi.service
+[Unit]
+Description=Strapi CMS
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=strapi
+Group=strapi
+WorkingDirectory=/var/www/strapi
+ExecStart=/usr/bin/npm run start
+Restart=on-failure
+RestartSec=10
+Environment=NODE_ENV=production
+EnvironmentFile=/var/www/strapi/.env
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now strapi
+sudo journalctl -u strapi -f
+```
+
+---
+
+## nginx reverse proxy and HTTPS
+
+Put nginx in front of Strapi for TLS termination and compression. A minimal site:
+
+```nginx
+# /etc/nginx/sites-available/strapi
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
+server {
+    listen 80;
+    server_name cms.yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name cms.yourdomain.com;
+
+    ssl_certificate /etc/letsencrypt/live/cms.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/cms.yourdomain.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    client_max_body_size 50m;
+
+    location / {
+        proxy_pass http://127.0.0.1:1337;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+    }
+
+    location /uploads/ {
+        proxy_pass http://127.0.0.1:1337;
+        add_header Cache-Control "public, max-age=86400";
+    }
+}
+```
+
+```bash
+sudo ln -s /etc/nginx/sites-available/strapi /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+
+# TLS via Certbot (start with an HTTP-only server block first if needed)
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d cms.yourdomain.com
+sudo certbot renew --dry-run
+```
 
 ---
 
@@ -392,7 +523,7 @@ The full PM2 recipe - `ecosystem.config.js`, the log directory, `pm2 save` and
 | Enable rate limiting                             | Protects admin login and API endpoints                        |
 | Disable GraphQL Playground                       | Leaks schema information in production                        |
 | Run behind a reverse proxy                       | Nginx, Caddy, or Traefik for TLS termination and caching      |
-| Set up backups                                   | Automate database + uploads backups                           |
+| Set up backups                                   | Automate database + uploads backups — see [Backup strategy](/strapi/data-import-export-migration#backup-strategy) |
 
 ---
 
@@ -459,6 +590,7 @@ module.exports = ({ env }) => ({
 
 ## See also
 
+- [Beginner deployment walkthrough](/strapi/beginners-guide/configuration-and-deployment) - short checklist that links here
 - [Authentication and Permissions](./authentication-and-permissions.md) - securing the deployed instance
 - [File Uploads and Media](./file-uploads-and-media.md) - configuring upload providers
 - [Admin Panel Customization](./admin-panel-customization.md) - admin server configuration
