@@ -26,6 +26,14 @@ describe('selectTagsToDelete', () => {
     it('keeps a tag Docker Hub gave no timestamp', () => {
         assert.deepEqual(selectTagsToDelete([{name: 'mystery'}], OPTIONS, NOW), []);
     });
+
+    it('does not let a protected tag consume a keep_last slot', () => {
+        const tags = [tag('latest', 1), tag('build-new', 2), tag('build-mid', 3), tag('build-old', 24)];
+        assert.deepEqual(
+            selectTagsToDelete(tags, {...OPTIONS, keepLast: 2}, NOW).map(entry => entry.name),
+            ['build-old'],
+        );
+    });
 });
 
 const jsonResponse = body => ({
@@ -56,7 +64,7 @@ describe('run', () => {
     it('deletes every tag outside the keep set', async () => {
         const calls = [];
         const fetchImpl = fakeFetch(calls, {
-            'lnhh/app': [tag('latest', 1), tag('old', 40)],
+            'lnhh/app': [tag('latest', 1), tag('new', 2), tag('old', 40)],
         });
         const stats = await run({
             config: config(['app']),
@@ -75,7 +83,7 @@ describe('run', () => {
     it('deletes nothing in a dry run', async () => {
         const calls = [];
         const fetchImpl = fakeFetch(calls, {
-            'lnhh/app': [tag('latest', 1), tag('old', 40)],
+            'lnhh/app': [tag('latest', 1), tag('new', 2), tag('old', 40)],
         });
         const stats = await run({
             config: config(['app']),
@@ -96,7 +104,7 @@ describe('run', () => {
             if (url.endsWith('/users/login/')) return jsonResponse({token: 't'});
             if (url.includes('page=2')) return jsonResponse({results: [tag('old', 90)], next: null});
             return jsonResponse({
-                results: [tag('latest', 1)],
+                results: [tag('latest', 1), tag('new', 2)],
                 next: 'https://hub.docker.com/v2/repositories/lnhh/app/tags/?page=2',
             });
         };
@@ -108,7 +116,7 @@ describe('run', () => {
             fetchImpl,
             log: () => {},
         });
-        assert.equal(stats[0].total, 2);
+        assert.equal(stats[0].total, 3);
         assert.deepEqual(stats[0].deleted, ['old']);
     });
 
@@ -130,5 +138,54 @@ describe('run', () => {
         });
         assert.match(stats[0].failed, /403/);
         assert.equal(stats[1].failed, '');
+    });
+
+    it('is a dry run when dryRun is omitted', async () => {
+        const calls = [];
+        const fetchImpl = fakeFetch(calls, {
+            'lnhh/app': [tag('latest', 1), tag('new', 2), tag('old', 40)],
+        });
+        const stats = await run({
+            config: config(['app']),
+            username: 'u',
+            password: 'p',
+            fetchImpl,
+            log: () => {},
+        });
+        assert.deepEqual(stats[0].deleted, ['old']);
+        assert.equal(calls.filter(call => call.method === 'DELETE').length, 0);
+    });
+
+    it('does not report a failed delete as deleted', async () => {
+        const fetchImpl = async (url, init = {}) => {
+            if (url.endsWith('/users/login/')) return jsonResponse({token: 't'});
+            if (init.method === 'DELETE') return {ok: false, status: 500, headers: {get: () => null}};
+            return jsonResponse({results: [tag('latest', 1), tag('new', 2), tag('old', 40)], next: null});
+        };
+        const stats = await run({
+            config: config(['app']),
+            username: 'u',
+            password: 'p',
+            dryRun: false,
+            fetchImpl,
+            log: () => {},
+        });
+        assert.deepEqual(stats[0].deleted, []);
+        assert.match(stats[0].failed, /delete old: 500/);
+    });
+
+    it('rejects a protected value that is not an array', async () => {
+        const fetchImpl = fakeFetch([], {});
+        await assert.rejects(
+            run({
+                config: {...config(['app']), protected: 'latest'},
+                username: 'u',
+                password: 'p',
+                dryRun: true,
+                fetchImpl,
+                log: () => {},
+            }),
+            /config\.protected must be an array/,
+        );
     });
 });
