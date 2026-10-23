@@ -34,11 +34,11 @@ end-to-end.
 | Purpose | Library | Notes |
 |---------|---------|-------|
 | Unit test runner | **JUnit 5** (`junit-jupiter`) | Use `@ExtendWith(AemContextExtension.class)` for AEM-aware tests |
-| AEM + Sling mocks | **wcm.io AEM Mocks** (`io.wcm.testing.mock.aem-junit5`) | Bundles Apache Sling Mocks + OSGi Mock + AEM-specific extensions. De facto standard |
+| AEM + Sling mocks | **wcm.io AEM Mocks** (`io.wcm:io.wcm.testing.aem-mock.junit5`) | Bundles Apache Sling Mocks + OSGi Mock + AEM-specific extensions. De facto standard |
 | Matching / assertions | **AssertJ** or plain JUnit | AssertJ chaining (`assertThat(model).isNotNull().extracting(...)...`) reads better for deep objects |
 | Mocking collaborators | **Mockito** | Use for external services; prefer `AemContext.registerService` for Sling/OSGi services |
 | HTTP mocking | **WireMock** | Stubs external APIs your Sling Models call |
-| UI tests | **Selenium / WebDriver** via the AEM Archetype `ui.tests` module, **Cypress**, or **Playwright** | Hobbes.js is deprecated - avoid starting new tests on it |
+| UI tests | **Cypress** via the AEM Archetype `ui.tests` module, or **Playwright** | Hobbes.js is deprecated - avoid starting new tests on it |
 | Dispatcher config | **AEM Dispatcher SDK validator** (`bin/validate.sh` / `bin/validator`) | Validates the AEMaaCS Dispatcher source tree offline |
 
 :::info[AEM Mocks vs Sling Mocks - what's the difference?]
@@ -61,7 +61,7 @@ Most of your test surface is a single `AemContext` instance:
 ```java
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
-import org.apache.sling.resourceresolver.ResourceResolverType;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
 
 @ExtendWith(AemContextExtension.class)
 class MyModelTest {
@@ -342,12 +342,12 @@ one class rather than sprinkling them across your suite.
 
 ### Testing Context-Aware Configuration
 
-Register the config explicitly - AEM Mocks ships a `ConfigurationResolver` that reads from the
-test resource tree:
+Add the `org.apache.sling:org.apache.sling.testing.caconfig-mock-plugin` test dependency and build the context with `new AemContextBuilder().plugin(ContextPlugins.CACONFIG).build()`:
 
 ```java
 @BeforeEach
 void setUp() {
+    ctx.create().resource("/content/site/en", "sling:configRef", "/conf/site/en");
     MockContextAwareConfig.registerAnnotationClasses(ctx, SiteConfig.class);
     MockContextAwareConfig.writeConfiguration(ctx, "/content/site/en",
             SiteConfig.class,
@@ -356,7 +356,7 @@ void setUp() {
 
 @Test
 void readsSiteConfig() {
-    Resource resource = ctx.resourceResolver().getResource("/content/site/en/jcr:content");
+    Resource resource = ctx.resourceResolver().getResource("/content/site/en");
     SiteConfig config = resource.adaptTo(ConfigurationBuilder.class).as(SiteConfig.class);
     assertEquals("GA-TEST-123", config.analyticsId());
 }
@@ -394,7 +394,7 @@ class WeatherServiceTest {
 
 ## Integration tests (UI.tests module)
 
-The AEM Maven Archetype scaffolds a `ui.tests` module that runs Selenium-based tests against a
+The AEM Maven Archetype scaffolds a `ui.tests` module that runs Cypress-based tests against a
 live instance (local SDK or a deployed environment). It's the successor to the deprecated
 Hobbes.js tests.
 
@@ -403,30 +403,14 @@ myproject/
 ├── core/                 # Java, where Sling Model unit tests live
 ├── ui.apps/              # ui.apps package
 ├── ui.tests/
-│   ├── test-module/      # Selenium TypeScript tests
-│   └── wdio.conf.ts      # WebdriverIO config: base URL, capabilities
+│   └── test-module/      # Cypress UI test module
 └── ui.frontend/
-```
-
-Typical WebdriverIO test:
-
-```typescript title="ui.tests/test-module/specs/teaser.spec.ts"
-describe("Teaser component", () => {
-    it("renders title and link", async () => {
-        await browser.url("/content/myproject/us/en/home.html");
-        const teaser = await $(".cmp-teaser");
-        await expect(teaser).toBeDisplayed();
-        await expect(await teaser.$(".cmp-teaser__title")).toHaveText("Welcome");
-    });
-});
 ```
 
 Run against the local SDK:
 
 ```bash
-mvn clean verify -PfedDev \
-    -Dsling.it.instance.url=http://localhost:4502 \
-    -Dsling.it.instance.runmode=author
+cd ui.tests/test-module && npm install && AEM_AUTHOR_URL=http://localhost:4502 npm test
 ```
 
 For Cypress / Playwright setups, point the `baseUrl` at your AEM Publish (or the Dispatcher, if
@@ -501,8 +485,7 @@ and services - don't chase 100% for HTL or generated code.
   confusing NPE three lines later.
 - **Wrong `ResourceResolverType`** - a JCR-SQL2 query silently returns zero results under
   `RESOURCERESOLVER_MOCK`. The test "passes" for the wrong reason.
-- **Relying on real tag resolution** - `TagManager.resolve()` works in `JCR_OAK` but is stubbed
-  under `RESOURCERESOLVER_MOCK`. Load tags into `/content/cq:tags/...` or use `JCR_OAK`.
+- **Relying on real tag resolution** - `TagManager.resolve()` (AEM Mocks' resource-based `MockTagManager`, the same under every resolver type) only finds tags you load into `/content/cq:tags/...`.
 - **Testing against hardcoded `admin` in integration tests** - mirrors a real antipattern. Use
   service users; they need to work in tests too.
 - **Coupling tests to property order** - `ValueMap` iteration order is not guaranteed.
@@ -523,4 +506,4 @@ and services - don't chase 100% for HTL or generated code.
 - [Java best practices](../backend/java-best-practices.mdx)
 - [wcm.io AEM Mocks](https://wcm.io/testing/aem-mock/) - `AemContext` JUnit integration for Sling Models and OSGi services
 - [AEM Testing (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/cloud-service/local-development-environment-set-up/development-tools) - developer tooling and testing setup
-- AEMaaCS UI Testing - Selenium-based UI tests in Cloud Manager pipelines (custom functional testing step)
+- AEMaaCS UI Testing - UI tests in Cloud Manager pipelines (Custom UI Testing step)
