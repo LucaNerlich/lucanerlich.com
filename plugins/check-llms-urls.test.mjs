@@ -8,11 +8,15 @@ import plugin from './check-llms-urls.js';
 
 const dirs = [];
 
-const run = (content, routes) => {
+const run = (content, routes, staticFiles = []) => {
     const siteDir = fs.mkdtempSync(path.join(os.tmpdir(), 'llms-'));
     dirs.push(siteDir);
     fs.mkdirSync(path.join(siteDir, 'static'), {recursive: true});
     fs.writeFileSync(path.join(siteDir, 'static', 'llms.txt'), content);
+    for (const file of staticFiles) {
+        fs.mkdirSync(path.dirname(path.join(siteDir, 'static', file)), {recursive: true});
+        fs.writeFileSync(path.join(siteDir, 'static', file), 'x');
+    }
     return plugin().postBuild({siteDir, routesPaths: routes});
 };
 
@@ -123,4 +127,26 @@ test('names a malformed URL instead of throwing a bare TypeError', async () => {
         run('[A](https://lucanerlich.com:99999/a/)\n', ['/a']),
         /static\/llms\.txt has an invalid URL: https:\/\/lucanerlich\.com:99999\/a\//,
     );
+});
+
+test('route-checks an angle-bracket destination', async () => {
+    await assert.rejects(
+        run('[A](<https://lucanerlich.com/z/>)\n[B](</missing/>)\n', ['/z']),
+        /no matching route[\s\S]*\/missing/,
+    );
+});
+
+test('route-checks a reference-style relative link', async () => {
+    await assert.rejects(
+        run('[A](https://lucanerlich.com/z/)\n[r]: /missing/\n', ['/z']),
+        /no matching route/,
+    );
+});
+
+test('accepts a relative link that points at a static file', async () => {
+    await run('[A](https://lucanerlich.com/z/)\n[B](/manifest.json)\n', ['/z'], ['manifest.json']);
+});
+
+test('accepts a relative link to a static file in a subdirectory', async () => {
+    await run('[A](https://lucanerlich.com/z/)\n![x](/img/x.png)\n', ['/z'], ['img/x.png']);
 });
