@@ -79,7 +79,7 @@ See [Deployment & Cloud Manager](/aem/beginners-guide/deployment-and-cloud-manag
 - **AEM 6.5** uses **replication agents** under `/etc/replication` (Agent on author, Dispatcher Flush)
   that you configure and monitor.
 - **AEMaaCS** uses **Sling Content Distribution** through Adobe-managed infrastructure - there are
-  **no replication agents to configure**, and CDN/Dispatcher invalidation is automatic.
+  **no replication agents to configure**, and Dispatcher invalidation is automatic; the CDN is not flushed and serves cached content until its TTL expires.
 
 The authoring actions (Activate/Deactivate) and the `Replicator` API are the **same** on both. See
 [Publishing & Replication](/aem/beginners-guide/publishing-and-replication) and the AEMaaCS
