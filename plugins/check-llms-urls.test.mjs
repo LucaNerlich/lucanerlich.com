@@ -95,3 +95,32 @@ test('route-checks a mixed-case site URL instead of skipping it', async () => {
         /no matching route/,
     );
 });
+
+test('route-checks a root-relative link', async () => {
+    await assert.rejects(
+        run('[A](https://lucanerlich.com/a/)\n[B](/missing/)\n', ['/a']),
+        /no matching route[\s\S]*\/missing/,
+    );
+});
+
+test('accepts a root-relative link that resolves', async () => {
+    await run('[A](https://lucanerlich.com/a/)\n[B](/b/)\n', ['/a', '/b']);
+});
+
+test('route-checks a protocol-relative site link', async () => {
+    await assert.rejects(
+        run('[A](//lucanerlich.com/missing/)\n', ['/a']),
+        /no matching route/,
+    );
+});
+
+test('ignores a protocol-relative link to another host', async () => {
+    await run('[A](https://lucanerlich.com/a/)\n[B](//example.com/x)\n', ['/a']);
+});
+
+test('names a malformed URL instead of throwing a bare TypeError', async () => {
+    await assert.rejects(
+        run('[A](https://lucanerlich.com:99999/a/)\n', ['/a']),
+        /static\/llms\.txt has an invalid URL: https:\/\/lucanerlich\.com:99999\/a\//,
+    );
+});
