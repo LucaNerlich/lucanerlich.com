@@ -756,7 +756,9 @@ Parameterize with variables by appending `;name=value` segments to the path
 ### 3. Fetch it from a frontend
 
 ```javascript title="lib/aem.js"
-const AEM_HOST = process.env.AEM_PUBLISH_HOST; // e.g. https://publish-p123.adobeaemcloud.com
+// Client-side fetch: the variable must be public, or the bundler inlines it
+// as undefined and the request goes to "undefined/graphql/...".
+const AEM_HOST = process.env.NEXT_PUBLIC_AEM_PUBLISH_HOST; // e.g. https://publish-p123.adobeaemcloud.com
 
 export async function getFeaturedArticles(limit = 10) {
     const res = await fetch(
@@ -795,6 +797,10 @@ export function FeaturedArticles() {
     );
 }
 ```
+
+`lib/aem.js` runs in the browser, so the variable needs the framework's public prefix
+(`NEXT_PUBLIC_…` for Next.js, `VITE_…` for Vite). If the endpoint must stay secret, move the fetch to a
+server component or route handler and keep the plain variable name.
 
 ### 4. CORS, referrer, and caching
 
