@@ -265,8 +265,10 @@ export const formatError = (messages: Messages, error: MessageError): string => 
     let text = messages.t(error.key);
     for (const [name, value] of Object.entries(error.params ?? {})) {
         // A raw float would print rounding noise (33.34 * 3 = 100.02000000000001).
+        // Three digits: the percent validator's tolerance is 0.001, so two would
+        // render a rejected 100.002 as "100".
         const rendered = typeof value === 'number'
-            ? value.toLocaleString(undefined, {maximumFractionDigits: 2})
+            ? value.toLocaleString(undefined, {maximumFractionDigits: 3})
             : String(value);
         text = text.replace(`{${name}}`, () => rendered);
     }

@@ -93,6 +93,13 @@ describe('formatError', () => {
         );
     });
 
+    it('shows a sum the validator rejects even when it rounds to 100 at two decimals', () => {
+        assert.match(
+            formatError(createMessages('en'), {key: 'errorPercentSum', params: {sum: 100.002}}),
+            /\(currently 100[.,]002\)/,
+        );
+    });
+
     it('fills every placeholder in both catalogs', () => {
         const params = {total: '25,00 €', got: '24,00 €', example: '12,50', sum: 90};
         for (const messages of [createMessages('en'), createMessages('de')]) {
