@@ -6,7 +6,7 @@ import type {MessageError} from '../_lib/messages';
 import type {Messages} from '../_lib/messages';
 import {formatError} from '../_lib/messages';
 import SplitFields from './SplitFields';
-import {draftAfterAdd, draftFromPeople} from '../_lib/splitDraft';
+import {clearsTypedInput, draftAfterAdd, draftFromPeople, isNewSession} from '../_lib/splitDraft';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -33,6 +33,7 @@ const ExpenseForm: React.FC<Props> = ({
     // Until the user edits the split, every people change re-seeds all of them:
     // the first draft is built before hydration, and people arrive one at a time.
     const touched = useRef(false);
+    const previousPeople = useRef<Person[]>([]);
 
     useEffect(() => {
         if (!people.some(p => p.id === paidBy)) {
@@ -43,8 +44,16 @@ const ExpenseForm: React.FC<Props> = ({
     }, [people, paidBy, lastPaidBy]);
 
     useEffect(() => {
+        const fresh = isNewSession(previousPeople.current, people);
+        const clearInput = clearsTypedInput(previousPeople.current, people);
+        if (fresh) touched.current = false;
+        previousPeople.current = people;
+        if (clearInput) {
+            setDescription('');
+            setAmount('');
+        }
         setDraft(prev =>
-            touched.current ? draftFromPeople(people, prev) : draftFromPeople(people),
+            fresh ? draftFromPeople(people) : touched.current ? draftFromPeople(people, prev) : draftFromPeople(people),
         );
     }, [people]);
 

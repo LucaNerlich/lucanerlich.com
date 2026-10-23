@@ -1,6 +1,6 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {draftAfterAdd, draftFromExpense, draftFromPeople, toggleParticipant} from './splitDraft';
+import {clearsTypedInput, draftAfterAdd, draftFromExpense, draftFromPeople, isNewSession, toggleParticipant} from './splitDraft';
 import {buildSplit} from './expenseInput';
 import type {Person} from './types';
 
@@ -123,5 +123,29 @@ describe('draftFromExpense', () => {
         assert.deepEqual(draft.participants, ['b']);
         assert.equal(draft.splitMode, 'exact');
         assert.equal(draft.amounts.b, '5.00');
+    });
+});
+
+describe('isNewSession', () => {
+    it('treats a disjoint people list as a new session', () => {
+        assert.equal(isNewSession(people, [{id: 'x', name: 'Xena'}, {id: 'y', name: 'Yuri'}]), true);
+    });
+
+    it('keeps the draft when any id survives', () => {
+        assert.equal(isNewSession(people, [{id: 'b', name: 'Bob'}, {id: 'c', name: 'Cara'}]), false);
+    });
+
+    it('does not fire on the first hydration', () => {
+        assert.equal(isNewSession([], people), false);
+    });
+
+    it('clears the typed input only for a replacement that leaves people', () => {
+        const replaced = [{id: 'x', name: 'Xena'}];
+        assert.equal(clearsTypedInput(people, replaced), true);
+        // Removing the last person is an edit, not a replacement.
+        assert.equal(clearsTypedInput([{id: 'a', name: 'Alice'}], []), false);
+        // First hydration and an ordinary edit keep what the user typed.
+        assert.equal(clearsTypedInput([], people), false);
+        assert.equal(clearsTypedInput(people, [people[0]]), false);
     });
 });

@@ -38,6 +38,21 @@ export const draftFromPeople = (people: Person[], previous?: SplitDraft): SplitD
     return next;
 };
 
+// A wholesale replacement (demo, import, reset, shared link) is not an edit:
+// when none of the previous people survive, the form starts over instead of
+// carrying an empty selection the user never made.
+export const isNewSession = (previous: Person[], next: Person[]): boolean => {
+    if (previous.length === 0) return false;
+    const ids = new Set(next.map(p => p.id));
+    return !previous.some(p => ids.has(p.id));
+};
+
+// Only a replacement that leaves people to fill in starts the form over.
+// Removing the last person is an edit: the draft empties, but a typed
+// description/amount must survive so the user can re-add someone.
+export const clearsTypedInput = (previous: Person[], next: Person[]): boolean =>
+    isNewSession(previous, next) && next.length > 0;
+
 // Checking a participant is a people change: seed their values through the
 // same rules as a fresh draft, or the shares form shows a weight the draft
 // does not have and refuses to submit. Unchecking only drops the id, so a
