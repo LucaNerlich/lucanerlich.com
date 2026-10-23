@@ -51,15 +51,15 @@ flowchart TD
 | **Blueprint**      | The source site - the "master" content                    |
 | **Live Copy**      | A site that inherits from the blueprint                    |
 | **Rollout**        | Push changes from blueprint to live copies                 |
-| **Inheritance**    | Live copy pages/components inherit from blueprint          |
-| **Detach**         | Break inheritance for a page or component (local override) |
-| **Suspend**        | Temporarily pause inheritance                              |
-| **Rollout Config** | Rules that define what gets rolled out and how             |
+| **Inheritance**    | Live copy pages/components inherit from blueprint                                                                     |
+| **Detach**         | Permanently remove the live relationship (not reversible); for a local component override use **Cancel Inheritance** |
+| **Suspend**        | Temporarily pause inheritance                                                                                          |
+| **Rollout Config** | Rules that define what gets rolled out and how                                                                        |
 
 ### Creating a Blueprint
 
 1. Create your master site structure under `/content/mysite/en`
-2. Go to **Tools** > **General** > **Blueprints**
+2. Go to **Tools** > **Sites** > **Blueprints** (on AEMaaCS only on the local SDK; cloud environments receive blueprint configurations from Git)
 3. Click **Create**
 4. Select your source: `/content/mysite/en`
 5. Give it a title and save
@@ -78,11 +78,10 @@ flowchart TD
 
 Rollout configs define the synchronization behavior:
 
-| Config                        | Behavior                                  |
-|-------------------------------|-------------------------------------------|
-| **Standard Rollout Config**   | Push content on rollout trigger           |
-| **Push on Modify**            | Auto-push when blueprint is modified      |
-| **Push on Modify and Create** | Auto-push on modify and new page creation |
+| Config                      | Behavior                             |
+|-----------------------------|--------------------------------------|
+| **Standard Rollout Config** | Push content on rollout trigger      |
+| **Push on Modify**          | Auto-push when blueprint is modified |
 
 You can also create custom rollout configs that combine triggers and actions.
 
@@ -96,7 +95,7 @@ After updating the blueprint:
 4. Choose depth (this page only or including sub-pages)
 5. Click **Rollout**
 
-Or use **bulk rollout**: go to the Blueprint console, select the blueprint, and roll out to all live copies at once.
+Or roll out from the **Live Copy Overview**: select the blueprint page and choose **Rollout**.
 
 ### Inheritance and local overrides
 
@@ -180,10 +179,9 @@ flowchart LR
 ### Machine translation
 
 AEM integrates with machine translation services. Configure in **Tools** > **Cloud Services** > **Translation Cloud
-Configuration**:
+Services**:
 
 - **Microsoft Translator**
-- **Google Cloud Translation**
 - Custom connectors via the Translation Integration Framework
 
 ### Translation rules
@@ -195,14 +193,14 @@ Translation Configuration**):
 
 ```xml title="translation_rules.xml - translate a custom property and a whole component"
 <nodelist>
-    <!-- Translate the custom 'subtitle' property on any node -->
     <node path="/content">
+        <!-- Translate the custom 'subtitle' property on any node -->
         <property name="subtitle" translate="true"/>
-    </node>
-    <!-- Translate all text properties of a specific component -->
-    <node resourceType="mysite/components/teaser">
-        <property name="pretitle" translate="true"/>
-        <property name="ctaText" translate="true"/>
+        <!-- Translate all text properties of a specific component -->
+        <node resourceType="mysite/components/teaser">
+            <property name="pretitle" translate="true"/>
+            <property name="ctaText" translate="true"/>
+        </node>
     </node>
 </nodelist>
 ```
