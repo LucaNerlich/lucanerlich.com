@@ -1,6 +1,6 @@
 ---
 title: Customizing
-description: How to extend EDS at the project level - scripts.js, aem.js decoration overrides, head.html, fonts, paths.json, response headers, and shared plugins.
+description: How to extend EDS at the project level - scripts.js, aem.js decoration overrides, head.html, fonts, path mapping, response headers, and shared plugins.
 tags: [aem, edge-delivery, customizing, theming, plugins, site-config]
 ---
 
@@ -20,7 +20,6 @@ the three lifecycle phases from `aem.js`:
 import {
     loadHeader,
     loadFooter,
-    decorateButtons,
     decorateIcons,
     decorateSections,
     decorateBlocks,
@@ -30,6 +29,12 @@ import {
     loadSections,
     loadCSS,
 } from './aem.js';
+
+export function decorateButtons(element) {
+    element.querySelectorAll('a').forEach((a) => {
+        // promote standalone links to buttons
+    });
+}
 
 function buildAutoBlocks(main) {
     // synthesise blocks from default content, e.g. a hero from the first h1 + picture
@@ -63,7 +68,7 @@ async function loadLazy(doc) {
 }
 
 function loadDelayed() {
-    window.setTimeout(() => import('./delayed.js'), 3000);
+    import('./consent-check.js');
 }
 
 async function loadPage() {
@@ -93,9 +98,9 @@ The real boilerplate also loads fonts (`loadFonts()`) and restores the scroll po
 
 | Function | Defined in | What it does | Customise to... |
 |----------|------------|--------------|-----------------|
-| `decorateButtons(main)` | `aem.js` | Promotes links that sit alone in a paragraph to buttons | Change button class names, suppress promotion for specific links |
+| `decorateButtons(main)` | `scripts.js` | Turns bold/italic links that sit alone in a paragraph into buttons | Change button class names, suppress promotion for specific links |
 | `decorateIcons(main, prefix)` | `aem.js` | Turns `:icon-name:` into icon spans that load SVGs from `/icons/` | Swap the icon location or prefix |
-| `decorateSections(main)` | `aem.js` | Adds section wrappers and applies section-metadata classes | Support new section-metadata keys |
+| `decorateSections(main)` | `aem.js` | Adds section wrappers and the `section` class (aem.js 3.1+ leaves section metadata to the delivery pipeline) | Support new section-metadata keys |
 | `decorateBlocks(main)` | `aem.js` | Marks every block (`block` class, `data-block-name`) so it can be loaded | Adjust block classes before loading |
 | `buildAutoBlocks(main)` | `scripts.js` | Synthesises blocks from markup (e.g. hero from H1+picture) | Add your own auto-blocks |
 | `decorateMain(main)` | `scripts.js` | Calls everything above in order | Insert custom passes before / after |
@@ -117,11 +122,11 @@ export function decorateMain(main) {
 
 This keeps you on the upgrade path when `aem.js` ships changes.
 
-## scripts/delayed.js - the analytics dumping ground
+## scripts/consented.js - delayed phase scripts
 
-Anything that doesn't need to render or shift layout belongs here:
+Anything that doesn't need to render or shift layout belongs here (loaded by `consent-check.js` after consent; older projects: `delayed.js`):
 
-```javascript title="scripts/delayed.js"
+```javascript title="scripts/consented.js"
 // Adobe Launch
 const launchScript = document.createElement('script');
 launchScript.src = 'https://assets.adobedtm.com/.../launch.min.js';
@@ -134,12 +139,9 @@ plausible.src = 'https://plausible.io/js/script.js';
 plausible.dataset.domain = 'example.com';
 plausible.defer = true;
 document.head.append(plausible);
-
-// Cookie consent banner
-import('https://cdn.cookieconsent.example.com/banner.js');
 ```
 
-The 3-second delay (configured in `scripts.js`) means none of this hits Lighthouse.
+There is no built-in timer; add one in `consent-check.js` if you need a minimum delay.
 
 ## head.html - early `<head>` content
 
@@ -222,7 +224,7 @@ Declare fonts with `font-display: swap` in `styles/fonts.css`:
 
 Do **not** preload fonts in `head.html`. Web fonts compete with the LCP image for
 bandwidth, so the boilerplate loads `fonts.css` via `loadFonts()` in the lazy phase (or
-eagerly only on repeat visits, once a session flag says the fonts are cached). To avoid a
+eagerly on desktop viewports of 900px and wider and on repeat visits, once a session flag says the fonts are cached). To avoid a
 layout shift when the web font swaps in, define a size-adjusted local fallback font:
 
 ```css title="styles/styles.css"
@@ -239,21 +241,22 @@ layout shift when the web font swaps in, define a size-adjusted local fallback f
 
 Self-host fonts wherever possible - third-party font CDNs add another connection.
 
-## paths.json - AEM path mappings
+## Path mapping (AEM authoring)
 
-For AEM-authored (Universal Editor) sites, `paths.json` maps AEM repository paths to public
-URLs and lists which AEM paths may be published:
+For AEM-authored (Universal Editor) sites, path mapping is set in the Configuration Service
+(`POST https://admin.hlx.page/config/{org}/sites/{site}/public.json`) and maps AEM repository paths to public
+URLs:
 
-```json title="paths.json"
+```json
 {
-    "mappings": [
-        "/content/mysite/:/",
-        "/content/mysite/configuration:/.helix/config.json",
-        "/content/mysite/metadata:/metadata.json"
-    ],
-    "includes": [
-        "/content/mysite/"
-    ]
+    "paths": {
+        "mappings": [
+            "/content/mysite/:/"
+        ],
+        "includes": [
+            "/content/mysite/"
+        ]
+    }
 }
 ```
 
@@ -271,8 +274,6 @@ configuration) is not stored in the code repository. It lives in the site config
 - **Configuration Service** - JSON managed through the Admin API at
   `https://admin.hlx.page/config/{org}/sites/{site}.json` (see
   [Admin API](./admin-api.mdx#config---configuration-service)).
-- **Document-based projects** - the `.helix/config` and `.helix/headers` spreadsheets in the
-  content source (older setups).
 
 Custom headers are keyed by URL glob. With the Configuration Service:
 
