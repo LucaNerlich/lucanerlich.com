@@ -175,7 +175,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     networks:
       - strapi-network
     healthcheck:
@@ -213,7 +213,7 @@ services:
       - ./package.json:/app/package.json
       - ./tsconfig.json:/app/tsconfig.json
     ports:
-      - "1337:1337"
+      - "127.0.0.1:1337:1337"
     networks:
       - strapi-network
     depends_on:
@@ -226,7 +226,7 @@ services:
     container_name: strapi-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis-data:/data
     networks:
@@ -239,7 +239,7 @@ services:
     container_name: strapi-adminer
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     networks:
       - strapi-network
     depends_on:
@@ -530,6 +530,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
