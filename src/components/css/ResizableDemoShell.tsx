@@ -57,6 +57,10 @@ export default function ResizableDemoShell({
     // more than the panel can occupy.
     const [slotMax, setSlotMax] = useState(effectiveMaxWidth);
 
+    // Width at pointerdown, so a click that never dragged is not mistaken for
+    // a resize (the rendered width is clamped to the slot).
+    const pointerStartWidth = useRef<number | null>(null);
+
     const applyObservedWidth = (rawWidth: number) => {
         if (!Number.isFinite(rawWidth)) {
             return;
@@ -70,13 +74,26 @@ export default function ResizableDemoShell({
         if (!panel) {
             return;
         }
-        applyObservedWidth(panel.getBoundingClientRect().width);
+        const observed = Math.round(panel.getBoundingClientRect().width);
+        const start = pointerStartWidth.current;
+        pointerStartWidth.current = null;
+        // No armed press (a pointerup that did not start on the panel) or an
+        // unchanged width is not a resize.
+        if (start === null || observed === start) {
+            return;
+        }
+        applyObservedWidth(observed);
     };
 
     // The inline max-width stops a native drag at the cap, so the release can
     // land outside the panel; listen on the window or the width state stays
-    // stale while the panel renders the clamped width.
+    // stale while the panel renders the clamped width. This is the only sync
+    // path: a second handler on the panel would clear the snapshot first and
+    // re-apply the clamped width on the same release.
     const armWidthSync = () => {
+        pointerStartWidth.current = panelRef.current
+            ? Math.round(panelRef.current.getBoundingClientRect().width)
+            : null;
         const done = () => {
             window.removeEventListener('pointerup', done);
             window.removeEventListener('pointercancel', done);
@@ -133,8 +150,6 @@ export default function ResizableDemoShell({
             className={className ? `${panelClassName} ${className}` : panelClassName}
             style={panelStyle}
             onPointerDown={lockedPanel ? undefined : armWidthSync}
-            onPointerUp={lockedPanel ? undefined : syncWidthFromPanel}
-            onTouchEnd={lockedPanel ? undefined : syncWidthFromPanel}
         >
             {content}
         </div>
