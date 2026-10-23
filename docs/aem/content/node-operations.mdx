@@ -11,10 +11,10 @@ tags: [aem, jcr, utilities]
 AEM stores all content in the Java Content Repository (JCR). When working with JCR nodes programmatically, you have two main APIs at your disposal:
 
 - **Sling Resource API** (recommended) - higher-level abstraction that works with `Resource` objects and `ResourceResolver`. Portable, testable, and the idiomatic way to work in AEM.
-- **JCR Node API** - the lower-level `javax.jcr` API that operates directly on `Node`, `Session`, and `Property` objects. Use when the Sling API does not expose the feature you need (versioning, ordering, workspace operations).
+- **JCR Node API** - the lower-level `javax.jcr` API that operates directly on `Node`, `Session`, and `Property` objects. Use when the Sling API does not expose the feature you need (versioning, workspace operations).
 
 :::tip
-Prefer the Sling Resource API for everyday CRUD operations. Fall back to the JCR API only when you need capabilities like node ordering, versioning, or workspace-level copy.
+Prefer the Sling Resource API for everyday CRUD operations. Fall back to the JCR API only when you need capabilities like versioning or workspace-level copy.
 :::
 
 ---
@@ -243,16 +243,18 @@ public void copyNode(Session session) throws Exception {
 import org.apache.sling.api.resource.ResourceResolver;
 
 public void moveOrCopyResource(ResourceResolver resolver) throws Exception {
-    resolver.move("/content/mysite/en/old-page", "/content/mysite/en/new-page");
-    resolver.copy("/content/mysite/en/source-page", "/content/mysite/en/copy-of-source");
+    // destAbsPath is the destination parent resource (which must exist)
+    resolver.move("/content/mysite/en/old-page", "/content/mysite/archive"); // -> /content/mysite/archive/old-page
+    resolver.copy("/content/mysite/en/source-page", "/content/mysite/de");    // -> /content/mysite/de/source-page
     resolver.commit();
 }
 ```
 
 :::tip
-`session.move()` is transient - it requires `session.save()` to persist. `workspace.copy()` is
-immediate and does not require a save. Sling `resolver.move()` and `resolver.copy()` are persisted
-with `resolver.commit()`. Copy duplicates the entire subtree including child nodes and properties.
+`session.move()` is transient - it requires `session.save()` to persist, and takes the destination path
+including the new node name (useful for in-place renames). In contrast, Sling `resolver.move()` and
+`resolver.copy()` take the destination *parent* path under which the resource is placed. They are
+persisted with `resolver.commit()`. Copy duplicates the entire subtree including child nodes and properties.
 :::
 
 ---
@@ -429,7 +431,7 @@ A batch size of **1000** is a good starting point. For nodes with large binary p
 | **Update**               | `ModifiableValueMap.put()`       | `node.setProperty()`             |
 | **Delete**               | `resolver.delete()`              | `node.remove()`                  |
 | **Persist**              | `resolver.commit()`              | `session.save()`                 |
-| **Node ordering**        | Not supported                    | `node.orderBefore()`             |
+| **Node ordering**        | `resolver.orderBefore()` (Sling API 2.24.0+) | `node.orderBefore()`             |
 | **Versioning**           | Not supported                    | `VersionManager`                 |
 | **Move**                 | `resolver.move()`                | `session.move()`                 |
 | **Copy**                 | `resolver.copy()`                | `workspace.copy()`               |
