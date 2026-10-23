@@ -65,7 +65,7 @@ Understanding the trigger points keeps the UX predictable:
 | Trigger | What happens |
 |---|---|
 | Author clicks **Done** / submits | Every registered validator runs against every matching field. First failure blocks the save. |
-| Field adapts to `foundation-field` and calls `.checkValidity()` | Only that field's validators run. Used to trigger validation imperatively from custom JS. |
+| Field adapts to `foundation-validation` and calls `.checkValidity()` then `.updateUI()` | Only that field's validators run. Used to trigger validation imperatively from custom JS. |
 | Author leaves a field (blur on most inputs) | Coral triggers revalidation on fields that have already been validated once - so the error state clears as soon as the author corrects the value. |
 | Author changes a field | Coral re-runs `validate()` if the field is currently marked invalid. |
 
@@ -73,9 +73,10 @@ Trigger validation manually on a single field:
 
 ```javascript
 var $field = $(".my-field");
-var api = $field.adaptTo("foundation-field");
-if (api && api.checkValidity) {
-    var isValid = api.checkValidity(); // also calls show()/clear() as needed
+var api = $field.adaptTo("foundation-validation");
+if (api) {
+    api.checkValidity();
+    api.updateUI();
 }
 ```
 
@@ -314,7 +315,7 @@ Validates that a text field contains a properly formatted URL.
             }
         });
 
-    // Reusable show/clear helpers (shared across validators)
+    // File-local helpers - copy into each validator or use DialogValidation (see Extracting Reusable Helpers)
     function showError($el, el, message) {
         var fieldAPI = $el.adaptTo("foundation-field");
         if (fieldAPI && fieldAPI.setInvalid) {
@@ -614,6 +615,8 @@ Validates that a text field contains a properly formatted email address.
                 clearError($(el));
             }
         });
+
+    // ... showError / clearError helpers (same as above) ...
 })(Granite.$);
 ```
 
@@ -658,6 +661,8 @@ Validates international phone number formats.
                 clearError($(el));
             }
         });
+
+    // ... showError / clearError helpers (same as above) ...
 })(Granite.$);
 ```
 
@@ -724,6 +729,8 @@ required only when an image is selected.
                 clearError($(el));
             }
         });
+
+    // ... showError / clearError helpers (same as above) ...
 })(Granite.$);
 ```
 
@@ -769,6 +776,8 @@ Validates that a textarea contains valid JSON (useful for configuration fields).
                 clearError($(el));
             }
         });
+
+    // ... showError / clearError helpers (same as above) ...
 })(Granite.$);
 ```
 
@@ -847,6 +856,8 @@ walk up to the enclosing `coral-multifield-item` to reach sibling fields.
             show: function (el, message) { showError($(el), el, message); },
             clear: function (el) { clearError($(el)); }
         });
+
+    // ... showError / clearError helpers (same as above) ...
 })(Granite.$);
 ```
 
@@ -859,8 +870,11 @@ clears:
 $(document).on("change blur", "[data-link-role]", function () {
     var $row = $(this).closest("coral-multifield-item");
     $row.find("[data-link-role]").each(function () {
-        var api = $(this).adaptTo("foundation-field");
-        if (api && api.checkValidity) api.checkValidity();
+        var api = $(this).adaptTo("foundation-validation");
+        if (api) {
+            api.checkValidity();
+            api.updateUI();
+        }
     });
 });
 ```
@@ -942,13 +956,18 @@ SKU exist?", "is this URL reachable?". The Foundation API is synchronous, so the
                 $el.data("slugValidation", { value: value, error: undefined });
             }).always(function () {
                 // Re-trigger validation so the cached result takes effect.
-                var api = $el.adaptTo("foundation-field");
-                if (api && api.checkValidity) api.checkValidity();
+                var api = $el.adaptTo("foundation-validation");
+                if (api) {
+                    api.checkValidity();
+                    api.updateUI();
+                }
             });
         }, DEBOUNCE_MS);
 
         $el.data("slugValidation.timer", timer);
     }
+
+    // ... showError / clearError helpers (same as above) ...
 })(Granite.$);
 ```
 
@@ -976,22 +995,15 @@ Set these directly on the field node:
 | `max="{Long}100"` | Maximum numeric value | `numberfield` |
 | `min="{Long}0"` | Minimum numeric value | `numberfield` |
 | `maxlength="{Long}255"` | Maximum string length | `textfield`, `textarea` |
-| `pattern="^[A-Za-z]+$"` | HTML5 regex pattern | `textfield` |
 | `step="{Double}0.01"` | Numeric step / granularity | `numberfield` |
 
 ### Registered `foundation.*` validators
 
-Use these as the value of the `validation` attribute - they are pre-registered by Granite UI:
+Use this as the value of the `validation` attribute - it is pre-registered by Granite UI:
 
 | Validator key | Purpose |
 |---------------|---------|
 | `foundation.jcr.name` | Accepts characters allowed in JCR node names (no `/`, `:`, `[`, `]`, `\|`, `*`) |
-| `foundation.jcr.name.path` | Same as above, but permits `/` so the value can be a relative path |
-| `foundation.form.field.required` | Equivalent to `required="{Boolean}true"` declared as a validator |
-| `foundation.form.field.pattern` | Reads the HTML5 `pattern` attribute and reports a friendlier error |
-| `foundation.form.field.maxlength` | Reads `maxlength` and enforces it even for pasted content |
-| `foundation.form.field.step` / `min` / `max` | Number-field bounds and step validation |
-| `foundation.validation.number` | Value must parse as a number (for text-typed inputs) |
 
 ```xml title="Example: built-in validations combined"
 <price
@@ -1012,13 +1024,6 @@ Use these as the value of the `validation` attribute - they are pre-registered b
     required="{Boolean}true"
     validation="foundation.jcr.name"/>
 ```
-
-:::note[Validator names are not load-bearing]
-The exact `foundation.*` keys shipped by Granite UI are an implementation detail of the platform
-and occasionally get added to or renamed between versions. If a key above doesn't exist in your
-release, grep the `granite/ui/components/coral/foundation/clientlibs/foundation/js/validations`
-folder (or its successor) for the current list.
-:::
 
 ---
 
@@ -1257,11 +1262,11 @@ it survives re-renders and is easy to spot in the inspector:
 
 ```javascript
 show: function (el, message) {
-    $(el).closest("coral-Form-fieldwrapper").attr("data-failed", "my-rule");
+    $(el).closest(".coral-Form-fieldwrapper").attr("data-failed", "my-rule");
     /* ... */
 },
 clear: function (el) {
-    $(el).closest("coral-Form-fieldwrapper").removeAttr("data-failed");
+    $(el).closest(".coral-Form-fieldwrapper").removeAttr("data-failed");
     /* ... */
 }
 ```
@@ -1339,15 +1344,16 @@ Instead of clicking "Done" and chasing through every validator, trigger only the
 about:
 
 ```javascript
-var api = $("[name='./myField']").adaptTo("foundation-field");
-api.checkValidity();        // runs validators, triggers show()/clear()
-api.isValid();              // reads the current state
+var api = $("[name='./myField']").adaptTo("foundation-validation");
+api.checkValidity();        // runs validators
+api.updateUI();             // shows error UI if invalid
+api.getValidity().isValid(); // reads the current state
 ```
 
 ### 4. Inspect the Coral field API
 
 Multiple validator paths assume `el.adaptTo("foundation-field")` returns a truthy object with
-`setInvalid` and `checkValidity`. On non-form containers (fieldsets, multifields wrapped in custom
+`setInvalid`. On non-form containers (fieldsets, multifields wrapped in custom
 components) this can be `null`. Always guard:
 
 ```javascript
