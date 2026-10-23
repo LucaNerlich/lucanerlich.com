@@ -512,15 +512,20 @@ flowchart LR
 
 ```bash
 #!/bin/bash
-# backup.sh - run daily via cron
+# backup.sh - install in root's crontab: sudo crontab -e
+#   0 2 * * * /opt/backup.sh
 set -euo pipefail
+# Backups hold password and token hashes: keep them root-only.
+umask 077
 DATE=$(date +%Y%m%d)
 BACKUP_DIR="/backups/strapi"
 
 mkdir -p "$BACKUP_DIR"
 
-# Database backup (as the postgres OS user: root cannot peer-authenticate as `strapi`)
-sudo -u postgres pg_dump -U postgres strapi_db | gzip > "$BACKUP_DIR/db-$DATE.sql.gz"
+# Database backup (as the postgres OS user: root cannot peer-authenticate as `strapi`).
+# Drop the partial file when the dump fails -- it still passes gunzip -t.
+sudo -u postgres pg_dump -U postgres strapi | gzip > "$BACKUP_DIR/db-$DATE.sql.gz" \
+  || { rm -f "$BACKUP_DIR/db-$DATE.sql.gz"; exit 1; }
 
 # Strapi export (includes content + config)
 cd /srv/strapi

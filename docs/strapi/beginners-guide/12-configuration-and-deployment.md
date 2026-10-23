@@ -857,6 +857,8 @@ sudo nano /opt/backup-strapi.sh
 ```bash
 #!/bin/bash
 set -euo pipefail
+# Backups hold password and token hashes: keep them root-only.
+umask 077
 BACKUP_DIR="/var/backups/strapi"
 DATE=$(date +%Y%m%d_%H%M%S)
 RETENTION_DAYS=30
@@ -864,8 +866,11 @@ RETENTION_DAYS=30
 mkdir -p "$BACKUP_DIR"
 
 # root cannot peer-authenticate as the `strapi` role over the socket, so dump
-# as the postgres OS user (mapped to the postgres superuser role).
-sudo -u postgres pg_dump -U postgres strapi_blog | gzip > "$BACKUP_DIR/db_$DATE.sql.gz"
+# as the postgres OS user (mapped to the postgres superuser role). The shell
+# creates the redirect target before the dump runs, so drop it again when
+# pg_dump fails -- an empty .gz still passes gunzip -t.
+sudo -u postgres pg_dump -U postgres strapi_blog | gzip > "$BACKUP_DIR/db_$DATE.sql.gz" \
+  || { rm -f "$BACKUP_DIR/db_$DATE.sql.gz"; exit 1; }
 
 # Remove old backups
 find "$BACKUP_DIR" -name "db_*.sql.gz" -mtime +$RETENTION_DAYS -delete
