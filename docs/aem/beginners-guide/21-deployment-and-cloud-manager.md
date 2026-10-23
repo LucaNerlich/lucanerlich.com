@@ -140,7 +140,7 @@ flowchart LR
     Functional --> UI
 ```
 
-1. **Maven Build** - compiles your project (`mvn clean install`)
+1. **Maven Build** - compiles your project (`mvn --batch-mode org.jacoco:jacoco-maven-plugin:prepare-agent package`, after a clean)
 2. **Unit Tests** - runs `core/` tests
 3. **Code Quality** - static analysis checks (coverage, bugs, maintainability)
 4. **Security Scan** - checks for known vulnerabilities
@@ -173,7 +173,7 @@ YAML-based operational configuration such as CDN and traffic-filter rules.
     - **On Git Changes** - auto-trigger on push
     - **Manual** - trigger manually
 6. Select the Git branch
-7. Configure quality gates (code coverage thresholds, etc.)
+7. Choose the **Important Metric Failures Behavior**
 
 ### Running a pipeline
 
@@ -190,7 +190,7 @@ Cloud Manager enforces quality gates:
 
 | Gate area              | Typical expectation                       |
 |------------------------|-------------------------------------------|
-| **Unit test coverage** | Meets configured threshold                |
+| **Unit test coverage** | >= 50% (fixed, Important gate)            |
 | **Reliability**        | No blocking/high-severity defects         |
 | **Security**           | No blocking/high-severity vulnerabilities |
 | **Maintainability**    | Within acceptable quality thresholds      |
@@ -375,8 +375,7 @@ Before your first production deployment:
 
 ## Migrating from AEM 6.5
 
-If you are moving an existing AEM 6.5 project to AEMaaCS, the **Content Transfer Tool (CTT)** migrates content (pages,
-assets, users) from your on-premise or managed-services instance to the cloud. The tool handles extraction, ingestion,
+If you are moving an existing AEM 6.5 project to AEMaaCS, the **Content Transfer Tool (CTT)** migrates content (pages, assets) and the groups referenced by its ACLs/CUGs; users are not migrated (they are provisioned via IMS/Admin Console). The tool handles extraction, ingestion,
 and validation. See
 the [Content Transfer Tool documentation](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/migration-journey/cloud-migration/content-transfer-tool/overview-content-transfer-tool)
 for details.
