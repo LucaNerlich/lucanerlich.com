@@ -92,7 +92,7 @@ list of social media links.
 
 #### Hints
 
-- For the avatar, use `granite/ui/components/coral/foundation/form/fileupload` with `fileReferenceParameter="./fileReference"`.
+- For the avatar, use `cq/gui/components/authoring/dialog/fileupload` with `fileReferenceParameter="./fileReference"`.
   In the Sling Model, inject the `fileReference` property with `@ValueMapValue`.
 - Social links work like the multifield in chapter 6 - each item has `platform` (select: LinkedIn, GitHub, Twitter)
   and `url` (textfield).
@@ -265,8 +265,8 @@ Starting from the archetype defaults, harden your Dispatcher configuration for a
   `/en/blog/` does not invalidate the cached pages under `/de/`.
 - Validate with `./bin/validator full dispatcher/src` from the Dispatcher SDK directory. Fix every warning - the Cloud
   Manager pipeline rejects invalid configs.
-- Test locally with `./bin/docker_run.sh dispatcher/src host.docker.internal:4503` and verify that admin paths return
-  403, pages are cached (check `X-Dispatcher` response header), and vanity URLs resolve.
+- Test locally with `./bin/docker_run.sh dispatcher/src host.docker.internal:4503 8080` and verify that admin paths return
+  404, pages are cached (send `X-Dispatcher-Info: true` and check the `X-Cache-Info` response header; needs `/info "1"` in the farm), and vanity URLs resolve.
 
 ---
 
