@@ -197,7 +197,7 @@ module.exports = {
 npm run build
 
 # Clear cache
-rm -rf .cache build
+rm -rf .cache dist build
 
 # Rebuild with clean cache
 npm run build
