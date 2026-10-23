@@ -71,7 +71,7 @@ domain).
 The **Sidekick Library** is a plugin that displays a side-panel of project-specific
 authoring assets - typically a **block library** (copy-paste examples of every block
 your project ships) and a **tag library** (the controlled vocabulary). Authors browse
-the library, click an item, and have it inserted into their document.
+the library, click an item, and have it copied for pasting into their document.
 
 The library is just an HTML page that EDS hosts at `/tools/sidekick/library.html` and
 that the Sidekick loads in a side panel.
@@ -109,23 +109,24 @@ your project has a custom library loader.
 
 ### A `blocks` source
 
-The blocks source is an authored sheet listing every block, a thumbnail, the source
-markup, and an optional description. The library renders one card per row and
-copies the source to clipboard or inserts it directly into the doc.
+The `helix-blocks` sheet lists each block's `name` and the `path` of a document with its
+variations; the library renders that document and copies a variation to the clipboard.
 
 ```markdown
-| name      | path                         | preview                  |
-|-----------|------------------------------|--------------------------|
-| Hero      | /library/blocks/hero         | /library/previews/hero   |
-| Cards     | /library/blocks/cards        | /library/previews/cards  |
-| Carousel  | /library/blocks/carousel     | /library/previews/carousel |
+| name      | path                     |
+|-----------|--------------------------|
+| Hero      | /library/blocks/hero     |
+| Cards     | /library/blocks/cards    |
+| Carousel  | /library/blocks/carousel |
 ```
 
-The **path** column points at a Word / Docs file whose body is the block markup the
-library should copy. **preview** points at a screenshot (a Page in the Content Bus or
-an asset URL).
+The **path** column points at a Word / Docs file whose body contains the block markup and variations
+the library renders.
 
 ### A `tags` source
+
+A tags library requires a custom plugin implementation (`plugins.tags.src`). With a tags plugin
+configured, authors can browse a controlled vocabulary sheet:
 
 ```markdown
 | key             | value           |
@@ -140,8 +141,8 @@ Authors browse and insert tags into the page metadata table without typos.
 ## Building a custom plugin
 
 Beyond the library, you can ship arbitrary tools. A plugin is just an HTML page;
-the Sidekick opens it in a panel and passes the current page context via
-`postMessage`:
+the Sidekick opens it in a new tab (or a palette with `isPalette`) and, with
+`passReferrer`/`passConfig`, passes the page context as query parameters:
 
 ```html title="tools/sidekick/screenshot.html"
 <!doctype html>
@@ -187,8 +188,6 @@ list. On the backend, `/api/screenshot` must independently validate the `path` q
 
 - **Theme the library** to match the project. The custom element accepts CSS variables
   - override them in `library.html`.
-- **Keep block previews up to date** - a stale screenshot teaches authors a wrong
-  expectation.
 - **Restrict environments** - a destructive plugin (e.g. "Delete all") should be
   confined to specific environments and ideally guarded by a confirm dialog.
 - **Use the Admin API** ([helix5](./admin-api.mdx)) for plugin actions that must
@@ -198,4 +197,4 @@ list. On the backend, `/api/screenshot` must independently validate the `path` q
 
 - [Authoring models](./authoring.mdx)
 - [Admin API](./admin-api.mdx) - programmatic preview / publish from a plugin
-- aem.live: [Sidekick Library docs](https://www.aem.live/developer/sidekick-library)
+- aem.live: [Sidekick Library docs](https://www.aem.live/docs/sidekick-library)
