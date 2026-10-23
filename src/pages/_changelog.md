@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.34.3] - 2026-10-23
+
+### Fixed
+- Docker beginners guide: the networking chapter uses its own Postgres volume so chapter 4's `pgdata` credentials no longer break the example
+- AEM GraphQL: localhost GraphiQL points at the AEMaaCS SDK path (`/aem/graphiql.html`); the 6.5 add-on path is labeled
+- AEM OSGi: factory-config pitfall now states that `-` is deprecated, not a singleton (prefer `~`)
+- Strapi: beginners deploy chapter is a short walkthrough; full PM2/nginx/HTTPS recipes live only on Configuration and Deployment
+- Splitter app: restore `role="list"` on balances, transfers, and calculation sub-lists for Safari/VoiceOver
+
 ## [1.34.2] - 2026-10-23
 
 ### Fixed
