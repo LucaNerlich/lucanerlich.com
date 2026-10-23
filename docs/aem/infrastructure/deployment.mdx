@@ -12,7 +12,7 @@ Understanding the deployment model is critical because it determines how you str
 
 ## AEMaaCS Cloud Manager Pipelines
 
-Cloud Manager is the sole deployment mechanism for AEMaaCS. You cannot install packages via CRX Package Manager or WebDAV in production - all code flows through pipelines.
+Cloud Manager is the sole deployment mechanism for AEMaaCS. You cannot install code packages via CRX Package Manager or WebDAV - all code flows through pipelines (Package Manager only installs mutable content such as `/content` or `/conf`).
 
 ### Pipeline Types
 
@@ -20,7 +20,7 @@ Cloud Manager is the sole deployment mechanism for AEMaaCS. You cannot install p
 |---|---|---|
 | **Full-Stack** | Java bundles, OSGi configs, content packages, Dispatcher configs | Standard release of backend + frontend |
 | **Frontend-Only** | Static assets from `ui.frontend` module | Rapid UI iteration without full build |
-| **Config-Only** | CDN and Dispatcher configuration | Traffic routing, redirect rules, cache headers |
+| **Config-Only** | CDN, log forwarding, and maintenance configuration | Traffic routing, redirect rules, cache headers |
 | **Web-Tier** | Dispatcher configuration only | Updating vhost or rewrite rules independently |
 
 :::tip
@@ -45,7 +45,7 @@ Each stage acts as a quality gate. If unit tests or code quality scans fail, the
 
 ### Configuration
 
-Pipelines are configured entirely through the **Cloud Manager UI** - there is no YAML or pipeline-as-code file. You select the Git branch, the environment targets, and the pipeline type. Triggers can be manual or on Git push.
+Pipelines are configured in the **Cloud Manager UI** (or via the Cloud Manager API) - there is no YAML or pipeline-as-code file. You select the Git branch, the environment targets, and the pipeline type. Triggers can be manual or on Git push.
 
 ## Package Structure
 
@@ -57,7 +57,7 @@ The [AEM Project Archetype](https://github.com/adobe/aem-project-archetype) gene
 | `core/` | Immutable | Author + Publish | Java OSGi bundles (Sling models, servlets, workflows) |
 | `ui.apps/` | **Immutable** | Author + Publish | Components, templates, clientlibs under `/apps` |
 | `ui.config/` | **Immutable** | Author + Publish | OSGi configurations (runmode-specific) |
-| `ui.content/` | **Mutable** | Author | Sample content, editable templates, policies |
+| `ui.content/` | **Mutable** | Author + Publish | Sample content, editable templates, policies |
 | `ui.frontend/` | Immutable | Author + Publish | Webpack/Vite frontend build; output copied to `ui.apps` clientlibs |
 | `dispatcher/` | Config | CDN/Dispatcher | Apache/Dispatcher configuration files |
 
@@ -137,10 +137,8 @@ The `filter.xml` file in each content package declares which repository paths th
     <filter root="/apps/mysite/templates"/>
     <filter root="/apps/mysite/clientlibs"/>
 
-    <!-- Include configs but exclude author-specific runmode on publish -->
-    <filter root="/apps/mysite/config">
-        <exclude pattern="/apps/mysite/config\.author/.*"/>
-    </filter>
+    <filter root="/apps/mysite/config"/>
+    <filter root="/apps/mysite/config.author"/>
 
     <!-- Mutable content with selective includes -->
     <filter root="/content/mysite" mode="merge">
@@ -233,7 +231,7 @@ java -jar oak-run.jar compact /path/to/crx-quickstart/repository/segmentstore
 # Check repository consistency
 java -jar oak-run.jar check /path/to/crx-quickstart/repository/segmentstore
 
-# Export node data for debugging
+# Browse the repository in a read-only Swing GUI
 java -jar oak-run.jar explore /path/to/crx-quickstart/repository/segmentstore
 ```
 
@@ -255,7 +253,7 @@ This requires duplicate infrastructure and load balancer integration, but elimin
 |---|---|---|---|
 | **Pipeline redeploy** | AEMaaCS - revert Git commit, trigger pipeline | ~45 min | Low - identical to any deployment |
 | **Package uninstall** | On-prem/AMS - uninstall via Package Manager | Minutes | Medium - snapshot may be stale |
-| **RDE reset** | RDE environments only | ~30 sec | Low - clean slate |
+| **RDE reset** | RDE environments only | A few minutes | Low - clean slate |
 | **Blue-green switch** | On-prem/AMS with dual environments | Seconds | Low - previous version still running |
 | **Git revert + redeploy** | Any environment | Varies | Low - uses standard pipeline |
 
