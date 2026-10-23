@@ -38,7 +38,7 @@ Each GitHub Release produces the following artefacts:
 In general, downloading the `core.wcm.components.all-<version>.zip` and installing it via
 the [JCR Package Manager](http://localhost:4502/crx/packmgr/index.jsp) is enough.
 
-If you are running an AEM Cloud SDK, the Core Components are bundled with the SDK and available under `/apps/core/wcm/components/` - you do not need to install them separately on AEMaaCS.
+If you are running an AEM Cloud SDK, the Core Components are bundled with the SDK and available under `/libs/core/wcm/components/` - you do not need to install them separately on AEMaaCS.
 
 #### Core Components - Manual Installation
 
@@ -276,13 +276,10 @@ Prefer a standalone module instead of full ACS Commons? Use
 [acs.include](../standalone-acs-commons/acs-include.mdx) from
 [standalone-acs-commons](https://github.com/LucaNerlich/standalone-acs-commons). Migration from ACS Commons
 requires replacing `acs-commons/granite/ui/components/include` with
-`acs-include/granite/ui/components/include` and removing the leading slash from every `path` value (for example
-`path="/libs/..."` becomes `path="libs/..."`). After that, placeholder/parameter authoring matches ACS Commons,
-with optional `hide` and typed casting on top.
+`acs-include/granite/ui/components/include`. After that, placeholder/parameter authoring,
+`hide` and typed casting work as in ACS Commons.
 
-```xml
-<!-- ui.apps/src/main/content/jcr_root/apps/mysite/components/extendedimage/_cq_dialog/.content.xml -->
-
+```xml title="ui.apps/src/main/content/jcr_root/apps/mysite/components/extendedimage/_cq_dialog/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           xmlns:cq="http://www.day.com/jcr/cq/1.0"
@@ -529,7 +526,7 @@ additional properties.
 
 - [Core Components Releases](https://github.com/adobe/aem-core-wcm-components/releases)
 - [Core Components Library](https://www.aemcomponents.dev/)
-- [Image Core Component](https://www.aemcomponents.dev/content/core-components-examples/library/page-authoring/image.html)
+- [Image Core Component](https://www.aemcomponents.dev/content/core-components-examples/library/core-content/image.html)
 - [Parameterized Namespace Granite Include](https://adobe-consulting-services.github.io/acs-aem-commons/features/granite/parameterized-namespace-include/index.html)
 - [Child Resource From Request Injector](https://adobe-consulting-services.github.io/acs-aem-commons/features/sling-model-injectors/child-resource-from-request/index.html)
 - [JCR Package Manager](http://localhost:4502/crx/packmgr/index.jsp)
