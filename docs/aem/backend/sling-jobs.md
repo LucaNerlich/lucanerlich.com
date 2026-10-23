@@ -273,7 +273,7 @@ OSGi:
 |---------------------|-----------------------------------------------------------------------------------|
 | `ORDERED`           | Jobs processed one at a time, in order; if one fails, the queue pauses            |
 | `UNORDERED`         | Jobs processed in parallel (up to `maxparallel`); failures don't block other jobs |
-| `TOPIC_ROUND_ROBIN` | Distributes jobs across cluster nodes in round-robin fashion                      |
+| `TOPIC_ROUND_ROBIN` | Jobs processed in parallel; the queue starts them round-robin across their topics  |
 
 #### Key properties
 
@@ -292,9 +292,7 @@ OSGi:
 Schedulers execute code at specific times or intervals. AEM supports two patterns.
 
 :::warning[AEMaaCS cluster behaviour]
-Schedulers are local triggers and can fire on more than one instance. For cluster-safe work, keep the
-scheduled `Runnable` small and have it enqueue a Sling Job; let the job consumer do the durable work.
-Avoid `scheduler.runOn`/leader-only assumptions on AEMaaCS.
+Schedulers are local triggers and fire on every instance, so a `Runnable` that enqueues a Sling Job enqueues one job per instance. For once-per-cluster schedules use the Sling Jobs scheduler (`jobManager.createJob(topic).schedule()`), as Adobe recommends.
 :::
 
 ### Pattern 1: OSGi Scheduler service (recommended)
@@ -409,7 +407,7 @@ public void scheduleOneTimeTask(String taskId, long delayMs) {
     options.name(taskId);
     options.canRunConcurrently(false);
 
-    scheduler.schedule(this::executeTask, options);
+    scheduler.schedule((Runnable) this::executeTask, options);
 }
 
 public void schedulePeriodic(String taskId, int intervalSeconds) {
@@ -417,7 +415,7 @@ public void schedulePeriodic(String taskId, int intervalSeconds) {
     options.name(taskId);
     options.canRunConcurrently(false);
 
-    scheduler.schedule(this::executeTask, options);
+    scheduler.schedule((Runnable) this::executeTask, options);
 }
 
 public void cancelSchedule(String taskId) {
@@ -629,8 +627,6 @@ runs on **exactly one node**:
 - Jobs are still persisted and survive restarts
 - The Felix console (`/system/console/slingevent`) is not exposed on Cloud Service; use Developer Console
   logs (or the local SDK) to monitor jobs
-- **Scheduler frequency limits**: avoid scheduling tasks more frequently than every 5 minutes
-  on AEMaaCS; the infrastructure may throttle or de-duplicate
 - For heavy background work, consider **Adobe I/O App Builder** actions triggered by I/O Events
   instead of long-running Sling Jobs
 
@@ -640,8 +636,8 @@ runs on **exactly one node**:
 
 ### Separate scheduling from execution
 
-The scheduler creates the job; the `JobConsumer` does the work. This gives you retries,
-monitoring, and cluster-awareness for free.
+The scheduler creates the job; the `JobConsumer` does the work. This gives you retries and
+monitoring for free.
 
 ### Use meaningful job topics
 
@@ -677,7 +673,7 @@ with a dedicated service user.
 | Jobs execute on all cluster nodes   | This is EventHandler behaviour, not Sling Jobs; make sure you're using `JobManager.addJob()`              |
 | Queue is stuck / paused             | An ORDERED queue pauses when a job fails; check for failed jobs and fix or cancel them                    |
 | Scheduler runs but nothing happens  | Verify the cron expression; check that `scheduler.concurrent` is set correctly                            |
-| Scheduler runs too often on AEMaaCS | AEMaaCS may run multiple instances; use `scheduler.concurrent = false` and Sling Jobs for the actual work |
+| Scheduler runs too often on AEMaaCS | `scheduler.concurrent = false` only stops overlapping runs on one instance; schedule with `JobManager.createJob(topic).schedule()` |
 | Memory issues with bulk jobs        | Process in batches; commit the ResourceResolver periodically; keep paths, not Resource objects, in memory |
 | Job retries endlessly               | Return `JobResult.CANCEL` for permanent failures; configure `queue.retries`                               |
 
