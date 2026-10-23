@@ -41,8 +41,8 @@ recipe is a short checklist with links to the detailed pages.
 
 1. Run the query through the **Explain Query** tool to confirm whether it traverses - [Search & Indexing](/aem/content/search-and-indexing).
 2. Tighten the `path` and `type` constraints.
-3. Define an Oak [property or Lucene index](/aem/beginners-guide/search-and-indexing) that matches the filter + sort.
-4. Deploy the index under `/oak:index` (use the `-custom-N` convention on AEMaaCS) and reindex.
+3. Define an Oak index that matches the filter + sort (Lucene on AEMaaCS; [property or Lucene](/aem/beginners-guide/search-and-indexing) on 6.5).
+4. Deploy the index under `/oak:index` (use the `-custom-N` convention on AEMaaCS, where the deployment reindexes it; reindex manually only on 6.5).
 
 ## Bulk-edit existing content
 
