@@ -54,8 +54,7 @@ programmatic publishing you must enumerate and replicate them yourself.
 
 ### Scheduling (on/off time)
 
-Use **Manage Publication > Later** to schedule activation/deactivation, or set the page's **On Time /
-Off Time** properties so a page goes live (or expires) automatically.
+Use **Manage Publication > Later** to schedule activation/deactivation. **On Time / Off Time** only show or hide a page that is already published; they do not publish or unpublish it.
 
 ## How replication works under the hood
 
@@ -65,14 +64,13 @@ On AEM 6.5, replication is driven by **replication agents** (configured at
 
 On **AEM as a Cloud Service**, the classic agent model is replaced by **Sling Content Distribution
 (SCD)** and a managed pipeline - you do **not** configure replication agents. Content authored on the
-author service is distributed to the publish service through Adobe-managed infrastructure, and cache
-invalidation flows to the CDN automatically.
+author service is distributed to the publish service through Adobe-managed infrastructure, and the publish tier invalidates its Dispatcher cache automatically; the CDN is not flushed and serves cached copies until their TTL expires.
 
 | | AEM 6.5 | AEM as a Cloud Service |
 |---|---|---|
 | Mechanism | Replication agents | Sling Content Distribution (managed) |
 | Configuration | `/etc/replication/agents.*` | None - Adobe-managed |
-| Cache flush | Dispatcher Flush agent | Automatic CDN/Dispatcher invalidation |
+| Cache flush | Dispatcher Flush agent | Automatic Dispatcher invalidation; CDN expires by TTL |
 | API | `Replicator` | `Replicator` (still works) |
 
 :::note[Terminology]
@@ -113,7 +111,7 @@ see the [Replication & Activation](../content/replication-activation.mdx) refere
 
 Publishing updates the publish repository, but visitors hit the **Dispatcher** (and CDN) cache. A
 stale cache means visitors keep seeing old content. On 6.5 a Dispatcher Flush agent invalidates the
-affected paths; on AEMaaCS invalidation is automatic. See
+affected paths; on AEMaaCS Dispatcher invalidation is automatic, while the CDN expires content by TTL. See
 [Dispatcher & Caching](./18-dispatcher-and-caching.md) for cache rules and `statfileslevel`.
 
 ## Troubleshooting
@@ -127,7 +125,7 @@ affected paths; on AEMaaCS invalidation is automatic. See
 | Works on author, 404 on publish | Page or its template/policy not published | Publish `/conf` template + the page |
 
 On 6.5 inspect queues at **Tools > Deployment > Replication** or the agent's **Test Connection** /
-**View Queue**. On AEMaaCS use the **Developer Console** and the distribution logs.
+**View Queue**. On AEMaaCS use **Tools > Deployment > Distribution** (agent status, logs, and queue).
 
 ## Summary
 
