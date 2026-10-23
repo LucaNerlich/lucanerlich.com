@@ -90,13 +90,14 @@ is powerful for fine-grained control without creating ACEs on every node:
 
 ### Common glob patterns
 
-| Pattern            | Matches                                                    |
+| Pattern            | Matches (for an ACE on `/foo`)                             |
 |--------------------|------------------------------------------------------------|
 | `""` (empty)       | Only the node itself                                       |
-| `*`                | Direct children only                                       |
-| `*/jcr:content`    | `jcr:content` of direct children                           |
-| `*/jcr:content*`   | `jcr:content` and everything below it, for direct children |
-| `/*/jcr:content/*` | Properties/children under `jcr:content` at depth 2         |
+| `/*`               | All descendants, not the node itself                       |
+| `*`                | `/foo`, siblings whose names start with `foo`, and all their descendants |
+| `*/jcr:content`    | Every `jcr:content` at any depth below `/foo` (and below `foo*` siblings) |
+| `*/jcr:content*`   | Every `jcr:content` subtree at any depth below `/foo` (and `foo*` siblings) |
+| `/*/jcr:content/*` | Everything below a `jcr:content` that is at least two levels below `/foo` |
 
 ### Example: Read-only access to page properties
 
@@ -118,7 +119,8 @@ manage users, groups, service users, and ACLs declaratively:
 ```text title="ui.config/.../org.apache.sling.jcr.repoinit.RepositoryInitializer~myproject.cfg.json"
 {
     "scripts": [
-        "ensure nodes (sling:OrderedFolder) /content/mysite /content/dam/mysite",
+        "ensure nodes /content/mysite",
+        "ensure nodes /content/dam/mysite",
         "create service user myproject-service-user with path system/cq:services/myproject",
         "set ACL for myproject-service-user\n    allow jcr:read on /content/mysite\n    allow rep:write on /content/mysite\n    allow jcr:read on /content/dam/mysite\nend",
         "create group content-authors with path /home/groups/myproject",
@@ -157,7 +159,7 @@ de facto standard for managing AEM permissions in enterprise projects. It provid
 | **Format**           | Custom DSL in JSON | YAML                                   |
 | **Readability**      | Moderate           | Excellent                              |
 | **Group management** | Basic              | Full (hierarchy, membership, profiles) |
-| **ACL management**   | Full               | Full (with glob, restrictions, CUGs)   |
+| **ACL management**   | Full               | Full (with glob, restrictions)         |
 | **Idempotent**       | Yes                | Yes                                    |
 | **Dump existing**    | No                 | Yes (`acl-dump`)                       |
 | **Validation**       | Runtime only       | Pre-deploy validation                  |
@@ -171,18 +173,14 @@ Add the ACL Tool to your project:
 ```xml title="all/pom.xml (embedded dependency)"
 <dependency>
     <groupId>biz.netcentric.cq.tools.accesscontroltool</groupId>
-    <artifactId>accesscontroltool-bundle</artifactId>
-    <version>3.7.0</version>
-</dependency>
-<dependency>
-    <groupId>biz.netcentric.cq.tools.accesscontroltool</groupId>
     <artifactId>accesscontroltool-package</artifactId>
-    <version>3.7.0</version>
+    <version>4.2.4</version>
     <type>zip</type>
+    <classifier>cloud</classifier>
 </dependency>
 ```
 
-Embed it in your `all` package as a container dependency.
+Embed it in your `all` package as a container dependency (omit `<classifier>cloud</classifier>` on AEM 6.5).
 
 ### YAML Configuration
 
@@ -215,60 +213,61 @@ ACL definitions are stored in YAML files under your `ui.config` or `ui.apps` pac
 
 ```yaml title="ui.apps/.../acl/myproject-acls.yaml"
 # ACL definitions
-- content-authors:
+- ace_config:
+    - content-authors:
 
-    # Content pages: read, write, replicate
-    - path: /content/mysite
-      permission: allow
-      privileges: jcr:read,rep:write,crx:replicate
-      actions:
+        # Content pages: read, write, replicate
+        - path: /content/mysite
+          permission: allow
+          privileges: jcr:read,rep:write,crx:replicate
+          actions:
 
-    # DAM: read-only
-    - path: /content/dam/mysite
-      permission: allow
-      privileges: jcr:read
+        # DAM: read-only
+        - path: /content/dam/mysite
+          permission: allow
+          privileges: jcr:read
 
-    # Tags: read and create
-    - path: /content/cq:tags/mysite
-      permission: allow
-      privileges: jcr:read,jcr:addChildNodes,jcr:modifyProperties
+        # Tags: read and create
+        - path: /content/cq:tags/mysite
+          permission: allow
+          privileges: jcr:read,jcr:addChildNodes,jcr:modifyProperties
 
-    # Deny deleting top-level pages
-    - path: /content/mysite
-      permission: deny
-      privileges: jcr:removeNode
-      repGlob: ""
+        # Deny deleting top-level pages
+        - path: /content/mysite
+          permission: deny
+          privileges: jcr:removeNode
+          repGlob: ""
 
-    # Experience Fragments: read and write
-    - path: /content/experience-fragments/mysite
-      permission: allow
-      privileges: jcr:read,rep:write
+        # Experience Fragments: read and write
+        - path: /content/experience-fragments/mysite
+          permission: allow
+          privileges: jcr:read,rep:write
 
-- dam-contributors:
+    - dam-contributors:
 
-    - path: /content/dam/mysite
-      permission: allow
-      privileges: jcr:read,rep:write
+        - path: /content/dam/mysite
+          permission: allow
+          privileges: jcr:read,rep:write
 
-    # Deny publish (requires approval workflow)
-    - path: /content/dam/mysite
-      permission: deny
-      privileges: crx:replicate
+        # Deny publish (requires approval workflow)
+        - path: /content/dam/mysite
+          permission: deny
+          privileges: crx:replicate
 
-- site-admins:
+    - site-admins:
 
-    # Full access
-    - path: /content/mysite
-      permission: allow
-      privileges: jcr:all
+        # Full access
+        - path: /content/mysite
+          permission: allow
+          privileges: jcr:all
 
-    - path: /content/dam/mysite
-      permission: allow
-      privileges: jcr:all
+        - path: /content/dam/mysite
+          permission: allow
+          privileges: jcr:all
 
-    - path: /content/experience-fragments/mysite
-      permission: allow
-      privileges: jcr:all
+        - path: /content/experience-fragments/mysite
+          permission: allow
+          privileges: jcr:all
 ```
 
 ### Applying ACLs
@@ -279,7 +278,7 @@ can be triggered manually:
 ```bash
 # Via curl (on-prem / SDK)
 curl -u admin:admin -X POST \
-  "http://localhost:4502/system/console/jmx/biz.netcentric.cq.tools.accesscontroltool:type=ACTService/op/apply"
+  "http://localhost:4502/system/console/jmx/biz.netcentric.cq.tools:type=ACTool/op/apply/"
 ```
 
 ### Dumping existing permissions
@@ -287,10 +286,9 @@ curl -u admin:admin -X POST \
 Export the current ACL state to YAML for analysis or migration:
 
 ```bash
-# Dump all permissions for a group
-curl -u admin:admin \
-  "http://localhost:4502/system/console/jmx/biz.netcentric.cq.tools.accesscontroltool:type=ACTService/op/getDump/java.lang.String" \
-  -d "p0=content-authors"
+# Dump all ACEs grouped by principal
+curl -u admin:admin -X POST \
+  "http://localhost:4502/system/console/jmx/biz.netcentric.cq.tools:type=ACTool/op/groupBasedDump/"
 ```
 
 Or use the **ACL Tool dump** page in the Felix console:
@@ -301,37 +299,24 @@ Or use the **ACL Tool dump** page in the Felix console:
 #### Glob restrictions
 
 ```yaml
-- content-authors:
-    - path: /content/mysite
-      permission: allow
-      privileges: jcr:read
-      repGlob: "*/jcr:content*"
-```
-
-#### CUG (Closed User Group)
-
-```yaml
-- premium-users:
-    - path: /content/mysite/premium
-      permission: allow
-      privileges: jcr:read
-      actions: read
-
-# Set CUG on the premium section
-- cug_config:
-    - path: /content/mysite/premium
-      principalNames: premium-users
+- ace_config:
+    - content-authors:
+        - path: /content/mysite
+          permission: allow
+          privileges: jcr:read
+          repGlob: "*/jcr:content*"
 ```
 
 #### Conditional ACLs (per run mode)
 
-```yaml
-# Only apply on publish
-- content-authors:
-    - path: /content/mysite
-      permission: allow
-      privileges: jcr:read
-      runModes: publish
+To limit ACLs to a specific run mode, place the YAML file in a run-mode-specific configuration folder (e.g. `myproject.publish`):
+
+```yaml title="ui.apps/.../acl/myproject.publish/myproject-acls.yaml"
+- ace_config:
+    - content-authors:
+        - path: /content/mysite
+          permission: allow
+          privileges: jcr:read
 ```
 
 ---
@@ -348,6 +333,9 @@ They replace the deprecated `loginAdministrative()` approach.
 ```text
 create service user myproject-content-reader with path system/cq:services/myproject
 
+ensure nodes /content/mysite
+ensure nodes /content/dam/mysite
+
 set ACL for myproject-content-reader
     allow jcr:read on /content/mysite
     allow jcr:read on /content/dam/mysite
@@ -357,18 +345,19 @@ end
 **Netcentric ACL Tool:**
 
 ```yaml
-- system_users:
+- user_config:
     - myproject-content-reader:
         path: /home/users/system/myproject
-        isMemberOf:
+        isSystemUser: true
 
-- myproject-content-reader:
-    - path: /content/mysite
-      permission: allow
-      privileges: jcr:read
-    - path: /content/dam/mysite
-      permission: allow
-      privileges: jcr:read
+- ace_config:
+    - myproject-content-reader:
+        - path: /content/mysite
+          permission: allow
+          privileges: jcr:read
+        - path: /content/dam/mysite
+          permission: allow
+          privileges: jcr:read
 ```
 
 ### Service user mapping
@@ -468,8 +457,7 @@ equivalent, `<accessControlHandling>merge</accessControlHandling>` - see the
 
 Sling repoinit does not provide a portable `set CUG` statement. Deploy the
 `rep:cugPolicy` node as access-control content in a package (with access-control
-handling set to `merge`) or let a tool such as the Netcentric ACL Tool write the CUG.
-Also make sure Oak CUG support is enabled for the intended roots (for example
+handling set to `merge`). Also make sure Oak CUG support is enabled for the intended roots (for example
 `/content`) in the CUG OSGi configuration; otherwise the policy is ignored.
 
 ### How CUGs work
@@ -527,10 +515,11 @@ for (AccessControlPolicy policy : acm.getPolicies("/content/mysite")) {
 
 if (acl == null) {
     // Create a new ACL
-    for (AccessControlPolicy policy : acm.getApplicablePolicies("/content/mysite")) {
+    javax.jcr.security.AccessControlPolicyIterator it = acm.getApplicablePolicies("/content/mysite");
+    while (acl == null && it.hasNext()) {
+        AccessControlPolicy policy = it.nextAccessControlPolicy();
         if (policy instanceof JackrabbitAccessControlList) {
             acl = (JackrabbitAccessControlList) policy;
-            break;
         }
     }
 }
@@ -561,15 +550,6 @@ Use **User Admin** or the Impersonate feature to test as a specific user:
 2. Select a user
 3. Click **Impersonate**
 4. Browse the site as that user
-
-### Permission checker
-
-On the local SDK or AEM 6.5, AEM provides a permission check endpoint (on AEMaaCS the
-Felix console is not exposed):
-
-```http
-GET /system/console/jcr?path=/content/mysite&user=content-author-user
-```
 
 ### Groovy Console
 
