@@ -47,7 +47,7 @@ the Dispatcher. Adobe discourages them for anything content-related.
 
 ### Resource-type-bound servlet (returns JSON)
 
-This servlet responds to `<page>.children.json` and returns the page's child pages as JSON:
+This servlet responds to `<page>/jcr:content.children.json` and returns the page's child pages as JSON:
 
 ```java title="core/.../servlets/ChildPagesServlet.java"
 import com.day.cq.wcm.api.Page;
@@ -177,7 +177,7 @@ You learned:
 
 ## Official Documentation
 
-- [Servlets and Request Handling (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/development/understand-java-api-best-practices)
+- [Java API Best Practices (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/development/understand-java-api-best-practices)
 - [Apache Sling Servlets & Scripts](https://sling.apache.org/documentation/the-sling-engine/servlets.html)
 - [Servlets deep dive](../backend/servlets.mdx) - registration patterns, selectors, and security on this site
 
