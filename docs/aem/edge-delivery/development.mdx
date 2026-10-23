@@ -23,7 +23,8 @@ my-eds-project/
 ├── scripts/             # Global scripts
 │   ├── aem.js           # EDS runtime (provided)
 │   ├── scripts.js       # Global initialisation
-│   └── delayed.js       # Deferred scripts (analytics, etc.)
+│   ├── consent-check.js # Delayed phase consent gating
+│   └── consented.js     # Deferred scripts (analytics, etc.)
 ├── styles/              # Global styles
 │   ├── styles.css       # Main stylesheet
 │   ├── lazy-styles.css  # Below-the-fold styles
@@ -50,12 +51,13 @@ my-eds-project/
 | `head.html` | Additional `<head>` tags (meta, preload, third-party scripts) |
 | `scripts/aem.js` | EDS runtime: block loading, section loading, LCP optimisation |
 | `scripts/scripts.js` | Your global initialisation code |
-| `scripts/delayed.js` | Scripts loaded about three seconds after page load (analytics, chat widgets) |
+| `scripts/consent-check.js`, `scripts/consented.js` | Scripts loaded after consent in the delayed phase (analytics, chat widgets; older projects: `delayed.js`) |
 
 Site-level settings such as custom response headers, CDN configuration, access control, and
 Sidekick configuration are **not** repository files. They live in the site configuration, managed
 through the [Configuration Service](./admin-api.mdx#config---configuration-service) (or, in older
-document-based projects, in `.helix/config` and `.helix/headers` spreadsheets). See
+document-based projects, in `.helix/config` and `.helix/headers` spreadsheets, with Sidekick settings
+in the repository's `tools/sidekick/config.json`). See
 [Customizing](./customizing.mdx) for `head.html`, `scripts.js`, `aem.js` overrides, and response headers.
 
 ## fstab.yaml
@@ -84,15 +86,13 @@ route between them at the CDN.
 
 ## paths.json
 
-AEM-authored (Universal Editor) projects use `paths.json` to map AEM repository paths to public
-URLs and to declare which AEM paths may be published to Edge Delivery:
+Repository-configured AEM-authored (Universal Editor) projects use `paths.json` to map AEM repository paths to public
+URLs and to declare which AEM paths may be published to Edge Delivery (Configuration Service sites set this under `paths` in the site's `public.json`):
 
 ```json title="paths.json"
 {
     "mappings": [
-        "/content/mysite/:/",
-        "/content/mysite/configuration:/.helix/config.json",
-        "/content/mysite/metadata:/metadata.json"
+        "/content/mysite/:/"
     ],
     "includes": [
         "/content/mysite/"
