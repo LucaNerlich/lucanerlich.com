@@ -1,7 +1,7 @@
 import type {ReactNode} from 'react';
 import {useId, useMemo, useState} from 'react';
 
-import DemoShell, {demoShellStyles as shell} from '../DemoShell';
+import DemoShell, {SelectControl, demoShellStyles as shell} from '../DemoShell';
 import styles from './IntlFormatDemo.module.css';
 
 const LOCALES = ['en-US', 'de-DE', 'fr-FR', 'ja-JP', 'ar-EG'] as const;
@@ -50,32 +50,20 @@ export default function IntlFormatDemo(): ReactNode {
             footer="Output uses the browser's built-in Intl APIs -- no extra libraries."
             controls={
                 <>
-                    <label className={shell.control} htmlFor={ids.locale}>
-                        <span className={shell.controlLabel}>locale</span>
-                        <select
-                            id={ids.locale}
-                            className={shell.select}
-                            value={locale}
-                            onChange={(event) => setLocale(event.target.value as typeof locale)}
-                        >
-                            {LOCALES.map((value) => (
-                                <option key={value} value={value}>{value}</option>
-                            ))}
-                        </select>
-                    </label>
-                    <label className={shell.control} htmlFor={ids.currency}>
-                        <span className={shell.controlLabel}>currency</span>
-                        <select
-                            id={ids.currency}
-                            className={shell.select}
-                            value={currency}
-                            onChange={(event) => setCurrency(event.target.value as typeof currency)}
-                        >
-                            {CURRENCIES.map((value) => (
-                                <option key={value} value={value}>{value}</option>
-                            ))}
-                        </select>
-                    </label>
+                    <SelectControl
+                        id={ids.locale}
+                        label="locale"
+                        value={locale}
+                        options={LOCALES.map((value) => ({value, label: value}))}
+                        onChange={(value) => setLocale(value as typeof locale)}
+                    />
+                    <SelectControl
+                        id={ids.currency}
+                        label="currency"
+                        value={currency}
+                        options={CURRENCIES.map((value) => ({value, label: value}))}
+                        onChange={(value) => setCurrency(value as typeof currency)}
+                    />
                     <label className={shell.control} htmlFor={ids.amount}>
                         <span className={shell.controlLabel}>amount</span>
                         <input
