@@ -136,7 +136,7 @@ Restrict console access to trusted admin groups only:
 | `allowedGroups` | Groups authorized to execute scripts. Only `admin` user has access by default | `[]` |
 | `allowedScheduledJobsGroups` | Groups authorized to schedule jobs | `[]` |
 | `auditDisabled` | Disable auditing of script execution history | `false` |
-| `displayAllAuditRecords` | Show audit records from all users (not just current) | `false` |
+| `auditDisplayAll` | Show audit records from all users (not just current) | `false` |
 | `emailEnabled` | Send email notifications on script completion | `false` |
 | `emailRecipients` | Email addresses to notify | `[]` |
 | `threadTimeout` | Seconds before a script is interrupted (0 = no timeout) | `0` |
@@ -157,7 +157,6 @@ Every script automatically has access to these pre-bound variables - no imports 
 | `session` | `javax.jcr.Session` | The current JCR session |
 | `resourceResolver` | `ResourceResolver` | Sling resource resolver for the current user |
 | `pageManager` | `PageManager` | AEM page management API |
-| `queryBuilder` | `QueryBuilder` | AEM QueryBuilder API |
 | `bundleContext` | `BundleContext` | OSGi bundle context for accessing services |
 | `log` | `Logger` | SLF4J logger (output appears in `error.log`) |
 | `out` | `PrintStream` | Writes output to the console result panel |
@@ -173,6 +172,7 @@ The console also adds convenience methods to the script class:
 | Method | Description |
 |--------|-------------|
 | `getService(Class)` / `getService(String)` | Return one OSGi service |
+| `createQuery(Map)` | Creates a QueryBuilder `Query` from a predicates map |
 | `getServices(Class, String)` / `getServices(String, String)` | Return OSGi services matching an LDAP filter |
 | `getResource(String)` | Resolve a Sling resource |
 | `getPage(String)` | Resolve a CQ page |
@@ -321,9 +321,8 @@ while (true) {
         out.println("Found: ${path}${title ? " | title='${title}'" : ''}")
 
         if (!DRY_RUN) {
-            // Use an unprefixed property name; a prefix like 'demo:' requires
-            // the namespace to be registered on the JCR NamespaceRegistry first.
-            node.setProperty('lastScanned', java.time.Instant.now().toString())
+            // cq:Page and dam:Asset nodes accept no custom properties - write to jcr:content
+            (node.hasNode('jcr:content') ? node.getNode('jcr:content') : node).setProperty('lastScanned', java.time.Instant.now().toString())
             mutated++
         }
     }
@@ -636,8 +635,6 @@ out.println("Created ${count} pages (DRY_RUN=${DRY_RUN})")
 Use the AEM QueryBuilder API instead of raw SQL2:
 
 ```groovy
-import com.day.cq.search.PredicateGroup
-
 def params = [
     'path'           : '/content/my-site',
     'type'           : 'cq:Page',
@@ -647,7 +644,7 @@ def params = [
     'p.limit'        : '-1'  // all results (use with caution)
 ]
 
-def query = queryBuilder.createQuery(PredicateGroup.create(params), session)
+def query = createQuery(params)
 def result = query.result
 
 out.println("Found ${result.totalMatches} pages")
@@ -695,7 +692,7 @@ if (group == null) {
 }
 
 int count = 0
-group.getMembers().each { Authorizable member ->
+group.getDeclaredMembers().each { Authorizable member ->
     out.println("${member.getID()}${member instanceof Group ? ' (group)' : ''} -> ${member.path}")
     count++
 }
@@ -871,8 +868,7 @@ resourceResolver.getResource(BASE_PATH).listChildren().each { child ->
         'fulltext': '"' + child.path + '"',
         'p.limit' : '1'
     ]
-    def result = queryBuilder.createQuery(
-        com.day.cq.search.PredicateGroup.create(params), session).result
+    def result = createQuery(params).result
 
     if (result.totalMatches == 0) {
         out.println("POSSIBLE ORPHAN: ${child.path}")
@@ -888,7 +884,7 @@ return orphans
 :::warning["Unreferenced" is not "safe to delete"]
 This is a **full-text heuristic**: it can miss references (external systems, hardcoded URLs, rich-text
 HTML, paths split across properties) and is only as good as the search index. For an authoritative
-answer, enumerate the known reference properties or use `com.day.cq.wcm.api.reference.ReferenceSearch`.
+answer, enumerate the known reference properties or use `com.day.cq.wcm.commons.ReferenceSearch`.
 Always review the list (and back up) before deleting.
 :::
 
@@ -1036,7 +1032,7 @@ The Groovy Console can be extended with custom bindings, metaclasses, and compil
 |---------------------|---------|
 | `BindingExtensionProvider` | Add custom variables (e.g. project-specific helpers) to every script execution |
 | `CompilationCustomizerExtensionProvider` | Restrict or enhance language features, provide AST transformations |
-| `ScriptMetaClassExtensionProvider` | Add methods to the script class at runtime (e.g. `node.doSomething()`) |
+| `ScriptMetaClassExtensionProvider` | Add methods to the script class at runtime (e.g. a top-level `doSomething()`) |
 | `StarImportExtensionProvider` | Provide additional star imports for the compiler |
 | `NotificationService` | Custom notifications after script execution (e.g. Slack, Teams) |
 
@@ -1045,6 +1041,7 @@ Example: adding a custom binding that provides a `projectHelper` object to all s
 ```java title="core/src/main/java/com/example/core/groovy/ProjectBindingProvider.java"
 import be.orbinson.aem.groovy.console.api.BindingExtensionProvider;
 import be.orbinson.aem.groovy.console.api.BindingVariable;
+import be.orbinson.aem.groovy.console.api.context.ScriptContext;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.osgi.service.component.annotations.Component;
@@ -1053,7 +1050,7 @@ import org.osgi.service.component.annotations.Component;
 public class ProjectBindingProvider implements BindingExtensionProvider {
 
     @Override
-    public Map<String, BindingVariable> getBindingVariables() {
+    public Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
         Map<String, BindingVariable> variables = new LinkedHashMap<>();
         variables.put("projectName", new BindingVariable("my-project", String.class));
         return variables;
