@@ -100,12 +100,12 @@ Files under `resources/` are served as-is (fonts, images, SVGs) and are accessib
 /etc.clientlibs/myproject/clientlibs/clientlib-site/resources/fonts/myfont.woff2
 ```
 
-Reference them in CSS with relative paths:
+Reference them in CSS with paths relative to the CSS file (here `css/`):
 
 ```css
 @font-face {
     font-family: 'MyFont';
-    src: url('resources/fonts/myfont.woff2') format('woff2');
+    src: url('../resources/fonts/myfont.woff2') format('woff2');
 }
 ```
 
@@ -266,14 +266,18 @@ Pass an array:
 
 ### Async and defer loading
 
-For non-blocking JS loading, use the `loading` attribute:
+AEM's default `/libs/granite/sightly/templates/clientlib.html` does not support `async` or `defer` attributes. To load scripts with `defer` or `async`, use the Core Components `ClientLibraries` model:
 
 ```html
 <!-- Defer: execute after HTML parsing, maintain order -->
-<sly data-sly-call="${clientlib.js @ categories='myproject.site', loading='defer'}"/>
+<sly data-sly-use.clientlibs="${'com.adobe.cq.wcm.core.components.models.ClientLibraries' @ categories='myproject.site', defer=true}">
+    ${clientlibs.jsIncludes @ context="unsafe"}
+</sly>
 
 <!-- Async: execute as soon as downloaded, no order guarantee -->
-<sly data-sly-call="${clientlib.js @ categories='myproject.analytics', loading='async'}"/>
+<sly data-sly-use.clientlibs="${'com.adobe.cq.wcm.core.components.models.ClientLibraries' @ categories='myproject.analytics', async=true}">
+    ${clientlibs.jsIncludes @ context="unsafe"}
+</sly>
 ```
 
 ### Optimal page template placement
@@ -297,7 +301,7 @@ For best performance, split CSS and JS loading:
     </div>
 
     <!-- JS at the end of body: doesn't block rendering -->
-    <sly data-sly-call="${clientlib.js @ categories='myproject.site', loading='defer'}"/>
+    <sly data-sly-call="${clientlib.js @ categories='myproject.site'}"/>
 </body>
 </html>
 ```
@@ -336,7 +340,7 @@ AEM's **HTML Library Manager** handles minification and aggregation at runtime.
 | `htmllibmanager.debug` | Serve individual unminified files (like `?debugClientLibs=true` permanently) | `false` |
 | `htmllibmanager.gzip` | Enable GZip compression of clientlib output | `true` |
 | `htmllibmanager.timing` | Log timing information for clientlib processing | `false` |
-| `htmllibmanager.maxage` | Cache-Control max-age in seconds (604800 = 7 days) | `604800` |
+| `htmllibmanager.maxage` | Cache-Control max-age in seconds (604800 = 7 days) | `< 0` (disabled) |
 
 :::warning[AEM as a Cloud Service]
 Do not rely on the HTML Library Manager OSGi configuration to set system-wide minifiers in an AEMaaCS full-stack
@@ -448,16 +452,14 @@ Check the `dumplibs` tool if styles or scripts are not loading
 
 ### Built-in LESS compiler
 
-AEM includes a LESS compiler that processes `.less` files at runtime. Configure it via the
-`cssProcessor` property:
+AEM compiles `.less` files listed in `css.txt` natively at runtime; no `cssProcessor` setting is needed:
 
 ```xml title=".content.xml with LESS support"
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
           jcr:primaryType="cq:ClientLibraryFolder"
           allowProxy="{Boolean}true"
-          categories="[myproject.site]"
-          cssProcessor="[default:less, min:yui]"/>
+          categories="[myproject.site]"/>
 ```
 
 Then reference `.less` files in `css.txt`:
@@ -470,7 +472,7 @@ styles.less
 
 ### SCSS, TypeScript, and modern tooling
 
-AEM does **not** include built-in support for SCSS, TypeScript, or PostCSS. For these, use the
+AEM does **not** include built-in support for SCSS or PostCSS, and its built-in `typescript` preprocessor is discouraged on AEMaaCS. For these, use the
 `ui.frontend` module with a webpack or Vite build pipeline. The build output is plain CSS/JS that
 AEM serves as a regular clientlib.
 
@@ -571,7 +573,7 @@ multi-tenancy setup, see [Multi-Tenancy UI Frontend Themes](./ui/multi-tenancy-s
 - **Use `dependencies` for shared vendor libraries** - so they are cached once and reused across clientlibs.
 - **Split CSS and JS loading** - CSS in the `<head>`, JS at the end of `<body>` with `defer`. Avoids render-blocking.
 - **Disable AEM minification when using `ui.frontend`** - set `cssProcessor` and `jsProcessor` to `none` if webpack/Vite already minifies.
-- **Use the `ui.frontend` module for SCSS, TypeScript, or complex builds** - AEM's built-in processing is limited to LESS and basic minification.
+- **Use the `ui.frontend` module for SCSS, TypeScript, or complex builds** - AEM's built-in processing is limited to LESS, a basic `typescript` preprocessor, and YUI/GCC minification.
 - **Test with `?debugClientLibs=true`** during development to verify individual files load correctly.
 - **Check the dump libs tool** after deployments to detect category collisions or broken dependencies.
 - **Never put sensitive data in clientlibs** - they are publicly accessible on publish. No API keys, tokens, or server-side logic.
@@ -631,7 +633,7 @@ Always add `allowProxy="{Boolean}true"` and reference the proxy URL in Dispatche
 </head>
 <body>
     <!-- page content -->
-    <sly data-sly-call="${clientlib.js @ categories='myproject.site', loading='defer'}"/>
+    <sly data-sly-call="${clientlib.js @ categories='myproject.site'}"/>
 </body>
 ```
 
