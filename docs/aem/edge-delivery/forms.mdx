@@ -116,8 +116,10 @@ a structured error response that the block displays inline.
 Edge delivery means the form is *very* fast to load - attackers will find it. Pick
 at least one of:
 
-- **CAPTCHA** - reCAPTCHA, Cloudflare Turnstile, hCaptcha. Render in `delayed.js`
-  to keep LCP clean.
+- **CAPTCHA** - reCAPTCHA, Cloudflare Turnstile, hCaptcha. Load dynamically within
+  the form block (e.g. on form interaction or when entering viewport) rather than in
+  `consented.js`, ensuring anti-bot protection works when users decline marketing
+  cookies while keeping initial LCP clean.
 - **Honeypot field** - an `<input>` hidden with CSS that humans never fill but bots
   often do.
 - **Time check** - record the load timestamp; reject submissions submitted faster
