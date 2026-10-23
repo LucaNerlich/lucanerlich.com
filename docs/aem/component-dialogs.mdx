@@ -97,7 +97,7 @@ For a first component, the [beginners guide dialog chapter](./beginners-guide/06
 
 - Missing `name`, or a `name` without the `./` prefix. The field renders and the POST goes nowhere useful.
 - A checkbox with no `uncheckedValue`. Clearing it deletes the property, so the model sees `null` instead of `false`.
-- A select or radio with no `selected` item. The closed dialog shows the first option, and nothing is stored until the author changes it.
+- A select with no `selected` item stores its first option on save; a radio group with no `checked` item stores nothing.
 - Treating the multifield's own node name as the JCR name. For a composite multifield the stored node is the `name` on the inner `field` container.
 - `min-items` / `max-items` with no validator. Those data attributes are inert until the [multifield validator](./components/dialog-validation.mdx#multifield-min--max-items) is registered.
 - `required` on a field that show/hide can hide. The `hide` class does not turn validation off, so save stays blocked.
@@ -288,11 +288,10 @@ A Sling Model `long` converts the string and hides the mismatch until a query or
 
 | `filter` | Picker shows |
 |----------|----------------|
-| `hierarchyNotFile` | Pages and folders, not assets |
-| `nosystem` | Hides `/apps`, `/libs`, and other system paths |
-| omitted | Pages and assets |
+| `hierarchyNotFile` (default) | Pages, folders and assets; hides `nt:file` nodes |
+| `nosystem` | Hides `rep:*` nodes and `jcr:system` |
 
-An asset picker uses `rootPath="/content/dam"` and no `filter`. `hierarchyNotFile` on a DAM root hides the assets you wanted the author to pick.
+An asset picker uses `rootPath="/content/dam"` and no `filter`.
 
 ![Pathfield](/images/aem/dialogfields/pathfield.png)
 
@@ -372,23 +371,6 @@ In legacy AEM 6.5 codebases you might still encounter the older Coral 2 `pathbro
 
 ![Checkbox](/images/aem/dialogfields/checkbox.png)
 
-### Checkbox group
-
-```xml
-<checkboxGroup
-    jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/form/checkboxgroup"
-    fieldLabel="Options"
-    name="./options">
-    <items jcr:primaryType="nt:unstructured">
-        <optA text="Option A" value="a" jcr:primaryType="nt:unstructured"/>
-        <optB text="Option B" value="b" jcr:primaryType="nt:unstructured"/>
-    </items>
-</checkboxGroup>
-```
-
-Checked options are stored as a `String[]` on `./options`. Read it with `@ValueMapValue private String[] options`. There is no `uncheckedValue` here: clearing every box removes the property.
-
 ### Switch
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html)
@@ -404,23 +386,9 @@ Checked options are stored as a `String[]` on `./options`. Read it with `@ValueM
    value="{Boolean}true"/>
 ```
 
-A switch persists the same way as a checkbox: `value` when on, `uncheckedValue` when off, property deleted when `uncheckedValue` is missing. `onText` and `offText` replace the default labels.
+A switch posts `value` (default `true`) when on and `uncheckedValue` (default `false`) when off.
 
 ![Switch](/images/aem/dialogfields/switch.png)
-
-#### Switch with labels
-
-```xml
-<switch
-   jcr:primaryType="nt:unstructured"
-   sling:resourceType="granite/ui/components/coral/foundation/form/switch"
-   fieldLabel="Enable feature"
-   onText="On"
-   offText="Off"
-   name="./featureEnabled"
-   uncheckedValue="{Boolean}false"
-   value="{Boolean}true"/>
-```
 
 ### Datepicker
 
@@ -439,7 +407,7 @@ A switch persists the same way as a checkbox: `value` when on, `uncheckedValue` 
 
 `displayedFormat` uses [Moment](https://momentjs.com/docs/#/displaying/format/) tokens, not `SimpleDateFormat`. `DD` is the day of the month and `dd` is the day of the week, so a Java-style `dd-MM-yyyy` renders the weekday. `YYYY-MM-DD` is the usual date-only format.
 
-`type` is `date`, `time`, or `datetime`. `typeHint="Date"` stores a JCR Date, which a `Calendar` injection can read. Without the hint the value is an ISO string and the `Calendar` comes back null.
+`type` is `date`, `time`, or `datetime`. The datepicker posts `@TypeHint` itself (`typeHint` defaults to `Date`), so the value is a JCR Date that a `Calendar` injection can read.
 
 ![Datepicker](/images/aem/dialogfields/datepicker.png)
 
@@ -505,8 +473,7 @@ You can also restrict to a predefined palette by providing custom swatches:
 
 :::warning
 Dialog passwords are stored as plain text in the JCR. For actual secrets, use
-[OSGi secret configurations](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/deploying/configuring-osgi#secret-configuration-values)
-or context-aware configurations instead.
+[OSGi secret configurations](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/deploying/configuring-osgi#secret-configuration-values) instead.
 :::
 
 ### Button Group
@@ -587,7 +554,7 @@ For client-side toggles (show/hide based on a checkbox or select), prefer dialog
 
 ### Native showhide with cq-dialog-dropdown-showhide
 
-The dialog editor already loads `cq.authoring.dialog`, and that clientlib contains Adobe's show/hide script. You do not register anything. A select (or checkbox) with the class below toggles every element that carries the matching target class and `showhidetargetvalue`.
+The dialog editor already loads `cq.authoring.dialog`, and that clientlib contains Adobe's show/hide script. You do not register anything. A select with the class below toggles every element that carries the matching target class and `showhidetargetvalue`.
 
 **Dropdown-controlled target**
 
@@ -653,33 +620,6 @@ How Adobe's script resolves it:
 :::warning[A hidden required field still blocks save]
 The script toggles `hide`. It does not disable Foundation validation. A target with `required="{Boolean}true"` fails the dialog while it is hidden. Leave `required` off fields that can be hidden, or register a validator that skips `.hide` ancestors. See [Dialog Validation](./components/dialog-validation.mdx).
 :::
-
-**Checkbox-controlled target** (same idea, different class)
-
-```xml
-<enableAnalytics
-    jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
-    text="Enable analytics tracking"
-    name="./enableAnalytics"
-    value="{Boolean}true"
-    uncheckedValue="{Boolean}false"
-    granite:class="cq-dialog-checkbox-showhide">
-    <granite:data
-        jcr:primaryType="nt:unstructured"
-        cq-dialog-checkbox-showhide-target=".cmp-analytics-settings"/>
-</enableAnalytics>
-
-<trackingId
-    jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-    fieldLabel="Tracking ID"
-    name="./trackingId"
-    granite:class="cmp-analytics-settings hide"/>
-```
-
-With the checkbox variant, the target is simply shown when checked and hidden when unchecked -
-there's no `showhidetargetvalue` needed.
 
 :::tip[Scope the selector inside multifields]
 Adobe's script queries the **whole document** by default. Inside a composite multifield every item
@@ -840,7 +780,7 @@ Open
 Closed
 ![Select closed](/images/aem/dialogfields/selectclosed.png)
 
-`selected="{Boolean}true"` is the value stored when the author saves without touching the field. With no selected item, Coral shows the first option in the closed dropdown and the property stays missing until they change it. Handle the same fallback in the Sling Model, because content created before the field existed has no property either.
+`selected="{Boolean}true"` is the value stored when the author saves without touching the field. With no selected item (and no `emptyText`), Coral selects the first option, so saving stores its value. Handle the same fallback in the Sling Model, because content created before the field existed has no property either.
 
 ### Select with datasource
 
@@ -935,7 +875,7 @@ The select compares each option's `value` with the property already stored on th
                 jcr:primaryType="nt:unstructured"
                 text="Variation A"
                 value="var-a"
-                selected="{Boolean}true"/>
+                checked="{Boolean}true"/>
         <varb
                 jcr:primaryType="nt:unstructured"
                 text="Variation B"
@@ -944,7 +884,7 @@ The select compares each option's `value` with the property already stored on th
 </radio>
 ```
 
-Same rule as a select: set `selected` on the default, or the first radio looks chosen and nothing is written.
+Radio items use `checked`, not `selected`: set it on the default, or nothing is written until the author picks one.
 
 ![Radio group](/images/aem/dialogfields/radio.png)
 
@@ -957,31 +897,10 @@ Same rule as a select: set `selected` on the default, or the first radio looks c
     fieldLabel="Variant"
     name="./variant">
     <items jcr:primaryType="nt:unstructured">
-        <simple text="Simple" value="simple" selected="{Boolean}true" jcr:primaryType="nt:unstructured"/>
+        <simple text="Simple" value="simple" checked="{Boolean}true" jcr:primaryType="nt:unstructured"/>
         <advanced text="Advanced" value="advanced" jcr:primaryType="nt:unstructured"/>
     </items>
 </variant>
-```
-
-### Datasource-backed fields
-
-For dynamic values, provide a datasource resource type. This works well for autocomplete and selects.
-
-```xml
-<customValue
-    jcr:primaryType="nt:unstructured"
-    sling:resourceType="granite/ui/components/coral/foundation/form/autocomplete"
-    fieldLabel="Backend-driven values"
-    name="./customValue"
-    emptyText="Pick a value"
-    multiple="{Boolean}false">
-    <datasource
-        jcr:primaryType="nt:unstructured"
-        sling:resourceType="myproject/datasource/customstrings"/>
-    <options
-        jcr:primaryType="nt:unstructured"
-        sling:resourceType="granite/ui/components/coral/foundation/form/autocomplete/list"/>
-</customValue>
 ```
 
 ### Multifield
@@ -1028,11 +947,12 @@ import java.util.List;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ChildResource;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
-@Model(adaptables = SlingHttpServletRequest.class)
+@Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class LinkList {
 
     @ChildResource
@@ -1042,7 +962,7 @@ public class LinkList {
         return links != null ? links : Collections.emptyList();
     }
 
-    @Model(adaptables = Resource.class)
+    @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
     public static class Link {
         @ValueMapValue
         private String text;
@@ -1116,28 +1036,25 @@ The full pattern, including a multifield of nested models, is on the [`@ChildRes
 
 [Documentation](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
 
-A `fieldset` groups related fields under a single legend, and -- usefully -- prefixes every nested
-field's property name so the values land in a subnode of the component. This is the cleanest way
-to persist "a logical sub-object" (e.g. social links, SEO metadata) without reaching for a
-multifield.
+A `fieldset` groups fields under a legend; it does not change where values are stored.
+Prefix field names (e.g. `./social/twitter`) to persist into a subnode.
 
 ```xml
 <social
     jcr:primaryType="nt:unstructured"
     sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
-    jcr:title="Social Links"
-    name="./social">
+    jcr:title="Social Links">
     <items jcr:primaryType="nt:unstructured">
         <twitter
             jcr:primaryType="nt:unstructured"
             sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
             fieldLabel="Twitter / X"
-            name="./twitter"/>
+            name="./social/twitter"/>
         <linkedin
             jcr:primaryType="nt:unstructured"
             sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
             fieldLabel="LinkedIn"
-            name="./linkedin"/>
+            name="./social/linkedin"/>
     </items>
 </social>
 ```
@@ -1164,7 +1081,7 @@ public String getTwitter() {
 
 :::tip[Fieldset vs Well vs Multifield]
 - **Well** - visual grouping only. No name prefix, no subnode.
-- **Fieldset** - visual grouping *and* persistence into a subnode (`name="./social"`).
+- **Fieldset** - visual grouping only; prefix field names (`./social/...`) to persist into a subnode.
 - **Multifield** - use only when authors can add *n* repeating items. A fieldset is almost always
   the right choice for a fixed group of fields.
 :::
@@ -1291,33 +1208,32 @@ localized tag titles and filtering by namespace.
 
 ### Link tuple (label + URL + target)
 
-A recurring pattern is a "link" made of three related fields. Group them inside a fieldset so
-they persist to a single subnode, and handle the `target="_blank"` security additions in the
+A recurring pattern is a "link" made of three related fields. Prefix the fields with `./link/`
+so they persist to a single subnode, and handle the `target="_blank"` security additions in the
 Sling Model - not in the dialog.
 
 ```xml
 <link
     jcr:primaryType="nt:unstructured"
     sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
-    jcr:title="Call-to-action link"
-    name="./link">
+    jcr:title="Call-to-action link">
     <items jcr:primaryType="nt:unstructured">
         <label
             jcr:primaryType="nt:unstructured"
             sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
             fieldLabel="Label"
-            name="./label"/>
+            name="./link/label"/>
         <url
             jcr:primaryType="nt:unstructured"
             sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
             fieldLabel="URL or path"
             fieldDescription="Internal paths or full URLs (https://...)"
-            name="./url"/>
+            name="./link/url"/>
         <target
             jcr:primaryType="nt:unstructured"
             sling:resourceType="granite/ui/components/coral/foundation/form/select"
             fieldLabel="Open in"
-            name="./target">
+            name="./link/target">
             <items jcr:primaryType="nt:unstructured">
                 <self  jcr:primaryType="nt:unstructured" text="Same tab"  value="_self" selected="{Boolean}true"/>
                 <blank jcr:primaryType="nt:unstructured" text="New tab"   value="_blank"/>
@@ -1363,7 +1279,7 @@ private LinkModel link;
 
 ### Content Fragment picker
 
-`dam/cfm/components/cfpicker` is the Content Fragment picker (AEM 6.5 and Cloud Service). The attributes below are the ones on the Core Components Content Fragment dialog. A plain pathfield with `filter="hierarchyNotFile"` cannot select a fragment: that filter hides assets, and a content fragment is a `dam:Asset`.
+`dam/cfm/components/cfpicker` is the Content Fragment picker (AEM 6.5 and Cloud Service). The attributes below are the ones on the Core Components Content Fragment dialog.
 
 ```xml
 <contentFragment
@@ -1587,8 +1503,7 @@ Lets authors drag an image from the asset finder straight onto the component.
 ```
 
 The `propertyName` is where the path of the dragged asset is stored on the component's resource.
-Mark the component HTML with `cq-droptarget` (or the clientlib-generated class) so the drop zone is
-visible in edit mode.
+Put the class `cq-dd-image` (`cq-dd-` + the drop target node name) on the element that should accept the drop.
 
 ### Inline editor (edit text without opening the dialog)
 
@@ -1597,9 +1512,9 @@ visible in edit mode.
     <cq:inplaceEditing
         jcr:primaryType="cq:InplaceEditingConfig"
         active="{Boolean}true"
-        configPath="/apps/myproject/components/mycomponent/cq:editConfig/inplaceEditing"
-        editorType="text">
-        <config
+        configPath="inplaceEditingConfig"
+        editorType="plaintext">
+        <inplaceEditingConfig
             jcr:primaryType="nt:unstructured"
             editElementQuery=".cmp-mycomponent__title"
             propertyName="./title"
@@ -1608,8 +1523,8 @@ visible in edit mode.
 </cq:editConfig>
 ```
 
-- `editorType="text"` - plain textfield inline editor.
-- `editorType="plaintext"` - same, but strips HTML on save.
+- `editorType="text"` - Rich Text Editor, for HTML content.
+- `editorType="plaintext"` - plain text editor, for non-HTML content.
 - `editorType="title"` - classic title editor (single line, pressing Enter saves).
 
 For Rich Text inline editing, set `editorType="text"` and add the full `rtePlugins` config similar
@@ -1907,7 +1822,7 @@ Use `granite:data` to expose custom attributes for dialog scripts.
 - Prefer handling defaults in Sling Models rather than relying solely on dialog defaults.
 
 ```java
-@ValueMapValue
+@ValueMapValue(injectionStrategy = InjectionStrategy.OPTIONAL)
 private String variant;
 
 public String getVariant() {
@@ -1978,16 +1893,7 @@ component CSS, paste-as-plaintext, special characters, find/replace, and source 
             features="*"/>
         <links
             jcr:primaryType="nt:unstructured"
-            features="[modifylink,unlink]">
-            <!-- Only allow internal and https links; protocols can be restricted -->
-            <linkbrowserConfig
-                jcr:primaryType="nt:unstructured"
-                targetConfig="{Boolean}true">
-                <targetConfig
-                    jcr:primaryType="nt:unstructured"
-                    mode="manual"/>
-            </linkbrowserConfig>
-        </links>
+            features="[modifylink,unlink]"/>
         <paraformat
             jcr:primaryType="nt:unstructured">
             <formats jcr:primaryType="cq:WidgetCollection">
@@ -2061,12 +1967,12 @@ component CSS, paste-as-plaintext, special characters, find/replace, and source 
 | `subsuperscript` | `subscript`, `superscript` | Sub/superscript |
 | `lists` | `ordered`, `unordered`, `indent`, `outdent` | Lists and indentation |
 | `justify` | `*` | Text alignment |
-| `links` | `modifylink`, `unlink` | Anchor insertion; `linkbrowserConfig` controls the path picker and target |
+| `links` | `modifylink`, `unlink` | Anchor insertion |
 | `paraformat` | block `formats` | Wrap selection in `p`, `h2`, `blockquote`, etc. |
 | `styles` | CSS class dropdown | Apply semantic classes (preferred over inline styling) |
 | `misctools` | `specialchars`, `sourceedit` | Special characters and raw HTML editing |
 | `findreplace` / `undo` / `spellcheck` | `*` | Editor utilities |
-| `edit` | `defaultPasteMode` | Controls paste behaviour (`plaintext`, `wordhtml`, `html`) |
+| `edit` | `defaultPasteMode` | Controls paste behaviour (`browser`, `plaintext`, `wordhtml`) |
 
 ### RTE tips
 
@@ -2888,10 +2794,6 @@ for the underlying accessibility contracts.
 ### Set Documentation as Default Active Tab
 
 The help view opens on the component properties. To make the documentation tab active, overlay the console node and order it first.
-
-:::warning[Do not overlay `/libs` on AEM as a Cloud Service]
-`helpPath` works on 6.5 and on Cloud Service. The overlay copies a `/libs` node into `/apps`, which Cloud Service does not allow. Use it on 6.5 on-prem only. See [AEMaaCS vs AEM 6.5](./infrastructure/aemaacs-vs-aem-65.mdx).
-:::
 
 1. In CRXDE Lite, open `/libs/wcm/core/content/sites/components/details/jcr:content/content/single/content/items/content/items/tabs/items/documentation`.
 2. Overlay that node to `/apps` with **Match node types** checked.
