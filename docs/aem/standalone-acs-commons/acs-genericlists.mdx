@@ -27,12 +27,9 @@ root.
 - **`core`** -- `GenericList` / `GenericListImpl` / `GenericListAdapterFactory`: adapt a `Page` whose content
   resource type is `acs-genericlists/components/utilities/genericlist` and call `getItems()` or
   `lookupTitle(value[, locale])`.
-- **`ui.apps`** -- Touch UI dialog (composite multifield), page template restricted to
-  `/content/generic-lists(/.*)?`, and a datasource JSP that feeds Granite `select` / `radiogroup` options from an
-  existing list page.
+- **`ui.apps`** -- Key/Value List component with a nested composite-multifield dialog and a datasource servlet for Granite `select` / `radiogroup`; the `generic-list` editable template (restricted to `/content/generic-lists(/.*)?`) ships in `ui.content`.
 
-Storage matches the ACS Commons shape: child nodes under `./list/`, each with `jcr:title` and `value`. Authoring
-uses a modern Touch UI dialog instead of the legacy Classic UI widgets from ACS Commons.
+Rows are stored as `items/itemN` (`jcr:title`, `value`, optional `translations`); ACS-style `./list/` content is still read. Authoring uses a standard component dialog instead of ACS Commons' MCP-generated list editor.
 
 ## When to use it
 
@@ -75,17 +72,15 @@ String title = list.lookupTitle("de"); // e.g. "Germany"
 
 ## Authoring flow
 
-1. Deploy the module (`core` + `ui.apps`).
-2. Create pages under `/content/generic-lists` with the `genericlist` template.
-3. Open the page properties dialog and add title/value rows in the multifield.
+1. Install the aggregate `all` package.
+2. Create pages under `/content/generic-lists` with the Generic List template.
+3. Edit the Key/Value List component on the page and add title/value rows.
 4. Point dialog datasources (or Java adapters) at those list page paths.
 
 ## What was not ported
 
-- Legacy Classic UI dialog and `/generic-lists.html` bulk-properties console.
-- Legacy `list.json.jsp` JSON export (deprecated `org.apache.sling.commons.json`).
+- ACS Commons' MCP-generated list editor and the `/generic-lists.html` console.
 - A page render script -- a list page is a pure data container.
-- The `/etc/acs-commons/lists` default root -- this module uses `/content/generic-lists(/.*)?` for AEMaaCS.
 
 See the [module README](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.genericlists/README.md)
 for the full rationale.
