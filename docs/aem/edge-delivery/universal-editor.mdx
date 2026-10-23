@@ -84,59 +84,53 @@ Defines the authoring **fields** for each component referenced above. This is wh
 authors actually fill in.
 
 ```json title="component-models.json"
-{
-    "models": [
-        {
-            "id": "hero",
-            "fields": [
-                {
-                    "component": "reference",
-                    "valueType": "string",
-                    "name": "image",
-                    "label": "Background image",
-                    "multi": false
-                },
-                { "component": "text", "name": "imageAlt", "label": "Alt text" },
-                { "component": "text", "name": "title", "label": "Heading" },
-                { "component": "richtext", "name": "body", "label": "Body" },
-                { "component": "aem-content", "name": "cta", "label": "CTA link" }
-            ]
-        },
-        {
-            "id": "cards",
-            "fields": [
-                { "component": "container", "name": "cards", "label": "Cards" }
-            ]
-        }
-    ]
-}
+[
+    {
+        "id": "hero",
+        "fields": [
+            {
+                "component": "reference",
+                "valueType": "string",
+                "name": "image",
+                "label": "Background image",
+                "multi": false
+            },
+            { "component": "text", "name": "imageAlt", "label": "Alt text" },
+            { "component": "text", "name": "title", "label": "Heading" },
+            { "component": "richtext", "name": "body", "label": "Body" },
+            { "component": "aem-content", "name": "cta", "label": "CTA link" }
+        ]
+    },
+    {
+        "id": "cards",
+        "fields": []
+    }
+]
 ```
 
-Common field components: `text`, `multiline`, `richtext`, `select`, `boolean`,
+Common field components: `text`, `textarea`, `richtext`, `select`, `boolean`,
 `reference` (for assets), `aem-content` (for content fragments / pages), `container`
-(for nested children).
+(groups fields in the properties panel, incl. multifields).
 
 ### component-filters.json
 
 Whitelists which components can be inserted inside which container.
 
 ```json title="component-filters.json"
-{
-    "filters": [
-        {
-            "id": "section",
-            "components": ["hero", "cards", "columns", "text", "image", "embed"]
-        },
-        {
-            "id": "cards",
-            "components": ["card-item"]
-        },
-        {
-            "id": "hero",
-            "components": []
-        }
-    ]
-}
+[
+    {
+        "id": "section",
+        "components": ["hero", "cards", "columns", "text", "image", "embed"]
+    },
+    {
+        "id": "cards",
+        "components": ["card-item"]
+    },
+    {
+        "id": "hero",
+        "components": []
+    }
+]
 ```
 
 The `id` matches the `template.filter` value in `component-definition.json`. An empty
@@ -152,11 +146,10 @@ can hover-highlight, edit, and re-order elements in place.
 |-----------|---------------|
 | `data-aue-resource` | The content resource (where the value persists) |
 | `data-aue-prop` | Which property of that resource is being shown |
-| `data-aue-type` | Field component (e.g. `text`, `richtext`, `image`, `reference`) |
+| `data-aue-type` | Item type: `text`, `richtext`, `media`, `container`, `component`, `reference` |
 | `data-aue-label` | Label shown in the editor sidebar |
 | `data-aue-model` | Component model used for component insertion/editing |
 | `data-aue-filter` | For container elements - which filter applies here |
-| `data-aue-behavior` | `component` for a whole block, `container` for a nested zone |
 
 Document-based authoring does not require these attributes. For UE, the source comes
 pre-instrumented from AEM or from the UE/XWalk authoring pipeline, and your block
@@ -201,7 +194,7 @@ mountpoints:
 
 Sites managed through the [Configuration Service](./admin-api.mdx#config---configuration-service)
 store the same information in the `content.source` section of the site configuration instead
-of `fstab.yaml`. `paths.json` then maps AEM paths such as `/content/mysite/` to public URLs (see
+of `fstab.yaml`, and maps AEM paths such as `/content/mysite/` to public URLs under `paths` in the site's `public.json` (repository-configured sites use `paths.json`, see
 [Development](./development.mdx#pathsjson)).
 
 The rendered page also needs the Universal Editor connection metadata, usually in
