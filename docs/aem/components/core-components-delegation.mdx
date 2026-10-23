@@ -273,7 +273,7 @@ the version is managed in the parent POM.
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | Your model is never used | `resourceType` in `@Model` does not match the proxy's path | Use the exact resource type (`myproject/components/title`) |
-| `StackOverflowError` | `@Self` without `@Via(type = ResourceSuperType.class)` adapts to your own model again | Always combine `@Self` with the `ResourceSuperType` via |
+| Model fails to adapt; log shows `too much recursive invocations` | `@Self` without `@Via(type = ResourceSuperType.class)` adapts to your own model again | Always combine `@Self` with the `ResourceSuperType` via |
 | `UnsupportedOperationException` in HTL or `.model.json` | A default interface method was not forwarded | Delegate every method of the interface |
 | `delegate` is `null` / model fails to adapt | Proxy has no `sling:resourceSuperType`, or it points to a path without a model | Check the proxy's `.content.xml` |
 | Component missing from `.model.json` | `ComponentExporter` not in `adapters` or `@Exporter` missing | Add both |
