@@ -132,11 +132,11 @@ The dialog lives in `_cq_dialog/.content.xml` inside the component folder.
       filter="hierarchyNotFile"/>
 ```
 
-| `filter` value     | Shows                  |
-|--------------------|------------------------|
-| `hierarchyNotFile` | Pages only (no assets) |
-| `nosystem`         | Hides system paths     |
-| (none)             | Shows everything       |
+| `filter` value                | Shows                                                              |
+|-------------------------------|--------------------------------------------------------------------|
+| `hierarchyNotFile` (default)  | Hierarchy nodes except `nt:file` -- pages, folders and DAM assets  |
+| `nosystem`                    | Hides system paths                                                 |
+| (none)                        | Same as `hierarchyNotFile` (the default)                           |
 
 ### Image upload (file upload)
 
