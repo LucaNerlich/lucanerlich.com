@@ -56,9 +56,9 @@ graph TD
 
 ```text
 /content/experience-fragments/mysite/en/
-├── site-header/                         ← XF folder
+├── site-header/                         ← XF container
 │   ├── jcr:content
-│   │   └── cq:xfVariantType = "web"
+│   │   └── sling:resourceType = "cq/experience-fragments/components/experiencefragment"
 │   ├── master/                          ← "Master" variation
 │   │   └── jcr:content
 │   │       ├── root/
@@ -67,6 +67,8 @@ graph TD
 │   │       │   │   ├── navigation
 │   │       │   │   └── search
 │   │       │   └── ...
+│   │       ├── cq:xfMasterVariation = true
+│   │       ├── cq:xfVariantType = "web"
 │   │       └── sling:resourceType = "cq/experience-fragments/components/xfpage"
 │   ├── email/                           ← Email variation
 │   │   └── jcr:content
@@ -126,7 +128,7 @@ public Page createExperienceFragment(ResourceResolver resolver,
     Page xfRoot = pm.create(
         parentPath,
         name,
-        "/conf/mysite/settings/wcm/templates/experience-fragment-web-variation",
+        "/libs/cq/experience-fragments/components/experiencefragment/template",
         title
     );
 
@@ -164,8 +166,7 @@ component dialog.
 
 ### Localised XF references
 
-For multi-language sites, the XF component automatically resolves the correct language
-variation based on the page's language:
+When the XF component is part of the page's editable template, the Core Component renders the XF variation matching the page's language root (falling back to the configured one). An XF component added in page content renders exactly the configured variation:
 
 ```text
 Page: /content/mysite/de/home
@@ -176,7 +177,7 @@ XF reference: /content/experience-fragments/mysite/en/site-header/master
   (if it exists; otherwise falls back to the English version)
 ```
 
-This behaviour is built into the Core Component XF wrapper.
+This behaviour is built into the Core Component XF wrapper when used within a template.
 
 ---
 
@@ -189,6 +190,7 @@ import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.api.Page;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.InjectionStrategy;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
@@ -198,7 +200,7 @@ public class ExperienceFragmentModel {
     @Self
     private Resource resource;
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue(injectionStrategy = InjectionStrategy.OPTIONAL)
     private String fragmentVariationPath;
 
     public String getFragmentHtml() {
@@ -224,23 +226,33 @@ public class ExperienceFragmentModel {
 ```java
 public List<XfInfo> listExperienceFragments(ResourceResolver resolver, String rootPath) {
     List<XfInfo> fragments = new ArrayList<>();
-    PageManager pm = resolver.adaptTo(PageManager.class);
-    Page root = pm.getPage(rootPath);
+    QueryBuilder qb = resolver.adaptTo(QueryBuilder.class);
+    Session session = resolver.adaptTo(Session.class);
+    if (qb == null || session == null) return fragments;
 
-    if (root == null) return fragments;
+    Map<String, String> map = new HashMap<>();
+    map.put("path", rootPath);
+    map.put("type", "cq:PageContent");
+    map.put("property", "sling:resourceType");
+    map.put("property.value", "cq/experience-fragments/components/experiencefragment");
+    map.put("p.limit", "-1");
 
-    Iterator<Page> children = root.listChildren(new PageFilter(false, false), true);
-    while (children.hasNext()) {
-        Page child = children.next();
-        String resourceType = child.getContentResource()
-            .getResourceType();
+    Query query = qb.createQuery(PredicateGroup.create(map), session);
+    SearchResult result = query.getResult();
 
-        if ("cq/experience-fragments/components/xfpage".equals(resourceType)) {
-            fragments.add(new XfInfo(
-                child.getPath(),
-                child.getTitle(),
-                child.getDescription()
-            ));
+    for (Hit hit : result.getHits()) {
+        try {
+            Resource xfRoot = hit.getResource().getParent();
+            Page page = xfRoot != null ? xfRoot.adaptTo(Page.class) : null;
+            if (page != null) {
+                fragments.add(new XfInfo(
+                    page.getPath(),
+                    page.getTitle(),
+                    page.getDescription()
+                ));
+            }
+        } catch (RepositoryException e) {
+            // handle exception
         }
     }
 
@@ -299,9 +311,8 @@ inject into any page. A JSON offer can be used when the consuming application wa
 the component structure itself.
 
 :::note[Link rewriting]
-AEM rewrites internal links in exported XF HTML through the
-`com.adobe.cq.xf.ExperienceFragmentLinkRewriterProvider` OSGi configuration. Verify the
-rewriter rules before using XF offers on external domains.
+By default AEM rewrites internal links in exported XF HTML with the Link Externalizer (`publishLink()`).
+To customize this, implement `com.adobe.cq.xf.ExperienceFragmentLinkRewriterProvider` as an OSGi service.
 :::
 
 ---
@@ -449,8 +460,9 @@ variations within one XF rather than separate XFs.
 
 ### Leverage automatic language resolution
 
-The Core Component XF wrapper resolves the correct language variation automatically.
-Use consistent paths across languages to enable this.
+When placed in the page's editable template, the Core Component XF wrapper resolves
+the correct language variation automatically. Use consistent paths across languages
+to enable this.
 
 ### Version XFs before major changes
 
