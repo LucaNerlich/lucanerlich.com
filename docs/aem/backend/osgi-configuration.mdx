@@ -333,8 +333,11 @@ The table below lists frequently configured services and their PIDs.
 1. **Wrong run mode folder** - placing a publish config in `config.author/` means it is never active on
 publish instances. Double-check the folder name.
 
-2. **Missing tilde in factory configs** - without the `~identifier` suffix, AEM treats the file as a
-singleton and only one instance will ever be created.
+2. **Prefer `~` over `-` in factory configs** - Sling's Configuration Installer accepts both
+`<pid>~<subname>` and `<pid>-<subname>`, but since installer 1.2.0 the tilde form is preferred and
+the dash form is deprecated. A dash does **not** turn the file into a singleton; omitting any
+separator does. Prefer `~identifier` in new configs (Adobe's own AEMaaCS examples still sometimes
+use `-`, which still works).
 
 3. **PID typo** - the filename PID must exactly match the fully qualified class name annotated with
 `@Component`. A silent mismatch means the config is never applied.
