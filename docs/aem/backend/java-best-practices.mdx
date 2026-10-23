@@ -140,7 +140,7 @@ try (ResourceResolver resolver = resolverFactory.getServiceResourceResolver(auth
 
 ### SQL2 example with safe parameter handling
 
-JCR SQL2 does not support prepared statements. For user-controlled values, prefer the Query Object Model (QOM) API, which lets you bind values safely.
+JCR-SQL2 supports bind variables: write `$title` in the statement and call `query.bindValue("title", vf.createValue(title))`. The QOM API below does the same programmatically.
 
 ```java
 public List<Resource> findPagesByTitle(ResourceResolver resolver, String rootPath, String title) throws RepositoryException {
@@ -203,7 +203,7 @@ try {
 @Component(service = Runnable.class,
     property = {
         "scheduler.expression=0 0 * * * ?",
-        "scheduler.concurrent=false"
+        "scheduler.concurrent:Boolean=false"
     })
 public class HourlyJob implements Runnable {
     @Override
@@ -242,7 +242,7 @@ public String safeUrl(String url) {
 Other backend techniques:
 
 - Use HTL contexts (`@ context='uri'`, `@ context='html'`) when rendering values.
-- Use `Text.escape()` or `Encode.forHtml()` for non-HTL contexts.
+- Use `Encode.forHtml()` for non-HTL contexts.
 - Prefer allowlists over regex for values like hostnames, paths, or enums.
 
 #### Frontend pitfalls and sanitization
@@ -285,7 +285,7 @@ private static final Set<String> ALLOWED_HOSTS =
     Set.of("api.example.com", "services.example.com");
 
 public boolean isAllowedHost(URI uri) {
-    return ALLOWED_HOSTS.contains(uri.getHost());
+    return uri.getHost() != null && ALLOWED_HOSTS.contains(uri.getHost());
 }
 ```
 
