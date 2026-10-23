@@ -175,7 +175,8 @@ describe('run', () => {
     });
 
     it('rejects a protected value that is not an array', async () => {
-        const fetchImpl = fakeFetch([], {});
+        const calls = [];
+        const fetchImpl = fakeFetch(calls, {});
         await assert.rejects(
             run({
                 config: {...config(['app']), protected: 'latest'},
@@ -187,5 +188,6 @@ describe('run', () => {
             }),
             /config\.protected must be an array/,
         );
+        assert.deepEqual(calls, [], 'the config error must not reach the API');
     });
 });

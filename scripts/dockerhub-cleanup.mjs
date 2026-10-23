@@ -84,11 +84,13 @@ export const run = async ({
     fetchImpl = fetch,
     log = console.log,
 }) => {
-    const token = await login(fetchImpl, username, password);
+    // Validate before the network call: a bad config is a config error, not a
+    // credential failure.
     const protectedTags = config.protected ?? ['latest'];
     if (!Array.isArray(protectedTags)) {
         throw new Error('config.protected must be an array of tag names');
     }
+    const token = await login(fetchImpl, username, password);
     const stats = [];
     for (const name of config.repositories) {
         const repo = name.includes('/') ? name : `${config.namespace}/${name}`;
