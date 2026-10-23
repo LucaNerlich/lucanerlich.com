@@ -31,7 +31,6 @@ graph LR
     CDN -->|"cache miss"| Dispatcher
     Dispatcher -->|"cache miss"| Publish
     Author -->|"replication"| Publish
-    Dispatcher -->|"invalidation"| CDN
     Author -.->|"flush agent"| Dispatcher
 ```
 
@@ -47,8 +46,8 @@ graph LR
 2. When the content is approved, the author **activates** (replicates) it.
 3. On AEM 6.5/AMS, the replication agent serialises the content and pushes it to one or more **Publish** instances.
    On AEMaaCS, Adobe-managed content distribution performs the equivalent movement.
-4. A 6.5/AMS flush agent, or the managed AEMaaCS invalidation flow, invalidates the **Dispatcher/CDN** cache for the
-   affected paths.
+4. A 6.5/AMS flush agent, or the managed AEMaaCS invalidation flow, invalidates the **Dispatcher** cache for the
+   affected paths; on AEMaaCS the Adobe CDN is not flushed and serves its copy until the TTL expires.
 5. The next request from a browser triggers a cache miss, Dispatcher fetches the fresh page from Publish, caches it, and serves it.
 
 ## The Sling Request Processing Pipeline
@@ -120,18 +119,18 @@ Resource: sling:resourceType = "myproject/components/page"
 Selectors: [nav]
 Extension: html
 
-Search order (first match wins):
-1. /apps/myproject/components/page/nav.html
-2. /apps/myproject/components/page/nav/nav.html (selector-named folder)
-3. /apps/myproject/components/page/page.html    (fallback to component name)
-4. /libs/myproject/components/page/nav.html      (/libs as fallback)
-5. sling:resourceSuperType chain (parent component scripts)
+Ranking (more matching selectors wins first, then /apps before /libs, then the super-type chain):
+1. /apps/myproject/components/page/nav.html (or nav/nav.html)
+2. /libs/myproject/components/page/nav.html
+3. nav.html in the sling:resourceSuperType chain
+4. /apps/myproject/components/page/page.html (no selector match)
+5. /libs and super-type default scripts
 ```
 
 Key rules:
 - `/apps` is always searched before `/libs` - this is how overlays and customisations work
 - Selectors narrow the script selection: `nav.html` is preferred over `page.html` when the `.nav` selector is present
-- The `sling:resourceSuperType` chain enables component inheritance - if no script is found on the current resource type, Sling walks up the super-type chain
+- The `sling:resourceSuperType` chain enables component inheritance -- a selector-matching script anywhere in the super-type chain wins over the current type's default script
 
 ### Step 4: Rendering
 
@@ -151,11 +150,11 @@ All content in AEM is stored as a tree of **nodes** and **properties** in the JC
 
 | Node type | Used for |
 |-----------|----------|
-| `cq:Page` | Content pages - has a mandatory `jcr:content` child |
+| `cq:Page` | Content pages - authored content lives in the `jcr:content` child |
 | `nt:unstructured` | Generic node type for component data, dialog values, configurations |
 | `dam:Asset` | DAM assets (images, PDFs, videos) |
 | `cq:Component` | Component definitions (under `/apps`) |
-| `cq:Template` | Static templates (legacy) |
+| `cq:Template` | Page templates (editable under `/conf`, legacy static under `/apps`) |
 | `rep:User` / `rep:Group` | Users and groups |
 
 ### Page anatomy
@@ -363,7 +362,7 @@ Asset asset = damResource.adaptTo(Asset.class);
 
 ### JCR API (lower level)
 
-Direct JCR node and property access. Use when you need transactions, observation, or node-type-specific operations.
+Direct JCR node and property access. Use when you need observation or node-type-specific operations.
 
 ```java
 Session session = resourceResolver.adaptTo(Session.class);
@@ -610,7 +609,7 @@ SDI replaces component output with an SSI (Server Side Include) or ESI tag at th
 
 ```text
 Static page (cached by Dispatcher)
-  ├── Header: <ssi:include src="/content/.../header.nocache.html"/>  (not cached)
+  ├── Header: <!--#include virtual="/content/.../header.nocache.html" -->  (not cached)
   ├── Hero: static (cached)
   └── Footer: static (cached)
 ```
