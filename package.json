@@ -1,6 +1,6 @@
 {
     "name": "lucanerlich.com",
-    "version": "1.34.1",
+    "version": "1.34.2",
     "private": true,
     "scripts": {
         "docusaurus": "docusaurus",
@@ -31,7 +31,7 @@
         "@types/react": "^19.3.0",
         "typescript": "~7.0.2"
     },
-   "engines": {
+    "engines": {
         "node": "^24",
         "pnpm": "^10"
     },

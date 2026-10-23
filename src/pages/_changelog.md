@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.34.2] - 2026-10-23
+
+### Fixed
+- Comprehensive AEM documentation verification and correctness sweep (88 pull requests, issues #763–#850):
+    - Edge Delivery Services: Sidekick library sheet format, plugin context, delayed script execution via `consent-check.js` and `consented.js`, dynamic CAPTCHA form integration, experimentation plugins, and retired Helix domains
+    - Backend & Sling: Servlet registration requirements, Sling Jobs cluster distribution and scheduled jobs, Filter chain empty response symptom, Sling Models `@Via` and resource type resolution, Externalizer scope, CA Config, and OSGi Declarative Services
+    - Components & UI: Granite UI Multifield item validation, Touch UI Clientlibs async/defer loading, Core Components proxying and recursion handling, render conditions, omnisearch bar actions, and Coral UI
+    - Content & Assets: Asset processing compute worker facts, Content Fragments and GraphQL persisted queries, MSM rollouts, and Experience Fragments localization
+    - Infrastructure & Deployment: Cloud Manager pipeline stages, Dispatcher invalidation vs CDN TTL caching on AEMaaCS, RDE facts, and CRXDE Lite availability
+    - Beginners Guide & Reference: Beginners Guide chapters (HTL, servlets, templates, clientlibs, workflows), Glossary overlay support, and ACS Commons feature parity clarifications
+- Splitter app: row actions hardening, participant split values seeding on check, duplicate expense ID dropping on share decode, person ID validation on wire format, expense ID and currency validation on import, and focus ring preservation on rename input
+- Site & tooling: Strapi deployment recipe error handling and loopback configuration, sidebar order test assertions, demo label contrast, and test suite execution
+
 ## [1.34.1] - 2026-10-21
 
 ### Fixed
