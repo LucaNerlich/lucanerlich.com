@@ -71,7 +71,7 @@ AEM ships with Coral UI 3. The full API is browsable on your local instance:
 | `coral-switch` | `<coral-switch>` | Toggle switch |
 | `coral-dialog` | `<coral-dialog>` | Modal dialog |
 | `coral-alert` | `<coral-alert>` | Alert / notification banner |
-| `coral-table` | `<coral-table>` | Data table |
+| `coral-table` | `<table is="coral-table">` | Data table |
 | `coral-tabs` | `<coral-tablist>` + `<coral-panelstack>` | Tabbed interface |
 | `coral-accordion` | `<coral-accordion>` | Collapsible sections |
 | `coral-tag` | `<coral-tag>` | Tag / chip |
@@ -238,38 +238,38 @@ select.on('change', function() {
 ### Tables
 
 ```html
-<coral-table selectable>
-    <coral-table-head>
-        <coral-table-row>
-            <coral-table-headercell>Name</coral-table-headercell>
-            <coral-table-headercell>Status</coral-table-headercell>
-            <coral-table-headercell>Modified</coral-table-headercell>
-        </coral-table-row>
-    </coral-table-head>
-    <coral-table-body>
-        <coral-table-row>
-            <coral-table-cell>Homepage</coral-table-cell>
-            <coral-table-cell><coral-status variant="success">Published</coral-status></coral-table-cell>
-            <coral-table-cell>2025-01-15</coral-table-cell>
-        </coral-table-row>
-        <coral-table-row>
-            <coral-table-cell>About Us</coral-table-cell>
-            <coral-table-cell><coral-status variant="warning">Draft</coral-status></coral-table-cell>
-            <coral-table-cell>2025-01-20</coral-table-cell>
-        </coral-table-row>
-    </coral-table-body>
-</coral-table>
+<table is="coral-table" selectable>
+    <thead is="coral-table-head">
+        <tr is="coral-table-row">
+            <th is="coral-table-headercell">Name</th>
+            <th is="coral-table-headercell">Status</th>
+            <th is="coral-table-headercell">Modified</th>
+        </tr>
+    </thead>
+    <tbody is="coral-table-body">
+        <tr is="coral-table-row">
+            <td is="coral-table-cell">Homepage</td>
+            <td is="coral-table-cell"><coral-status variant="success">Published</coral-status></td>
+            <td is="coral-table-cell">2025-01-15</td>
+        </tr>
+        <tr is="coral-table-row">
+            <td is="coral-table-cell">About Us</td>
+            <td is="coral-table-cell"><coral-status variant="warning">Draft</coral-status></td>
+            <td is="coral-table-cell">2025-01-20</td>
+        </tr>
+    </tbody>
+</table>
 ```
 
 ### Tabs
 
 ```html
-<coral-tablist>
+<coral-tablist target="#settings-panels">
     <coral-tab>General</coral-tab>
     <coral-tab selected>Advanced</coral-tab>
     <coral-tab>Permissions</coral-tab>
 </coral-tablist>
-<coral-panelstack>
+<coral-panelstack id="settings-panels">
     <coral-panel>
         <p>General settings content</p>
     </coral-panel>
@@ -512,9 +512,6 @@ var registry = $(window).adaptTo('foundation-registry');
 // Register a validator
 registry.register('foundation.validation.validator', { ... });
 
-// Register a condition (for show/hide)
-registry.register('foundation.condition', { ... });
-
 // Register an adapter
 registry.register('foundation.adapters', { ... });
 ```
@@ -544,30 +541,52 @@ field component that renders Coral UI markup:
 ### Server-side (Granite UI field)
 
 ```html title="ui.apps/apps/myproject/components/fields/color-picker/color-picker.html"
-<sly data-sly-use.field="com.adobe.granite.ui.components.Field"/>
 <div class="coral-Form-fieldwrapper"
-     data-sly-use.cfg="com.adobe.granite.ui.components.Config">
+     data-sly-use.model="com.myproject.core.models.ColorPickerModel">
 
     <label class="coral-Form-fieldlabel"
-           data-sly-test="${cfg.fieldLabel}">${cfg.fieldLabel}</label>
+           data-sly-test="${properties.fieldLabel}">${properties.fieldLabel}</label>
 
     <div class="myproject-color-picker">
         <input is="coral-textfield"
-               name="${field.name}"
-               value="${field.value}"
+               name="${properties.name}"
+               value="${model.value}"
                type="text"
                class="myproject-color-picker__input"
-               placeholder="${cfg.emptyText || '#000000'}"/>
+               placeholder="${properties.emptyText || '#000000'}"/>
         <div class="myproject-color-picker__preview"
-             style="background-color: ${field.value || '#000000'}"></div>
+             style="background-color: ${model.value || '#000000'}"></div>
     </div>
 
     <coral-icon icon="infoCircle"
                 size="S"
                 class="coral-Form-fieldinfo"
-                data-sly-test="${cfg.fieldDescription}"
-                title="${cfg.fieldDescription}"></coral-icon>
+                data-sly-test="${properties.fieldDescription}"
+                title="${properties.fieldDescription}"></coral-icon>
 </div>
+```
+
+```java title="core/.../models/ColorPickerModel.java"
+package com.myproject.core.models;
+
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+import com.adobe.granite.ui.components.Config;
+import com.adobe.granite.ui.components.Value;
+
+@Model(adaptables = SlingHttpServletRequest.class)
+public class ColorPickerModel {
+
+    @Self
+    private SlingHttpServletRequest request;
+
+    public String getValue() {
+        Config cfg = new Config(request.getResource());
+        String name = cfg.get("name", String.class);
+        return new Value(request, cfg).get(name, String.class);
+    }
+}
 ```
 
 ### Client-side (JavaScript enhancement)
@@ -620,24 +639,17 @@ Coral UI uses a set of CSS utility classes for layout and spacing:
 | `coral-Form-field` | The input element itself |
 | `coral--dark` | Dark theme (applied to a container) |
 | `coral--light` | Light theme |
-| `coral--largest` | Largest text size |
-| `coral--large` | Large text size |
+| `coral--large` | Large scale (bigger touch targets) |
 
 ### Spacing with `u-coral-*`
 
 ```html
 <!-- Margin -->
 <div class="u-coral-margin">Standard margin</div>
-<div class="u-coral-marginTop">Top margin only</div>
-<div class="u-coral-marginBottom">Bottom margin only</div>
 
 <!-- Padding -->
 <div class="u-coral-padding">Standard padding</div>
 <div class="u-coral-noPadding">Remove padding</div>
-
-<!-- Text alignment -->
-<div class="u-coral-textAlignCenter">Centred text</div>
-<div class="u-coral-textAlignRight">Right-aligned text</div>
 
 <!-- Visibility -->
 <div class="u-coral-screenReaderOnly">Hidden visually, accessible to screen readers</div>
@@ -659,8 +671,8 @@ unique field name before executing your logic.
 
 ### Don't manipulate Coral DOM internals
 
-Coral components manage their own internal DOM structure (shadow DOM). Don't rely on or manipulate
-internal elements - use the component's JavaScript API instead:
+Coral components manage their own internal DOM structure. Don't rely on or manipulate
+internal elements -- use the component's JavaScript API instead:
 
 ```javascript
 // ❌ Bad: manipulating internal DOM
