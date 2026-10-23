@@ -121,39 +121,37 @@ the inner markup your HTL controls), `cq:htmlTag` gives you one place to declare
 ### Overriding classes inherited from a supertype
 
 This is the most common "gotcha" worth knowing. When a component sets
-`sling:resourceSuperType` to a core component, it **inherits that core component's `cq:htmlTag`**. The Core
-Components add their own classes this way - for example the Experience Fragment component contributes an
-`experiencefragment` class to the decoration element.
+`sling:resourceSuperType` to a core component, it **inherits that core component's `cq:htmlTag`**. For example,
+Core Components v1 Text contributes `cmp-text` to the decoration element.
 
 If you extend such a component but want a different (or no) extra class, declare a **local** `_cq_htmlTag`.
 A local decoration-tag node **shadows** the inherited one entirely:
 
-```xml title="apps/myproject/components/richtext-xf-reference/.content.xml"
+```xml title="apps/myproject/components/custom-text/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
           jcr:primaryType="cq:Component"
-          jcr:title="Richtext XF Reference"
-          sling:resourceSuperType="core/wcm/components/experiencefragment/v2/experiencefragment"/>
+          jcr:title="Custom Text"
+          sling:resourceSuperType="core/wcm/components/text/v1/text"/>
 ```
 
-```xml title="apps/myproject/components/richtext-xf-reference/_cq_htmlTag/.content.xml"
+```xml title="apps/myproject/components/custom-text/_cq_htmlTag/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
           jcr:primaryType="nt:unstructured"
-          class="richtext"/>
+          class="custom-text"/>
 ```
 
-Result: the inherited `experiencefragment` class is gone and `richtext` is used instead, so the wrapper lines
-up with a plain richtext component's wrapper for styling purposes:
+Result: the inherited `cmp-text` class is gone and `custom-text` is used instead:
 
 ```html
 <!-- before: inherited class -->
-<div class="richtext-xf-reference experiencefragment">...</div>
+<div class="custom-text cmp-text">...</div>
 
-<!-- after: local _cq_htmlTag with class="richtext" -->
-<div class="richtext-xf-reference richtext">...</div>
+<!-- after: local _cq_htmlTag with class="custom-text" -->
+<div class="custom-text">...</div>
 ```
 
 ## Disabling or overriding decoration at include time
