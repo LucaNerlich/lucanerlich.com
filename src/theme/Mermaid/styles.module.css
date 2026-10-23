@@ -1,6 +1,8 @@
 /* Pele crops a zoomed diagram through its viewBox, so the container clips to
    stop the page widening. The zoom button stack is appended inside this box
-   and is taller than a short diagram, so reserve its height instead. */
+   and is taller than a short diagram, so reserve its height instead. Pele
+   keeps the wrapper mounted and toggles `hidden`, so key the floor on the
+   visible state -- the guard is the fix, not a refinement. */
 .container {
     position: relative;
     max-width: 100%;
