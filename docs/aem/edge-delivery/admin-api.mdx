@@ -337,7 +337,7 @@ verify against the `secret`.
 
 ### Republish a sitemap of pages
 
-```javascript title="scripts/republish-all.js"
+```javascript title="scripts/republish-all.mjs"
 import { setTimeout as wait } from 'node:timers/promises';
 
 const { EDS_API_KEY } = process.env;
@@ -382,6 +382,10 @@ console.log('live:', liveResult.progress);
 
 ### Scheduled republish via cron
 
+The script uses `import` and top-level `await`, so it must run as an ES module: keep the `.mjs` extension
+(or add `"type": "module"` to the project's `package.json`). A stock Edge Delivery repo has neither, and
+Node parses a plain `.js` file as CommonJS.
+
 ```yaml title=".github/workflows/scheduled-republish.yml"
 name: Scheduled republish
 on:
@@ -396,7 +400,7 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with: { node-version: 22 }
-            - run: node scripts/republish-all.js
+            - run: node scripts/republish-all.mjs
               env:
                   EDS_API_KEY: ${{ secrets.EDS_API_KEY }}
 ```
