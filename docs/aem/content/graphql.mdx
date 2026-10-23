@@ -82,17 +82,19 @@ endpoint exposes all models across all sites.
 
 ### GraphiQL IDE
 
-AEM ships with an embedded GraphiQL IDE for testing queries:
+On the local AEMaaCS SDK, GraphiQL is available at:
 
 ```text
-http://localhost:4502/content/graphiql.html
+http://localhost:4502/aem/graphiql.html
 ```
 
-On AEMaaCS, GraphiQL is available on the author instance of your environment:
+On AEMaaCS cloud, GraphiQL is available on the author instance of your environment:
 
 ```text
 https://author-pXXXXX-eXXXXX.adobeaemcloud.com/aem/graphiql.html
 ```
+
+AEM 6.5 with the GraphiQL add-on used `/content/graphiql.html` instead; that path 404s on the AEMaaCS SDK.
 
 GraphiQL provides:
 - Schema explorer with auto-complete
