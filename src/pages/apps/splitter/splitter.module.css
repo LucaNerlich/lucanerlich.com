@@ -212,7 +212,7 @@
 }
 
 .error {
-    color: var(--custom-accent-red);
+    color: var(--custom-text-negative);
     margin: 0;
     font-size: 0.875rem;
 }
@@ -266,7 +266,7 @@
 }
 
 .chipRemove:hover {
-    color: var(--custom-accent-red);
+    color: var(--custom-text-negative);
     background: var(--ifm-color-emphasis-200);
 }
 
@@ -356,13 +356,13 @@
 }
 
 .balancePositive {
-    color: var(--custom-accent-green);
+    color: var(--custom-text-positive);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
 }
 
 .balanceNegative {
-    color: var(--custom-accent-red);
+    color: var(--custom-text-negative);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
 }
@@ -403,10 +403,6 @@
     border-radius: 6px;
 }
 
-.transferPaid {
-    opacity: 0.65;
-}
-
 .transferPaid .transferAmount {
     text-decoration: line-through;
 }
@@ -432,12 +428,12 @@
 }
 
 .transferFrom {
-    color: var(--custom-accent-red);
+    color: var(--custom-text-negative);
     font-weight: 600;
 }
 
 .transferTo {
-    color: var(--custom-accent-green);
+    color: var(--custom-text-positive);
     font-weight: 600;
 }
 

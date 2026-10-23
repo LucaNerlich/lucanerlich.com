@@ -12,6 +12,9 @@
     --custom-accent-green: #148a3c;
     --custom-accent-purple: #2d2aa8;
     --custom-accent-amber: #c08800;
+    /* Text-safe pair: the accents above are tuned as fills and miss AA as text. */
+    --custom-text-positive: #0f6b2e;
+    --custom-text-negative: #b00000;
     --custom-muted: #606060;
     /* Pele draws on this colour: --ifm-background-color is transparent in light mode. */
     --custom-diagram-bg: #ffffff;
@@ -22,6 +25,8 @@ html[data-theme='dark'] {
     --custom-accent-green: #2dd460;
     --custom-accent-purple: #6c68ff;
     --custom-accent-amber: #ffb000;
+    --custom-text-positive: #2dd460;
+    --custom-text-negative: #ffa8a8;
     --custom-muted: #999999;
     --custom-diagram-bg: var(--ifm-background-color);
 }
