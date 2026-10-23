@@ -110,7 +110,7 @@ const SessionBar: React.FC<Props> = ({
                     type="button"
                     className={styles.secondaryButton}
                     onClick={() => {
-                        const text = settlementSummaryText(state);
+                        const text = settlementSummaryText(state, messages);
                         const w = window.open('', '_blank');
                         if (!w) return;
                         w.opener = null;

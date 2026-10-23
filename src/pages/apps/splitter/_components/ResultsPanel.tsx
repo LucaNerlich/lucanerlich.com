@@ -40,7 +40,7 @@ const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
     const nameOf = (id: string) => nameFrom(peopleIndex, id);
 
     const copyTransfers = async () => {
-        const text = transfersAsText(state, transfers, state.currency);
+        const text = transfersAsText(state, transfers, state.currency, messages);
         try {
             await navigator.clipboard.writeText(text);
             setCopied(true);

@@ -6,6 +6,7 @@ import type {Transfer} from './settlement';
 import {summarize} from './settlement';
 import {validateSplit} from './split';
 import {isCurrency, isWireSafePersonId, transferKey} from './types';
+import type {Messages} from './messages';
 
 // Normalization drops anything it cannot resolve, so a file must be valid
 // before it is encoded: otherwise a restore reports success after losing rows
@@ -142,10 +143,11 @@ const transferLine = (
     names: ReturnType<typeof indexPeople>,
     transfer: Transfer,
     currency: Currency,
+    messages: Messages,
 ): string => {
     const line = `${nameFrom(names, transfer.from)} → ${nameFrom(names, transfer.to)}: ${formatMoney(transfer.cents, currency)}`;
     return state.paidTransferKeys.includes(transferKey(transfer.from, transfer.to, transfer.cents))
-        ? `${line} (paid)`
+        ? `${line} ${messages.t('paidSuffix')}`
         : line;
 };
 
@@ -153,32 +155,33 @@ export const transfersAsText = (
     state: AppState,
     transfers: Transfer[],
     currency: Currency,
+    messages: Messages,
 ): string => {
     const names = indexPeople(state.people);
-    if (transfers.length === 0) return 'Everyone is settled up.';
-    return transfers.map(t => transferLine(state, names, t, currency)).join('\n');
+    if (transfers.length === 0) return messages.t('everyoneSettled');
+    return transfers.map(t => transferLine(state, names, t, currency, messages)).join('\n');
 };
 
-export const settlementSummaryText = (state: AppState): string => {
+export const settlementSummaryText = (state: AppState, messages: Messages): string => {
     const {totalCents, balances, transfers} = summarize(state);
     const names = indexPeople(state.people);
     const lines: string[] = [
-        'Splitter settlement',
-        `Currency: ${state.currency}`,
-        `Total: ${formatMoney(totalCents, state.currency)}`,
+        messages.t('settlementTitle'),
+        `${messages.t('currency')}: ${state.currency}`,
+        `${messages.t('totalLabel')}: ${formatMoney(totalCents, state.currency)}`,
         '',
-        'Balances:',
+        `${messages.t('balances')}:`,
     ];
     for (const p of state.people) {
         const net = balances.get(p.id) ?? 0;
         lines.push(`- ${p.name}: ${formatSignedMoney(net, state.currency)}`);
     }
-    lines.push('', 'Transfers:');
+    lines.push('', `${messages.t('transfers')}:`);
     if (transfers.length === 0) {
-        lines.push('- Everyone is settled up.');
+        lines.push(`- ${messages.t('everyoneSettled')}`);
     } else {
         for (const t of transfers) {
-            lines.push(`- ${transferLine(state, names, t, state.currency)}`);
+            lines.push(`- ${transferLine(state, names, t, state.currency, messages)}`);
         }
     }
     return lines.join('\n');
