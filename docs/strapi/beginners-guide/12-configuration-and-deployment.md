@@ -42,7 +42,7 @@ The components:
 
 | Layer               | Role                                                |
 |---------------------|-----------------------------------------------------|
-| **nginx**           | Reverse proxy, SSL termination, static file caching |
+| **nginx**           | Reverse proxy, SSL termination |
 | **Strapi**          | Application server (Node.js)                        |
 | **PostgreSQL**      | Production database                                 |
 | **S3 / Cloudinary** | Media storage (chapter 10)                          |
@@ -238,28 +238,37 @@ GRANT ALL PRIVILEGES ON DATABASE strapi_blog TO strapi;
 Run Strapi as a dedicated non-root user:
 
 ```bash
-sudo adduser --system --group --shell /bin/bash strapi
+sudo adduser --system --group --shell /bin/bash --home /home/strapi strapi
+sudo install -d -m 755 -o strapi -g strapi /home/strapi
 sudo mkdir -p /var/www/strapi
-sudo chown strapi:strapi /var/www/strapi
+sudo chown -R strapi:strapi /var/www/strapi
+
+# The deploy user needs the key you already log in with, and a home for
+# npm's cache and pm2's state.
+sudo install -d -m 700 -o strapi -g strapi /home/strapi/.ssh
+sudo cp /home/your-user/.ssh/authorized_keys /home/strapi/.ssh/authorized_keys
+sudo chown strapi:strapi /home/strapi/.ssh/authorized_keys
+sudo chmod 600 /home/strapi/.ssh/authorized_keys
 ```
 
 ## Deploying the application
 
 ### Transfer files to the server
 
-From your local machine, use `rsync` to transfer the project:
+From your local machine, use `rsync` to transfer the project as the user that owns the
+directory:
 
 ```bash
 rsync -avz --exclude node_modules --exclude .tmp --exclude .cache \
   --exclude dist --exclude .env \
-  ./ your-user@your-server:/var/www/strapi/
+  ./ strapi@your-server:/var/www/strapi/
 ```
 
 ### Install dependencies on the server
 
 ```bash
 # SSH into the server
-ssh your-user@your-server
+ssh strapi@your-server
 
 # Switch to the strapi directory
 cd /var/www/strapi
@@ -280,7 +289,7 @@ npm prune --omit=dev
 Create the production `.env` on the server:
 
 ```bash
-sudo -u strapi nano /var/www/strapi/.env
+nano /var/www/strapi/.env
 ```
 
 ```bash
@@ -425,7 +434,7 @@ sudo journalctl -u strapi -f
 
 ## nginx reverse proxy
 
-nginx sits in front of Strapi, handling SSL, compression, and caching.
+nginx sits in front of Strapi, handling SSL and compression.
 
 ### Create the nginx configuration
 
@@ -471,10 +480,9 @@ server {
         proxy_send_timeout 300s;
     }
 
-    # Cache static assets
+    # Let browsers cache uploaded media
     location /uploads/ {
         proxy_pass http://127.0.0.1:1337;
-        proxy_cache_valid 200 1d;
         add_header Cache-Control "public, max-age=86400";
     }
 }
@@ -604,9 +612,11 @@ export default [
 ];
 ```
 
-> **Note:** Strapi does not ship with a built-in rate limiter. For production, use the custom rate limiting middleware
-> from [chapter 8](./08-routes-policies-middleware.md), or install a third-party package like
-> [koa-ratelimit](https://github.com/koajs/ratelimit) or [koa2-ratelimit](https://github.com/ysocorp/koa2-ratelimit).
+> **Note:** Strapi rate-limits the auth routes through the
+> [Users & Permissions `ratelimit` config](/strapi/api-security-hardening) and the admin panel
+> through [`rateLimit`](/strapi/authentication-and-permissions). Reach for the custom middleware in
+> [chapter 8](./08-routes-policies-middleware.md) or a package like
+> [koa-ratelimit](https://github.com/koajs/ratelimit) only for your own public endpoints.
 
 ### Additional security headers with Helmet
 
@@ -898,10 +908,13 @@ To deploy updates:
 # On your local machine
 rsync -avz --exclude node_modules --exclude .tmp --exclude .cache \
   --exclude dist --exclude .env \
-  ./ your-user@your-server:/var/www/strapi/
+  ./ strapi@your-server:/var/www/strapi/
 
 # On the server
+ssh strapi@your-server
 cd /var/www/strapi
+# Deployed before this guide used a dedicated user? Fix the ownership once:
+#   sudo chown -R strapi:strapi /var/www/strapi
 npm install
 NODE_ENV=production npm run build
 pm2 restart strapi
@@ -920,7 +933,7 @@ You learned:
 - Switching to **PostgreSQL** for production
 - **Deploying to a VPS** - transferring files, installing dependencies, building
 - **PM2** and **systemd** for process management
-- **nginx** as a reverse proxy with caching
+- **nginx** as a reverse proxy
 - **HTTPS** with Let's Encrypt and automatic renewal
 - **Security hardening** - firewall, CORS, CSP, SSH, Fail2Ban, automatic updates
 - **Database backups** and update procedures
