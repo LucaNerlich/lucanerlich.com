@@ -28,7 +28,7 @@ The Oak repository sits on top of either a TarMK or MongoMK persistence layer. W
 Create a **custom index** whenever you add a new query that filters on a property not covered by out-of-the-box indexes.
 
 ```xml
-<!-- /oak:index/cq:myCustomIndex -->
+<!-- /oak:index/mysite.myCustomIndex-1-custom-1 -->
 <jcr:root
     jcr:primaryType="oak:QueryIndexDefinition"
     type="lucene"
@@ -250,7 +250,6 @@ Enable minification in the **HTML Library Manager** OSGi config:
 {
     "htmllibmanager.minify": true,
     "htmllibmanager.gzip": true,
-    "htmllibmanager.timing": true,
     "htmllibmanager.debug.init.js": false
 }
 ```
@@ -375,7 +374,7 @@ public class CacheHeaderFilter implements Filter {
         // Unversioned clientlibs must revalidate: a deploy changes the file but
         // not the URL. Versioned URLs only (ACS Commons or AEMaaCS .lc-<hash>):
         // Cache-Control: public, max-age=31536000, immutable
-        if (req.getRequestURI().startsWith("/etc.clientlibs/")) {
+        if (((HttpServletRequest) req).getRequestURI().startsWith("/etc.clientlibs/")) {
             response.setHeader("Cache-Control", "public, max-age=300");
         }
         chain.doFilter(req, res);
@@ -492,7 +491,7 @@ Setting `queryFailTraversal=true` causes traversal queries to **fail immediately
 
 ### JMX Beans for Repository Statistics
 
-Access Oak JMX beans via the **JMX Console** (`/system/console/jmx`) or programmatically:
+Access Oak JMX beans via the **JMX Console** (`/system/console/jmx`, AEM 6.5 and the local SDK only -- the Web Console is not available on AEMaaCS) or programmatically:
 
 | MBean | What it tells you |
 |---|---|
