@@ -271,7 +271,7 @@ Reference them with `$[env:...]` or `$[secret:...]` placeholders:
 }
 ```
 
-Set the actual values in **Cloud Manager > Environments > Environment Variables**. AEM resolves the
+Set the actual values in **Cloud Manager > Environments > (your environment) > Configuration**. AEM resolves the
 placeholders at runtime.
 
 :::danger[Never commit real secrets]
@@ -294,7 +294,7 @@ instance-specific - encrypted values cannot be moved between instances without r
 
 ## Felix Web Console
 
-The OSGi Web Console is available on local and non-production AEM instances at:
+The OSGi Web Console is available on the local AEMaaCS SDK and on AEM 6.5 instances (AEMaaCS cloud environments only offer the Developer Console) at:
 
 | URL | Purpose |
 |---|---|
@@ -320,7 +320,7 @@ The table below lists frequently configured services and their PIDs.
 | **Sling Referrer Filter** | `org.apache.sling.security.impl.ReferrerFilter` | Allowed hosts, allow empty |
 | **Link Externalizer** | `com.day.cq.commons.impl.ExternalizerImpl` | Domain mappings per run mode |
 | **Resource Resolver Mapping** | `org.apache.sling.jcr.resource.internal.JcrResourceResolverFactoryImpl` | URL mappings, vanity paths |
-| **Sling POST Servlet** | `org.apache.sling.servlets.post.impl.SlingPostServlet` | Node name generator, allowed operations |
+| **Sling POST Servlet** | `org.apache.sling.servlets.post.impl.SlingPostServlet` | Node name hints and max length, date formats |
 | **Sling Logging** | `org.apache.sling.commons.log.LogManager` | Log level, log file, pattern |
 | **Sling Logger (factory)** | `org.apache.sling.commons.log.LogManager.factory.config` | Per-package log levels |
 | **CSRF Filter** | `com.adobe.granite.csrf.impl.CSRFFilter` | Excluded paths |
