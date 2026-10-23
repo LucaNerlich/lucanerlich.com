@@ -93,7 +93,7 @@ graph TD
         IOEvents["I/O Events"]
         AEM_API["AEM APIs"]
         FilesSDK["Files SDK (Azure Blob)"]
-        StateSDK["State SDK (Cosmos DB)"]
+        StateSDK["State SDK"]
     end
 
     Actions -->|deploys to| OW
@@ -108,10 +108,10 @@ graph TD
 
 | Component           | Description                                                                   |
 |---------------------|-------------------------------------------------------------------------------|
-| **Runtime Actions** | Serverless Node.js functions (60s default timeout, configurable up to 60 min; CDN-served web actions still need fast responses) |
+| **Runtime Actions** | Serverless Node.js functions (60s default timeout; up to 3h for non-blocking invocations -- blocking/web-action calls return an error after 60s) |
 | **Web Assets**      | Optional React SPA served from Adobe's CDN, embedded in AEM Shell             |
 | **Files SDK**       | Cloud file storage (Azure Blob under the hood) for temporary/persistent files |
-| **State SDK**       | Key-value store (Azure Cosmos DB) for caching, state, and configuration       |
+| **State SDK**       | Key-value store for caching, state, and configuration                         |
 | **I/O Events**      | Pub/sub event system - AEM publishes events, actions consume them            |
 | **Adobe IMS**       | OAuth 2.0 authentication and service-to-service tokens                        |
 
@@ -237,16 +237,15 @@ runtimeManifest:
 
 ## Authentication
 
-App Builder actions authenticate against AEM using **service-to-service OAuth** (technical
+App Builder actions authenticate against AEM using **service credentials (JWT)** (technical
 accounts) or **user tokens** (for UI-driven flows).
 
 ### Service-to-service (server-side actions)
 
-For backend actions that run without a user context, use a **Technical Account** (also
-called Service Credentials):
+For backend actions that run without a user context, use a **Technical Account** (Service Credentials):
 
-1. In the Adobe Developer Console, add the **AEM as a Cloud Service** API to your project
-2. Create an **OAuth Server-to-Server** credential
+1. In the AEM Developer Console (Integrations → Technical Accounts), create service credentials
+2. Exchange a JWT signed with them for an access token (e.g. via `@adobe/jwt-auth`)
 3. Store the credentials as environment variables
 
 ```bash title=".env (local development only)"
@@ -255,33 +254,30 @@ AEM_TECHNICAL_ACCOUNT_ID=ABC123@techacct.adobe.com
 AEM_CLIENT_ID=your-client-id
 AEM_CLIENT_SECRET=your-client-secret
 AEM_ORG_ID=your-org@AdobeOrg
-AEM_IMS_ENDPOINT=https://ims-na1.adobelogin.com
+AEM_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n..."
 ```
 
-In your action, use the Adobe I/O SDK to fetch an access token:
+In your action, use `@adobe/jwt-auth` to fetch an access token:
 
 ```js title="actions/utils.js"
 const { Core } = require('@adobe/aio-sdk');
-const fetch = require('node-fetch');
+const auth = require('@adobe/jwt-auth');
 
 /**
- * Get a bearer token for AEM using OAuth Server-to-Server credentials.
+ * Get a bearer token for AEM using service credentials (JWT).
  */
 async function getAemAccessToken(params) {
-    const response = await fetch(
-        `${params.AEM_IMS_ENDPOINT}/ims/token/v3`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-            client_id: params.AEM_CLIENT_ID,
-            client_secret: params.AEM_CLIENT_SECRET,
-            grant_type: 'client_credentials',
-            scope: 'AdobeID,openid,aem.author'
-        })
-    });
+    const config = {
+        clientId: params.AEM_CLIENT_ID,
+        technicalAccountId: params.AEM_TECHNICAL_ACCOUNT_ID,
+        orgId: params.AEM_ORG_ID,
+        clientSecret: params.AEM_CLIENT_SECRET,
+        privateKey: params.AEM_PRIVATE_KEY,
+        metaScopes: ['ent_aem_cloud_sdk']
+    };
 
-    const data = await response.json();
-    return data.access_token;
+    const { access_token } = await auth(config);
+    return access_token;
 }
 
 module.exports = { getAemAccessToken };
@@ -308,17 +304,17 @@ Builder actions react to them automatically.
 
 ### Common AEM event types
 
-| Event Provider        | Event Type                        | Triggered when                      |
-|-----------------------|-----------------------------------|-------------------------------------|
-| AEM Assets            | `aem.assets.asset.created`        | A new asset is uploaded             |
-| AEM Assets            | `aem.assets.asset.updated`        | An asset is modified or reprocessed |
-| AEM Assets            | `aem.assets.asset.deleted`        | An asset is removed                 |
-| AEM Content Fragments | `aem.contentfragment.created`     | A new CF is created                 |
-| AEM Content Fragments | `aem.contentfragment.modified`    | A CF is updated                     |
-| AEM Content Fragments | `aem.contentfragment.published`   | A CF is published                   |
-| AEM Content Fragments | `aem.contentfragment.unpublished` | A CF is unpublished                 |
-| AEM Sites             | `aem.sites.page.published`        | A page is activated                 |
-| AEM Sites             | `aem.sites.page.unpublished`      | A page is deactivated               |
+| Event Provider        | Event Type                                | Triggered when                      |
+|-----------------------|-------------------------------------------|-------------------------------------|
+| AEM Assets            | `aem.assets.asset.processing_completed`   | An asset finished processing        |
+| AEM Assets            | `aem.assets.asset.metadata_updated`       | An asset's metadata is modified     |
+| AEM Assets            | `aem.assets.asset.deleted`                | An asset is removed                 |
+| AEM Content Fragments | `aem.sites.contentFragment.created`       | A new CF is created                 |
+| AEM Content Fragments | `aem.sites.contentFragment.modified`      | A CF is updated                     |
+| AEM Content Fragments | `aem.sites.contentFragment.published`     | A CF is published                   |
+| AEM Content Fragments | `aem.sites.contentFragment.unpublished`   | A CF is unpublished                 |
+| AEM Sites             | `aem.sites.page.published`                | A page is activated                 |
+| AEM Sites             | `aem.sites.page.unpublished`              | A page is deactivated               |
 
 ### Registering an event consumer
 
@@ -344,10 +340,10 @@ async function main(params) {
         logger.info(`Received event: ${eventType}`);
         logger.info(`Resource: ${JSON.stringify(eventData)}`);
 
-        // Example: react to asset creation
-        if (eventType === 'aem.assets.asset.created') {
-            const assetPath = eventData?.path;
-            logger.info(`New asset created at: ${assetPath}`);
+        // Example: react to asset processing completion
+        if (eventType === 'aem.assets.asset.processing_completed') {
+            const assetPath = eventData?.repositoryMetadata?.['repo:path'];
+            logger.info(`Asset ready at: ${assetPath}`);
 
             // Fetch an access token and call AEM APIs
             const token = await getAemAccessToken(params);
@@ -753,23 +749,18 @@ Before uploading, you may need to ensure the target folder exists:
 const fetch = require('node-fetch');
 
 async function createDamFolder(host, folderPath, folderTitle, auth, logger = console) {
-    const formData = new URLSearchParams();
-    formData.append('./jcr:content/jcr:title', folderTitle);
-    formData.append(':name', folderPath.split('/').pop());
-    formData.append('./jcr:primaryType', 'sling:OrderedFolder');
-    formData.append('./jcr:content/jcr:primaryType', 'nt:unstructured');
-    formData.append('_charset_', 'UTF-8');
-
-    const parentPath = folderPath.substring(0, folderPath.lastIndexOf('/'));
-    const url = `${host}/content/dam/${parentPath}`;
+    const url = `${host}/api/assets/${folderPath}`;
 
     const response = await fetch(url, {
         method: 'POST',
         headers: {
             'Authorization': auth,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/json'
         },
-        body: formData
+        body: JSON.stringify({
+            class: 'assetFolder',
+            properties: { title: folderTitle }
+        })
     });
 
     if (!response.ok && response.status !== 409) {
@@ -809,7 +800,8 @@ graph LR
 ### Creating a worker
 
 ```bash
-aio app init my-asset-worker --template @adobe/aio-cli-plugin-asset-compute
+aio app init my-asset-worker
+# When prompted, select the "DX Asset Compute Worker" extension point (template @adobe/generator-app-asset-compute)
 ```
 
 ```js title="actions/worker/index.js"
@@ -845,7 +837,6 @@ App Builder can host **Single Page Applications** that integrate into the AEM Sh
 ```js title="web-src/src/App.js"
 import React from 'react';
 import { Provider, defaultTheme } from '@adobe/react-spectrum';
-import { extensionRegistration } from '@adobe/uix-guest';
 
 function App() {
     return (
@@ -871,9 +862,10 @@ The SPA is deployed to Adobe's CDN and appears as an extension in the AEM naviga
 # Start the local development server
 aio app run
 
-# This starts:
-# - Runtime Actions on http://localhost:9080
-# - Web UI on http://localhost:9080 (with hot reload)
+# This:
+# - deploys the actions to I/O Runtime (current workspace)
+# - serves the Web UI on https://localhost:9080 (with hot reload)
+# (use `aio app dev` to run actions locally)
 ```
 
 ### Deploy to Stage
@@ -1032,10 +1024,11 @@ event types or API endpoints. Use separate actions and orchestrate them.
 ### Handle timeouts gracefully
 
 The default timeout is 60 seconds. For long-running operations (large file uploads, bulk
-processing), increase the timeout in the manifest and implement progress tracking:
+processing), increase `timeout` under `limits` in the manifest and invoke the action non-blocking;
+web action HTTP responses still end at 60 seconds:
 
 ```yaml
-runtime:
+limits:
   timeout: 600000  # 10 minutes
 ```
 
@@ -1053,8 +1046,8 @@ await files.write('temp/processing.json', JSON.stringify(data));
 
 // Cache API responses
 const state = await stateLib.init();
-await state.put('cache:token', accessToken, { ttl: 3600 });
-const cached = await state.get('cache:token');
+await state.put('cache.token', accessToken, { ttl: 3600 });
+const cached = (await state.get('cache.token'))?.value;
 ```
 
 ### Implement retry logic
@@ -1096,8 +1089,8 @@ logger.info({ assetPath, fileSize, duration }, 'Asset upload complete');
 
 | Pitfall                                 | Solution                                                                                    |
 |-----------------------------------------|---------------------------------------------------------------------------------------------|
-| Action times out during large upload    | Increase `timeout` in manifest; use multi-part upload with concurrency                      |
-| `401 Unauthorized` when calling AEM     | Token expired or wrong scope; regenerate or use OAuth Server-to-Server                      |
+| Action times out during large upload    | Raise `timeout` and invoke non-blocking (web actions return after 60s); use direct upload    |
+| `401 Unauthorized` when calling AEM     | Token expired; regenerate the service-credential token (OAuth S2S works only for OpenAPI `/adobe/...` APIs) |
 | Cold start latency is too high          | Keep action bundles small; avoid heavy `require()` chains at the top level                  |
 | `.env` file committed to git            | Add `.env` to `.gitignore` immediately; rotate any exposed credentials                      |
 | Event handler misses events             | Use the **Journaling API** (polling) instead of webhooks for reliability                    |
