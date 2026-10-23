@@ -76,15 +76,11 @@ Or in the older node-based format:
 
 ### JSON dictionary format (recommended)
 
-The simplest approach is JSON files:
+The simplest approach is JSON files containing key-value message pairs. Set
+`jcr:mixinTypes="[mix:language]"` and `jcr:language` on the file node in `<lang>.json.dir/.content.xml`:
 
 ```json title="/apps/myproject/i18n/en.json"
 {
-    "jcr:language": "en",
-    "jcr:mixinTypes": ["mix:language"],
-    "jcr:primaryType": "sling:Folder",
-    "sling:basename": "myproject",
-
     "readMore": "Read more",
     "backToTop": "Back to top",
     "searchPlaceholder": "Search...",
@@ -95,11 +91,6 @@ The simplest approach is JSON files:
 
 ```json title="/apps/myproject/i18n/de.json"
 {
-    "jcr:language": "de",
-    "jcr:mixinTypes": ["mix:language"],
-    "jcr:primaryType": "sling:Folder",
-    "sling:basename": "myproject",
-
     "readMore": "Weiterlesen",
     "backToTop": "Nach oben",
     "searchPlaceholder": "Suchen...",
@@ -111,11 +102,11 @@ The simplest approach is JSON files:
 ### The `sling:basename` property
 
 If your project has multiple dictionaries (e.g., shared and site-specific), use
-`sling:basename` to namespace them and avoid collisions:
+`sling:basename` on the `mix:language` nodes to namespace them and avoid collisions:
 
 ```text
-/apps/myproject/i18n/        sling:basename = "myproject"
-/apps/shared/i18n/           sling:basename = "shared"
+/apps/myproject/i18n/en.json    sling:basename = "myproject"
+/apps/shared/i18n/en.json       sling:basename = "shared"
 ```
 
 Reference the basename in HTL:
@@ -154,8 +145,10 @@ from the language root, e.g., `/content/mysite/de`).
 
 #### Translation hints for translators
 
+The hint selects the dictionary entry whose Comment matches it exactly (key `open ((hint))`). Add
+a hint only when the dictionary contains that commented entry:
+
 ```html
-<!-- Hint helps translators understand the context -->
 <span>${'open' @ i18n, hint='As in: open a door, not the adjective'}</span>
 ```
 
@@ -251,8 +244,10 @@ language the subtree uses.
 
 ### Language copies
 
-**Language copies** are the translated versions of a source language tree. They are
-created via **Sites > Create > Language Copy** or programmatically.
+**Language copies** are the translated versions of a source language tree. Language copies
+are not Live Copies; they are created through the Translation Integration Framework via
+**References > Language Copies > Create & Translate** (or programmatically) after creating the
+language root with **Create > Page**.
 
 ```mermaid
 graph TD
@@ -441,13 +436,14 @@ public class FormattingModel {
         // JA: "2025年1月15日"
     }
 
-    public String formatPrice(double amount) {
+    public String formatPrice(double amount, String currencyCode) {
         Locale locale = currentPage.getLanguage(false);
         NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
+        formatter.setCurrency(Currency.getInstance(currencyCode));
         return formatter.format(amount);
-        // EN-US: "$99.99"
-        // DE:    "99,99 €"
-        // JA:    "￥9,999"
+        // EN (USD): "$99.99"
+        // DE (EUR): "99,99 €"
+        // JA (JPY): "￥9,999"
     }
 }
 ```
@@ -459,6 +455,10 @@ public class FormattingModel {
 A common component that links to the equivalent page in other languages:
 
 ```java
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 @Model(adaptables = SlingHttpServletRequest.class)
 public class LanguageSwitcherModel {
 
@@ -482,7 +482,9 @@ public class LanguageSwitcherModel {
             .substring(languageRoot.getPath().length());
         // e.g., /products/shoes
 
-        for (Page sibling : siteRoot.listChildren()) {
+        Iterator<Page> siblings = siteRoot.listChildren();
+        while (siblings.hasNext()) {
+            Page sibling = siblings.next();
             String langCode = sibling.getName();
             String targetPath = sibling.getPath() + relativePath;
 
@@ -578,7 +580,8 @@ to namespace dictionaries.
 
 ### Provide context for translators
 
-Use the `hint` option in HTL to give translators context:
+The hint selects the dictionary entry whose Comment matches it exactly (key `open ((hint))`). Add
+a hint only when the dictionary contains that commented entry:
 
 ```html
 ${'open' @ i18n, hint='Verb: to open a menu, not the adjective'}
