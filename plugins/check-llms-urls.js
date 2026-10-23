@@ -14,6 +14,16 @@ const path = require('path');
 // instead of treating them as external links the guard never sees.
 const LINK_PATTERN = /https?:\/\/(?:[\w-]+\.)*lucanerlich\.com[^)\s>]*/gi;
 
+// Markdown destinations without a scheme that still name the site: a
+// root-relative path, or a protocol-relative URL. Same-site links written this
+// way were invisible to the guard, so a dead slug shipped with a green build.
+// `<...>` is the CommonMark form for destinations with spaces or parentheses;
+// reference definitions use the same destination syntax after `]:`.
+const RELATIVE_PATTERNS = [
+    /\]\(\s*<?(\/\/[^)>\s]+|\/(?!\/)[^)>\s]*)>?/g,
+    /^\[[^\]]+\]:\s*<?(\/\/[^>\s]+|\/(?!\/)[^>\s]*)>?/gm,
+];
+
 /** Hosts the guard accepts as the site's own. */
 const SITE_HOSTS = new Set(['lucanerlich.com', 'www.lucanerlich.com']);
 
@@ -26,6 +36,19 @@ const SITE_HOSTS = new Set(['lucanerlich.com', 'www.lucanerlich.com']);
  */
 function hostOf(url) {
     return url.hostname.replace(/\.$/, '');
+}
+
+/**
+ * @param {string} raw
+ * @returns {URL}
+ */
+function parseUrl(raw) {
+    try {
+        return new URL(raw);
+    } catch {
+        // A malformed port or host must name the entry, not just throw.
+        throw new Error(`static/llms.txt has an invalid URL: ${raw}`);
+    }
 }
 
 /**
@@ -48,8 +71,31 @@ module.exports = function checkLlmsUrlsPlugin() {
             const listed = [...content.matchAll(LINK_PATTERN)].map((match) =>
                 // A prose URL can be followed by sentence punctuation, quotes
                 // or markdown emphasis.
-                new URL(match[0].replace(/[.,;:"'`*_!?]+$/, '')),
+                parseUrl(match[0].replace(/[.,;:"'`*_!?]+$/, '')),
             );
+            const relativePaths = [];
+            for (const pattern of RELATIVE_PATTERNS) {
+                for (const match of content.matchAll(pattern)) {
+                    const destination = match[1];
+                    let pathname;
+                    if (destination.startsWith('//')) {
+                        const url = parseUrl(`https:${destination}`);
+                        // A protocol-relative link to another host is external,
+                        // like an absolute one: the guard owns lucanerlich.com.
+                        if (!SITE_HOSTS.has(hostOf(url))) continue;
+                        if (url.port !== '') {
+                            throw new Error(`static/llms.txt links ${url.host}, which is not the site`);
+                        }
+                        pathname = url.pathname;
+                    } else {
+                        pathname = destination.split(/[?#]/)[0];
+                    }
+                    // Static files are copied, not routed: llms.txt may link
+                    // llms-full.txt or an image without a page route.
+                    if (fs.existsSync(path.join(siteDir, 'static', pathname))) continue;
+                    relativePaths.push(pathname);
+                }
+            }
             // A non-default port is a different origin even on the right host.
             const foreign = listed.find((url) => !SITE_HOSTS.has(hostOf(url)) || url.port !== '');
             if (foreign) {
@@ -57,7 +103,7 @@ module.exports = function checkLlmsUrlsPlugin() {
                     `static/llms.txt links ${foreign.host}, which is not the site`,
                 );
             }
-            const listedPaths = listed.map((url) => url.pathname);
+            const listedPaths = [...listed.map((url) => url.pathname), ...relativePaths];
             // An empty match set would make the guard pass vacuously.
             if (listedPaths.length === 0) {
                 throw new Error('static/llms.txt lists no lucanerlich.com URLs');
