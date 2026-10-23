@@ -489,54 +489,12 @@ tenant they're on - they just pick "Featured" in the Style System dropdown.
 ## Using Vite Instead of Webpack
 
 For new projects, [Vite](https://vitejs.dev/) is a faster alternative to webpack. The same
-multi-tenancy concept applies - you just configure it differently:
+multi-tenancy concept applies.
 
-```javascript title="ui.frontend/vite.config.js"
-import { defineConfig } from 'vite';
-import path from 'path';
-
-const SITES = ['site-X', 'site-Y'];
-
-// Build separate entry points per tenant
-const input = {};
-SITES.forEach(site => {
-    input[site] = path.resolve(__dirname, `src/main/webpack/${site}/main.ts`);
-});
-
-export default defineConfig({
-    build: {
-        rollupOptions: {
-            input,
-            output: {
-                entryFileNames: `clientlib-[name]/[name].js`,
-                assetFileNames: (assetInfo) => {
-                    if (assetInfo.name?.endsWith('.css')) {
-                        return `clientlib-[name]/[name].css`;
-                    }
-                    return `clientlib-[name]/resources/[name][extname]`;
-                },
-            },
-        },
-        outDir: 'dist',
-    },
-    css: {
-        preprocessorOptions: {
-            scss: {
-                additionalData: `@import "src/main/webpack/shared/variables";`,
-            },
-        },
-    },
-});
-```
-
-The `aem-clientlib-generator` configuration remains the same regardless of whether you use
-webpack or Vite - it only cares about the `/dist` output structure.
-
-:::tip[Packaged alternative to hand-rolling this]
-The hand-rolled `vite.config.js` above and the matching `aem-clientlib-generator` config both need to
-be kept in sync per tenant. [`@aemvite`](../aemvite.mdx) packages this exact pattern: declare
+:::tip[Vite alternative]
+[`@aemvite`](../aemvite.mdx) packages this exact pattern: declare
 one `clientlibs` entry per tenant in a typed `aem.config.mjs`, and both the Vite build and the
-byte-identical `.content.xml` / `js.txt` / `css.txt` emission are handled for you - see
+byte-identical `.content.xml` / `js.txt` / `css.txt` emission are handled for you -- see
 [Multiple clientlibs for multi-tenant setups](../aemvite.mdx#71-multiple-clientlibs-for-multi-tenant-setups).
 :::
 
@@ -603,17 +561,12 @@ two separate components rather than two themes of one component. Multi-tenancy w
 
 ### Watch the bundle size
 
-After adding several tenants, monitor the CSS/JS bundle sizes. Use webpack-bundle-analyzer or
-Vite's built-in analysis to ensure you're not accidentally bundling the same code into multiple
-tenant bundles:
+After adding several tenants, monitor the CSS/JS bundle sizes. Use webpack-bundle-analyzer
+to ensure you're not accidentally bundling the same code into multiple tenant bundles:
 
 ```bash
-# Webpack
 npx webpack --profile --json > stats.json
 npx webpack-bundle-analyzer stats.json
-
-# Vite
-npx vite build --report
 ```
 
 ### Test all tenants
