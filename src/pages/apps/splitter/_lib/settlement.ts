@@ -35,8 +35,7 @@ export const expenseBreakdowns = (state: AppState): ExpenseBreakdown[] => {
 
 /**
  * Paid and owed per person, the two quantities `balancesFrom` nets out.
- * Exported so the calculation panel can show the same numbers the settlement
- * used instead of re-accumulating the expenses.
+ * Exported for tests; the calculation panel reads paid/owed off `summarize()`.
  */
 export const paidAndOwed = (
     state: AppState,
