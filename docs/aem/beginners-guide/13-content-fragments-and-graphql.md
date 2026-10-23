@@ -90,7 +90,7 @@ Create these fields for an Article model:
 | Title          | Single line text   | Required                  |
 | Slug           | Single line text   | Required, unique          |
 | Body           | Multi line text    | Rich text, required       |
-| Excerpt        | Multi line text    | Plain text, max 300 chars |
+| Excerpt        | Multi line text    | Plain text                |
 | Featured Image | Content Reference  | Asset reference           |
 | Publish Date   | Date and Time      | Date only                 |
 | Featured       | Boolean            | Default: false            |
@@ -136,12 +136,11 @@ Content Fragments support **variations** - alternate versions of the same conten
 - **Master** - the default version
 - Named variations - e.g., "Summary", "Mobile", "Newsletter"
 
-Each variation can override specific fields while inheriting others from the master.
+Each variation starts as a copy of Main (called Master in 6.5); later edits to Main are not inherited - use Sync to copy them over.
 
 ## The GraphQL API
 
-AEM automatically generates a GraphQL API from your Content Fragment Models. No code needed - install the model, and
-the API is ready.
+AEM generates the GraphQL schema from your enabled Content Fragment Models - no code needed. Before querying, create (and publish) an endpoint for your configuration under **Tools > General > GraphQL**.
 
 ### GraphQL endpoint
 
@@ -177,7 +176,9 @@ names if queries return `null` unexpectedly.
       _path
       title
       slug
-      excerpt
+      excerpt {
+        plaintext
+      }
       publishDate
       featured
       category
@@ -201,7 +202,9 @@ names if queries return `null` unexpectedly.
       publishDate
       author {
         name
-        bio
+        bio {
+          plaintext
+        }
       }
     }
   }
@@ -220,7 +223,9 @@ names if queries return `null` unexpectedly.
   ) {
     items {
       title
-      excerpt
+      excerpt {
+        plaintext
+      }
       publishDate
     }
   }
@@ -293,7 +298,9 @@ When an Article references an Author:
       title
       author {
         name
-        bio
+        bio {
+          plaintext
+        }
         avatar {
           ... on ImageRef {
             _path
