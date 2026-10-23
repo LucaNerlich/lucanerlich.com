@@ -34,7 +34,7 @@ export const expenseBreakdowns = (state: AppState): ExpenseBreakdown[] => {
 };
 
 /**
- * Paid and owed per person, the two quantities `computeBalances` nets out.
+ * Paid and owed per person, the two quantities `balancesFrom` nets out.
  * Exported so the calculation panel can show the same numbers the settlement
  * used instead of re-accumulating the expenses.
  */
@@ -66,19 +66,6 @@ const balancesFrom = (paid: Map<string, number>, owed: Map<string, number>): Map
         if (!balances.has(id)) balances.set(id, -cents);
     }
     return balances;
-};
-
-// Returns a Map<personId, netCents> where positive = is owed, negative = owes.
-// Balances sum to 0 when every expense allocates cleanly. Callers that already
-// hold the breakdowns pass them in to avoid a second traversal of the expenses;
-// the balance rule itself lives in `paidAndOwed` + `balancesFrom`, which
-// `summarize` uses so the calculation panel and the settlement cannot drift.
-export const computeBalances = (
-    state: AppState,
-    breakdowns: ExpenseBreakdown[] = expenseBreakdowns(state),
-): Map<string, number> => {
-    const {paid, owed} = paidAndOwed(state, breakdowns);
-    return balancesFrom(paid, owed);
 };
 
 export const computeSettlement = (balances: Map<string, number>): Transfer[] => {

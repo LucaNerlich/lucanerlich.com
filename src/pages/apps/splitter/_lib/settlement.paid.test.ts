@@ -1,12 +1,16 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {computeBalances, paidAndOwed, summarize} from './settlement';
+import {paidAndOwed, summarize} from './settlement';
 import {demoState} from './demo';
 
 describe('balances', () => {
-    it('agree between summarize and computeBalances', () => {
+    it('net the paid and owed maps into the summary balances', () => {
         const state = demoState();
-        assert.deepEqual([...summarize(state).balances], [...computeBalances(state)]);
+        const {balances, paid, owed} = summarize(state);
+        for (const [id, cents] of balances) {
+            assert.equal(cents, (paid.get(id) ?? 0) - (owed.get(id) ?? 0));
+        }
+        assert.equal([...balances.values()].reduce((a, b) => a + b, 0), 0);
     });
 
     it('sum to zero', () => {
