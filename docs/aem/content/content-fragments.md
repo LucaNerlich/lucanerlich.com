@@ -563,7 +563,7 @@ component or a custom Sling Model.
 
 ### Using the Core Component
 
-The [AEM Core Content Fragment component](https://www.aemcomponents.dev/content/core-components-examples/library/content-fragment.html)
+The [AEM Core Content Fragment component](https://www.aemcomponents.dev/content/core-components-examples/library/core-content/content-fragment.html)
 renders Content Fragments out of the box. Add it to your template policy and configure via dialog.
 
 ### Custom HTL rendering

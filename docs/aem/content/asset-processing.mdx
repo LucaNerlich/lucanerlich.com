@@ -113,7 +113,7 @@ To add project-specific renditions, create a **processing profile** under
 |--------------|------------|
 | **Image** | Extra image renditions - width/height, format (JPEG, PNG, GIF, WebP), quality, and include/exclude MIME types |
 | **Custom** | Calling your own [Asset Compute worker](#3-custom-asset-compute-workers) with parameters |
-| **Video** | Video encoding renditions (Dynamic Media) |
+| **Video** | MP4 (H.264) video renditions; advanced transcoding needs Dynamic Media |
 
 Apply the profile to a folder (folder **Properties > Asset Processing**, or **Apply Profile to
 Folders** from the profile). It applies to the folder and its subfolders, for assets that are
@@ -187,7 +187,7 @@ Rules for post-processing models:
 | Launcher on `/content/dam` that starts a custom model | Post-processing workflow configured per folder or path |
 | Upload via Assets HTTP API / `createasset.html` | Direct binary upload (`@adobe/aem-upload`) |
 | Metadata extraction step | Built in - microservices extract XMP / EXIF / IPTC |
-| Video transcoding with FFmpeg | Dynamic Media video profiles |
+| Video transcoding with FFmpeg | Video processing profile (MP4) or Dynamic Media video profiles |
 
 ## Common pitfalls
 
@@ -205,7 +205,7 @@ Rules for post-processing models:
 - [Workflows](../backend/workflows.mdx) - writing custom workflow steps
 - [App Builder](../infrastructure/aio-app-builder.md) - the platform Asset Compute workers run on
 - [AEMaaCS vs AEM 6.5](../infrastructure/aemaacs-vs-aem-65.mdx)
-- Adobe docs: [Asset microservices overview](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/manage/asset-microservices-overview)
+- Adobe docs: [Asset microservices overview](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/asset-microservices-overview)
 - Adobe docs: [Configure and use asset microservices](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/manage/asset-microservices-configure-and-use)
-- Adobe docs: [Asset Compute Service extensibility](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/manage/asset-compute-extensibility)
+- Adobe docs: [Asset Compute Service extensibility](https://experienceleague.adobe.com/en/docs/asset-compute/using/extend/understand-extensibility)
 - [@adobe/aem-upload on GitHub](https://github.com/adobe/aem-upload)
