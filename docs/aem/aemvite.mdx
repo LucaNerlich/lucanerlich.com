@@ -173,7 +173,7 @@ You only ever install `@aemvite/aem-config` yourself - the five plugin packages 
 What does **not** change:
 
 - The clientlib descriptors (`.content.xml`, `js.txt`, `css.txt`) are emitted byte-identical to the historical archetype output.
-- `ui.frontend/pom.xml` is untouched. `frontend-maven-plugin` still runs `npm install` and `npm run prod` during `generate-resources`; only the npm scripts behind those names swap from webpack to `aem-build`.
+- `ui.frontend/pom.xml` is untouched. `frontend-maven-plugin` still runs `npm ci` and `npm run prod` during `generate-resources`; only the npm scripts behind those names swap from webpack to `aem-build`.
 - `ui.apps` is untouched - the emitter writes into the same `clientLibRoot` the archetype already uses (`ui.apps/src/main/content/jcr_root/apps/<project>/clientlibs/`).
 - The `src/main/webpack/` source layout is preserved. You do not have to move files (the folder is still called `webpack/` in the reference project even after migration).
 - You install `@aemvite` from the public npm registry - the monorepo is only the source of truth for the packages.
@@ -233,10 +233,10 @@ The rest of this post walks through converting an actual AEM Maven archetype `ui
 
 ### 1. Prerequisites
 
-- **Node.js** `^20.19.0 || ^22.18.0 || >=24.11.0`. Older Node fails `npm install` of `@aemvite/aem-config` (whose own `engines` field enforces this range) and also breaks `frontend-maven-plugin` invocations with `SyntaxError: ... does not provide an export named 'styleText'`.
+- **Node.js** `^20.19.0 || ^22.18.0 || >=24.11.0`. Older Node only gets an `EBADENGINE` warning from `npm install`, then `frontend-maven-plugin` builds fail with `SyntaxError: ... styleText`.
 - **npm** (Yarn / pnpm work too, but `frontend-maven-plugin` defaults to npm).
 - **An AEM Maven multi-module project** with a `ui.frontend/` module that feeds compiled assets into `ui.apps/` clientlibs - i.e. the standard AEM archetype layout.
-- **`frontend-maven-plugin`** in `ui.frontend/pom.xml` running `npm install` then `npm run prod` during `generate-resources`. Maven does not need to change when you migrate; only the npm scripts behind `run prod` / `run dev` swap from webpack to `aem-build`.
+- **`frontend-maven-plugin`** in `ui.frontend/pom.xml` running `npm ci` then `npm run prod` during `generate-resources`. Maven does not need to change when you migrate; only the npm scripts behind `run prod` / `run dev` swap from webpack to `aem-build`.
 
 ### 2. The OOTB before-state
 
@@ -451,8 +451,8 @@ export default defineAemConfig({
       // CSS with no sourcemap. Flip `minify` or `sourcemap` here to change just
       // this clientlib's output without touching the global block.
       build: {
-        minify: { js: false, css: false },
-        sourcemap: true,
+        minify: { js: true, css: true },
+        sourcemap: false,
       },
     },
   ],
@@ -593,7 +593,7 @@ import.meta.glob('../components/**/*.js', { eager: true });
 @import './styles/*.scss';           // expanded too
 ```
 
-Non-glob `@import 'variables';` is preserved verbatim - Sass resolves it. Under the hood, `@aemvite/vite-plugin-glob` finds `@`-rules whose specifier contains glob magic characters (`* ? [ ] { } ! ( )`), resolves them with [`tinyglobby`](https://github.com/SuperchupuDev/tinyglobby) relative to the source file's directory, sorts the matches lexicographically (configurable via a `sort` comparator), and rewrites the single `@`-rule into one `@`-rule per matched file - before Vite's CSS pipeline runs.
+Non-glob `@import 'variables';` is preserved verbatim - Sass resolves it. Under the hood, `@aemvite/vite-plugin-glob` finds `@`-rules whose specifier contains glob magic characters (`* ? [ ] { } ! ( )`), resolves them with [`tinyglobby`](https://github.com/SuperchupuDev/tinyglobby) relative to the source file's directory, sorts the matches lexicographically (fixed, not configurable), and rewrites the single `@`-rule into one `@`-rule per matched file - before Vite's CSS pipeline runs.
 
 ### 11. `resources/` handling
 
@@ -611,7 +611,7 @@ Add at least one real file before you expect a `resources/` folder to appear in 
 
 ### 12. Maven: bump the pinned Node version
 
-`ui.frontend/pom.xml` itself does not need to change - `frontend-maven-plugin` keeps running `npm run prod` / `npm run dev` exactly as before. But its `<nodeVersion>` almost certainly needs a bump: the AEM Maven archetype historically pins `v16.x`, and `@aemvite/*` refuses to install on anything outside `^20.19.0 || ^22.18.0 || >=24.11.0`. Find the `frontend-maven-plugin` `<configuration>` block (usually in the parent `pom.xml`, not `ui.frontend/pom.xml`) and update it:
+`ui.frontend/pom.xml` itself does not need to change - `frontend-maven-plugin` keeps running `npm run prod` / `npm run dev` exactly as before. But its `<nodeVersion>` almost certainly needs a bump: the AEM Maven archetype historically pins `v16.x`, and `@aemvite/*` declares `engines` `^20.19.0 || ^22.18.0 || >=24.11.0`. Find the `frontend-maven-plugin` `<configuration>` block (usually in the parent `pom.xml`, not `ui.frontend/pom.xml`) and update it:
 
 ```diff
  <plugin>
@@ -732,7 +732,7 @@ export default defineAemConfig({
 
   // OR fine-grained:
   // handlebars: {
-  //   include: /\.template\.hbs$/,
+  //   templateSuffix: '.template.hbs',
   //   ignore:  [/\.stories\.js$/, /[\\/]vendors[\\/]tabs\.js$/],
   //   runtime: 'handlebars/runtime', // override only if your project wraps it
   // },
@@ -815,7 +815,7 @@ export default defineConfig({
 - **`SyntaxError: ... does not provide an export named 'styleText'`** or an `EBADENGINE` warning. Your Node doesn't satisfy `@aemvite/*`'s required range - bump to `^20.19.0 || ^22.18.0 || >=24.11.0` and, in a Maven build, bump `<nodeVersion>` in `frontend-maven-plugin` (see step 12). Note the `22.12.0`-`22.17.x` band is specifically excluded, even though it satisfied plain Vite 8's older range.
 - **pnpm vs npm gotcha.** If Corepack and a parent repo's `"packageManager": "pnpm@…"` are in play, plain `npm` invocations can get silently rerouted through pnpm, which ignores npm's `-w` form. Prefix with `command npm` or `cd` into `ui.frontend/` first.
 - **`clientlib-site/resources/` directory unexpectedly missing.** By design when the source `resources/` tree contains only `.gitkeep` placeholders. Add a real file and re-run.
-- **CSS glob ordering changed.** `@aemvite/vite-plugin-glob` sorts matched files lexicographically by default; pass a custom `sort` comparator to override.
+- **CSS glob ordering changed.** `@aemvite/vite-plugin-glob` sorts matched files lexicographically and the order is not configurable; replace the glob with explicit `@import`s where order matters.
 - **Maven works locally, fails in CI.** Confirm CI Node satisfies `^20.19.0 || ^22.18.0 || >=24.11.0` and that `frontend-maven-plugin`'s pinned Node version does too.
 
 ## Status and scope
