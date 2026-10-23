@@ -1,5 +1,5 @@
 import type {AppState, Currency, Expense, Person, Split} from './types';
-import {equalSplit, isCurrency, transferKey} from './types';
+import {equalSplit, isCurrency, isWireSafePersonId, transferKey} from './types';
 import {validateSplit} from './split';
 
 // Compact wire formats.
@@ -285,7 +285,7 @@ const fromWireV3 = (w: WireV3): AppState => {
     return {v: 2, currency, people, expenses, paidTransferKeys};
 };
 
-const parseWire = (json: string): AppState | null => {
+const decodeWire = (json: string): AppState | null => {
     const wire = JSON.parse(json) as WireV1 | WireV2 | WireV3;
     if (Array.isArray(wire)) {
         if (wire[0] === 3) return fromWireV3(wire as WireV3);
@@ -295,6 +295,14 @@ const parseWire = (json: string): AppState | null => {
     if (wire.v === 1) return fromWireV1(wire);
     if (wire.v === 2) return fromWireV2(wire);
     return null;
+};
+
+// A crafted or legacy link can carry a person id the transfer-key codec cannot
+// represent (empty, or containing the `|` delimiter). Rejecting the payload is
+// cheaper than letting the next encode silently drop every paid mark.
+const parseWire = (json: string): AppState | null => {
+    const state = decodeWire(json);
+    return state && state.people.every(person => isWireSafePersonId(person.id)) ? state : null;
 };
 
 const toBase64Url = (bytes: Uint8Array): string => {

@@ -49,3 +49,37 @@ describe('decodeState expense ids', () => {
         assert.deepEqual(decoded?.expenses.map(e => e.description), ['first']);
     });
 });
+
+describe('decodeState person ids', () => {
+    it('rejects a v3 payload whose person id contains the transfer delimiter', async () => {
+        const decoded = await decodeState(legacy([
+            3,
+            'EUR',
+            [['a', 'Ada'], ['b|c', 'Bob']],
+            [],
+            [],
+        ]));
+        assert.equal(decoded, null);
+    });
+
+    it('rejects a v2 payload with an empty person id', async () => {
+        const decoded = await decodeState(legacy({
+            v: 2,
+            c: 'EUR',
+            p: [['', 'Ada'], ['b', 'Bob']],
+            e: [],
+        }));
+        assert.equal(decoded, null);
+    });
+
+    it('still decodes a payload whose ids are wire-safe', async () => {
+        const decoded = await decodeState(legacy([
+            3,
+            'EUR',
+            [['a1', 'Ada'], ['b2', 'Bob']],
+            [],
+            [],
+        ]));
+        assert.deepEqual(decoded?.people.map(p => p.id), ['a1', 'b2']);
+    });
+});
