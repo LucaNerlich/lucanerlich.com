@@ -128,9 +128,6 @@ Each event carries properties that describe what happened. Access them via `even
 |----------|------|-------------|
 | `SlingConstants.PROPERTY_PATH` | `String` | Path of the affected resource |
 | `SlingConstants.PROPERTY_RESOURCE_TYPE` | `String` | `sling:resourceType` of the resource |
-| `SlingConstants.PROPERTY_ADDED_ATTRIBUTES` | `String[]` | Properties that were added |
-| `SlingConstants.PROPERTY_CHANGED_ATTRIBUTES` | `String[]` | Properties that changed |
-| `SlingConstants.PROPERTY_REMOVED_ATTRIBUTES` | `String[]` | Properties that were removed |
 | `SlingConstants.PROPERTY_USERID` | `String` | User who made the change |
 
 ```java title="Inspecting event properties"
@@ -138,11 +135,8 @@ Each event carries properties that describe what happened. Access them via `even
 public void handleEvent(Event event) {
     String path = (String) event.getProperty(SlingConstants.PROPERTY_PATH);
     String userId = (String) event.getProperty(SlingConstants.PROPERTY_USERID);
-    String[] changedProps = (String[]) event.getProperty(
-        SlingConstants.PROPERTY_CHANGED_ATTRIBUTES);
 
-    LOG.info("User {} modified {} (changed: {})",
-        userId, path, Arrays.toString(changedProps));
+    LOG.info("User {} modified {}", userId, path);
 }
 ```
 
@@ -203,9 +197,6 @@ Each `ResourceChange` object provides:
 | `getType()` | `ChangeType` | `ADDED`, `REMOVED`, `CHANGED`, `PROVIDER_ADDED`, `PROVIDER_REMOVED` |
 | `getUserId()` | `String` | User who performed the change |
 | `isExternal()` | `boolean` | Whether the change originated from a different cluster node |
-| `getAddedPropertyNames()` | `Set<String>` | Properties that were added |
-| `getChangedPropertyNames()` | `Set<String>` | Properties that changed |
-| `getRemovedPropertyNames()` | `Set<String>` | Properties that were removed |
 
 :::tip
 Prefer `ResourceChangeListener` over the older `SlingConstants.TOPIC_RESOURCE_*` OSGi events for
@@ -722,7 +713,7 @@ public class OrderNotificationHandler implements EventHandler {
 
 ### Sling ResourceChangeListener with external change detection
 
-Detect changes that originate from other cluster nodes (e.g., replication from Author to Publish):
+Detect changes that originate from other cluster nodes:
 
 ```java title="core/.../listeners/ExternalChangeListener.java"
 package com.myproject.core.listeners;
@@ -1013,7 +1004,7 @@ instance.
 | Slow handler blocks all event processing | Keep `handleEvent()` fast; delegate heavy work to Sling Jobs |
 | JCR session leak in observation listener | Always close the session in `@Deactivate` |
 | Handler works on Author but not Publish | Check that the OSGi config is deployed to the Publish run mode |
-| Cluster: handler fires on every node | Use Sling Jobs (cluster-aware) or check `ResourceChange.isExternal()` |
+| Cluster: handler fires on every node | Enqueue the Sling Job only for local events (`ResourceChange.isExternal()` is false) |
 | AEMaaCS: Sling Jobs restricted | On AEMaaCS, some job topics are reserved; test thoroughly in the cloud environment |
 
 ---
@@ -1022,10 +1013,7 @@ instance.
 
 ### Felix Web Console
 
-Navigate to `http://localhost:4502/system/console/slingevent` to see:
-- All registered event topics and their handlers
-- Recent event history
-- Event delivery statistics
+Navigate to `http://localhost:4502/system/console/events` to see recently delivered OSGi events and their properties.
 
 ### Logging
 
@@ -1039,7 +1027,7 @@ Enable debug logging for event processing:
         "org.osgi.service.event"
     ],
     "org.apache.sling.commons.log.level": "DEBUG",
-    "org.apache.sling.commons.log.file": "logs/events.log"
+    "org.apache.sling.commons.log.file": "logs/error.log"
 }
 ```
 
