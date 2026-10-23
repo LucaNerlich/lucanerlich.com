@@ -9,8 +9,11 @@ if (ExecutionEnvironment.canUseDOM) {
         navigator.globalPrivacyControl === true ||
         navigator.doNotTrack === '1' ||
         window.doNotTrack === '1'
-    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || hostname === '[::1]') {
-        console.debug('Skipping umami tracking on localhost')
+    // Production is the only place worth tracking: local hosts, LAN previews
+    // (the documented --host 0.0.0.0) and deploy previews all stay out.
+    const isProduction = hostname === 'lucanerlich.com' || hostname === 'www.lucanerlich.com'
+    if (!isProduction) {
+        console.debug('Skipping umami tracking outside production')
     } else if (isOptedOut) {
         console.debug('Skipping umami tracking: privacy opt-out signal is set')
     } else {
