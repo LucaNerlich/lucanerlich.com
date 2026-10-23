@@ -128,12 +128,12 @@ containing individual Access Control Entries (ACEs).
 
 The `rep:glob` restriction enables fine-grained path matching within an ACL:
 
-| Pattern | Matches |
+| Pattern | Matches (for an ACE defined on `/foo`) |
 |---|---|
-| `""` (empty string) | Only the node itself, not children |
-| `*` | All direct children |
-| `*/jcr:content` | The `jcr:content` child of every direct child |
-| `/*` | The node and all descendants |
+| `""` (empty string) | Only `/foo` itself, not children |
+| `*` | `/foo`, siblings whose names start with `foo`, and all their descendants |
+| `*/jcr:content` | Every `jcr:content` at any depth below `/foo` (and below `foo*` siblings) |
+| `/*` | All descendants, not the node itself |
 
 ```xml title="Example ACL granting read to a specific subtree"
 <rep:policy jcr:primaryType="rep:ACL">
@@ -176,6 +176,7 @@ scripts=[
      end\n
 
      create service user my-project-write-service with path system/my-project\n
+     ensure nodes /content/my-project/dam/uploads\n
      set ACL for my-project-write-service\n
          allow jcr:read,rep:write on /content/my-project/dam/uploads\n
      end"
@@ -237,42 +238,7 @@ invalid tokens.
 
 ### Adding CSRF tokens to forms
 
-HTL does not provide a magic `@csrf-token` expression. For server-rendered forms, expose the
-token from Java (for example a Sling Model using `com.adobe.granite.csrf.CSRFTokenProvider`) and
-render it as an escaped attribute:
-
-```html
-<sly data-sly-use.form="com.myproject.core.models.CsrfFormModel" />
-<form method="POST" action="/content/my-project/submit">
-    <input type="hidden" name=":cq_csrf_token" value="${form.token @ context='attribute'}" />
-    <input type="text" name="message" />
-    <button type="submit">Send</button>
-</form>
-```
-
-```java
-import com.adobe.granite.csrf.CSRFTokenProvider;
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.OSGiService;
-import org.apache.sling.models.annotations.injectorspecific.Self;
-
-@Model(adaptables = SlingHttpServletRequest.class)
-public class CsrfFormModel {
-
-    @Self
-    private SlingHttpServletRequest request;
-
-    @OSGiService
-    private CSRFTokenProvider csrfTokenProvider;
-
-    public String getToken() {
-        return csrfTokenProvider.getToken(request);
-    }
-}
-```
-
-For JavaScript-driven requests, fetch the token from the granite CSRF servlet:
+For forms, declare a dependency on the `granite.csrf.standalone` client library (Adobe's CSRF framework); for custom JavaScript, fetch the token as below:
 
 ```javascript
 async function getCsrfToken() {
@@ -503,17 +469,13 @@ forcing the browser to download rather than render the content inline.
 ```json title="org.apache.sling.security.impl.ContentDispositionFilter.cfg.json"
 {
     "sling.content.disposition.paths": [
-        "/content/dam/*:image/svg+xml",
-        "/content/dam/*:text/html",
-        "/content/dam/*:text/xml",
-        "/content/dam/*:application/xhtml+xml"
+        "/content/dam/*:image/jpeg,image/png,image/gif,image/webp,application/pdf"
     ],
     "sling.content.disposition.all.paths": false
 }
 ```
 
-This configuration forces downloads for SVG, HTML, and XML files served from the DAM - the most
-common vectors for stored XSS via file upload.
+Content types after the `:` are exclusions; every other binary under `/content/dam` - including SVG, HTML, and XML - is served with `Content-Disposition: attachment`.
 
 :::tip
 On AEMaaCS, the Content Disposition Filter is pre-configured with sensible defaults. Verify
@@ -538,7 +500,7 @@ enforce authentication and authorisation. Never assume the Dispatcher will be th
 and crashes the instance.
 
 4. **Overly broad Dispatcher allow rules** - Rules like `/0010 { /type "allow" /url "*" }` negate
-all subsequent deny rules if placed incorrectly. Always follow a deny-by-default pattern.
+every deny rule placed before them (the last matching filter wins). Always follow a deny-by-default pattern.
 
 5. **Secrets in clientlibs** - API keys, internal hostnames, or tokens embedded in JavaScript
 clientlibs are visible to anyone inspecting the page source. Use server-side proxies or
