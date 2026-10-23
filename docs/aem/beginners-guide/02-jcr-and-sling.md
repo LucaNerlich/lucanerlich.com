@@ -127,14 +127,14 @@ http://localhost:4502/crx/de
 | Area             | What it shows                                  |
 |------------------|------------------------------------------------|
 | **Left panel**   | Node tree browser - navigate the hierarchy    |
-| **Center panel** | Node properties (key-value pairs)              |
-| **Bottom panel** | Query tool, access control, and node details |
+| **Center panel** | Edit pane - opens files (scripts) for editing  |
+| **Bottom panel** | Properties, Access Control, and Console tabs   |
 
 ### Browsing content
 
 Try navigating to:
 
-- `/content/mysite/en` - your site's English root page
+- `/content/mysite/us/en` - your site's English root page
 - `/apps/mysite/components` - your project's component definitions
 - `/libs/core/wcm/components` - AEM Core Components source
 - `/conf/mysite/settings/wcm/templates` - your editable templates
@@ -143,7 +143,7 @@ Try navigating to:
 
 You can modify properties directly in CRXDE Lite:
 
-1. Navigate to `/content/mysite/en/jcr:content`
+1. Navigate to `/content/mysite/us/en/jcr:content`
 2. Find the `jcr:title` property
 3. Change its value
 4. Click **Save All** at the top
@@ -255,11 +255,11 @@ For a resource with `sling:resourceType = "mysite/components/text"`, Sling looks
 | Request             | Script looked up                     |
 |---------------------|--------------------------------------|
 | `GET .html`         | `text.html` or `html.html`           |
-| `GET .json`         | `text.json` (or Sling Default GET Servlet for JSON) |
-| `GET .article.html` | `text.article.html` then `text.html` |
+| `GET .json`         | `json.html` (or Sling Default GET Servlet for JSON) |
+| `GET .article.html` | `article.html` then `text.html`      |
 | `POST .html`        | `text.POST.html`                     |
 
-Script naming conventions: `<component>.<selector>.<extension>.html` or the shorthand `<extension>.html`.
+Script naming conventions: `<component>.html` or `<extension>.html` without selectors; `<selector>.html` (or `<selector>.<extension>.html`) with selectors.
 
 ## Resources and the Resource API
 
@@ -413,7 +413,7 @@ WHERE ISDESCENDANTNODE(page, '/content/mysite')
   AND page.[jcr:content/jcr:title] LIKE '%about%'
 ```
 
-You can run queries in CRXDE Lite's query tool (bottom panel) or the QueryBuilder Debugger at
+You can run queries in CRXDE Lite's query tool (**Tools > Query**) or the QueryBuilder Debugger at
 `http://localhost:4502/libs/cq/search/content/querydebug.html`.
 
 > **Performance warning:** Queries without proper indexes are slow and can block the repository. Always test query
