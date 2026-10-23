@@ -139,7 +139,7 @@ const CalculationSteps: React.FC<Props> = ({
                 </li>
                 <li>
                     <span className={styles.calcStepLabel}>{t('calcPerExpenseShares')}</span>
-                    <ul className={styles.calcSubList}>
+                    <ul className={styles.calcSubList} role="list">
                         {breakdowns.map(({expense, shares}) => {
                             const label = expense.description || t('calcUntitledExpense');
                             const parts = [...shares.entries()]
@@ -163,7 +163,7 @@ const CalculationSteps: React.FC<Props> = ({
                 </li>
                 <li>
                     <span className={styles.calcStepLabel}>{t('calcBalance')}</span>
-                    <ul className={styles.calcSubList}>
+                    <ul className={styles.calcSubList} role="list">
                         {state.people.map(p => {
                             const paidAmt = paid.get(p.id) ?? 0;
                             const owedAmt = owed.get(p.id) ?? 0;
@@ -187,7 +187,7 @@ const CalculationSteps: React.FC<Props> = ({
                     ) : (
                         <>
                             <span className={styles.calcNote}>{t('calcMatchNote')}</span>
-                            <ul className={styles.calcSubList}>
+                            <ul className={styles.calcSubList} role="list">
                                 {transfers.map(tr => (
                                     <li key={`${tr.from}-${tr.to}-${tr.cents}`}>
                                         <code className={styles.calcInline}>
