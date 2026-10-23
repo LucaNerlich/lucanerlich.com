@@ -9,7 +9,7 @@ if (ExecutionEnvironment.canUseDOM) {
         navigator.globalPrivacyControl === true ||
         navigator.doNotTrack === '1' ||
         window.doNotTrack === '1'
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || hostname === '[::1]') {
         console.debug('Skipping umami tracking on localhost')
     } else if (isOptedOut) {
         console.debug('Skipping umami tracking: privacy opt-out signal is set')
