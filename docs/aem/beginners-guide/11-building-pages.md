@@ -186,14 +186,13 @@ Add a **Container** component to create a content section. Inside it:
 
 Click the **Page Information** button (top left) > **Open Properties**:
 
-| Tab              | Property                 | Value                                           |
-|------------------|--------------------------|-------------------------------------------------|
-| **Basic**        | Title                    | Getting Started with AEM Components             |
-| **Basic**        | Subtitle                 | A guide for new AEM developers                  |
-| **Basic**        | Description              | Learn how to create your first AEM component... |
-| **Basic**        | Tags                     | Select relevant tags                            |
-| **Advanced**     | Featured Image           | Select from DAM                                 |
-| **Social Media** | og:title, og:description | For social sharing                              |
+| Tab                  | Property                 | Value                                           |
+|----------------------|--------------------------|-------------------------------------------------|
+| **Basic**            | Title                    | Getting Started with AEM Components             |
+| **Basic**            | Subtitle                 | A guide for new AEM developers                  |
+| **Basic**            | Description              | Learn how to create your first AEM component... |
+| **Basic**            | Tags                     | Select relevant tags                            |
+| **Featured Image**   | Featured Image           | Select from DAM                                 |
 
 ### 3. Add content
 
@@ -266,8 +265,7 @@ public class ArticlePageModel {
 
 ## Extending page properties
 
-Notice the **Featured Image** property used above is not a standard AEM field - it is a custom
-property. Page properties are just a dialog on the **page component**, so you extend them the same way
+Core Components pages already ship a **Featured Image** (Images tab, stored at `jcr:content/cq:featuredimage`); the `featuredImage` property here is a separate custom field, used only to show how to extend page properties. Page properties are just a dialog on the **page component**, so you extend them the same way
 you extend any component dialog: by overlaying or adding to the page component's
 `_cq_dialog`.
 
@@ -339,12 +337,12 @@ The Navigation Core Component builds a navigation tree from the site structure:
 
 Configure the Navigation component:
 
-| Property                    | Value                | Effect                    |
-|-----------------------------|----------------------|---------------------------|
-| **Navigation Root**         | `/content/mysite/en` | Start point               |
-| **Exclude Root Level**      | 1                    | Skip the root page        |
-| **Structure Depth**         | 2                    | Show 2 levels of pages    |
-| **Collect all child pages** | No                   | Only show navigable pages |
+| Property                    | Value                | Effect                                         |
+|-----------------------------|----------------------|------------------------------------------------|
+| **Navigation Root**         | `/content/mysite/en` | Start point                                    |
+| **Exclude Root Level**      | 1                    | Skip the root page                             |
+| **Structure Depth**         | 2                    | Show 2 levels of pages                         |
+| **Collect all child pages** | No                   | Use Structure Depth instead of all descendants |
 
 Pages can opt out of navigation via the **Hide in Navigation** property in page properties.
 
@@ -376,7 +374,7 @@ When you update the fragment, all pages automatically reflect the change.
 
 ### Quick edit vs dialog
 
-- **Quick edit** - click the component once to edit text inline
+- **Quick edit** - select the component, then click **Edit** (pencil) to edit text in place
 - **Dialog** - click the wrench icon or double-click for the full configuration dialog
 
 ### Preview vs Edit mode
@@ -396,9 +394,7 @@ A couple of these need context:
 - **Targeting** drives personalization - you define audiences and serve different content/offers to
   each, typically with Adobe Target. It is an advanced topic; ignore it until you actually run
   personalization campaigns.
-- **Timewarp** replays the page using version history and scheduled (on/off-time) content, so you can
-  preview "what did this page look like last Tuesday" or "what will it look like when the embargo
-  lifts". It is read-only and great for debugging publish issues.
+- **Timewarp** shows the page's published state at a past date, rebuilt from page versions (future states only via Launches), so you can preview "what did this page look like last Tuesday". It is read-only and great for debugging publish issues.
 
 > For more on Core Components, see the [Core Components](/aem/components/core-components) reference. See
 > also [Experience Fragments](/aem/content/experience-fragments) for reusable content blocks
