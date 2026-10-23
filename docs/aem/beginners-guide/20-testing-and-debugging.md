@@ -110,7 +110,7 @@ Do **not** waste tests asserting that the framework injected a value - test *you
 ## Code coverage and quality gates
 
 The Cloud Manager pipeline runs **code quality** (SonarQube rules) and reports **test coverage**.
-Builds fail below the configured coverage threshold, so keep `core` unit tests meaningful. Run quality
+Coverage below Cloud Manager's fixed 50% threshold is an Important failure that pauses the pipeline until it is overridden or rejected, so keep `core` unit tests meaningful. Run quality
 locally before pushing (see your project's `pom.xml` and the Maven `jacoco`/`sonar` plugins).
 
 ## Debugging toolkit
@@ -122,13 +122,13 @@ When something breaks, work down from the symptom:
 - `crx-quickstart/logs/error.log` is the primary log. Tail it while reproducing.
 - Add a focused logger for your package at DEBUG via an OSGi **Logger** config (or
   `/system/console/slinglog`), rather than turning the whole instance to DEBUG.
-- On **AEMaaCS**, stream logs with the Cloud Manager **Developer Console** / `aio aem` CLI; there is no
+- On **AEMaaCS**, download logs in Cloud Manager or tail them with `aio cloudmanager:tail-log`; there is no
   filesystem access.
 
 ### CRXDE Lite
 
 `http://localhost:4502/crx/de` - browse the JCR, confirm a property actually persisted, check
-`sling:resourceType`, inspect ACLs. Local SDK only on AEMaaCS.
+`sling:resourceType`, inspect ACLs. On AEMaaCS: local SDK and dev-environment author only (not stage/prod).
 
 ### Request progress / "Recent requests"
 
