@@ -518,10 +518,17 @@ public class ContentCleanupJobConsumer implements JobConsumer {
             );
 
             Iterator<Resource> results = resolver.findResources(query, "JCR-SQL2");
-            int deleted = 0;
-
+            // Collect first: committing mid-iteration invalidates the open
+            // query, so a batched delete over a live iterator skips rows.
+            List<String> paths = new ArrayList<>();
             while (results.hasNext()) {
-                Resource resource = results.next();
+                paths.add(results.next().getPath());
+            }
+
+            int deleted = 0;
+            for (String path : paths) {
+                Resource resource = resolver.getResource(path);
+                if (resource == null) continue;
                 resolver.delete(resource);
                 deleted++;
 
