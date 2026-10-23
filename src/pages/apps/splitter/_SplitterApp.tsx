@@ -31,9 +31,11 @@ const SplitterApp: React.FC = () => {
     const addExpenseHeadingRef = useRef<HTMLHeadingElement>(null);
     const lastPaidBy = state.expenses[state.expenses.length - 1]?.paidBy;
 
-    const handleRemovePerson = (id: string) => {
+    // Returns whether the removal actually happened, so the list only moves
+    // focus when the confirm was accepted.
+    const handleRemovePerson = (id: string): boolean => {
         const person = state.people.find(p => p.id === id);
-        if (!person) return;
+        if (!person) return false;
         // Warn about the whole cascade: paid expenses are deleted, the ones
         // the person only joined are re-split.
         const affected = expensesAffectedByRemoval(state, id);
@@ -54,9 +56,10 @@ const SplitterApp: React.FC = () => {
                     .replace('{parts}', () => parts.join(t('listJoin')))
                     .replace('{name}', () => person.name),
             );
-            if (!ok) return;
+            if (!ok) return false;
         }
         dispatch({type: 'REMOVE_PERSON', id});
+        return true;
     };
 
     const handleCopyLink = async () => {

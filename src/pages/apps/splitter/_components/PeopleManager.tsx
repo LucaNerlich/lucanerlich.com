@@ -7,7 +7,7 @@ type Props = {
     people: Person[];
     messages: Messages;
     onAdd: (name: string) => void;
-    onRemove: (id: string) => void;
+    onRemove: (id: string) => boolean;
     onRename: (id: string, name: string) => void;
 };
 
@@ -31,7 +31,11 @@ const PeopleManager: React.FC<Props> = ({
 
     useEffect(() => {
         if (!refocusId) return;
-        openerRefs.current.get(refocusId)?.focus();
+        const target = openerRefs.current.get(refocusId);
+        // A neighbour mid-rename has no mounted button; fall back rather than
+        // dropping focus to <body>.
+        if (target?.isConnected) target.focus();
+        else nameInputRef.current?.focus();
         setRefocusId(null);
     }, [refocusId]);
 
@@ -54,7 +58,7 @@ const PeopleManager: React.FC<Props> = ({
     const removePerson = (p: Person) => {
         const index = people.findIndex(person => person.id === p.id);
         const neighbour = people[index + 1] ?? people[index - 1];
-        onRemove(p.id);
+        if (!onRemove(p.id)) return;
         if (neighbour) setRefocusId(neighbour.id);
         else nameInputRef.current?.focus();
     };
