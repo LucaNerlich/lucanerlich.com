@@ -101,7 +101,7 @@ model, see the [Tags & Taxonomies](../content/tags-taxonomies.md) reference.
 On upload, AEM runs **asset processing**:
 
 - **AEM as a Cloud Service** uses **Asset Compute** microservices (cloud-native, fast, supports
-  modern formats like WebP and AVIF).
+  modern formats like WebP).
 - **AEM 6.5** uses the **DAM Update Asset** workflow with ImageMagick/Sling.
 
 | Rendition pattern | Purpose |
