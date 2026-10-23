@@ -44,12 +44,14 @@ Blueprint configuration location: `/libs/msm/wcm/blueprintconfigs/` (product) or
 ```xml title="apps/msm/myproject/blueprintconfigs/myproject-blueprint/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           jcr:primaryType="cq:Page">
     <jcr:content
         jcr:primaryType="cq:PageContent"
         jcr:title="My Project Blueprint"
-        sling:resourceType="msm/wcm/components/blueprint/configure"
+        cq:template="/libs/wcm/msm/templates/blueprint"
+        sling:resourceType="wcm/msm/components/blueprint"
         sitePath="/content/myproject/master"/>
 </jcr:root>
 ```
@@ -154,22 +156,10 @@ public Page createLiveCopy(ResourceResolver resolver,
 
 ### Language copies
 
-MSM is the mechanism behind AEM's **language copy** feature. When you create a language copy via
-**Sites > Create > Language Copy**, AEM creates a Live Copy with:
-
-- A translation-specific rollout configuration
-- Integration with the AEM Translation Framework
-- Language-specific `jcr:language` property
-
-```text
-/content/myproject/
-├── master/          # Blueprint (source language, e.g., English)
-│   ├── en/
-│   └── ...
-├── de/              # Live Copy (German translation)
-├── fr/              # Live Copy (French translation)
-└── ja/              # Live Copy (Japanese translation)
-```
+Language copies are not Live Copies. The Translation Integration Framework copies pages
+into language copies: create the language root with **Create > Page**, then use
+**References > Language Copies > Create & Translate**. MSM can be combined with translation,
+for example Live Copies of translated language masters.
 
 ---
 
@@ -183,9 +173,9 @@ product default is at `/libs/msm/wcm/rolloutconfigs/default`.
 | Configuration                            | Location                                    | Trigger        | Actions                                                                              |
 |------------------------------------------|---------------------------------------------|----------------|--------------------------------------------------------------------------------------|
 | **Standard Rollout Config**              | `/libs/msm/wcm/rolloutconfigs/default`      | `rollout`      | `contentUpdate`, `contentCopy`, `contentDelete`, `referencesUpdate`, `orderChildren` |
-| **Activate on Blueprint Activation**     | `/libs/msm/wcm/rolloutconfigs/activate`     | `activate`     | `targetActivate`                                                                     |
+| **Activate on Blueprint Activation**     | `/libs/msm/wcm/rolloutconfigs/activate`     | `publish`      | `targetActivate`                                                                     |
 | **Deactivate on Blueprint Deactivation** | `/libs/msm/wcm/rolloutconfigs/deactivate`   | `deactivate`   | `targetDeactivate`                                                                   |
-| **Push on Modify**                       | `/libs/msm/wcm/rolloutconfigs/pushonmodify` | `modification` | `contentUpdate`, `contentCopy`, `contentDelete`, `orderChildren`                     |
+| **Push on Modify**                       | `/libs/msm/wcm/rolloutconfigs/pushonmodify` | `modification` | `contentUpdate`, `contentCopy`, `contentDelete`, `referencesUpdate`, `orderChildren` |
 
 ### Rollout triggers (`cq:trigger`)
 
@@ -193,7 +183,7 @@ product default is at `/libs/msm/wcm/rolloutconfigs/default`.
 |----------------|---------------------------------------------|
 | `rollout`      | Author manually triggers a rollout          |
 | `modification` | Blueprint page is modified (saved)          |
-| `activate`     | Blueprint page is activated (published)     |
+| `publish`      | Blueprint page is activated (published)     |
 | `deactivate`   | Blueprint page is deactivated (unpublished) |
 
 ### Built-in rollout actions
@@ -304,8 +294,10 @@ import com.day.cq.wcm.msm.api.LiveAction;
 import com.day.cq.wcm.msm.api.LiveActionFactory;
 import com.day.cq.wcm.msm.api.LiveRelationship;
 import com.day.cq.wcm.msm.commons.BaseAction;
+import com.day.cq.wcm.msm.commons.BaseActionFactory;
 import com.myproject.core.services.NotificationService;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -318,7 +310,7 @@ import org.slf4j.LoggerFactory;
         LiveActionFactory.LIVE_ACTION_NAME + "=" + NotificationRolloutActionFactory.ACTION_NAME
     }
 )
-public class NotificationRolloutActionFactory implements LiveActionFactory<LiveAction> {
+public class NotificationRolloutActionFactory extends BaseActionFactory<BaseAction> {
 
     static final String ACTION_NAME = "NotifyOnRollout";
     private static final Logger LOG = LoggerFactory.getLogger(NotificationRolloutActionFactory.class);
@@ -332,15 +324,17 @@ public class NotificationRolloutActionFactory implements LiveActionFactory<LiveA
     }
 
     @Override
-    public LiveAction createAction(Resource resource) {
-        return new NotifyAction(notificationService);
+    protected BaseAction newActionInstance(ValueMap config) {
+        return new NotifyAction(config, this, notificationService);
     }
 
     private static class NotifyAction extends BaseAction {
 
         private final NotificationService notificationService;
 
-        NotifyAction(NotificationService notificationService) {
+        NotifyAction(ValueMap config, BaseActionFactory<? extends LiveAction> factory,
+                NotificationService notificationService) {
+            super(config, factory);
             this.notificationService = notificationService;
         }
 
@@ -688,12 +682,10 @@ rules:
 
 ### Rollout conflict handler
 
-AEM provides a `RolloutConflictHandler` that determines behaviour when conflicts arise. The default
-handler uses the **Blueprint wins** strategy for inherited content. You can configure this via:
-
-```text
-Tools > Operations > Web Console > Day CQ WCM Rollout Conflict Handler
-```
+If a page with the same name was created manually in the Live Copy, the default
+`ResourceNameRolloutConflictHandler` moves it to `<name>_msm_moved` and rolls out the Blueprint
+page. Turn this on or off with `rolloutmgr.conflicthandling.enabled` in the OSGi configuration of
+**Day CQ WCM Rollout Manager** (deployed as code on AEM as a Cloud Service).
 
 ---
 
@@ -716,7 +708,7 @@ Tools > Operations > Web Console > Day CQ WCM Rollout Conflict Handler
 ### Rollout strategy
 
 - Use **manual rollout** for critical content changes that need review
-- Use **automatic triggers** (`modification`, `activate`) only for low-risk content like navigation
+- Use **automatic triggers** (`modification`, `publish`) only for low-risk content like navigation
   or footer
 - Always test rollouts on Author before activating to Publish
 - Schedule large rollouts during low-traffic periods
@@ -740,7 +732,7 @@ Tools > Operations > Web Console > Day CQ WCM Rollout Conflict Handler
 | References point to Blueprint paths    | Ensure `referencesUpdate` action is in the rollout config                                       |
 | Live Copy shows stale content          | Check if rollout was triggered; synchronize from the Live Copy page                             |
 | Nested blueprints cascade unexpectedly | Test multi-level rollouts in a staging environment first                                        |
-| Translation integration not working    | Ensure language copies are created via **Sites > Create > Language Copy**, not manual Live Copy |
+| Translation integration not working    | Ensure language copies are created through translation projects (**References > Language Copies > Create & Translate**), not manual Live Copy |
 | AEMaaCS: Rollout performance           | AEMaaCS has improved rollout performance; use the latest dispatcher cache invalidation patterns |
 
 ## External Resources
