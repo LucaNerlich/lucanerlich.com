@@ -115,7 +115,7 @@ module.exports = ({ env }) => ({
           region: env('AWS_REGION', 'eu-central-1'),
           params: {
             Bucket: env('AWS_BUCKET'),
-            ACL: env('AWS_ACL', 'private'),
+            ACL: env('AWS_ACL'),
             signedUrlExpires: env.int('AWS_SIGNED_URL_EXPIRES', 15 * 60),
           },
         },
@@ -129,6 +129,14 @@ module.exports = ({ env }) => ({
   },
 });
 ```
+
+With no `ACL` value the provider omits the ACL header entirely, which is what a bucket with ACLs
+disabled (the default since 2023) requires; objects inherit the bucket's private default. Setting
+`AWS_ACL` is opt-in and needs a bucket with ACLs enabled — see
+[Private media on S3](#private-media-on-s3).
+
+If you keep `baseUrl` (CDN) with private objects, the CDN must read the bucket through OAC or signed
+URLs; without it, the provider returns presigned S3 URLs that expire after 15 minutes.
 
 ### Cloudinary
 
