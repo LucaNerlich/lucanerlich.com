@@ -280,7 +280,7 @@ HTL provides several global objects available in every template:
 | `request`                 | `SlingHttpServletRequest`  | The current request                            |
 | `response`                | `SlingHttpServletResponse` | The current response                           |
 | `log`                     | `Logger`                   | SLF4J logger                                   |
-| `wcmmode`                 | `WCMMode`                  | Current WCM mode (edit, preview, disabled)     |
+| `wcmmode`                 | `SightlyWCMMode`           | Current WCM mode (edit, preview, disabled)     |
 | `currentDesign`           | `Design`                   | Current page design (deprecated in AEMaaCS - use `currentStyle` instead) |
 | `currentStyle`            | `Style`                    | Current component policy                       |
 

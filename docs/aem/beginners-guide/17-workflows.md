@@ -55,7 +55,7 @@ Create and edit models in **Tools > Workflow > Models**. A model is a flow of st
 - **Goto / container** steps - looping and reuse.
 
 Common out-of-the-box models include **DAM Update Asset** (asset processing on 6.5), **Request for
-Activation** (approval before publish), and **Publish/Unpublish Example**.
+Activation** (approval before publish), and **Publish Example**.
 
 ## Custom process step
 
@@ -124,7 +124,7 @@ Launchers are how most automated content processing is wired up without writing 
 
 ## Starting workflows manually and via API
 
-- **Manually:** select content in the Sites/Assets console and choose **Workflow > Start Workflow**, or
+- **Manually:** select content in the Sites/Assets console and choose **Create > Workflow**, or
   use the page **Timeline**.
 - **Programmatically:** use `WorkflowSession.startWorkflow(model, data)`. There is a ready-made
   [Groovy script to start a workflow](../groovy-console.mdx#start-a-workflow-on-a-payload).
@@ -152,10 +152,12 @@ processing, prefer Sling Jobs.
 
 ## Debugging workflows
 
-- **Workflow > Instances** shows running/completed/failed instances; open one to see where it stopped.
+- **Workflow > Instances** shows running instances; completed ones are in **Archive**, failed ones in
+  **Failures**; open one to see where it stopped.
 - A failed step routes the instance to an **error** state - inspect the step's exception in `error.log`.
 - **Stuck workflows** are usually a process step throwing, a participant task nobody actions, or thread
-  pool exhaustion from too many concurrent instances. Terminate/retry from the Instances console.
+  pool exhaustion from too many concurrent instances. Retry or terminate failed instances from the **Failures**
+  console.
 - On AEMaaCS, watch the workflow purge configuration so completed instances do not pile up.
 
 For the full developer reference (custom steps, participant choosers, the `WorkflowSession` API), see

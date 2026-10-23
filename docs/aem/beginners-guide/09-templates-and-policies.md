@@ -397,7 +397,7 @@ You learned:
 ## Official Documentation
 
 - [Page Templates (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates) - editable templates, the template editor, and enabling templates
-- [Page Templates (developer)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/components-templates/templates) - template types, structure vs initial content
+- [Creating Page Templates (developer)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/components-templates/templates) - template types, structure vs initial content
 - [Style System](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/style-system) - author-applied CSS classes
 - [WKND tutorial - Pages & Templates](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
 
