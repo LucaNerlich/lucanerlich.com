@@ -70,7 +70,7 @@ const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
             </div>
 
             <h3 className={styles.subSectionTitle}>{t('balances')}</h3>
-            <ul className={styles.balanceList}>
+            <ul className={styles.balanceList} role="list">
                 {state.people.map(p => {
                     const net = balances.get(p.id) ?? 0;
                     const cls =
@@ -103,7 +103,7 @@ const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
             {transfers.length === 0 ? (
                 <p className={styles.muted}>{t('everyoneSettled')}</p>
             ) : (
-                <ul className={styles.transferList}>
+                <ul className={styles.transferList} role="list">
                     {transfers.map(tr => {
                         const key = transferKey(tr.from, tr.to, tr.cents);
                         const paid = state.paidTransferKeys.includes(key);
