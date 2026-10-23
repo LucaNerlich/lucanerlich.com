@@ -856,20 +856,26 @@ sudo nano /opt/backup-strapi.sh
 
 ```bash
 #!/bin/bash
+set -euo pipefail
 BACKUP_DIR="/var/backups/strapi"
 DATE=$(date +%Y%m%d_%H%M%S)
 RETENTION_DAYS=30
 
 mkdir -p "$BACKUP_DIR"
 
-# Dump the database
-pg_dump -U strapi strapi_blog | gzip > "$BACKUP_DIR/db_$DATE.sql.gz"
+# root cannot peer-authenticate as the `strapi` role over the socket, so dump
+# as the postgres OS user (mapped to the postgres superuser role).
+sudo -u postgres pg_dump -U postgres strapi_blog | gzip > "$BACKUP_DIR/db_$DATE.sql.gz"
 
 # Remove old backups
 find "$BACKUP_DIR" -name "db_*.sql.gz" -mtime +$RETENTION_DAYS -delete
 
 echo "Backup completed: db_$DATE.sql.gz"
 ```
+
+`set -euo pipefail` is what makes the cron job fail visibly: without it the pipeline's exit status is
+`gzip`'s, so a dump that could not authenticate still writes an empty archive and prints the success
+line.
 
 ```bash
 sudo chmod +x /opt/backup-strapi.sh

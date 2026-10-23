@@ -513,11 +513,14 @@ flowchart LR
 ```bash
 #!/bin/bash
 # backup.sh - run daily via cron
+set -euo pipefail
 DATE=$(date +%Y%m%d)
 BACKUP_DIR="/backups/strapi"
 
-# Database backup
-pg_dump -h localhost -U strapi strapi_db | gzip > "$BACKUP_DIR/db-$DATE.sql.gz"
+mkdir -p "$BACKUP_DIR"
+
+# Database backup (as the postgres OS user: root cannot peer-authenticate as `strapi`)
+sudo -u postgres pg_dump -U postgres strapi_db | gzip > "$BACKUP_DIR/db-$DATE.sql.gz"
 
 # Strapi export (includes content + config)
 cd /srv/strapi
