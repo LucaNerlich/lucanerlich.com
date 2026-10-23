@@ -93,7 +93,7 @@ Cloud Service. Adobe recommends Lucene indexes on 6.5 too, so a later migration 
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0"
           jcr:primaryType="oak:QueryIndexDefinition"
           type="property"
-          propertyNames="[cq:template]"
+          propertyNames="{Name}[cq:template]"
           includedPaths="[/content/mysite]"/>
 ```
 
@@ -145,7 +145,7 @@ switching traffic to it.
 ## Check your query with Explain Query
 
 Before shipping, run the query through the **Explain Query** tool to confirm it uses an index and is
-not traversing. On the local SDK or AEM 6.5, open **Tools > Diagnosis > Query Performance** and switch
+not traversing. On the local SDK or AEM 6.5, open **Tools > Operations > Diagnosis > Query Performance** and switch
 to the **Explain Query** tab:
 
 ```text
