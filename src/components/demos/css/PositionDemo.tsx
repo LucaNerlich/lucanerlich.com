@@ -71,7 +71,11 @@ export default function PositionDemo(): ReactNode {
                 </>
             }
         >
-            <div className={styles.frame}>
+            <div
+                className={styles.frame}
+                // The frame scrolls; focusable so keyboard users can reach it.
+                tabIndex={0}
+            >
                 <div className={styles.parent}>
                     <div className={styles.sibling}>Sibling A</div>
                     <div className={styles.target} style={boxStyle}>
