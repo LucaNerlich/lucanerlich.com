@@ -115,7 +115,7 @@ reference](/aem/infrastructure/dispatcher-configuration#rewrite-rules).
 ### Vanity URLs
 
 AEM supports vanity URLs in page properties. An author can set `/products` as a vanity URL for
-`/content/mysite/en/products-and-services`. The Dispatcher resolves these through a vanity URL mapping file.
+`/content/mysite/en/products-and-services`. AEM resolves vanity URLs; the Dispatcher only has to let them through its filters (an explicit allow, or the optional `/vanity_urls` list).
 
 ## Cache invalidation
 
@@ -185,7 +185,7 @@ This validates your Dispatcher configuration against AEMaaCS rules. Common check
 
 ```bash
 # Start the local Dispatcher (Docker required)
-./bin/docker_run.sh dispatcher/src host.docker.internal:4503
+./bin/docker_run.sh dispatcher/src host.docker.internal:4503 8080
 ```
 
 This starts an Apache + Dispatcher instance pointing to your local Publish on port 4503. Test at
@@ -213,7 +213,7 @@ pushing to Cloud Manager - the pipeline will reject invalid configurations.
 | Test              | What to verify                                      |
 |-------------------|-----------------------------------------------------|
 | **Page loads**    | Pages render correctly through the Dispatcher       |
-| **Caching**       | Reload and check the `X-Dispatcher` response header |
+| **Caching**       | Reload, send `X-Dispatcher-Info: true`, and check the `X-Cache-Info` response header (needs `/info "1"` in the farm) |
 | **Filters**       | Admin paths return 403 or 404                       |
 | **Rewrites**      | Vanity URLs resolve correctly                       |
 | **Invalidation**  | Publish a page and verify the cache is refreshed    |
@@ -223,7 +223,7 @@ pushing to Cloud Manager - the pipeline will reject invalid configurations.
 
 | Symptom                               | First check                                | Typical fix                                                |
 |---------------------------------------|--------------------------------------------|------------------------------------------------------------|
-| Unexpected 403 via Dispatcher         | `filters.any` order and last-match behavior | Add explicit allow for required path before deny selectors |
+| Unexpected 404 via Dispatcher         | `filters.any` order and last-match behavior | Add explicit allow for required path before deny selectors |
 | Cache never hits                      | Response headers and cache rules            | Remove non-cacheable headers where appropriate, adjust rules |
 | Content stale after publish           | Invalidation logs and `statfileslevel`      | Verify flush agent flow and tune invalidation granularity  |
 | Vanity URL fails                      | Rewrite/vanity mappings and vhost            | Rebuild mappings and validate rewrite conditions            |
