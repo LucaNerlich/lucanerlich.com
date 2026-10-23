@@ -828,10 +828,12 @@ Before running, ensure:
 From the project root:
 
 ```bash
-php -S localhost:8000 -t public
+php -S localhost:8000 -t public public/index.php
 ```
 
-The `-t public` option sets the document root to `public/`. Requests to `http://localhost:8000` are handled by `public/index.php`.
+The `-t public` option sets the document root to `public/`; the trailing `public/index.php` is the router script, so
+every request goes through the front controller instead of PHP looking for a matching file. `/login`, `/register` and
+`/notes` all reach it.
 
 > **Tip:** For Apache or Nginx, use the rewrite rules shown earlier.
 
