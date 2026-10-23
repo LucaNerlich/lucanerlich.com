@@ -356,8 +356,8 @@ Filters and servlets serve different purposes. Use this decision table to pick t
 
 ### 1. Forgetting `chain.doFilter()`
 
-If you forget to call `chain.doFilter(request, response)`, the request **hangs** - no servlet is ever invoked and the
-client receives no response (or a timeout).
+If you forget to call `chain.doFilter(request, response)`, the request stops there - no servlet is ever invoked and the
+client gets only what the filter wrote (usually an empty response).
 
 ```java
 // BAD - request will never reach the servlet
