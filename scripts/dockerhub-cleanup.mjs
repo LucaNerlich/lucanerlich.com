@@ -30,6 +30,7 @@ export const selectTagsToDelete = (
 ) => {
     const keep = new Set(protectedTags);
     [...tags]
+        .filter(tag => !keep.has(tag.name))
         .sort((a, b) => pushedAt(b) - pushedAt(a))
         .slice(0, Math.max(0, keepLast))
         .forEach(tag => keep.add(tag.name));
@@ -79,12 +80,17 @@ export const run = async ({
     config,
     username,
     password,
-    dryRun,
+    dryRun = true,
     fetchImpl = fetch,
     log = console.log,
 }) => {
-    const token = await login(fetchImpl, username, password);
+    // Validate before the network call: a bad config is a config error, not a
+    // credential failure.
     const protectedTags = config.protected ?? ['latest'];
+    if (!Array.isArray(protectedTags)) {
+        throw new Error('config.protected must be an array of tag names');
+    }
+    const token = await login(fetchImpl, username, password);
     const stats = [];
     for (const name of config.repositories) {
         const repo = name.includes('/') ? name : `${config.namespace}/${name}`;
@@ -98,9 +104,12 @@ export const run = async ({
                 minAgeDays: config.min_age_days ?? 0,
                 protectedTags,
             });
-            stat.deleted = doomed.map(tag => tag.name);
-            log(`${repo}: ${tags.length} tags, ${doomed.length} ${dryRun ? 'to delete' : 'to remove'}`);
-            if (dryRun) continue;
+            if (dryRun) {
+                stat.deleted = doomed.map(tag => tag.name);
+                log(`${repo}: ${tags.length} tags, ${doomed.length} to delete`);
+                continue;
+            }
+            log(`${repo}: ${tags.length} tags, ${doomed.length} to remove`);
             for (const tag of doomed) {
                 const response = await request(
                     fetchImpl,
@@ -111,6 +120,7 @@ export const run = async ({
                 if (!response.ok && response.status !== 404) {
                     throw new Error(`delete ${tag.name}: ${response.status}`);
                 }
+                stat.deleted.push(tag.name);
                 log(`${repo}: deleted ${tag.name}`);
             }
         } catch (error) {
