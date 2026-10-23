@@ -37,7 +37,7 @@ Initialises a Use-object (Sling Model, POJO, or JS file) and binds it to a varia
   ${hero.title}
 </div>
 
-<!-- Relative JavaScript Use-object -->
+<!-- Relative JavaScript Use-object (deprecated on AEM as a Cloud Service) -->
 <div data-sly-use.logic="logic.js">
   ${logic.greeting}
 </div>
@@ -109,8 +109,8 @@ You can rename the loop variable:
 | `first`   | `true` if the current item is the first  |
 | `middle`  | `true` if the item is neither first nor last |
 | `last`    | `true` if the current item is the last   |
-| `odd`     | `true` if `index` is odd                 |
-| `even`    | `true` if `index` is even                |
+| `odd`     | `true` if `count` is odd (the first item is odd) |
+| `even`    | `true` if `count` is even                |
 
 ### data-sly-repeat
 
@@ -393,11 +393,11 @@ with `@ context='...'`. Always use the most restrictive context that works for y
 <!-- Script string context (inside quoted inline JS strings) -->
 <script>var label = "${model.label @ context='scriptString'}";</script>
 
-<!-- Script token context (for pre-serialized JSON from trusted model code) -->
-<script>var config = ${model.jsonConfig @ context='scriptToken'};</script>
+<!-- Script token context (for JavaScript identifiers, literal numbers, or literal strings) -->
+<script>var ${model.varName @ context='scriptToken'} = 'Bar';</script>
 
-<!-- Style context -->
-<div style="${model.inlineStyles @ context='styleString'}">Styled</div>
+<!-- Style context (use styleToken for validated CSS property values) -->
+<div style="color: ${model.color @ context='styleToken'};">Styled</div>
 
 <!-- Number context -->
 <span>${model.count @ context='number'}</span>
@@ -416,12 +416,12 @@ with `@ context='...'`. Always use the most restrictive context that works for y
 | `attributeName`| For dynamic attribute names                       |
 | `elementName`  | For dynamic element names                         |
 | `uri`          | For `href` and `src` attribute values             |
-| `scriptToken`  | For JavaScript tokens, such as trusted serialized JSON |
+| `scriptToken`  | For JavaScript identifiers, literal numbers, or literal strings |
 | `scriptString` | Inside JavaScript strings                         |
 | `scriptComment`| Inside JavaScript comments                       |
-| `styleString`  | Inside CSS property values                        |
+| `styleString`  | Inside quoted CSS strings, e.g. `url('...')`     |
 | `styleComment` | Inside CSS comments                              |
-| `styleToken`   | For CSS identifiers                              |
+| `styleToken`   | For CSS identifiers and property values          |
 | `number`       | For numeric output                               |
 | `unsafe`       | Disables all escaping (use only for trusted data) |
 | `jsonString`   | Escapes text for JSON string grammar (Sling extension) |
@@ -500,32 +500,17 @@ For example, allowing `<iframe>` elements from trusted sources:
 </tag>
 ```
 
-Common AntiSamy **directives** you might adjust (at the top of the policy file):
-
-| Directive | Default | Description |
-|-----------|---------|-------------|
-| `useXHTML` | `true` | When `true`, output is XHTML-compliant (self-closing tags like `<div/>`). Set to `false` if empty `<div></div>` tags are being collapsed and breaking your layout |
-| `omitXMLDeclaration` | `true` | Omit the XML declaration from output |
-| `formatOutput` | `false` | Pretty-print the filtered HTML |
-| `maxInputSize` | `100000` | Maximum input string length in characters that AntiSamy will process |
-| `embedStyleSheets` | `false` | Whether to follow and inline external CSS `@import` rules |
-| `onUnknownTag` | `remove` | What to do with tags not listed in the policy: `remove`, `encode`, or `filter` (remove tag but keep content) |
-
-```xml title="Directive example"
-<directive name="useXHTML" value="false"/>
-<directive name="onUnknownTag" value="remove"/>
-<directive name="maxInputSize" value="200000"/>
-```
+AEM's Sling XSS filter honours only `allowDynamicAttributes` (and `maxInputSize` in current releases).
 
 #### Using XSSAPI in Java / Sling Models
 
 When you need XSS-safe output in Java code (Sling Models, Servlets, or WCMUse classes), use the
-[XSSAPI](https://developer.adobe.com/experience-manager/reference-materials/6-5/javadoc/com/adobe/granite/xss/XSSAPI.html)
+[XSSAPI](https://developer.adobe.com/experience-manager/reference-materials/cloud-service/javadoc/org/apache/sling/xss/XSSAPI.html)
 service rather than manually escaping strings. Adobe strongly recommends always going through XSSAPI
 for any value that will be rendered in HTML.
 
 ```java title="core/src/main/java/com/example/core/models/SafeTextModel.java"
-import com.adobe.granite.xss.XSSAPI;
+import org.apache.sling.xss.XSSAPI;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -689,26 +674,7 @@ The key insight: the `tel:` scheme is a **literal** in the template, not part of
 portion (the phone number) is validated with a regex in Java and rendered with `context='text'`, so no
 exploit string can slip through.
 
-**Approach 2: Overlay the AntiSamy config to allow `tel:` in URIs**
-
-If many components need `tel:` links and the feature-flag approach feels too repetitive, you can add `tel` to
-the allowed protocols in your `/apps/cq/xssprotection/config.xml` overlay:
-
-```xml title="/apps/cq/xssprotection/config.xml (excerpt)"
-<allowed-protocols>
-  <protocol value="http"/>
-  <protocol value="https"/>
-  <protocol value="mailto"/>
-  <protocol value="tel"/>    <!-- added -->
-</allowed-protocols>
-```
-
-:::warning
-Only add schemes you genuinely need. Every additional allowed protocol widens the attack surface.
-Never add `javascript` or `data` to the allowed protocols.
-:::
-
-**Approach 3: Sanitise in the Sling Model and return a safe href**
+**Approach 2: Sanitise in the Sling Model and return a safe href**
 
 ```java title="SafeLinkModel.java"
 public String getSafeHref() {
@@ -800,27 +766,27 @@ When the ICU4J bundle is available, complex argument types like `plural` and `se
 
 ```html
 <!-- Custom date pattern -->
-<p>${model.publishDate @ format='yyyy-MM-dd'}</p>
+<p>${'yyyy-MM-dd' @ format=model.publishDate}</p>
 <!-- Output: "2025-03-15" -->
 
-<p>${model.publishDate @ format='dd.MM.yyyy HH:mm'}</p>
+<p>${'dd.MM.yyyy HH:mm' @ format=model.publishDate}</p>
 <!-- Output: "15.03.2025 14:30" -->
 
 <!-- Predefined patterns (Sling extension) -->
-<p>${model.publishDate @ format='short'}</p>
+<p>${'short' @ format=model.publishDate}</p>
 <!-- Output (en_US): "3/15/25" -->
 
-<p>${model.publishDate @ format='medium'}</p>
+<p>${'medium' @ format=model.publishDate}</p>
 <!-- Output (en_US): "Mar 15, 2025" -->
 
-<p>${model.publishDate @ format='long'}</p>
+<p>${'long' @ format=model.publishDate}</p>
 <!-- Output (en_US): "March 15, 2025" -->
 
-<p>${model.publishDate @ format='full'}</p>
+<p>${'full' @ format=model.publishDate}</p>
 <!-- Output (en_US): "Saturday, March 15, 2025" -->
 
 <!-- With explicit locale -->
-<p>${model.publishDate @ format='long', locale='de'}</p>
+<p>${'long' @ format=model.publishDate, locale='de'}</p>
 <!-- Output: "15. März 2025" -->
 ```
 
@@ -906,7 +872,7 @@ public class ArticleModel {
 <article data-sly-use.article="com.example.core.models.ArticleModel">
   <h1>${article.title}</h1>
   <span class="author">By ${article.author}</span>
-  <time>${article.publishDate @ format='medium'}</time>
+  <time>${'medium' @ format=article.publishDate}</time>
 
   <ul data-sly-list="${article.tags}">
     <li>${item}</li>
@@ -1005,8 +971,8 @@ match the resource path, with invalid Java characters replaced by underscores.
 
 ### JavaScript Use-API
 
-JavaScript Use-objects are evaluated server-side by the Rhino engine. Useful for quick prototyping or
-when Java infrastructure is not available. Use ES5 syntax only.
+JavaScript Use-objects are evaluated server-side by the Rhino engine. Deprecated on AEM as a Cloud Service --
+use the Java Use-API instead. Use ES5 syntax only.
 
 ```javascript title="logic.js"
 use(function () {
@@ -1041,7 +1007,7 @@ use(function () {
   'use strict';
   return {
     truncate: function (text, maxLength) {
-      if (text != null && text.length() > maxLength) {
+      if (text != null && String(text).length > maxLength) {
         return text.substring(0, maxLength) + '...';
       }
       return text;
@@ -1069,9 +1035,10 @@ use(['utils.js'], function (Utils) {
 ```
 
 :::warning
-JavaScript Use-objects are slower than Sling Models and harder to test. Prefer the Java Use-API (Sling Models)
-for production components. Also, use the loose equality operator (`==`) instead of strict equality (`===`) when
-comparing Java objects in Rhino, because `===` does not perform type coercion between Java and JavaScript types.
+JavaScript Use-objects are deprecated on AEM as a Cloud Service, slower than Sling Models, and harder to test.
+Prefer the Java Use-API (Sling Models) for production components. Also, use the loose equality operator (`==`)
+instead of strict equality (`===`) when comparing Java objects in Rhino, because `===` does not perform type
+coercion between Java and JavaScript types.
 :::
 
 #### JavaScript caveats with strict equality
@@ -1164,11 +1131,11 @@ When HTL evaluates expressions, Java objects are converted according to these ru
 ### Nested loops with templates
 
 ```html title="partials/nav.html"
-<template data-sly-template.navItem="${@ item, level}">
-  <li class="nav-item nav-level-${level}">
+<template data-sly-template.navItem="${@ item}">
+  <li class="nav-item nav-level-${item.level}">
     <a href="${item.url}">${item.title}</a>
     <ul data-sly-test="${item.children}" data-sly-list.child="${item.children}">
-      <sly data-sly-call="${navItem @ item=child, level=level + 1}"/>
+      <sly data-sly-call="${navItem @ item=child}"/>
     </ul>
   </li>
 </template>
@@ -1177,7 +1144,7 @@ When HTL evaluates expressions, Java objects are converted according to these ru
 ```html
 <nav data-sly-use.nav="partials/nav.html">
   <ul data-sly-list.root="${model.rootItems}">
-    <sly data-sly-call="${nav.navItem @ item=root, level=0}"/>
+    <sly data-sly-call="${nav.navItem @ item=root}"/>
   </ul>
 </nav>
 ```
@@ -1245,6 +1212,6 @@ When HTL evaluates expressions, Java objects are converted according to these ru
 - [Official HTL Specification](https://github.com/adobe/htl-spec/blob/master/SPECIFICATION.md)
 - [Sling HTL Scripting Engine Documentation](https://sling.apache.org/documentation/bundles/scripting/scripting-htl.html)
 - [AEM Security - XSS Protection](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/introduction/security)
-- [XSSAPI Javadoc](https://developer.adobe.com/experience-manager/reference-materials/6-5/javadoc/com/adobe/granite/xss/XSSAPI.html)
+- [XSSAPI Javadoc](https://developer.adobe.com/experience-manager/reference-materials/cloud-service/javadoc/org/apache/sling/xss/XSSAPI.html)
 - [OWASP AntiSamy Project](https://owasp.org/www-project-antisamy/)
 - [How good is your AEM security? - XSS (Perficient)](https://blogs.perficient.com/2022/10/04/how-good-is-your-aem-security-xss/)
