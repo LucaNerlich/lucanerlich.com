@@ -9,7 +9,7 @@ tags: [aem, jcr, repository]
 ## JCR Queries
 
 I highly recommend downloading and "studying"
-the [JCR Query Cheatsheet](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/query-builder/querybuilder-predicate-reference) [^1].
+the [JCR Query Cheatsheet](https://cdn.experienceleague.adobe.com/assets/Adobe-Enterprise-Docs/experience-manager-65.en/main/help/sites-deploying/assets/JCR_query_cheatsheet-v1.1.pdf) [^1].
 
 ### QueryBuilder
 
@@ -53,10 +53,11 @@ private List<Hit> executeQuery(SlingHttpServletRequest request, HashMap<String, 
 ### SQL2
 
 `resourceResolver.findResources()` runs a JCR-SQL2 query directly. Use it when **all query inputs
-are constants under your control** - the JCR-SQL2 grammar has no parameter binding, so any
-user-controlled string concatenated into the statement is a query injection risk. For any query
-fed by request parameters, use the QueryBuilder above (or pre-validate inputs against a strict
-allowlist before building the statement).
+are constants under your control** -- `findResources()` has no parameter binding (JCR-SQL2 `$name`
+bind variables need the JCR `QueryManager` and `Query.bindValue()`), so any user-controlled string
+concatenated into the statement is a query injection risk. For any query fed by request parameters,
+use the QueryBuilder above (or pre-validate inputs against a strict allowlist before building the
+statement).
 
 The example below only references constants (the resource type and a fixed path), so string
 construction is safe:
@@ -162,7 +163,7 @@ maintenance - don't copy their string-concatenation shape into production servle
 ### Simple query example
 
 Find all pages below a given path that use a specific `sling:resourceType`. Uses `JCR-SQL2` (the
-legacy `sql` language is deprecated and gone in modern Oak).
+legacy `sql` language is deprecated).
 
 ```groovy
 def findByResourceType(rootPath, resourceType) {
