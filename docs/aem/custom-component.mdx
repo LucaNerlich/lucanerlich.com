@@ -957,28 +957,33 @@ import '../components/articlecard.js';
 The `clientlib.config.js` in the `ui.frontend` root maps build output to AEM clientlib categories:
 
 ```js title="ui.frontend/clientlib.config.js"
-module.exports = [
-    {
-        name: 'clientlib-site',
-        categories: ['myproject.site'],
-        serializationFormat: 'xml',
-        cssProcessor: ['default:none', 'min:none'],    // already minified by webpack
-        jsProcessor: ['default:none', 'min:none'],
-        assets: {
-            js: ['dist/**/*.js'],
-            css: ['dist/**/*.css'],
+module.exports = {
+    clientLibRoot: '../ui.apps/src/main/content/jcr_root/apps/myproject/clientlibs',
+    libs: [
+        {
+            name: 'clientlib-site',
+            allowProxy: true,
+            categories: ['myproject.site'],
+            serializationFormat: 'xml',
+            cssProcessor: ['default:none', 'min:none'],    // already minified by webpack
+            jsProcessor: ['default:none', 'min:none'],
+            assets: {
+                js: ['dist/**/*.js'],
+                css: ['dist/**/*.css'],
+            },
         },
-    },
-    // Separate clientlib for dependencies (vendor libs) if needed
-    {
-        name: 'clientlib-dependencies',
-        categories: ['myproject.dependencies'],
-        serializationFormat: 'xml',
-        assets: {
-            js: ['dist/vendors~*.js'],
+        // Separate clientlib for dependencies (vendor libs) if needed
+        {
+            name: 'clientlib-dependencies',
+            allowProxy: true,
+            categories: ['myproject.dependencies'],
+            serializationFormat: 'xml',
+            assets: {
+                js: ['dist/vendors~*.js'],
+            },
         },
-    },
-];
+    ],
+};
 ```
 
 ### Build commands
@@ -989,8 +994,8 @@ mvn clean install -PautoInstallSinglePackage
 
 # Frontend-only build (faster iteration)
 cd ui.frontend
-npm run dev          # watch mode with hot-reload (if configured)
-npm run build        # production build
+npm run dev          # development build
+npm run prod         # production build
 
 # Deploy only ui.apps after a frontend build
 cd ../ui.apps
@@ -1005,7 +1010,7 @@ mvn clean install -PautoInstallPackage
 | **Build tool** | None (raw CSS/JS deployed as-is) | webpack, Vite, or similar |
 | **Shared variables** | Not possible (plain CSS) | SCSS variables, mixins, design tokens |
 | **Team** | Full-stack developer | Dedicated frontend developer(s) |
-| **Hot reload** | No (manual deploy) | Yes (with `npm run dev`) |
+| **Hot reload** | No (manual deploy) | Yes (with `npm run start`) |
 | **Can coexist?** | Yes - dialog clientlibs are always inline | Yes - runtime clientlibs can come from either |
 
 :::tip
@@ -1020,8 +1025,7 @@ the emitted clientlib descriptors byte-identical to the archetype's historical o
 
 ## Unit Testing the Sling Model
 
-Test your model with [wcm.io AEM Mocks](https://wcm.io/testing/aem-mock/) or the
-[AEM SDK testing utilities](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/aem-project-content-package-structure).
+Test your model with [wcm.io AEM Mocks](https://wcm.io/testing/aem-mock/).
 
 ```java title="core/src/test/java/com/myproject/core/models/ArticleCardModelTest.java"
 package com.myproject.core.models;
@@ -1125,7 +1129,7 @@ This is stored in the repository under `/conf/myproject/settings/wcm/policies/`.
 | | Editable templates | Static templates (legacy) |
 |---|---|---|
 | **Component policies** | Managed in template editor UI | Hardcoded in design mode |
-| **Allowed components** | Per-container policy | `cq:allowedTemplates` / design cells |
+| **Allowed components** | Per-container policy | Design mode (design cells) |
 | **Recommendation** | Always use for new projects | Only maintain for legacy projects |
 
 ## Edit Configuration (Optional)
