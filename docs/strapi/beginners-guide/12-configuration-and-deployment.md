@@ -247,19 +247,20 @@ sudo chown strapi:strapi /var/www/strapi
 
 ### Transfer files to the server
 
-From your local machine, use `rsync` to transfer the project:
+From your local machine, use `rsync` to transfer the project as the user that owns the
+directory:
 
 ```bash
 rsync -avz --exclude node_modules --exclude .tmp --exclude .cache \
   --exclude dist --exclude .env \
-  ./ your-user@your-server:/var/www/strapi/
+  ./ strapi@your-server:/var/www/strapi/
 ```
 
 ### Install dependencies on the server
 
 ```bash
 # SSH into the server
-ssh your-user@your-server
+ssh strapi@your-server
 
 # Switch to the strapi directory
 cd /var/www/strapi
@@ -471,10 +472,9 @@ server {
         proxy_send_timeout 300s;
     }
 
-    # Cache static assets
+    # Let browsers cache uploaded media
     location /uploads/ {
         proxy_pass http://127.0.0.1:1337;
-        proxy_cache_valid 200 1d;
         add_header Cache-Control "public, max-age=86400";
     }
 }
@@ -604,9 +604,10 @@ export default [
 ];
 ```
 
-> **Note:** Strapi does not ship with a built-in rate limiter. For production, use the custom rate limiting middleware
-> from [chapter 8](./08-routes-policies-middleware.md), or install a third-party package like
-> [koa-ratelimit](https://github.com/koajs/ratelimit) or [koa2-ratelimit](https://github.com/ysocorp/koa2-ratelimit).
+> **Note:** Strapi rate-limits the auth routes through the Users & Permissions `ratelimit`
+> config and the admin panel through `rateLimit`. Reach for the custom middleware in
+> [chapter 8](./08-routes-policies-middleware.md) or a package like
+> [koa-ratelimit](https://github.com/koajs/ratelimit) only for your own public endpoints.
 
 ### Additional security headers with Helmet
 
@@ -898,9 +899,10 @@ To deploy updates:
 # On your local machine
 rsync -avz --exclude node_modules --exclude .tmp --exclude .cache \
   --exclude dist --exclude .env \
-  ./ your-user@your-server:/var/www/strapi/
+  ./ strapi@your-server:/var/www/strapi/
 
 # On the server
+ssh strapi@your-server
 cd /var/www/strapi
 npm install
 NODE_ENV=production npm run build
