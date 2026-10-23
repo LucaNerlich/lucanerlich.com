@@ -184,16 +184,15 @@ use.
 
 The following example demonstrates a bash command using the `aem-project-archetype`.
 By setting `appTitle`, `appId`, and `groupId` we tell the archetype how to name and structure the project.
-`frontendModule` can be one of `none`, `general`, `react`, or `angular`.
-By specifying this parameter, we can opt in to use the `ui.frontend` module, which can be preconfigured with either
-a classic HTML variant or a modern SPA framework (React or Angular).
+`frontendModule` can be `general` (default) or `none`.
+By specifying this parameter, we can opt in to use the `ui.frontend` module.
 
 For AEM as a Cloud Service, set `aemVersion=cloud`. A specific on-prem version can be set via passing the AEM
 version in its `major.minor.patch` notation. For example `aemVersion="6.5.21"` creates a project based on AEM 6.5 with
 service pack 21 and adds all necessary dependencies to the `pom.xml`.
 
 ```bash
-mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.2.1:generate \
+mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.3.1:generate \
  -D archetypeGroupId=com.adobe.aem \
  -D archetypeArtifactId=aem-project-archetype \
  -D archetypeVersion=58 \
@@ -201,7 +200,7 @@ mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.2.1:generate \
  -D appId="mysite" \
  -D groupId="com.mysite" \
  -D aemVersion=cloud \
- -D frontendModule=react \
+ -D frontendModule=general \
  -D includeExamples=y
 ```
 
@@ -210,7 +209,7 @@ mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.2.1:generate \
 - `appTitle`: Display name, e.g. "My Site"
 - `appId`: Project folder and package prefix, e.g. "mysite"
 - `groupId`: Maven group id, e.g. "com.mysite"
-- `frontendModule`: `none | general | react | angular`
+- `frontendModule`: `none | general`
 - `includeExamples`: `y` to include example components and content
 - `aemVersion`: `6.5.0` style version (for non-cloud)
 
@@ -306,12 +305,13 @@ doesn't work with your IDE, use the AEM Repo Tool below or a full Maven build in
 
 ### AEM Repo Tool (content sync)
 
-The AEM Repo Tool (`repo`) is a fast way to push or pull content packages without a full Maven build.
+The AEM Repo Tool (`repo`) is a fast way to push or pull JCR content without a full Maven build.
 It is especially useful for front-end asset changes or small content updates.
 
 ```bash
 # Install the repo tool (macOS via brew)
-brew install aem/repo/repo
+brew tap adobe-marketing-cloud/brews
+brew install adobe-marketing-cloud/brews/repo
 
 # Check that it is available
 repo --version
@@ -320,14 +320,17 @@ repo --version
 Example usage:
 
 ```bash
-# Push a local content package (zip)
-repo put -u admin -p admin http://localhost:4502 crx-package.zip
+# Navigate to a local JCR checkout directory
+cd ui.apps/src/main/content/jcr_root/apps/mysite
 
-# Push a file or folder directly into JCR (useful for ui.apps changes)
-repo put -u admin -p admin http://localhost:4502 /path/to/ui.apps/src/main/content/jcr_root/apps/mysite
+# Push local changes to AEM
+repo put -f
 
-# Pull from AEM into your local filesystem
-repo get -u admin -p admin http://localhost:4502 /content/mysite/en
+# Pull remote changes from AEM into your local filesystem
+repo get -f
+
+# Initial checkout of a JCR path (from package root)
+repo checkout /content/mysite/en
 ```
 
 ### Troubleshooting quick hits
