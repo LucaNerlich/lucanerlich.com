@@ -104,7 +104,7 @@ cq:tags = ["marketing:campaigns/2025", "products:shoes/running"]
 
 ### Via the Tagging Console
 
-Navigate to **Tools > General > Tagging** (`/aem/tagging`) in the AEM author instance.
+Navigate to **Tools > General > Tagging** in the AEM author instance.
 From here you can:
 
 - Create namespaces and child tags
@@ -235,7 +235,7 @@ public class TaggedContentModel {
     @Self
     private Resource resource;
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue(name = "cq:tags", optional = true)
     private String[] cqTags;
 
     private List<TagInfo> tags;
@@ -296,13 +296,16 @@ public class LocalisedTagModel {
     @Self
     private SlingHttpServletRequest request;
 
+    @ScriptVariable
+    private Page currentPage;
+
     @ValueMapValue(name = "cq:tags", optional = true)
     private String[] tagIds;
 
     public List<String> getTagTitles() {
         if (tagIds == null) return Collections.emptyList();
 
-        Locale pageLocale = request.getLocale();
+        Locale pageLocale = currentPage.getLanguage(false);
         TagManager tagManager = request.getResourceResolver().adaptTo(TagManager.class);
         if (tagManager == null) {
             return Collections.emptyList();
@@ -314,7 +317,7 @@ public class LocalisedTagModel {
             Tag tag = tagManager.resolve(id);
             if (tag != null) {
                 // Returns the title in the page locale, with fallback to default
-                titles.add(tag.getLocalizedTitle(pageLocale));
+                titles.add(tag.getTitle(pageLocale));
             }
         }
         return titles;
@@ -503,7 +506,7 @@ Tag titles can be translated for multi-language sites by adding locale-specific
 └── jcr:title.ja = "靴"
 ```
 
-The `tag.getLocalizedTitle(locale)` method resolves titles with a fallback chain:
+The `tag.getTitle(locale)` method resolves titles with a fallback chain:
 
 1. Exact locale match (`de_DE`)
 2. Language match (`de`)
@@ -519,7 +522,7 @@ The `tag.getLocalizedTitle(locale)` method resolves titles with a fallback chain
 import com.day.cq.tagging.TagManager
 
 def tagManager = resourceResolver.adaptTo(TagManager.class)
-def namespace = tagManager.resolve("products")
+def namespace = tagManager.resolve("products:")
 
 def printTag(tag, depth) {
     println "  " * depth + tag.tagID + " → " + tag.title
@@ -534,11 +537,11 @@ printTag(namespace, 0)
 ```groovy
 import com.day.cq.tagging.TagManager
 
-def tagManager = resourceResolver.adaptTo(TagManager.class)
-def namespace = tagManager.resolve("marketing")
+tagManager = resourceResolver.adaptTo(TagManager.class)
+def namespace = tagManager.resolve("marketing:")
 
 def checkTag(tag) {
-    def count = tagManager.find("/content", tag.tagID).size()
+    def count = tagManager.find("/content", [tag.path] as String[]).size()
     if (count == 0) {
         println "UNUSED: ${tag.tagID}"
     }
@@ -603,8 +606,8 @@ and rarely provide meaningful classification value.
 ### Always use tag IDs, never paths
 
 Store and reference tags by their tag ID (`namespace:path`) not the JCR path
-(`/content/cq:tags/namespace/path`). The TagManager APIs understand tag IDs and update content
-references during move/merge operations; hard-coded repository paths are more brittle.
+(`/content/cq:tags/namespace/path`). The TagManager APIs understand tag IDs and follow `cq:movedTo`
+after a move/merge (stored `cq:tags` values are not rewritten); hard-coded repository paths are more brittle.
 
 ### Localise tag titles
 
