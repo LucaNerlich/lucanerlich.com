@@ -57,7 +57,7 @@ public class MyModel implements ComponentExporter { ... }
 |-----------|------|---------|
 | `adaptables` | `Class<?>[]` | What the model can be adapted from (`SlingHttpServletRequest.class`, `Resource.class`, or both) |
 | `adapters` | `Class<?>[]` | What interfaces/classes the model can be adapted **to** (used for `adaptTo()` lookups) |
-| `resourceType` | `String` | Binds the model to a specific `sling:resourceType` (enables automatic resolution) |
+| `resourceType` | `String[]` | Binds the model to one or more `sling:resourceType`s (enables automatic resolution) |
 | `defaultInjectionStrategy` | `DefaultInjectionStrategy` | `OPTIONAL` or `REQUIRED` - controls what happens when fields can't be injected |
 
 ### `adaptables`: Request vs Resource
@@ -358,7 +358,7 @@ public class NavigationModel {
     private Page currentPage;
 
     @ScriptVariable
-    private Designer currentDesign;
+    private Design currentDesign;
 
     @ScriptVariable
     private Style currentStyle;
@@ -550,8 +550,7 @@ preferred - they bypass the priority chain entirely and target one injector dire
 
 ## @Named
 
-Overrides the property/parameter name for `@Inject`. Only works with `@Inject`, not with the
-injector-specific annotations (which have their own `name` attribute).
+Overrides the property/parameter name for `@Inject`. Injector-specific annotations also honour it when their own `name` is empty; prefer their `name` attribute.
 
 ```java
 // Without @Named - field name "title" is used as the JCR property name
@@ -613,8 +612,7 @@ or resource). `@Via` redirects injection to a different source.
 @Model(adaptables = SlingHttpServletRequest.class)
 public class MyModel {
 
-    // Without @Via: reads from the request's ValueMap (usually empty)
-    // With @Via: reads from the underlying resource's ValueMap
+    // @Inject already reads the request's resource ValueMap (Sling Models Impl 1.5.0+, AEMaaCS); @Via("resource") only matters on older impls
     @Inject @Via("resource")
     private String title;
 }
@@ -622,7 +620,7 @@ public class MyModel {
 
 :::info
 This specific pattern is rarely needed because `@ValueMapValue` already reads from the resource's ValueMap
-automatically, even when the model adapts from a request. `@Via("resource")` is mainly useful with `@Inject`.
+automatically, even when the model adapts from a request.
 :::
 
 ### Via types for delegation
