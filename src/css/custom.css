@@ -26,7 +26,7 @@ html[data-theme='dark'] {
     --custom-accent-purple: #6c68ff;
     --custom-accent-amber: #ffb000;
     --custom-text-positive: #2dd460;
-    --custom-text-negative: #ff8a8a;
+    --custom-text-negative: #ffa8a8;
     --custom-muted: #999999;
     --custom-diagram-bg: var(--ifm-background-color);
 }

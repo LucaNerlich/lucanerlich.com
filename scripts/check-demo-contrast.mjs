@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Guards the demo colour contract in two ways:
 //
-// 1. WCAG AA contrast for every accent fill used by the demo modules
-//    (FlexboxDemo, GridDemo, TransitionDemo). The foregrounds below are the
-//    ones those modules set; update a pair when a module changes a colour.
+// 1. WCAG AA contrast for every accent fill used by the demo modules and for
+//    the splitter's text-safe pair. Update a pair when a module changes a
+//    colour.
 // 2. No label in a demo or an app page may paint itself in an accent token.
 //    Those tokens are tuned as fills; used as text on a same-hue tint they
 //    measured 2.28-3.59:1 (issue #618), so the rule is banned rather than
@@ -44,10 +44,12 @@ const pairs = [
     ['dark', 'accent-red', '#111111', 'Flexbox item 4'],
     // Worst case in the splitter: an odd balance row / a chip hover, which use
     // the emphasis tints rather than the card surface.
+    // Surfaces the splitter paints: odd balance rows use emphasis-100, the
+    // chip hover uses emphasis-200 (#444950 in the dark theme).
     ['light', 'text-positive', '#ebedf0', 'splitter balances and errors'],
     ['light', 'text-negative', '#ebedf0', 'splitter balances and errors'],
-    ['dark', 'text-positive', '#3a3d40', 'splitter balances and errors'],
-    ['dark', 'text-negative', '#3a3d40', 'splitter balances and errors'],
+    ['dark', 'text-positive', '#444950', 'splitter balances and errors'],
+    ['dark', 'text-negative', '#444950', 'splitter balances and errors'],
 ];
 
 const channel = (value) => {
@@ -87,16 +89,18 @@ if (failed > 0) {
 }
 console.log(`all ${pairs.length} colour pairs >= ${AA_NORMAL_TEXT}:1`);
 
-// A demo label must inherit its colour. An accent token as `color` has no
-// contrast guarantee against the tint it sits on, and modelling six
-// `color-mix` backgrounds here would drift from the CSS it guards (#618).
+// A label in a demo or app page must inherit its colour. An accent token as
+// `color` has no contrast guarantee against the tint it sits on, and modelling
+// every `color-mix` background here would drift from the CSS it guards (#618).
 const offenders = [];
 for (const root of ['src/components', 'src/pages']) {
     for (const file of readdirSync(new URL(`../${root}`, import.meta.url), {recursive: true})) {
         if (!file.endsWith('.module.css')) continue;
         const text = readFileSync(new URL(`../${root}/${file}`, import.meta.url), 'utf8');
         text.split('\n').forEach((line, index) => {
-            if (/^\s*color:\s*var\(--custom-accent-/.test(line)) {
+            // Any declaration in the rule, including a color-mix() value; the
+            // [;{] anchor keeps `border-color` out.
+            if (/(?:^|[;{])\s*color:[^;]*var\(--custom-accent-/.test(line)) {
                 offenders.push(`${root}/${file}:${index + 1}`);
             }
         });
@@ -104,7 +108,7 @@ for (const root of ['src/components', 'src/pages']) {
 }
 
 if (offenders.length > 0) {
-    console.error('demo labels must not use an accent token as text colour:');
+    console.error('labels must not use an accent token as text colour:');
     for (const where of offenders) console.error(`  ${where}`);
     process.exit(1);
 }

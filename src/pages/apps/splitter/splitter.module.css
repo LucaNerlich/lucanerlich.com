@@ -403,10 +403,6 @@
     border-radius: 6px;
 }
 
-.transferPaid {
-    opacity: 0.65;
-}
-
 .transferPaid .transferAmount {
     text-decoration: line-through;
 }
