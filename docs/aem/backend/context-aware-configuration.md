@@ -125,20 +125,20 @@ public @interface SiteConfig {
 
 :::note[Register CA Config classes in the bundle]
 The CA Config annotations must be discoverable by Sling. Either add the
-`Sling-ContextAware-Configuration-Classes` bundle header for your config package/classes, or use the
+`Sling-ContextAware-Configuration-Classes` bundle header listing your configuration class names (comma-separated), or use the
 Sling CA Config bnd scanner plugin (`org.apache.sling.caconfig.bndplugin.ConfigurationClassScannerPlugin`).
 :::
 
 ### Supported property types
 
-| Type       | Example          | Notes                        |
-|------------|------------------|------------------------------|
-| `String`   | `"UA-12345"`     | Default: `""`                |
-| `boolean`  | `true` / `false` | Default: `false`             |
-| `int`      | `10`             | Default: `0`                 |
-| `long`     | `1000L`          | Default: `0L`                |
-| `double`   | `3.14`           | Default: `0.0`               |
-| `String[]` | `{"a", "b"}`     | Arrays of any primitive type |
+| Type       | Example          | Notes                                                    |
+|------------|------------------|----------------------------------------------------------|
+| `String`   | `"UA-12345"`     | Default: `""`                                            |
+| `boolean`  | `true` / `false` | Default: `false`                                         |
+| `int`      | `10`             | Default: `0`                                             |
+| `long`     | `1000L`          | Default: `0L`                                            |
+| `double`   | `3.14`           | Default: `0.0`                                           |
+| `String[]` | `{"a", "b"}`     | Arrays of `String`, `int`, `long`, `double` or `boolean` |
 
 ---
 
@@ -166,7 +166,7 @@ public class HeaderModel {
 
     public boolean isNewHeaderEnabled() {
         SiteConfig config = configResolver.get(resource).as(SiteConfig.class);
-        // as() may return null when no configuration resource is bound to this context.
+        // as() never returns null: without a bound configuration it returns the annotation defaults.
         return config != null && config.enableNewHeader();
     }
 
@@ -236,9 +236,8 @@ Expose the config values through your Sling Model and use them in HTL:
 ```
 
 :::tip[Always set `@ context` inside `<script>`]
-HTL's auto-context detection usually picks `scriptString` inside `<script>` tags, but set it
-explicitly to be safe - a value that slips through unescaped can break out of the string literal
-and execute arbitrary JavaScript. For JSON payloads use `@ context="scriptToken"` or render the
+HTL does not auto-detect a context inside `<script>`: an expression without `@ context` is
+replaced with an empty string (the compiler logs a warning). For JSON payloads, render the
 value via a `<meta>` tag instead.
 :::
 
@@ -353,7 +352,6 @@ which add:
 - **Context path strategies** - more flexible lookup (absolute parent level, root template)
 - **Persistence strategies** - storing configs in `/conf` with AEM-compatible structure
 - **Editor UI** - a page-level configuration editor for authors
-- **Override support** - system-wide overrides via OSGi
 
 ### Installation
 
@@ -489,7 +487,6 @@ belong in OSGi configurations.
 | Nested config items are empty          | Verify the JCR structure matches the annotation hierarchy (child nodes under `items/`)                          |
 | wcm.io editor not showing              | Check that the context path strategy is configured correctly for your site structure                            |
 | Wrong site config resolved             | Verify the `sling:configRef` points to the correct `/conf/` path; check for overlapping context path strategies |
-| Config changes not picked up           | CA Config caching may delay updates; clear the Sling CA Config cache                                            |
 
 ## See also
 
