@@ -1,7 +1,7 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
 import {allocateByWeights, allocateEqual, allocateExpense, validateSplit} from './split';
-import {computeBalances, computeSettlement, summarize} from './settlement';
+import {computeSettlement, summarize} from './settlement';
 import {applyAction, expensesAffectedByRemoval, expensesDeletedByRemoval} from './model';
 import {
     COMPRESSED_PREFIX,
@@ -134,7 +134,7 @@ describe('allocateExpense modes', () => {
 describe('settlement with participants and payer-covers', () => {
     it('balances sum to zero for demo trip', () => {
         const state = demoState();
-        const balances = computeBalances(state);
+        const balances = summarize(state).balances;
         const sum = [...balances.values()].reduce((a, b) => a + b, 0);
         assert.equal(sum, 0);
         const {transfers} = summarize(state);
@@ -177,7 +177,7 @@ describe('settlement with participants and payer-covers', () => {
             ],
             paidTransferKeys: [],
         };
-        const balances = computeBalances(state);
+        const balances = summarize(state).balances;
         assert.equal(balances.get('a'), 4000);
         assert.equal(balances.get('b'), -4000);
     });
@@ -474,7 +474,7 @@ describe('model', () => {
             },
         };
         paid = applyAction(paid, dinner);
-        const [transfer] = computeSettlement(computeBalances(paid));
+        const [transfer] = computeSettlement(summarize(paid).balances);
         const key = transferKey(transfer.from, transfer.to, transfer.cents);
         paid = applyAction(paid, {type: 'TOGGLE_TRANSFER_PAID', key});
         assert.deepEqual(paid.paidTransferKeys, [key]);
