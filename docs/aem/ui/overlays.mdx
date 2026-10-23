@@ -82,12 +82,11 @@ ui.apps/src/main/content/jcr_root/
 Add the path to your `filter.xml`:
 
 ```xml title="ui.apps/src/main/content/META-INF/vault/filter.xml"
-<filter root="/apps/cq/core/content/nav" mode="merge"/>
+<filter root="/apps/cq/core/content/nav"/>
 ```
 
-:::warning
-Always use `mode="merge"` in your filter for overlays. Using the default `mode="replace"` would
-delete all product nodes not present in your overlay, potentially breaking the UI.
+:::tip[Filter roots and import modes]
+`replace` (the default) only affects the `/apps` subtree under the filter root and never touches `/libs`. Scope the root to the overlay nodes your package owns. If other packages write below the same root, use `update_properties` (FileVault 3.5.0+), not the deprecated `merge`, which never updates existing nodes.
 :::
 
 :::warning[AEM as a Cloud Service]
@@ -152,31 +151,31 @@ Adjust the `order` value to position the button (lower numbers appear first). In
 
 ### Customise Sites console columns
 
-Add or remove columns in the Sites console list view:
+Add or remove columns in the Sites console list view by overlaying the available columns definition:
 
-```xml title="ui.apps/.../apps/cq/core/content/sites/jcr:content/views/list/columns/.content.xml"
+```xml title="ui.apps/.../apps/wcm/core/content/common/availablecolumns/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
     jcr:primaryType="nt:unstructured">
-    <!-- Hide the "Published" column -->
-    <published jcr:primaryType="nt:unstructured"
-               sling:hideResource="{Boolean}true"/>
-    <!-- Add a custom column -->
-    <template jcr:primaryType="nt:unstructured"
-              jcr:title="Template"
-              sortable="{Boolean}true"
-              sling:orderBefore="published"/>
+    <!-- Add a custom column to the Sites console list view -->
+    <createdBy
+        jcr:primaryType="nt:unstructured"
+        jcr:title="Created By"
+        columnGroup="created"
+        page-info-provider="created"
+        page-info-provider-property="createdBy"
+        columnResourceType="cq/gui/components/common/admin/listview/customcell"
+        sortable="{Boolean}true"/>
 </jcr:root>
 ```
 
 ### Overlay a dialog field
 
-Change the default value or behaviour of a product dialog field. For example, modify the Core
-Component Image dialog to change a field label:
+Change the default value or behaviour of a product dialog field. For example, in a project proxy component extending Core Component Image v3 (`sling:resourceSuperType="core/wcm/components/image/v3/image"`), override the alt-text field label:
 
-```xml title="ui.apps/.../apps/core/wcm/components/image/v3/image/_cq_dialog/.content.xml (partial)"
+```xml title="ui.apps/.../apps/myproject/components/image/_cq_dialog/.content.xml (partial)"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
@@ -185,14 +184,26 @@ Component Image dialog to change a field label:
         <items jcr:primaryType="nt:unstructured">
             <tabs jcr:primaryType="nt:unstructured">
                 <items jcr:primaryType="nt:unstructured">
-                    <properties jcr:primaryType="nt:unstructured">
+                    <asset jcr:primaryType="nt:unstructured">
                         <items jcr:primaryType="nt:unstructured">
-                            <!-- Only override the specific field you need to change -->
-                            <alt jcr:primaryType="nt:unstructured"
-                                 fieldLabel="Accessibility Text (required)"
-                                 required="{Boolean}true"/>
+                            <columns jcr:primaryType="nt:unstructured">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <column jcr:primaryType="nt:unstructured">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <alternativeGroup jcr:primaryType="nt:unstructured">
+                                                <items jcr:primaryType="nt:unstructured">
+                                                    <!-- Only override the specific field you need to change -->
+                                                    <alt jcr:primaryType="nt:unstructured"
+                                                         fieldLabel="Accessibility Text (required)"
+                                                         required="{Boolean}true"/>
+                                                </items>
+                                            </alternativeGroup>
+                                        </items>
+                                    </column>
+                                </items>
+                            </columns>
                         </items>
-                    </properties>
+                    </asset>
                 </items>
             </tabs>
         </items>
@@ -319,10 +330,11 @@ Hide the "Configure" (wrench) button for a specific component type:
     $document.on('cq-layer-activated', function(ev) {
         if (ev.layer === 'Edit') {
             // Add a custom "Analytics" action to the toolbar
-            author.EditorFrame.editableToolbar.config.actions.ANALYTICS = {
+            var analyticsAction = new author.ui.ToolbarAction({
+                name: 'ANALYTICS',
                 icon: 'graphBarVertical',
                 text: 'View Analytics',
-                handler: function(editable) {
+                execute: function(editable) {
                     var path = editable.path;
                     window.open('/mnt/overlay/dam/gui/content/assets/analysisreport.html?path='
                         + encodeURIComponent(path), '_blank');
@@ -331,7 +343,8 @@ Hide the "Configure" (wrench) button for a specific component type:
                     // Only show for page components
                     return editable.type === 'wcm/foundation/components/responsivegrid';
                 }
-            };
+            });
+            author.EditorFrame.editableToolbar.registerAction('ANALYTICS', analyticsAction);
         }
     });
 
@@ -537,15 +550,15 @@ Overlaying `/libs` clientlibs (`js.txt`, `css.txt`, or JS/CSS files) is fragile 
 upgrades. Instead, create your own clientlib with the appropriate category and add your custom
 code there.
 
-### Use `mode="merge"` in filter.xml
+### Scope overlay filter roots carefully
 
-Always use merge mode for overlay paths:
+Scope each filter root to the overlay nodes your package owns:
 
 ```xml
-<filter root="/apps/cq/core/content/nav" mode="merge"/>
+<filter root="/apps/cq/core/content/nav"/>
 ```
 
-Using the default `replace` mode would delete product nodes not in your overlay.
+`replace` (the default) only affects the `/apps` subtree under the filter root and never touches `/libs`. If multiple packages write below the same root, use `update_properties` rather than the deprecated `merge` mode.
 
 ### Document your overlays
 
@@ -578,7 +591,7 @@ placement rather than relying on JCR node ordering:
 | Overlay has no effect | Verify the path matches `/libs` exactly (case-sensitive); check `filter.xml` includes the overlay path |
 | Navigation item still visible after hiding | Clear browser cache and the AEM clientlib cache (`/libs/granite/ui/content/dumplibs.rebuild.html`) |
 | Overlay breaks after AEM upgrade | Minimise overlays; only overlay what you need; test after every upgrade |
-| `filter.xml` with `mode="replace"` deletes product content | Always use `mode="merge"` for overlay paths |
+| Overlay filter root deletes other `/apps` nodes | Scope filter roots tightly to owned overlay nodes, or use `mode="update_properties"` if shared |
 | Dialog overlay doesn't merge correctly | Ensure you replicate the full **node path** from root to the target field (every parent node must exist) |
 | Custom navigation button doesn't appear | Check the `order` value; set it between existing items' order values |
 | Toolbar action JS doesn't load | Verify the clientlib category is `cq.authoring.editor` |
