@@ -64,8 +64,8 @@ The `adaptables` parameter defines what the model can be adapted from:
 
 | Adaptable                       | Use when                                                        | Available injectors                                                   |
 |---------------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------|
-| `Resource.class`                | You only need resource properties and children                  | `@ValueMapValue`, `@ChildResource`, `@ResourcePath`                   |
-| `SlingHttpServletRequest.class` | You need the request, session, selectors, or request attributes | All of the above plus `@RequestAttribute`, `@ScriptVariable`, `@Self` |
+| `Resource.class`                | You only need resource properties and children                  | `@ValueMapValue`, `@ChildResource`, `@ResourcePath`, `@Self`          |
+| `SlingHttpServletRequest.class` | You need the request, session, selectors, or request attributes | All of the above plus `@RequestAttribute`, `@ScriptVariable`          |
 
 ```java
 // Resource-based (simpler, preferred when sufficient)
@@ -274,29 +274,6 @@ public class FooterModel {
     }
 }
 ```
-
-### @Via - control the injection source
-
-When your model adapts from `SlingHttpServletRequest` but you want a specific injector to read from the underlying
-resource instead, use `@Via`:
-
-```java
-@Model(adaptables = SlingHttpServletRequest.class)
-public class HybridModel {
-
-    @ValueMapValue
-    @Via("resource")
-    private String title;
-
-    @Self
-    private SlingHttpServletRequest request;
-}
-```
-
-`@Via("resource")` tells the injector to resolve the value from the request's resource rather than the request itself.
-It applies **per field** - other fields in the same model still inject from the request unless they also use `@Via`.
-This is useful when you need both request-level features (selectors, request attributes) and resource-level property
-injection in the same model.
 
 ## @PostConstruct - initialization logic
 
@@ -557,12 +534,12 @@ user mapping** configuration:
 ```json title="ui.config/.../config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~mysite.cfg.json"
 {
     "user.mapping": [
-        "com.mysite.core:mysite-reader=mysite-reader"
+        "com.mysite.core:mysite-reader=[mysite-reader]"
     ]
 }
 ```
 
-The format is `<bundle-symbolic-name>:<sub-service-name>=<service-user-name>`.
+The format is `<bundle-symbolic-name>:<sub-service-name>=[<principal-name>,...]`.
 
 ### Using the service user in code
 
