@@ -47,6 +47,12 @@ export const isNewSession = (previous: Person[], next: Person[]): boolean => {
     return !previous.some(p => ids.has(p.id));
 };
 
+// Only a replacement that leaves people to fill in starts the form over.
+// Removing the last person is an edit: the draft empties, but a typed
+// description/amount must survive so the user can re-add someone.
+export const clearsTypedInput = (previous: Person[], next: Person[]): boolean =>
+    isNewSession(previous, next) && next.length > 0;
+
 // Checking a participant is a people change: seed their values through the
 // same rules as a fresh draft, or the shares form shows a weight the draft
 // does not have and refuses to submit. Unchecking only drops the id, so a

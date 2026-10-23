@@ -1,6 +1,6 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {draftAfterAdd, draftFromExpense, draftFromPeople, isNewSession, toggleParticipant} from './splitDraft';
+import {clearsTypedInput, draftAfterAdd, draftFromExpense, draftFromPeople, isNewSession, toggleParticipant} from './splitDraft';
 import {buildSplit} from './expenseInput';
 import type {Person} from './types';
 
@@ -139,10 +139,13 @@ describe('isNewSession', () => {
         assert.equal(isNewSession([], people), false);
     });
 
-    it('rebuilds a fresh, fully checked draft after a replacement', () => {
-        const draft = draftFromPeople(people);
-        const replaced = draftFromPeople([{id: 'x', name: 'Xena'}], draft);
-        assert.deepEqual(replaced.participants, []);
-        assert.deepEqual(draftFromPeople([{id: 'x', name: 'Xena'}]).participants, ['x']);
+    it('clears the typed input only for a replacement that leaves people', () => {
+        const replaced = [{id: 'x', name: 'Xena'}];
+        assert.equal(clearsTypedInput(people, replaced), true);
+        // Removing the last person is an edit, not a replacement.
+        assert.equal(clearsTypedInput([{id: 'a', name: 'Alice'}], []), false);
+        // First hydration and an ordinary edit keep what the user typed.
+        assert.equal(clearsTypedInput([], people), false);
+        assert.equal(clearsTypedInput(people, [people[0]]), false);
     });
 });

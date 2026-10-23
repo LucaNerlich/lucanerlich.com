@@ -6,7 +6,7 @@ import type {MessageError} from '../_lib/messages';
 import type {Messages} from '../_lib/messages';
 import {formatError} from '../_lib/messages';
 import SplitFields from './SplitFields';
-import {draftAfterAdd, draftFromPeople, isNewSession} from '../_lib/splitDraft';
+import {clearsTypedInput, draftAfterAdd, draftFromPeople, isNewSession} from '../_lib/splitDraft';
 import styles from '../splitter.module.css';
 
 type Props = {
@@ -44,14 +44,16 @@ const ExpenseForm: React.FC<Props> = ({
     }, [people, paidBy, lastPaidBy]);
 
     useEffect(() => {
-        if (isNewSession(previousPeople.current, people)) {
-            touched.current = false;
+        const fresh = isNewSession(previousPeople.current, people);
+        const clearInput = clearsTypedInput(previousPeople.current, people);
+        if (fresh) touched.current = false;
+        previousPeople.current = people;
+        if (clearInput) {
             setDescription('');
             setAmount('');
         }
-        previousPeople.current = people;
         setDraft(prev =>
-            touched.current ? draftFromPeople(people, prev) : draftFromPeople(people),
+            fresh ? draftFromPeople(people) : touched.current ? draftFromPeople(people, prev) : draftFromPeople(people),
         );
     }, [people]);
 
