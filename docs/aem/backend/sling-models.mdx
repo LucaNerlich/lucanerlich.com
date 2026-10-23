@@ -178,7 +178,7 @@ public class ArticleModel implements ComponentExporter {
 |-----------|------------|---------------------|
 | `SlingHttpServletRequest.class` | **Default for components** - HTL rendering, servlets | Everything: resource, request, session, script variables, WCM mode |
 | `Resource.class` | Utility models, child models for `@ChildResource`, unit tests | Resource properties, child resources, OSGi services |
-| Both (`{Request.class, Resource.class}`) | Models used from both contexts | Use `@Via("resource")` when adapting from request to access resource properties |
+| Both (`{Request.class, Resource.class}`) | Models used from both contexts | No `@Via` needed: `@ValueMapValue`/`@ChildResource` read the request's resource automatically; `@Via("resource")` injects null when adapted from a `Resource` |
 
 :::tip
 Always prefer `SlingHttpServletRequest.class` for component models. Use `Resource.class` only for
@@ -293,7 +293,7 @@ Response:
 | `@JsonProperty("name")` | Rename a field in JSON output |
 | `@JsonIgnore` | Exclude a getter from JSON output |
 | `@JsonInclude(NON_NULL)` | Omit null values |
-| `@JsonRootName("article")` | Wrap output in a root element |
+| `@JsonRootName("article")` | Root wrapper name -- applied only when `@Exporter` sets `options = @ExporterOption(name = "SerializationFeature.WRAP_ROOT_VALUE", value = "true")` |
 
 ---
 
@@ -481,7 +481,7 @@ Common `TagManager` operations:
 |--------|---------|
 | `resolve(tagId)` | Resolves a tag ID to a `Tag` object |
 | `createTag(tagId, title, description)` | Creates a new tag |
-| `find(keyword)` | Searches tags by keyword |
+| `findTagsByTitle(keyword, locale)` | Searches tags by title keyword |
 | `getTags(resource)` | Gets all tags for a resource |
 | `setTags(resource, tags)` | Sets tags on a resource |
 
@@ -627,7 +627,7 @@ resolver.delete(resource);
 resolver.commit();
 
 // Map an internal path to an external URL
-String externalUrl = resolver.map(request, "/content/my-site/en/about");
+String externalUrl = resolver.map(request, "/content/my-site/en/about.html");
 // → "/en/about.html"
 
 // Adapt to JCR Session (when you need low-level JCR API)
@@ -778,7 +778,7 @@ use(function () {
     // 'this' contains variables passed from HTL via data-sly-use
     var inputValue = this.someVar;
 
-    // ⚠️ Runs server-side (Rhino engine) - no console.log, no window, no DOM
+    // ⚠️ Runs server-side (Rhino engine) - no window, no DOM
     // ⚠️ Must use ES5 syntax - arrow functions, let/const, template literals will fail
 
     return {
@@ -798,7 +798,7 @@ use(function () {
 | Language | Java (any version) | ES5 only (Rhino) |
 | Performance | Fast (compiled) | Slow (interpreted per request) |
 | Unit testing | Full (JUnit, AEM Mocks) | Not testable |
-| API access | Full Sling/JCR/AEM API | Limited (no OSGi services) |
+| API access | Full Sling/JCR/AEM API | Limited (services only via `sling.getService(...)`) |
 | IDE support | Full (autocomplete, refactoring) | Minimal |
 | Recommendation | **Always use** | Avoid in new code |
 
@@ -860,8 +860,8 @@ class GreetingModelTest {
 void setUp() {
     context.addModelsForClasses(ArticleModel.class);
 
-    // Register a mock or real service
-    context.registerService(DateFormatterService.class, new DateFormatterServiceImpl());
+    // Register a mock (registerService) or real service
+    context.registerInjectActivateService(new DateFormatterServiceImpl());
 }
 ```
 
