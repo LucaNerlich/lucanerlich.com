@@ -181,23 +181,27 @@ in `/libs/`:
 
 #### filter.xml
 
-Use `mode="merge"` so the package does not delete any existing nodes under that path that are not
-in your package:
+`replace` (the default) only affects the `/apps` subtree under the filter root and never touches
+`/libs`. Scope the root to the overlay nodes your package owns. If other packages write below the same
+root, use `update_properties` (FileVault 3.5.0+), not the deprecated `merge`, which never updates
+existing nodes:
 
 ```xml title="ui.apps/src/main/content/META-INF/vault/filter.xml"
-<filter root="/apps/granite/omnisearch" mode="merge"/>
+<filter root="/apps/granite/omnisearch"/>
 ```
 
 :::warning
 Do not use a narrow filter root like `...selection/smartcrop` directly. The FileVault
-`jackrabbit-filter` validator will fail with:
+`jackrabbit-filter` validator reports (WARN by default):
 
 ```text
 Filter root's ancestor '.../actions/selection' is not covered
 by any of the specified dependencies nor a valid root.
 ```
 
-The filter root must be high enough in the tree that all intermediate paths are descendants of it.
+The validator checks each filter root's parent: it must be a valid root (by default `/`, `/libs`,
+`/apps`, `/etc`, `/var`, `/tmp`, `/content`, `/etc/packages`) or be covered by a dependency, so add
+`<filter><root>/apps/granite</root></filter>` to `ui.apps.structure`.
 :::
 
 ---
@@ -290,9 +294,9 @@ public class SmartCropCheckServlet extends SlingSafeMethodsServlet {
 }
 ```
 
-`getSmartCrops(asset)` returns already-processed smart crop renditions. `hasLocalCropDefns(asset)`
-returns true when a smart crop image processing profile is assigned to the asset's folder but
-processing has not yet run. Together they cover both cases.
+`getSmartCrops(asset)` lists the asset's smart crops; `hasLocalCropDefns(asset)` returns true if
+smart crops are stored as renditions in the JCR. Neither detects an assigned profile that has not
+run yet.
 
 #### Unit tests
 
@@ -488,8 +492,7 @@ returns structured JSON.
 ## Gotchas
 
 **`S7damImageProcessingProfileService` is a private API.** Adobe's render condition servlet injects
-this service, but it is not in the public `aem-sdk-api` jar. `AssetSmartCropStore.hasLocalCropDefns()`
-covers the same use case (profile assigned to folder) and is public API.
+this service, but it is not in the public `aem-sdk-api` jar.
 
 **`nt:unstructured` in FileVault XML values doesn't need the `nt` namespace - but include it
 anyway.** The `nt:` prefix in `jcr:primaryType="nt:unstructured"` is an attribute *value*, not an
