@@ -227,6 +227,13 @@ In `public/index.php`, you bootstrap the app and register routes:
 ```php
 <?php
 
+// The built-in server sends every request here, including real files such as
+// /style.css. Return false for those so PHP serves them itself; Apache and
+// Nginx use their rewrite rules instead.
+if (PHP_SAPI === 'cli-server' && is_file(__DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))) {
+    return false;
+}
+
 require __DIR__ . '/../vendor/autoload.php';
 
 session_start();
@@ -833,7 +840,8 @@ php -S localhost:8000 -t public public/index.php
 
 The `-t public` option sets the document root to `public/`; the trailing `public/index.php` is the router script, so
 every request goes through the front controller instead of PHP looking for a matching file. `/login`, `/register` and
-`/notes` all reach it.
+`/notes` all reach it. Because the router sees every request, it returns `false` for real files (see the `index.php`
+snippet above) so `-t public` can serve your CSS and images.
 
 > **Tip:** For Apache or Nginx, use the rewrite rules shown earlier.
 
@@ -874,7 +882,7 @@ Next steps: implement password reset, add pagination, improve form validation, a
 - Templates use a layout and a small `view()` helper; state-changing forms include CSRF tokens
 - Authentication uses `password_hash()` and `password_verify()`; sessions store `user_id`
 - `requireAuth()` protects routes; notes are scoped to the logged-in user
-- Run with `php -S localhost:8000 -t public`; use Apache/Nginx rewrite rules for production
+- Run with `php -S localhost:8000 -t public public/index.php`; use Apache/Nginx rewrite rules for production
 - Frameworks (Laravel, Symfony), templating (Twig, Blade), and ORMs (Eloquent, Doctrine) extend these patterns
 
 ## Next up
