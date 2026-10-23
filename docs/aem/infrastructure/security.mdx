@@ -39,7 +39,7 @@ minimal privileges instead.
 Service user mappings are defined as OSGi factory configurations for
 `org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended`.
 
-```json title="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-my-project.cfg.json"
+```json title="org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~my-project.cfg.json"
 {
     "user.mapping": [
         "my-project.core:my-read-service=[my-project-read-service]",
@@ -167,7 +167,7 @@ for (AccessControlPolicy policy : policies) {
 On AEM as a Cloud Service, `repoinit` scripts are the recommended way to provision service users
 and their ACLs declaratively. They run during deployment and are idempotent.
 
-```text title="org.apache.sling.jcr.repoinit.RepositoryInitializer-my-project.config"
+```text title="org.apache.sling.jcr.repoinit.RepositoryInitializer~my-project.config"
 scripts=[
     "create service user my-project-read-service with path system/my-project\n
      create path /content/my-project(sling:Folder)\n

@@ -530,7 +530,7 @@ with minimal permissions.
 Repoinit scripts run at bundle startup and set up repository state (users, groups, ACLs). Add them as OSGi
 configurations in `ui.config`:
 
-```json title="ui.config/.../config/org.apache.sling.jcr.repoinit.RepositoryInitializer-mysite.cfg.json"
+```json title="ui.config/.../config/org.apache.sling.jcr.repoinit.RepositoryInitializer~mysite.cfg.json"
 {
     "scripts": [
         "create service user mysite-reader\nset ACL for mysite-reader\n    allow jcr:read on /content/mysite\nend"
@@ -554,7 +554,7 @@ end
 Map your bundle to the service user so `getServiceResourceResolver` knows which user to use. Add an **amended service
 user mapping** configuration:
 
-```json title="ui.config/.../config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended-mysite.cfg.json"
+```json title="ui.config/.../config/org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~mysite.cfg.json"
 {
     "user.mapping": [
         "com.mysite.core:mysite-reader=mysite-reader"
