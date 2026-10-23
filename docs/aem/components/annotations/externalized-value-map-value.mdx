@@ -30,7 +30,7 @@ graph LR
     JCR["JCR: /content/my-site/en/about"]
     Injector["@ExternalizedValueMapValue"]
     ExtService["ExternalizerService"]
-    Output["/en/about.html"]
+    Output["/en/about"]
 
     Author --> JCR
     JCR --> Injector
@@ -59,7 +59,7 @@ private String linkUrl;
 // With externalization - mapped URL
 @ExternalizedValueMapValue
 private String linkUrl;
-// Returns: /en/about.html (or full URL depending on configuration)
+// Returns: /en/about (or full URL depending on configuration)
 ```
 
 ## The Externalizer Concept
@@ -71,8 +71,10 @@ AEM provides `ResourceResolver.map()` to convert internal paths to external URLs
 ResourceResolver.map("/content/my-site/en/about")
     → applies /etc/map rules
     → strips /content/my-site prefix
-    → returns "/en/about.html"
+    → returns "/en/about"
 ```
+
+`map()` and the Externalizer add no extension -- append `.html` to page paths after mapping, as the Externalizer javadoc does.
 
 For fully qualified URLs (including scheme and domain), AEM provides the
 `com.day.cq.commons.Externalizer` OSGi service:
@@ -80,11 +82,11 @@ For fully qualified URLs (including scheme and domain), AEM provides the
 ```java
 // ResourceResolver.map() - relative, context-aware
 String relative = resolver.map(request, "/content/my-site/en/about");
-// → "/en/about.html"
+// → "/en/about"
 
 // Externalizer - absolute URL with domain
 String absolute = externalizer.publishLink(resolver, "/content/my-site/en/about");
-// → "https://www.my-site.com/en/about.html"
+// → "https://www.my-site.com/en/about"
 ```
 
 | Method | Returns | Use case |
@@ -194,8 +196,8 @@ Requesting the component with `.model.json`:
     ":type": "myproject/components/teaser",
     "title": "Our Story",
     "description": "Learn about our company...",
-    "linkUrl": "/en/about.html",
-    "ctaLink": "/en/contact.html"
+    "linkUrl": "/en/about",
+    "ctaLink": "/en/contact"
 }
 ```
 
@@ -348,27 +350,12 @@ public class ExternalizerServiceImpl implements ExternalizerService {
 }
 ```
 
-For SPA projects that need client-side routing (where `.html` extensions and `/content/` prefixes
-are stripped), you would implement a specialized version:
-
-```java
-@Override
-public String externalizeForSPARouter(SlingHttpServletRequest request, String path) {
-    if (StringUtils.isBlank(path)) {
-        return null;
-    }
-    String mapped = request.getResourceResolver().map(request, path);
-    // Remove .html extension for SPA client-side routing
-    return StringUtils.removeEnd(mapped, ".html");
-}
-```
-
 ## Externalizer OSGi Configuration
 
 AEM's built-in `com.day.cq.commons.impl.ExternalizerImpl` must be configured with the correct domains
 for each environment:
 
-```json title="ui.config/.../config.author/com.day.cq.commons.impl.ExternalizerImpl.cfg.json"
+```json title="AEM 6.5 / AMS: ui.config/.../config.author/com.day.cq.commons.impl.ExternalizerImpl.cfg.json"
 {
     "externalizer.domains": [
         "local https://localhost:4502",
@@ -381,14 +368,13 @@ for each environment:
 
 | Domain | Purpose | Example output |
 |--------|---------|----------------|
-| `local` | Local development | `https://localhost:4502/en/about.html` |
-| `author` | Author instance | `https://author.my-site.com/en/about.html` |
-| `publish` | Publish / public facing | `https://www.my-site.com/en/about.html` |
+| `local` | Local development | `https://localhost:4502/en/about` |
+| `author` | Author instance | `https://author.my-site.com/en/about` |
+| `publish` | Publish / public facing | `https://www.my-site.com/en/about` |
 
 :::info[AEMaaCS]
 On AEM as a Cloud Service, the Externalizer domains are configured automatically by Cloud Manager.
-You typically don't need to configure them manually. Use `ResourceResolver.map()` for relative URLs
-and the built-in Externalizer for absolute URLs.
+Do not deploy this file on AEMaaCS -- keep the default `$[env:AEM_EXTERNALIZER_*]` mappings; to change the publish or preview domain set the `AEM_CDN_DOMAIN_PUBLISH` / `AEM_CDN_DOMAIN_PREVIEW` Cloud Manager environment variables.
 :::
 
 ## Alternative Approaches
