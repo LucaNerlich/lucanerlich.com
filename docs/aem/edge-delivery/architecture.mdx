@@ -66,7 +66,7 @@ serves the HTML, scripts, styles, and media through the Edge Delivery origins:
 
 1. **Content fetch** - HTML fragments from the Content Bus
 2. **Code lookup** - scripts, styles, and block assets are resolved from the GitHub ref
-3. **Optimisation** - HTML minified, images lazy-loaded, CSS / JS inlined where useful
+3. **Optimisation** - images rendered as responsive, lazy-loaded `<picture>` elements
 4. **Caching** - aggressive CDN caching with instant purge on publish
 
 Block decoration itself runs in the browser via `scripts/aem.js` and each block's
@@ -90,12 +90,12 @@ Key behaviours:
 
 | Tier | URL pattern | Purpose |
 |------|-------------|---------|
-| **Preview** | `https://main--{repo}--{org}.aem.page/` | Author preview, not cached |
+| **Preview** | `https://main--{repo}--{org}.aem.page/` | Author preview (short cache) |
 | **Live** | `https://main--{repo}--{org}.aem.live/` | Production-ready, cached, used as CDN origin |
 | **Production** | `https://www.example.com/` | Custom domain via CDN (Adobe or BYO) |
 
-The legacy `hlx.page` / `hlx.live` hostnames are still served and resolve to the same
-origin - you'll see both in older repos and tooling.
+The legacy `hlx.page` / `hlx.live` hostnames were retired on 18 Dec 2025 and now return 403;
+use `aem.page` / `aem.live` (only `admin.hlx.page` remains).
 
 The branch in the URL matters. `main` is the default; pushing to a feature branch gives
 you `https://feature--{repo}--{org}.aem.page/`, which is invaluable for review.
