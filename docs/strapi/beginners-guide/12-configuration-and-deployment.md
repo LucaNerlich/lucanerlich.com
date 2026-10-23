@@ -17,10 +17,12 @@ sidebar_position: 12
 # Configuration & Deployment
 
 Our blog CMS is feature-complete. This chapter is a short deploy checklist for that project.
-The full recipes -- environment config, PostgreSQL, Docker, PM2, nginx, HTTPS, and hardening --
+The full recipes -- environment config, PostgreSQL, Docker, PM2, nginx, and HTTPS --
 live in one place: [Configuration and Deployment](/strapi/configuration-and-deployment).
+That page also has a production hardening checklist; OS-level steps (firewall, SSH, Fail2Ban)
+belong in your VPS/Linux hardening guides, not duplicated here.
 
-Use that reference as the source of truth. Follow the steps below in order, opening the linked
+Use the reference as the source of truth. Follow the steps below in order, opening the linked
 sections when you need the commands or file contents.
 
 ## Deployment architecture
@@ -52,8 +54,10 @@ flowchart LR
    [PM2 deployment (VPS)](/strapi/configuration-and-deployment#pm2-deployment-vps).
 5. **Terminate TLS** -- put nginx in front and obtain certificates. See
    [nginx reverse proxy and HTTPS](/strapi/configuration-and-deployment#nginx-reverse-proxy-and-https).
-6. **Harden** -- walk the
+6. **Harden and back up** -- walk the
    [Production hardening checklist](/strapi/configuration-and-deployment#production-hardening-checklist)
+   and set up the
+   [Backup strategy](/strapi/data-import-export-migration#backup-strategy)
    before you call the deploy done.
 
 ## Acceptance check

@@ -523,7 +523,7 @@ sudo certbot renew --dry-run
 | Enable rate limiting                             | Protects admin login and API endpoints                        |
 | Disable GraphQL Playground                       | Leaks schema information in production                        |
 | Run behind a reverse proxy                       | Nginx, Caddy, or Traefik for TLS termination and caching      |
-| Set up backups                                   | Automate database + uploads backups                           |
+| Set up backups                                   | Automate database + uploads backups — see [Backup strategy](/strapi/data-import-export-migration#backup-strategy) |
 
 ---
 
