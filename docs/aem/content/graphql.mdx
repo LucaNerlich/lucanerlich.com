@@ -69,7 +69,7 @@ Request URL:     /content/_cq_graphql/myproject/endpoint.json
 | Endpoint | Path | Use case |
 |----------|------|----------|
 | **Global** | `/content/_cq_graphql/global/endpoint.json` | Access models from all configurations |
-| **Site-specific** | `/content/_cq_graphql/myproject/endpoint.json` | Only models from `/conf/myproject` |
+| **Site-specific** | `/content/_cq_graphql/myproject/endpoint.json` | Models from `/conf/myproject` plus `/conf/global` |
 
 :::tip
 Use site-specific endpoints in production to limit the schema scope and improve security. The global
@@ -247,18 +247,19 @@ Use the `filter` argument on list queries. Each field supports type-specific ope
 | Operator | Applies to | Example |
 |----------|-----------|---------|
 | `value` | All types | Exact match |
-| `_operator: EQUALS` | All | Default; exact match |
-| `_operator: EQUALS_NOT` | All | Not equal |
+| `_operator: EQUALS` | String, ID, Boolean | Default; exact match |
+| `_operator: EQUALS_NOT` | String, ID | Not equal |
+| `_operator: EQUAL` / `UNEQUAL` | Int, Float | Equal / not equal |
 | `_operator: CONTAINS` | String | Substring match (case-sensitive) |
 | `_operator: CONTAINS_NOT` | String | Does not contain substring |
-| `_operator: STARTS_WITH` | String | Prefix match |
-| `_operator: LOWER` | Number, Date | Less than |
-| `_operator: LOWER_EQUAL` | Number, Date | Less than or equal |
-| `_operator: GREATER` | Number, Date | Greater than |
-| `_operator: GREATER_EQUAL` | Number, Date | Greater than or equal |
-| `_operator: AT` | Date | Exact date match |
-| `_operator: BEFORE` | Date | Before date |
-| `_operator: AFTER` | Date | After date |
+| `_operator: STARTS_WITH` | ID (e.g. `_path`) | Prefix match |
+| `_operator: LOWER` | Int, Float | Less than |
+| `_operator: LOWER_EQUAL` | Int, Float | Less than or equal |
+| `_operator: GREATER` | Int, Float | Greater than |
+| `_operator: GREATER_EQUAL` | Int, Float | Greater than or equal |
+| `_operator: AT` | Date, Calendar, Time | Exact date match |
+| `_operator: BEFORE` | Date, Calendar, Time | Before date |
+| `_operator: AFTER` | Date, Calendar, Time | After date |
 
 **String filtering:**
 
@@ -432,8 +433,8 @@ curl -u admin:admin \
 # GET request (cacheable)
 curl "http://localhost:4502/graphql/execute.json/myproject/latest-articles"
 
-# With variables
-curl "http://localhost:4502/graphql/execute.json/myproject/articles-by-category;category=technology;limit=5"
+# With variables (end with semicolon or encode delimiters)
+curl "http://localhost:4502/graphql/execute.json/myproject/articles-by-category;category=technology;limit=5;"
 ```
 
 ### Persisted queries with variables
@@ -449,17 +450,17 @@ curl -u admin:admin \
   }' \
   "http://localhost:4502/graphql/persist.json/myproject/articles-by-category"
 
-# Execute with variables in the URL path
-curl "http://localhost:4502/graphql/execute.json/myproject/articles-by-category;category=technology;limit=5"
+# Execute with variables in the URL path (with trailing semicolon)
+curl "http://localhost:4502/graphql/execute.json/myproject/articles-by-category;category=technology;limit=5;"
 ```
 
 ### Persisted query URLs
 
 | URL Pattern | Description |
 |------------|-------------|
-| `/graphql/persist.json/{config}/{query-name}` | Create/update a persisted query (PUT) |
+| `/graphql/persist.json/{config}/{query-name}` | Create (PUT) or update (POST) a persisted query |
 | `/graphql/execute.json/{config}/{query-name}` | Execute a persisted query (GET) |
-| `/graphql/execute.json/{config}/{query-name};var1=val1;var2=val2` | Execute with variables; URL-encode names and values |
+| `/graphql/execute.json/{config}/{query-name};var1=val1;var2=val2` | Execute with variables; encode `;`/`=` as `%3B`/%3D or end the URL with `;` |
 | `/graphql/list.json/{config}` | List all persisted queries for a config |
 
 ---
@@ -484,7 +485,7 @@ export async function fetchPersistedQuery<T>(
         const params = Object.entries(variables)
             .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
             .join(';');
-        url += `;${params}`;
+        url += `;${params};`;
     }
 
     const response = await fetch(url, {
@@ -590,23 +591,24 @@ Allow GraphQL requests through the Dispatcher:
 
 ### Dispatcher client headers
 
-Forward CORS-related headers from the client through Dispatcher:
+When Dispatcher caching for persisted queries is enabled, the `Origin` and `Access-Control-Request-*`
+headers must not be passed to AEM Publish, because Dispatcher does not cache the `Vary` header or
+per-origin CORS headers. Instead, configure CORS at the Dispatcher level (Apache virtual host) for
+Publish (see Adobe's [Dispatcher Caching for Persisted Queries](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/headless/deployment/dispatcher-caching)).
+Pass only headers such as `Authorization` to Publish when needed:
 
 ```text title="dispatcher/src/conf.dispatcher.d/clientheaders/clientheaders.any"
 $include "./default_clientheaders.any"
-"Origin"
-"Access-Control-Request-Method"
-"Access-Control-Request-Headers"
 "Authorization"
 ```
 
 ### Dispatcher caching for persisted queries
 
-Persisted-query responses are served via GET and can be cached by Dispatcher. First enable AEM's
-persisted-query cache headers in `global.vars`:
+Persisted-query responses are served via GET and can be cached by Dispatcher. First enable Dispatcher
+caching of persisted queries in `global.vars`:
 
 ```text title="dispatcher/src/conf.d/global.vars"
-# Let AEM compute the cache headers for persisted queries
+# Cache persisted-query responses in the Dispatcher
 Define CACHE_GRAPHQL_PERSISTED_QUERIES
 ```
 
@@ -622,16 +624,17 @@ JSON endpoints that must not be cached:
 ```
 
 :::note
-With `CACHE_GRAPHQL_PERSISTED_QUERIES` defined, AEM sets the `Cache-Control` and
-`Surrogate-Control` headers for persisted queries itself. Do not override them with manual
-`Header set` directives in the vhost.
+AEM sets `Cache-Control` and `Surrogate-Control` TTL headers for persisted queries by default
+(Publish default: max-age 60, s-maxage 7200). Change them per query, via OSGi or via Cloud Manager
+variables, not with `Header set` directives in the vhost.
 :::
 
 ### CORS configuration
 
-Configure CORS to allow cross-origin GraphQL requests from your frontend domains:
+For Author (or Publish environments where Dispatcher caching is not enabled), configure CORS via OSGi
+to allow cross-origin GraphQL requests from your frontend domains:
 
-```json title="ui.config/.../com.adobe.granite.cors.impl.CORSPolicyImpl~graphql.cfg.json"
+```json title="ui.config/.../config.author/com.adobe.granite.cors.impl.CORSPolicyImpl~graphql.cfg.json"
 {
     "supportscredentials": false,
     "supportedmethods": [
@@ -672,9 +675,11 @@ for preview/staging URLs but always enumerate production domains explicitly.
 
 ### Referrer filter
 
-Allow POST requests to GraphQL endpoints from your frontend origins:
+AEM's Referrer Filter is a singleton (not an OSGi configuration factory), meaning only one
+configuration is active at a time. This configuration replaces the default configuration and is only
+needed for POST requests (GET persisted queries require no Referrer Filter configuration):
 
-```json title="ui.config/.../org.apache.sling.security.impl.ReferrerFilter~graphql.cfg.json"
+```json title="ui.config/.../org.apache.sling.security.impl.ReferrerFilter.cfg.json"
 {
     "allow.empty": false,
     "allow.hosts": [
@@ -682,7 +687,7 @@ Allow POST requests to GraphQL endpoints from your frontend origins:
         "app.myproject.com"
     ],
     "allow.hosts.regexp": [
-        "https://deploy-preview-.*\\.myproject\\.com",
+        "https://deploy-preview-.*\\.myproject\\.com:443",
         "http://localhost:.*"
     ],
     "filter.methods": [
@@ -732,8 +737,9 @@ GraphQL responses:
 }
 ```
 
-On AEM as a Cloud Service, publication and Sling Content Distribution trigger Adobe-managed
-Dispatcher/CDN invalidation; do not configure custom flush agents on the cloud service.
+On AEM as a Cloud Service, persisted-query responses expire by TTL (Publish default `s-maxage`
+7200 s; tune it per query, via OSGi or via Cloud Manager variables). The Adobe-managed CDN is not
+flushed on publication; do not configure custom flush agents on the cloud service.
 
 ---
 
@@ -887,10 +893,7 @@ For frequently filtered fields, ensure Oak indexes exist for the underlying JCR 
 | GraphQL API | Available (requires feature pack on older SPs) | Built-in, always available |
 | GraphiQL IDE | `/content/graphiql.html` | `/aem/graphiql.html` |
 | Persisted queries | Supported | Supported (recommended) |
-| Cursor-based pagination | Not available | Available |
-| JSON Object field type | Not available | Available |
-| Optimised Content Fragment queries | Manual Oak index setup | Automatic index optimisation |
-| CDN caching | Manual Dispatcher config | Fastly integration with automatic purge |
+| CDN caching | Manual Dispatcher config | TTL-based (no purge on publish) |
 
 ---
 
