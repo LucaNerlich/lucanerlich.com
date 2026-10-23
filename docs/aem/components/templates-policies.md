@@ -107,14 +107,13 @@ graph LR
 │               ├── components/
 │               │   ├── text/
 │               │   │   └── default/         ← Policy for text component
-│               │   │       ├── jcr:title = "Default Text Policy"
-│               │   │       └── allowedFormats = ["bold", "italic", "links"]
+│               │   │       └── jcr:title = "Default Text Policy"
 │               │   └── image/
 │               │       └── default/
 │               └── page/
 │                   └── default/             ← Page policy
 │                       ├── clientlibs = ["mysite.base", "mysite.theme"]
-│                       └── appResourcesPath = "/etc.clientlibs/mysite"
+│                       └── appResourcesClientlib = "mysite.base"
 ```
 
 ---
@@ -161,7 +160,7 @@ create templates. They define the locked structure and default policies.
 
 ## Template Editor
 
-The Template Editor (**Tools > General > Templates**) provides three modes:
+The Template Editor (**Tools > General > Templates**) provides three modes (Structure, Initial Content, Layout):
 
 ### Structure Mode
 
@@ -183,13 +182,13 @@ For example:
 
 Authors can modify this initial content when they create a page.
 
-### Policies Mode
+### Policies (Structure mode and Page Information > Page Policy)
 
 Assigns **policies** to the page and to individual components. This is where you
 configure:
 
 - Which clientlibs the page loads
-- Which RTE formats are allowed in text components
+- Which RTE plugins are active in text components
 - Which image sizes are permitted
 - Style System classes
 
@@ -201,12 +200,11 @@ Page policies control **page-level settings** applied to all pages using a templ
 
 ### Common page policy properties
 
-| Property                 | Description                                     |
-|--------------------------|-------------------------------------------------|
-| `clientlibs`             | Clientlib categories to load on every page      |
-| `appResourcesPath`       | Path prefix for clientlib proxy resolution      |
-| `htmlPageItemsConfig`    | Controls `<head>` and `<body>` element ordering |
-| `responsive/breakpoints` | Responsive grid breakpoint configuration        |
+| Property                | Description                                                 |
+|-------------------------|-------------------------------------------------------------|
+| `clientlibs`            | Clientlib categories to load on every page                  |
+| `clientlibsJsHead`      | JavaScript clientlib categories loaded in `<head>`          |
+| `appResourcesClientlib` | Client library category used to serve favicons and manifest |
 
 ### Setting page policy via JCR
 
@@ -217,7 +215,7 @@ Page policies control **page-level settings** applied to all pages using a templ
     jcr:title="My Site Page Policy"
     sling:resourceType="wcm/core/components/policy/policy"
     clientlibs="[mysite.base,mysite.components]"
-    appResourcesPath="/etc.clientlibs/mysite"/>
+    appResourcesClientlib="mysite.base"/>
 ```
 
 ### Reading page policies in Sling Models
@@ -228,7 +226,6 @@ import com.day.cq.wcm.api.policies.ContentPolicyManager;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
-import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 
 @Model(adaptables = Resource.class)
 public class PagePolicyModel {
@@ -236,13 +233,13 @@ public class PagePolicyModel {
     @Self
     private Resource resource;
 
-    @OSGiService
-    private ContentPolicyManager policyManager;
-
     public String[] getClientlibs() {
-        ContentPolicy policy = policyManager.getPolicy(resource);
-        if (policy != null) {
-            return policy.getProperties().get("clientlibs", String[].class);
+        ContentPolicyManager policyManager = resource.getResourceResolver().adaptTo(ContentPolicyManager.class);
+        if (policyManager != null) {
+            ContentPolicy policy = policyManager.getPolicy(resource);
+            if (policy != null) {
+                return policy.getProperties().get("clientlibs", String[].class);
+            }
         }
         return new String[0];
     }
@@ -258,16 +255,19 @@ component can behave differently depending on which template it's used in.
 
 ### Example: Text component policy
 
-A policy that restricts the Rich Text Editor to only bold, italic, and links:
+A policy that configures the RTE format and link plugins:
 
 ```xml title="Policy for text component"
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
     jcr:primaryType="nt:unstructured"
     jcr:title="Restricted Text"
-    sling:resourceType="wcm/core/components/policy/policy"
-    textIsRich="{Boolean}true"
-    allowedFormats="[bold,italic,links]"/>
+    sling:resourceType="wcm/core/components/policy/policy">
+    <rtePlugins jcr:primaryType="nt:unstructured">
+        <format jcr:primaryType="nt:unstructured" features="bold,italic"/>
+        <links jcr:primaryType="nt:unstructured" features="modifylink,unlink"/>
+    </rtePlugins>
+</jcr:root>
 ```
 
 ### Example: Image component policy
@@ -286,13 +286,13 @@ A policy that restricts the Rich Text Editor to only bold, italic, and links:
 ### Reading component policies in Sling Models
 
 ```java
+import java.util.Arrays;
+
 import com.day.cq.wcm.api.policies.ContentPolicy;
 import com.day.cq.wcm.api.policies.ContentPolicyManager;
-import java.util.Arrays;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 
 @Model(adaptables = SlingHttpServletRequest.class)
@@ -301,20 +301,21 @@ public class ImageModel {
     @Self
     private SlingHttpServletRequest request;
 
-    @OSGiService
-    private ContentPolicyManager policyManager;
-
     public int[] getAllowedWidths() {
         Resource resource = request.getResource();
-        ContentPolicy policy = policyManager.getPolicy(resource, request);
+        ContentPolicyManager policyManager = request.getResourceResolver().adaptTo(ContentPolicyManager.class);
 
-        if (policy != null) {
-            String[] widths = policy.getProperties()
-                .get("allowedRenditionWidths", String[].class);
-            if (widths != null) {
-                return Arrays.stream(widths)
-                    .mapToInt(Integer::parseInt)
-                    .toArray();
+        if (policyManager != null) {
+            ContentPolicy policy = policyManager.getPolicy(resource, request);
+
+            if (policy != null) {
+                String[] widths = policy.getProperties()
+                    .get("allowedRenditionWidths", String[].class);
+                if (widths != null) {
+                    return Arrays.stream(widths)
+                        .mapToInt(Integer::parseInt)
+                        .toArray();
+                }
             }
         }
 
@@ -392,7 +393,7 @@ developer intervention. It builds on top of component policies:
         <group1
             jcr:primaryType="nt:unstructured"
             cq:styleGroupLabel="Size">
-            <styles jcr:primaryType="nt:unstructured">
+            <cq:styles jcr:primaryType="nt:unstructured">
                 <small
                     jcr:primaryType="nt:unstructured"
                     cq:styleId="btn-sm"
@@ -403,12 +404,12 @@ developer intervention. It builds on top of component policies:
                     cq:styleId="btn-lg"
                     cq:styleLabel="Large"
                     cq:styleClasses="btn-lg"/>
-            </styles>
+            </cq:styles>
         </group1>
         <group2
             jcr:primaryType="nt:unstructured"
             cq:styleGroupLabel="Color">
-            <styles jcr:primaryType="nt:unstructured">
+            <cq:styles jcr:primaryType="nt:unstructured">
                 <primary
                     jcr:primaryType="nt:unstructured"
                     cq:styleId="btn-primary"
@@ -419,7 +420,7 @@ developer intervention. It builds on top of component policies:
                     cq:styleId="btn-secondary"
                     cq:styleLabel="Secondary"
                     cq:styleClasses="btn-secondary"/>
-            </styles>
+            </cq:styles>
         </group2>
     </cq:styleGroups>
 </jcr:root>
@@ -467,8 +468,7 @@ Policies are mapped to components within a template via `cq:policy` references:
 │   ├── cq:policy = "mysite/page/default"
 │   └── root/
 │       └── responsivegrid/
-│           ├── cq:policy = "mysite/containers/content"
-│           └── cq:policyMapping = { ... }
+│           └── cq:policy = "mysite/containers/content"
 ```
 
 The `cq:policy` property stores the policy path relative to `/conf/<site>/settings/wcm/policies`.
@@ -486,7 +486,7 @@ Template authors can **lock** containers and components in the structure:
 | **Unlocked (editable structure)** | Can add, move, and delete components                         |
 | **Initial content only**          | Component is in initial content but not locked in structure  |
 
-Locking is set via the `cq:editable` property on the structure node.
+Locking is set via the `editable` property (`{Boolean}true` = unlocked) on the component node under the template's `structure`.
 
 ---
 
