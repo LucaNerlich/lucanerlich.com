@@ -51,7 +51,7 @@ Keep custom analytics bridges implementation-specific. Read the selected experim
 variant from the experimentation plugin or data layer used by the site; do not assume a
 global `data-experiment` attribute exists unless your project adds one. For example:
 
-```javascript title="scripts/delayed.js"
+```javascript title="scripts/consented.js"
 const assignment = window.acmeExperimentAssignment;
 if (assignment && window.analytics) {
     window.analytics.track('experiment-exposure', assignment);
@@ -87,5 +87,5 @@ Option 1 keeps URLs stable and is the default.
 ## See also
 
 - [Performance](./performance.mdx) - edge resolution avoids the flicker that hurts CLS
-- [Customizing](./customizing.mdx) - wiring analytics in `delayed.js`
+- [Customizing](./customizing.mdx) - wiring analytics in `consented.js`
 - aem.live: [experimentation docs](https://www.aem.live/docs/experimentation)
