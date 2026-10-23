@@ -44,6 +44,8 @@ configuration:
         "create path (sling:Folder) /var/myproject",
         "create service user myproject-reader with path system/cq:services/myproject",
         "create service user myproject-writer with path system/cq:services/myproject",
+        "create path /content/myproject(cq:Page)",
+        "create path (sling:OrderedFolder) /content/dam/myproject",
         "set ACL for myproject-reader\n    allow jcr:read on /content/myproject\n    allow jcr:read on /content/dam/myproject\nend",
         "set ACL for myproject-writer\n    allow jcr:read,rep:write on /var/myproject\nend"
     ]
@@ -58,6 +60,9 @@ create path (sling:Folder) /var/myproject
 
 create service user myproject-reader with path system/cq:services/myproject
 create service user myproject-writer with path system/cq:services/myproject
+
+create path /content/myproject(cq:Page)
+create path (sling:OrderedFolder) /content/dam/myproject
 
 set ACL for myproject-reader
     allow jcr:read on /content/myproject
@@ -76,7 +81,7 @@ Notes:
 - `set ACL for <principal>` lists ACEs per principal; `set ACL on <path>` lists them per path.
   Both are equivalent - pick the one that reads better.
 - The paths you grant access to must exist when the script runs. Create them with
-  `create path` or make sure the content package that creates them is installed first.
+  `create path` earlier in the same script.
 - Put the config in `config.author` or `config.publish` if the user is only needed on one tier.
 
 ### Common privileges
