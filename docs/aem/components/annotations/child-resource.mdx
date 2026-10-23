@@ -100,10 +100,6 @@ node name in the JCR.
                 sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
                 fieldLabel="Products"
                 composite="{Boolean}true">
-                <granite:data
-                    jcr:primaryType="nt:unstructured"
-                    min-items="1"
-                    max-items="10"/>
                 <field
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="granite/ui/components/coral/foundation/container"
@@ -139,8 +135,6 @@ node name in the JCR.
 |-----------|---------|
 | `composite="{Boolean}true"` | Stores each entry as a child node (required for `@ChildResource`) |
 | `name="./products"` | The JCR child node name under the component node |
-| `granite:data/min-items` | Optional minimum number of entries |
-| `granite:data/max-items` | Optional maximum number of entries |
 
 :::warning
 If you forget `composite="{Boolean}true"`, the multifield stores values as flat multi-value properties.
