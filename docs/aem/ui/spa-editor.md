@@ -133,7 +133,7 @@ myspa/
 │   │   ├── App.js
 │   │   └── index.js
 │   ├── package.json
-│   └── webpack.config.js
+│   └── clientlib.config.js
 └── pom.xml
 ```
 
@@ -148,9 +148,9 @@ myspa/
 | `@adobe/aem-core-components-react-spa`  | SPA-specific Core Component wrappers                            |
 
 ```bash
-npm install @adobe/aem-react-editable-components \
-            @adobe/aem-spa-page-model-manager \
-            @adobe/aem-spa-component-mapping
+npm install @adobe/aem-react-editable-components@^1.1.11 \
+            @adobe/aem-spa-page-model-manager@~1.4.0 \
+            @adobe/aem-spa-component-mapping@~1.1.0
 ```
 
 ---
@@ -269,17 +269,18 @@ export default App;
 
 ```jsx title="ui.frontend/src/index.js"
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { render } from 'react-dom';
 import { ModelManager } from '@adobe/aem-spa-page-model-manager';
 import App from './App';
 
 ModelManager.initialize().then((pageModel) => {
-    createRoot(document.getElementById('spa-root')).render(
+    render(
         <App
             cqItems={pageModel[':items']}
             cqItemsOrder={pageModel[':itemsOrder']}
             cqPath={pageModel[':path']}
-        />
+        />,
+        document.getElementById('spa-root')
     );
 });
 ```
@@ -295,6 +296,7 @@ produces the JSON representation:
 import com.adobe.cq.export.json.ComponentExporter;
 import com.adobe.cq.export.json.ExporterConstants;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Exporter;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
@@ -302,7 +304,8 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(
     adaptables = SlingHttpServletRequest.class,
     adapters = { HeroModel.class, ComponentExporter.class },
-    resourceType = HeroModel.RESOURCE_TYPE
+    resourceType = HeroModel.RESOURCE_TYPE,
+    defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
 @Exporter(
     name = ExporterConstants.SLING_MODEL_EXPORTER_NAME,
@@ -312,16 +315,16 @@ public class HeroModel implements ComponentExporter {
 
     static final String RESOURCE_TYPE = "myproject/components/hero";
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue
     private String title;
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue
     private String backgroundImage;
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue
     private String ctaText;
 
-    @ValueMapValue(optional = true)
+    @ValueMapValue
     private String ctaLink;
 
     public String getTitle() { return title; }
@@ -347,10 +350,7 @@ SPAs handle client-side routing. The SPA Editor SDK integrates with React Router
 
 ```jsx title="ui.frontend/src/App.js"
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { ModelManager, ModelClient } from '@adobe/aem-spa-page-model-manager';
-
-// Configure the model manager to fetch models for new routes
-const modelClient = new ModelClient();
+import { Page } from '@adobe/aem-react-editable-components';
 
 function App() {
     return (
@@ -389,7 +389,7 @@ graph LR
     Remote["Remote SPA (e.g., Vercel)"]
     JSON["JSON Model API"]
 
-    AEM -->|"embeds via iframe"| Remote
+    AEM -->|"loads JS/CSS via RemotePage"| Remote
     Remote -->|"fetches model"| JSON
     AEM -->|"serves"| JSON
 ```
@@ -399,7 +399,7 @@ graph LR
 1. Host your SPA on an external server
 2. Configure AEM to allow the remote origin (CORS, CSP headers)
 3. The SPA fetches the page model from AEM's JSON endpoint
-4. The SPA Editor loads the remote SPA in an iframe for authoring
+4. Create the page with a component extending `spa-project-core/components/remotepage` and set the remote URL in Page Properties; it loads the JS/CSS listed in the SPA's `asset-manifest.json` into the AEM page
 
 ```js
 // Configure ModelManager for remote SPA
@@ -422,10 +422,10 @@ ModelManager.initialize({
 
 ## SPA vs Headless vs Edge Delivery
 
-| Aspect            | SPA Editor                             | Headless (GraphQL)                    | Edge Delivery                      |
-|-------------------|----------------------------------------|---------------------------------------|------------------------------------|
-| **Authoring**     | Visual, in-context                     | No visual editing (external frontend) | Universal Editor or document-based |
-| **Frontend**      | React / Angular (AEM-hosted or remote) | Any framework (decoupled)             | Vanilla JS + CSS                   |
+| Aspect            | SPA Editor                             | Headless (GraphQL)                                   | Edge Delivery                      |
+|-------------------|----------------------------------------|------------------------------------------------------|------------------------------------|
+| **Authoring**     | Visual, in-context                     | Universal Editor (visual) or Content Fragment Editor | Universal Editor or document-based |
+| **Frontend**      | React / Angular (AEM-hosted or remote) | Any framework (decoupled)                            | Vanilla JS + CSS                   |
 | **Content model** | Page model (JSON tree)                 | Content Fragments (structured)        | Content Bus (tables to HTML)       |
 | **Rendering**     | Client-side (SPA)                      | Client-side or SSR (custom)           | Edge-side (CDN)                    |
 | **Performance**   | Good (but SPA overhead)                | Depends on implementation             | Excellent (100 Lighthouse)         |
@@ -548,7 +548,7 @@ editable content must flow through the JSON model.
 | Empty placeholder never disappears                                | Check the `isEmpty()` function - it may not be checking the right props                              |
 | Drag-and-drop doesn't work                                        | Verify the container component is correctly mapped (e.g., `ResponsiveGrid`)                           |
 | JSON model is empty or missing components                         | Check that Sling Models implement `ComponentExporter` and have `@Exporter`                            |
-| SPA loads but shows blank page in editor                          | Verify the SPA page component in AEM has `sling:resourceSuperType = core/wcm/components/page/v3/page` |
+| SPA loads but shows blank page in editor                          | Verify the SPA page component extends `spa-project-core/components/page` (SPA Project Core, itself based on `core/wcm/components/page/v3/page`) |
 | Client-side routing breaks the editor                             | Ensure `ModelManager.initialize()` completes before rendering routes                                  |
 | Styles look different in author vs publish                        | The editor adds wrapper divs; scope your CSS to handle both cases                                     |
 | Build fails with `aem-react-editable-components` version mismatch | Pin all `@adobe/aem-*` packages to compatible versions                                                |
