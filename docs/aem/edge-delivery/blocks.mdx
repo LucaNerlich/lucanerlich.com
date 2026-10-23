@@ -77,15 +77,14 @@ sequenceDiagram
     aem->>Page: header, footer, lazy-styles.css, fonts
 
     Page->>aem: loadDelayed()
-    Note over aem: setTimeout(..., 3000)
-    aem->>Browser: import delayed.js
+    aem->>Browser: import consent-check.js, then consented.js
 ```
 
 | Phase | When | Used for |
 |-------|------|----------|
 | **Eager** | Before LCP | Blocks in the first section (hero, above-the-fold content) |
 | **Lazy** | Right after LCP | All remaining sections and blocks, header, footer, lazy styles, fonts |
-| **Delayed** | About 3 seconds after load | `delayed.js`: analytics, chat, marketing tags |
+| **Delayed** | After load (gated by consent) | `consented.js` (via `consent-check.js`): analytics, chat, marketing tags |
 
 You don't usually pick the phase per block - `aem.js` decides based on the section the block
 sits in. Blocks that should only do expensive work when visible (maps, videos, embeds) can add
