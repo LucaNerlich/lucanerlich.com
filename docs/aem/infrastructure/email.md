@@ -240,12 +240,14 @@ public void sendWithAttachment(String to, String subject, String body,
 
 ### Attaching DAM assets
 
+AEM 6.5/AMS only. On AEMaaCS, Adobe says not to stream originals (`asset.getOriginal().getStream()`); link to the asset instead (see the "Attachment too large" pitfall).
+
 To attach an asset from the JCR repository, stream it from the rendition:
 
 ```java
 import com.day.cq.dam.api.Asset;
 import com.day.cq.dam.api.Rendition;
-import org.apache.commons.mail.ByteArrayDataSource;
+import javax.mail.util.ByteArrayDataSource;
 
 Resource assetResource = resolver.getResource("/content/dam/myproject/report.pdf");
 Asset asset = assetResource.adaptTo(Asset.class);
@@ -577,9 +579,10 @@ This section walks through both, end to end.
 | `ui.content` (`/content/...`)    | Authors         | `MailTemplate.create(path, ...)`   | Templates business users should tweak without a deployment |
 | Bundle resource (`src/main/resources`) | Developers | `new MailTemplate(stream, charset)` | Simplest, unit-testable, no JCR lookup at all              |
 
-> Avoid `/etc/notification/email/...` on AEM as a Cloud Service. `/etc` is deprecated and
-> read-only there. Put developer-owned templates under `/apps/<project>/templates/email/`
-> (immutable but readable at runtime) or ship them as bundle resources.
+> Avoid `/etc/notification/email/...` on AEM as a Cloud Service. `/etc` is a legacy location
+> there (mutable, but Adobe recommends migrating nodes out of it). Put developer-owned templates
+> under `/apps/<project>/templates/email/` (immutable but readable at runtime) or ship them as
+> bundle resources.
 
 ### Step 2 - Write the template (header block + body + placeholders)
 
@@ -1075,8 +1078,8 @@ public class TemplatedEmailStep implements WorkflowProcess {
             params.put("link.open", "/editor.html" + payloadPath + ".html");
             params.put("modelTitle", workItem.getWorkflow().getWorkflowModel().getTitle());
             params.put("eventTimestamp", workItem.getTimeStarted().toString());
-            // absolute publish host prefix so links work outside AEM
-            params.put("host.prefix", externalizer.externalLink(resolver, Externalizer.PUBLISH, ""));
+            // absolute author host prefix so links work outside AEM
+            params.put("host.prefix", externalizer.externalLink(resolver, Externalizer.AUTHOR, ""));
 
             List<Authorizable> recipients = resolveRecipients(argMap.get("sendTo"), resolver);
             emailService.sendToAuthorizables(templatePath, params, recipients, resolver);
@@ -1118,13 +1121,11 @@ configure **Advanced Networking** to allow AEM to reach an external SMTP server.
 1. **Enable dedicated egress IP** in Cloud Manager (or flexible port egress)
 2. **Add a port forwarding rule** for your SMTP server:
 
-| Name              | Value              |
-|-------------------|--------------------|
-| Port forward name | `smtp_sendgrid`    |
-| Protocol          | TCP                |
-| `portDest`        | 587                |
-| `portOrig`        | 30587              |
-| Destination host  | `smtp.sendgrid.net`|
+| Property                  | Value              |
+|---------------------------|--------------------|
+| `name` (destination host) | `smtp.sendgrid.net`|
+| `portDest`                | 587                |
+| `portOrig`                | 30587              |
 
 3. **Reference the forwarded port** in your OSGi config:
 
@@ -1149,20 +1150,39 @@ configure **Advanced Networking** to allow AEM to reach an external SMTP server.
 ### OAuth 2.0 (Microsoft 365 / Google Workspace)
 
 AEMaaCS supports OAuth 2.0 authentication for SMTP. This is required when connecting to
-Microsoft 365 or Google Workspace, which have deprecated basic password authentication:
+Microsoft 365 or Google Workspace, which have deprecated basic password authentication.
+OAuth configuration requires two OSGi configurations: the OAuth configuration provider and the mail service.
 
-```json title="OAuth configuration"
+```json title="ui.config/.../config/com.day.cq.mailer.oauth.impl.OAuthConfigurationProviderImpl.cfg.json"
+{
+    "authUrl": "https://login.microsoftonline.com/<tenantID>/oauth2/v2.0/authorize",
+    "tokenUrl": "https://login.microsoftonline.com/<tenantID>/oauth2/v2.0/token",
+    "refreshUrl": "https://login.microsoftonline.com/<tenantID>/oauth2/v2.0/token",
+    "clientId": "<clientID>",
+    "clientSecret": "$[secret:SECRET_SMTP_OAUTH_CLIENT_SECRET]",
+    "scopes": [
+        "https://outlook.office.com/SMTP.Send",
+        "openid",
+        "offline_access",
+        "email",
+        "profile"
+    ],
+    "authCodeRedirectUrl": "http://localhost",
+    "refreshToken": "$[secret:SECRET_SMTP_OAUTH_REFRESH_TOKEN]"
+}
+```
+
+```json title="ui.config/.../config/com.day.cq.mailer.DefaultMailService.cfg.json"
 {
     "smtp.host": "$[env:AEM_PROXY_HOST;default=proxy.tunnel]",
     "smtp.port": 30587,
+    "smtp.user": "mailuser@example.com",
     "oauth.flow": true,
-    "oauth.client.id": "$[secret:oauth_client_id]",
-    "oauth.client.secret": "$[secret:oauth_client_secret]",
-    "oauth.token.url": "https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token",
-    "oauth.scope": "https://outlook.office365.com/.default",
     "from.address": "noreply@example.com"
 }
 ```
+
+Follow the [OAuth2 Support for Mail Service](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/security/oauth2-support-for-mail-service) guide on Experience League to register the Azure AD application and generate the refresh token.
 
 ---
 
