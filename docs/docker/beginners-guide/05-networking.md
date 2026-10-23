@@ -267,10 +267,12 @@ Let us wire up a realistic three-service setup entirely with network commands (b
 docker network create app-stack
 
 # Start PostgreSQL
+# Use a volume this chapter owns. Reusing `pgdata` from chapter 4 would keep
+# that volume's init-time superuser (`postgres`) and ignore POSTGRES_USER here.
 docker run -d \
   --name pg \
   --network app-stack \
-  -v pgdata:/var/lib/postgresql/data \
+  -v app-stack-pgdata:/var/lib/postgresql/data \
   -e POSTGRES_USER=myapp \
   -e POSTGRES_PASSWORD=secret \
   -e POSTGRES_DB=myapp \
