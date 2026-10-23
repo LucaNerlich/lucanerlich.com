@@ -57,6 +57,10 @@ export default function ResizableDemoShell({
     // more than the panel can occupy.
     const [slotMax, setSlotMax] = useState(effectiveMaxWidth);
 
+    // Width at pointerdown, so a click that never dragged is not mistaken for
+    // a resize (the rendered width is clamped to the slot).
+    const pointerStartWidth = useRef<number | null>(null);
+
     const applyObservedWidth = (rawWidth: number) => {
         if (!Number.isFinite(rawWidth)) {
             return;
@@ -70,13 +74,20 @@ export default function ResizableDemoShell({
         if (!panel) {
             return;
         }
-        applyObservedWidth(panel.getBoundingClientRect().width);
+        const observed = Math.round(panel.getBoundingClientRect().width);
+        const start = pointerStartWidth.current;
+        pointerStartWidth.current = null;
+        if (start !== null && observed === start) {
+            return;
+        }
+        applyObservedWidth(observed);
     };
 
     // The inline max-width stops a native drag at the cap, so the release can
     // land outside the panel; listen on the window or the width state stays
     // stale while the panel renders the clamped width.
     const armWidthSync = () => {
+        pointerStartWidth.current = panelRef.current?.getBoundingClientRect().width ?? null;
         const done = () => {
             window.removeEventListener('pointerup', done);
             window.removeEventListener('pointercancel', done);
