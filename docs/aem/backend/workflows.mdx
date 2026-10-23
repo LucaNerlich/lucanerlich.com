@@ -123,7 +123,7 @@ graph TD
 | **COMPLETED** | All steps finished successfully |
 | **ABORTED** | The workflow was terminated by an administrator |
 | **SUSPENDED** | The workflow is paused and can be resumed |
-| **STALE** | The workflow instance references a model version that no longer exists |
+| **STALE** | The background job that advances the instance can no longer be found (usually after an execution error); restart the instance |
 
 ### Workflow launchers
 
@@ -203,7 +203,7 @@ active until you sync.
 | **AND Split / AND Join** | Splits into parallel branches that all execute concurrently, then waits for all to complete | Parallel |
 | **Container Step** | Groups steps into a sub-workflow for organisational clarity | N/A |
 | **Goto Step** | Jumps to a previous step (creates a loop) | N/A |
-| **External Process Step** | Calls an external system and waits for a callback | External |
+| **External Process Step** | Starts an asynchronous external process and polls `hasFinished()` until it is done | External |
 
 ### Configuring launchers in the UI
 
@@ -480,14 +480,10 @@ an external `.ecma` file, rather than accepting inline text.
 ### Starting a workflow
 
 ```java
-@Reference
-private com.adobe.granite.workflow.WorkflowService workflowService;
-
 public void startApprovalWorkflow(ResourceResolver resolver, String pagePath)
         throws WorkflowException {
 
-    WorkflowSession wfSession = workflowService.getWorkflowSession(
-        resolver.adaptTo(Session.class));
+    WorkflowSession wfSession = resolver.adaptTo(WorkflowSession.class);
 
     // Load the workflow model
     WorkflowModel model = wfSession.getModel("/var/workflow/models/request_for_activation");
@@ -603,12 +599,12 @@ then re-enable launchers. This avoids thousands of workflow instances being crea
 ### Disabling a launcher via overlay
 
 Instead of programmatic toggling, you can permanently disable a built-in launcher by overlaying its
-configuration. This is deployed as part of your code package and survives instance restarts.
+configuration. This is deployed with your content package (ui.content) and survives instance restarts.
 
 Create an overlay at `/conf/global/settings/workflow/launcher/config/<launcher-name>/.content.xml`
 with `enabled="{Boolean}false"`:
 
-```xml title="ui.config/.../workflow/launcher/config/newsletter_bounce_check/.content.xml"
+```xml title="ui.content/.../conf/global/settings/workflow/launcher/config/newsletter_bounce_check/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:cq="http://www.day.com/jcr/cq/1.0"
@@ -719,9 +715,8 @@ AEM ships with several commonly used workflows:
 |----------|-----------|---------|
 | **Request for Activation** | `/var/workflow/models/request_for_activation` | Content approval before publish |
 | **DAM Update Asset** | `/var/workflow/models/dam/update_asset` | Asset processing pipeline |
-| **DAM Parse Word Documents** | `/var/workflow/models/dam/dam-parse-word-documents` | Extract content from Word files |
+| **DAM Parse Word Documents** | `/var/workflow/models/dam-parse-word-documents` | Extract content from Word files |
 | **Publish Page** | `/var/workflow/models/publish_example` | Automated page publishing |
-| **Unpublish Page** | `/var/workflow/models/unpublish_example` | Automated page deactivation |
 | **Scheduled Activation** | `/var/workflow/models/scheduled_activation` | Time-delayed activation |
 | **Scheduled Deactivation** | `/var/workflow/models/scheduled_deactivation` | Time-delayed deactivation |
 | **Translation** | `/var/workflow/models/translation` | Content translation pipeline |
@@ -747,8 +742,7 @@ Enable transient mode by checking **Transient** in the workflow model editor's p
 Completed workflow instances accumulate in `/var/workflow/instances/` and degrade repository performance
 over time. Configure regular purging:
 
-- **AEM UI**: Tools > Workflow > Instances > select completed > Purge
-- **Maintenance tasks**: Configure the **Workflow Purge** maintenance task in the Operations Dashboard
+- **Maintenance tasks**: enable the **Workflow Purge** task (Operations Dashboard on 6.5; on AEMaaCS a `granite_WorkflowPurgeTask` node under `/conf/global/settings/granite/operations/maintenance/granite_weekly`, deployed from git)
 - **Recommended retention**: 30 days or fewer for completed instances
 
 ### Prevent launcher infinite loops
@@ -770,7 +764,7 @@ external API) blocks the thread and can starve the workflow engine.
 
 For long-running operations:
 - Use a **Sling Job** (via `JobManager`) and have the workflow step start the job, then use an
-**External Process Step** that waits for a callback
+**External Process Step** whose `hasFinished()` polls the job's status
 - Set timeouts on HTTP calls
 - Consider asynchronous patterns with a polling step
 
@@ -851,14 +845,14 @@ class AutoTagProcessStepTest {
 | Custom process steps | Supported | Supported (including post-processing workflows for assets) |
 | Workflow launchers | File-based and UI | Same |
 | Transient workflows | Supported | Supported |
-| Workflow purge | Manual or scheduled | Automatic (maintenance windows) |
+| Workflow purge | Manual or scheduled | Customer-configured in git (`granite_WorkflowPurgeTask` + `com.adobe.granite.workflow.purge.Scheduler` config) |
 
 ---
 
 ## External Resources
 
 - [Adobe: Administering Workflows](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/operations/workflows)
-- [Adobe: Developing and Extending Workflows](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/operations/workflows)
+- [Adobe: Developing and Extending Workflows](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/extending-aem/extending-workflows/workflows)
 - [Adobe: Asset Microservices (AEMaaCS)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/assets/manage/asset-microservices-configure-and-use)
 - [Granite Workflow API JavaDoc](https://developer.adobe.com/experience-manager/reference-materials/6-5/javadoc/com/adobe/granite/workflow/package-summary.html)
 
