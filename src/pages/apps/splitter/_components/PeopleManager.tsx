@@ -26,6 +26,7 @@ const PeopleManager: React.FC<Props> = ({
     // The chip button is replaced by the rename input, so the opener is a new
     // element after every close; keep the mounted ones and focus after render.
     const openerRefs = useRef(new Map<string, HTMLButtonElement>());
+    const nameInputRef = useRef<HTMLInputElement>(null);
     const [refocusId, setRefocusId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -46,6 +47,16 @@ const PeopleManager: React.FC<Props> = ({
         setError(null);
         onAdd(trimmed);
         setName('');
+    };
+
+    // The remove button unmounts, so hand focus to a neighbour (or the add
+    // field when the list empties) instead of dropping it to <body>.
+    const removePerson = (p: Person) => {
+        const index = people.findIndex(person => person.id === p.id);
+        const neighbour = people[index + 1] ?? people[index - 1];
+        onRemove(p.id);
+        if (neighbour) setRefocusId(neighbour.id);
+        else nameInputRef.current?.focus();
     };
 
     const startRename = (p: Person) => {
@@ -132,7 +143,7 @@ const PeopleManager: React.FC<Props> = ({
                             <button
                                 type="button"
                                 className={styles.chipRemove}
-                                onClick={() => onRemove(p.id)}
+                                onClick={() => removePerson(p)}
                                 aria-label={messages.t('removePerson').replace('{name}', () => p.name)}
                                 title={messages.t('removePerson').replace('{name}', () => p.name)}
                             >
@@ -142,6 +153,7 @@ const PeopleManager: React.FC<Props> = ({
                     ),
                 )}
                 <input
+                    ref={nameInputRef}
                     type="text"
                     value={name}
                     placeholder={people.length === 0 ? messages.t('addFirstPersonPlaceholder') : messages.t('addAnotherPlaceholder')}
