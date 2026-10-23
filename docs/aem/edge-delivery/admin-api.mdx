@@ -383,8 +383,9 @@ console.log('live:', liveResult.progress);
 ### Scheduled republish via cron
 
 The script uses `import` and top-level `await`, so it must run as an ES module: keep the `.mjs` extension
-(or add `"type": "module"` to the project's `package.json`). A stock Edge Delivery repo has neither, and
-Node parses a plain `.js` file as CommonJS.
+(or add `"type": "module"` to the project's `package.json`). A `.mjs` file is an ES module regardless of
+the package type; a plain `.js` file in a project without `"type": "module"` is CommonJS, which Node
+22.7+ reparses as ESM with a `MODULE_TYPELESS_PACKAGE_JSON` warning and older versions reject.
 
 ```yaml title=".github/workflows/scheduled-republish.yml"
 name: Scheduled republish
