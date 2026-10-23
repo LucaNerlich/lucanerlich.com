@@ -44,17 +44,20 @@ Three auth modes are supported, picked in this order of preference:
 ### Obtaining a token
 
 ```bash
-# Interactive browser login; stores the token for aem-cli
-aem login
+# Create an Admin API key for automation
+curl -X POST https://admin.hlx.page/config/{org}/sites/{site}/apiKeys.json \
+    -H 'x-auth-token: <admin token>' \
+    -H 'content-type: application/json' \
+    --data '{"description":"CI republish","roles":["publish"]}'
 
-# Or log in through the Admin API UI, then inspect your profile
+# Or log in interactively through the Admin API UI, then inspect your profile
 open https://admin.hlx.page/login
 open https://admin.hlx.page/profile
 ```
 
-For automation, store the resulting token in your secret manager and rotate it
-regularly. Scope and issuance depend on the site's Admin API / Configuration Service
-setup.
+For automation, store the returned key `value` in your secret manager (it cannot
+be retrieved again) and rotate it regularly. Scope and issuance depend on the site's
+Admin API / Configuration Service setup.
 
 ### Using the key
 
@@ -86,12 +89,12 @@ const status = await res.json();
 | `/code` | `POST` | Trigger a code-bus refresh after a force push or branch switch |
 | `/index` | `POST`, `GET` | Rebuild or query indexes (sitemap, search) |
 | `/cache` | `POST` | Programmatic cache purge at the CDN edge |
-| `/log` | `GET` | Per-resource event log - preview / publish / errors |
-| `/profile` | `GET` | Current user / token info - scopes, expiry |
-| `/sitemap` | `POST`, `GET` | Regenerate or fetch sitemap.xml |
-| `/snapshot` | `POST`, `GET`, `DELETE` | Point-in-time content snapshots for rollback |
+| `/log` | `GET` | Project audit log (preview / publish operations) |
+| `/profile` | `GET` | Logged-in user's profile (name, email, token ttl) |
+| `/sitemap` | `POST` | Regenerate sitemap.xml |
+| `/snapshot` | `POST`, `GET` | Stage previewed pages and publish them together |
 | `/job` | `GET`, `DELETE` | Inspect or cancel async bulk jobs |
-| `/config` | `GET`, `PUT`, `PATCH` | Configuration Service: site config, headers, redirects, access rules |
+| `/config` | `GET`, `POST`, `PUT`, `DELETE` | Configuration Service: site config, headers, access rules |
 
 ### `/status` - inspect a resource
 
@@ -116,7 +119,7 @@ curl -H "Authorization: token $EDS_API_KEY" \
         "lastModified": "2026-04-29T17:00:11Z",
         "sourceLastModified": "2026-04-29T16:59:48Z"
     },
-    "source": {
+    "edit": {
         "status": 200,
         "lastModified": "2026-04-30T11:22:50Z"
     }
@@ -151,10 +154,14 @@ curl -X POST -H "Authorization: token $EDS_API_KEY" \
     -d '{ "paths": ["/products/widget", "/products/gadget", "/about/team"] }'
 ```
 
-The bulk variant is async and returns a `jobId`:
+The bulk variant is async and returns a job:
 
 ```json
-{ "jobId": "abc123", "status": "pending", "self": "/job/acme/acme-website/main/abc123" }
+{
+    "messageId": "12345",
+    "job": { "topic": "preview", "name": "job-123", "state": "created" },
+    "links": { "self": "https://admin.hlx.page/job/acme/acme-website/main/preview/job-123" }
+}
 ```
 
 ### `/live` - promote to live
@@ -180,7 +187,7 @@ the pipeline pulls the latest blocks and scripts:
 
 ```bash
 curl -X POST -H "Authorization: token $EDS_API_KEY" \
-    https://admin.hlx.page/code/acme/acme-website/main
+    https://admin.hlx.page/code/acme/acme-website/main/*
 ```
 
 Only needed in the unusual case where the repo state is ahead of what EDS has cached
@@ -193,14 +200,14 @@ auto-block sources. Force a rebuild:
 
 ```bash
 curl -X POST -H "Authorization: token $EDS_API_KEY" \
-    https://admin.hlx.page/index/acme/acme-website/main
+    https://admin.hlx.page/index/acme/acme-website/main/*
 ```
 
-`GET` returns the index status:
+`GET` returns one resource's index entry:
 
 ```bash
 curl -H "Authorization: token $EDS_API_KEY" \
-    https://admin.hlx.page/index/acme/acme-website/main
+    https://admin.hlx.page/index/acme/acme-website/main/products/widget
 ```
 
 ### `/cache` - programmatic purge
@@ -211,26 +218,21 @@ Push-invalidation usually handles purges, but you can force one:
 # Purge a single path
 curl -X POST -H "Authorization: token $EDS_API_KEY" \
     https://admin.hlx.page/cache/acme/acme-website/main/products/widget
-
-# Purge by surrogate key (e.g. all pages tagged with a section)
-curl -X POST -H "Authorization: token $EDS_API_KEY" \
-    -H "Content-Type: application/json" \
-    https://admin.hlx.page/cache/acme/acme-website/main \
-    -d '{ "keys": ["section:products"] }'
 ```
 
-### `/log` - per-resource events
+### `/log` - project audit log
 
 ```bash
 curl -H "Authorization: token $EDS_API_KEY" \
-    "https://admin.hlx.page/log/acme/acme-website/main/products/widget?limit=20"
+    "https://admin.hlx.page/log/acme/acme-website/main?since=1h"
 ```
 
 ```json
 {
-    "events": [
-        { "ts": "2026-04-30T11:23:14Z", "action": "preview", "user": "alice@acme.com", "status": 200 },
-        { "ts": "2026-04-30T11:22:50Z", "action": "source-modified", "user": "alice@acme.com" }
+    "from": "2026-04-30T10:23:14Z",
+    "to": "2026-04-30T11:23:14Z",
+    "entries": [
+        { "timestamp": 1777548194000, "route": "preview", "path": "/products/widget", "user": "alice@acme.com", "status": 200 }
     ]
 }
 ```
@@ -245,10 +247,12 @@ curl -H "Authorization: token $EDS_API_KEY" https://admin.hlx.page/profile
 
 ```json
 {
-    "name": "ci-republish",
-    "email": "ci@acme.com",
-    "scopes": ["preview", "live", "cache:purge"],
-    "expiresAt": "2027-01-01T00:00:00Z"
+    "profile": {
+        "iss": "https://auth.hlx.page",
+        "email": "ci@acme.com",
+        "name": "ci-republish",
+        "ttl": 7200
+    }
 }
 ```
 
@@ -259,54 +263,52 @@ mid-job.
 
 ```bash
 curl -X POST -H "Authorization: token $EDS_API_KEY" \
-    https://admin.hlx.page/sitemap/acme/acme-website/main
+    https://admin.hlx.page/sitemap/acme/acme-website/main/sitemap.xml
 ```
 
 Useful after bulk content changes. EDS regenerates sitemaps on a schedule, but a
 manual trigger is sometimes faster.
 
-### `/snapshot` - rollback safety net
+### `/snapshot` - stage previewed pages
 
-Snapshots capture the live state of a path (or path glob) at a moment in time. Restore
-later if a bad publish ships:
+Snapshots copy the current preview state of pages for review on `.aem.reviews` and joint
+publishing (there is no restore):
 
 ```bash
-# Take a snapshot before a risky publish
+# Stage pages into a snapshot
 curl -X POST -H "Authorization: token $EDS_API_KEY" \
     -H "Content-Type: application/json" \
-    https://admin.hlx.page/snapshot/acme/acme-website/main \
-    -d '{ "name": "pre-launch", "paths": ["/products/**"] }'
+    https://admin.hlx.page/snapshot/acme/acme-website/main/pre-launch/* \
+    -d '{ "paths": ["/products/widget", "/products/gadget"] }'
 
 # List snapshots
 curl -H "Authorization: token $EDS_API_KEY" \
     https://admin.hlx.page/snapshot/acme/acme-website/main
 
-# Restore
+# Publish all staged resources in the snapshot
 curl -X POST -H "Authorization: token $EDS_API_KEY" \
-    https://admin.hlx.page/snapshot/acme/acme-website/main/pre-launch/restore
+    "https://admin.hlx.page/snapshot/acme/acme-website/main/pre-launch?publish=true"
 ```
 
 ### `/job` - inspect bulk operations
 
-Bulk operations return a `jobId`. Poll for status:
+Bulk operations return a job URL in `links.self`. Poll for status:
 
 ```bash
 curl -H "Authorization: token $EDS_API_KEY" \
-    https://admin.hlx.page/job/acme/acme-website/main/abc123
+    https://admin.hlx.page/job/acme/acme-website/main/preview/job-123
 ```
 
 ```json
 {
-    "jobId": "abc123",
-    "status": "running",
-    "progress": { "total": 120, "succeeded": 87, "failed": 2 },
-    "errors": [
-        { "path": "/products/legacy", "status": 404, "message": "source not found" }
-    ]
+    "topic": "preview",
+    "name": "job-123",
+    "state": "running",
+    "progress": { "total": 120, "processed": 87, "failed": 2 }
 }
 ```
 
-`status` values: `pending`, `running`, `done`, `failed`, `cancelled`.
+`state` values: `created`, `running`, `stopped`.
 
 ### `/config` - Configuration Service
 
@@ -318,7 +320,7 @@ https://admin.hlx.page/config/{org}/sites/{site}.json
 ```
 
 Use it to manage site configuration such as content sources, path mappings, headers,
-redirects, access rules, Sidekick configuration, indexes, sitemaps, and robots.txt.
+access rules, Sidekick configuration, indexes, sitemaps, and robots.txt.
 Older projects keep parts of this configuration in files (`paths.json`, `helix-query.yaml`,
 `helix-sitemap.yaml`) or in `.helix/*` spreadsheets in the content source. Before changing a
 repository file, verify which settings the Configuration Service owns for the site.
@@ -356,14 +358,11 @@ async function startBulk(action, paths) {
     return res.json();
 }
 
-async function pollJob(jobId) {
+async function pollJob(url) {
     while (true) {
-        const res = await fetch(
-            `https://admin.hlx.page/job/${owner}/${repo}/${ref}/${jobId}`,
-            { headers },
-        );
+        const res = await fetch(url, { headers });
         const job = await res.json();
-        if (job.status === 'done' || job.status === 'failed') return job;
+        if (job.state === 'stopped') return job;
         await wait(2000);
     }
 }
@@ -372,11 +371,11 @@ const sitemap = await fetch(`https://www.example.com/sitemap.xml`).then((r) => r
 const paths = [...sitemap.matchAll(/<loc>https?:\/\/[^/]+(\/[^<]*)<\/loc>/g)].map((m) => m[1]);
 
 const previewJob = await startBulk('preview', paths);
-const previewResult = await pollJob(previewJob.jobId);
+const previewResult = await pollJob(previewJob.links.self);
 console.log('preview:', previewResult.progress);
 
 const liveJob = await startBulk('live', paths);
-const liveResult = await pollJob(liveJob.jobId);
+const liveResult = await pollJob(liveJob.links.self);
 console.log('live:', liveResult.progress);
 ```
 
@@ -412,14 +411,14 @@ jobs:
 const drifted = [];
 for (const path of paths) {
     const res = await fetch(
-        `https://admin.hlx.page/status/${owner}/${repo}/${ref}${path}`,
+        `https://admin.hlx.page/status/${owner}/${repo}/${ref}${path}?editUrl=auto`,
         { headers },
     );
     const s = await res.json();
-    if (s.source.lastModified > s.live.lastModified) {
+    if (s.edit?.lastModified > s.live?.lastModified) {
         drifted.push({
             path,
-            sourceModified: s.source.lastModified,
+            sourceModified: s.edit.lastModified,
             liveModified: s.live.lastModified,
         });
     }
@@ -427,24 +426,12 @@ for (const path of paths) {
 console.table(drifted);
 ```
 
-### Bulk purge a section
-
-```bash
-curl -X POST -H "Authorization: token $EDS_API_KEY" \
-    -H "Content-Type: application/json" \
-    https://admin.hlx.page/cache/acme/acme-website/main \
-    -d '{ "keys": ["section:products"] }'
-```
-
-Surrogate keys are emitted as response headers by the pipeline - inspect `Surrogate-Key`
-on a live response to see what's available.
-
 ## Errors and rate limits
 
 - `401` - token missing or expired (check `/profile`)
-- `403` - token lacks the required scope
+- `403` - access role lacks the required permission
 - `404` - path not found in the source for `/preview`, or not yet previewed for `/live`
-- `409` - conflict (e.g. trying to publish an unpreviewed page)
+- `409` - conflict with the resource state (e.g. changing a locked snapshot)
 - `429` - rate limited; back off (`Retry-After` header indicates wait time)
 - `5xx` - pipeline error; usually transient, retry with exponential backoff
 
@@ -455,9 +442,8 @@ on an already-previewed path is safe.
 
 - Store API tokens in your secret manager (GitHub Actions secrets, Vault, AWS Secrets
   Manager). Never commit them.
-- Scope keys narrowly - a republish bot doesn't need `cache:purge` if it never
-  purges.
-- Rotate keys quarterly; set `expiresAt` rather than relying on revocation.
+- Scope keys narrowly - give each key the narrowest role (e.g. `publish`).
+- Rotate keys quarterly; create keys with `expiresIn` and rotate them before their `expiration`.
 - Verify webhook HMAC signatures before acting on the payload.
 - Restrict outbound webhook URLs to your own domain to limit the blast radius if a
   config write is compromised.
@@ -467,4 +453,4 @@ on an already-previewed path is safe.
 - [Sidekick](./sidekick.mdx) - the UI front-end for many of these endpoints
 - [Customizing](./customizing.mdx) - site configuration for response headers and CDN
 - [Architecture](./architecture.mdx) - how the API ties into the pipeline
-- aem.live: [Admin API](https://www.aem.live/docs/admin)
+- aem.live: [Admin API](https://www.aem.live/docs/admin.html)
