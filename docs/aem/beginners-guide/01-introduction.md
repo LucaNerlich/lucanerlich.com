@@ -104,8 +104,7 @@ Before we start:
 - **A code editor** - IntelliJ IDEA (recommended for Java) or VS Code
 - **Git** - for version control
 
-> **Note:** The AEMaaCS SDK is free to download for development. You need an Adobe ID but not a paid license to get
-> started locally.
+> **Note:** SDK downloads are limited to users in organizations with AEM as a Cloud Service or AEM Managed Services environments.
 
 ## Installing the AEMaaCS SDK
 
@@ -214,7 +213,7 @@ performance.
 Adobe provides a Maven Archetype that scaffolds a complete AEM project:
 
 ```bash
-mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.2.1:generate \
+mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.3.1:generate \
   -D archetypeGroupId=com.adobe.aem \
   -D archetypeArtifactId=aem-project-archetype \
   -D archetypeVersion=58 \
@@ -321,7 +320,7 @@ flowchart TD
 | **ui.frontend** | Frontend source (SCSS, JS) - compiled and copied to ui.apps | Not deployed directly |
 | **all**         | Aggregates all packages into one deployable unit             | Container package     |
 | **dispatcher**  | Apache/Dispatcher configuration                              | Deployed separately   |
-| **it.tests**    | Integration tests                                            | Run during build      |
+| **it.tests**    | Integration tests                                            | Run separately against a running instance (`mvn clean verify -Plocal`) |
 
 ### Content package filters
 
