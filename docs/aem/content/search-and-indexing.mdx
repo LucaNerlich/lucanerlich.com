@@ -99,7 +99,7 @@ A minimal exact-match index on a single property, deployed as content under `/oa
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0"
           jcr:primaryType="oak:QueryIndexDefinition"
           type="property"
-          propertyNames="[cq:template]"
+          propertyNames="{Name}[cq:template]"
           reindex="{Boolean}true"/>
 ```
 
@@ -108,16 +108,17 @@ A minimal exact-match index on a single property, deployed as content under `/oa
 A Lucene index uses **index rules** per node type, declaring which properties are indexed and how
 (`propertyIndex` for exact match, `ordered` for sortable, `analyzed` for full text):
 
-```xml title="ui.apps/.../jcr_root/_oak_index/mysiteArticle-custom-1/.content.xml"
+```xml title="ui.apps/.../jcr_root/_oak_index/acme.article-1-custom-1/.content.xml"
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0"
           jcr:primaryType="oak:QueryIndexDefinition"
           type="lucene"
           async="[async]"
           compatVersion="{Long}2"
-          evaluatePathRestrictions="{Boolean}true"
-          reindex="{Boolean}false">
+          evaluatePathRestrictions="{Boolean}true">
     <indexRules jcr:primaryType="nt:unstructured">
         <cq:Page jcr:primaryType="nt:unstructured">
             <properties jcr:primaryType="nt:unstructured">
@@ -181,7 +182,9 @@ Deploy the `/oak:index` node via a content package, set `reindex=true` (or trigg
 
 Changing an index definition requires a **reindex** so existing content is covered:
 
-- Set `reindex="{Boolean}true"` on the index node (Oak flips it back to `false` when done).
+- **AEM 6.5:** Set `reindex="{Boolean}true"` on the index node (Oak flips it back to `false` when done).
+  On AEM as a Cloud Service, custom index definitions must not contain the `reindex` property; deploy
+  the change as a new `-custom-<N+1>` version instead, and the platform builds it automatically.
 - Reindexing reads matching content - it is I/O heavy; do it off-peak on large repositories.
 - `async="[async]"` indexes update slightly behind writes (the norm for Lucene); pure property indexes
   are synchronous.
