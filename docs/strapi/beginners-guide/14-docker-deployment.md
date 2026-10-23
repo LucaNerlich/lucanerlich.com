@@ -714,7 +714,10 @@ Add security scanning to your CI pipeline:
 
 ```yaml
 # IMAGE_NAME must be the lowercase value written by the Normalize image name step.
+# `latest` is only published for the default branch, so scan there: a develop
+# push would otherwise scan whatever main last built.
 - name: Run Trivy vulnerability scanner
+  if: github.ref == 'refs/heads/main'
   uses: aquasecurity/trivy-action@master
   with:
     image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
