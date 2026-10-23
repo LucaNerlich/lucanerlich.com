@@ -93,11 +93,11 @@ conf/mysite/settings/wcm/template-types/
 
 The template editor has three modes:
 
-| Mode                | Purpose                                                                     |
-|---------------------|-----------------------------------------------------------------------------|
-| **Structure**       | Define locked layout containers and components. Authors cannot change these |
-| **Initial Content** | Set default content for new pages. Authors can modify this                  |
-| **Policies**        | Configure component policies - allowed components, styles, behavior        |
+| Mode                | Purpose                                                                            |
+|---------------------|------------------------------------------------------------------------------------|
+| **Structure**       | Define locked layout containers and components. Authors cannot change these        |
+| **Initial Content** | Set default content for new pages. Authors can modify this                         |
+| **Layout**          | Predefine the responsive layout per device (policies are set from Structure mode)  |
 
 ### Structure mode
 
@@ -305,13 +305,12 @@ Authors use the layout mode (ruler icon) to resize component columns per breakpo
 
 | Breakpoint | Default width   |
 |------------|-----------------|
-| Phone      | < 768px         |
-| Tablet     | 768px - 1024px |
-| Desktop    | > 1024px        |
+| Phone      | ≤ 768px         |
+| Tablet     | 769px - 1200px  |
+| Desktop    | > 1200px        |
 
-Breakpoints are configured in the responsive grid's **policy** (in the template editor, select the layout container,
-open its policy, and edit the breakpoint widths). You can also define custom breakpoints in the
-`wcm/foundation/components/responsivegrid` policy node in your `/conf` configuration.
+Breakpoints are defined in a `cq:responsive/breakpoints` node under the template (type) `structure/jcr:content`, or a
+page's `jcr:content`, via CRXDE Lite or XML. The layout container policy's Responsive Settings tab only sets the number of columns.
 
 ## Proxy components
 
@@ -387,7 +386,7 @@ sequenceDiagram
 You learned:
 
 - **Editable templates** are configured in the authoring UI, backed by template types in code
-- Template editor has three modes: **Structure**, **Initial Content**, and **Policies**
+- Template editor has three modes: **Structure**, **Initial Content**, and **Layout**
 - The **page component** renders the HTML document (`<html>`, `<head>`, `<body>`)
 - **Component policies** control allowed components, default settings, and style options
 - The **Style System** lets authors apply CSS classes without code changes
@@ -398,7 +397,7 @@ You learned:
 ## Official Documentation
 
 - [Page Templates (Experience League)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/templates) - editable templates, the template editor, and enabling templates
-- [Creating Page Templates (developer)](https://experienceleague.adobe.com/en/docs/experience-manager-65/content/implementing/developing/platform/templates/page-templates-static) - template types, structure vs initial content
+- [Page Templates (developer)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/full-stack/components-templates/templates) - template types, structure vs initial content
 - [Style System](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/authoring/page-editor/style-system) - author-applied CSS classes
 - [WKND tutorial - Pages & Templates](https://experienceleague.adobe.com/en/docs/experience-manager-learn/getting-started-wknd-tutorial-develop/overview)
 
