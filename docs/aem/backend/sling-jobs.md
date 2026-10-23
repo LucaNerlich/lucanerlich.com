@@ -518,10 +518,17 @@ public class ContentCleanupJobConsumer implements JobConsumer {
             );
 
             Iterator<Resource> results = resolver.findResources(query, "JCR-SQL2");
-            int deleted = 0;
-
+            // Collect first: committing mid-iteration invalidates the open
+            // query, so a batched delete over a live iterator skips rows.
+            List<String> paths = new ArrayList<>();
             while (results.hasNext()) {
-                Resource resource = results.next();
+                paths.add(results.next().getPath());
+            }
+
+            int deleted = 0;
+            for (String path : paths) {
+                Resource resource = resolver.getResource(path);
+                if (resource == null) continue;
                 resolver.delete(resource);
                 deleted++;
 
@@ -671,7 +678,7 @@ with a dedicated service user.
 | Queue is stuck / paused             | An ORDERED queue pauses when a job fails; check for failed jobs and fix or cancel them                    |
 | Scheduler runs but nothing happens  | Verify the cron expression; check that `scheduler.concurrent` is set correctly                            |
 | Scheduler runs too often on AEMaaCS | AEMaaCS may run multiple instances; use `scheduler.concurrent = false` and Sling Jobs for the actual work |
-| Memory issues with bulk jobs        | Process in batches; commit the ResourceResolver periodically; don't accumulate results in memory          |
+| Memory issues with bulk jobs        | Process in batches; commit the ResourceResolver periodically; keep paths, not Resource objects, in memory |
 | Job retries endlessly               | Return `JobResult.CANCEL` for permanent failures; configure `queue.retries`                               |
 
 ## See also
