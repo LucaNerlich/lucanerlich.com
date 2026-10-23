@@ -73,14 +73,16 @@ created in the AEM configuration space (`/conf`) and must be enabled per site co
 │   ├── jcr:title = "Article"
 │   ├── jcr:description = "An article with title, body, and author"
 │   └── model
-│       ├── cq:fields
-│       │   ├── title          (fieldType: "text-single", required: true)
-│       │   ├── body           (fieldType: "text-multi", mimeType: "text/html")
-│       │   ├── publishDate    (fieldType: "calendar")
-│       │   ├── category       (fieldType: "enumeration", options: [...])
-│       │   ├── featuredImage   (fieldType: "content-reference")
-│       │   ├── author          (fieldType: "fragment-reference", modelPath: "/conf/.../author")
-│       │   └── relatedArticles (fieldType: "fragment-reference", multiple: true)
+│       └── cq:dialog
+│           └── content
+│               └── items
+│                   ├── title          (metaType: "text-single", valueType: "string", required: "on")
+│                   ├── body           (metaType: "text-multi", valueType: "string", default-mime-type: "text/html")
+│                   ├── publishDate    (metaType: "date", valueType: "calendar")
+│                   ├── category       (metaType: "enumeration", options: [...])
+│                   ├── featuredImage   (metaType: "reference", valueType: "string")
+│                   ├── author          (metaType: "fragment-reference", fragmentmodelreference: "/conf/.../author")
+│                   └── relatedArticles (metaType: "fragment-reference", multiple: true)
 ```
 
 ### Model field validation
@@ -100,14 +102,13 @@ Models support built-in validation rules:
 
 ## Authoring in the Content Fragments Console
 
-Most teams create models and fragments through the UI, not code. On AEM as a Cloud Service the
-dedicated **Content Fragments Console** is the primary entry point; on AEM 6.5 you use the Assets
-console plus **Tools > General > Content Fragment Models**.
+Most teams create models and fragments through the UI, not code. On AEM as a Cloud Service,
+navigate to **Tools > Assets > Content Fragment Models** (or the **Content Fragments Console** in online
+environments); on AEM 6.5 use **Tools > Assets > Content Fragment Models**.
 
 ### Create a model
 
-1. Open the [Content Fragments Console](http://localhost:4502/aem/content-fragments) (AEMaaCS) or
-   **Tools > General > Content Fragment Models** (6.5).
+1. Open **Tools > Assets > Content Fragment Models** (or the [Content Fragments Console](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/sites/administering/content-fragments/overview) on AEMaaCS).
 2. Select the configuration folder for your site and choose **Create**.
 3. Add fields by dragging data types from the right rail, set each field's **Property Name**
    (this becomes the GraphQL field name), and mark required/translatable as needed.
@@ -144,23 +145,30 @@ shipping it in a content package (e.g. `ui.content` or a dedicated `ui.conf`):
 <filter root="/conf/myproject/settings/dam/cfm/models"/>
 ```
 
-The exported `.content.xml` for a model field carries the field type and validation, for example:
+The exported `.content.xml` for a model field carries the Granite UI field type and metadata, for example:
 
 ```xml title="/conf/myproject/settings/dam/cfm/models/article/.content.xml (excerpt)"
 <title
     jcr:primaryType="nt:unstructured"
-    sling:resourceType="dam/cfm/models/editor/components/datatypes/multifield"
-    fieldType="text-single"
+    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+    fieldLabel="Title"
+    listOrder="1"
+    metaType="text-single"
     name="title"
-    required="{Boolean}true"
+    renderReadOnly="false"
+    showEmptyInReadOnly="true"
     valueType="string"/>
 <body
     jcr:primaryType="nt:unstructured"
-    sling:resourceType="dam/cfm/models/editor/components/datatypes/multifield"
-    fieldType="text-multi"
+    sling:resourceType="dam/cfm/admin/components/authoring/contenteditor/multieditor"
+    default-mime-type="text/html"
+    fieldLabel="Body"
+    listOrder="2"
+    metaType="text-multi"
     name="body"
-    valueType="string"
-    mimeType="text/html"/>
+    renderReadOnly="false"
+    showEmptyInReadOnly="true"
+    valueType="string"/>
 ```
 
 :::tip[Treat model changes like schema migrations]
@@ -359,6 +367,7 @@ package com.myproject.core.services.impl;
 import com.adobe.cq.dam.cfm.ContentFragment;
 import com.adobe.cq.dam.cfm.ContentFragmentException;
 import com.adobe.cq.dam.cfm.FragmentTemplate;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
@@ -367,7 +376,7 @@ public ContentFragment createFragment(
         ResourceResolver resolver,
         String modelPath,
         String folderPath,
-        String title) throws ContentFragmentException {
+        String title) throws ContentFragmentException, PersistenceException {
 
     // 1. Resolve the CF model
     Resource modelResource = resolver.getResource(modelPath);
@@ -403,14 +412,16 @@ public ContentFragment createFragment(
 /**
  * Set a text field (single-line or multi-line).
  */
-public void setText(ContentFragment fragment, String fieldName, String value, String mimeType) {
+public void setText(ContentFragment fragment, String fieldName, String value, String mimeType)
+        throws ContentFragmentException {
     fragment.getElement(fieldName).setContent(value, mimeType);
 }
 
 /**
  * Set a typed value (number, boolean, date, etc.).
  */
-public void setTypedValue(ContentFragment fragment, String fieldName, Object value) {
+public void setTypedValue(ContentFragment fragment, String fieldName, Object value)
+        throws ContentFragmentException {
     FragmentData data = fragment.getElement(fieldName).getValue();
     data.setValue(value);
     fragment.getElement(fieldName).setValue(data);
@@ -431,7 +442,7 @@ setTypedValue(fragment, "publishDate", Calendar.getInstance());
  * Set a fragment reference field (single or multi-valued).
  */
 public void setFragmentReferences(ContentFragment fragment, String fieldName,
-        List<ContentFragment> references) {
+        List<ContentFragment> references) throws ContentFragmentException {
 
     List<ContentFragment> validRefs = references.stream()
         .filter(Objects::nonNull)
@@ -524,13 +535,13 @@ resolver.commit();
 ```java
 ContentElement bodyElement = fragment.getElement("body");
 
-// Create a fragment-wide variation template, then create the element variation from it
-VariationDef socialVariationDef = fragment.createVariation(
+// Create a fragment-wide variation; variation is added across all elements
+fragment.createVariation(
     "social",
     "Social Media",
     "Short version for social"
 );
-ContentVariation socialVariation = bodyElement.createVariation(socialVariationDef);
+ContentVariation socialVariation = bodyElement.getVariation("social");
 
 // Set variation content
 socialVariation.setContent("Check out our latest article on Content Fragments!", "text/plain");
@@ -563,7 +574,7 @@ component or a custom Sling Model.
 
 ### Using the Core Component
 
-The [AEM Core Content Fragment component](https://www.aemcomponents.dev/content/core-components-examples/library/content-fragment.html)
+The [AEM Core Content Fragment component](https://www.aemcomponents.dev/content/core-components-examples/library/core-content/content-fragment.html)
 renders Content Fragments out of the box. Add it to your template policy and configure via dialog.
 
 ### Custom HTL rendering
@@ -733,7 +744,7 @@ Enabling a model generates its GraphQL schema (e.g. an `Article` model creates t
 
 ### 2. Save a persisted query
 
-Persist the query above with the AEM GraphQL CLI or a PUT to the persistence endpoint, giving it a
+Persist the query above in the GraphiQL IDE or with a PUT to the persistence endpoint, giving it a
 short name (`featured-articles`):
 
 ```bash
@@ -943,7 +954,7 @@ public List<Map<String, Object>> exportFragments(ResourceResolver resolver,
 | **Content Fragments OpenAPI** | Newer AEMaaCS API under `/adobe/sites/cf/fragments` for managing fragments with scoped service credentials |
 | **Assets HTTP API**      | Older DAM Assets API support for Content Fragments; prefer the OpenAPI for new AEMaaCS integrations |
 | **CF Console**           | AEMaaCS has a dedicated Content Fragments Console at `/ui#/aem/cf/admin/`                 |
-| **Bulk imports**         | Use the Content Fragment Migration tool or the Assets HTTP API for large imports          |
+| **Bulk imports**         | Use the Content Fragments OpenAPI or the Assets HTTP API for large imports          |
 
 ### Assets HTTP API (REST)
 
@@ -1009,36 +1020,31 @@ curl -u admin:admin \
 
 The model reference (`cq:model`) lives on the `jcr:content/data` node - a **relative path two levels
 deep**. A `type="property"` index cannot index that (its `propertyNames` is a single property *name*,
-and Oak only transforms the single `jcr:content` -> parent hop), so use a **Lucene** index with an
-`indexRule` on `dam:Asset`, deployed as a content package
-(`ui.apps/.../_oak_index/cfModel-custom-1/.content.xml`):
+and Oak only transforms the single `jcr:content` -> parent hop). On AEM as a Cloud Service, adding a
+new standalone index on `dam:Asset` is discouraged as it can conflict with out-of-the-box indexes;
+instead, extend the existing `damAssetLucene` index (e.g. via Simplified Indexing
+`_oak_index/diff.index/diff.json` or a `damAssetLucene-<N>-custom-<M>` definition):
 
-```xml title="Oak Lucene index for cq:model"
-<?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-          xmlns:dam="http://www.day.com/dam/1.0"
-          xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0"
-          jcr:primaryType="oak:QueryIndexDefinition"
-          type="lucene"
-          async="[async]"
-          compatVersion="{Long}2"
-          evaluatePathRestrictions="{Boolean}true">
-    <indexRules jcr:primaryType="nt:unstructured">
-        <dam:Asset jcr:primaryType="nt:unstructured">
-            <properties jcr:primaryType="nt:unstructured">
-                <cqModel
-                    jcr:primaryType="nt:unstructured"
-                    name="jcr:content/data/cq:model"
-                    propertyIndex="{Boolean}true"/>
-            </properties>
-        </dam:Asset>
-    </indexRules>
-</jcr:root>
+```json title="_oak_index/diff.index/diff.json (Simplified Index Management)"
+{
+  "damAssetLucene": {
+    "indexRules": {
+      "dam:Asset": {
+        "properties": {
+          "cqModel": {
+            "name": "jcr:content/data/cq:model",
+            "propertyIndex": true
+          }
+        }
+      }
+    }
+  }
+}
 ```
 
-For full-text search across fragment fields, add `analyzed="{Boolean}true"` properties to the same
-index. See Adobe's [Content Search and Indexing](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/indexing)
-documentation for AEMaaCS index deployment (`/oak:index` via `ui.apps`, using the `-custom-N` naming convention).
+For full-text search across fragment fields, add analyzed properties to that same `damAssetLucene`
+customization. See Adobe's [Content Search and Indexing](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/operations/indexing)
+documentation for AEMaaCS index deployment.
 
 ### Common pitfalls
 
@@ -1049,7 +1055,7 @@ documentation for AEMaaCS index deployment (`/oak:index` via `ui.apps`, using th
 | Rich text displays raw HTML          | Use `context='html'` in HTL: `${model.body @ context='html'}`                          |
 | Fragment references not resolving    | References are stored as paths; if the target is moved, the reference breaks           |
 | Slow fragment queries                | Add an Oak index for the `cq:model` property and your custom filter properties         |
-| Variation content is empty           | Variations inherit from `master`; only fields explicitly set on a variation are stored |
+| Variation content is empty           | Variations start as a copy of `master`; later `master` edits are not propagated. Synchronize the variation or set the value on it |
 | CORS errors on GraphQL               | Configure CORS and referrer filters; see [Headless GraphQL](./graphql.mdx)             |
 | Infinite loop / stack overflow resolving references | Fragment A references B which references A. GraphQL limits nesting depth, but custom Java traversal must guard against cycles - track visited paths in a `Set` and stop on revisit |
 | GraphQL field missing after model change | The schema is regenerated when a model is created/updated/deleted; a disabled model produces no schema. Re-enable and republish the model |
