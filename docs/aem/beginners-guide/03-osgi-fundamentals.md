@@ -216,7 +216,7 @@ private GreetingService greetingService;
 private List<GreetingService> greetingServices;
 
 // Target filter: select a specific implementation by property
-@Reference(target = "(service.pid=com.mysite.core.services.impl.CustomGreetingServiceImpl)")
+@Reference(target = "(component.name=com.mysite.core.services.impl.CustomGreetingServiceImpl)")
 private GreetingService greetingService;
 ```
 
@@ -260,14 +260,14 @@ The **Sling Resource Resolver** page lets you test how URLs resolve:
 
 1. Go to `/system/console/jcrresolver`
 2. Enter a URL (e.g., `/content/mysite/en/about.html`)
-3. Click **Resolve** to see which resource and rendering script Sling picks
+3. Click **Resolve** to see which resource the URL resolves to (use `/system/console/servletresolver` to see which script or servlet renders it)
 
 This is invaluable for debugging "page not found" or "wrong component rendered" issues.
 
 ## OSGi Configurations
 
-Configurations let you change service behavior without changing code. They are stored in the JCR and can vary by **run
-mode** (author, publish, dev, stage, prod).
+Configurations let you change service behavior without changing code. They ship as `.cfg.json` files in the `ui.config`
+package and can vary by **run mode** (author, publish, dev, stage, prod).
 
 ### Configuration via annotations
 
@@ -354,13 +354,12 @@ A configuration file:
 
 > **Naming convention:** Notice that the annotation method `greeting_prefix()` maps to the config key `greeting.prefix`.
 > OSGi converts underscores (`_`) in method names to periods (`.`) in configuration property names. A double underscore
-> (`__`) maps to a single underscore, and a single trailing underscore (`_`) is removed. For example:
+> (`__`) maps to a single underscore. For example:
 >
 > | Method name         | Config property key |
 > |---------------------|---------------------|
 > | `greeting_prefix()` | `greeting.prefix`   |
 > | `my__property()`    | `my_property`       |
-> | `trailing_()`       | `trailing`          |
 
 ### Run modes
 
@@ -375,11 +374,11 @@ example, author vs publish plus environment tier), so think of these folders as 
 | `stage`   | Stage environment       |
 | `prod`    | Production environment  |
 
-Configurations are **cumulative** - `config/` applies everywhere, and more specific folders add/override values when
-their run modes are active.
+Configurations are not merged: for each PID, the file from the folder with the most matching run modes applies in full,
+so a run-mode file must repeat every property it needs.
 
-> **Tip:** Keep defaults in `config/`, then add only environment-specific overrides where needed (`config.author/`,
-> `config.publish/`, `config.dev/`, `config.stage/`, `config.prod/`).
+> **Tip:** Keep defaults in `config/`, and copy the complete file into a run-mode folder only where values differ
+> (`config.author/`, `config.publish/`, `config.dev/`, `config.stage/`, `config.prod/`).
 
 ### Editing configurations in the Web Console
 
@@ -389,8 +388,8 @@ During development, you can edit configurations live:
 2. Search for your service name
 3. Edit values and click **Save**
 
-> **Important:** Changes made in the Web Console are temporary - they are lost when the instance restarts. For
-> persistent configurations, use `.cfg.json` files in the `ui.config` module.
+> **Important:** Web Console changes are written to the local repository and survive restarts, but they are not part of
+> your code and are never deployed. For deployable configurations, use `.cfg.json` files in the `ui.config` module.
 
 ## Component lifecycle annotations
 
@@ -449,7 +448,7 @@ inside the OSGi runtime.
 | Component is unsatisfied                      | `/system/console/components` references     | Register missing service or loosen reference cardinality    |
 | Config changes not applied                    | `/system/console/configMgr` PID and values | Fix PID/file name, verify run mode folder                  |
 | Service implementation not the expected one   | `/system/console/services` ranking          | Adjust `service.ranking` and target filters                 |
-| Works local SDK, fails in cloud               | Cloud logs + committed config files         | Move transient console edits into `ui.config` `.cfg.json`   |
+| Works local SDK, fails in cloud               | Cloud logs + committed config files         | Move console-only edits into `ui.config` `.cfg.json`        |
 
 ## Common OSGi patterns in AEM
 
@@ -513,8 +512,7 @@ public class ResourceChangeHandler implements EventHandler {
 
 > **AEMaaCS note:** Classic replication events (`com/day/cq/replication/job/publish`) apply to AEM 6.5. In AEM as a
 > Cloud Service, content distribution replaces classic replication and uses different event topics. For observing content
-> changes, prefer Sling Resource Observation (`ResourceChangeListener`) or OSGi events with resource topics as shown
-> above.
+> changes, use Sling Resource Observation (`ResourceChangeListener`); the `org/apache/sling/api/resource/Resource/*` OSGi event topics used above are deprecated.
 
 > For more advanced OSGi topics, see the [OSGi Configuration](/aem/backend/osgi-configuration) reference. For deeper
 > coverage of the patterns introduced above,
@@ -542,7 +540,7 @@ With the foundation covered (JCR, Sling, OSGi), we are ready to build our first 
 - [OSGi Declarative Services Specification](https://docs.osgi.org/specification/osgi.cmpn/8.1.0/service.component.html) - `@Component`, `@Reference`, and `@Activate` spec
 - [Apache Felix Configuration Admin](https://felix.apache.org/documentation/subprojects/apache-felix-config-admin.html) - underlying Config Admin service
 - [AEM OSGi Configuration (AEMaaCS)](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/deploying/configuring-osgi) - cloud-specific deployment of OSGi configs
-- [Apache Sling Service User Mapper](https://sling.apache.org/documentation/bundles/service-user-mapper-service-user-provisioning-and-authentication.html) - service users and repoinit
+- [Apache Sling Service Authentication](https://sling.apache.org/documentation/the-sling-engine/service-authentication.html) - service users and the ServiceUserMapper
 
 Next up: [Your First Component](./04-your-first-component.md) - component anatomy, creating a simple component, placing
 it on a page, and understanding the component-dialog-model triad.
