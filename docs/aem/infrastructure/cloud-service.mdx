@@ -52,9 +52,9 @@ graph TD
 | **Updates**             | Manual upgrades (months/years)          | Continuous updates (monthly, automatic)                      |
 | **`/apps` and `/libs`** | Mutable at runtime                      | **Immutable** - deployed via pipeline only                  |
 | **`/etc/designs`**      | Design mode for component config        | **Deprecated** - use editable templates and policies        |
-| **Custom run modes**    | Any custom run mode name                | Only `author`, `publish`, `preview` + `dev`, `stage`, `prod` |
+| **Custom run modes**    | Any custom run mode name                | Only `author`, `publish` + `dev`, `stage`, `prod`            |
 | **CRXDE Lite**          | Available in all environments           | Available on dev/RDE only, **not in stage/prod**             |
-| **Repository access**   | Direct JCR access, WebDAV               | Developer Console for logs; no direct JCR in prod            |
+| **Repository access**   | Direct JCR access, WebDAV               | Developer Console (read-only diagnostics); logs via Cloud Manager |
 | **Content replication** | Replication agents (manual config)      | **Content Distribution** (Sling, automatic)                  |
 | **Pricing model**       | Perpetual license                       | Subscription (per program)                                   |
 | **Scaling**             | Manual (add servers)                    | Automatic (horizontal auto-scaling)                          |
@@ -92,7 +92,7 @@ graph LR
 | **Development**     | Day-to-day development and testing   | Mutable; CRXDE available; can install packages manually    |
 | **Rapid Dev (RDE)** | Fast iteration without full pipeline | Deploy in seconds via CLI; no build step; limited lifespan |
 | **Stage**           | Pre-production validation            | Mirrors prod topology; immutable; pipeline-only deployment |
-| **Production**      | Live site                            | Immutable; auto-scaled; no CRXDE; no Package Manager       |
+| **Production**      | Live site                            | Immutable; auto-scaled; no CRXDE                           |
 | **Preview**         | Content preview before publish       | Optional; separate tier for preview workflows              |
 
 ---
@@ -137,7 +137,8 @@ Initialisation (repoinit)** scripts to bootstrap required structures:
 ```json title="ui.config/.../org.apache.sling.jcr.repoinit.RepositoryInitializer~myproject.cfg.json"
 {
     "scripts": [
-        "ensure nodes (sling:OrderedFolder) /content/mysite /content/dam/mysite",
+        "ensure nodes /content/mysite",
+        "ensure nodes /content/dam/mysite",
         "create service user myproject-service with path system/cq:services/myproject",
         "set ACL for myproject-service\n    allow jcr:read on /content/mysite\n    allow rep:write on /content/mysite\nend"
     ]
@@ -178,8 +179,7 @@ Key differences:
 
 ### Invalidating the CDN/Dispatcher cache
 
-On publish, AEMaaCS automatically invalidates the Dispatcher cache and purges the CDN
-for the affected paths. You do not need to configure flush agents.
+On publish, AEMaaCS automatically invalidates the Dispatcher cache; the Adobe CDN is not purged and serves cached responses until their TTL expires. You do not need to configure flush agents.
 
 For Edge Delivery Services or custom CDN setups, configure **push invalidation** in the
 CDN config.
@@ -260,13 +260,10 @@ Access it at: `https://dev-console-<env-id>.adobeaemcloud.com/`
 | **Sling Models**       | List registered Sling Models and their adapters              |
 | **Oak Indexes**        | View index definitions and reindexing status                 |
 | **Repository browser** | Browse the JCR tree (read-only)                              |
-| **Logs**               | Download or tail log files (error.log, request.log, etc.)    |
 | **Query performance**  | View slow queries and index usage                            |
 
 :::tip
-For production debugging, the Developer Console log viewer is your primary tool. You
-can filter by log level, logger name, and time range. Download full log files for
-offline analysis.
+For production debugging, download logs from Cloud Manager or tail them with the Adobe I/O CLI.
 :::
 
 ---
@@ -367,14 +364,13 @@ These features available on AEM 6.5 are **not available** or **deprecated** on A
 | Feature                          | Status     | Replacement                                       |
 |----------------------------------|------------|---------------------------------------------------|
 | **CRXDE Lite** (prod)            | Removed    | Developer Console (read-only)                     |
-| **Package Manager** (prod)       | Removed    | Cloud Manager pipelines                           |
 | **Classic UI**                   | Deprecated | Touch UI                                          |
 | **Design mode / `/etc/designs`** | Deprecated | Editable templates and policies                   |
 | **Static templates**             | Deprecated | Editable templates                                |
 | **Custom run modes**             | Removed    | `dev`, `stage`, `prod` only                       |
 | **JSP scripting**                | Deprecated | HTL (Sightly)                                     |
 | **Replication agents**           | Replaced   | Sling Content Distribution                        |
-| **Workflow purge schedulers**    | Changed    | Adobe-managed maintenance windows                 |
+| **Workflow purge schedulers**    | Changed    | Customer-configured Workflow Purge task in Git (under `/conf/global/settings/granite/operations/maintenance`) |
 | **`loginAdministrative()`**      | Removed    | Service users with `getServiceResourceResolver()` |
 | **WebDAV access**                | Removed    | Assets HTTP API, AEM Desktop App                  |
 | **VLT (FileVault)**              | Limited    | AEM Repo Tool, RDE CLI                            |
