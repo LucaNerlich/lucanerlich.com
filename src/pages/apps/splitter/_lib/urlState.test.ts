@@ -1,6 +1,6 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
-import {decodeState} from './urlState';
+import {decodeState, encodeState} from './urlState';
 
 // Bare base64url JSON is the legacy (uncompressed) wire shape.
 const legacy = (wire: unknown): string =>
@@ -70,6 +70,17 @@ describe('decodeState person ids', () => {
             e: [],
         }));
         assert.equal(decoded, null);
+    });
+
+    it('rejects an unsafe id through the compressed share-link round trip', async () => {
+        const state = {
+            v: 2 as const,
+            currency: 'EUR' as const,
+            people: [{id: 'a|b', name: 'Ada'}],
+            expenses: [],
+            paidTransferKeys: [],
+        };
+        assert.equal(await decodeState(await encodeState(state)), null);
     });
 
     it('still decodes a payload whose ids are wire-safe', async () => {
