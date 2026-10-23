@@ -7,7 +7,7 @@
     overflow: hidden;
 }
 
-.container:has(> :global(.pele-zoom)) {
+.container:has(> :global(.pele-zoom:not([hidden]))) {
     min-height: 6rem;
 }
 
