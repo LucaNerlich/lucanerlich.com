@@ -20,7 +20,8 @@ The examples below are the working set for **this site**. They use the syntax th
 here, accepts in the Mermaid 12.1 language. Copy the `markdown` block under each diagram. The
 [live editor](https://mermaid.live/) is useful for drafting, but it draws with Mermaid, not Pele, so
 spacing and layout differ. Rendering, theming, and the build checks are in
-[How this site renders Mermaid](#how-this-site-renders-mermaid).
+[How this site renders Mermaid](#how-this-site-renders-mermaid). To ship the same renderer in an
+application, see [Using Pele in your app](#using-pele-in-your-app).
 
 ## Getting Started
 
@@ -2079,6 +2080,133 @@ build.
 
 ---
 
+## Using Pele in your app
+
+[Pele](https://github.com/obsidianmd/pele) is Obsidian's open-source Mermaid renderer. It turns Mermaid
+source into SVG: small, synchronous, no runtime dependencies, and themed with CSS variables. It targets
+Mermaid 12.1 syntax with its own layout engine, so the picture will not match `mermaid.js` pixel for
+pixel -- the language is the same; the drawing is Pele's.
+
+Use it when you want diagrams in a product without shipping Mermaid's browser stack: build-time docs,
+server-rendered pages, or a client that inserts SVG and lets CSS handle light and dark. Docs and a
+playground live at [pele.run](https://pele.run/); the source is on
+[GitHub](https://github.com/obsidianmd/pele).
+
+### Install
+
+```bash
+npm install pele
+```
+
+Or load the browser build from a CDN ([API: using a CDN](https://pele.run/api#using-a-cdn)):
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/pele@1/dist/pele.global.js"></script>
+<script>
+  for (const el of document.querySelectorAll('pre.mermaid')) {
+    pele.mount(el, el.textContent);
+  }
+</script>
+```
+
+`@1` tracks the latest 1.x release. Pin an exact version when you need a fixed draw.
+
+### Render flow
+
+Two entry points cover most apps:
+
+1. **`render(source)`** -- returns `{ svg, width, height, type, ... }`. Insert the SVG yourself. Works
+   in Node and in the browser. Throws `PeleError` on bad input.
+2. **`mount(element, text)`** -- draws into a DOM node, measures fonts from CSS, treats the container
+   width as `maxWidth`, and re-lays out on resize. Prefer this for live, editable, or responsive UI.
+
+Minimal client path:
+
+```typescript
+import {render} from 'pele';
+
+const {svg} = render(`flowchart LR
+  A[Mermaid text] --> B[SVG]`);
+
+document.querySelector('#diagram').innerHTML = svg;
+```
+
+Live container:
+
+```typescript
+import {mount} from 'pele';
+
+const diagram = mount(document.querySelector('#diagram'), source);
+diagram.update('flowchart LR\n  A[Draft] --> B[Published]');
+```
+
+`mount()` does not throw on a bad diagram: the container shows the error (dimmed previous SVG, or in
+place if nothing drew yet). Read it from `diagram.error`, or pass `onError`. Always display
+`PeleError.message` with `textContent` -- the message can include diagram source.
+
+Catch failures from `render()` the same way this site's remark plugin does:
+
+```typescript
+import {PeleError, render} from 'pele';
+
+try {
+    container.innerHTML = render(source).svg;
+} catch (error) {
+    if (!(error instanceof PeleError)) {
+        throw error;
+    }
+    container.textContent = error.message;
+}
+```
+
+Useful options on `render` / `mount` (all optional; full list on the [API page](https://pele.run/api)):
+
+| Option | Role |
+|--------|------|
+| `fontFamily`, `fontSize` | Label font; defaults `sans-serif` / `16` |
+| `idPrefix` | Unique prefix for SVG ids when several diagrams share a page |
+| `maxWidth` | Available width in px; Pele may wrap labels or rearrange |
+| `autoDirection` | Below the breakpoint, some diagrams may flip to a vertical layout |
+| `linkSchemes` | Allowed link schemes; default `http`, `https`, `mailto`, `tel` |
+
+Theme with `--pele-*` CSS variables on `.pele` or a parent. Colors follow the theme toggle without a
+redraw -- see [Theming](https://pele.run/theming).
+
+### Smaller bundles
+
+The default `pele` import registers every Mermaid 12.1 diagram type. Trim the initial load when you
+only need a few:
+
+```typescript
+import {register, render} from 'pele/core';
+import flowchart from 'pele/diagrams/flowchart';
+import sequence from 'pele/diagrams/sequence';
+
+register(flowchart, sequence);
+const {svg} = render(source);
+```
+
+Or load types on first use:
+
+```typescript
+import {renderAsync} from 'pele/lazy';
+
+const {svg} = await renderAsync(source);
+```
+
+### How this site uses it
+
+This docs site is one of those apps, with the render step moved to build time. `plugins/pele-diagrams.mjs`
+calls `render()` on every `mermaid` fence, and the page ships the SVG. The browser only loads Pele's
+zoom fragment when a diagram had to shrink. Details, config, and CSS wiring are in
+[How this site renders Mermaid](#how-this-site-renders-mermaid).
+
+Treat diagram text as untrusted if it comes from users -- Pele escapes labels and filters links, but
+you still validate input and show errors as text. See [Security](https://pele.run/security) and
+[Treat diagram input as untrusted](#treat-diagram-input-as-untrusted) above.
+
+---
+
 ## How this site renders Mermaid
 
 Diagrams are drawn by [Pele](https://pele.run/), a Mermaid renderer that runs in Node. It draws during
@@ -2191,9 +2319,11 @@ site draws. Export to SVG or PNG only when the destination has no Mermaid render
 - [Mermaid documentation](https://mermaid.js.org/intro/)
 - [Mermaid syntax reference](https://mermaid.js.org/intro/syntax-reference.html)
 - [Mermaid Live Editor](https://mermaid.live/)
+- [Pele on GitHub](https://github.com/obsidianmd/pele)
 - [Pele documentation](https://pele.run/)
 - [Pele API](https://pele.run/api)
 - [Pele theming](https://pele.run/theming)
 - [Pele compatibility](https://pele.run/compatibility)
+- [Pele security](https://pele.run/security)
 - [Docusaurus diagrams](https://docusaurus.io/docs/markdown-features/diagrams)
 - [GitHub diagrams](https://docs.github.com/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)
