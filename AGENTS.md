@@ -11,7 +11,7 @@ with minimal TypeScript/JS configuration and CSS.
 
 - **Framework:** Docusaurus 3.10.x (`@docusaurus/preset-classic`)
 - **Package manager:** pnpm 10.x (see `packageManager` in `package.json`)
-- **Node version:** ^22 (ignore the outdated `.nvmrc` which says v16)
+- **Node version:** ^24 (ignore the outdated `.nvmrc` which says v16)
 - **React:** 19.x
 - **TypeScript:** ~7 (dev dependency; no tsconfig in the repo - Docusaurus
   transpiles config files with SWC, `tsc` is not part of the build)
@@ -223,7 +223,7 @@ Rust, C.
 
 ### Environment prerequisites
 
-Node.js ^22 and pnpm 10.x are required (see `engines` in `package.json`). No
+Node.js ^24 and pnpm 10.x are required (see `engines` in `package.json`). No
 other system dependencies are needed.
 
 ### Running the dev server
@@ -254,7 +254,7 @@ There is no test suite. The verification steps are:
   native bindings.
 - **Lockfile is committed**: `pnpm-lock.yaml` is tracked in git and must be
   committed alongside dependency changes.
-- **`.nvmrc` says v16**: Ignore it. The correct Node version is `^22` per
+- **`.nvmrc` says v16**: Ignore it. The correct Node version is `^24` per
   `engines` in `package.json`.
 - **No ESLint / Prettier**: There are no JS/TS linters configured. The only
   prose linter is Vale (optional, not installed by default).
