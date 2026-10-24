@@ -150,3 +150,25 @@ test('accepts a relative link that points at a static file', async () => {
 test('accepts a relative link to a static file in a subdirectory', async () => {
     await run('[A](https://lucanerlich.com/z/)\n![x](/img/x.png)\n', ['/z'], ['img/x.png']);
 });
+
+test('rejects a relative link that only matches a static directory', async () => {
+    const siteDir = fs.mkdtempSync(path.join(os.tmpdir(), 'llms-'));
+    dirs.push(siteDir);
+    fs.mkdirSync(path.join(siteDir, 'static', 'images'), {recursive: true});
+    fs.writeFileSync(
+        path.join(siteDir, 'static', 'llms.txt'),
+        '[A](https://lucanerlich.com/z/)\n[B](/images/)\n',
+    );
+    await assert.rejects(
+        plugin().postBuild({siteDir, routesPaths: ['/z']}),
+        /no matching route[\s\S]*\/images/,
+    );
+});
+
+test('accepts an absolute URL that points at a static file', async () => {
+    await run(
+        '[A](https://lucanerlich.com/z/)\n[B](https://lucanerlich.com/manifest.json)\n',
+        ['/z'],
+        ['manifest.json'],
+    );
+});
