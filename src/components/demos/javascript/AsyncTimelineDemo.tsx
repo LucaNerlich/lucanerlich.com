@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react';
-import {useEffect, useId, useState} from 'react';
+import {useEffect, useId, useRef, useState} from 'react';
 
 import DemoShell, {demoShellStyles as shell, RangeControl, SelectControl} from '../DemoShell';
 import styles from './AsyncTimelineDemo.module.css';
@@ -10,12 +10,6 @@ type Bar = {
     start: number;
     duration: number;
 };
-
-function wait(ms: number): Promise<void> {
-    return new Promise((resolve) => {
-        window.setTimeout(resolve, ms);
-    });
-}
 
 export default function AsyncTimelineDemo(): ReactNode {
     const ids = {
@@ -31,6 +25,35 @@ export default function AsyncTimelineDemo(): ReactNode {
     const [bars, setBars] = useState<Bar[]>([]);
     const [elapsed, setElapsed] = useState<number | null>(null);
     const [running, setRunning] = useState(false);
+    // Sync lock: `running` state only flips after commit, so a same-tick
+    // double click must not start a second interleaved timeline.
+    const runningRef = useRef(false);
+    const cancelledRef = useRef(false);
+    const timeoutsRef = useRef<number[]>([]);
+
+    const clearTimers = () => {
+        for (const id of timeoutsRef.current) {
+            window.clearTimeout(id);
+        }
+        timeoutsRef.current = [];
+    };
+
+    const wait = (ms: number): Promise<void> => new Promise((resolve) => {
+        const id = window.setTimeout(() => {
+            timeoutsRef.current = timeoutsRef.current.filter((open) => open !== id);
+            resolve();
+        }, ms);
+        timeoutsRef.current.push(id);
+    });
+
+    useEffect(() => {
+        cancelledRef.current = false;
+        return () => {
+            cancelledRef.current = true;
+            clearTimers();
+            runningRef.current = false;
+        };
+    }, []);
 
     // After a run the chart and elapsed time are frozen. Changing the
     // scenario must drop that stale result, otherwise the demo shows
@@ -41,9 +64,10 @@ export default function AsyncTimelineDemo(): ReactNode {
     }, [mode, delayA, delayB, delayC]);
 
     const run = async () => {
-        if (running) {
+        if (runningRef.current) {
             return;
         }
+        runningRef.current = true;
         setRunning(true);
         setBars([]);
         setElapsed(null);
@@ -56,6 +80,7 @@ export default function AsyncTimelineDemo(): ReactNode {
                 let cursor = 0;
                 const nextBars: Bar[] = [];
                 for (let index = 0; index < delays.length; index += 1) {
+                    if (cancelledRef.current) return;
                     const duration = delays[index];
                     nextBars.push({label: labels[index], start: cursor, duration});
                     setBars([...nextBars]);
@@ -77,9 +102,13 @@ export default function AsyncTimelineDemo(): ReactNode {
                 })));
                 await Promise.race(delays.map((duration) => wait(duration)));
             }
+            if (cancelledRef.current) return;
             setElapsed(Math.round(performance.now() - started));
         } finally {
-            setRunning(false);
+            if (!cancelledRef.current) {
+                runningRef.current = false;
+                setRunning(false);
+            }
         }
     };
 
