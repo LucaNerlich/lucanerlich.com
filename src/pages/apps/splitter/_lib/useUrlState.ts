@@ -96,7 +96,8 @@ type MountHydrateArgs<S> = {
  * Mount hydrate: read the first decodable payload from the stores and apply
  * it, unless the effect was cancelled or the user already acted while a slow
  * decode was pending - a late hydrate must not clobber user input. Returns
- * true when a payload decoded (whether or not it was applied).
+ * true only when a payload was applied (found-but-skipped is false so the
+ * write gate does not treat a partial in-memory session as hydrated).
  */
 export const hydrateFromStores = async <S>({
     stores,
@@ -112,7 +113,8 @@ export const hydrateFromStores = async <S>({
             const decoded = await Promise.resolve(decode(raw));
             if (isCancelled()) return false;
             if (decoded) {
-                if (!hasUserActed()) hydrate(decoded);
+                if (hasUserActed()) return false;
+                hydrate(decoded);
                 return true;
             }
         } catch {
@@ -174,7 +176,7 @@ export function useUrlState<S, A>({
     store,
     fallbackStore,
     debounceMs = 150,
-}: UseUrlStateArgs<S, A>): [S, Dispatch<A>] {
+}: UseUrlStateArgs<S, A>): [S, Dispatch<A>, boolean] {
     const [state, dispatch] = useReducer(reducer, undefined, init);
     const [ready, setReady] = useState(false);
     const storeRef = useRef<StateStore | null>(null);
@@ -182,6 +184,7 @@ export function useUrlState<S, A>({
     const hadInitialStateRef = useRef(false);
     const wroteOnceRef = useRef(false);
     const userActedRef = useRef(false);
+    const readyRef = useRef(false);
     const codecRef = useRef(codec);
     codecRef.current = codec;
 
@@ -191,10 +194,12 @@ export function useUrlState<S, A>({
         storeRef.current = store ?? queryStore();
     }
 
-    // Any dispatch coming from the UI marks the user as having taken over, so
-    // the mount hydrate skips a late decode result instead of clobbering it.
+    // Drop UI actions until mount hydrate finishes. Otherwise a click during
+    // a slow decode marks userActed, skips applying the share payload, and
+    // the write effect persists the empty/partial state over `?s=`.
     const dispatchUser = useCallback<Dispatch<A>>(
         action => {
+            if (!readyRef.current) return;
             userActedRef.current = true;
             dispatch(action);
         },
@@ -218,7 +223,10 @@ export function useUrlState<S, A>({
             } catch {
                 // A failing store or decode leaves the app usable, not un-ready.
             } finally {
-                if (!cancelled) setReady(true);
+                if (!cancelled) {
+                    readyRef.current = true;
+                    setReady(true);
+                }
             }
         })();
         return () => {
@@ -285,5 +293,5 @@ export function useUrlState<S, A>({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state, debounceMs, ready]);
 
-    return [state, dispatchUser];
+    return [state, dispatchUser, ready];
 }

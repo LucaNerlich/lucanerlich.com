@@ -16,7 +16,7 @@ import styles from './splitter.module.css';
 const SplitterApp: React.FC = () => {
     const messages = useMemo(() => createMessages(), []);
     const {t} = messages;
-    const [state, dispatch] = useUrlState<AppState, Action>({
+    const [state, dispatch, ready] = useUrlState<AppState, Action>({
         reducer: applyAction,
         init: emptyState,
         codec: {encode: encodeState, decode: decodeState},
@@ -99,7 +99,7 @@ const SplitterApp: React.FC = () => {
     };
 
     return (
-        <main className={styles.app}>
+        <main className={styles.app} aria-busy={!ready}>
             <header className={styles.header}>
                 <h1 className={styles.title}>{t('title')}</h1>
                 <p className={styles.subtitle}>{t('subtitle')}</p>
@@ -108,6 +108,7 @@ const SplitterApp: React.FC = () => {
                         type="button"
                         className={styles.secondaryButton}
                         onClick={handleCopyLink}
+                        disabled={!ready}
                     >
                         {copied ? t('copied') : t('copyLink')}
                     </button>
@@ -115,6 +116,7 @@ const SplitterApp: React.FC = () => {
                         type="button"
                         className={styles.linkButton}
                         onClick={handleReset}
+                        disabled={!ready}
                     >
                         {t('reset')}
                     </button>
