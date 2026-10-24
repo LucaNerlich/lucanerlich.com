@@ -6,6 +6,8 @@ import styles from '../splitter.module.css';
 type Props = {
     people: Person[];
     messages: Messages;
+    /** When false, mutations no-op upstream — keep controls disabled. */
+    ready: boolean;
     onAdd: (name: string) => void;
     onRemove: (id: string) => boolean;
     onRename: (id: string, name: string) => void;
@@ -14,6 +16,7 @@ type Props = {
 const PeopleManager: React.FC<Props> = ({
     people,
     messages,
+    ready,
     onAdd,
     onRemove,
     onRename,
@@ -41,6 +44,7 @@ const PeopleManager: React.FC<Props> = ({
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!ready) return;
         const trimmed = name.trim();
         if (!trimmed) return;
         const lower = trimmed.toLocaleLowerCase();
@@ -56,6 +60,7 @@ const PeopleManager: React.FC<Props> = ({
     // The remove button unmounts, so hand focus to a neighbour (or the add
     // field when the list empties) instead of dropping it to <body>.
     const removePerson = (p: Person) => {
+        if (!ready) return;
         const index = people.findIndex(person => person.id === p.id);
         const neighbour = people[index + 1] ?? people[index - 1];
         if (!onRemove(p.id)) return;
@@ -64,6 +69,7 @@ const PeopleManager: React.FC<Props> = ({
     };
 
     const startRename = (p: Person) => {
+        if (!ready) return;
         renameCancelled.current = false;
         setEditingId(p.id);
         setEditName(p.name);
@@ -73,7 +79,7 @@ const PeopleManager: React.FC<Props> = ({
     // refocus is false for the blur path: the user moved focus somewhere
     // deliberate, so only Enter/Escape hand it back to the chip.
     const commitRename = (refocus = false) => {
-        if (!editingId) return;
+        if (!ready || !editingId) return;
         // Every path that closes the editor clears the shared error; the
         // duplicate branch below re-sets it in the same event.
         setError(null);
@@ -107,6 +113,7 @@ const PeopleManager: React.FC<Props> = ({
                                 className={styles.tagInput}
                                 value={editName}
                                 autoFocus
+                                disabled={!ready}
                                 aria-label={messages.t('renamePerson').replace('{name}', () => p.name)}
                                 aria-invalid={error ? true : undefined}
                                 onChange={e => setEditName(e.target.value)}
@@ -140,6 +147,7 @@ const PeopleManager: React.FC<Props> = ({
                                     if (el) openerRefs.current.set(p.id, el);
                                 }}
                                 onClick={() => startRename(p)}
+                                disabled={!ready}
                                 title={messages.t('rename')}
                             >
                                 {p.name}
@@ -148,6 +156,7 @@ const PeopleManager: React.FC<Props> = ({
                                 type="button"
                                 className={styles.chipRemove}
                                 onClick={() => removePerson(p)}
+                                disabled={!ready}
                                 aria-label={messages.t('removePerson').replace('{name}', () => p.name)}
                                 title={messages.t('removePerson').replace('{name}', () => p.name)}
                             >
@@ -165,11 +174,12 @@ const PeopleManager: React.FC<Props> = ({
                         setName(e.target.value);
                         if (error && !editingId) setError(null);
                     }}
+                    disabled={!ready}
                     className={styles.tagInput}
                     aria-label={messages.t('personName')}
                     aria-invalid={error && !editingId ? true : undefined}
                 />
-                <button type="submit" className={styles.primaryButton}>
+                <button type="submit" className={styles.primaryButton} disabled={!ready}>
                     {messages.t('add')}
                 </button>
             </form>

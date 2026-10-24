@@ -14,6 +14,8 @@ import styles from '../splitter.module.css';
 type Props = {
     state: AppState;
     messages: Messages;
+    /** When false, mutations no-op upstream — keep controls disabled. */
+    ready: boolean;
     onCurrency: (currency: Currency) => void;
     onImport: (state: AppState) => void;
     onLoadDemo: () => void;
@@ -22,6 +24,7 @@ type Props = {
 const SessionBar: React.FC<Props> = ({
     state,
     messages,
+    ready,
     onCurrency,
     onImport,
     onLoadDemo,
@@ -30,7 +33,7 @@ const SessionBar: React.FC<Props> = ({
     const {t} = messages;
 
     const onFile = async (file: File | null) => {
-        if (!file) return;
+        if (!ready || !file) return;
         const text = await file.text();
         const next = await importJson(text);
         if (!next) {
@@ -53,6 +56,7 @@ const SessionBar: React.FC<Props> = ({
                 <select
                     className={styles.select}
                     value={state.currency}
+                    disabled={!ready}
                     onChange={e => onCurrency(e.target.value as Currency)}
                 >
                     {CURRENCIES.map(c => (
@@ -67,12 +71,14 @@ const SessionBar: React.FC<Props> = ({
                     type="button"
                     className={styles.secondaryButton}
                     onClick={onLoadDemo}
+                    disabled={!ready}
                 >
                     {t('tryExample')}
                 </button>
                 <button
                     type="button"
                     className={styles.secondaryButton}
+                    disabled={!ready}
                     onClick={() => {
                         void (async () => {
                             try {
@@ -93,6 +99,7 @@ const SessionBar: React.FC<Props> = ({
                     type="button"
                     className={styles.secondaryButton}
                     onClick={() => fileRef.current?.click()}
+                    disabled={!ready}
                 >
                     {t('importJson')}
                 </button>
@@ -102,7 +109,7 @@ const SessionBar: React.FC<Props> = ({
                     onClick={() =>
                         downloadText('splitter-expenses.csv', exportCsv(state), 'text/csv')
                     }
-                    disabled={state.expenses.length === 0}
+                    disabled={!ready || state.expenses.length === 0}
                 >
                     {t('exportCsv')}
                 </button>
@@ -121,7 +128,7 @@ const SessionBar: React.FC<Props> = ({
                         w.focus();
                         w.print();
                     }}
-                    disabled={state.expenses.length === 0}
+                    disabled={!ready || state.expenses.length === 0}
                 >
                     {t('printSummary')}
                 </button>
@@ -130,6 +137,7 @@ const SessionBar: React.FC<Props> = ({
                     type="file"
                     accept="application/json,.json"
                     hidden
+                    disabled={!ready}
                     onChange={e => {
                         void onFile(e.target.files?.[0] ?? null);
                         e.target.value = '';

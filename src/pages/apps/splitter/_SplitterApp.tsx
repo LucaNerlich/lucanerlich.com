@@ -127,6 +127,7 @@ const SplitterApp: React.FC = () => {
                 <SessionBar
                     state={state}
                     messages={messages}
+                    ready={ready}
                     onCurrency={currency => dispatch({type: 'SET_CURRENCY', currency})}
                     onImport={next => dispatch({type: 'HYDRATE', state: next})}
                     onLoadDemo={handleLoadDemo}
@@ -138,6 +139,7 @@ const SplitterApp: React.FC = () => {
                 <PeopleManager
                     people={state.people}
                     messages={messages}
+                    ready={ready}
                     onAdd={name => dispatch({type: 'ADD_PERSON', name})}
                     onRemove={handleRemovePerson}
                     onRename={(id, name) => dispatch({type: 'RENAME_PERSON', id, name})}
@@ -153,6 +155,7 @@ const SplitterApp: React.FC = () => {
                     currency={state.currency}
                     lastPaidBy={lastPaidBy}
                     messages={messages}
+                    ready={ready}
                     onAdd={expense => dispatch({type: 'ADD_EXPENSE', expense})}
                 />
             </section>
@@ -165,6 +168,7 @@ const SplitterApp: React.FC = () => {
                         people={state.people}
                         currency={state.currency}
                         messages={messages}
+                        ready={ready}
                         onRemove={id => dispatch({type: 'REMOVE_EXPENSE', id})}
                         onDuplicate={id => dispatch({type: 'DUPLICATE_EXPENSE', id})}
                         onUpdate={(id, expense) =>
@@ -178,6 +182,7 @@ const SplitterApp: React.FC = () => {
             <ResultsPanel
                 state={state}
                 messages={messages}
+                ready={ready}
                 onTogglePaid={key => dispatch({type: 'TOGGLE_TRANSFER_PAID', key})}
             />
         </main>
