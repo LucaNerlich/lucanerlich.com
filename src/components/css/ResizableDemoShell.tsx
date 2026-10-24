@@ -60,6 +60,9 @@ export default function ResizableDemoShell({
     // Width at pointerdown, so a click that never dragged is not mistaken for
     // a resize (the rendered width is clamped to the slot).
     const pointerStartWidth = useRef<number | null>(null);
+    // Armed window listener teardown; must run on unmount if the user leaves
+    // mid-drag, otherwise pointerup fires setState on a detached tree.
+    const disarmWidthSync = useRef<(() => void) | null>(null);
 
     const applyObservedWidth = (rawWidth: number) => {
         if (!Number.isFinite(rawWidth)) {
@@ -91,14 +94,19 @@ export default function ResizableDemoShell({
     // path: a second handler on the panel would clear the snapshot first and
     // re-apply the clamped width on the same release.
     const armWidthSync = () => {
+        disarmWidthSync.current?.();
         pointerStartWidth.current = panelRef.current
             ? Math.round(panelRef.current.getBoundingClientRect().width)
             : null;
         const done = () => {
             window.removeEventListener('pointerup', done);
             window.removeEventListener('pointercancel', done);
+            if (disarmWidthSync.current === done) {
+                disarmWidthSync.current = null;
+            }
             syncWidthFromPanel();
         };
+        disarmWidthSync.current = done;
         window.addEventListener('pointerup', done);
         window.addEventListener('pointercancel', done);
     };
@@ -127,7 +135,14 @@ export default function ResizableDemoShell({
         updateSlot();
         const observer = new ResizeObserver(updateSlot);
         observer.observe(column);
-        return () => observer.disconnect();
+        return () => {
+            observer.disconnect();
+            // Drop armed window listeners without syncing width into an
+            // unmounted tree (pointerStartWidth cleared so sync is a no-op).
+            pointerStartWidth.current = null;
+            disarmWidthSync.current?.();
+            disarmWidthSync.current = null;
+        };
     }, [effectiveMinWidth, effectiveMaxWidth]);
 
     const visibleWidth = Math.min(width, slotMax);
