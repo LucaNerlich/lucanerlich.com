@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.34.4] - 2026-10-24
+
+### Fixed
+- Splitter app: UI mutations wait until URL/localStorage hydrate finishes so a share link is not overwritten by a partial session
+- llms.txt guard: static exemptions require a real file (not a directory) and also cover absolute static asset URLs
+- Async timeline demo: same-tick double Run is ignored, and timers clear on unmount
+- Resizable demo shell: window pointer listeners disarm on unmount mid-drag
+- AGENTS.md Node version claims match `package.json` engines (`^24`)
+
 ## [1.34.3] - 2026-10-23
 
 ### Fixed
