@@ -12,10 +12,12 @@ import styles from '../splitter.module.css';
 type Props = {
     state: AppState;
     messages: Messages;
+    /** When false, mutations no-op upstream — keep controls disabled. */
+    ready: boolean;
     onTogglePaid: (key: string) => void;
 };
 
-const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
+const ResultsPanel: React.FC<Props> = ({state, messages, ready, onTogglePaid}) => {
     const {balances, transfers, totalCents, perPersonCents, breakdowns, paid, owed} = useMemo(
         () => summarize(state),
         [state],
@@ -116,6 +118,7 @@ const ResultsPanel: React.FC<Props> = ({state, messages, onTogglePaid}) => {
                                     <input
                                         type="checkbox"
                                         checked={paid}
+                                        disabled={!ready}
                                         onChange={() => onTogglePaid(key)}
                                         aria-label={`${t('markPaid')}: ${nameOf(tr.from)} → ${nameOf(tr.to)}`}
                                     />

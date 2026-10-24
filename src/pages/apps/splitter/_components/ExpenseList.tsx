@@ -15,6 +15,8 @@ type Props = {
     people: Person[];
     currency: Currency;
     messages: Messages;
+    /** When false, mutations no-op upstream — keep controls disabled. */
+    ready: boolean;
     onRemove: (id: string) => void;
     onDuplicate: (id: string) => void;
     onUpdate: (id: string, expense: ExpenseInput) => void;
@@ -27,6 +29,7 @@ const ExpenseList: React.FC<Props> = ({
     people,
     currency,
     messages,
+    ready,
     onRemove,
     onDuplicate,
     onUpdate,
@@ -49,6 +52,7 @@ const ExpenseList: React.FC<Props> = ({
     // Deleting removes the focused row too, so focus moves to the next row's
     // Edit button (or the previous one, or the list itself for the last row).
     const remove = (expense: Expense): void => {
+        if (!ready) return;
         const label = expense.description || messages.t('untitledExpense');
         if (!window.confirm(messages.t('removeExpenseConfirm').replace('{name}', () => label))) {
             return;
@@ -118,6 +122,7 @@ const ExpenseList: React.FC<Props> = ({
                                                 if (el) rowRefs.current.set(e.id, el);
                                                 else rowRefs.current.delete(e.id);
                                             }}
+                                            disabled={!ready}
                                             onClick={event => {
                                                 openerRef.current = event.currentTarget;
                                                 setEditingId(editingId === e.id ? null : e.id);
@@ -133,6 +138,7 @@ const ExpenseList: React.FC<Props> = ({
                                         <button
                                             type="button"
                                             className={styles.linkButton}
+                                            disabled={!ready}
                                             onClick={() => onDuplicate(e.id)}
                                             aria-label={messages
                                                 .t('duplicateExpense')
@@ -143,6 +149,7 @@ const ExpenseList: React.FC<Props> = ({
                                         <button
                                             type="button"
                                             className={styles.chipRemove}
+                                            disabled={!ready}
                                             onClick={() => remove(e)}
                                             aria-label={messages.t('removeExpense').replace('{name}', () => label)}
                                             title={messages.t('remove')}

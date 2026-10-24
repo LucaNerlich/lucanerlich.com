@@ -14,6 +14,8 @@ type Props = {
     currency: Currency;
     lastPaidBy?: string;
     messages: Messages;
+    /** When false, mutations no-op upstream — keep controls disabled. */
+    ready: boolean;
     onAdd: (expense: ExpenseInput) => void;
 };
 
@@ -22,6 +24,7 @@ const ExpenseForm: React.FC<Props> = ({
     currency,
     lastPaidBy,
     messages,
+    ready,
     onAdd,
 }) => {
     const [description, setDescription] = useState('');
@@ -59,6 +62,7 @@ const ExpenseForm: React.FC<Props> = ({
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!ready) return;
         setError(null);
         const {input, error: inputError} = buildExpenseInput(
             draft,
@@ -79,7 +83,7 @@ const ExpenseForm: React.FC<Props> = ({
         descriptionRef.current?.focus();
     };
 
-    const disabled = people.length === 0;
+    const disabled = !ready || people.length === 0;
 
     return (
         <form onSubmit={submit} className={styles.expenseForm}>
@@ -162,7 +166,7 @@ const ExpenseForm: React.FC<Props> = ({
                 >
                     {messages.t('addExpense')}
                 </button>
-                {disabled && (
+                {people.length === 0 && (
                     <span className={styles.mutedInline}>{messages.t('addPersonFirst')}</span>
                 )}
             </div>
