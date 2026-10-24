@@ -25,7 +25,9 @@ describe('mount hydrate', () => {
         });
         userActed = true; // the user clicks while the decode is still pending
         release();
-        assert.equal(await pending, true);
+        // Found-but-skipped must not report as hydrated: the write gate would
+        // otherwise persist the partial in-memory session over the share URL.
+        assert.equal(await pending, false);
         assert.equal(applied, 0);
     });
 
