@@ -62,6 +62,24 @@ function normalizePathname(pathname) {
     return pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
 }
 
+/**
+ * True when pathname names a real file under static/ (not a directory).
+ * Directories must not skip the route check: `/images/` exists on disk but
+ * is not a served asset URL the guard should green-light.
+ *
+ * @param {string} siteDir
+ * @param {string} pathname
+ * @returns {boolean}
+ */
+function isStaticFile(siteDir, pathname) {
+    const candidate = path.join(siteDir, 'static', pathname);
+    try {
+        return fs.statSync(candidate).isFile();
+    } catch {
+        return false;
+    }
+}
+
 /** @type {import('@docusaurus/types').PluginModule} */
 module.exports = function checkLlmsUrlsPlugin() {
     return {
@@ -92,7 +110,7 @@ module.exports = function checkLlmsUrlsPlugin() {
                     }
                     // Static files are copied, not routed: llms.txt may link
                     // llms-full.txt or an image without a page route.
-                    if (fs.existsSync(path.join(siteDir, 'static', pathname))) continue;
+                    if (isStaticFile(siteDir, pathname)) continue;
                     relativePaths.push(pathname);
                 }
             }
@@ -109,11 +127,16 @@ module.exports = function checkLlmsUrlsPlugin() {
                 throw new Error('static/llms.txt lists no lucanerlich.com URLs');
             }
             const routePaths = new Set(routesPaths.map(normalizePathname));
-            const missing = listedPaths.filter((listed) => !routePaths.has(normalizePathname(listed)));
+            // Absolute site URLs to static files get the same exemption as
+            // relative ones (existsSync/dir-only was wrong for both shapes).
+            const missing = listedPaths.filter((listedPath) => {
+                if (isStaticFile(siteDir, listedPath)) return false;
+                return !routePaths.has(normalizePathname(listedPath));
+            });
             if (missing.length > 0) {
                 throw new Error(
                     `static/llms.txt lists ${missing.length} URL(s) with no matching route:\n` +
-                        missing.map((listed) => `  ${listed}`).join('\n'),
+                        missing.map((listedPath) => `  ${listedPath}`).join('\n'),
                 );
             }
         },
