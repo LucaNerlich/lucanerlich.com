@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.34.5] - 2026-10-24
+
+### Fixed
+- Splitter app: mutator controls stay disabled until hydrate `ready`, so Add/Import/Demo cannot clear local UI against a no-op dispatch
+
 ## [1.34.4] - 2026-10-24
 
 ### Fixed
