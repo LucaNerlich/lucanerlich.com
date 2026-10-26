@@ -46,22 +46,22 @@ Nested rules stay next to the component they style -- easier reviews, fewer scat
 
 ## When `&` is required
 
-Use `&` when the nested selector would otherwise start with a **type selector**, or when you need to attach a
-pseudo-class / compound to the parent:
+Use `&` when you need to **attach** a pseudo-class or compound to the parent. Relaxed nesting (Baseline) allows bare
+type and class selectors as descendants -- `&` is optional there:
 
 ```css
 .nav {
-    /* Required: type selector */
-    & a {
+    /* Valid without &: nested type as a descendant */
+    a {
         color: inherit;
     }
 
-    /* Required: parent pseudo */
+    /* Required: attach pseudo to the parent */
     &:focus-within {
         outline: 2px solid var(--brand);
     }
 
-    /* OK without & for a relative class selector in modern nesting */
+    /* Also valid without &: nested class as a descendant */
     .logo {
         font-weight: 700;
     }
