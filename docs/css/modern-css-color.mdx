@@ -1,0 +1,221 @@
+---
+title: "Modern CSS Color"
+sidebar_label: "Modern Color"
+description: Perceptually uniform colour with oklch/oklab, color-mix(), relative colour syntax, light-dark(), color-scheme, and contrast-aware theming tips.
+slug: /css/modern-css-color
+tags: [css, color, theming]
+keywords:
+    - css oklch
+    - css oklab
+    - color-mix
+    - relative color syntax
+    - light-dark
+    - color-scheme
+    - display-p3
+---
+
+# Modern CSS Color
+
+Hex and `hsl()` still ship fine. Modern CSS adds **perceptually uniform** spaces (`oklch` / `oklab`), mixing and
+relative colour derivation without a preprocessor, and helpers for light/dark themes.
+
+This deep dive builds on [Colors & Typography](./beginners-guide/04-colors-and-typography.md) and the short
+`color-mix()` note in [Modern CSS Features](./beginners-guide/15-modern-css-features.md). For accessibility targets
+and content strategy, see
+[Color and contrast](../building-for-the-web/web-content/color-and-contrast.md) in Building for the Web.
+
+## Why OKLCH / OKLAB?
+
+`hsl()` is convenient but uneven: the same lightness change can look dramatic in one hue and dull in another.
+**OKLCH** (and sibling **OKLAB**) are designed so equal numeric steps feel closer to equal visual steps.
+
+```css
+:root {
+    --brand: oklch(0.62 0.18 250);
+    --brand-dark: oklch(0.45 0.16 250);
+    --brand-light: oklch(0.85 0.08 250);
+}
+```
+
+| Channel | Meaning (OKLCH) |
+|---------|-----------------|
+| `L` | Lightness (roughly 0–1, or 0%–100% depending on notation) |
+| `C` | Chroma (saturation-like; 0 is grey) |
+| `H` | Hue angle |
+
+OKLAB uses `L`, `a`, `b` instead of polar chroma/hue. Prefer **OKLCH** for design tokens you tweak by hue;
+prefer **OKLAB** when interpolating some gradients.
+
+```css
+.hero {
+    background: linear-gradient(
+        135deg,
+        oklch(0.7 0.15 230),
+        oklch(0.55 0.18 300)
+    );
+}
+```
+
+Browsers map out-of-gamut values reasonably; still check brand colours on target displays.
+
+## Wider gamuts (brief)
+
+`color(display-p3 …)` and similar profiles unlock vivid colours on capable screens. Use them as progressive
+enhancement:
+
+```css
+.accent {
+    color: oklch(0.65 0.2 40); /* sRGB-mapped fallback path via OKLCH */
+}
+
+@supports (color: color(display-p3 1 0 0)) {
+    .accent {
+        color: color(display-p3 0.95 0.45 0.1);
+    }
+}
+```
+
+Do not chase maximum chroma at the cost of contrast. Wide-gamut accents still need readable text pairs -- see the
+Building for the Web colour guide.
+
+## `color-mix()`
+
+Blend two colours in a chosen colour space:
+
+```css
+.button:hover {
+    background: color-mix(in oklch, var(--brand) 85%, black);
+}
+
+.muted {
+    color: color-mix(in oklch, var(--text) 65%, transparent);
+}
+
+.tint {
+    background: color-mix(in oklch, var(--brand) 20%, var(--surface));
+}
+```
+
+Mixing **in `oklch`** usually yields more even midpoints than `in srgb`. You can still mix in `srgb` when you want
+legacy-familiar results.
+
+## Relative colour syntax
+
+Derive a variant from an existing colour by adjusting channels:
+
+```css
+:root {
+    --brand: oklch(0.62 0.18 250);
+}
+
+.button {
+    background: var(--brand);
+    border-color: oklch(from var(--brand) calc(l - 0.1) c h);
+}
+
+.button:hover {
+    background: oklch(from var(--brand) calc(l * 0.92) c h);
+}
+```
+
+`from <color>` exposes channels (`l`, `c`, `h` in OKLCH; `r`, `g`, `b` in sRGB, and so on) that you can reuse or
+recalculate. This replaces many Sass `darken()` / `lighten()` helpers.
+
+```css
+.chip {
+    --base: #4a90d9;
+    background: rgb(from var(--base) r g b / 0.15);
+    color: var(--base);
+}
+```
+
+## `light-dark()` and `color-scheme`
+
+`light-dark()` picks the first value in light schemes and the second in dark schemes -- **when** the element
+participates in a colour scheme via `color-scheme` (or the user/agent scheme):
+
+```css
+:root {
+    color-scheme: light dark;
+    --surface: light-dark(#ffffff, #121212);
+    --text: light-dark(#1a1a1a, #f2f2f2);
+    --border: light-dark(#ddd, #333);
+}
+
+body {
+    background: var(--surface);
+    color: var(--text);
+}
+```
+
+`color-scheme: light dark;` also tells the browser to paint native controls (scrollbars, form widgets) appropriately.
+
+You can still use `[data-theme="dark"]` token overrides when the product needs an explicit toggle independent of
+OS preference -- combine both carefully so `light-dark()` and data-theme do not fight.
+
+```css
+:root {
+    color-scheme: light;
+    --surface: #fff;
+}
+
+[data-theme='dark'] {
+    color-scheme: dark;
+    --surface: light-dark(#fff, #121212); /* resolves to dark side when scheme is dark */
+}
+```
+
+For many apps, redefining tokens under `[data-theme="dark"]` remains clearer than nesting `light-dark()` everywhere.
+
+## Contrast notes
+
+Modern colour functions do not guarantee WCAG contrast. After you mix or derive:
+
+- Check text/background pairs against your target (AA/AAA).
+- Prefer adjusting **lightness** in OKLCH over blindly mixing with white/black in sRGB.
+- Keep a semantic token layer (`--text`, `--danger`, `--focus-ring`) instead of one-off hex values in components.
+
+See [Color and contrast](../building-for-the-web/web-content/color-and-contrast.md) for content and a11y guidance.
+
+## Practical token starter
+
+```css
+:root {
+    color-scheme: light dark;
+
+    --brand: oklch(0.62 0.17 250);
+    --brand-hover: oklch(from var(--brand) calc(l - 0.08) c h);
+
+    --surface: light-dark(oklch(0.99 0.01 250), oklch(0.22 0.02 250));
+    --text: light-dark(oklch(0.25 0.02 250), oklch(0.93 0.01 250));
+    --muted: color-mix(in oklch, var(--text) 65%, transparent);
+    --border: color-mix(in oklch, var(--text) 18%, transparent);
+}
+```
+
+Pair with [typed custom properties](./typed-custom-properties.mdx) when you animate colour tokens or want
+`@property` syntax checks.
+
+## Gotchas
+
+1. **Older browsers** ignore unknown colour functions -- provide a simple hex/`hsl` fallback first when needed.
+2. **Mixing spaces differ.** `in srgb` ≠ `in oklch`; pick deliberately.
+3. **`light-dark()` needs a scheme.** Without `color-scheme` (or an ancestor scheme), results may not match your
+   mental model.
+4. **Chroma clips.** High chroma in OKLCH can fall outside sRGB; browsers map it, but soft proofs still help.
+5. **Opacity vs mix.** Prefer `color-mix(…, transparent)` or relative alpha over stacking `opacity` on text
+   containers when you only want transparent colour.
+
+## Browser support
+
+`color-mix()`, OKLCH/OKLAB, relative colours, `light-dark()`, and `color-scheme` are widely available in current
+evergreen browsers. Confirm edge cases on MDN / Can I use for your support policy.
+
+## Related reading
+
+- [Colors & Typography](./beginners-guide/04-colors-and-typography.md) -- hex, rgb, hsl basics
+- [CSS Custom Properties](./beginners-guide/13-css-custom-properties.md) -- token theming
+- [Typed Custom Properties](./typed-custom-properties.mdx) -- `@property` for animated / typed colours
+- [Color and contrast](../building-for-the-web/web-content/color-and-contrast.md) -- a11y
+- Inspiration: [modern-css.com OKLCH](https://modern-css.com/perceptually-uniform-colors-with-oklch/),
+  [light-dark](https://modern-css.com/dark-mode-colors-without-duplicating-values/)

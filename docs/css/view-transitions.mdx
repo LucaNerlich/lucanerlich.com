@@ -1,0 +1,179 @@
+---
+title: "View Transitions API"
+sidebar_label: "View Transitions"
+description: Animate between UI states with the View Transitions API -- same-document transitions, view-transition names, pseudo-elements, reduced motion, and a brief look at cross-document MPA support.
+slug: /css/view-transitions
+tags: [css, animation, view-transitions]
+keywords:
+    - css view transitions
+    - view-transition-name
+    - document startViewTransition
+    - ::view-transition
+    - page transitions css
+---
+
+# View Transitions API
+
+View transitions morph the old UI into the new one when the DOM updates -- list to detail, theme swap, filtered
+gallery -- without hand-rolling FLIP math for every case.
+
+This page expands the one-line mention in
+[Modern CSS Features](./beginners-guide/15-modern-css-features.md). Focus is **same-document** transitions (the
+common SPA / progressive-enhancement path). Cross-document (MPA) support is noted as a watch item.
+
+## Same-document flow
+
+1. Call `document.startViewTransition(() => { /* update the DOM */ })`.
+2. The browser captures old and new states, builds a transition tree of pseudo-elements, and runs animations.
+3. You customise duration, easing, and which elements morph via CSS.
+
+```js
+const update = () => {
+    main.dataset.view = 'detail';
+    // …swap content, classes, etc.
+};
+
+if (document.startViewTransition) {
+    document.startViewTransition(update);
+} else {
+    update();
+}
+```
+
+Always keep a non-animated path. The API is progressive enhancement around a plain DOM update.
+
+## Naming elements that should morph
+
+By default the whole page cross-fades as one snapshot. Give persistent pieces a shared
+`view-transition-name` so the browser can animate them independently:
+
+```css
+.card-thumb {
+    view-transition-name: hero;
+}
+
+.detail-hero {
+    view-transition-name: hero;
+}
+```
+
+Names must be unique in the visible tree during a transition (like `id`). Use `none` to opt out.
+
+```css
+.skip-transition {
+    view-transition-name: none;
+}
+```
+
+## Pseudo-elements
+
+The browser builds a tree rooted at `::view-transition`. Important pieces:
+
+| Pseudo-element | Role |
+|----------------|------|
+| `::view-transition` | Root overlay for the transition |
+| `::view-transition-group(name)` | Group for one named transition |
+| `::view-transition-image-pair(name)` | Holds old and new snapshots |
+| `::view-transition-old(name)` | Snapshot of the old state |
+| `::view-transition-new(name)` | Snapshot of the new state |
+
+```css
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 280ms;
+    animation-timing-function: ease;
+}
+
+::view-transition-group(hero) {
+    animation-duration: 360ms;
+}
+```
+
+You can replace the default fade/morph with custom `@keyframes` on these pseudos. Keep motion short and purposeful.
+
+## Root vs named groups
+
+- **`root`** covers the document (or the transitioning root) when you have not named everything.
+- **Named groups** (`hero`, `title`, …) let list thumbnails expand into detail media while the rest of the page
+  fades more quietly.
+
+```css
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 200ms;
+}
+
+::view-transition-group(hero) {
+    animation-duration: 400ms;
+}
+```
+
+## Reduced motion
+
+Respect `prefers-reduced-motion`. Options:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
+}
+```
+
+Or skip calling `startViewTransition` when the user prefers reduced motion:
+
+```js
+const motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (motionOk && document.startViewTransition) {
+    document.startViewTransition(update);
+} else {
+    update();
+}
+```
+
+## When to use it
+
+**Good fits**
+
+- Soft navigations inside a page (tabs, multi-step flows, list → detail)
+- Theme toggles that should feel continuous
+- Filtering / sorting where items rearrange
+
+**Weaker fits**
+
+- Tiny hover micro-interactions (use transitions)
+- Scroll-linked scrubbing (use [scroll-driven animations](./scroll-driven-animations.mdx))
+- Cases where you need frame-by-frame control of every pixel (custom WAAPI / canvas)
+
+## Cross-document (MPA) transitions -- watch
+
+Browsers are adding **cross-document** view transitions for multi-page apps (opt-in via meta / CSS, plus matching
+`view-transition-name`s across pages). Treat MPA transitions as an enhancement to verify against current MDN and
+Baseline status for your audience. Same-document `startViewTransition` remains the reliable teaching path today.
+
+## Gotchas
+
+1. **Unique names.** Two visible elements with the same `view-transition-name` break or confuse the transition.
+2. **Capture cost.** Huge trees or heavy effects during capture can jank; keep snapshots simple.
+3. **Async updates.** Prefer completing DOM work inside the `startViewTransition` callback (or its update promise
+   pattern) so old/new captures match what you intend.
+4. **Focus and a11y.** Still manage focus after the update; the animation does not replace good navigation hygiene.
+5. **Stacking / overflow.** Named elements with complex overflow or transforms may snapshot differently than you
+   expect -- test in DevTools.
+
+## Browser support
+
+Same-document View Transitions are widely available in Chromium and have been expanding elsewhere. Gate on
+`document.startViewTransition` and check [Can I use](https://caniuse.com/view-transitions) / MDN before requiring
+them.
+
+## Related reading
+
+- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) -- classic CSS motion
+- [Scroll-Driven Animations](./scroll-driven-animations.mdx) -- scroll as timeline, not DOM swaps
+- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) -- survey hub
+- [MDN: View Transition API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API)
+- Inspiration: [modern-css.com page transitions](https://modern-css.com/page-transitions-without-a-framework/)

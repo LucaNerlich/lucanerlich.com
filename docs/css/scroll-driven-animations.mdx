@@ -1,0 +1,262 @@
+---
+title: "Scroll-Driven Animations"
+sidebar_label: "Scroll-Driven Animations"
+description: Drive CSS animations from scroll progress with animation-timeline, scroll(), and view() -- ranges, progressive enhancement, and when IntersectionObserver still wins.
+slug: /css/scroll-driven-animations
+tags: [css, animation, scroll]
+keywords:
+    - css scroll-driven animations
+    - animation-timeline
+    - scroll() timeline
+    - view() timeline
+    - animation-range
+    - scroll linked animation
+---
+
+# Scroll-Driven Animations
+
+Time-based `@keyframes` run on the clock. **Scroll-driven animations** run on scroll progress instead: scrubbing a
+page or sliding an element through the viewport advances the same keyframes.
+
+This guide goes deeper than the brief mention in
+[Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx). You will learn `animation-timeline`
+with `scroll()` and `view()`, how ranges work, and how to fall back when support is missing.
+
+## The problem they solve
+
+Classic "animate on scroll" patterns wire `IntersectionObserver` (or a library) to toggle a class when an element
+enters the viewport. That works, but it means:
+
+- JavaScript for something that is often pure presentation
+- Timing that is either on/off, not smoothly tied to scroll distance
+- Extra work to keep progress in sync while the user scrolls up and down
+
+Scroll-driven animations keep the motion in CSS. Scroll position *is* the timeline.
+
+## Core API
+
+### Link an animation to a timeline
+
+Use the usual `@keyframes` and `animation-name`, then set `animation-timeline` instead of relying on time alone:
+
+```css
+@keyframes reveal {
+    from {
+        opacity: 0;
+        transform: translateY(2rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+}
+```
+
+`animation-duration` still appears in the shorthand (often `auto` or a placeholder). Progress comes from the
+**timeline**, not from wall-clock time. Prefer `animation-timing-function: linear` so keyframe percentages map
+directly to scroll progress.
+
+### `scroll()` -- scroll progress of a scroller
+
+`scroll()` creates an anonymous **scroll progress timeline** for a scroll container:
+
+```css
+.progress-bar {
+    transform-origin: left;
+    animation: grow-x linear;
+    animation-timeline: scroll(root block);
+}
+
+@keyframes grow-x {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+```
+
+| Argument | Meaning |
+|----------|---------|
+| `nearest` (default) | Nearest ancestor scroll container |
+| `root` | Document (viewport) scroller |
+| `self` | The element itself, if it scrolls |
+| `block` / `inline` / `x` / `y` | Axis that drives progress (default `block`) |
+
+Named timelines are useful when several elements share one scroller:
+
+```css
+.scroller {
+    scroll-timeline-name: --page;
+    scroll-timeline-axis: block;
+}
+
+.progress {
+    animation-timeline: --page;
+}
+```
+
+### `view()` -- progress as an element crosses the scrollport
+
+`view()` creates a **view progress timeline** based on the subject element's visibility inside its nearest scroller:
+
+```css
+.feature {
+    animation: fade-slide linear both;
+    animation-timeline: view(block);
+}
+```
+
+Optional insets shrink or expand when the element counts as "in view":
+
+```css
+animation-timeline: view(block 10% 20%);
+```
+
+By default, progress runs from when the element first appears at one edge of the scrollport until it leaves the
+opposite edge. Insets let you start later or finish earlier.
+
+### `animation-range`
+
+`animation-range` limits which portion of the timeline maps to your keyframes:
+
+```css
+.card {
+    animation: reveal linear both;
+    animation-timeline: view();
+    /* Start when the element enters; finish once it covers 40% of the view */
+    animation-range: entry 0% cover 40%;
+}
+```
+
+Common range names:
+
+| Name | Rough meaning |
+|------|----------------|
+| `cover` | From first visible until fully past the other edge |
+| `contain` | While the element is fully inside the scrollport |
+| `entry` / `exit` | Crossing in / crossing out |
+| `entry-crossing` / `exit-crossing` | Crossing the start / end edge |
+
+Percentages after a name fine-tune the start and end of that phase. Check
+[MDN: `animation-range`](https://developer.mozilla.org/en-US/docs/Web/CSS/animation-range) for the full grammar --
+browser implementations still catch up on every named range.
+
+## Patterns that work well
+
+### Reading progress indicator
+
+Drive a thin top bar from root scroll:
+
+```css
+.reading-progress {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    block-size: 3px;
+    background: var(--color-primary);
+    transform-origin: inline-start;
+    animation: grow-inline linear;
+    animation-timeline: scroll(root);
+}
+
+@keyframes grow-inline {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+```
+
+### Reveal cards as they enter
+
+```css
+@media (prefers-reduced-motion: no-preference) {
+    .card {
+        animation: reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 100%;
+    }
+}
+
+@keyframes reveal {
+    from {
+        opacity: 0;
+        transform: translateY(1.5rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+```
+
+### Parallax-ish layers (keep it subtle)
+
+Tie background position or translate to scroll, but keep motion small and always respect reduced motion. Large
+parallax is a common accessibility failure.
+
+## Progressive enhancement vs IntersectionObserver
+
+| Approach | Best for | Weakness |
+|----------|----------|----------|
+| **Scroll-driven CSS** | Scrubbing, progress bars, continuous reveal tied to scroll distance | Support still catching up; harder to share logic with non-CSS systems |
+| **IntersectionObserver** | One-shot enter/exit, analytics, lazy loading, complex branching | Not a smooth scrub timeline unless you write more JS |
+| **Libraries** | Cross-browser polish, timeline tooling | Bundle cost; often unnecessary once native timelines land |
+
+Practical rule:
+
+1. Ship a **static or lightly transitioned** default that works everywhere.
+2. Layer scroll-driven animations behind `@supports` or progressive enhancement when the motion is decorative.
+3. Keep **IntersectionObserver** for behaviour (load data, pause video, fire analytics) -- not only for CSS class
+   toggles.
+
+```css
+.card {
+    /* Fallback: visible without animation */
+    opacity: 1;
+}
+
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .card {
+            animation: reveal linear both;
+            animation-timeline: view();
+            animation-range: entry 0% cover 30%;
+        }
+    }
+}
+```
+
+## Accessibility
+
+- Wrap decorative scroll motion in `prefers-reduced-motion: no-preference` (or disable under `reduce`).
+- Do not encode **required** information only in a scroll animation.
+- Prefer short ranges and modest transforms; long scrubbing parallax is often uncomfortable.
+
+## Gotchas
+
+1. **Inactive timelines.** If the chosen axis has no overflow / no scrollbar, progress stays at zero.
+2. **`view()` subject.** The animated element is usually the subject whose visibility drives the timeline. Named
+   `view-timeline` on an ancestor is for sharing that progress with other elements.
+3. **Duration vs timeline.** Do not expect wall-clock `animation-duration` to drive progress when a scroll timeline
+   is attached.
+4. **Fill mode.** `animation-fill-mode: both` (or `forwards` / `backwards` as needed) keeps the start and end
+   keyframes from flashing incorrectly at the edges of the range.
+5. **Support.** Treat as progressive enhancement until your audience's browsers match your requirements -- verify on
+   [Can I use](https://caniuse.com/css-scroll-driven-animations) and MDN.
+
+## Browser support
+
+Scroll-driven animations are available in Chromium for some time and have been landing in Safari and Firefox as
+Baseline coverage improves. Always check current tables before relying on them without a fallback.
+
+## Related reading
+
+- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) -- time-based transitions and
+  keyframes
+- [View Transitions API](./view-transitions.mdx) -- animating document or UI state changes, not scroll progress
+- [Scroll Snap & Carousels](./scroll-snap-and-carousels.mdx) -- snapping and carousel patterns that pair with scroll
+- [MDN: Scroll-driven animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations)
+- Inspiration: [modern-css.com scroll-linked animations](https://modern-css.com/scroll-linked-animations-without-a-library/)

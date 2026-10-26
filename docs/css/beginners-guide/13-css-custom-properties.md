@@ -332,7 +332,15 @@ h1 {
 - Custom properties cannot be used in **media query conditions**: `@media (min-width: var(--bp))` does not work
 - They cannot define **property names**: `var(--my-prop): red` is invalid
 - They are inherited by default - child elements see parent values unless overridden
-- No built-in type checking - any value is accepted
+- No built-in type checking - any value is accepted (unless you register them with `@property`)
+
+### Typed properties and modern colour helpers
+
+When you need to **animate** a custom property, enforce a value type, or set a guaranteed initial value, register it
+with `@property` -- see [Typed Custom Properties](../typed-custom-properties.mdx).
+
+For theme colours without duplicating light/dark token blocks, also look at `light-dark()` and OKLCH-based tokens in
+[Modern CSS Color](../modern-css-color.mdx).
 
 ## What you learned
 

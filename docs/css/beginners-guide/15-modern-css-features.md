@@ -20,7 +20,9 @@ now built into the language. This chapter covers the most impactful additions.
 
 ## CSS nesting
 
-You can now nest selectors inside other selectors, reducing repetition and improving readability:
+You can now nest selectors inside other selectors, reducing repetition and improving readability. For production
+rules, Sass differences, and specificity guidance, see the deep dive
+[CSS Nesting](../css-nesting.mdx).
 
 ```css
 .card {
@@ -213,6 +215,8 @@ Shorthand properties:
 > **Tip:** Start using logical properties in new code. They make your CSS automatically work with different text
 > directions and are the direction CSS is heading.
 
+> **Deep dive:** [Logical Properties](../logical-properties.mdx) covers `inset`, shorthands, and RTL patterns.
+
 ## accent-color
 
 Style native form controls (checkboxes, radio buttons, range sliders, progress bars) with a single property:
@@ -256,6 +260,9 @@ This mixes 80% of the primary colour with 20% black - creating a darker hover sh
 
 Mix with `transparent` to create semi-transparent versions of any colour.
 
+> **Deep dive:** [Modern CSS Color](../modern-css-color.mdx) covers `oklch`, relative colours, `light-dark()`, and
+> mixing in perceptually uniform spaces.
+
 ## Subgrid
 
 When you have nested grids, `subgrid` lets a child grid inherit the track definitions of its parent:
@@ -279,18 +286,20 @@ the child grid inherits the parent's row tracks, and content aligns perfectly.
 
 ## Other modern features
 
-| Feature              | What it does                                                      |
-|----------------------|-------------------------------------------------------------------|
-| `text-wrap: balance` | Balances text across lines for headings (avoids orphans)          |
-| `text-wrap: pretty`  | Optimises line breaking for paragraphs                            |
-| `@scope`             | Scopes styles to a specific DOM subtree                           |
-| `view-transition`    | Animates between page states (page transitions)                   |
-| `@starting-style`    | Defines the starting style for entry animations                   |
-| `popover`            | Native popover behaviour with CSS styling                         |
-| `anchor positioning` | Position elements relative to other elements without JS           |
+| Feature | What it does | Deep dive |
+|---------|--------------|-----------|
+| `text-wrap: balance` / `pretty` | Better line breaking for headings and paragraphs | -- |
+| `@layer` / `@scope` | Explicit cascade order and subtree scoping | [Cascade Layers & Scope](../cascade-layers-and-scope.mdx) |
+| View Transitions | Animate between DOM or page states | [View Transitions API](../view-transitions.mdx) |
+| `@starting-style` / discrete transitions | Entry animations for `display` / popovers | [Transitions & Animations](./11-transitions-and-animations.mdx) |
+| Popover + anchor positioning | Native overlays positioned against triggers | [Anchor Positioning & Popover](../anchor-positioning-and-popover.mdx) |
+| `<dialog>` | Native modal / non-modal dialogs | [Native Overlays & Dialogs](../native-overlays-and-dialogs.mdx) |
+| Scroll-driven animations | Drive keyframes from scroll / view progress | [Scroll-Driven Animations](../scroll-driven-animations.mdx) |
+| `@property` | Typed, animatable custom properties | [Typed Custom Properties](../typed-custom-properties.mdx) |
+| Scroll snap | CSS carousels and snap scrolling | [Scroll Snap & Carousels](../scroll-snap-and-carousels.mdx) |
+| `content-visibility` | Skip rendering off-screen subtrees | [content-visibility & perf](../content-visibility-and-perf.mdx) |
 
-These features are at various stages of browser support. Check
-[caniuse.com](https://caniuse.com) before using them in production.
+Check [caniuse.com](https://caniuse.com) or MDN before relying on a feature without a fallback.
 
 ## Browser support strategy
 

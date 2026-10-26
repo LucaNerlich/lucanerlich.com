@@ -1,0 +1,196 @@
+---
+title: "Native Overlays & Dialogs"
+sidebar_label: "Overlays & Dialogs"
+description: Build modals and light-dismiss overlays with the HTML dialog element, invoker commands, and CSS -- without a JavaScript modal library.
+slug: /css/native-overlays-and-dialogs
+tags: [css, html, dialog, overlay]
+keywords:
+    - html dialog
+    - dialog showModal
+    - popover vs dialog
+    - commandfor invoker
+    - light dismiss dialog
+---
+
+# Native Overlays & Dialogs
+
+Custom modal libraries reimplement focus traps, Escape handling, backdrop clicks, and `aria-modal`. The platform now
+covers much of that with **`<dialog>`**, invoker attributes, and CSS for open/closed styling.
+
+For tooltips and anchored menus, prefer
+[Anchor Positioning & Popover](./anchor-positioning-and-popover.mdx). This page focuses on **dialogs** and command
+invokers.
+
+## `<dialog>` basics
+
+```html
+<dialog id="confirm">
+    <form method="dialog">
+        <p>Discard unsaved changes?</p>
+        <button value="cancel">Keep editing</button>
+        <button value="confirm">Discard</button>
+    </form>
+</dialog>
+
+<button id="open-confirm">Discard…</button>
+```
+
+```js
+const dialog = document.querySelector('#confirm');
+document.querySelector('#open-confirm').addEventListener('click', () => {
+    dialog.showModal();
+});
+
+dialog.addEventListener('close', () => {
+    console.log(dialog.returnValue); // "confirm" or "cancel"
+});
+```
+
+| Method / behaviour | Role |
+|--------------------|------|
+| `showModal()` | Modal dialog + backdrop; focus moves into the dialog |
+| `show()` | Non-modal dialog (no backdrop; less common) |
+| `close()` | Closes; optional return value |
+| `method="dialog"` on `<form>` | Submitting a button closes the dialog and sets `returnValue` |
+
+Style the backdrop with `::backdrop`:
+
+```css
+dialog {
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    max-width: min(28rem, 100% - 2rem);
+    background: var(--surface);
+    color: var(--text);
+}
+
+dialog::backdrop {
+    background: rgb(0 0 0 / 0.45);
+}
+```
+
+## Open state and entry motion
+
+Browsers expose open dialogs via the `open` attribute / `:open` where supported. Pair with
+`@starting-style` and `transition-behavior: allow-discrete` for entry animations (see
+[Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx)):
+
+```css
+dialog {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition:
+        opacity 200ms ease,
+        transform 200ms ease,
+        overlay 200ms allow-discrete,
+        display 200ms allow-discrete;
+}
+
+dialog:open {
+    opacity: 1;
+    transform: none;
+}
+
+@starting-style {
+    dialog:open {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    dialog {
+        transition: none;
+    }
+}
+```
+
+Support for discrete transitions on `display` / `overlay` varies -- keep a usable unanimated dialog as the baseline.
+
+## Light dismiss
+
+Modal dialogs traditionally close via explicit buttons or Escape. Some browsers are adding **light dismiss**
+behaviours for dialogs (click outside) comparable to popovers -- verify current MDN notes for `closedby` /
+light-dismiss attributes before relying on them. Portable pattern today:
+
+```js
+dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) {
+        dialog.close('cancel');
+    }
+});
+```
+
+Put interactive content in an inner wrapper so clicks on the panel do not hit the `<dialog>` element itself:
+
+```html
+<dialog id="confirm">
+    <div class="dialog-panel">…</div>
+</dialog>
+```
+
+```css
+dialog {
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.dialog-panel {
+    padding: 1.25rem;
+    background: var(--surface);
+    border-radius: 0.75rem;
+}
+```
+
+## Invokers / `commandfor` (progressive)
+
+HTML is gaining **invoker commands** so buttons can open dialogs declaratively (for example `commandfor` /
+`command="show-modal"` -- names have evolved in proposals and early shipping). Treat declarative invokers as
+progressive enhancement:
+
+```html
+<button commandfor="confirm" command="show-modal">Discard…</button>
+<dialog id="confirm">…</dialog>
+```
+
+If the attributes are missing in a browser, keep a few lines of `showModal()` as in the first example. Always check
+[MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#command) for the current attribute names and
+support.
+
+## Dialog vs popover
+
+| Need | Prefer |
+|------|--------|
+| Modal flow, form confirm, focus trap, backdrop | `<dialog showModal()>` |
+| Non-modal menu, tooltip, teaching bubble | `popover` (+ [anchors](./anchor-positioning-and-popover.mdx)) |
+| Navigate away / route change | App-level routing, not a forever-open dialog |
+
+You can combine patterns (a dialog that contains anchored popovers) but keep one clear primary modality for the user.
+
+## Accessibility checklist
+
+- Prefer `showModal()` for true modals so focus is trapped appropriately.
+- Give the dialog an accessible name (`aria-labelledby` pointing at a heading, or `aria-label`).
+- Restore focus to the trigger on close when you move focus manually.
+- Do not hide essential content only behind hover.
+- Ensure backdrop contrast does not make the page look broken for zoom users -- content in the dialog must scroll if
+  needed (`max-height` + `overflow: auto` on the panel).
+
+## Gotchas
+
+1. **Centring.** User-agent styles centre modal dialogs; override carefully with logical insets if you customise
+   layout.
+2. **Nested dialogs.** Avoid stacking many modals; redesign the flow.
+3. **`display: none` fights.** Let the dialog API manage open/closed; animate with the patterns above instead of
+   hand-rolling a second visibility system.
+4. **Forms.** `method="dialog"` buttons close without a network submit -- use regular forms when you need HTTP POST.
+
+## Related reading
+
+- [Anchor Positioning & Popover](./anchor-positioning-and-popover.mdx) -- menus and tooltips
+- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) -- `@starting-style`, discrete
+  transitions
+- [MDN: `<dialog>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog)
+- Inspiration: [modern-css.com modal dialogs](https://modern-css.com/modal-dialogs-without-a-javascript-library/)

@@ -211,7 +211,23 @@ export const sidebarOrder: Record<string, string[]> = {
     // ------------------------------------------------------------------
     'css': [
         'beginners-guide',
+        // Responsive / layout deep dives
         'container-queries',
+        'logical-properties',
+        // Motion
+        'scroll-driven-animations',
+        'view-transitions',
+        'scroll-snap-and-carousels',
+        // Overlay / interaction primitives
+        'anchor-positioning-and-popover',
+        'native-overlays-and-dialogs',
+        // Color & tokens
+        'modern-css-color',
+        'typed-custom-properties',
+        // Architecture & performance
+        'cascade-layers-and-scope',
+        'css-nesting',
+        'content-visibility-and-perf',
     ],
 
     // ------------------------------------------------------------------
