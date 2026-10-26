@@ -158,6 +158,13 @@ Alpha transparency works the same way:
 > **Tip:** Most design tools (Figma, Sketch, Adobe XD) export hex values by default. Use hex for one-off colours and
 > HSL when building a colour system with consistent hues.
 
+### Next: modern colour
+
+When you outgrow hex/HSL, modern CSS offers **OKLCH** (perceptually uniform lightness), **`color-mix()`**,
+**relative colour syntax**, and **`light-dark()`** for theming -- without a preprocessor. Continue in
+[Modern CSS Color](../modern-css-color.mdx). For accessibility contrast targets, see
+[Color and contrast](../../building-for-the-web/web-content/color-and-contrast.md).
+
 ## The opacity property
 
 The `opacity` property makes an **entire element** transparent, including all its children:

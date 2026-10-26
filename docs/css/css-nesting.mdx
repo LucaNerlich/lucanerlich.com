@@ -1,0 +1,183 @@
+---
+title: "CSS Nesting"
+sidebar_label: "CSS Nesting"
+description: Production rules for native CSS nesting -- & usage, specificity, nesting media queries, and how native nesting differs from Sass.
+slug: /css/css-nesting
+tags: [css, nesting, architecture]
+keywords:
+    - css nesting
+    - 'css nesting &'
+    - css nest media queries
+    - sass vs css nesting
+---
+
+# CSS Nesting
+
+Native CSS nesting groups related rules without a preprocessor. The survey in
+[Modern CSS Features](./beginners-guide/15-modern-css-features.md) shows the basics; this page covers production
+rules, specificity, and Sass differences.
+
+## Basics
+
+```css
+.card {
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+
+    & h2 {
+        margin-block: 0 0.5rem;
+    }
+
+    & p {
+        color: var(--muted);
+    }
+
+    &:hover {
+        border-color: var(--brand);
+    }
+
+    .badge {
+        font-size: 0.75rem;
+    }
+}
+```
+
+Nested rules stay next to the component they style -- easier reviews, fewer scattered selectors.
+
+## When `&` is required
+
+Use `&` when you need to **attach** a pseudo-class or compound to the parent. Relaxed nesting (Baseline) allows bare
+type and class selectors as descendants -- `&` is optional there:
+
+```css
+.nav {
+    /* Valid without &: nested type as a descendant */
+    a {
+        color: inherit;
+    }
+
+    /* Required: attach pseudo to the parent */
+    &:focus-within {
+        outline: 2px solid var(--brand);
+    }
+
+    /* Also valid without &: nested class as a descendant */
+    .logo {
+        font-weight: 700;
+    }
+}
+```
+
+A bare `:hover` without `&` nests as a **descendant** pseudo (`parent *:hover` style matching), which is almost never
+what you want. Prefer `&:hover`.
+
+## No Sass-style concatenation
+
+Sass could append suffixes (`&__title`, `&--active`). **Native CSS does not concatenate** identifiers that way.
+Write the full selector:
+
+```css
+/* Sass mental model -- NOT how native CSS works for BEM suffixes */
+/* &__title { } */
+
+.card {
+    & .card__title {
+        font-size: 1.25rem;
+    }
+
+    &.card--featured {
+        border-color: var(--brand);
+    }
+}
+```
+
+Or keep flat BEM selectors outside nesting if that reads clearer for your team.
+
+## Specificity
+
+Nesting is mostly syntactic sugar for longer selectors. Specificity is calculated from the **resulting** selector,
+not reduced because you nested:
+
+```css
+.card {
+    & .title { } /* like .card .title -- two classes */
+}
+```
+
+Deep nesting inflates specificity and readability. Cap at **two or three** levels. Prefer
+[cascade layers](./cascade-layers-and-scope.mdx) for override control instead of nesting wars.
+
+## Nesting at-rules
+
+Media queries (and other nested at-rules) can live inside a rule:
+
+```css
+.sidebar {
+    display: none;
+
+    @media (min-width: 64rem) {
+        display: block;
+        inline-size: 16rem;
+    }
+}
+```
+
+Container queries work the same way next to the component:
+
+```css
+.widget {
+    padding: 1rem;
+
+    @container (min-width: 24rem) {
+        display: grid;
+        grid-template-columns: 8rem 1fr;
+    }
+}
+```
+
+See [Container Queries](./container-queries.mdx) for containment setup.
+
+## Nesting + `@scope` / `@layer`
+
+```css
+@layer components {
+    @scope (.card) {
+        :scope {
+            padding: 1rem;
+
+            & h2 {
+                margin: 0;
+            }
+        }
+    }
+}
+```
+
+Keep the architecture boring: layers for priority, scope for reach, nesting for locality.
+
+## Native nesting vs Sass
+
+| Topic | Sass | Native CSS |
+|-------|------|------------|
+| Parent pseudo | `&:hover` | `&:hover` (same idea) |
+| BEM suffix concat | `&__title` | Not supported -- write full class |
+| Partial selectors | Very flexible | Stick to valid CSS after substitution |
+| Variables | `$vars` | `var(--tokens)` / `@property` |
+| Mixins / functions | First-class | Not the same -- watch CSS mixins proposals separately |
+| Build step | Required | Optional |
+
+You can keep Sass for mixins while emitting nested CSS, or drop the preprocessor for many codebases once tokens and
+nesting cover the pain points.
+
+## Progressive enhancement
+
+Unsupported browsers **drop** entire nested rules. If you must support very old engines, either transpile nesting or
+keep critical selectors flat. For evergreen-only docs sites and apps, native nesting is production-ready.
+
+## Related reading
+
+- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) -- nesting survey
+- [Cascade Layers & Scope](./cascade-layers-and-scope.mdx) -- `@layer` and `@scope`
+- [Architecture & Best Practices](./beginners-guide/16-architecture-and-best-practices.md) -- BEM
+- [MDN: CSS nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting)
+- Inspiration: [modern-css.com nesting](https://modern-css.com/nesting-selectors-without-sass-or-less/)

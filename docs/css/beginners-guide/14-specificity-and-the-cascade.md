@@ -243,8 +243,29 @@ components layer.
 This solves the specificity escalation problem: you no longer need to match or exceed the specificity of existing rules.
 You just put your override in a higher layer.
 
-> **Note:** Cascade layers are a more advanced topic. They are most useful in large projects and design systems. For
-> small projects, understanding specificity and source order is sufficient.
+Unlayered styles sit above layered ones. Once you adopt layers, put resets, base, components, and utilities *all*
+inside layers so a stray unlayered rule does not silently win:
+
+```css
+@layer reset, base, components, utilities;
+
+@layer utilities {
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+}
+```
+
+> **Deep dive:** [Cascade Layers & Scope](../cascade-layers-and-scope.mdx) covers layer maps, nested layers, and
+> `@scope` for subtree encapsulation (including how scope compares to BEM).
+
+> **Note:** Cascade layers are most useful in large projects and design systems. For small projects, understanding
+> specificity and source order is still enough -- but layers are worth learning early.
 
 ## Debugging specificity conflicts
 

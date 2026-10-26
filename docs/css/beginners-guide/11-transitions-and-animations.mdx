@@ -438,7 +438,39 @@ system.
 ```
 
 This is the CSS half of a scroll-reveal pattern. In practice, the `.visible` class is usually added by JavaScript
-(for example with `IntersectionObserver`) or by newer scroll-driven animation APIs.
+(for example with `IntersectionObserver`). For scrubbing tied directly to scroll progress, prefer
+[Scroll-Driven Animations](../scroll-driven-animations.mdx). For morphing between DOM states, see
+[View Transitions](../view-transitions.mdx).
+
+### Entry animations with `@starting-style`
+
+Animating an element as it appears (including when `display` flips from `none`) needs a starting snapshot. Use
+`@starting-style` with discrete property transitions:
+
+```css
+.toast {
+    display: none;
+    opacity: 0;
+    transition:
+        opacity 200ms ease,
+        display 200ms allow-discrete;
+}
+
+.toast[data-open] {
+    display: block;
+    opacity: 1;
+}
+
+@starting-style {
+    .toast[data-open] {
+        opacity: 0;
+    }
+}
+```
+
+`transition-behavior: allow-discrete` (also writable in the `transition` shorthand as above) lets discrete
+properties like `display` participate. Support varies -- keep a usable non-animated state. Dialogs and popovers use
+the same idea; see [Native Overlays & Dialogs](../native-overlays-and-dialogs.mdx).
 
 ### Button press effect
 
@@ -484,6 +516,8 @@ This is the CSS half of a scroll-reveal pattern. In practice, the `.visible` cla
 - `animation-fill-mode: forwards` keeps the end state; `infinite` loops forever
 - Animate only `transform` and `opacity` for best performance
 - Always respect `prefers-reduced-motion` for accessibility
+- `@starting-style` and `allow-discrete` enable entry transitions for previously hidden UI
+- Scroll-driven timelines and view transitions cover motion beyond time-based keyframes
 
 ## Next step
 

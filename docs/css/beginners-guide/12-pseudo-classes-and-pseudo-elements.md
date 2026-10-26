@@ -404,6 +404,25 @@ input:focus::placeholder {
 }
 ```
 
+## Form validation: `:user-valid` and `:user-invalid`
+
+`:valid` and `:invalid` match as soon as the page loads -- empty required fields often look "invalid" immediately.
+**`:user-valid`** and **`:user-invalid`** wait until the user has interacted with the control (or the form was
+submitted, depending on the browser's rules), which is usually what you want for error styling:
+
+```css
+input:user-invalid {
+    border-color: #c62828;
+}
+
+input:user-valid {
+    border-color: #2e7d32;
+}
+```
+
+Prefer these user-* variants for visible error chrome; keep `:invalid` for logic like "disable submit while the form
+is incomplete" when that matches your UX.
+
 ## Practical example: custom checkbox
 
 A fully CSS-styled checkbox using pseudo-elements:
@@ -472,6 +491,7 @@ A fully CSS-styled checkbox using pseudo-elements:
 
 - **Pseudo-classes** (`:hover`, `:focus`, `:nth-child`) target elements based on state or position
 - `:focus-visible` is better than `:focus` for keyboard-only focus rings
+- `:user-valid` / `:user-invalid` style form fields after interaction (unlike immediate `:valid` / `:invalid`)
 - `:nth-child(An+B)` uses a formula for repeating patterns
 - `:is()` reduces selector repetition; `:where()` does the same with zero specificity
 - `:not()` excludes elements matching a selector

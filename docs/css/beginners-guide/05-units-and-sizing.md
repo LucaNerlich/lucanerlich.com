@@ -165,6 +165,28 @@ Common use cases:
 > space. Modern CSS offers `dvh` (dynamic viewport height), `svh` (small), and `lvh` (large) to handle this. Use `dvh`
 > when you need precise full-screen behaviour on mobile.
 
+Prefer **`100dvh`** (or `min-height: 100dvh`) over `100vh` for full-screen heroes and app shells:
+
+| Unit | Meaning |
+|------|---------|
+| `svh` | Smallest viewport height (UI chrome expanded) |
+| `lvh` | Largest viewport height (UI chrome retracted) |
+| `dvh` | Current dynamic height as chrome shows/hides |
+
+```css
+.hero {
+    min-height: 100dvh;
+}
+
+.sheet {
+    /* Avoid jumping with the URL bar when possible */
+    height: 100dvh;
+    max-height: 100svh;
+}
+```
+
+`100vh` alone still causes the classic mobile "content clipped behind the URL bar" bug -- default to `dvh` for new UI.
+
 ### ch
 
 `1ch` equals the width of the `0` (zero) character in the current font. It is useful for setting widths based on

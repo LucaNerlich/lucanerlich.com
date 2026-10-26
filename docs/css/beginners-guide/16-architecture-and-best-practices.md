@@ -119,6 +119,14 @@ Architecture conventions solve these problems.
 3. **Do not nest elements** - `.card__body__title` is wrong; use `.card__title`
 4. **Modifiers extend, not replace** - use both classes: `class="card card--featured"`
 
+### `@scope` vs BEM
+
+Native **`@scope`** can limit selectors to a DOM subtree so `.card h2` does not leak as freely as global CSS.
+That does not retire BEM: class contracts still document the public API of a component, work in every browser you
+support, and stay searchable in HTML. A practical mix is BEM (or similar) for the block / modifier surface, and
+`@scope` for internal descendants when your baseline allows it. See
+[Cascade Layers & Scope](../cascade-layers-and-scope.mdx).
+
 ## File organisation
 
 ### Single file

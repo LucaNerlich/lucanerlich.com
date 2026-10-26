@@ -121,7 +121,20 @@ Besides size, you can query custom properties on a container:
 ```
 
 Browser support for style queries is newer than size queries. Prefer size queries for core layout;
-treat style queries as progressive enhancement.
+treat style queries as progressive enhancement. Range comparisons in style queries (for example querying whether a
+custom property exceeds a threshold) are also landing -- use them as progressive enhancement when Baseline-ready for
+your audience.
+
+### Advanced: scroll-state and anchored queries (watch)
+
+Spec work and early implementations explore **scroll-state** container queries (style based on sticky / snapped /
+scrollable state) and tighter integration with **anchor positioning**. Treat these as advanced footnotes until they
+are Baseline for your users:
+
+- Prefer today's size (and carefully tested style) queries for production layout.
+- Follow MDN / What's New notes before replacing IntersectionObserver sticky logic with scroll-state queries.
+- When anchoring overlays, see [Anchor Positioning & Popover](./anchor-positioning-and-popover.mdx); keep query
+  containers and anchors as separate concerns until the platform glue is widely available.
 
 ## Interactive demos
 
@@ -262,8 +275,10 @@ check [Can I use: CSS Container Queries](https://caniuse.com/css-container-queri
 ## Related reading
 
 - [Responsive Design](./beginners-guide/09-responsive-design.md) -- viewport meta tag, media queries,
-  mobile-first breakpoints
+  mobile-first breakpoints, media query range syntax
 - [Modern CSS Features](./beginners-guide/15-modern-css-features.md) -- nesting, `:has()`, short
   container-query intro, `@supports`
 - [CSS Grid](./beginners-guide/08-css-grid.mdx) -- `auto-fit` / `minmax()` layouts that pair well with
   containers
+- [CSS Nesting](./css-nesting.mdx) -- nesting `@container` next to the component
+- [Logical Properties](./logical-properties.mdx) -- flow-relative sizing inside responsive components

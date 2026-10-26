@@ -391,6 +391,23 @@ Unlike borders, outlines do not affect the element's size or position. They are 
 > **Note:** Never remove focus outlines (`outline: none`) without providing an alternative focus style. Focus indicators
 > are essential for keyboard navigation.
 
+## Frosted glass with `backdrop-filter`
+
+`backdrop-filter` blurs (or otherwise filters) **what is behind** an element -- useful for translucent toolbars and
+cards over busy backgrounds:
+
+```css
+.toolbar {
+    background: rgb(255 255 255 / 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-block-end: 1px solid rgb(0 0 0 / 0.08);
+}
+```
+
+Provide a solid or high-opacity fallback background for browsers without `backdrop-filter`, and keep text contrast
+high -- blur is not a substitute for readable colour pairs. Prefer modest blur radii for performance.
+
 ## Practical example
 
 A polished card component combining everything:
@@ -440,6 +457,7 @@ A polished card component combining everything:
 - **box-shadow** adds depth; stack multiple shadows for realism; use `inset` for inner shadows
 - **text-shadow** adds depth behind text
 - **Outlines** are for focus indicators and do not affect layout
+- **`backdrop-filter`** can frost glass overlays; always keep a readable fallback background
 
 ## Next step
 

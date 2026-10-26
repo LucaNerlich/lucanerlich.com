@@ -53,6 +53,35 @@ narrower than a threshold:
 
 On screens narrower than 768px, the sidebar is hidden. On screens 768px and wider, it appears.
 
+### Range syntax
+
+Modern media queries can use comparison operators instead of `min-` / `max-` prefixes:
+
+```css
+@media (width >= 768px) {
+    .sidebar {
+        display: block;
+        width: 250px;
+    }
+}
+
+@media (768px <= width < 1024px) {
+    .container {
+        padding: 24px;
+    }
+}
+```
+
+| Older form | Range form |
+|------------|------------|
+| `(min-width: 768px)` | `(width >= 768px)` |
+| `(max-width: 767px)` | `(width < 768px)` |
+| `(min-width: 768px) and (max-width: 1023px)` | `(768px <= width < 1024px)` |
+
+Both styles work in current evergreen browsers. Prefer range syntax in new code for readability. Component-level
+responsiveness still belongs in [container queries](../container-queries.mdx) (including style / range queries on
+containers), not only in viewport media queries.
+
 ### Syntax
 
 ```css

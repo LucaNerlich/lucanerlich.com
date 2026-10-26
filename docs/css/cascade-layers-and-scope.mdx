@@ -1,0 +1,206 @@
+---
+title: "Cascade Layers & Scope"
+sidebar_label: "Layers & Scope"
+description: Control the cascade with @layer patterns and encapsulate component styles with @scope -- how they compare to BEM, specificity wars, and !important.
+slug: /css/cascade-layers-and-scope
+tags: [css, cascade, architecture]
+keywords:
+    - 'css @layer'
+    - css cascade layers
+    - 'css @scope'
+    - css specificity
+    - bem vs scope
+---
+
+# Cascade Layers & Scope
+
+Specificity and source order still matter -- but large codebases need stronger tools. **`@layer`** puts whole groups
+of rules into an explicit priority order. **`@scope`** limits how far selectors can reach inside a subtree.
+
+This expands the intro in [Specificity & the Cascade](./beginners-guide/14-specificity-and-the-cascade.md) and pairs
+with [Architecture & Best Practices](./beginners-guide/16-architecture-and-best-practices.md).
+
+## Cascade layers (`@layer`)
+
+### Declare order once
+
+```css
+@layer reset, tokens, base, components, utilities;
+```
+
+Later layers win over earlier layers **even when specificity is lower**. A one-class utility can override a verbose
+component selector without `!important`.
+
+```css
+@layer components {
+    .button {
+        padding: 0.75rem 1.25rem;
+        background: var(--brand);
+        color: white;
+    }
+}
+
+@layer utilities {
+    .hidden {
+        display: none;
+    }
+}
+```
+
+`.hidden` wins against `.button` from an earlier layer even though both have the same specificity class score --
+layer order decides first (within normal author styles).
+
+### Adding to a layer
+
+```css
+@layer components {
+    .card { /* … */ }
+}
+
+/* Later file -- same layer bucket */
+@layer components {
+    .card__title { /* … */ }
+}
+```
+
+Unlayered styles sit in an implicit **higher** priority than layered ones. Prefer putting *everything* in a layer
+once you adopt the system, or you will fight unlayered leftovers.
+
+```css
+@layer reset, base, components;
+
+/* Avoid: unlayered -- beats all layered rules */
+.widget {
+    color: red;
+}
+```
+
+### Nested layers
+
+```css
+@layer components {
+    @layer buttons {
+        .button { }
+    }
+    @layer cards {
+        .card { }
+    }
+}
+```
+
+Refer to nested order with dotted names when declaring: `@layer components.buttons, components.cards;`. Keep nesting
+shallow.
+
+### Layers vs `!important`
+
+`!important` still creates a separate importance world. Layers reduce the *need* for `!important` in author CSS;
+they do not make `!important` a good default. Prefer moving the override to a higher layer.
+
+### Practical layer map
+
+| Layer | Contents |
+|-------|----------|
+| `reset` | Box-sizing, margin resets |
+| `tokens` | Rarely needed as real CSS -- often just `:root` variables in `base` |
+| `base` | Element defaults, typography |
+| `components` | BEM blocks / UI pieces |
+| `utilities` | Single-purpose overrides (`hidden`, `sr-only`) |
+
+Frameworks may ship their own layer names -- declare your order to interleave with them explicitly.
+
+## `@scope`
+
+`@scope` bounds selectors to a subtree, optionally with a **donut** lower boundary:
+
+```css
+@scope (.card) {
+    h2 {
+        font-size: 1.25rem;
+    }
+
+    img {
+        border-radius: 0.5rem;
+    }
+}
+```
+
+Inside the scope, `h2` only matches headings **within** `.card`. That reduces reliance on long BEM prefixes for
+descendant elements -- though clear names remain valuable for readable HTML.
+
+### Donut scope (exclude inner regions)
+
+```css
+@scope (.article) to (.comments) {
+    p {
+        line-height: 1.7;
+        max-width: 65ch;
+    }
+}
+```
+
+Paragraph styles apply in `.article` but **not** inside nested `.comments`.
+
+### `@scope` and proximity
+
+Scoped rules participate in the cascade with an extra **proximity** consideration: scopes closer to the element can
+win over equally specific rules from outer scopes. Still keep selectors simple; scope is not a licence for deep
+nesting.
+
+```css
+@scope (.theme-light) {
+    a { color: navy; }
+}
+
+@scope (.theme-dark) {
+    a { color: skyblue; }
+}
+```
+
+### Scope vs BEM
+
+| Approach | Strength | Weakness |
+|----------|----------|----------|
+| **BEM** | Explicit, readable class contracts; works everywhere | Verbose HTML; no true encapsulation |
+| **`@scope`** | Fewer prefixes; subtree encapsulation; donut exclusion | Browser support must match your baseline; selectors look "loose" in HTML |
+| **Both** | BEM for public block API, `@scope` for internal descendants | Team must agree on conventions |
+
+A pragmatic mix: keep `.card`, `.card--featured` as the public API; use `@scope (.card)` for internal `h2` / `p` /
+`img` styling when you control the markup.
+
+```css
+@scope (.card) {
+    :scope {
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+    }
+
+    h2 {
+        margin: 0;
+    }
+}
+```
+
+`:scope` (or `&` in nesting contexts, depending on authoring style) targets the scope root itself.
+
+## Layers + scope together
+
+Use layers for **cross-cutting priority** (reset, then components, then utilities) and scope for **local reach**. They
+solve different problems:
+
+- Fighting a third-party widget stylesheet → `@layer`
+- Stopping `.sidebar h2` from styling a nested widget title → `@scope` or better class contracts
+
+## Progressive enhancement
+
+`@layer` is widely supported. `@scope` support is strong in modern evergreen browsers but verify before removing BEM
+entirely. Unscoped BEM remains a valid baseline; `@scope` can land as an enhancement in new components.
+
+## Related reading
+
+- [Specificity & the Cascade](./beginners-guide/14-specificity-and-the-cascade.md) -- specificity math, intro `@layer`
+- [Architecture & Best Practices](./beginners-guide/16-architecture-and-best-practices.md) -- BEM and file structure
+- [CSS Nesting](./css-nesting.mdx) -- nesting inside layers and scopes
+- [MDN: `@layer`](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer)
+- [MDN: `@scope`](https://developer.mozilla.org/en-US/docs/Web/CSS/@scope)
+- Inspiration: [modern-css.com cascade layers](https://modern-css.com/organizing-css-with-cascade-layers/),
+  [scoped styles](https://modern-css.com/scoped-styles-without-bem-naming/)

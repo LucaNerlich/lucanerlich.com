@@ -1,0 +1,252 @@
+---
+title: "Anchor Positioning & Popover"
+sidebar_label: "Anchor & Popover"
+description: Position tooltips and menus with CSS anchor positioning and the Popover API -- anchor(), position-area, position-try, anchor-size(), popover=hint, and when JavaScript still wins.
+slug: /css/anchor-positioning-and-popover
+tags: [css, overlay, popover, anchor]
+keywords:
+    - css anchor positioning
+    - position-anchor
+    - position-try
+    - anchor-size
+    - popover api
+    - popover=hint
+    - css tooltip
+---
+
+# Anchor Positioning & Popover
+
+Tooltips, dropdowns, and teaching callouts used to mean measuring boxes in JavaScript and fighting scroll/overflow.
+**CSS anchor positioning** ties a positioned element to another element. The **Popover API** gives show/hide,
+top-layer rendering, and light dismiss without a custom overlay stack.
+
+Keep this page distinct from [Native Overlays & Dialogs](./native-overlays-and-dialogs.mdx): dialogs are for modal /
+non-modal dialogs and invokers; here the focus is anchors + popovers for lightweight overlays.
+
+## Popover API (behaviour first)
+
+Mark an element with the `popover` attribute. The browser puts it in the **top layer** when open and handles Escape /
+outside click for auto popovers.
+
+```html
+<button popovertarget="menu" popovertargetaction="toggle">Menu</button>
+
+<div id="menu" popover>
+    <a href="/docs/">Docs</a>
+    <a href="/blog/">Blog</a>
+</div>
+```
+
+| Value | Behaviour |
+|-------|-----------|
+| `popover` / `popover="auto"` | Light dismiss (outside click / Escape); only one auto popover open at a time |
+| `popover="manual"` | You control open/close; no light dismiss by default |
+| `popover="hint"` | Hint-style overlays (for example hover tooltips) that can coexist with an auto popover -- check current support |
+
+Open/close from script when needed:
+
+```js
+menu.showPopover();
+menu.hidePopover();
+menu.togglePopover();
+```
+
+Style open state with `:popover-open`:
+
+```css
+[popover] {
+    border: 1px solid var(--border);
+    padding: 0.5rem;
+    background: var(--surface);
+}
+
+[popover]:popover-open {
+    /* optional open styles */
+}
+```
+
+Popovers are not a positioning system by themselves -- they still need CSS (or anchors) to sit next to their trigger.
+
+## CSS anchor positioning
+
+### Declare an anchor
+
+```css
+.trigger {
+    anchor-name: --menu-trigger;
+}
+
+.menu {
+    position: absolute; /* or fixed */
+    position-anchor: --menu-trigger;
+    /* Place relative to the anchor */
+    position-area: block-end span-inline-end;
+}
+```
+
+`anchor-name` creates a named anchor. `position-anchor` (or the `anchor()` function in insets) ties the positioned
+element to that name.
+
+### Insets with `anchor()`
+
+For finer control, set insets against anchor edges:
+
+```css
+.tooltip {
+    position: fixed;
+    position-anchor: --help;
+    left: anchor(right);
+    top: anchor(top);
+    margin-inline-start: 0.5rem;
+}
+```
+
+Exact edge keywords and percentage forms are documented on
+[MDN: `anchor()`](https://developer.mozilla.org/en-US/docs/Web/CSS/anchor) -- prefer `position-area` for common
+placements when it is enough.
+
+### `position-area`
+
+`position-area` places the element on a 3×3 grid around the anchor (block/inline start, center, end spans). It is
+often clearer than four inset lines for menus and tooltips.
+
+```css
+.menu {
+    position: absolute;
+    position-anchor: --trigger;
+    position-area: block-end span-inline-end;
+}
+```
+
+### Fallbacks with `position-try`
+
+When the preferred placement overflows the viewport, try alternatives:
+
+```css
+.tooltip {
+    position: fixed;
+    position-anchor: --help;
+    position-area: block-start;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+}
+```
+
+You can also define custom `@position-try` rules for denser fallback chains. See
+[MDN: `position-try-fallbacks`](https://developer.mozilla.org/en-US/docs/Web/CSS/position-try-fallbacks).
+
+### `anchor-size()`
+
+Size the overlay from the anchor's dimensions:
+
+```css
+.menu {
+    position: absolute;
+    position-anchor: --trigger;
+    min-width: anchor-size(width);
+}
+```
+
+Useful for dropdowns that should match the trigger width.
+
+## Pattern: tooltip
+
+```html
+<button class="help" id="help-btn" popovertarget="tip">?</button>
+<div id="tip" popover="hint" class="tooltip">
+    Saves automatically every 30 seconds.
+</div>
+```
+
+```css
+.help {
+    anchor-name: --help;
+}
+
+.tooltip {
+    position: fixed;
+    position-anchor: --help;
+    position-area: block-start;
+    position-try-fallbacks: flip-block, flip-inline;
+    max-width: 16rem;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 0.375rem;
+    background: CanvasText;
+    color: Canvas;
+}
+```
+
+Use `hint` when you want tooltip-like behaviour alongside other UI; fall back to `auto` if `hint` is unavailable in
+your support matrix. For hover-driven hints, verify whether your browser exposes CSS interest / invoker behaviour or
+still needs a small script -- do not assume hover-open is universal yet.
+
+## Pattern: dropdown menu
+
+```html
+<button popovertarget="nav-more" style="anchor-name: --more">More</button>
+<ul id="nav-more" popover class="menu">
+    <li><a href="/imprint/">Imprint</a></li>
+    <li><a href="/blog/">Blog</a></li>
+</ul>
+```
+
+```css
+.menu {
+    position: absolute;
+    position-anchor: --more;
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block, flip-inline;
+    min-width: anchor-size(--more width);
+    margin: 0;
+    padding: 0.25rem;
+    list-style: none;
+}
+```
+
+(If `anchor-size(--name width)` form is awkward in a given engine, set `position-anchor` and use
+`anchor-size(width)`.)
+
+## When JavaScript still wins
+
+Prefer JS (or a component library) when you need:
+
+- **Complex collision** beyond `position-try` (multi-axis, custom clipping ancestors)
+- **Virtualised lists** or overlays tied to canvas / WebGL
+- **Rich focus traps** and roving tabindex beyond what dialog/popover give you
+- **Server-driven** menus with heavy async content loading and cancellation
+- **Guaranteed** behaviour on browsers without anchor positioning -- polyfills exist, but measure cost
+
+Native popover + anchors cover a large share of tooltips and menus with less code.
+
+## Accessibility checklist
+
+- Prefer real `<button>` triggers and labelled content.
+- Ensure keyboard users can open, move focus into, and dismiss the overlay.
+- Do not rely on hover alone for essential information.
+- Keep contrast high on tooltip surfaces (`Canvas` / `CanvasText` or your design tokens).
+- For modal blocking UI, use [`<dialog>`](./native-overlays-and-dialogs.mdx) instead of a non-modal popover.
+
+## Gotchas
+
+1. **Containing blocks.** Absolute anchors still participate in normal CSS positioning rules; `fixed` often behaves
+   more predictably for viewport-adjacent UI.
+2. **Overflow hidden ancestors** can clip or confuse expectations -- top-layer popovers help for painting, but
+   anchoring still references geometry.
+3. **Name collisions.** `anchor-name` values should be unique where lookups would be ambiguous.
+4. **Support variance.** Anchor positioning and `popover=hint` land on different schedules -- feature-detect and
+   degrade to static placement or JS.
+
+## Browser support
+
+Popover is broadly available in current evergreen browsers. CSS anchor positioning has strong Chromium support and
+is expanding; verify [Can I use: CSS Anchor Positioning](https://caniuse.com/css-anchor-positioning) and MDN before
+shipping without a fallback.
+
+## Related reading
+
+- [Native Overlays & Dialogs](./native-overlays-and-dialogs.mdx) -- `<dialog>`, invokers, light dismiss
+- [Logical Properties](./logical-properties.mdx) -- flow-relative placement language
+- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) -- survey table
+- [MDN: CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning)
+- [MDN: Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API)
+- Inspiration: [modern-css.com tooltip positioning](https://modern-css.com/tooltip-positioning-without-javascript/)

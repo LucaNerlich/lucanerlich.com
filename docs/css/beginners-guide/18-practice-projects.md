@@ -1,7 +1,7 @@
 ---
 title: "Practice Projects"
 sidebar_label: "Practice Projects"
-description: Six hands-on CSS projects from beginner to advanced - personal profile card, navigation bar, photo gallery, landing page, dashboard layout, and CSS art.
+description: Hands-on CSS projects from beginner to advanced - profile card, navigation, gallery, landing page, dashboard, CSS art, scroll-snap carousel, and anchored tooltip.
 slug: /css/beginners-guide/practice-projects
 tags: [css, beginners, projects]
 keywords:
@@ -15,8 +15,9 @@ sidebar_position: 18
 
 # Practice Projects
 
-The best way to solidify everything you have learned is to build real things. Below are six projects, ordered from
-beginner to advanced. Each one lists what you will build, which skills it practises, and a few hints to get you started.
+The best way to solidify everything you have learned is to build real things. Below are projects ordered from
+beginner to advanced -- including modern extras (scroll-snap carousel, anchored tooltip). Each one lists what you will
+build, which skills it practises, and a few hints to get you started.
 
 No step-by-step hand-holding; that is the point. Apply the knowledge from chapters 1-17, use DevTools to debug, and
 figure things out.
@@ -229,6 +230,67 @@ A purely decorative illustration made entirely with CSS - no images, no SVGs, no
 ### Chapters used
 
 6 (Display & Positioning), 10 (Backgrounds & Shadows), 11 (Transitions & Animations), 12 (Pseudo-elements)
+
+---
+
+## Project 7: Scroll-snap carousel
+
+**Difficulty:** Intermediate
+
+### What you will build
+
+A horizontal card carousel that snaps from slide to slide using **CSS scroll snap** -- no carousel library. Include
+optional previous/next buttons that call `scrollBy`, but make sure trackpad / touch scrolling works without them.
+
+### Skills practised
+
+- `overflow-x` + Flexbox or Grid auto-columns
+- `scroll-snap-type` / `scroll-snap-align` / `scroll-padding`
+- Accessible labelling of the scroller region
+- Progressive enhancement for controls
+- Optional: fade slides with [scroll-driven animations](../scroll-driven-animations.mdx)
+
+### Hints
+
+- Start from the patterns in [Scroll Snap & Carousels](../scroll-snap-and-carousels.mdx)
+- Use `grid-auto-columns: min(20rem, 85%)` so slides peek on small screens
+- Respect `prefers-reduced-motion` if you add autoplay (prefer no autoplay)
+- Test keyboard focus on links inside slides
+
+### Chapters / guides used
+
+9 (Responsive), 7/8 (Flex/Grid), [Scroll Snap & Carousels](../scroll-snap-and-carousels.mdx)
+
+---
+
+## Project 8: Anchored tooltip
+
+**Difficulty:** Intermediate / Advanced
+
+### What you will build
+
+A help tooltip or dropdown that opens with the **Popover API** and sits next to its trigger using **CSS anchor
+positioning**, including at least one `position-try` fallback so it flips when near the viewport edge.
+
+### Skills practised
+
+- `popover` / `popovertarget`
+- `anchor-name`, `position-anchor`, `position-area` or `anchor()`
+- `position-try-fallbacks`
+- Focus and keyboard dismiss behaviour
+- Fallback layout when anchor positioning is missing
+
+### Hints
+
+- Follow [Anchor Positioning & Popover](../anchor-positioning-and-popover.mdx)
+- Keep the trigger a real `<button>`
+- Provide a static below-trigger fallback inside `@supports` or accept top-layer centred popover as degradation
+- Do not put essential instructions in a hover-only tip
+
+### Chapters / guides used
+
+12 (Pseudo-classes), [Anchor Positioning & Popover](../anchor-positioning-and-popover.mdx),
+[Native Overlays & Dialogs](../native-overlays-and-dialogs.mdx)
 
 ---
 

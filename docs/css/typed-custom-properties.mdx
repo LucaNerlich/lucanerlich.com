@@ -1,0 +1,223 @@
+---
+title: "Typed Custom Properties (`@property`)"
+sidebar_label: "Typed Custom Properties"
+description: Register CSS custom properties with @property for type checking, inheritance control, initial values, and animating custom properties smoothly.
+slug: /css/typed-custom-properties
+tags: [css, custom-properties, animation]
+keywords:
+    - 'css @property'
+    - typed custom properties
+    - css Houdini properties
+    - animate css variables
+    - '@property syntax'
+---
+
+# Typed Custom Properties (`@property`)
+
+Ordinary custom properties are untyped strings to the cascade. **`@property`** registers a name with a syntax, an
+inheritance flag, and an initial value -- so the browser can validate values, interpolate them, and animate them.
+
+This page extends [CSS Custom Properties](./beginners-guide/13-css-custom-properties.md). Keep using plain `--tokens`
+for most theming; reach for `@property` when you need animation or stricter contracts.
+
+## Why register a property?
+
+Without `@property`, this fails to animate smoothly (the browser treats the value as a discrete string):
+
+```css
+.box {
+    --angle: 0deg;
+    background: conic-gradient(from var(--angle), …);
+    transition: --angle 0.4s linear; /* often no meaningful interpolation */
+}
+```
+
+With a registered angle, transitions and `@keyframes` can interpolate:
+
+```css
+@property --angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+
+.box {
+    --angle: 0deg;
+    background: conic-gradient(from var(--angle), #4a90d9, #e74c3c, #4a90d9);
+    transition: --angle 0.6s linear;
+}
+
+.box:hover {
+    --angle: 180deg;
+}
+```
+
+## `@property` rule shape
+
+```css
+@property --progress {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0;
+}
+```
+
+| Descriptor | Role |
+|------------|------|
+| `syntax` | Allowed value type(s), as a string |
+| `inherits` | Whether descendants inherit the computed value |
+| `initial-value` | Required for most non-universal syntaxes; used when the property is invalid or unset |
+
+Invalid assignments fall back to the registered **initial value** (fail closed for that property), instead of
+silently passing a bad string downstream.
+
+## Common `syntax` values
+
+| Syntax | Examples |
+|--------|----------|
+| `"*"` | Any value (still gains inheritance / initial control; limited interpolation) |
+| `"<number>"` | `0`, `0.5`, `2` |
+| `"<percentage>"` | `50%` |
+| `"<length>"` | `1.5rem`, `8px` |
+| `"<length-percentage>"` | length or percentage |
+| `"<color>"` | `#4a90d9`, `oklch(…)` |
+| `"<angle>"` | `45deg`, `0.5turn` |
+| `"<time>"` | `200ms` |
+| `"<transform-function>"` | `translateX(4px)` |
+
+Unions and lists are possible for advanced cases (for example `"<color>+"`). Start with a single type.
+
+```css
+@property --brand {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #4a90d9;
+}
+```
+
+## Inheritance and initial-value gotchas
+
+### `inherits: false` for component-local state
+
+Progress, open offsets, and per-instance animation knobs should usually **not** inherit:
+
+```css
+@property --drawer-shift {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+```
+
+If `inherits` is `true`, a parent `--drawer-shift` leaks into nested drawers.
+
+### `initial-value` must match `syntax`
+
+```css
+/* Broken: initial-value is not a colour */
+@property --brand {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: 0;
+}
+```
+
+The whole `@property` rule is ignored if descriptors are inconsistent -- you silently get an untyped property again.
+Validate in DevTools.
+
+### Registered vs unregistered shadowing
+
+Once registered globally, the syntax applies wherever that name is used. Pick clear names (`--motion-progress`,
+`--theme-brand`) to avoid collisions across a design system.
+
+## Animating custom properties
+
+### Transitions
+
+```css
+@property --glow {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: transparent;
+}
+
+.card {
+    box-shadow: 0 0 0 0 var(--glow);
+    transition: --glow 0.25s ease;
+}
+
+.card:focus-visible {
+    --glow: color-mix(in oklch, var(--brand) 45%, transparent);
+}
+```
+
+### Keyframes
+
+```css
+@property --spot {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
+}
+
+@keyframes sweep {
+    to {
+        --spot: 100%;
+    }
+}
+
+.shine {
+    background: linear-gradient(
+        90deg,
+        transparent calc(var(--spot) - 10%),
+        rgb(255 255 255 / 0.4) var(--spot),
+        transparent calc(var(--spot) + 10%)
+    );
+    animation: sweep 2s linear infinite;
+}
+```
+
+Pair with [scroll-driven animations](./scroll-driven-animations.mdx) by animating a registered `--progress` number on
+a scroll timeline when you need custom interpolated inputs.
+
+## JavaScript still works
+
+`element.style.setProperty('--progress', '0.4')` continues to work. With a registered `<number>`, invalid strings
+are rejected according to the registration rules -- prefer setting well-typed values.
+
+```js
+card.style.setProperty('--progress', String(ratio));
+```
+
+## When not to use `@property`
+
+- Flat design tokens that never animate (`--radius-md: 8px`) -- plain custom properties are enough
+- Values you intentionally pass as raw lists/shorthands that do not fit a tidy syntax
+- Critical path CSS where a missing registration would be confusing -- document registered names in the design system
+
+## Progressive enhancement
+
+Unregistered browsers ignore `@property` and keep treating the custom property as untyped. Provide usable static
+values so layouts work without interpolation:
+
+```css
+.box {
+    --angle: 0deg;
+    background: conic-gradient(from var(--angle), #4a90d9, #e74c3c, #4a90d9);
+}
+
+@supports (background: paint(something)) {
+    /* not required for @property -- shown only as a reminder to think in layers */
+}
+```
+
+Feature detection for `@property` is awkward in pure CSS; rely on sensible defaults and treat smooth interpolation
+as enhancement. Check support tables when animation is essential.
+
+## Related reading
+
+- [CSS Custom Properties](./beginners-guide/13-css-custom-properties.md) -- `var()`, theming, fallbacks
+- [Modern CSS Color](./modern-css-color.mdx) -- OKLCH tokens and `color-mix()`
+- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) -- transition basics
+- [MDN: `@property`](https://developer.mozilla.org/en-US/docs/Web/CSS/@property)
+- Inspiration: [modern-css.com typed custom properties](https://modern-css.com/typed-custom-properties-without-javascript/)

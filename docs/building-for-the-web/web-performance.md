@@ -319,7 +319,8 @@ Tools like `critical` (npm) extract critical CSS automatically.
 
 - **Remove unused CSS** - tools: PurgeCSS, Tailwind's built-in purge, Coverage tab in Chrome DevTools
 - **Avoid `@import`** in CSS files - it creates sequential requests; use bundler imports instead
-- **Use `content-visibility: auto`** on below-the-fold sections - skips rendering until the element is near the viewport
+- **Use `content-visibility: auto`** on below-the-fold sections - skips rendering until the element is near the viewport.
+  Deep dive: [content-visibility & Rendering Performance](../css/content-visibility-and-perf.mdx)
 
 ### Avoiding render-blocking CSS
 

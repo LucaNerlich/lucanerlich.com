@@ -1,0 +1,177 @@
+---
+title: "Logical Properties"
+sidebar_label: "Logical Properties"
+description: Build direction-aware layouts with CSS logical properties -- inset, margin-inline, padding-block, inline-size, and how they map to physical top/right/bottom/left.
+slug: /css/logical-properties
+tags: [css, layout, i18n]
+keywords:
+    - css logical properties
+    - margin-inline
+    - inset
+    - inline-size
+    - writing-mode
+    - rtl css
+---
+
+# Logical Properties
+
+Physical properties (`margin-left`, `top`, `width`) assume horizontal left-to-right layout. **Logical properties**
+speak in **flow-relative** terms: inline-start/end and block-start/end. When `direction` or `writing-mode` changes,
+logical values flip with the text.
+
+This expands the survey section in [Modern CSS Features](./beginners-guide/15-modern-css-features.md).
+
+## Mental model
+
+| Axis | Meaning in horizontal LTR | Flips with… |
+|------|---------------------------|-------------|
+| **Inline** | Horizontal (left ↔ right) | `direction: rtl` |
+| **Block** | Vertical (top ↔ bottom) | `writing-mode` (for example vertical scripts) |
+
+So `margin-inline-start` is the "beginning" side of a line of text -- left in English, right in Arabic.
+
+## Common mappings
+
+| Physical | Logical |
+|----------|---------|
+| `width` / `height` | `inline-size` / `block-size` |
+| `min-width` / `max-width` | `min-inline-size` / `max-inline-size` |
+| `margin-left` / `margin-right` | `margin-inline-start` / `margin-inline-end` |
+| `margin-top` / `margin-bottom` | `margin-block-start` / `margin-block-end` |
+| `padding-*` | `padding-inline-*` / `padding-block-*` |
+| `border-left`, … | `border-inline-start`, … |
+| `top` / `right` / `bottom` / `left` | `inset-block-start` / `inset-inline-end` / … |
+| `text-align: left` | `text-align: start` |
+
+### Shorthands worth memorising
+
+```css
+.card {
+    margin-inline: auto;      /* both inline sides */
+    padding-block: 1.5rem;    /* both block sides */
+    padding-inline: 1rem;
+    inset: 0;                 /* all four physical insets -- see below */
+    inset-inline: 1rem;       /* logical inline insets */
+    inset-block-start: 0;
+}
+```
+
+`inset` is the physical shorthand for `top` / `right` / `bottom` / `left`. Prefer `inset-block` /
+`inset-inline` when you mean flow-relative positioning.
+
+```css
+.badge {
+    position: absolute;
+    inset-block-start: 0.5rem;
+    inset-inline-end: 0.5rem;
+}
+```
+
+In LTR this sits top-right; in RTL it sits top-left -- usually what you want for a "trailing" badge.
+
+## Layout examples
+
+### Centred content column
+
+```css
+.prose {
+    max-inline-size: 65ch;
+    margin-inline: auto;
+    padding-inline: 1rem;
+}
+```
+
+### Sidebar spacing
+
+```css
+.sidebar {
+    padding-inline: 1rem;
+    border-inline-end: 1px solid var(--border);
+}
+```
+
+The border stays on the "end" of the sidebar's inline axis relative to reading direction.
+
+### Sticky footer offset
+
+```css
+.toast {
+    position: fixed;
+    inset-inline: 1rem;
+    inset-block-end: 1rem;
+}
+```
+
+## Positioning shorthand mindset
+
+Instead of four longhands:
+
+```css
+/* Physical */
+.modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+/* Compact physical */
+.modal {
+    position: fixed;
+    inset: 0;
+}
+
+/* Flow-aware partial */
+.banner {
+    position: sticky;
+    inset-block-start: 0;
+}
+```
+
+## When physical properties are still right
+
+Use physical values when the design is **genuinely physical**:
+
+- A shadow that must always fall "down the screen" (`0 4px 8px`) regardless of writing mode
+- Canvas / map UI tied to screen coordinates
+- Matching a third-party widget that only documents physical offsets
+
+For typography, spacing, and component chrome, default to logical.
+
+## Mixing with Flexbox and Grid
+
+Flex and Grid already use alignment keywords like `start` / `end` in many places. Logical margin/padding on children
+complements that:
+
+```css
+.row {
+    display: flex;
+    gap: 1rem;
+}
+
+.row .meta {
+    margin-inline-start: auto; /* push to the inline-end */
+}
+```
+
+## Gotchas
+
+1. **`left`/`right` in animations** -- transforms are often clearer; if you animate insets, be consistent about
+   logical vs physical.
+2. **Older mental muscle** -- teams used to `margin-left: auto` need a short lint or review norm for `margin-inline`.
+3. **`width` vs `inline-size`** -- both work in horizontal modes; prefer `inline-size` in new shared components.
+4. **Borders and radii** -- logical border longhands exist; corner radii still use physical corner names in many
+   codebases (`border-top-left-radius`) with logical equivalents available as `border-start-start-radius`, etc.
+
+## Browser support
+
+Logical properties are widely supported across evergreen browsers. Safe for new production CSS in most baselines.
+
+## Related reading
+
+- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) -- short logical-property intro
+- [The Box Model](./beginners-guide/03-the-box-model.mdx) -- padding, margin, border basics
+- [Display & Positioning](./beginners-guide/06-display-and-positioning.mdx) -- `position` and offsets
+- [MDN: CSS logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values)
+- Inspiration: [modern-css.com direction-aware layouts](https://modern-css.com/direction-aware-layouts-without-left-and-right/)
