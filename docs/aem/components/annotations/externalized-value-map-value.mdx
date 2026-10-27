@@ -74,7 +74,7 @@ ResourceResolver.map("/content/my-site/en/about")
     → returns "/en/about"
 ```
 
-`map()` and the Externalizer add no extension -- append `.html` to page paths after mapping, as the Externalizer javadoc does.
+`map()` and the Externalizer add no extension - append `.html` to page paths after mapping, as the Externalizer javadoc does.
 
 For fully qualified URLs (including scheme and domain), AEM provides the
 `com.day.cq.commons.Externalizer` OSGi service:
@@ -374,7 +374,7 @@ for each environment:
 
 :::info[AEMaaCS]
 On AEM as a Cloud Service, the Externalizer domains are configured automatically by Cloud Manager.
-Do not deploy this file on AEMaaCS -- keep the default `$[env:AEM_EXTERNALIZER_*]` mappings; to change the publish or preview domain set the `AEM_CDN_DOMAIN_PUBLISH` / `AEM_CDN_DOMAIN_PREVIEW` Cloud Manager environment variables.
+Do not deploy this file on AEMaaCS - keep the default `$[env:AEM_EXTERNALIZER_*]` mappings; to change the publish or preview domain set the `AEM_CDN_DOMAIN_PUBLISH` / `AEM_CDN_DOMAIN_PREVIEW` Cloud Manager environment variables.
 :::
 
 ## Alternative Approaches

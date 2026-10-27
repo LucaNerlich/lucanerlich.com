@@ -134,7 +134,7 @@ sudo systemctl reload ssh
 sudo sshd -T | grep -Ei 'passwordauthentication|permitrootlogin'
 ```
 
-The last command prints the effective settings -- both should say `no`.
+The last command prints the effective settings - both should say `no`.
 
 **Warning:** Make sure your SSH key login works before doing this. If you lock yourself out, you will need to use the
 provider's console access.

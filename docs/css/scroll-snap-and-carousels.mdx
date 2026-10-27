@@ -1,7 +1,7 @@
 ---
 title: "Scroll Snap & Carousels"
 sidebar_label: "Scroll Snap & Carousels"
-description: Build CSS-only carousels and galleries with scroll-snap, overflow scrolling, and progressive enhancement -- without a carousel library.
+description: Build CSS-only carousels and galleries with scroll-snap, overflow scrolling, and progressive enhancement - without a carousel library.
 slug: /css/scroll-snap-and-carousels
 tags: [css, scroll, carousel]
 keywords:
@@ -15,7 +15,7 @@ keywords:
 # Scroll Snap & Carousels
 
 Many "carousels" are a horizontal scroller with snap points. **Scroll snap** gives you that behaviour in CSS --
-accessible keyboard scrolling included -- without a JavaScript slider library for the basic case.
+accessible keyboard scrolling included - without a JavaScript slider library for the basic case.
 
 ## Core API
 
@@ -52,8 +52,8 @@ Prefer `proximity` when mandatory snapping feels aggressive; use `mandatory` for
 
 | Property | Role |
 |----------|------|
-| `scroll-snap-align` | `start` / `center` / `end` -- which edge snaps |
-| `scroll-snap-stop` | `normal` or `always` -- whether fast flicks can skip past |
+| `scroll-snap-align` | `start` / `center` / `end` - which edge snaps |
+| `scroll-snap-stop` | `normal` or `always` - whether fast flicks can skip past |
 
 ## Pattern: card carousel
 
@@ -99,7 +99,7 @@ Grid auto-columns keep slide width consistent without Flex `flex-basis` math.
 }
 ```
 
-Use sparingly -- full-page mandatory snap can trap users and fight browser find-in-page / accessibility tools. Offer a
+Use sparingly - full-page mandatory snap can trap users and fight browser find-in-page / accessibility tools. Offer a
 non-snapping alternative when content is long-form.
 
 ## Controls without a library
@@ -114,7 +114,7 @@ prev.addEventListener('click', () => {
 
 Keep buttons as enhancement; the scroller must work without them.
 
-For dots / markers, newer CSS scroll-marker proposals are emerging -- treat as progressive enhancement and verify
+For dots / markers, newer CSS scroll-marker proposals are emerging - treat as progressive enhancement and verify
 Baseline status before depending on them. A small script that toggles `aria-current` on dots from `scroll` events is
 still a solid approach.
 
@@ -138,19 +138,19 @@ still a solid approach.
 
 - [Scroll-driven animations](./scroll-driven-animations.mdx) can fade captions as slides cross the scrollport.
 - [Container queries](./container-queries.mdx) can change slide density inside a dashboard widget.
-- Peek layouts (`flex-basis: 85%`) hint that more content exists -- better than clipping with no affordance.
+- Peek layouts (`flex-basis: 85%`) hint that more content exists - better than clipping with no affordance.
 
 ## Gotchas
 
-1. **Nested scrollers** fight each other -- avoid snap on both parent and child unless intentional.
+1. **Nested scrollers** fight each other - avoid snap on both parent and child unless intentional.
 2. **`mandatory` + uneven widths** can feel sticky; test with real content.
-3. **Focus.** Focused elements scrolled into view may disagree with snap alignment -- test keyboard paths.
+3. **Focus.** Focused elements scrolled into view may disagree with snap alignment - test keyboard paths.
 4. **Libraries.** Reach for a JS carousel when you need infinite loops, complex lazy loading, or analytics-heavy
-   slide APIs -- not for basic snap galleries.
+slide APIs - not for basic snap galleries.
 
 ## Related reading
 
 - [Scroll-Driven Animations](./scroll-driven-animations.mdx)
-- [Practice Projects](./beginners-guide/18-practice-projects.md) -- carousel practice idea
+- [Practice Projects](./beginners-guide/18-practice-projects.md) - carousel practice idea
 - [MDN: CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap)
 - Inspiration: [modern-css.com scroll snapping](https://modern-css.com/scroll-snapping-without-a-carousel-library/)

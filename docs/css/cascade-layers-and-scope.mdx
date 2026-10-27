@@ -1,7 +1,7 @@
 ---
 title: "Cascade Layers & Scope"
 sidebar_label: "Layers & Scope"
-description: Control the cascade with @layer patterns and encapsulate component styles with @scope -- how they compare to BEM, specificity wars, and !important.
+description: Control the cascade with @layer patterns and encapsulate component styles with @scope - how they compare to BEM, specificity wars, and !important.
 slug: /css/cascade-layers-and-scope
 tags: [css, cascade, architecture]
 keywords:
@@ -14,7 +14,7 @@ keywords:
 
 # Cascade Layers & Scope
 
-Specificity and source order still matter -- but large codebases need stronger tools. **`@layer`** puts whole groups
+Specificity and source order still matter - but large codebases need stronger tools. **`@layer`** puts whole groups
 of rules into an explicit priority order. **`@scope`** limits how far selectors can reach inside a subtree.
 
 This expands the intro in [Specificity & the Cascade](./beginners-guide/14-specificity-and-the-cascade.md) and pairs
@@ -57,7 +57,7 @@ layer order decides first (within normal author styles).
     .card { /* … */ }
 }
 
-/* Later file -- same layer bucket */
+/* Later file - same layer bucket */
 @layer components {
     .card__title { /* … */ }
 }
@@ -69,7 +69,7 @@ once you adopt the system, or you will fight unlayered leftovers.
 ```css
 @layer reset, base, components;
 
-/* Avoid: unlayered -- beats all layered rules */
+/* Avoid: unlayered - beats all layered rules */
 .widget {
     color: red;
 }
@@ -101,12 +101,12 @@ they do not make `!important` a good default. Prefer moving the override to a hi
 | Layer | Contents |
 |-------|----------|
 | `reset` | Box-sizing, margin resets |
-| `tokens` | Rarely needed as real CSS -- often just `:root` variables in `base` |
+| `tokens` | Rarely needed as real CSS - often just `:root` variables in `base` |
 | `base` | Element defaults, typography |
 | `components` | BEM blocks / UI pieces |
 | `utilities` | Single-purpose overrides (`hidden`, `sr-only`) |
 
-Frameworks may ship their own layer names -- declare your order to interleave with them explicitly.
+Frameworks may ship their own layer names - declare your order to interleave with them explicitly.
 
 ## `@scope`
 
@@ -125,7 +125,7 @@ Frameworks may ship their own layer names -- declare your order to interleave wi
 ```
 
 Inside the scope, `h2` only matches headings **within** `.card`. That reduces reliance on long BEM prefixes for
-descendant elements -- though clear names remain valuable for readable HTML.
+descendant elements - though clear names remain valuable for readable HTML.
 
 ### Donut scope (exclude inner regions)
 
@@ -197,9 +197,9 @@ entirely. Unscoped BEM remains a valid baseline; `@scope` can land as an enhance
 
 ## Related reading
 
-- [Specificity & the Cascade](./beginners-guide/14-specificity-and-the-cascade.md) -- specificity math, intro `@layer`
-- [Architecture & Best Practices](./beginners-guide/16-architecture-and-best-practices.md) -- BEM and file structure
-- [CSS Nesting](./css-nesting.mdx) -- nesting inside layers and scopes
+- [Specificity & the Cascade](./beginners-guide/14-specificity-and-the-cascade.md) - specificity math, intro `@layer`
+- [Architecture & Best Practices](./beginners-guide/16-architecture-and-best-practices.md) - BEM and file structure
+- [CSS Nesting](./css-nesting.mdx) - nesting inside layers and scopes
 - [MDN: `@layer`](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer)
 - [MDN: `@scope`](https://developer.mozilla.org/en-US/docs/Web/CSS/@scope)
 - Inspiration: [modern-css.com cascade layers](https://modern-css.com/organizing-css-with-cascade-layers/),

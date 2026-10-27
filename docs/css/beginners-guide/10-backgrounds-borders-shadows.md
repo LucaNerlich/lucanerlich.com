@@ -393,7 +393,7 @@ Unlike borders, outlines do not affect the element's size or position. They are 
 
 ## Frosted glass with `backdrop-filter`
 
-`backdrop-filter` blurs (or otherwise filters) **what is behind** an element -- useful for translucent toolbars and
+`backdrop-filter` blurs (or otherwise filters) **what is behind** an element - useful for translucent toolbars and
 cards over busy backgrounds:
 
 ```css
@@ -406,7 +406,7 @@ cards over busy backgrounds:
 ```
 
 Provide a solid or high-opacity fallback background for browsers without `backdrop-filter`, and keep text contrast
-high -- blur is not a substitute for readable colour pairs. Prefer modest blur radii for performance.
+high - blur is not a substitute for readable colour pairs. Prefer modest blur radii for performance.
 
 ## Practical example
 

@@ -185,7 +185,7 @@ Prefer **`100dvh`** (or `min-height: 100dvh`) over `100vh` for full-screen heroe
 }
 ```
 
-`100vh` alone still causes the classic mobile "content clipped behind the URL bar" bug -- default to `dvh` for new UI.
+`100vh` alone still causes the classic mobile "content clipped behind the URL bar" bug - default to `dvh` for new UI.
 
 ### ch
 

@@ -406,7 +406,7 @@ input:focus::placeholder {
 
 ## Form validation: `:user-valid` and `:user-invalid`
 
-`:valid` and `:invalid` match as soon as the page loads -- empty required fields often look "invalid" immediately.
+`:valid` and `:invalid` match as soon as the page loads - empty required fields often look "invalid" immediately.
 **`:user-valid`** and **`:user-invalid`** wait until the user has interacted with the control (or the form was
 submitted, depending on the browser's rules), which is usually what you want for error styling:
 

@@ -1,7 +1,7 @@
 ---
 title: "View Transitions API"
 sidebar_label: "View Transitions"
-description: Animate between UI states with the View Transitions API -- same-document transitions, view-transition names, pseudo-elements, reduced motion, and a brief look at cross-document MPA support.
+description: Animate between UI states with the View Transitions API - same-document transitions, view-transition names, pseudo-elements, reduced motion, and a brief look at cross-document MPA support.
 slug: /css/view-transitions
 tags: [css, animation, view-transitions]
 keywords:
@@ -14,8 +14,8 @@ keywords:
 
 # View Transitions API
 
-View transitions morph the old UI into the new one when the DOM updates -- list to detail, theme swap, filtered
-gallery -- without hand-rolling FLIP math for every case.
+View transitions morph the old UI into the new one when the DOM updates - list to detail, theme swap, filtered
+gallery - without hand-rolling FLIP math for every case.
 
 This page expands the one-line mention in
 [Modern CSS Features](./beginners-guide/15-modern-css-features.md). Focus is **same-document** transitions (the
@@ -148,7 +148,7 @@ if (motionOk && document.startViewTransition) {
 - Scroll-linked scrubbing (use [scroll-driven animations](./scroll-driven-animations.mdx))
 - Cases where you need frame-by-frame control of every pixel (custom WAAPI / canvas)
 
-## Cross-document (MPA) transitions -- watch
+## Cross-document (MPA) transitions - watch
 
 Browsers are adding **cross-document** view transitions for multi-page apps (opt-in via meta / CSS, plus matching
 `view-transition-name`s across pages). Treat MPA transitions as an enhancement to verify against current MDN and
@@ -162,7 +162,7 @@ Baseline status for your audience. Same-document `startViewTransition` remains t
    pattern) so old/new captures match what you intend.
 4. **Focus and a11y.** Still manage focus after the update; the animation does not replace good navigation hygiene.
 5. **Stacking / overflow.** Named elements with complex overflow or transforms may snapshot differently than you
-   expect -- test in DevTools.
+expect - test in DevTools.
 
 ## Browser support
 
@@ -172,8 +172,8 @@ them.
 
 ## Related reading
 
-- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) -- classic CSS motion
-- [Scroll-Driven Animations](./scroll-driven-animations.mdx) -- scroll as timeline, not DOM swaps
-- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) -- survey hub
+- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) - classic CSS motion
+- [Scroll-Driven Animations](./scroll-driven-animations.mdx) - scroll as timeline, not DOM swaps
+- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) - survey hub
 - [MDN: View Transition API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API)
 - Inspiration: [modern-css.com page transitions](https://modern-css.com/page-transitions-without-a-framework/)

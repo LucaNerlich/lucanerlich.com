@@ -15,7 +15,7 @@ keywords:
 # Typed Custom Properties (`@property`)
 
 Ordinary custom properties are untyped strings to the cascade. **`@property`** registers a name with a syntax, an
-inheritance flag, and an initial value -- so the browser can validate values, interpolate them, and animate them.
+inheritance flag, and an initial value - so the browser can validate values, interpolate them, and animate them.
 
 This page extends [CSS Custom Properties](./beginners-guide/13-css-custom-properties.md). Keep using plain `--tokens`
 for most theming; reach for `@property` when you need animation or stricter contracts.
@@ -122,7 +122,7 @@ If `inherits` is `true`, a parent `--drawer-shift` leaks into nested drawers.
 }
 ```
 
-The whole `@property` rule is ignored if descriptors are inconsistent -- you silently get an untyped property again.
+The whole `@property` rule is ignored if descriptors are inconsistent - you silently get an untyped property again.
 Validate in DevTools.
 
 ### Registered vs unregistered shadowing
@@ -183,7 +183,7 @@ a scroll timeline when you need custom interpolated inputs.
 ## JavaScript still works
 
 `element.style.setProperty('--progress', '0.4')` continues to work. With a registered `<number>`, invalid strings
-are rejected according to the registration rules -- prefer setting well-typed values.
+are rejected according to the registration rules - prefer setting well-typed values.
 
 ```js
 card.style.setProperty('--progress', String(ratio));
@@ -191,9 +191,9 @@ card.style.setProperty('--progress', String(ratio));
 
 ## When not to use `@property`
 
-- Flat design tokens that never animate (`--radius-md: 8px`) -- plain custom properties are enough
+- Flat design tokens that never animate (`--radius-md: 8px`) - plain custom properties are enough
 - Values you intentionally pass as raw lists/shorthands that do not fit a tidy syntax
-- Critical path CSS where a missing registration would be confusing -- document registered names in the design system
+- Critical path CSS where a missing registration would be confusing - document registered names in the design system
 
 ## Progressive enhancement
 
@@ -207,7 +207,7 @@ values so layouts work without interpolation:
 }
 
 @supports (background: paint(something)) {
-    /* not required for @property -- shown only as a reminder to think in layers */
+    /* not required for @property - shown only as a reminder to think in layers */
 }
 ```
 
@@ -216,8 +216,8 @@ as enhancement. Check support tables when animation is essential.
 
 ## Related reading
 
-- [CSS Custom Properties](./beginners-guide/13-css-custom-properties.md) -- `var()`, theming, fallbacks
-- [Modern CSS Color](./modern-css-color.mdx) -- OKLCH tokens and `color-mix()`
-- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) -- transition basics
+- [CSS Custom Properties](./beginners-guide/13-css-custom-properties.md) - `var()`, theming, fallbacks
+- [Modern CSS Color](./modern-css-color.mdx) - OKLCH tokens and `color-mix()`
+- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) - transition basics
 - [MDN: `@property`](https://developer.mozilla.org/en-US/docs/Web/CSS/@property)
 - Inspiration: [modern-css.com typed custom properties](https://modern-css.com/typed-custom-properties-without-javascript/)

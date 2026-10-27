@@ -581,7 +581,7 @@ module.exports = {
 #### Step 3: Update dependencies
 
 `npx @strapi/upgrade major` bumps these for you. If you update manually, keep all `@strapi/*` packages on the same
-version. `@strapi/plugin-i18n` is a v4-only package -- i18n is part of the Strapi 5 core, so remove it from
+version. `@strapi/plugin-i18n` is a v4-only package - i18n is part of the Strapi 5 core, so remove it from
 `package.json`:
 
 ```json

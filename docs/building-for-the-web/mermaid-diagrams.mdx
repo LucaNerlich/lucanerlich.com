@@ -2085,7 +2085,7 @@ build.
 [Pele](https://github.com/obsidianmd/pele) is Obsidian's open-source Mermaid renderer. It turns Mermaid
 source into SVG: small, synchronous, no runtime dependencies, and themed with CSS variables. It targets
 Mermaid 12.1 syntax with its own layout engine, so the picture will not match `mermaid.js` pixel for
-pixel -- the language is the same; the drawing is Pele's.
+pixel - the language is the same; the drawing is Pele's.
 
 Use it when you want diagrams in a product without shipping Mermaid's browser stack: build-time docs,
 server-rendered pages, or a client that inserts SVG and lets CSS handle light and dark. Docs and a
@@ -2115,9 +2115,9 @@ Or load the browser build from a CDN ([API: using a CDN](https://pele.run/api#us
 
 Two entry points cover most apps:
 
-1. **`render(source)`** -- returns `{ svg, width, height, type, ... }`. Insert the SVG yourself. Works
+1. **`render(source)`** - returns `{ svg, width, height, type, ... }`. Insert the SVG yourself. Works
    in Node and in the browser. Throws `PeleError` on bad input.
-2. **`mount(element, text)`** -- draws into a DOM node, measures fonts from CSS, treats the container
+2. **`mount(element, text)`** - draws into a DOM node, measures fonts from CSS, treats the container
    width as `maxWidth`, and re-lays out on resize. Prefer this for live, editable, or responsive UI.
 
 Minimal client path:
@@ -2142,7 +2142,7 @@ diagram.update('flowchart LR\n  A[Draft] --> B[Published]');
 
 `mount()` does not throw on a bad diagram: the container shows the error (dimmed previous SVG, or in
 place if nothing drew yet). Read it from `diagram.error`, or pass `onError`. Always display
-`PeleError.message` with `textContent` -- the message can include diagram source.
+`PeleError.message` with `textContent` - the message can include diagram source.
 
 Catch failures from `render()` the same way this site's remark plugin does:
 
@@ -2170,7 +2170,7 @@ Useful options on `render` / `mount` (all optional; full list on the [API page](
 | `linkSchemes` | Allowed link schemes; default `http`, `https`, `mailto`, `tel` |
 
 Theme with `--pele-*` CSS variables on `.pele` or a parent. Colors follow the theme toggle without a
-redraw -- see [Theming](https://pele.run/theming).
+redraw - see [Theming](https://pele.run/theming).
 
 ### Smaller bundles
 
@@ -2201,7 +2201,7 @@ calls `render()` on every `mermaid` fence, and the page ships the SVG. The brows
 zoom fragment when a diagram had to shrink. Details, config, and CSS wiring are in
 [How this site renders Mermaid](#how-this-site-renders-mermaid).
 
-Treat diagram text as untrusted if it comes from users -- Pele escapes labels and filters links, but
+Treat diagram text as untrusted if it comes from users - Pele escapes labels and filters links, but
 you still validate input and show errors as text. See [Security](https://pele.run/security) and
 [Treat diagram input as untrusted](#treat-diagram-input-as-untrusted) above.
 

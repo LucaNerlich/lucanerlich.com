@@ -75,7 +75,7 @@ enhancement:
 }
 ```
 
-Do not chase maximum chroma at the cost of contrast. Wide-gamut accents still need readable text pairs -- see the
+Do not chase maximum chroma at the cost of contrast. Wide-gamut accents still need readable text pairs - see the
 Building for the Web colour guide.
 
 ## `color-mix()`
@@ -131,7 +131,7 @@ recalculate. This replaces many Sass `darken()` / `lighten()` helpers.
 
 ## `light-dark()` and `color-scheme`
 
-`light-dark()` picks the first value in light schemes and the second in dark schemes -- **when** the element
+`light-dark()` picks the first value in light schemes and the second in dark schemes - **when** the element
 participates in a colour scheme via `color-scheme` (or the user/agent scheme):
 
 ```css
@@ -151,7 +151,7 @@ body {
 `color-scheme: light dark;` also tells the browser to paint native controls (scrollbars, form widgets) appropriately.
 
 You can still use `[data-theme="dark"]` token overrides when the product needs an explicit toggle independent of
-OS preference -- combine both carefully so `light-dark()` and data-theme do not fight.
+OS preference - combine both carefully so `light-dark()` and data-theme do not fight.
 
 ```css
 :root {
@@ -198,7 +198,7 @@ Pair with [typed custom properties](./typed-custom-properties.mdx) when you anim
 
 ## Gotchas
 
-1. **Older browsers** ignore unknown colour functions -- provide a simple hex/`hsl` fallback first when needed.
+1. **Older browsers** ignore unknown colour functions - provide a simple hex/`hsl` fallback first when needed.
 2. **Mixing spaces differ.** `in srgb` ≠ `in oklch`; pick deliberately.
 3. **`light-dark()` needs a scheme.** Without `color-scheme` (or an ancestor scheme), results may not match your
    mental model.
@@ -213,9 +213,9 @@ evergreen browsers. Confirm edge cases on MDN / Can I use for your support polic
 
 ## Related reading
 
-- [Colors & Typography](./beginners-guide/04-colors-and-typography.md) -- hex, rgb, hsl basics
-- [CSS Custom Properties](./beginners-guide/13-css-custom-properties.md) -- token theming
-- [Typed Custom Properties](./typed-custom-properties.mdx) -- `@property` for animated / typed colours
-- [Color and contrast](../building-for-the-web/web-content/color-and-contrast.md) -- a11y
+- [Colors & Typography](./beginners-guide/04-colors-and-typography.md) - hex, rgb, hsl basics
+- [CSS Custom Properties](./beginners-guide/13-css-custom-properties.md) - token theming
+- [Typed Custom Properties](./typed-custom-properties.mdx) - `@property` for animated / typed colours
+- [Color and contrast](../building-for-the-web/web-content/color-and-contrast.md) - a11y
 - Inspiration: [modern-css.com OKLCH](https://modern-css.com/perceptually-uniform-colors-with-oklch/),
   [light-dark](https://modern-css.com/dark-mode-colors-without-duplicating-values/)

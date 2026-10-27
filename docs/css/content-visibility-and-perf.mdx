@@ -1,7 +1,7 @@
 ---
 title: "content-visibility & Rendering Performance"
 sidebar_label: "content-visibility"
-description: Skip rendering off-screen content with content-visibility and contain-intrinsic-size -- when it helps, accessibility caveats, and how it pairs with general web performance advice.
+description: Skip rendering off-screen content with content-visibility and contain-intrinsic-size - when it helps, accessibility caveats, and how it pairs with general web performance advice.
 slug: /css/content-visibility-and-perf
 tags: [css, performance]
 keywords:
@@ -14,7 +14,7 @@ keywords:
 # content-visibility & Rendering Performance
 
 `content-visibility: auto` lets the browser **skip rendering work** for off-screen subtrees until they approach the
-viewport -- similar in spirit to lazy rendering, without an `IntersectionObserver` for that specific optimisation.
+viewport - similar in spirit to lazy rendering, without an `IntersectionObserver` for that specific optimisation.
 
 For the broader performance checklist (images, fonts, JS), see
 [Web performance](../building-for-the-web/web-performance.md). This page is the CSS-focused deep dive.
@@ -32,7 +32,7 @@ For the broader performance checklist (images, fonts, JS), see
 |----------|------|
 | `content-visibility: auto` | Browser may skip painting/layout of contents when far off-screen |
 | `content-visibility: hidden` | Force-skip (also used for app-like hide without wiping state in some patterns) |
-| `content-visibility: visible` | Default -- always render |
+| `content-visibility: visible` | Default - always render |
 | `contain-intrinsic-size` | Placeholder size while contents are not rendered, so scrollbars stay sane |
 
 `auto` also applies relevant **CSS containment** so skipped subtrees do not invalidate the whole document as often.
@@ -68,14 +68,14 @@ after the first visit to that section). Check MDN for the exact syntax your base
 
 ## Accessibility and UX notes
 
-- Keyboard users and find-in-page should still reach content -- test before rolling out site-wide.
+- Keyboard users and find-in-page should still reach content - test before rolling out site-wide.
 - Do not use `content-visibility: hidden` as a substitute for proper `hidden` / `display` semantics without checking
   focus and AT behaviour.
 - Combine with responsive images and modern image formats; this property does not replace image lazy-loading.
 
 ## Progressive enhancement
 
-Unsupported browsers ignore the property -- the page still works, just without the optimisation. Ship it as an
+Unsupported browsers ignore the property - the page still works, just without the optimisation. Ship it as an
 additive improvement after measuring (Chrome Performance panel, Interaction to Next Paint, etc.).
 
 ```css
@@ -93,7 +93,7 @@ auto` over hand-tuning every `contain` value unless you know you need finer cont
 
 ## Related reading
 
-- [Web performance](../building-for-the-web/web-performance.md) -- site-wide performance practices
-- [Container Queries](./container-queries.mdx) -- different kind of "containment" (query containers)
+- [Web performance](../building-for-the-web/web-performance.md) - site-wide performance practices
+- [Container Queries](./container-queries.mdx) - different kind of "containment" (query containers)
 - [MDN: `content-visibility`](https://developer.mozilla.org/en-US/docs/Web/CSS/content-visibility)
 - Inspiration: [modern-css.com lazy rendering](https://modern-css.com/lazy-rendering-without-intersection-observer/)

@@ -265,7 +265,7 @@ inside layers so a stray unlayered rule does not silently win:
 > `@scope` for subtree encapsulation (including how scope compares to BEM).
 
 > **Note:** Cascade layers are most useful in large projects and design systems. For small projects, understanding
-> specificity and source order is still enough -- but layers are worth learning early.
+> specificity and source order is still enough - but layers are worth learning early.
 
 ## Debugging specificity conflicts
 

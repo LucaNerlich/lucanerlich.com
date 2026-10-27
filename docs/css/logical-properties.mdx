@@ -1,7 +1,7 @@
 ---
 title: "Logical Properties"
 sidebar_label: "Logical Properties"
-description: Build direction-aware layouts with CSS logical properties -- inset, margin-inline, padding-block, inline-size, and how they map to physical top/right/bottom/left.
+description: Build direction-aware layouts with CSS logical properties - inset, margin-inline, padding-block, inline-size, and how they map to physical top/right/bottom/left.
 slug: /css/logical-properties
 tags: [css, layout, i18n]
 keywords:
@@ -28,7 +28,7 @@ This expands the survey section in [Modern CSS Features](./beginners-guide/15-mo
 | **Inline** | Horizontal (left ↔ right) | `direction: rtl` |
 | **Block** | Vertical (top ↔ bottom) | `writing-mode` (for example vertical scripts) |
 
-So `margin-inline-start` is the "beginning" side of a line of text -- left in English, right in Arabic.
+So `margin-inline-start` is the "beginning" side of a line of text - left in English, right in Arabic.
 
 ## Common mappings
 
@@ -50,7 +50,7 @@ So `margin-inline-start` is the "beginning" side of a line of text -- left in En
     margin-inline: auto;      /* both inline sides */
     padding-block: 1.5rem;    /* both block sides */
     padding-inline: 1rem;
-    inset: 0;                 /* all four physical insets -- see below */
+    inset: 0;                 /* all four physical insets - see below */
     inset-inline: 1rem;       /* logical inline insets */
     inset-block-start: 0;
 }
@@ -67,7 +67,7 @@ So `margin-inline-start` is the "beginning" side of a line of text -- left in En
 }
 ```
 
-In LTR this sits top-right; in RTL it sits top-left -- usually what you want for a "trailing" badge.
+In LTR this sits top-right; in RTL it sits top-left - usually what you want for a "trailing" badge.
 
 ## Layout examples
 
@@ -157,11 +157,11 @@ complements that:
 
 ## Gotchas
 
-1. **`left`/`right` in animations** -- transforms are often clearer; if you animate insets, be consistent about
+1. **`left`/`right` in animations** - transforms are often clearer; if you animate insets, be consistent about
    logical vs physical.
-2. **Older mental muscle** -- teams used to `margin-left: auto` need a short lint or review norm for `margin-inline`.
-3. **`width` vs `inline-size`** -- both work in horizontal modes; prefer `inline-size` in new shared components.
-4. **Borders and radii** -- logical border longhands exist; corner radii still use physical corner names in many
+2. **Older mental muscle** - teams used to `margin-left: auto` need a short lint or review norm for `margin-inline`.
+3. **`width` vs `inline-size`** - both work in horizontal modes; prefer `inline-size` in new shared components.
+4. **Borders and radii** - logical border longhands exist; corner radii still use physical corner names in many
    codebases (`border-top-left-radius`) with logical equivalents available as `border-start-start-radius`, etc.
 
 ## Browser support
@@ -170,8 +170,8 @@ Logical properties are widely supported across evergreen browsers. Safe for new 
 
 ## Related reading
 
-- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) -- short logical-property intro
-- [The Box Model](./beginners-guide/03-the-box-model.mdx) -- padding, margin, border basics
-- [Display & Positioning](./beginners-guide/06-display-and-positioning.mdx) -- `position` and offsets
+- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) - short logical-property intro
+- [The Box Model](./beginners-guide/03-the-box-model.mdx) - padding, margin, border basics
+- [Display & Positioning](./beginners-guide/06-display-and-positioning.mdx) - `position` and offsets
 - [MDN: CSS logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values)
 - Inspiration: [modern-css.com direction-aware layouts](https://modern-css.com/direction-aware-layouts-without-left-and-right/)

@@ -337,7 +337,7 @@ h1 {
 ### Typed properties and modern colour helpers
 
 When you need to **animate** a custom property, enforce a value type, or set a guaranteed initial value, register it
-with `@property` -- see [Typed Custom Properties](../typed-custom-properties.mdx).
+with `@property` - see [Typed Custom Properties](../typed-custom-properties.mdx).
 
 For theme colours without duplicating light/dark token blocks, also look at `light-dark()` and OKLCH-based tokens in
 [Modern CSS Color](../modern-css-color.mdx).

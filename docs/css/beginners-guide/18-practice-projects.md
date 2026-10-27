@@ -16,7 +16,7 @@ sidebar_position: 18
 # Practice Projects
 
 The best way to solidify everything you have learned is to build real things. Below are projects ordered from
-beginner to advanced -- including modern extras (scroll-snap carousel, anchored tooltip). Each one lists what you will
+beginner to advanced - including modern extras (scroll-snap carousel, anchored tooltip). Each one lists what you will
 build, which skills it practises, and a few hints to get you started.
 
 No step-by-step hand-holding; that is the point. Apply the knowledge from chapters 1-17, use DevTools to debug, and
@@ -239,7 +239,7 @@ A purely decorative illustration made entirely with CSS - no images, no SVGs, no
 
 ### What you will build
 
-A horizontal card carousel that snaps from slide to slide using **CSS scroll snap** -- no carousel library. Include
+A horizontal card carousel that snaps from slide to slide using **CSS scroll snap** - no carousel library. Include
 optional previous/next buttons that call `scrollBy`, but make sure trackpad / touch scrolling works without them.
 
 ### Skills practised

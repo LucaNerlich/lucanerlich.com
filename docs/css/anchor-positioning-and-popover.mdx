@@ -1,7 +1,7 @@
 ---
 title: "Anchor Positioning & Popover"
 sidebar_label: "Anchor & Popover"
-description: Position tooltips and menus with CSS anchor positioning and the Popover API -- anchor(), position-area, position-try, anchor-size(), popover=hint, and when JavaScript still wins.
+description: Position tooltips and menus with CSS anchor positioning and the Popover API - anchor(), position-area, position-try, anchor-size(), popover=hint, and when JavaScript still wins.
 slug: /css/anchor-positioning-and-popover
 tags: [css, overlay, popover, anchor]
 keywords:
@@ -41,7 +41,7 @@ outside click for auto popovers.
 |-------|-----------|
 | `popover` / `popover="auto"` | Light dismiss (outside click / Escape); only one auto popover open at a time |
 | `popover="manual"` | You control open/close; no light dismiss by default |
-| `popover="hint"` | Hint-style overlays (for example hover tooltips) that can coexist with an auto popover -- check current support |
+| `popover="hint"` | Hint-style overlays (for example hover tooltips) that can coexist with an auto popover - check current support |
 
 Open/close from script when needed:
 
@@ -65,7 +65,7 @@ Style open state with `:popover-open`:
 }
 ```
 
-Popovers are not a positioning system by themselves -- they still need CSS (or anchors) to sit next to their trigger.
+Popovers are not a positioning system by themselves - they still need CSS (or anchors) to sit next to their trigger.
 
 ## CSS anchor positioning
 
@@ -102,7 +102,7 @@ For finer control, set insets against anchor edges:
 ```
 
 Exact edge keywords and percentage forms are documented on
-[MDN: `anchor()`](https://developer.mozilla.org/en-US/docs/Web/CSS/anchor) -- prefer `position-area` for common
+[MDN: `anchor()`](https://developer.mozilla.org/en-US/docs/Web/CSS/anchor) - prefer `position-area` for common
 placements when it is enough.
 
 ### `position-area`
@@ -178,7 +178,7 @@ Useful for dropdowns that should match the trigger width.
 
 Use `hint` when you want tooltip-like behaviour alongside other UI; fall back to `auto` if `hint` is unavailable in
 your support matrix. For hover-driven hints, verify whether your browser exposes CSS interest / invoker behaviour or
-still needs a small script -- do not assume hover-open is universal yet.
+still needs a small script - do not assume hover-open is universal yet.
 
 ## Pattern: dropdown menu
 
@@ -214,7 +214,7 @@ Prefer JS (or a component library) when you need:
 - **Virtualised lists** or overlays tied to canvas / WebGL
 - **Rich focus traps** and roving tabindex beyond what dialog/popover give you
 - **Server-driven** menus with heavy async content loading and cancellation
-- **Guaranteed** behaviour on browsers without anchor positioning -- polyfills exist, but measure cost
+- **Guaranteed** behaviour on browsers without anchor positioning - polyfills exist, but measure cost
 
 Native popover + anchors cover a large share of tooltips and menus with less code.
 
@@ -230,10 +230,10 @@ Native popover + anchors cover a large share of tooltips and menus with less cod
 
 1. **Containing blocks.** Absolute anchors still participate in normal CSS positioning rules; `fixed` often behaves
    more predictably for viewport-adjacent UI.
-2. **Overflow hidden ancestors** can clip or confuse expectations -- top-layer popovers help for painting, but
+2. **Overflow hidden ancestors** can clip or confuse expectations - top-layer popovers help for painting, but
    anchoring still references geometry.
 3. **Name collisions.** `anchor-name` values should be unique where lookups would be ambiguous.
-4. **Support variance.** Anchor positioning and `popover=hint` land on different schedules -- feature-detect and
+4. **Support variance.** Anchor positioning and `popover=hint` land on different schedules - feature-detect and
    degrade to static placement or JS.
 
 ## Browser support
@@ -244,9 +244,9 @@ shipping without a fallback.
 
 ## Related reading
 
-- [Native Overlays & Dialogs](./native-overlays-and-dialogs.mdx) -- `<dialog>`, invokers, light dismiss
-- [Logical Properties](./logical-properties.mdx) -- flow-relative placement language
-- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) -- survey table
+- [Native Overlays & Dialogs](./native-overlays-and-dialogs.mdx) - `<dialog>`, invokers, light dismiss
+- [Logical Properties](./logical-properties.mdx) - flow-relative placement language
+- [Modern CSS Features](./beginners-guide/15-modern-css-features.md) - survey table
 - [MDN: CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning)
 - [MDN: Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API)
 - Inspiration: [modern-css.com tooltip positioning](https://modern-css.com/tooltip-positioning-without-javascript/)

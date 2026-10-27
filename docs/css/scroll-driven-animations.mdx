@@ -1,7 +1,7 @@
 ---
 title: "Scroll-Driven Animations"
 sidebar_label: "Scroll-Driven Animations"
-description: Drive CSS animations from scroll progress with animation-timeline, scroll(), and view() -- ranges, progressive enhancement, and when IntersectionObserver still wins.
+description: Drive CSS animations from scroll progress with animation-timeline, scroll(), and view() - ranges, progressive enhancement, and when IntersectionObserver still wins.
 slug: /css/scroll-driven-animations
 tags: [css, animation, scroll]
 keywords:
@@ -62,7 +62,7 @@ Use the usual `@keyframes` and `animation-name`, then set `animation-timeline` i
 **timeline**, not from wall-clock time. Prefer `animation-timing-function: linear` so keyframe percentages map
 directly to scroll progress.
 
-### `scroll()` -- scroll progress of a scroller
+### `scroll()` - scroll progress of a scroller
 
 `scroll()` creates an anonymous **scroll progress timeline** for a scroll container:
 
@@ -99,7 +99,7 @@ Named timelines are useful when several elements share one scroller:
 }
 ```
 
-### `view()` -- progress as an element crosses the scrollport
+### `view()` - progress as an element crosses the scrollport
 
 `view()` creates a **view progress timeline** based on the subject element's visibility inside its nearest scroller:
 
@@ -209,7 +209,7 @@ Practical rule:
 
 1. Ship a **static or lightly transitioned** default that works everywhere.
 2. Layer scroll-driven animations behind `@supports` or progressive enhancement when the motion is decorative.
-3. Keep **IntersectionObserver** for behaviour (load data, pause video, fire analytics) -- not only for CSS class
+3. Keep **IntersectionObserver** for behaviour (load data, pause video, fire analytics) - not only for CSS class
    toggles.
 
 ```css
@@ -244,7 +244,7 @@ Practical rule:
    is attached.
 4. **Fill mode.** `animation-fill-mode: both` (or `forwards` / `backwards` as needed) keeps the start and end
    keyframes from flashing incorrectly at the edges of the range.
-5. **Support.** Treat as progressive enhancement until your audience's browsers match your requirements -- verify on
+5. **Support.** Treat as progressive enhancement until your audience's browsers match your requirements - verify on
    [Can I use](https://caniuse.com/css-scroll-driven-animations) and MDN.
 
 ## Browser support
@@ -254,9 +254,9 @@ Baseline coverage improves. Always check current tables before relying on them w
 
 ## Related reading
 
-- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) -- time-based transitions and
+- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) - time-based transitions and
   keyframes
-- [View Transitions API](./view-transitions.mdx) -- animating document or UI state changes, not scroll progress
-- [Scroll Snap & Carousels](./scroll-snap-and-carousels.mdx) -- snapping and carousel patterns that pair with scroll
+- [View Transitions API](./view-transitions.mdx) - animating document or UI state changes, not scroll progress
+- [Scroll Snap & Carousels](./scroll-snap-and-carousels.mdx) - snapping and carousel patterns that pair with scroll
 - [MDN: Scroll-driven animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations)
 - Inspiration: [modern-css.com scroll-linked animations](https://modern-css.com/scroll-linked-animations-without-a-library/)

@@ -286,18 +286,18 @@ the child grid inherits the parent's row tracks, and content aligns perfectly.
 
 ## Other modern features
 
-| Feature | What it does | Deep dive |
-|---------|--------------|-----------|
-| `text-wrap: balance` / `pretty` | Better line breaking for headings and paragraphs | -- |
-| `@layer` / `@scope` | Explicit cascade order and subtree scoping | [Cascade Layers & Scope](../cascade-layers-and-scope.mdx) |
-| View Transitions | Animate between DOM or page states | [View Transitions API](../view-transitions.mdx) |
-| `@starting-style` / discrete transitions | Entry animations for `display` / popovers | [Transitions & Animations](./11-transitions-and-animations.mdx) |
-| Popover + anchor positioning | Native overlays positioned against triggers | [Anchor Positioning & Popover](../anchor-positioning-and-popover.mdx) |
-| `<dialog>` | Native modal / non-modal dialogs | [Native Overlays & Dialogs](../native-overlays-and-dialogs.mdx) |
-| Scroll-driven animations | Drive keyframes from scroll / view progress | [Scroll-Driven Animations](../scroll-driven-animations.mdx) |
-| `@property` | Typed, animatable custom properties | [Typed Custom Properties](../typed-custom-properties.mdx) |
-| Scroll snap | CSS carousels and snap scrolling | [Scroll Snap & Carousels](../scroll-snap-and-carousels.mdx) |
-| `content-visibility` | Skip rendering off-screen subtrees | [content-visibility & perf](../content-visibility-and-perf.mdx) |
+| Feature                                  | What it does                                     | Deep dive                                                             |
+|------------------------------------------|--------------------------------------------------|-----------------------------------------------------------------------|
+| `text-wrap: balance` / `pretty`          | Better line breaking for headings and paragraphs | -                                                                     |
+| `@layer` / `@scope`                      | Explicit cascade order and subtree scoping       | [Cascade Layers & Scope](../cascade-layers-and-scope.mdx)             |
+| View Transitions                         | Animate between DOM or page states               | [View Transitions API](../view-transitions.mdx)                       |
+| `@starting-style` / discrete transitions | Entry animations for `display` / popovers        | [Transitions & Animations](./11-transitions-and-animations.mdx)       |
+| Popover + anchor positioning             | Native overlays positioned against triggers      | [Anchor Positioning & Popover](../anchor-positioning-and-popover.mdx) |
+| `<dialog>`                               | Native modal / non-modal dialogs                 | [Native Overlays & Dialogs](../native-overlays-and-dialogs.mdx)       |
+| Scroll-driven animations                 | Drive keyframes from scroll / view progress      | [Scroll-Driven Animations](../scroll-driven-animations.mdx)           |
+| `@property`                              | Typed, animatable custom properties              | [Typed Custom Properties](../typed-custom-properties.mdx)             |
+| Scroll snap                              | CSS carousels and snap scrolling                 | [Scroll Snap & Carousels](../scroll-snap-and-carousels.mdx)           |
+| `content-visibility`                     | Skip rendering off-screen subtrees               | [content-visibility & perf](../content-visibility-and-perf.mdx)       |
 
 Check [caniuse.com](https://caniuse.com) or MDN before relying on a feature without a fallback.
 

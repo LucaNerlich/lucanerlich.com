@@ -1,7 +1,7 @@
 ---
 title: "Native Overlays & Dialogs"
 sidebar_label: "Overlays & Dialogs"
-description: Build modals and light-dismiss overlays with the HTML dialog element, invoker commands, and CSS -- without a JavaScript modal library.
+description: Build modals and light-dismiss overlays with the HTML dialog element, invoker commands, and CSS - without a JavaScript modal library.
 slug: /css/native-overlays-and-dialogs
 tags: [css, html, dialog, overlay]
 keywords:
@@ -106,12 +106,12 @@ dialog:open {
 }
 ```
 
-Support for discrete transitions on `display` / `overlay` varies -- keep a usable unanimated dialog as the baseline.
+Support for discrete transitions on `display` / `overlay` varies - keep a usable unanimated dialog as the baseline.
 
 ## Light dismiss
 
 Modal dialogs traditionally close via explicit buttons or Escape. Some browsers are adding **light dismiss**
-behaviours for dialogs (click outside) comparable to popovers -- verify current MDN notes for `closedby` /
+behaviours for dialogs (click outside) comparable to popovers - verify current MDN notes for `closedby` /
 light-dismiss attributes before relying on them. Portable pattern today:
 
 ```js
@@ -147,7 +147,7 @@ dialog {
 ## Invokers / `commandfor` (progressive)
 
 HTML is gaining **invoker commands** so buttons can open dialogs declaratively (for example `commandfor` /
-`command="show-modal"` -- names have evolved in proposals and early shipping). Treat declarative invokers as
+`command="show-modal"` - names have evolved in proposals and early shipping). Treat declarative invokers as
 progressive enhancement:
 
 ```html
@@ -175,7 +175,7 @@ You can combine patterns (a dialog that contains anchored popovers) but keep one
 - Give the dialog an accessible name (`aria-labelledby` pointing at a heading, or `aria-label`).
 - Restore focus to the trigger on close when you move focus manually.
 - Do not hide essential content only behind hover.
-- Ensure backdrop contrast does not make the page look broken for zoom users -- content in the dialog must scroll if
+- Ensure backdrop contrast does not make the page look broken for zoom users - content in the dialog must scroll if
   needed (`max-height` + `overflow: auto` on the panel).
 
 ## Gotchas
@@ -185,12 +185,12 @@ You can combine patterns (a dialog that contains anchored popovers) but keep one
 2. **Nested dialogs.** Avoid stacking many modals; redesign the flow.
 3. **`display: none` fights.** Let the dialog API manage open/closed; animate with the patterns above instead of
    hand-rolling a second visibility system.
-4. **Forms.** `method="dialog"` buttons close without a network submit -- use regular forms when you need HTTP POST.
+4. **Forms.** `method="dialog"` buttons close without a network submit - use regular forms when you need HTTP POST.
 
 ## Related reading
 
-- [Anchor Positioning & Popover](./anchor-positioning-and-popover.mdx) -- menus and tooltips
-- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) -- `@starting-style`, discrete
+- [Anchor Positioning & Popover](./anchor-positioning-and-popover.mdx) - menus and tooltips
+- [Transitions & Animations](./beginners-guide/11-transitions-and-animations.mdx) - `@starting-style`, discrete
   transitions
 - [MDN: `<dialog>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog)
 - Inspiration: [modern-css.com modal dialogs](https://modern-css.com/modal-dialogs-without-a-javascript-library/)
