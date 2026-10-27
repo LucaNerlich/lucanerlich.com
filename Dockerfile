@@ -25,6 +25,13 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 # Copy source files (separate layer: source changes don't re-install deps)
 COPY . .
 
+# Cap SSG concurrency for Coolify builders: the default worker pool peaks
+# around 3+ GiB RSS and gets OOM-killed (exit 255 / silent death after
+# "Creating an optimized production build..."). With rspackPersistentCache
+# and ssgWorkerThreads off in docusaurus.config.ts, peak stays ~2 GiB.
+ENV DOCUSAURUS_SSR_CONCURRENCY=4
+ENV DOCUSAURUS_SSG_WORKER_THREAD_COUNT=1
+
 # Build the Docusaurus site - output is fully static HTML in build/
 RUN pnpm build
 
