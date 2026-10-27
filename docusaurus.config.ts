@@ -107,7 +107,20 @@ const config: Config = {
     ],
 
     future: {
-        faster: true,
+        // Expand `faster: true` so Docker/Coolify builds can opt out of the
+        // memory-heavy pieces (persistent Rspack cache write, SSG workers).
+        // `gitEagerVcs` stays off: last-update timestamps are disabled.
+        faster: {
+            swcJsLoader: true,
+            swcJsMinimizer: true,
+            swcHtmlMinimizer: true,
+            lightningCssMinimizer: true,
+            mdxCrossCompilerCache: true,
+            rspackBundler: true,
+            rspackPersistentCache: false,
+            ssgWorkerThreads: false,
+            gitEagerVcs: false,
+        },
         v4: true,
     },
 
@@ -123,6 +136,7 @@ const config: Config = {
             },
         ],
         './plugins/check-llms-urls.js',
+        './plugins/build-memory-tuning.js',
     ],
 
     themeConfig: {
