@@ -1,5 +1,5 @@
 ---
-title: "Obsidian Daily QS -- Omarchy bar widget"
+title: "Obsidian Daily QS - Omarchy bar widget"
 description: Omarchy Quattro bar widget that shows today's Obsidian daily note todos (done/total) and opens a panel to check, add, search, and carry over items, with a Rust backend and QML frontend for Hyprland.
 tags: [omarchy, quickshell, rust, qml, hyprland, linux, obsidian, productivity]
 keywords:
@@ -15,13 +15,13 @@ keywords:
 
 [GitHub Repository](https://github.com/LucaNerlich/obsidian-daily-qs) · [Omarchy marketplace](https://omarchyplugins.com/plugin.html?id=luca.obsidian-daily) · [Releases](https://github.com/LucaNerlich/obsidian-daily-qs/releases)
 
-An [Omarchy](https://omarchy.org/) Quattro bar widget for today's [Obsidian](https://obsidian.md) daily note todos. The bar shows done/total (for example `☐ 2/5`), and left-click opens a panel to check items off, add new ones, search, and roll over leftovers from yesterday -- without leaving the desktop. The first write of a new day creates the note and automatically moves the previous day's open todos into it, so yesterday's note is left with only its done items.
+An [Omarchy](https://omarchy.org/) Quattro bar widget for today's [Obsidian](https://obsidian.md) daily note todos. The bar shows done/total (for example `☐ 2/5`), and left-click opens a panel to check items off, add new ones, search, and roll over leftovers from yesterday - without leaving the desktop. The first write of a new day creates the note and automatically moves the previous day's open todos into it, so yesterday's note is left with only its done items.
 
 ![Obsidian Daily QS panel showing today's todos](/images/projects/obsidian-daily-qs/preview.png)
 
 ## Why this exists
 
-Obsidian is where the day's tasks live, but checking a todo means switching to the editor, scrolling to the right heading, and editing markdown by hand. This widget moves the quick part of that loop -- check off, capture, review -- into the bar: one click opens the panel with focus already in the add field, so a thought is captured before it is gone. The note itself stays a plain markdown file, so nothing is locked into a plugin format.
+Obsidian is where the day's tasks live, but checking a todo means switching to the editor, scrolling to the right heading, and editing markdown by hand. This widget moves the quick part of that loop - check off, capture, review - into the bar: one click opens the panel with focus already in the add field, so a thought is captured before it is gone. The note itself stays a plain markdown file, so nothing is locked into a plugin format.
 
 ## Architecture
 
@@ -49,7 +49,7 @@ The backend enforces the vault boundary on every access: paths resolved from the
 
 The backend reads `OBSIDIAN_VAULT_ROOT` from its process environment. The Omarchy shell runs as a child of Hyprland, so an `export` in `~/.bashrc` does not reach it. Set the variable for the graphical session instead:
 
-**Option A -- Hyprland env** (per-session, applies without logging out):
+**Option A - Hyprland env** (per-session, applies without logging out):
 
 ```lua
 -- ~/.config/hypr/hyprland.lua
@@ -60,7 +60,7 @@ hl.env("OBSIDIAN_VAULT_ROOT", "/home/you/Documents/notizen")
 hyprctl reload && omarchy restart shell
 ```
 
-**Option B -- systemd user environment** (applies at next login, also covers apps launched via `uwsm-app`):
+**Option B - systemd user environment** (applies at next login, also covers apps launched via `uwsm-app`):
 
 ```ini
 # ~/.config/environment.d/obsidian-vault.conf

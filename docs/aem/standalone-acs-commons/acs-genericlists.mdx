@@ -24,10 +24,10 @@ root.
 
 ## What you get
 
-- **`core`** -- `GenericList` / `GenericListImpl` / `GenericListAdapterFactory`: adapt a `Page` whose content
+- **`core`** - `GenericList` / `GenericListImpl` / `GenericListAdapterFactory`: adapt a `Page` whose content
   resource type is `acs-genericlists/components/utilities/genericlist` and call `getItems()` or
   `lookupTitle(value[, locale])`.
-- **`ui.apps`** -- Key/Value List component with a nested composite-multifield dialog and a datasource servlet for Granite `select` / `radiogroup`; the `generic-list` editable template (restricted to `/content/generic-lists(/.*)?`) ships in `ui.content`.
+- **`ui.apps`** - Key/Value List component with a nested composite-multifield dialog and a datasource servlet for Granite `select` / `radiogroup`; the `generic-list` editable template (restricted to `/content/generic-lists(/.*)?`) ships in `ui.content`.
 
 Rows are stored as `items/itemN` (`jcr:title`, `value`, optional `translations`); ACS-style `./list/` content is still read. Authoring uses a standard component dialog instead of ACS Commons' MCP-generated list editor.
 
@@ -80,7 +80,7 @@ String title = list.lookupTitle("de"); // e.g. "Germany"
 ## What was not ported
 
 - ACS Commons' MCP-generated list editor and the `/generic-lists.html` console.
-- A page render script -- a list page is a pure data container.
+- A page render script - a list page is a pure data container.
 
 See the [module README](https://github.com/LucaNerlich/standalone-acs-commons/blob/main/acs.genericlists/README.md)
 for the full rationale.

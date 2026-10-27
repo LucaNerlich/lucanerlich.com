@@ -1,6 +1,6 @@
 ---
 title: Local Version Management with mise
-description: How I manage dev toolchains with mise (mise-en-place) -- global and per-project tool versions in mise.toml, config resolution rules, tool backends (npm, pipx, GitHub, mise registry), per-directory env vars, and migrating off nvm.
+description: How I manage dev toolchains with mise (mise-en-place) - global and per-project tool versions in mise.toml, config resolution rules, tool backends (npm, pipx, GitHub, mise registry), per-directory env vars, and migrating off nvm.
 tags: [mise, version-management, tooling, cli, shell]
 keywords: [mise, mise-en-place, version manager, nvm, pyenv, asdf, sdkman, mise.toml, dev tools, toolchain, opencode]
 ---
@@ -10,21 +10,21 @@ keywords: [mise, mise-en-place, version manager, nvm, pyenv, asdf, sdkman, mise.
 [mise](https://mise.jdx.dev) (short for *mise-en-place*, "everything in its
 place") is a single tool that replaces a whole drawer full of version managers:
 `nvm`, `pyenv`, `rbenv`, `asdf`, `sdkman`, and friends. It is written in Rust,
-so version switching is essentially instant -- no slow `nvm.sh` sourcing on
+so version switching is essentially instant - no slow `nvm.sh` sourcing on
 every shell startup.
 
 One tool, three jobs:
 
-1. **Dev tools** -- install and pin per-project versions of node, python, java,
+1. **Dev tools** - install and pin per-project versions of node, python, java,
    maven, and hundreds of other tools.
-2. **Environment variables** -- per-directory env vars (the `direnv`
+2. **Environment variables** - per-directory env vars (the `direnv`
    experience) defined right next to the tool versions.
-3. **Tasks** -- a small task runner (a lighter `make` / `just`) that always
+3. **Tasks** - a small task runner (a lighter `make` / `just`) that always
    runs with the correct tools and env loaded.
 
 This is the version-manager half of [my shell
 setup](./my-shell-setup.md); everything here works the same in zsh, bash,
-fish, or scripts -- it is not tied to any shell.
+fish, or scripts - it is not tied to any shell.
 
 ## Install and activate
 
@@ -34,7 +34,7 @@ brew install mise
 curl -fsSL https://mise.run | sh
 ```
 
-Add to `~/.zshrc` (mise adds its tool paths automatically when active -- you do
+Add to `~/.zshrc` (mise adds its tool paths automatically when active - you do
 not need it on `PATH` first). `mise activate` re-evaluates your environment on
 every prompt or `cd`, so entering a project directory instantly switches to
 that project's tools:
@@ -106,39 +106,39 @@ Concretely:
 ```
 
 Standing in `~/workspace/aem/site` you get node 20, java 11, and maven from
-global. `node` in the parent directory is still 22 -- only the `node` entry is
+global. `node` in the parent directory is still 22 - only the `node` entry is
 overridden, everything else is inherited (tools and env vars merge per-key;
 tasks from a deeper file replace same-named ones entirely).
 
 Where this bites people: **`mise use` does not always write to the directory
 you are standing in**. It walks up to the nearest directory that has a config
-file and edits that directory's lowest-precedence file -- so
+file and edits that directory's lowest-precedence file - so
 `cd ~/projects/site && mise use node@20` inside a tree with a parent
 `mise.toml` edits the parent's shared file, not a new file in `site/`. Only
 when no config exists up the tree does it create `mise.toml` in the current
 directory; run from your home directory, it writes the global config instead.
 Use:
 
-- `mise use -g ...` / `mise use --global ...` -- write to
+- `mise use -g ...` / `mise use --global ...` - write to
   `~/.config/mise/config.toml` (system-wide tooling)
-- `mise use ...` (no flag) -- write to the nearest existing config file
+- `mise use ...` (no flag) - write to the nearest existing config file
   (usually `mise.toml`); creates `mise.toml` in the current directory only
   when nothing above has config
-- `mise use --env local ...` -- write to `mise.local.toml`, a personal override
+- `mise use --env local ...` - write to `mise.local.toml`, a personal override
   file you git-ignore (e.g. your own preferred python version on top of the
   team's pin)
 
 A few extras worth knowing:
 
 - `mise cfg` (short for `mise config`) lists every config file mise is loading
-  and its precedence -- the fastest way to answer "why is this node version
+  and its precedence - the fastest way to answer "why is this node version
   active?". `mise which <tool>` shows the binary actually on your `PATH`.
 - mise can also read idiomatic version files from other managers like
   `.nvmrc`, `.java-version`, or `rust-toolchain.toml`, so projects that never
   heard of mise still get the right versions (opt-in per tool via
   `mise settings add idiomatic_version_file_enable_tools node`).
 - A `mise.toml` anywhere between `$HOME` and your project takes effect for
-  everything beneath it -- handy for a monorepo-wide default, but it also means
+  everything beneath it - handy for a monorepo-wide default, but it also means
   a stray file in a parent folder silently changes your environment.
 
 ## More than version managers: backends
@@ -154,9 +154,9 @@ mise use --global github:BurntSushi/ripgrep       # GitHub release binary
 mise use --global opencode                        # from the mise registry
 ```
 
-That last one is the neat part: CLI tools I use daily -- opencode (see
+That last one is the neat part: CLI tools I use daily - opencode (see
 [AI agent harnesses](../ai/agent-harnesses.md)), ripgrep, fzf, zoxide, even
-`gh` -- can all be installed and updated through mise instead of Homebrew. One
+`gh` - can all be installed and updated through mise instead of Homebrew. One
 config file, one `mise upgrade` to update everything, and your dotfiles
 describe your entire toolchain. Homebrew stays useful for GUI apps and casks;
 mise is great for anything CLI-shaped and version-sensitive.
@@ -178,7 +178,7 @@ _.file = ".env"   # also load a .env file, like direnv
 If you set per-project secrets with `direnv` today, `_.file = ".env"` does the
 same job without a second tool. One caveat: since these are project config
 files that can define tasks and hooks, mise asks you to trust them once per
-project -- just accept the prompt or run `mise trust`. For the broader
+project - just accept the prompt or run `mise trust`. For the broader
 secrets story (tokens in shell profiles, rotation, secrets managers), see
 [Managing secrets](./my-shell-setup.md#managing-secrets) in my shell setup
 post. Keep `.env` out of git, and prefer `mise.local.toml` or a real secrets
@@ -215,19 +215,19 @@ export NVM_DIR="$HOME/.nvm"
 with `eval "$(mise activate zsh)"` and `mise use --global node@22`. The nvm
 loader alone typically costs 100--300ms of shell startup; mise's hook is a few
 milliseconds. The same applies to hand-pinned `JAVA_HOME` / `MAVEN_HOME`
-exports -- `mise use --global java@... maven` makes them unnecessary.
+exports - `mise use --global java@... maven` makes them unnecessary.
 
 ## Handy commands
 
-| Command | What it does |
-|---------|--------------|
-| `mise ls` | List installed and active tools |
-| `mise current` | Show which versions are active in the current directory |
-| `mise outdated` | Check for newer tool versions |
-| `mise upgrade` | Update all installed tools (add `--bump` to also bump pins in config) |
-| `mise x node@20 -- node -v` | Run a one-off command with a specific version, without changing your pinned config |
-| `mise cfg` | List every config file being loaded and its precedence ("why is this version active?") |
-| `mise which \<tool\>` | Show the binary that is actually on your `PATH` for a tool |
-| `mise settings` | View/change settings (e.g. `mise settings experimental=true`) |
-| `mise doctor` | Diagnose shell activation and config problems |
-| `mise trust` | Trust a project's `mise.toml` after reviewing it |
+| Command                    | What it does                                                                           |
+|----------------------------|----------------------------------------------------------------------------------------|
+| `mise ls`                  | List installed and active tools                                                        |
+| `mise current`             | Show which versions are active in the current directory                                |
+| `mise outdated`            | Check for newer tool versions                                                          |
+| `mise upgrade`             | Update all installed tools (add `--bump` to also bump pins in config)                  |
+| `mise x node@20 - node -v` | Run a one-off command with a specific version, without changing your pinned config     |
+| `mise cfg`                 | List every config file being loaded and its precedence ("why is this version active?") |
+| `mise which \<tool\>`      | Show the binary that is actually on your `PATH` for a tool                             |
+| `mise settings`            | View/change settings (e.g. `mise settings experimental=true`)                          |
+| `mise doctor`              | Diagnose shell activation and config problems                                          |
+| `mise trust`               | Trust a project's `mise.toml` after reviewing it                                       |

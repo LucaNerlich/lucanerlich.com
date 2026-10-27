@@ -1,6 +1,6 @@
 ---
 title: AI Agent Harnesses
-description: The AI coding-agent harnesses I run in the terminal -- opencode, pi, and herdr -- what a harness is, how they differ, and how I use them day to day.
+description: The AI coding-agent harnesses I run in the terminal - opencode, pi, and herdr - what a harness is, how they differ, and how I use them day to day.
 tags: [ai, agents, cli, tooling, terminal]
 keywords: [opencode, pi coding agent, herdr, ai agent, coding agent, harness, terminal, cli]
 ---
@@ -8,7 +8,7 @@ keywords: [opencode, pi coding agent, herdr, ai agent, coding agent, harness, te
 # AI agent harnesses
 
 AI coding agents are converging on a common shape: a **harness** is the
-program that wraps the model -- it runs the agent loop, gives the model tools
+program that wraps the model - it runs the agent loop, gives the model tools
 (shell, file edits, search), manages sessions and context, and renders the
 terminal UI. For the underlying concepts (tool use, MCP, multi-agent
 patterns), see the [AI Agents](./agents.md) guide; for running local
@@ -33,15 +33,15 @@ scripts, and HTTP clients all attach to it.
 - **Install:** follow the [V2 docs](https://opencode.ai/v2/docs/); the V2 CLI
   binary is `opencode` (or `mise use --global opencode`).
 - **Usage:**
-  - `opencode` -- start the TUI in the current project
-  - `opencode run "explain this repo"` -- one-shot print mode
-  - `opencode --standalone` -- run with a private server instead of the shared
+    - `opencode` - start the TUI in the current project
+    - `opencode run "explain this repo"` - one-shot print mode
+    - `opencode --standalone` - run with a private server instead of the shared
     background service
   - Configuration lives in `~/.config/opencode/opencode.json(c)` (global),
     `opencode.json(c)`, or `.opencode/opencode.json(c)` per project; see the [config
     guide](https://opencode.ai/v2/docs/config).
 
-No `.zshrc` additions required -- it is fully self-contained.
+No `.zshrc` additions required - it is fully self-contained.
 
 ### Adding a local provider (LM Studio)
 
@@ -70,10 +70,10 @@ opencode has built-in LM Studio discovery. To point it at a local
 Two gotchas that produce confusing errors:
 
 - `settings` belongs directly under the provider id (`lmstudio`), as a sibling
-  of `models` -- not nested inside `models`. Nesting provider settings inside
+  of `models` - not nested inside `models`. Nesting provider settings inside
   `models` makes the schema validator treat them as model ids.
 - If you pin a model under `models`, its key must match the model id LM Studio
-  actually serves. Confirm with `curl http://127.0.0.1:1234/v1/models` -- a
+  actually serves. Confirm with `curl http://127.0.0.1:1234/v1/models` - a
   provider-prefixed alias like `lmstudio/qwen` will validate fine but fail at
   request time if LM Studio doesn't recognize that id.
 
@@ -81,12 +81,12 @@ Two gotchas that produce confusing errors:
 
 oMLX is a local inference server for Mac that exposes an OpenAI-compatible API
 at `http://127.0.0.1:8000/v1` by default. The setup mirrors LM Studio, with one
-important difference: **oMLX requires a real API key** -- Ollama/LM Studio
+important difference: **oMLX requires a real API key** - Ollama/LM Studio
 accept any non-empty string, oMLX answers `API key required` without one.
 
 1. **Find your key** in `~/.omlx/settings.json` under `auth.api_key`
    (it starts with `sk-omlx-`).
-2. **Confirm the served model id** (authenticated -- unauthenticated requests
+2. **Confirm the served model id** (authenticated - unauthenticated requests
    are rejected):
 
 ```bash
@@ -127,7 +127,7 @@ Gotchas learned the hard way:
 - Put the key in an environment variable listed under `env`, for example
   `export OMLX_API_KEY=<your-omlx-api-key>` before starting opencode. A stored
   account for another provider does not authenticate this custom provider.
-- If you set `limit`, it needs **both** `context` and `output` -- a lone
+- If you set `limit`, it needs **both** `context` and `output` - a lone
   `context` fails config validation and blocks `/models` entirely (the error
   names the missing `limit.output` key).
 - As with LM Studio, the key under `models` must exactly match the `id` from
@@ -138,10 +138,10 @@ Gotchas learned the hard way:
 [pi](https://pi.dev) ([GitHub](https://github.com/earendil-works/pi)) is a
 minimal agent harness by Mario Zechner. Its philosophy: ship a small, solid
 core (agent loop, tools, sessions, provider auth) and let you **extend the
-harness instead of adapting to it** -- with TypeScript extensions, skills,
+harness instead of adapting to it** - with TypeScript extensions, skills,
 prompt templates, and themes bundled as shareable packages.
 
-- **Highlights:** no MCP, sub-agents, or plan mode built in -- you add exactly
+- **Highlights:** no MCP, sub-agents, or plan mode built in - you add exactly
   what you want; tree-structured sessions with compaction; 15+ providers;
   four runtime modes (interactive, print/JSON, RPC, SDK).
 - **Install:**
@@ -155,7 +155,7 @@ prompt templates, and themes bundled as shareable packages.
   If `pi` (or any mise-installed tool) reports `command not found`, mise
   itself isn't hooked into the shell yet. Confirm with `mise doctor` --
   `activated: no` / `shims_on_path: no` means the activation line is
-  missing -- then add it:
+  missing - then add it:
 
   ```bash title="~/.zshrc - mise"
   eval "$(mise activate zsh)"
@@ -165,16 +165,16 @@ prompt templates, and themes bundled as shareable packages.
   for the full setup and per-shell variants.
 
 - **Usage:**
-  - `pi` -- interactive TUI in the current project
-  - `pi --print "fix the failing test"` -- one-shot prompt
-  - `/reload` -- pick up extension changes mid-session; ask pi to modify its
+    - `pi` - interactive TUI in the current project
+    - `pi --print "fix the failing test"` - one-shot prompt
+    - `/reload` - pick up extension changes mid-session; ask pi to modify its
     own extensions and it will
   - Press `Enter` to steer the current run, `Alt+Enter` to queue a follow-up
 
 ### Adding a local provider (LM Studio)
 
 Custom OpenAI-compatible providers (Ollama, LM Studio, vLLM) go in
-`~/.pi/agent/models.json`, which pi re-reads live -- no restart needed:
+`~/.pi/agent/models.json`, which pi re-reads live - no restart needed:
 
 ```json title="~/.pi/agent/models.json"
 {
@@ -194,10 +194,10 @@ Custom OpenAI-compatible providers (Ollama, LM Studio, vLLM) go in
 }
 ```
 
-- `baseUrl` needs the `/v1` suffix -- pi's OpenAI-compatible client expects
+- `baseUrl` needs the `/v1` suffix - pi's OpenAI-compatible client expects
   it, unlike some other harnesses.
 - The `id` must match exactly what LM Studio serves. Confirm with `curl
-  http://127.0.0.1:1234/v1/models` -- LM Studio often prefixes ids with the
+  http://127.0.0.1:1234/v1/models` - LM Studio often prefixes ids with the
   publisher (e.g. `qwen/qwen3.8-27b`, not `qwen3.8-27b`).
 - `apiKey` is optional for local servers but a harmless placeholder avoids
   clients that reject requests with no key at all.
@@ -206,8 +206,8 @@ Custom OpenAI-compatible providers (Ollama, LM Studio, vLLM) go in
 
 ### Tokens/sec footer
 
-There's no built-in setting for this -- `settings.json` has no
-`showTokensPerSecond` toggle -- but it's exactly the documented extension
+There's no built-in setting for this - `settings.json` has no
+`showTokensPerSecond` toggle - but it's exactly the documented extension
 pattern (`ctx.ui.setFooter()`, same one used for the git-branch example in
 pi's own docs). Drop this in `~/.pi/agent/extensions/tps-footer.ts` (global,
 auto-discovered, hot-reloadable with `/reload`):
@@ -219,7 +219,7 @@ import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 export default function (pi: ExtensionAPI) {
   // message_start/message_end fire back-to-back once the response is
-  // finalized -- they don't bracket the real streaming duration. Time
+  // finalized - they don't bracket the real streaming duration. Time
   // from the first streamed chunk (message_update) instead.
   let assistantPending = false;
   let firstTokenAt = 0;
@@ -289,7 +289,7 @@ throughput varies a lot by model size and quantization.
 ## herdr
 
 [herdr](https://herdr.dev) ([GitHub](https://github.com/herdrdev/herdr)) is an
-agent-aware terminal multiplexer -- tmux rebuilt for running several AI coding
+agent-aware terminal multiplexer - tmux rebuilt for running several AI coding
 agents at once. A background server owns the terminals, so your agents keep
 working when you close the lid, drop the network, or restart the machine.
 
@@ -298,17 +298,17 @@ working when you close the lid, drop the network, or restart the machine.
     the sidebar tells you which agent is waiting for you instead of you
     polling panes
   - Runs Claude Code, Codex, Cursor, OpenCode, pi, Grok, and 20+ others out
-    of the box -- it does not wrap or replace them, it owns their terminals
+    of the box - it does not wrap or replace them, it owns their terminals
   - Mouse-first (click, drag, right-click to split) plus tmux-style `ctrl+b`
     prefix keys
   - A CLI and socket API let scripts and agents spawn panes, prompt each
     other, and wait until another agent is genuinely blocked
-- **Install:** one binary for macOS, Linux, and Windows -- see the [quick
+- **Install:** one binary for macOS, Linux, and Windows - see the [quick
   start](https://herdr.dev/docs/quick-start/).
 - **Usage:**
-  - `herdr` -- start or reattach to your workspace
+    - `herdr` - start or reattach to your workspace
   - Start any supported agent (e.g. `claude`, `opencode`, `pi`) in a pane;
     herdr detects it automatically
-  - `ctrl+b q` -- detach; everything keeps running
-  - `herdr` again -- reattach, sessions are restored
-  - `herdr agent list` / `herdr agent explain` -- inspect what herdr sees
+    - `ctrl+b q` - detach; everything keeps running
+    - `herdr` again - reattach, sessions are restored
+    - `herdr agent list` / `herdr agent explain` - inspect what herdr sees

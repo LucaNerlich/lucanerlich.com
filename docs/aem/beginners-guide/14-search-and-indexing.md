@@ -100,7 +100,7 @@ Cloud Service. Adobe recommends Lucene indexes on 6.5 too, so a later migration 
 Use a property index only for simple exact-match queries on the indexed node's own property (for
 example `cq:PageContent` nodes with `cq:template`). Use a Lucene index when your query targets
 `cq:Page` and filters or sorts on relative `jcr:content/...` properties. Do not ship
-`reindex="{Boolean}true"` in a definition you deploy -- it triggers a full reindex on every deployment.
+`reindex="{Boolean}true"` in a definition you deploy - it triggers a full reindex on every deployment.
 
 ### A Lucene index (property + sort)
 

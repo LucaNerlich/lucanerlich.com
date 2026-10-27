@@ -481,7 +481,7 @@ brew install fzf
 ```
 
 Add to `~/.zshrc` (requires fzf 0.48+, which ships the built-in zsh
-integration -- key bindings and fuzzy completion in one line):
+integration - key bindings and fuzzy completion in one line):
 
 ```bash title="~/.zshrc - fzf"
 # fzf: enables Ctrl-R (history), Ctrl-T (insert file paths), Alt-C (cd into dir)
@@ -502,7 +502,7 @@ Usage highlights:
 
 A smarter `cd` that [learns which directories you visit
 often](https://github.com/ajeetdsouza/zoxide). `z` jumps straight to the best
-match -- this fully replaces my old `cd2` ... `cd6` alias pile.
+match - this fully replaces my old `cd2` ... `cd6` alias pile.
 
 Install:
 
@@ -521,17 +521,17 @@ alias cd='z'
 ```
 
 If you prefer zoxide to own `cd` natively instead of an alias, init it with the
-`--cmd` flag -- `eval "$(zoxide init zsh --cmd cd)"` -- which registers `cd`
+`--cmd` flag - `eval "$(zoxide init zsh --cmd cd)"` - which registers `cd`
 (and `cdi` for interactive mode) directly and needs no alias.
 
 Usage highlights:
 
-| Command | What it does |
-|---------|--------------|
-| `z foo` | Jump to the most-frequently/most-recently visited directory matching `foo` |
-| `z foo bar` | Multiple keywords refine the match |
-| `zi foo` | Interactive pick with fzf when several directories match |
-| `z -` | Not needed -- plain `cd -` still works, zoxide only adds commands |
+| Command     | What it does                                                               |
+|-------------|----------------------------------------------------------------------------|
+| `z foo`     | Jump to the most-frequently/most-recently visited directory matching `foo` |
+| `z foo bar` | Multiple keywords refine the match                                         |
+| `zi foo`    | Interactive pick with fzf when several directories match                   |
+| `z -`       | Not needed - plain `cd -` still works, zoxide only adds commands           |
 
 ## Git and Docker TUIs: lazygit and lazydocker
 
@@ -581,7 +581,7 @@ context menu (stop, remove, prune), `?` for help.
 ## Local version management: mise
 
 Tool versions for node, java, maven, python, and friends are no longer managed
-by nvm or hand-pinned `JAVA_HOME` exports -- [mise](https://mise.jdx.dev)
+by nvm or hand-pinned `JAVA_HOME` exports - [mise](https://mise.jdx.dev)
 (mise-en-place) handles all of them, per directory. It got big enough to earn
 its own post, including how global vs. per-project config resolves:
 
@@ -589,8 +589,8 @@ its own post, including how global vs. per-project config resolves:
 
 ## AI harness
 
-The terminal coding-agent harnesses I run -- [opencode](https://opencode.ai/v2/),
-[pi](https://pi.dev), and [herdr](https://herdr.dev) -- now have their own
+The terminal coding-agent harnesses I run - [opencode](https://opencode.ai/v2/),
+[pi](https://pi.dev), and [herdr](https://herdr.dev) - now have their own
 post too:
 
 **See [AI Agent Harnesses](../ai/agent-harnesses.md).**
@@ -601,7 +601,7 @@ post too:
 ([GitHub](https://github.com/sw33tLie/macshot)) is the screenshot and screen
 recording tool macOS forgot to make: annotate, blur/redact (with automatic
 PII detection), beautify, scroll capture, OCR, translate, and record MP4/GIF.
-Free, open source, pure Swift -- no Electron.
+Free, open source, pure Swift - no Electron.
 
 Install:
 
@@ -611,13 +611,13 @@ brew install --cask macshot
 
 Usage (defaults, all configurable):
 
-| Keys | What it does |
-|------|--------------|
-| `Cmd+Shift+X` | Capture an area, then annotate |
-| `Cmd+Shift+S` | Quick save |
-| `Cmd+Shift+T` | Quick OCR -- copy text from the screen |
-| `Cmd+Shift+R` | Record an area as MP4 or GIF |
-| `Cmd+Shift+H` | Screenshot history panel |
+| Keys          | What it does                          |
+|---------------|---------------------------------------|
+| `Cmd+Shift+X` | Capture an area, then annotate        |
+| `Cmd+Shift+S` | Quick save                            |
+| `Cmd+Shift+T` | Quick OCR - copy text from the screen |
+| `Cmd+Shift+R` | Record an area as MP4 or GIF          |
+| `Cmd+Shift+H` | Screenshot history panel              |
 
 ## Managing secrets
 

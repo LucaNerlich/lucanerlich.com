@@ -53,7 +53,7 @@ private List<Hit> executeQuery(SlingHttpServletRequest request, HashMap<String, 
 ### SQL2
 
 `resourceResolver.findResources()` runs a JCR-SQL2 query directly. Use it when **all query inputs
-are constants under your control** -- `findResources()` has no parameter binding (JCR-SQL2 `$name`
+are constants under your control** - `findResources()` has no parameter binding (JCR-SQL2 `$name`
 bind variables need the JCR `QueryManager` and `Query.bindValue()`), so any user-controlled string
 concatenated into the statement is a query injection risk. For any query fed by request parameters,
 use the QueryBuilder above (or pre-validate inputs against a strict allowlist before building the

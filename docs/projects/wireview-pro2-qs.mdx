@@ -1,5 +1,5 @@
 ---
-title: "WireView Pro 2 QS -- Omarchy bar widget"
+title: "WireView Pro 2 QS - Omarchy bar widget"
 description: Omarchy Quattro bar widget that shows live GPU power draw from the Thermal Grizzly WireView Pro II, with a Rust backend and QML frontend for Hyprland.
 tags: [omarchy, quickshell, rust, qml, hyprland, linux, gpu]
 keywords:
@@ -23,7 +23,7 @@ An [Omarchy](https://omarchy.org/) Quattro bar widget that shows the live GPU po
 
 ## Why this exists
 
-The WireView2 app (`wireview-linux`) publishes its power reading in the `Title` property of a StatusNotifierItem, but also writes the same text into the SNI `Status` property -- which the spec reserves for `Active` / `Passive` / `NeedsAttention`. Strict tray hosts reject the entire item:
+The WireView2 app (`wireview-linux`) publishes its power reading in the `Title` property of a StatusNotifierItem, but also writes the same text into the SNI `Status` property - which the spec reserves for `Active` / `Passive` / `NeedsAttention`. Strict tray hosts reject the entire item:
 
 ```text
 quickshell.dbus.properties: Nonconformant StatusNotifierItem Status: WireView Pro II - 43 W
@@ -46,8 +46,8 @@ flowchart LR
 
 ## Requirements
 
-- **The WireView2 app** ([`wireview-linux`](https://github.com/emaspa/wireview-linux)) -- provides Open / Restart / Quit actions and the wattage-only fallback. Without it the widget shows `⚡ off` and Open has nothing to launch.
-- **wireview-hwmon** (optional, recommended) -- enables the full per-pin, temperature, and fault panel.
+- **The WireView2 app** ([`wireview-linux`](https://github.com/emaspa/wireview-linux)) - provides Open / Restart / Quit actions and the wattage-only fallback. Without it the widget shows `⚡ off` and Open has nothing to launch.
+- **wireview-hwmon** (optional, recommended) - enables the full per-pin, temperature, and fault panel.
 - `hyprctl` (ships with Hyprland) for window focus.
 
 ## Install
@@ -75,13 +75,13 @@ sudo modprobe wireview_hwmon
 sudo systemctl enable --now wireviewd
 ```
 
-`wireviewd` reads the device over serial and exposes it as a `wireview` hwmon chip under `/sys/class/hwmon/`. The serial port is single-owner, so quit the WireView2 app before starting `wireviewd`, then relaunch it -- the app switches to reading through hwmon, and the widget reads the same chip alongside it.
+`wireviewd` reads the device over serial and exposes it as a `wireview` hwmon chip under `/sys/class/hwmon/`. The serial port is single-owner, so quit the WireView2 app before starting `wireviewd`, then relaunch it - the app switches to reading through hwmon, and the widget reads the same chip alongside it.
 
 The widget also works **without the GUI**: if only `wireviewd` is running, the bar still shows live watts, the panel App row reads "daemon only", and Open launches the app. When no chip is present it keeps the SNI-title fallback (watts only).
 
 ## Usage
 
-- **Bar**: left-click opens the app window -- launches it when not running, focuses it when a window exists, and restarts it when the process runs windowless (the app has no SNI `Activate` method and an empty dbusmenu in v1.2.0.0). Right-click opens the details panel.
+- **Bar**: left-click opens the app window - launches it when not running, focuses it when a window exists, and restarts it when the process runs windowless (the app has no SNI `Activate` method and an empty dbusmenu in v1.2.0.0). Right-click opens the details panel.
 - **Panel**: current power draw and app state (running, daemon only, or not running), plus Open / Restart / Quit. Restart and Quit hide when the GUI is not running. With the hwmon chip present, the panel also shows per-pin voltage/current/watts, an imbalance caption, fan duty, temperatures, named fault status/log, and the PSU rating. A live fault paints the bar in the urgent color and sends a critical Omarchy notification (click it to open this panel). Enter opens the app, Tab moves to the neighboring bar panel, Esc closes.
 - **Shell**: `omarchy-shell shell summon luca.wireview-pro2 '{}'` opens the panel; `omarchy-shell shell hide luca.wireview-pro2` closes it.
 
@@ -131,10 +131,10 @@ qmllint -I "$OMARCHY_PATH/shell" omarchy/BarWidget.qml omarchy/Panel.qml
 
 `make bundle` rebuilds the statically linked backend into `omarchy/bin/`. `make verify-bundle` is the marketplace gate: non-stripped ELF, matching SHA-256, version alignment with `Cargo.toml` / `manifest.json`, `.srcid` fingerprint of Rust sources, and a byte-identical musl rebuild.
 
-Any edit under `src/`, `Cargo.toml`, `Cargo.lock`, or `rust-toolchain.toml` changes the ELF -- including comments. Run `make bundle` in the same change as the Rust edit.
+Any edit under `src/`, `Cargo.toml`, `Cargo.lock`, or `rust-toolchain.toml` changes the ELF - including comments. Run `make bundle` in the same change as the Rust edit.
 
 Release checklist:
 
 1. Bump `Cargo.toml`, `Cargo.lock`, `manifest.json`, and `CHANGELOG.md`.
 2. Run `make bundle` then `make verify-bundle`.
-3. Tag `vX.Y.Z` -- CI re-runs verify and publishes the GitHub Release tarball only if it passes.
+3. Tag `vX.Y.Z` - CI re-runs verify and publishes the GitHub Release tarball only if it passes.

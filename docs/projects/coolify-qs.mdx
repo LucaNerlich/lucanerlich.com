@@ -1,5 +1,5 @@
 ---
-title: "Coolify QS -- Omarchy bar widget"
+title: "Coolify QS - Omarchy bar widget"
 description: Omarchy Quattro bar widget that shows deployment activity across self-hosted Coolify servers, with running and queued counts in the bar, a per-server deployment panel, and desktop notifications, powered by a Rust backend and a QML frontend for Hyprland.
 tags: [omarchy, quickshell, rust, qml, hyprland, linux, coolify, devops]
 keywords:
@@ -15,15 +15,15 @@ keywords:
 
 [GitHub Repository](https://github.com/LucaNerlich/coolify-qs) · [Omarchy marketplace](https://omarchyplugins.com/plugin.html?id=luca.coolify) · [Releases](https://github.com/LucaNerlich/coolify-qs/releases)
 
-An [Omarchy](https://omarchy.org/) Quattro bar widget for [Coolify](https://coolify.io/) deployments. The bar shows which application is deploying right now (for example `⟳ website ⏳ 2`), and the panel lists current and recent deployments in one column per server -- with a desktop notification when a deployment finishes or fails.
+An [Omarchy](https://omarchy.org/) Quattro bar widget for [Coolify](https://coolify.io/) deployments. The bar shows which application is deploying right now (for example `⟳ website ⏳ 2`), and the panel lists current and recent deployments in one column per server - with a desktop notification when a deployment finishes or fails.
 
 ## Why this exists
 
-Coolify deployments are long-running things: pushes land, builds start, and minutes later they either finish or fail -- usually while you are in the editor and the browser tab is long closed. The bar is the one place that is always visible, so the widget keeps the whole deployment loop there: the running app's name while it builds, a queued count when builds pile up, and a toast the moment one settles.
+Coolify deployments are long-running things: pushes land, builds start, and minutes later they either finish or fail - usually while you are in the editor and the browser tab is long closed. The bar is the one place that is always visible, so the widget keeps the whole deployment loop there: the running app's name while it builds, a queued count when builds pile up, and a toast the moment one settles.
 
 ## Architecture
 
-- **Rust backend** (`coolify-qs` binary): polls each configured server's `GET /api/v1/applications`, then `GET /api/v1/deployments/applications/{uuid}` per application, aggregates the results, and streams one JSON snapshot per change. It also tracks deployment transitions across polls and sends FreeDesktop notifications (rendered by the Omarchy notification service) when a running or queued deployment finishes or fails. No shelling out -- HTTP is reqwest with rustls, notifications go over the session bus with zbus.
+- **Rust backend** (`coolify-qs` binary): polls each configured server's `GET /api/v1/applications`, then `GET /api/v1/deployments/applications/{uuid}` per application, aggregates the results, and streams one JSON snapshot per change. It also tracks deployment transitions across polls and sends FreeDesktop notifications (rendered by the Omarchy notification service) when a running or queued deployment finishes or fails. No shelling out - HTTP is reqwest with rustls, notifications go over the session bus with zbus.
 - **QML frontend** (`omarchy/`): a `bar-widget` plugin. `BarWidget.qml` runs `coolify-qs watch` once and updates from its JSON lines; `Panel.qml` renders the per-server columns. All API traffic stays in Rust; the QML is pure presentation.
 
 ```mermaid
@@ -37,7 +37,7 @@ flowchart LR
 
 - **Omarchy Quattro** (Quickshell-based shell)
 - One or more self-hosted **Coolify** v4 instances with the API enabled and an API token with read-only access
-- `~/.config/coolify-qs/config.json` -- see [Configuration](#configuration)
+- `~/.config/coolify-qs/config.json` - see [Configuration](#configuration)
 
 ## Install
 
@@ -86,15 +86,15 @@ chmod 600 ~/.config/coolify-qs/config.json
 | `notifications` | true | Desktop notification when a deployment finishes or fails. |
 | `servers` | required | One entry per Coolify instance. |
 
-The file is re-read on every poll, so servers can be added or edited without restarting the shell. Tokens never leave the process -- the watch stream contains no secrets.
+The file is re-read on every poll, so servers can be added or edited without restarting the shell. Tokens never leave the process - the watch stream contains no secrets.
 
 Keep `config.json` out of dotfile sync or source control unless the file is encrypted separately.
 
 ## Usage
 
 - **Bar**: the running application's name (`⟳ website`, up to two names plus an overflow count) and the queued count (`⏳ 2`), or a plain `🚀` when idle. Turns urgent (`🚀 !`) on config errors. Left- or right-click opens the panel.
-- **Panel**: one column per server. Each application lists its current and recent deployments -- status glyph (`⟳` running, `⏳` queued, `✓` finished, `✗` failed, `⊘` cancelled), commit message, short commit sha, and relative time. Long messages wrap inside their column, apps without deployment history collapse into a muted count caption, and clicking a row opens the deployment in the Coolify UI.
-- **Notifications**: when a running or queued deployment settles, a toast appears through the Omarchy notification service -- `✓ website deployed` on success, `✗ website deployment failed` (critical urgency) on failure, with the commit message and server in the body. The first poll only seeds state, so existing history never spams toasts.
+- **Panel**: one column per server. Each application lists its current and recent deployments - status glyph (`⟳` running, `⏳` queued, `✓` finished, `✗` failed, `⊘` cancelled), commit message, short commit sha, and relative time. Long messages wrap inside their column, apps without deployment history collapse into a muted count caption, and clicking a row opens the deployment in the Coolify UI.
+- **Notifications**: when a running or queued deployment settles, a toast appears through the Omarchy notification service - `✓ website deployed` on success, `✗ website deployment failed` (critical urgency) on failure, with the commit message and server in the body. The first poll only seeds state, so existing history never spams toasts.
 - **Shell**: `omarchy-shell shell summon luca.coolify '{}'` opens the panel; `omarchy-shell shell hide luca.coolify` closes it.
 
 ## Settings
@@ -119,7 +119,7 @@ coolify-qs open --url X  # open an http(s) URL in the browser
 
 ## API notes
 
-The Coolify reference docs mis-describe the deployments response as a bare array of application objects (upstream issue [#5874](https://github.com/coollabsio/coolify/issues/5874)); the real endpoint returns a `{"count": n, "deployments": [...]}` envelope, deployment URLs are UI-relative paths, and the status enum hides extras like `cancelled-by-user`. The backend accepts both shapes, absolutizes the URLs, and maps every status -- with fixtures recorded from a live instance.
+The Coolify reference docs mis-describe the deployments response as a bare array of application objects (upstream issue [#5874](https://github.com/coollabsio/coolify/issues/5874)); the real endpoint returns a `{"count": n, "deployments": [...]}` envelope, deployment URLs are UI-relative paths, and the status enum hides extras like `cancelled-by-user`. The backend accepts both shapes, absolutizes the URLs, and maps every status - with fixtures recorded from a live instance.
 
 ## Development and releases
 

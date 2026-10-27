@@ -48,7 +48,7 @@ Before reaching for an undo command, ask:
 
 `git restore` discards changes in the working tree, reverting a file to the version currently in the index (or to a
 specific source you name). This is
-the modern replacement for `git checkout -- <file>`.
+the modern replacement for `git checkout - <file>`.
 
 ### Discard unstaged changes in a file
 

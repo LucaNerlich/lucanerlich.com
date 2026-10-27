@@ -294,7 +294,8 @@ print(resp.choices[0].message.content)
 
 - **System prompt** - prepend a `{role: 'system', content: '...'}` message to set persona and rules.
 - **Temperature** - add `"temperature": 0.2` to the request body for more focused, repeatable output (lower,
-  down to 0 -- still not guaranteed deterministic) or more variety (higher). See [temperature](./glossary.md#temperature).
+  down to 0 - still not guaranteed deterministic) or more variety (higher).
+  See [temperature](./glossary.md#temperature).
 - **Swap the model** - change one string. Pull another with `ollama pull <model>` or load another in
   LM Studio.
 - **Streaming on/off** - set `"stream": false` to get the whole response in one JSON object instead of

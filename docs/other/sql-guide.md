@@ -1803,8 +1803,8 @@ END;
 -- Conditional price adjustment
 UPDATE products
 SET price = CASE
-    WHEN stock = 0 THEN price * 0.5    -- clearance for out-of-stock
-    WHEN stock < 10 THEN price * 1.1   -- premium for low stock
+    WHEN stock = 0 THEN price * 0.5    - clearance for out-of-stock
+    WHEN stock < 10 THEN price * 1.1   - premium for low stock
     ELSE price
 END;
 ```

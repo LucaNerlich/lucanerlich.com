@@ -8,7 +8,9 @@ keywords: [AEM Content Advisor, Asset Selector, Dynamic Media OpenAPI, remote as
 
 # Integrating Content Advisor into an AEM Component Dialog
 
-Adobe Content Advisor -- formerly called Asset Selector -- is a micro-frontend for browsing and selecting assets from an AEM Assets as a Cloud Service repository. It can run inside an Adobe or non-Adobe application, including a custom AEM Sites component dialog.
+Adobe Content Advisor - formerly called Asset Selector - is a micro-frontend for browsing and selecting assets from an
+AEM Assets as a Cloud Service repository. It can run inside an Adobe or non-Adobe application, including a custom AEM
+Sites component dialog.
 
 A useful integration separates three concerns:
 

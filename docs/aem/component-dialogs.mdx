@@ -1,6 +1,6 @@
 ---
 title: Touch UI Component Dialogs
-description: "Copy-paste Granite UI / Coral dialog XML for AEM component dialogs -- fields, multifields, show/hide, RTE, design dialogs, and the mistakes that drop authored values."
+description: "Copy-paste Granite UI / Coral dialog XML for AEM component dialogs - fields, multifields, show/hide, RTE, design dialogs, and the mistakes that drop authored values."
 sidebar_position: 3
 tags: [aem, dialogs, touch-ui]
 keywords:
@@ -625,7 +625,7 @@ The script toggles `hide`. It does not disable Foundation validation. A target w
 Adobe's script queries the **whole document** by default. Inside a composite multifield every item
 has its own controller and target, so a global `.cmp-link-type-target` selector matches rows other
 than the one the author is editing and toggles them all together. For per-row behaviour, use the
-custom JS pattern shown below -- it scopes lookups to `closest("coral-multifield-item")`.
+custom JS pattern shown below - it scopes lookups to `closest("coral-multifield-item")`.
 :::
 
 ### Dynamic show/hide based on a selection
@@ -2258,7 +2258,7 @@ email) using the native [show/hide script](#native-showhide-with-cq-dialog-dropd
 
 ## Full XML Example
 
-The following `.content.xml` is a standalone dialog (no `sling:resourceSuperType`) that shows the widgets from this page in one place. It does not set `sling:hideChildren`. Paste it onto a Core Component proxy and that property would wipe the inherited tabs -- the merge rules are in [Dialog Inheritance](#dialog-inheritance).
+The following `.content.xml` is a standalone dialog (no `sling:resourceSuperType`) that shows the widgets from this page in one place. It does not set `sling:hideChildren`. Paste it onto a Core Component proxy and that property would wipe the inherited tabs - the merge rules are in [Dialog Inheritance](#dialog-inheritance).
 
 ![Dialog demo](/images/aem/dialogfields/demo-aem-component.png)
 

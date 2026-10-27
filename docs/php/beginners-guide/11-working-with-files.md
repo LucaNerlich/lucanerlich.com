@@ -310,7 +310,7 @@ if (is_dir('temp')) {
 ```php
 <?php
 
-// glob() matches a single directory level -- there is no ** recursion
+// glob() matches a single directory level - there is no ** recursion
 $txtFiles = glob('data/*.txt');
 
 foreach ($txtFiles as $file) {

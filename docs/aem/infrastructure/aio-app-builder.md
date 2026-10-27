@@ -106,14 +106,14 @@ graph TD
     Web -->|invokes| API
 ```
 
-| Component           | Description                                                                   |
-|---------------------|-------------------------------------------------------------------------------|
-| **Runtime Actions** | Serverless Node.js functions (60s default timeout; up to 3h for non-blocking invocations -- blocking/web-action calls return an error after 60s) |
-| **Web Assets**      | Optional React SPA served from Adobe's CDN, embedded in AEM Shell             |
-| **Files SDK**       | Cloud file storage (Azure Blob under the hood) for temporary/persistent files |
-| **State SDK**       | Key-value store for caching, state, and configuration                         |
-| **I/O Events**      | Pub/sub event system - AEM publishes events, actions consume them            |
-| **Adobe IMS**       | OAuth 2.0 authentication and service-to-service tokens                        |
+| Component           | Description                                                                                                                                     |
+|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Runtime Actions** | Serverless Node.js functions (60s default timeout; up to 3h for non-blocking invocations - blocking/web-action calls return an error after 60s) |
+| **Web Assets**      | Optional React SPA served from Adobe's CDN, embedded in AEM Shell                                                                               |
+| **Files SDK**       | Cloud file storage (Azure Blob under the hood) for temporary/persistent files                                                                   |
+| **State SDK**       | Key-value store for caching, state, and configuration                                                                                           |
+| **I/O Events**      | Pub/sub event system - AEM publishes events, actions consume them                                                                               |
+| **Adobe IMS**       | OAuth 2.0 authentication and service-to-service tokens                                                                                          |
 
 ### Execution Model
 

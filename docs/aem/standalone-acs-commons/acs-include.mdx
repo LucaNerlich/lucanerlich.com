@@ -37,7 +37,7 @@ At the include site:
 </caption>
 ```
 
-`path` is a relative, search-path-style reference (`/apps` then `/libs`) -- no leading slash. The included snippet
+`path` is a relative, search-path-style reference (`/apps` then `/libs`) - no leading slash. The included snippet
 uses `${{key:default}}` placeholders:
 
 ```xml
@@ -84,7 +84,7 @@ Include the same snippet more than once without colliding `name` / `fileNamePara
 ```
 
 If the snippet stores `./text`, `block1` writes `./block1/text` and `block2` writes `./block2/text`. Namespacing
-cascades into nested includes (`ambient/own`) but **not** into multifield rows -- multifield indexing already
+cascades into nested includes (`ambient/own`) but **not** into multifield rows - multifield indexing already
 guarantees uniqueness.
 
 ## Opt-in: conditional visibility (`hide`)

@@ -8,11 +8,14 @@ description: "Notes on the five DevOps ideals from The Unicorn Project and how t
 
 ## The Five Ideals
 
-1. **Locality and Simplicity** -- keep the work close to the people doing it, reduce hand-offs, and make the normal path the easy path.
-2. **Focus, Flow & Joy** -- protect long stretches of uninterrupted work and remove avoidable friction from daily tasks.
-3. **Improvement of Daily Work** -- reserve time to fix recurring annoyances, automate repetitive steps, and simplify the system itself.
-4. **Psychological Safety** -- make it safe to ask questions, surface problems early, and treat incidents as learning opportunities.
-5. **Customer Focus** -- optimize for outcomes that help real users, not just local throughput or vanity metrics.
+1. **Locality and Simplicity** - keep the work close to the people doing it, reduce hand-offs, and make the normal path
+   the easy path.
+2. **Focus, Flow & Joy** - protect long stretches of uninterrupted work and remove avoidable friction from daily tasks.
+3. **Improvement of Daily Work** - reserve time to fix recurring annoyances, automate repetitive steps, and simplify the
+   system itself.
+4. **Psychological Safety** - make it safe to ask questions, surface problems early, and treat incidents as learning
+   opportunities.
+5. **Customer Focus** - optimize for outcomes that help real users, not just local throughput or vanity metrics.
 
 > The Unicorn Project (©2019 Gene Kim)
 
@@ -23,10 +26,12 @@ that shortens feedback loops, and spend real time on removing the recurring pape
 
 ## The Four Types of Work
 
-1. **Business Projects** -- new features, launches, migrations, and other work that directly moves the product forward.
-2. **Internal Projects** -- platform work, tooling, documentation, and maintenance that improve how the team operates.
-3. **Operational Change** -- deployments, upgrades, access changes, backups, and the ongoing work needed to run systems safely.
-4. **Unplanned Work** -- incidents, urgent support, regressions, and interruptions that steal time from the first three categories.
+1. **Business Projects** - new features, launches, migrations, and other work that directly moves the product forward.
+2. **Internal Projects** - platform work, tooling, documentation, and maintenance that improve how the team operates.
+3. **Operational Change** - deployments, upgrades, access changes, backups, and the ongoing work needed to run systems
+   safely.
+4. **Unplanned Work** - incidents, urgent support, regressions, and interruptions that steal time from the first three
+   categories.
 
 > The Phoenix Project (Gene Kim, Kevin Behr, George Spafford)
 

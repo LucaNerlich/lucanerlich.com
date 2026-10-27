@@ -1,6 +1,6 @@
 ---
 title: Local & offline Copilot alternative
-description: Run a local coding assistant with Ollama and Continue -- which model fits your RAM, how quantization and context behave, and a config you can paste.
+description: Run a local coding assistant with Ollama and Continue - which model fits your RAM, how quantization and context behave, and a config you can paste.
 tags: [ai, local-models, ollama, coding]
 keywords:
     - local copilot alternative
@@ -569,8 +569,8 @@ model. JetBrains logs live in `~/.continue/logs/core.log`.
 
 ## See also
 
-- [Build a Local LLM App](./local-llm-app.md) -- Ollama, LM Studio, Open WebUI, and local API security
-- [Cloud vs Local Models](./cloud-vs-local.md) -- choosing local, self-hosted, or managed models
-- [Serving LLMs at Scale](./llm-serving.md) -- context length, KV cache, batching, and serving trade-offs
-- [Project Memory & Rules](./project-memory-and-rules.md) -- rules files across editors, not only Continue
-- [Multimodal & Voice](./multimodal-and-voice.md) -- images, documents, audio, and realtime voice agents
+- [Build a Local LLM App](./local-llm-app.md) - Ollama, LM Studio, Open WebUI, and local API security
+- [Cloud vs Local Models](./cloud-vs-local.md) - choosing local, self-hosted, or managed models
+- [Serving LLMs at Scale](./llm-serving.md) - context length, KV cache, batching, and serving trade-offs
+- [Project Memory & Rules](./project-memory-and-rules.md) - rules files across editors, not only Continue
+- [Multimodal & Voice](./multimodal-and-voice.md) - images, documents, audio, and realtime voice agents

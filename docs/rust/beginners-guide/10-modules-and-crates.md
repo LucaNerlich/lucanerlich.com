@@ -331,7 +331,8 @@ version within the specified range.
 `Cargo.lock` records the exact versions resolved for every dependency. It ensures reproducible builds:
 
 - **Applications**: Commit `Cargo.lock` to version control
-- **Libraries**: Committing `Cargo.lock` is optional -- crates.io ignores it, but checking it in can still help CI and contributors reproduce builds
+- **Libraries**: Committing `Cargo.lock` is optional - crates.io ignores it, but checking it in can still help CI and
+  contributors reproduce builds
 
 ## Using external crates
 

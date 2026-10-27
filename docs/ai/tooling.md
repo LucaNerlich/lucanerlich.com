@@ -1,6 +1,6 @@
 ---
 title: Tooling and Frameworks
-description: A map of the AI application tooling landscape -- orchestration frameworks, connectivity protocols, vector databases, evaluation and observability, and the LLMOps discipline that ties them together.
+description: A map of the AI application tooling landscape - orchestration frameworks, connectivity protocols, vector databases, evaluation and observability, and the LLMOps discipline that ties them together.
 tags: [ai, tooling, frameworks, llmops, agents]
 keywords:
     - ai frameworks
@@ -74,7 +74,7 @@ form the connectivity stack:
 
 - **MCP (Model Context Protocol)** - agent to tools/data. Build a tool server once; any MCP-compatible
   client (Cursor, Claude, internal agents) can use it. Official Python and TypeScript SDKs. For a
-  concrete, ready-to-use example see the [MDN MCP Server](./mdn-mcp-server.md) -- Mozilla's official
+  concrete, ready-to-use example see the [MDN MCP Server](./mdn-mcp-server.md) - Mozilla's official
   server for live browser compatibility data and MDN documentation.
 - **A2A (Agent2Agent)** - agent to agent across frameworks and vendors, with Agent Cards for capability
   discovery.

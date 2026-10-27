@@ -523,7 +523,7 @@ BACKUP_DIR="/backups/strapi"
 mkdir -p "$BACKUP_DIR"
 
 # Database backup (as the postgres OS user: root cannot peer-authenticate as `strapi`).
-# Drop the partial file when the dump fails -- it still passes gunzip -t.
+# Drop the partial file when the dump fails - it still passes gunzip -t.
 sudo -u postgres pg_dump -U postgres strapi | gzip > "$BACKUP_DIR/db-$DATE.sql.gz" \
   || { rm -f "$BACKUP_DIR/db-$DATE.sql.gz"; exit 1; }
 

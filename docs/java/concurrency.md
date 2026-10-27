@@ -228,8 +228,8 @@ try {
 }
 ```
 
-`ReentrantLock` is still worth using for its own features -- `tryLock()`, timed
-and interruptible locking, multiple condition variables -- but it is no longer a
+`ReentrantLock` is still worth using for its own features - `tryLock()`, timed
+and interruptible locking, multiple condition variables - but it is no longer a
 pinning workaround on JDK 24+.
 
 ---

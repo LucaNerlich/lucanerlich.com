@@ -305,7 +305,8 @@ Check [caniuse.com](https://caniuse.com) or MDN before relying on a feature with
 
 Not all browsers support every modern feature. Follow this approach:
 
-1. **Check support:** Use [caniuse.com](https://caniuse.com) or MDN browser compatibility tables -- or query them directly in your editor via the [MDN MCP server](../../ai/mdn-mcp-server.md)
+1. **Check support:** Use [caniuse.com](https://caniuse.com) or MDN browser compatibility tables - or query them
+   directly in your editor via the [MDN MCP server](../../ai/mdn-mcp-server.md)
 2. **Use progressive enhancement:** Start with styles that work everywhere, layer on modern features
 3. **Use @supports:** Test for feature support in CSS:
 

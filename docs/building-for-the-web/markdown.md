@@ -14,7 +14,9 @@ keywords:
 
 # Markdown
 
-Markdown is a plain-text format for writing structured documents. You type readable markup -- `#` for headings, `*` for lists, `` ` `` for code -- and a parser turns it into HTML. Edsger Dijkstra would hate the ambiguity; John Gruber designed it so the source stays readable even before rendering.
+Markdown is a plain-text format for writing structured documents. You type readable markup - `#` for headings, `*` for
+lists, `` ` `` for code - and a parser turns it into HTML. Edsger Dijkstra would hate the ambiguity; John Gruber
+designed it so the source stays readable even before rendering.
 
 This page is both a short tutorial and a cheat sheet. Examples show the source and what it becomes. Where this site diverges from "generic Markdown", that is called out explicitly.
 
@@ -35,7 +37,9 @@ The trade-off is under-specification. "Markdown" is a family of dialects, not on
 
 [CommonMark](https://commonmark.org/) is a carefully specified, unambiguous baseline. Most modern parsers claim CommonMark compatibility. If something works in CommonMark, it usually works everywhere.
 
-Useful mental model: **paragraphs, headings, emphasis, lists, links, images, code, blockquotes, thematic breaks, and HTML blocks/spans**. No tables. No task lists. No strikethrough. No autolinks like `www.example.com` without angle brackets in older interpretations -- CommonMark does support `<https://example.com>` autolinks.
+Useful mental model: **paragraphs, headings, emphasis, lists, links, images, code, blockquotes, thematic breaks, and
+HTML blocks/spans**. No tables. No task lists. No strikethrough. No autolinks like `www.example.com` without angle
+brackets in older interpretations - CommonMark does support `<https://example.com>` autolinks.
 
 ### GitHub Flavored Markdown (GFM)
 
@@ -65,15 +69,15 @@ MDX is stricter than Markdown about JSX-looking syntax. Characters like `{`, `}`
 
 ### What this site uses
 
-| Layer | Behaviour here |
-|-------|----------------|
-| Files | `.md` or `.mdx` under `docs/` (and `blog/`) |
-| Detection | Extension decides Markdown vs MDX |
-| Extras | GFM-style tables, task lists, strikethrough; footnotes enabled |
-| Diagrams | Fenced `mermaid` blocks -- see [Mermaid Diagrams](./mermaid-diagrams.mdx) |
-| Callouts | Docusaurus admonitions (`:::tip`, `:::warning`, ...) |
-| Links | `trailingSlash: true` -- prefer relative file paths or trailing `/` |
-| Build | `pnpm build` throws on broken Markdown links, images, and anchors |
+| Layer     | Behaviour here                                                           |
+|-----------|--------------------------------------------------------------------------|
+| Files     | `.md` or `.mdx` under `docs/` (and `blog/`)                              |
+| Detection | Extension decides Markdown vs MDX                                        |
+| Extras    | GFM-style tables, task lists, strikethrough; footnotes enabled           |
+| Diagrams  | Fenced `mermaid` blocks - see [Mermaid Diagrams](./mermaid-diagrams.mdx) |
+| Callouts  | Docusaurus admonitions (`:::tip`, `:::warning`, ...)                     |
+| Links     | `trailingSlash: true` - prefer relative file paths or trailing `/`       |
+| Build     | `pnpm build` throws on broken Markdown links, images, and anchors        |
 
 Practical rule: write **CommonMark + GFM extras** in `.md` files. Switch to `.mdx` only when you need React components or MDX-only features.
 
@@ -91,7 +95,9 @@ tags: [markdown, documentation]
 # Markdown
 ```
 
-Common fields on this site: `title`, `description`, `sidebar_label`, `tags`, `keywords`, occasionally `slug`. Sidebar **order** for categories listed in `sidebar-order.ts` is controlled there -- do not rely on `sidebar_position` alone for those trees.
+Common fields on this site: `title`, `description`, `sidebar_label`, `tags`, `keywords`, occasionally `slug`. Sidebar
+**order** for categories listed in `sidebar-order.ts` is controlled there - do not rely on `sidebar_position` alone for
+those trees.
 
 ## Headings
 
@@ -110,7 +116,8 @@ Rules of thumb:
 - Do not skip levels for styling (`##` then `####`). Screen readers and ToCs care about order.
 - Keep headings short; put nuance in the paragraph under them.
 
-Setext headings (`===` / `---` under a line) are valid CommonMark. Prefer ATX -- they are harder to mistake for a horizontal rule and easier to grep.
+Setext headings (`===` / `---` under a line) are valid CommonMark. Prefer ATX - they are harder to mistake for a
+horizontal rule and easier to grep.
 
 ## Paragraphs and line breaks
 
@@ -167,7 +174,8 @@ Prefer `*` / `**` over `_` / `__` inside words (`un*freaking*believable` works m
 3. Third
 ```
 
-CommonMark renumbers automatically if you write `1.` on every line. Still write sensible numbers -- the source should read well.
+CommonMark renumbers automatically if you write `1.` on every line. Still write sensible numbers - the source should
+read well.
 
 ### Loose vs tight
 
@@ -219,7 +227,8 @@ GFM also autolinks bare `https://...` URLs. Angle-bracket form is clearer and mo
 ### Link hygiene on this site
 
 - Prefer **relative paths to other docs** (`./mermaid-diagrams.mdx`, `../javascript/...`) so renames and `pnpm build` link checks work.
-- `trailingSlash: true` -- published URLs end with `/`. Prefer file-relative links in source; if you write a site path, include the trailing slash.
+- `trailingSlash: true` - published URLs end with `/`. Prefer file-relative links in source; if you write a site path,
+  include the trailing slash.
 - Broken Markdown links fail the production build. That is intentional.
 
 ## Images
@@ -229,7 +238,7 @@ GFM also autolinks bare `https://...` URLs. Angle-bracket form is clearer and mo
 ![Diagram](./assets/flow.png "Optional title")
 ```
 
-- Alt text is not optional decoration -- it is the accessible name.
+- Alt text is not optional decoration - it is the accessible name.
 - Put site-wide assets under `static/` (referenced from the site root, e.g. `/images/...`).
 - Prefer SVG or appropriately sized raster images; see [Images and Media](./web-content/images-and-media.md) for content guidance.
 
@@ -255,7 +264,8 @@ If the code itself contains a backtick, add more backticks on the outside and pa
 
 ### Fenced blocks
 
-Use three or more backticks (or tildes) and a language tag. Always set a language when you can -- Prism highlighting on this site expects it.
+Use three or more backticks (or tildes) and a language tag. Always set a language when you can - Prism highlighting on
+this site expects it.
 
 ````markdown
 ```typescript
@@ -285,7 +295,8 @@ More examples live in [Docusaurus](./docusaurus.md).
 
 ### Mermaid
 
-Fenced blocks with the `mermaid` language render as diagrams. Syntax, diagram types, and pitfalls for **this** Mermaid version are documented separately -- use that guide instead of copying diagram recipes here:
+Fenced blocks with the `mermaid` language render as diagrams. Syntax, diagram types, and pitfalls for **this** Mermaid
+version are documented separately - use that guide instead of copying diagram recipes here:
 
 ````markdown
 ```mermaid
@@ -301,12 +312,12 @@ Full reference: [Mermaid Diagrams](./mermaid-diagrams.mdx).
 ```markdown
 > Markdown is intended to be as easy-to-read and easy-to-write as possible.
 >
-> -- John Gruber
+> - John Gruber
 ```
 
 > Markdown is intended to be as easy-to-read and easy-to-write as possible.
 >
-> -- John Gruber
+> - John Gruber
 
 Nest with extra `>` markers. Lists and code fences work inside quotes. For editorial callouts on this site, prefer [admonitions](#admonitions) over nested blockquotes.
 
@@ -326,7 +337,8 @@ Nest with extra `>` markers. Lists and code fences work inside quotes. For edito
 | GFM        | yes    | no  |
 | MDX        | yes*   | yes |
 
-Alignment uses `:` in the separator row (`:---`, `---:`, `:---:`). Keep tables narrow -- wide tables are miserable on mobile. Escape `|` in cells as `\|` when needed.
+Alignment uses `:` in the separator row (`:---`, `---:`, `:---:`). Keep tables narrow - wide tables are miserable on
+mobile. Escape `|` in cells as `\|` when needed.
 
 \* MDX documents still use Markdown tables in the Markdown parts of the file.
 
@@ -340,7 +352,8 @@ Three or more hyphens, asterisks, or underscores on their own line:
 ___
 ```
 
-Leave blank lines around them. A line of `--` under text can be parsed as a Setext H2 -- another reason to prefer ATX headings and to keep rules clearly separated.
+Leave blank lines around them. A line of `--` under text can be parsed as a Setext H2 - another reason to prefer ATX
+headings and to keep rules clearly separated.
 
 ## Footnotes
 
@@ -385,7 +398,8 @@ Backslash escapes ASCII punctuation so it is not interpreted as markup:
 
 \*not italic\*
 
-Inside inline code and fenced blocks, Markdown emphasis does not apply -- use code spans when you are talking about syntax characters.
+Inside inline code and fenced blocks, Markdown emphasis does not apply - use code spans when you are talking about
+syntax characters.
 
 In MDX, escape or wrap expressions that look like JSX (`\{`, `` `{'<'}` ``, or put ambiguous text in code spans).
 
@@ -460,7 +474,7 @@ A minimal cheat sheet for choosing syntax:
 
 1. Create `docs/building-for-the-web/your-page.md` (or another category) with frontmatter.
 2. Add the filename (no extension) to the right array in `sidebar-order.ts` when the category is ordered there.
-3. Link with relative paths; use `--` for em dashes in prose (house style -- not a Unicode em dash).
+3. Link with relative paths; use `--` for em dashes in prose (house style - not a Unicode em dash).
 4. Run `pnpm build`. Fix any broken links, anchors, or images it reports.
 5. Use `pnpm start --host 0.0.0.0 --port 3000` for a visual pass.
 
@@ -504,8 +518,8 @@ flowchart LR
 
 ## Related pages
 
-- [Docusaurus](./docusaurus.md) -- site generator notes, Infima, code fence titles
-- [Mermaid Diagrams](./mermaid-diagrams.mdx) -- diagram types and syntax for this theme
-- [Semantic HTML](./semantic-html.mdx) -- what the rendered tags mean
-- [Build a Blog](./build-a-blog.md) -- content workflow practice
-- [Structure and Hierarchy](./web-content/structure-and-hierarchy.md) -- heading and outline craft beyond syntax
+- [Docusaurus](./docusaurus.md) - site generator notes, Infima, code fence titles
+- [Mermaid Diagrams](./mermaid-diagrams.mdx) - diagram types and syntax for this theme
+- [Semantic HTML](./semantic-html.mdx) - what the rendered tags mean
+- [Build a Blog](./build-a-blog.md) - content workflow practice
+- [Structure and Hierarchy](./web-content/structure-and-hierarchy.md) - heading and outline craft beyond syntax

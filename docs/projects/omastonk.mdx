@@ -1,5 +1,5 @@
 ---
-title: "Omastonk -- Omarchy bar widget"
+title: "Omastonk - Omarchy bar widget"
 description: Omarchy Quattro bar widget that rotates through a watchlist of market symbols with live quotes and per-symbol charts, powered by a Rust backend and a QML frontend for Hyprland.
 tags: [omarchy, quickshell, rust, qml, hyprland, linux, finance, stocks]
 keywords:
@@ -23,7 +23,7 @@ An [Omarchy](https://omarchy.org/) Quattro bar widget for a rotating market watc
 
 ## Why this exists
 
-Checking on a handful of tickers means either opening a broker app or refreshing a browser tab -- both far away from the bar where the clock already lives. Omastonk keeps a small watchlist on the bar itself: every symbol gets a fresh quote roughly once a minute, the display rotates, and one click opens the full chart for whichever symbol is showing. The watchlist is plain inline settings in `shell.json`, so nothing is locked into a proprietary format.
+Checking on a handful of tickers means either opening a broker app or refreshing a browser tab - both far away from the bar where the clock already lives. Omastonk keeps a small watchlist on the bar itself: every symbol gets a fresh quote roughly once a minute, the display rotates, and one click opens the full chart for whichever symbol is showing. The watchlist is plain inline settings in `shell.json`, so nothing is locked into a proprietary format.
 
 ## Architecture
 
@@ -63,7 +63,7 @@ The plugin bundles a statically linked x86_64 musl build of the backend (`omarch
 - **Panel** (left-click):
     - Symbol tabs across the top; click one or press `Up`/`Down` (or `J`/`K`) to switch symbols.
     - Interval picker below the chart: 5Y, 1Y, YTD, 6M, 1M, 5D, 1D; click or press `Left`/`Right` (or `H`/`L`). `Escape` closes.
-- **Editor** (right-click): add symbols in the field at the bottom (space-separated works too), rename rows inline, remove entries with `✕`, then Save -- which commits whatever is still typed in the add field.
+- **Editor** (right-click): add symbols in the field at the bottom (space-separated works too), rename rows inline, remove entries with `✕`, then Save - which commits whatever is still typed in the add field.
 - **Shell**: `omarchy-shell shell summon luca.omastonk '{}'` opens the panel; `omarchy-shell shell hide luca.omastonk` closes it.
 
 ## Settings
@@ -109,10 +109,10 @@ qmllint -I "$OMARCHY_PATH/shell" omarchy/BarWidget.qml omarchy/Panel.qml
 
 `make bundle` rebuilds the statically linked backend into `omarchy/bin/`. `make verify-bundle` is the marketplace gate: non-stripped ELF, matching SHA-256, version alignment with `Cargo.toml` / `manifest.json`, `.srcid` fingerprint of Rust sources, and a byte-identical musl rebuild.
 
-Any edit under `src/`, `Cargo.toml`, `Cargo.lock`, or `rust-toolchain.toml` changes the ELF -- including comments. Run `make bundle` in the same change as the Rust edit.
+Any edit under `src/`, `Cargo.toml`, `Cargo.lock`, or `rust-toolchain.toml` changes the ELF - including comments. Run `make bundle` in the same change as the Rust edit.
 
 Release checklist:
 
 1. Bump `Cargo.toml`, `Cargo.lock`, `manifest.json`, and `CHANGELOG.md`.
 2. Run `make bundle` then `make verify-bundle`.
-3. Tag `vX.Y.Z` -- CI re-runs verify and publishes the GitHub Release tarball only if it passes.
+3. Tag `vX.Y.Z` - CI re-runs verify and publishes the GitHub Release tarball only if it passes.

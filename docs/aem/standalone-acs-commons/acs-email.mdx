@@ -18,7 +18,7 @@ keywords:
 
 `acs.email` is a slim, template-based email sender for AEM as a Cloud Service. It replaces ACS AEM Commons'
 [`EmailService`](https://adobe-consulting-services.github.io/acs-aem-commons/features/e-mail/email-api/index.html)
-with a focused OSGi service built directly on AEM's native `MessageGatewayService` and `MailTemplate` APIs -- no ACS Commons dependency required.
+with a focused OSGi service built directly on AEM's native `MessageGatewayService` and `MailTemplate` APIs - no ACS Commons dependency required.
 
 ## What it does
 
@@ -68,7 +68,7 @@ List<String> failures = emailService.sendEmail(
 Reserved keys in `emailParams` (`EmailConstants.SENDER_EMAIL_ADDRESS`, `SENDER_NAME`, `SUBJECT`, `BOUNCE_ADDRESS`)
 override headers. Everything else is merged into the template as a `${key}` placeholder.
 
-Attachments (optional -- forces HTML multipart):
+Attachments (optional - forces HTML multipart):
 
 ```java
 MailAttachment attachment = new MailAttachment("invoice.pdf", myDataSource);

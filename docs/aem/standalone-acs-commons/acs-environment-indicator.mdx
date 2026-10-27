@@ -32,7 +32,7 @@ Adobe's Unified Shell already renders a generic environment badge (`span.colorBa
 the AEM logo. The clientlib (`env-indicator.js`) looks that badge up in `window.parent.document` and overwrites its
 text with a friendly label derived from the current author hostname.
 
-When Unified Shell is absent -- a local AEM author, or an AEMaaCS author opened directly at its Cloud Manager URL --
+When Unified Shell is absent - a local AEM author, or an AEMaaCS author opened directly at its Cloud Manager URL --
 there is no badge to reuse. The script then inserts its **own** badge after the classic shell home-anchor label
 (`<coral-shell-homeanchor-label>Adobe Experience Manager</coral-shell-homeanchor-label>`).
 

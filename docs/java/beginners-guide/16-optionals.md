@@ -281,7 +281,7 @@ Task task = manager.findById(id)
 ```
 
 The return type `Optional<Task>` makes it clear that the task might not exist and encourages the caller to handle the
-empty case. The compiler does not enforce it -- calling `get()` on an empty `Optional` compiles and throws
+empty case. The compiler does not enforce it - calling `get()` on an empty `Optional` compiles and throws
 `NoSuchElementException` at runtime.
 
 ### Using Optional with streams

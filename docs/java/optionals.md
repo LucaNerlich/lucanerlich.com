@@ -11,7 +11,7 @@ tags: [java, optional, null-safety]
 `Optional<T>` is a container that may or may not hold a value. It makes the "no
 value" case visible in the method signature and encourages callers to handle it
 explicitly instead of silently passing `null` around until something throws a
-`NullPointerException`. The compiler does not enforce that handling -- calling
+`NullPointerException`. The compiler does not enforce that handling - calling
 `get()` on an empty `Optional` compiles and throws `NoSuchElementException` at
 runtime.
 

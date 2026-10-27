@@ -24,8 +24,10 @@ The MDN MCP server solves this by giving your tools a real-time lookup channel:
 
 - **Browser support data** grounded in BCD (Browser Compatibility Data), MDN's compatibility dataset that
   also feeds parts of Can I Use
-- **Up-to-date documentation** -- spec changes, deprecations, and new APIs appear as MDN publishes them
-- **Faster answers in MDN's own comparison** -- MDN reported that Claude Code responses using the server were [roughly twice as fast](https://developer.mozilla.org/en-US/blog/introducing-mdn-mcp-server/#what_difference_does_the_mcp_make) in a small experiment; treat that as directional, not a general benchmark
+- **Up-to-date documentation** - spec changes, deprecations, and new APIs appear as MDN publishes them
+- **Faster answers in MDN's own comparison** - MDN reported that Claude Code responses using the server
+  were [roughly twice as fast](https://developer.mozilla.org/en-US/blog/introducing-mdn-mcp-server/#what_difference_does_the_mcp_make)
+  in a small experiment; treat that as directional, not a general benchmark
 
 ## Setup
 
@@ -101,12 +103,12 @@ for the current setup flow and network requirements.
 
 ## What the server exposes
 
-The MDN MCP server is a read-only data source -- it does not execute code or modify anything. Current
+The MDN MCP server is a read-only data source - it does not execute code or modify anything. Current
 tools exposed by the official server include:
 
-- `get-compat` -- given a BCD feature key, returns browser compatibility data
-- `get-doc` -- returns a specific MDN documentation page as Markdown
-- `search` -- finds MDN documentation pages by keyword
+- `get-compat` - given a BCD feature key, returns browser compatibility data
+- `get-doc` - returns a specific MDN documentation page as Markdown
+- `search` - finds MDN documentation pages by keyword
 
 The exact tool list evolves as MDN expands the server; check the
 [mdn/mcp repository](https://github.com/mdn/mcp) for the current spec.
