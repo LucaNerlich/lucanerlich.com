@@ -51,6 +51,14 @@ describe('import validation', () => {
         assert.equal(await importJson(JSON.stringify({encoded})), null);
     });
 
+    it('defaults a flat file without a currency to EUR', async () => {
+        const state = demoState();
+        const imported = await importJson(
+            JSON.stringify({people: state.people, expenses: state.expenses}),
+        );
+        assert.equal(imported?.currency, 'EUR');
+    });
+
     it('round-trips a split keyed by __proto__', async () => {
         const weights = Object.create(null) as Record<string, number>;
         weights.__proto__ = 1;

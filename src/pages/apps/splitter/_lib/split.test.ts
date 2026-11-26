@@ -647,6 +647,24 @@ describe('session files', () => {
         assert.deepEqual(await importJson(JSON.stringify(state)), state);
     });
 
+    it('imports the editable state from a previous-version file', async () => {
+        const state = demoState();
+        const legacy = {
+            format: 'lucanerlich.splitter',
+            version: 2,
+            encoded: await encodeState(state),
+            state: {
+                ...state,
+                paidTransferKeys: undefined,
+                people: state.people.map((person, index) =>
+                    index === 0 ? {...person, name: 'Edited name'} : person),
+            },
+        };
+        const imported = await importJson(JSON.stringify(legacy));
+        assert.equal(imported?.people[0].name, 'Edited name');
+        assert.deepEqual(imported?.paidTransferKeys, []);
+    });
+
     it('rejects malformed state instead of silently restoring encoded data', async () => {
         const encoded = await encodeState(demoState());
         for (const state of [null, {}, {people: [], expenses: null}]) {
