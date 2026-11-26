@@ -90,6 +90,11 @@ export const run = async ({
     if (!Array.isArray(protectedTags)) {
         throw new Error('config.protected must be an array of tag names');
     }
+    // A non-numeric window would coerce to 0 and delete every build tag.
+    const keepLast = config.keep_last ?? 1;
+    if (!Number.isInteger(keepLast) || keepLast < 1) {
+        throw new Error('config.keep_last must be a positive integer');
+    }
     const token = await login(fetchImpl, username, password);
     const stats = [];
     for (const name of config.repositories) {
@@ -100,7 +105,7 @@ export const run = async ({
             const tags = await listTags(fetchImpl, token, repo);
             stat.total = tags.length;
             const doomed = selectTagsToDelete(tags, {
-                keepLast: config.keep_last ?? 1,
+                keepLast,
                 minAgeDays: config.min_age_days ?? 0,
                 protectedTags,
             });

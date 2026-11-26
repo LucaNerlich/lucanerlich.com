@@ -190,4 +190,24 @@ describe('run', () => {
         );
         assert.deepEqual(calls, [], 'the config error must not reach the API');
     });
+
+    it('rejects a keep_last that is not a positive integer before login', async () => {
+        for (const keepLast of ['two', '', 0, -1, 1.5]) {
+            const calls = [];
+            const fetchImpl = fakeFetch(calls, {});
+            await assert.rejects(
+                run({
+                    config: {...config(['app']), keep_last: keepLast},
+                    username: 'u',
+                    password: 'p',
+                    dryRun: true,
+                    fetchImpl,
+                    log: () => {},
+                }),
+                /config\.keep_last must be a positive integer/,
+                String(keepLast),
+            );
+            assert.deepEqual(calls, [], 'the config error must not reach the API');
+        }
+    });
 });
