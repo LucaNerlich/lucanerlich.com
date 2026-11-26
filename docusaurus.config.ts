@@ -82,7 +82,6 @@ const config: Config = {
             'classic',
             {
                 docs: {
-                    sidebarPath: './sidebars.js',
                     editUrl: 'https://github.com/LucaNerlich/lucanerlich.com/tree/main',
                     showLastUpdateAuthor: false,
                     showLastUpdateTime: false,
