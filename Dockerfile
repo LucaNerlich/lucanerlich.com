@@ -30,7 +30,6 @@ COPY . .
 # "Creating an optimized production build..."). With rspackPersistentCache
 # and ssgWorkerThreads off in docusaurus.config.ts, peak stays ~2 GiB.
 ENV DOCUSAURUS_SSR_CONCURRENCY=4
-ENV DOCUSAURUS_SSG_WORKER_THREAD_COUNT=1
 
 # Build the Docusaurus site - output is fully static HTML in build/
 RUN pnpm build
