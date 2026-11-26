@@ -56,7 +56,7 @@ const ExpenseForm: React.FC<Props> = ({
             setAmount('');
         }
         setDraft(prev =>
-            fresh ? draftFromPeople(people) : touched.current ? draftFromPeople(people, prev) : draftFromPeople(people),
+            touched.current ? draftFromPeople(people, prev) : draftFromPeople(people),
         );
     }, [people]);
 
