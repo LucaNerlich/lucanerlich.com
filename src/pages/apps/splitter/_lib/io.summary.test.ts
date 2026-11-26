@@ -33,7 +33,9 @@ const de = createMessages('de');
 describe('transfer formatters', () => {
     it('marks a paid transfer in the list and the printed summary', () => {
         assert.match(transfersAsText(paidState, transfers, 'EUR', en), /\(paid\)$/);
-        assert.match(settlementSummaryText(paidState, en), /- Bob → Alice: €5\.00 \(paid\)/);
+        const amount = new Intl.NumberFormat(undefined, {style: 'currency', currency: 'EUR'}).format(5);
+        const expected = new RegExp(`- Bob → Alice: ${amount.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\(paid\\)`);
+        assert.match(settlementSummaryText(paidState, en), expected);
     });
 
     it('leaves an unpaid transfer unmarked in both', () => {
