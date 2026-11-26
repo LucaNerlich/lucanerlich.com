@@ -54,7 +54,11 @@
     margin: 0.2rem 0 0;
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--ifm-color-primary);
+    color: var(--ifm-color-primary-dark);
+}
+
+html[data-theme='dark'] .meta {
+    color: var(--ifm-color-primary-light);
 }
 
 /* The stacked label is the base state: a fractional container width cannot
