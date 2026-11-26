@@ -29,6 +29,7 @@
         "@docusaurus/tsconfig": "^3.10.2",
         "@docusaurus/types": "^3.10.2",
         "@types/react": "^19.3.0",
+        "happy-dom": "^21.0.4",
         "typescript": "~7.0.2"
     },
     "engines": {
