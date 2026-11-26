@@ -151,9 +151,9 @@
 }
 
 .primaryButton {
-    background: var(--ifm-color-primary);
-    color: var(--ifm-button-color, #fff);
-    border: 1px solid var(--ifm-color-primary);
+    background: var(--ifm-color-primary-dark);
+    color: #fff;
+    border: 1px solid var(--ifm-color-primary-dark);
     border-radius: 6px;
     padding: 0.5rem 1rem;
     cursor: pointer;
@@ -163,8 +163,8 @@
 }
 
 .primaryButton:hover:not(:disabled) {
-    background: var(--ifm-color-primary-dark);
-    border-color: var(--ifm-color-primary-dark);
+    background: var(--ifm-color-primary-darker);
+    border-color: var(--ifm-color-primary-darker);
 }
 
 .primaryButton:disabled {
