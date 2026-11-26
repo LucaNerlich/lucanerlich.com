@@ -71,7 +71,7 @@ Styles: Microsoft, write-good, Vale built-ins. Applied to `*.md` and `*.mdx`.
 - Use `satisfies` for type narrowing where appropriate
 - Use explicit type annotations for exported values
 - Prefer `const` over `let`; avoid `var`
-- JSDoc comments with `@ts-check` for `.js` files (see `umami.js`)
+- JSDoc comments with `@ts-check` for `.js` files (see `plugins/check-llms-urls.js`)
 - CommonJS (`module.exports`) for `.js` config files consumed by Docusaurus
 - ES modules (`export default`) for `.ts` config files
 - Section separators use comment blocks with dashes:
