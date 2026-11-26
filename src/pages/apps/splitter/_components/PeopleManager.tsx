@@ -65,7 +65,9 @@ const PeopleManager: React.FC<Props> = ({
         const neighbour = people[index + 1] ?? people[index - 1];
         if (!onRemove(p.id)) return;
         // The conflict the add field reported may be the person just removed.
-        if (!editingId) setError(null);
+        // Clear unconditionally: a still-open rename re-sets its error on the
+        // next Enter/blur if the duplicate is still there.
+        setError(null);
         if (neighbour) setRefocusId(neighbour.id);
         else nameInputRef.current?.focus();
     };
