@@ -166,6 +166,12 @@ type UseUrlStateArgs<S, A> = {
      */
     fallbackStore?: StateStore;
     debounceMs?: number;
+    /**
+     * Detects the action that replaces the whole session. Every such action,
+     * including the hook's own mount and `popstate` hydrates, bumps the
+     * returned generation so local form state can be remounted.
+     */
+    isHydrate?: (action: A) => boolean;
 };
 
 export function useUrlState<S, A>({
@@ -176,9 +182,11 @@ export function useUrlState<S, A>({
     store,
     fallbackStore,
     debounceMs = 150,
-}: UseUrlStateArgs<S, A>): [S, Dispatch<A>, boolean] {
+    isHydrate,
+}: UseUrlStateArgs<S, A>): [S, Dispatch<A>, boolean, number] {
     const [state, dispatch] = useReducer(reducer, undefined, init);
     const [ready, setReady] = useState(false);
+    const [hydrations, setHydrations] = useState(0);
     const storeRef = useRef<StateStore | null>(null);
     const fallbackRef = useRef<StateStore | undefined>(fallbackStore);
     const hadInitialStateRef = useRef(false);
@@ -187,6 +195,9 @@ export function useUrlState<S, A>({
     const readyRef = useRef(false);
     const codecRef = useRef(codec);
     codecRef.current = codec;
+    const isHydrateRef = useRef(isHydrate);
+    isHydrateRef.current = isHydrate;
+    const bumpHydrations = useCallback(() => setHydrations(n => n + 1), []);
 
     if (storeRef.current === null) {
         // Default to query-param persistence so freshly shared links survive
@@ -201,9 +212,10 @@ export function useUrlState<S, A>({
         action => {
             if (!readyRef.current) return;
             userActedRef.current = true;
+            if (isHydrateRef.current?.(action)) bumpHydrations();
             dispatch(action);
         },
-        [dispatch],
+        [dispatch, bumpHydrations],
     );
 
     useEffect(() => {
@@ -215,7 +227,10 @@ export function useUrlState<S, A>({
                 const hydrated = await hydrateFromStores({
                     stores: [storeRef.current!, fallbackRef.current],
                     decode: raw => codecRef.current.decode(raw),
-                    hydrate: decoded => dispatch(hydrate(decoded)),
+                    hydrate: decoded => {
+                        bumpHydrations();
+                        dispatch(hydrate(decoded));
+                    },
                     isCancelled: () => cancelled,
                     hasUserActed: () => userActedRef.current,
                 });
@@ -251,6 +266,7 @@ export function useUrlState<S, A>({
                 if (!raw) return;
                 const decoded = await Promise.resolve(codecRef.current.decode(raw));
                 if (!cancelled && sequence === navigationSequence && decoded) {
+                    bumpHydrations();
                     dispatch(hydrate(decoded));
                 }
             })();
@@ -293,5 +309,5 @@ export function useUrlState<S, A>({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state, debounceMs, ready]);
 
-    return [state, dispatchUser, ready];
+    return [state, dispatchUser, ready, hydrations];
 }
