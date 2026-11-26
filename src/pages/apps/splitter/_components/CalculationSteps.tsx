@@ -1,5 +1,6 @@
 import React, {useMemo} from 'react';
 import type {AppState} from '../_lib/types';
+import {transferKey} from '../_lib/types';
 import type {ExpenseBreakdown, Transfer} from '../_lib/settlement';
 import {indexPeople, nameFrom} from '../_lib/people';
 import {formatMoney, formatSignedMoney} from '../_lib/money';
@@ -189,7 +190,7 @@ const CalculationSteps: React.FC<Props> = ({
                             <span className={styles.calcNote}>{t('calcMatchNote')}</span>
                             <ul className={styles.calcSubList} role="list">
                                 {transfers.map(tr => (
-                                    <li key={`${tr.from}-${tr.to}-${tr.cents}`}>
+                                    <li key={transferKey(tr.from, tr.to, tr.cents)}>
                                         <code className={styles.calcInline}>
                                             {nameOf(tr.from)} → {nameOf(tr.to)}:{' '}
                                             {formatMoney(tr.cents, currency)}
