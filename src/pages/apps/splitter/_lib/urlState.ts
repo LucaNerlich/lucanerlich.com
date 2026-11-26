@@ -1,5 +1,5 @@
 import type {AppState, Currency, Expense, Person, Split} from './types';
-import {equalSplit, isCurrency, isWireSafePersonId, transferKey} from './types';
+import {MAX_EXPENSES, MAX_PEOPLE, equalSplit, isCurrency, isWireSafePersonId, transferKey} from './types';
 import {validateSplit} from './split';
 
 // Compact wire formats.
@@ -300,11 +300,6 @@ const decodeWire = (json: string): AppState | null => {
 // A crafted or legacy link can carry a person id the transfer-key codec cannot
 // represent (empty, or containing the `|` delimiter). Rejecting the payload is
 // cheaper than letting the next encode silently drop every paid mark.
-// Row caps keep a valid-but-huge payload from freezing the lists that render
-// every person and expense; the byte ceiling alone still allows ~250k rows.
-export const MAX_PEOPLE = 200;
-export const MAX_EXPENSES = 2000;
-
 const parseWire = (json: string): AppState | null => {
     const state = decodeWire(json);
     if (!state) return null;

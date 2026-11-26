@@ -74,6 +74,13 @@ export type Action =
     | {type: 'SET_CURRENCY'; currency: Currency}
     | {type: 'TOGGLE_TRANSFER_PAID'; key: string};
 
+// Bounds on what a session may contain: the lists render every row, and a
+// crafted share link must not be able to freeze the tab. Enforced when
+// decoding and when the app creates rows, so a session the app builds is
+// always one it can read back.
+export const MAX_PEOPLE = 200;
+export const MAX_EXPENSES = 2000;
+
 export const emptyState = (): AppState => ({
     v: 2,
     currency: 'EUR',
