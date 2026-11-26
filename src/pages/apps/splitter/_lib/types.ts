@@ -90,6 +90,11 @@ export const newId = (): string =>
 export const isWireSafePersonId = (id: string): boolean =>
     typeof id === 'string' && id.length > 0 && !id.includes('|');
 
+// Ids can be any wire-safe string, including `__proto__`. A plain `{}` would
+// then drop an assignment and read back `Object.prototype`, so id-keyed maps
+// are created without a prototype.
+export const idRecord = <T>(): Record<string, T> => Object.create(null);
+
 export const transferKey = (from: string, to: string, cents: number): string =>
     `${from}|${to}|${cents}`;
 

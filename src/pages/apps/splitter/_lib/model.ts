@@ -64,7 +64,7 @@ const stripPersonFromExpenses = (expenses: Expense[], personId: string): Expense
                 // A zero share can simply go; a non-zero one breaks the total,
                 // and an invalid kept split falls back like any other change.
                 const percents = {...e.split.percents};
-                if ((percents[personId] ?? 0) === 0) {
+                if ((Object.hasOwn(percents, personId) ? percents[personId] : 0) === 0) {
                     delete percents[personId];
                     const next = {...e, participants, split: {mode: 'percent' as const, percents}};
                     return validateSplit(next.split, participants, next.cents)
@@ -75,7 +75,7 @@ const stripPersonFromExpenses = (expenses: Expense[], personId: string): Expense
             }
             // Same for exact amounts: a zero entry leaves the rest summing to the total.
             const amounts = {...e.split.amounts};
-            if ((amounts[personId] ?? 0) === 0) {
+            if ((Object.hasOwn(amounts, personId) ? amounts[personId] : 0) === 0) {
                 delete amounts[personId];
                 const next = {...e, participants, split: {mode: 'exact' as const, amounts}};
                 return validateSplit(next.split, participants, next.cents)

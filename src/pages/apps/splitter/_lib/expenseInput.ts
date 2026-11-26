@@ -3,7 +3,7 @@
 // call `buildExpenseInput` so error precedence and copy cannot diverge.
 
 import type {Currency, ExpenseInput, Split} from './types';
-import {equalSplit} from './types';
+import {equalSplit, idRecord} from './types';
 import {amountExample, formatMoney, toCents} from './money';
 import {validateSplit} from './split';
 import type {MessageError} from './messages';
@@ -23,7 +23,7 @@ export const buildSplit = (draft: SplitDraft): {split: Split; error: MessageErro
     if (draft.splitMode === 'equal') return {split: equalSplit(), error: null};
 
     if (draft.splitMode === 'shares') {
-        const weights: Record<string, number> = {};
+        const weights: Record<string, number> = idRecord<number>();
         for (const id of draft.participants) {
             const w = Number(draft.weights[id]);
             if (!Number.isFinite(w) || w <= 0) {
@@ -31,11 +31,11 @@ export const buildSplit = (draft: SplitDraft): {split: Split; error: MessageErro
             }
             weights[id] = w;
         }
-        return {split: {mode: 'shares', weights}, error: null};
+        return {split: {mode: 'shares', weights: {...weights}}, error: null};
     }
 
     if (draft.splitMode === 'percent') {
-        const percents: Record<string, number> = {};
+        const percents: Record<string, number> = idRecord<number>();
         for (const id of draft.participants) {
             const raw = draft.percents[id];
             // Empty is not 0: Number('') would allocate a silent zero share.
@@ -48,10 +48,10 @@ export const buildSplit = (draft: SplitDraft): {split: Split; error: MessageErro
             }
             percents[id] = p;
         }
-        return {split: {mode: 'percent', percents}, error: null};
+        return {split: {mode: 'percent', percents: {...percents}}, error: null};
     }
 
-    const amounts: Record<string, number> = {};
+    const amounts: Record<string, number> = idRecord<number>();
     for (const id of draft.participants) {
         const cents = toCents(draft.amounts[id] ?? '');
         if (cents === null || cents < 0) {
@@ -59,7 +59,7 @@ export const buildSplit = (draft: SplitDraft): {split: Split; error: MessageErro
         }
         amounts[id] = cents;
     }
-    return {split: {mode: 'exact', amounts}, error: null};
+    return {split: {mode: 'exact', amounts: {...amounts}}, error: null};
 };
 
 /**

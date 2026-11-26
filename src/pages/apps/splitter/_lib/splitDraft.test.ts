@@ -34,9 +34,9 @@ describe('draftFromPeople', () => {
     it('prefills percents only when none were set', () => {
         const percent = {...draftFromPeople(people), splitMode: 'percent' as const};
         const filled = draftFromPeople(people, percent);
-        assert.deepEqual(filled.percents, {a: '50.00', b: '50.00'});
+        assert.deepEqual({...filled.percents}, {a: '50.00', b: '50.00'});
         const kept = draftFromPeople(people, {...filled, percents: {a: '70', b: '30'}});
-        assert.deepEqual(kept.percents, {a: '70', b: '30'});
+        assert.deepEqual({...kept.percents}, {a: '70', b: '30'});
     });
 });
 
@@ -87,7 +87,7 @@ describe('draftAfterAdd', () => {
             amounts: {a: '15.00', b: '15.00'},
         };
         const next = draftAfterAdd(exact);
-        assert.deepEqual(next.amounts, {});
+        assert.deepEqual({...next.amounts}, {});
         assert.equal(next.splitMode, 'equal');
     });
 
@@ -96,7 +96,7 @@ describe('draftAfterAdd', () => {
             ...draftFromPeople(people),
             amounts: {a: '15.00', b: '15.00'},
         };
-        assert.deepEqual(draftAfterAdd(equalWithAmounts).amounts, {});
+        assert.deepEqual({...draftAfterAdd(equalWithAmounts).amounts}, {});
         assert.equal(draftAfterAdd(equalWithAmounts).splitMode, 'equal');
     });
 
@@ -108,7 +108,7 @@ describe('draftAfterAdd', () => {
             assert.deepEqual(next.participants, draft.participants);
             assert.deepEqual(next.weights, draft.weights);
             assert.deepEqual(next.percents, draft.percents);
-            assert.deepEqual(next.amounts, {});
+            assert.deepEqual({...next.amounts}, {});
         }
     });
 });

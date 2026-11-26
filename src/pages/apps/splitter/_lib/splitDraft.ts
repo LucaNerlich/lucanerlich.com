@@ -2,6 +2,7 @@
 // rules (which participants start checked) are testable without React.
 
 import type {Person, Split} from './types';
+import {idRecord} from './types';
 import type {SplitDraft} from './expenseInput';
 import {centsToInput} from './money';
 
@@ -14,17 +15,18 @@ export const draftFromPeople = (people: Person[], previous?: SplitDraft): SplitD
             ? previous.participants.filter(id => ids.includes(id))
             : ids,
         splitMode: previous?.splitMode ?? 'equal',
-        weights: {},
-        percents: {},
-        amounts: {},
+        weights: idRecord<string>(),
+        percents: idRecord<string>(),
+        amounts: idRecord<string>(),
     };
     for (const id of next.participants) {
-        next.weights[id] = previous?.weights[id] ?? '1';
-        next.percents[id] = previous?.percents[id] ?? '';
-        next.amounts[id] = previous?.amounts[id] ?? '';
+        next.weights[id] = previous && Object.hasOwn(previous.weights, id) ? previous.weights[id] : '1';
+        next.percents[id] = previous && Object.hasOwn(previous.percents, id) ? previous.percents[id] : '';
+        next.amounts[id] = previous && Object.hasOwn(previous.amounts, id) ? previous.amounts[id] : '';
     }
     if (next.splitMode === 'percent') {
-        const missing = next.participants.filter(id => !previous?.percents[id]);
+        const missing = next.participants.filter(id =>
+            !previous || !Object.hasOwn(previous.percents, id) || !previous.percents[id]);
         if (missing.length === next.participants.length && next.participants.length > 0) {
             const each = Math.floor(10000 / next.participants.length);
             next.participants.forEach((id, index) => {
@@ -66,7 +68,7 @@ export const draftAfterAdd = (draft: SplitDraft): SplitDraft => ({
     // Exact amounts are absolute cents and only fit the total just added, so
     // they are never reusable; the weight modes carry over.
     ...draft,
-    amounts: {},
+    amounts: idRecord<string>(),
     splitMode: draft.splitMode === 'exact' ? 'equal' : draft.splitMode,
 });
 
@@ -83,15 +85,15 @@ export const draftFromExpense = (
     draft.splitMode = expense.split.mode;
     if (expense.split.mode === 'shares') {
         for (const id of draft.participants) {
-            draft.weights[id] = String(expense.split.weights[id] ?? 1);
+            draft.weights[id] = String(Object.hasOwn(expense.split.weights, id) ? expense.split.weights[id] : 1);
         }
     } else if (expense.split.mode === 'percent') {
         for (const id of draft.participants) {
-            draft.percents[id] = String(expense.split.percents[id] ?? 0);
+            draft.percents[id] = String(Object.hasOwn(expense.split.percents, id) ? expense.split.percents[id] : 0);
         }
     } else if (expense.split.mode === 'exact') {
         for (const id of draft.participants) {
-            draft.amounts[id] = centsToInput(expense.split.amounts[id] ?? 0);
+            draft.amounts[id] = centsToInput(Object.hasOwn(expense.split.amounts, id) ? expense.split.amounts[id] : 0);
         }
     }
     return draft;
