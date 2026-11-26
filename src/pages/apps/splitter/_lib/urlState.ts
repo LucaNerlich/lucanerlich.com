@@ -1,5 +1,5 @@
 import type {AppState, Currency, Expense, Person, Split} from './types';
-import {equalSplit, isCurrency, isWireSafePersonId, transferKey} from './types';
+import {MAX_EXPENSES, MAX_PEOPLE, equalSplit, isCurrency, isWireSafePersonId, transferKey} from './types';
 import {validateSplit} from './split';
 
 // Compact wire formats.
@@ -302,7 +302,9 @@ const decodeWire = (json: string): AppState | null => {
 // cheaper than letting the next encode silently drop every paid mark.
 const parseWire = (json: string): AppState | null => {
     const state = decodeWire(json);
-    return state && state.people.every(person => isWireSafePersonId(person.id)) ? state : null;
+    if (!state) return null;
+    if (state.people.length > MAX_PEOPLE || state.expenses.length > MAX_EXPENSES) return null;
+    return state.people.every(person => isWireSafePersonId(person.id)) ? state : null;
 };
 
 const toBase64Url = (bytes: Uint8Array): string => {

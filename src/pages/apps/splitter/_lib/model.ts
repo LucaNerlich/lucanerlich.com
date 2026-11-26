@@ -3,7 +3,7 @@
 // reducer is a thin adapter and the rules are testable through one interface.
 
 import type {Action, AppState, Expense, ExpenseInput} from './types';
-import {equalSplit, newId} from './types';
+import {MAX_EXPENSES, MAX_PEOPLE, equalSplit, newId} from './types';
 import {validateSplit} from './split';
 
 /**
@@ -98,6 +98,7 @@ export const applyAction = (state: AppState, action: Action): AppState => {
         case 'HYDRATE':
             return action.state;
         case 'ADD_PERSON': {
+            if (state.people.length >= MAX_PEOPLE) return state;
             const name = action.name.trim();
             if (!name) return state;
             const lower = name.toLocaleLowerCase();
@@ -128,6 +129,7 @@ export const applyAction = (state: AppState, action: Action): AppState => {
             };
         }
         case 'ADD_EXPENSE': {
+            if (state.expenses.length >= MAX_EXPENSES) return state;
             const normalized = normalizeExpenseInput(state, action.expense);
             if (!normalized) return state;
             return withoutPaidMarks({
@@ -151,6 +153,7 @@ export const applyAction = (state: AppState, action: Action): AppState => {
                 expenses: state.expenses.filter(e => e.id !== action.id),
             });
         case 'DUPLICATE_EXPENSE': {
+            if (state.expenses.length >= MAX_EXPENSES) return state;
             const source = state.expenses.find(e => e.id === action.id);
             if (!source) return state;
             const copy: Expense = {

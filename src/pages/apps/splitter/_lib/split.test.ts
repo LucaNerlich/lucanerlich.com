@@ -16,7 +16,7 @@ import {
 import {demoState} from './demo';
 import {exportCsv, exportJson, importJson} from './io';
 import type {AppState, Expense, Split} from './types';
-import {emptyState, equalSplit, transferKey} from './types';
+import {MAX_EXPENSES, MAX_PEOPLE, emptyState, equalSplit, transferKey} from './types';
 
 describe('allocateEqual', () => {
     it('distributes remainder cents to first sorted ids', () => {
@@ -750,5 +750,40 @@ describe('validateSplit error format', () => {
         );
         assert.equal(error?.key, 'errorExactSum');
         assert.deepEqual(error?.params, {total: '10.00 EUR', got: '9.50 EUR'});
+    });
+});
+
+describe('session row caps', () => {
+    it('refuses to create more rows than the decoder accepts', () => {
+        const peopleState = {
+            ...emptyState(),
+            people: Array.from({length: MAX_PEOPLE}, (_, i) => ({id: `p${i}`, name: `P${i}`})),
+        };
+        assert.equal(
+            applyAction(peopleState, {type: 'ADD_PERSON', name: 'Extra'}).people.length,
+            MAX_PEOPLE,
+        );
+
+        const base = demoState();
+        const expenses = Array.from({length: MAX_EXPENSES}, (_, i) => ({
+            ...base.expenses[0],
+            id: `e${i}`,
+        }));
+        const full = {...base, expenses};
+        assert.equal(
+            applyAction(full, {type: 'DUPLICATE_EXPENSE', id: 'e0'}).expenses.length,
+            MAX_EXPENSES,
+        );
+        const input = {
+            description: 'Extra',
+            cents: 100,
+            paidBy: base.people[0].id,
+            participants: [base.people[0].id],
+            split: equalSplit(),
+        };
+        assert.equal(
+            applyAction(full, {type: 'ADD_EXPENSE', expense: input}).expenses.length,
+            MAX_EXPENSES,
+        );
     });
 });
