@@ -64,6 +64,8 @@ const PeopleManager: React.FC<Props> = ({
         const index = people.findIndex(person => person.id === p.id);
         const neighbour = people[index + 1] ?? people[index - 1];
         if (!onRemove(p.id)) return;
+        // The conflict the add field reported may be the person just removed.
+        if (!editingId) setError(null);
         if (neighbour) setRefocusId(neighbour.id);
         else nameInputRef.current?.focus();
     };
@@ -116,7 +118,10 @@ const PeopleManager: React.FC<Props> = ({
                                 disabled={!ready}
                                 aria-label={messages.t('renamePerson').replace('{name}', () => p.name)}
                                 aria-invalid={error ? true : undefined}
-                                onChange={e => setEditName(e.target.value)}
+                                onChange={e => {
+                                    setEditName(e.target.value);
+                                    setError(null);
+                                }}
                                 onBlur={() => {
                                     if (renameCancelled.current) {
                                         renameCancelled.current = false;
