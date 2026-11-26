@@ -51,17 +51,27 @@ export const exportJson = async (state: AppState): Promise<string> =>
         {
             format: 'lucanerlich.splitter',
             version: 2,
-            encoded: await encodeState(state),
             state,
         },
         null,
         2,
     );
 
+// One contract for every accepted file shape: validate, normalize through the
+// codec, then reject if normalization still dropped a row.
+const restore = async (source: AppState): Promise<AppState | null> => {
+    if (!isRestorable(source)) return null;
+    const decoded = await decodeState(await encodeState(source));
+    return decoded
+        && decoded.people.length === source.people.length
+        && decoded.expenses.length === source.expenses.length
+        ? decoded
+        : null;
+};
+
 export const importJson = async (raw: string): Promise<AppState | null> => {
     try {
         const data = JSON.parse(raw) as {
-            encoded?: string;
             state?: AppState;
             people?: AppState['people'];
             expenses?: AppState['expenses'];
@@ -72,41 +82,20 @@ export const importJson = async (raw: string): Promise<AppState | null> => {
             if (!data.state || !Array.isArray(data.state.people) || !Array.isArray(data.state.expenses)) {
                 return null;
             }
-            const source = {
+            return restore({
                 ...data.state,
                 v: 2 as const,
                 paidTransferKeys: data.state.paidTransferKeys ?? [],
-            };
-            if (!isRestorable(source)) return null;
-            // Prefer the editable `state` object (may be newer than `encoded`),
-            // and normalize through encode/decode so invariants hold.
-            const decoded = await decodeState(await encodeState(source));
-            // Counts are a backstop for anything normalization still drops.
-            return decoded
-                && decoded.people.length === source.people.length
-                && decoded.expenses.length === source.expenses.length
-                ? decoded
-                : null;
-        }
-        if (typeof data.encoded === 'string') {
-            const decoded = await decodeState(data.encoded);
-            return decoded && decoded.people.every(p => isWireSafePersonId(p.id)) ? decoded : null;
+            });
         }
         if (Array.isArray(data.people) && Array.isArray(data.expenses)) {
-            const source = {
+            return restore({
                 v: 2 as const,
                 currency: data.currency ?? ('EUR' as const),
                 people: data.people,
                 expenses: data.expenses,
                 paidTransferKeys: data.paidTransferKeys ?? [],
-            };
-            if (!isRestorable(source)) return null;
-            const decoded = await decodeState(await encodeState(source));
-            return decoded
-                && decoded.people.length === source.people.length
-                && decoded.expenses.length === source.expenses.length
-                ? decoded
-                : null;
+            });
         }
         return null;
     } catch {

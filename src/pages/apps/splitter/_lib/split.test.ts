@@ -639,12 +639,11 @@ describe('model', () => {
 });
 
 describe('session files', () => {
-    it('imports edits to exported state ahead of stale encoded data', async () => {
+    it('imports edits to the exported state object', async () => {
         const state = demoState();
         const data = JSON.parse(await exportJson(state));
         data.state.people[0].name = 'Edited name';
         assert.deepEqual(await importJson(JSON.stringify(data)), data.state);
-        assert.deepEqual(await importJson(JSON.stringify({encoded: data.encoded})), state);
         assert.deepEqual(await importJson(JSON.stringify(state)), state);
     });
 

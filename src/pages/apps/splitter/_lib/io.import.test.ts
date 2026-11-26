@@ -46,10 +46,8 @@ describe('import validation', () => {
         }
     });
 
-    it('rejects an encoded-only payload with an unsafe person id', async () => {
-        const state = demoState();
-        const people = [{...state.people[0], id: ''}, ...state.people.slice(1)];
-        const encoded = await encodeState({...state, people, expenses: []});
+    it('rejects an encoded-only file even when the payload itself is valid', async () => {
+        const encoded = await encodeState(demoState());
         assert.equal(await importJson(JSON.stringify({encoded})), null);
     });
 
