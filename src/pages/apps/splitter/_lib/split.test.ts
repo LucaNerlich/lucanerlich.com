@@ -658,13 +658,30 @@ describe('model', () => {
 });
 
 describe('session files', () => {
-    it('imports edits to exported state ahead of stale encoded data', async () => {
+    it('imports edits to the exported state object', async () => {
         const state = demoState();
         const data = JSON.parse(await exportJson(state));
         data.state.people[0].name = 'Edited name';
         assert.deepEqual(await importJson(JSON.stringify(data)), data.state);
-        assert.deepEqual(await importJson(JSON.stringify({encoded: data.encoded})), state);
         assert.deepEqual(await importJson(JSON.stringify(state)), state);
+    });
+
+    it('imports the editable state from a previous-version file', async () => {
+        const state = demoState();
+        const legacy = {
+            format: 'lucanerlich.splitter',
+            version: 2,
+            encoded: await encodeState(state),
+            state: {
+                ...state,
+                paidTransferKeys: undefined,
+                people: state.people.map((person, index) =>
+                    index === 0 ? {...person, name: 'Edited name'} : person),
+            },
+        };
+        const imported = await importJson(JSON.stringify(legacy));
+        assert.equal(imported?.people[0].name, 'Edited name');
+        assert.deepEqual(imported?.paidTransferKeys, []);
     });
 
     it('rejects malformed state instead of silently restoring encoded data', async () => {
