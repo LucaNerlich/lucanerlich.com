@@ -117,9 +117,9 @@
 }
 
 .buttonPrimary {
-    background: var(--ifm-color-primary);
-    border-color: var(--ifm-color-primary);
-    color: var(--ifm-color-primary-contrast-background);
+    background: var(--ifm-color-primary-dark);
+    border-color: var(--ifm-color-primary-dark);
+    color: #fff;
 }
 
 .checkboxLabel {

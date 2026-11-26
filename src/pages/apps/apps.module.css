@@ -74,7 +74,11 @@
 
 .cardOpen {
     margin-top: 0.25rem;
-    color: var(--ifm-color-primary);
+    color: var(--ifm-color-primary-dark);
     font-weight: 600;
     font-size: 0.9rem;
+}
+
+html[data-theme='dark'] .cardOpen {
+    color: var(--ifm-color-primary-light);
 }

@@ -26,9 +26,14 @@ const parseTokens = (block) =>
         [...block.matchAll(/--custom-(accent|text)-([a-z]+):\s*(#[0-9a-f]{6})/gi)]
             .map(([, group, name, value]) => [`${group}-${name}`.toLowerCase(), value.toLowerCase()]),
     );
+// Infima's primary pair, used by the demo buttons and the apps CTA. The values
+// mirror infima 0.2.0-alpha.45; the package is not resolvable from the repo
+// root, so they are pinned beside the check.
+const PRIMARY_DARK = '#306cce';
+const PRIMARY_LIGHT = '#538ce9';
 const themes = {
-    light: parseTokens(css.slice(0, darkStart)),
-    dark: parseTokens(css.slice(darkStart)),
+    light: {...parseTokens(css.slice(0, darkStart)), 'primary-dark': PRIMARY_DARK, surface: '#ffffff'},
+    dark: {...parseTokens(css.slice(darkStart)), 'primary-dark': PRIMARY_DARK, surface: '#242526'},
 };
 
 // [theme, token, foreground, where the pair is rendered]. `accent-*` are fill
@@ -50,6 +55,12 @@ const pairs = [
     ['light', 'text-negative', '#ebedf0', 'splitter balances and errors'],
     ['dark', 'text-positive', '#444950', 'splitter balances and errors'],
     ['dark', 'text-negative', '#444950', 'splitter balances and errors'],
+    // Primary controls: the demo buttons fill with primary-dark and use white
+    // text; the apps CTA paints primary-dark/light as text on the card surface.
+    ['light', 'primary-dark', '#ffffff', 'demo primary buttons'],
+    ['dark', 'primary-dark', '#ffffff', 'demo primary buttons'],
+    ['light', 'surface', PRIMARY_DARK, 'apps card CTA'],
+    ['dark', 'surface', PRIMARY_LIGHT, 'apps card CTA'],
 ];
 
 const channel = (value) => {
@@ -71,7 +82,7 @@ let failed = 0;
 for (const [theme, token, foreground, where] of pairs) {
     const background = themes[theme]?.[token];
     if (!background) {
-        console.error(`missing --custom-${token} for ${theme}`);
+        console.error(`missing ${token} token for ${theme}`);
         failed += 1;
         continue;
     }
