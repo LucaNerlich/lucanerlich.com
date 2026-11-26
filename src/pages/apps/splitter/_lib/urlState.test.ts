@@ -94,3 +94,26 @@ describe('decodeState person ids', () => {
         assert.deepEqual(decoded?.people.map(p => p.id), ['a1', 'b2']);
     });
 });
+
+describe('decodeState row caps', () => {
+    const peopleRows = (n: number) =>
+        Array.from({length: n}, (_, i) => [`p${i}`, `P${i + 1}`]);
+
+    it('rejects more people than the UI can render', async () => {
+        const decoded = await decodeState(legacy([3, 'EUR', peopleRows(201), [], []]));
+        assert.equal(decoded, null);
+    });
+
+    it('rejects more expenses than the UI can render', async () => {
+        const expenses = Array.from({length: 2001}, (_, i) => [
+            `e${i}`, 'x', 100, 0, [0], 'eq',
+        ]);
+        const decoded = await decodeState(legacy([3, 'EUR', peopleRows(1), expenses, []]));
+        assert.equal(decoded, null);
+    });
+
+    it('keeps a session at the cap', async () => {
+        const decoded = await decodeState(legacy([3, 'EUR', peopleRows(200), [], []]));
+        assert.equal(decoded?.people.length, 200);
+    });
+});
