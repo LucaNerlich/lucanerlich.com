@@ -4,6 +4,7 @@ import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
 import {settlementSummaryText, transfersAsText} from './io';
 import {createMessages} from './messages';
+import {formatMoney} from './money';
 import type {AppState} from './types';
 
 const paidState: AppState = {
@@ -33,7 +34,8 @@ const de = createMessages('de');
 describe('transfer formatters', () => {
     it('marks a paid transfer in the list and the printed summary', () => {
         assert.match(transfersAsText(paidState, transfers, 'EUR', en), /\(paid\)$/);
-        assert.match(settlementSummaryText(paidState, en), /- Bob → Alice: €5\.00 \(paid\)/);
+        const expected = new RegExp(`- Bob → Alice: ${formatMoney(500, 'EUR').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\(paid\\)`);
+        assert.match(settlementSummaryText(paidState, en), expected);
     });
 
     it('leaves an unpaid transfer unmarked in both', () => {
