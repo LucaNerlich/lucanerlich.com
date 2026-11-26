@@ -16,11 +16,12 @@ import styles from './splitter.module.css';
 const SplitterApp: React.FC = () => {
     const messages = useMemo(() => createMessages(), []);
     const {t} = messages;
-    const [state, dispatch, ready] = useUrlState<AppState, Action>({
+    const [state, dispatch, ready, hydrations] = useUrlState<AppState, Action>({
         reducer: applyAction,
         init: emptyState,
         codec: {encode: encodeState, decode: decodeState},
         hydrate: decoded => ({type: 'HYDRATE', state: decoded}),
+        isHydrate: action => action.type === 'HYDRATE',
         // Query param (`?s=`) so chat apps that truncate at `#` keep the payload.
         // queryStore still reads legacy `#…` links.
         store: queryStore(),
@@ -137,6 +138,7 @@ const SplitterApp: React.FC = () => {
             <section className={`${styles.card} ${styles.noPrint}`}>
                 <h2 className={styles.sectionTitle}>{t('people')}</h2>
                 <PeopleManager
+                    key={hydrations}
                     people={state.people}
                     messages={messages}
                     ready={ready}
@@ -151,6 +153,7 @@ const SplitterApp: React.FC = () => {
                     {t('addExpense')}
                 </h2>
                 <ExpenseForm
+                    key={hydrations}
                     people={state.people}
                     currency={state.currency}
                     lastPaidBy={lastPaidBy}
@@ -164,6 +167,7 @@ const SplitterApp: React.FC = () => {
                 <section className={`${styles.card} ${styles.noPrint}`}>
                     <h2 className={styles.sectionTitle}>{t('expenses')}</h2>
                     <ExpenseList
+                        key={hydrations}
                         expenses={state.expenses}
                         people={state.people}
                         currency={state.currency}
