@@ -544,6 +544,25 @@ describe('model', () => {
             {mode: 'percent', percents: {[a]: 60, [b]: 40}},
         );
 
+        // A person id that collides with Object.prototype must not read as an
+        // entry of an unrelated split either.
+        const proto: AppState = {
+            ...state,
+            people: [...state.people, {id: '__proto__', name: 'Proto'}],
+            expenses: [{
+                id: 'p5',
+                description: 'Exact',
+                cents: 10000,
+                paidBy: a,
+                participants: [a, b],
+                split: {mode: 'exact', amounts: {[a]: 6000, [b]: 4000}},
+            }],
+        };
+        assert.deepEqual(
+            applyAction(proto, {type: 'REMOVE_PERSON', id: '__proto__'}).expenses[0].split,
+            {mode: 'exact', amounts: {[a]: 6000, [b]: 4000}},
+        );
+
         // A hand-built state whose kept split no longer validates falls back
         // to equal instead of dropping the expense.
         const invalid: AppState = {
