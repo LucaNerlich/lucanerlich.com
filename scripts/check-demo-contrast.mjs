@@ -16,6 +16,7 @@
 // The accent values are read from src/css/custom.css, so a token change is
 // picked up here without editing this file.
 import {readFileSync, readdirSync} from 'node:fs';
+import {createRequire} from 'node:module';
 
 const AA_NORMAL_TEXT = 4.5;
 
@@ -26,15 +27,52 @@ const parseTokens = (block) =>
         [...block.matchAll(/--custom-(accent|text)-([a-z]+):\s*(#[0-9a-f]{6})/gi)]
             .map(([, group, name, value]) => [`${group}-${name}`.toLowerCase(), value.toLowerCase()]),
     );
-// Infima's primary pair, used by the demo buttons and the apps CTA. The values
-// mirror infima 0.2.0-alpha.45; the package is not resolvable from the repo
-// root, so they are pinned beside the check.
-const PRIMARY_DARK = '#306cce';
-const PRIMARY_LIGHT = '#538ce9';
-const themes = {
-    light: {...parseTokens(css.slice(0, darkStart)), 'primary-dark': PRIMARY_DARK, surface: '#ffffff'},
-    dark: {...parseTokens(css.slice(darkStart)), 'primary-dark': PRIMARY_DARK, surface: '#242526'},
+// Infima's primary pair and surfaces, resolved through the preset because
+// Infima is not a direct dependency. Reading the installed values keeps the
+// check honest across a Docusaurus/Infima upgrade.
+const requireHere = createRequire(import.meta.url);
+const preset = requireHere.resolve('@docusaurus/preset-classic');
+const themeClassic = createRequire(preset).resolve('@docusaurus/theme-classic');
+const infima = readFileSync(
+    createRequire(themeClassic).resolve('infima/dist/css/default/default.css'),
+    'utf8',
+);
+const infimaDarkStart = infima.indexOf("html[data-theme='dark']");
+const declarations = (block) =>
+    Object.fromEntries(
+        [...block.matchAll(/--([a-z0-9-]+):\s*([^;]+);/gi)].map(([, name, value]) => [name, value.trim()]),
+    );
+const baseVars = declarations(infima.slice(0, infimaDarkStart));
+const darkVars = {...baseVars, ...declarations(infima.slice(infimaDarkStart))};
+const resolveVar = (vars, name, depth = 0) => {
+    if (depth > 20) return null;
+    const raw = vars[name];
+    if (!raw) return null;
+    const ref = raw.match(/^var\(--([a-z0-9-]+)\)$/i);
+    return ref ? resolveVar(vars, ref[1], depth + 1) : raw;
 };
+const toHex = (value) => {
+    if (!value) return null;
+    const rgb = value.match(/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i);
+    if (rgb) {
+        return `#${rgb.slice(1).map((n) => Number(n).toString(16).padStart(2, '0')).join('')}`;
+    }
+    const hex = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if (!hex) return null;
+    const digits = hex[1].length === 3 ? hex[1].split('').map((c) => c + c).join('') : hex[1];
+    return `#${digits.toLowerCase()}`;
+};
+const hexOf = (vars, name) => toHex(resolveVar(vars, name));
+const PRIMARY_DARK = hexOf(baseVars, 'ifm-color-primary-dark');
+const PRIMARY_LIGHT = hexOf(baseVars, 'ifm-color-primary-light');
+const themes = {
+    light: {...parseTokens(css.slice(0, darkStart)), 'primary-dark': PRIMARY_DARK, surface: hexOf(baseVars, 'ifm-background-surface-color')},
+    dark: {...parseTokens(css.slice(darkStart)), 'primary-dark': PRIMARY_DARK, surface: hexOf(darkVars, 'ifm-background-surface-color')},
+};
+if (!PRIMARY_DARK || !PRIMARY_LIGHT || !themes.light.surface || !themes.dark.surface) {
+    console.error('could not resolve the Infima primary tokens');
+    process.exit(1);
+}
 
 // [theme, token, foreground, where the pair is rendered]. `accent-*` are fill
 // tokens; `text-*` are the text-safe pair used by the splitter.
@@ -92,6 +130,26 @@ for (const [theme, token, foreground, where] of pairs) {
     console.log(
         `${ok ? 'ok  ' : 'FAIL'} ${value.toFixed(2)}:1  ${theme.padEnd(5)} ${foreground} on ${background}  (${where})`,
     );
+}
+
+// The numbers above only guard these selectors while they still use the
+// modelled tokens. Assert the declarations, so reverting one fails here.
+const guarded = [
+    ['src/components/demos/DemoShell.module.css',
+        /\.buttonPrimary\s*\{[^}]*background:\s*var\(--ifm-color-primary-dark\)[^}]*color:\s*#fff/s,
+        'buttonPrimary fill'],
+    ['src/pages/apps/apps.module.css',
+        /\.cardOpen\s*\{[^}]*color:\s*var\(--ifm-color-primary-dark\)/s,
+        'cardOpen (light)'],
+    ['src/pages/apps/apps.module.css',
+        /html\[data-theme='dark'\]\s*\.cardOpen\s*\{[^}]*color:\s*var\(--ifm-color-primary-light\)/s,
+        'cardOpen (dark)'],
+];
+for (const [file, pattern, where] of guarded) {
+    if (!pattern.test(readFileSync(new URL(`../${file}`, import.meta.url), 'utf8'))) {
+        failed += 1;
+        console.error(`guarded selector changed: ${where} in ${file}`);
+    }
 }
 
 if (failed > 0) {
