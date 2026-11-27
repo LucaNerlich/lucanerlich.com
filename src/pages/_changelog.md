@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.35.0] - 2026-11-27
+
+### Added
+- New CSS deep dives: scroll-driven animations, view transitions, anchor positioning and popover, modern color, `@property`, cascade layers and `@scope`, logical properties, native dialogs, nesting, scroll snap, and `content-visibility`, linked from the beginners chapters
+- Mermaid guide: what Pele is, how to install and mount it in apps, and how this site's build-time plugin relates
+
+### Fixed
+- Splitter app: a `__proto__` person id no longer breaks non-equal splits or rewrites unrelated expenses on removal; the expense editor and typed text reset when the session is replaced; the remove-person warning names sole-participant expenses correctly; transfer rows use collision-safe keys; the duplicate-name error clears once the conflict is gone
+- Splitter imports and links: an encoded-only file is rejected, both accepted import shapes share one validation path, a share link with more than 200 people or 2,000 expenses is rejected, and the same row caps apply when the app creates rows
+- Tooling and build: the Docker Hub cleanup rejects a non-integer `keep_last`, CI runs on Node 24, the settlement-summary test is locale-independent, the contrast guard reads the real Infima tokens, and Docker builds peak near 2 GiB instead of 3+ GiB
+- Site and content: demo primary buttons and the apps CTA meet AA contrast, demo checkbox labels sit beside their captions, the no-op SSG env var and the default-restating `sidebars.js` are gone, and the CSS and AEM guides received a clean-up pass
+
 ## [1.34.5] - 2026-10-24
 
 ### Fixed
